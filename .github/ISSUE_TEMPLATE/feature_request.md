@@ -9,7 +9,7 @@ assignees: ""
 ## Feature Request
 
 **Describe the feature you'd like:**
-A clear and concise description of the feature you are requesting.
+A clear and concise description of the feature you are requesting. Such descriptions can often be expressed in simple stories, like "As a [person], I [want to], [so that]"
 
 **Is your feature request related to a problem? Please describe:**
 A clear and concise description of the problem or need that the feature would address.
@@ -47,3 +47,8 @@ Add any additional notes or comments you think are relevant to this feature requ
 
 - Reference 1
 - Reference 2
+
+## Media Attachments (optional)
+
+- Attachment 1
+- Attachment 2
