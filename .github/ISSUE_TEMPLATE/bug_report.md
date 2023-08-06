@@ -11,23 +11,22 @@ assignees: ""
 **Describe the bug:**
 A clear and concise description of the bug you encountered.
 
+**Severity:**
+
+- [ ] P0 (Critical)
+- [ ] P1 (High Priority)
+- [ ] P2 (Medium Priority)
+- [ ] P3 (Low Priority)
+
+## Impact (optional)
+
+Describe the impact of the bug or feature being addressed, based on the bug reporter's judgment or your own assessment.
+
 **Steps to Reproduce:**
 Outline the steps to reproduce the bug. Provide a list of actions that led to the bug occurring.
 
-**Expected Behavior:**
-A clear and concise description of what you expected to happen.
-
-**Actual Behavior:**
-A clear and concise description of what actually happened.
-
 **Screenshots/Code Snippets:**
 If applicable, add screenshots or code snippets to help explain the problem.
-
-**Environment:**
-
-- Operating System: [e.g., Windows, macOS, Linux]
-- Browser/Device: [e.g., Chrome, Safari, Firefox, iPhone X]
-- Version/Commit: [e.g., v1.0, commit hash]
 
 **Additional Context:**
 Add any other context about the problem here, such as relevant logs, error messages, or any troubleshooting steps you have already taken.
