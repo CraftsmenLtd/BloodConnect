@@ -1,6 +1,8 @@
 Fixes #
+Used when the changes in the pull request directly address the issue.
 
 Resolves #
+Used when the changes in the pull request indirectly resolve another issue.
 
 - [x] Does not depend on other PRs
 - [ ] Depends on other PR being merged first: #
