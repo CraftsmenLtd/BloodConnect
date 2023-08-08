@@ -9,15 +9,15 @@ assignees: ""
 ## Enhancement/Refactor Request
 
 **Describe the enhancement/refactor you'd like:**
-A clear and concise description of the enhancement or refactoring you are requesting.
-
-**Is your request related to a problem or pain point? Please describe:**
-A clear and concise description of the problem or pain point that the enhancement or refactoring would address.
+A clear and concise description of the enhancement or refactoring you are requesting. Gist of it so that the developer can understand the objective.
 
 **Proposed Solution:**
-A clear and concise description of the solution or implementation you have in mind.
+A clear and concise work unit of the solution or implementation you have in mind. i.e, which files will be affected or needs to be changed, any design patterns or approach before starting the task.
 
-**Describe alternatives you've considered (if any):**
+**Is your request related to a problem or pain point? Please describe (optional):**
+A clear and concise description of the problem or pain point that the enhancement or refactoring would address.
+
+**Describe alternatives you've considered (optional):**
 A clear and concise description of any alternative solutions or approaches you've considered, if applicable.
 
 **Additional Context:**
