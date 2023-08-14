@@ -7,10 +7,10 @@ TEMPORARY_FILE_PATH=$1
 COMMIT_MSG=`head -n1 $TEMPORARY_FILE_PATH`
 
 ## init regex to match commit-message format
-REGEX="#[0-9]+ \w+"
+COMMIT_MSG_REGEX="\#[0-9]+|Merge branch\s.*"
 
 ## checking commit-message format
-if ! [[ $COMMIT_MSG =~ $REGEX ]]; then
+if ! [[ $COMMIT_MSG =~ $COMMIT_MSG_REGEX ]]; then
     echo -e "Your commit-message format is not valid:\n$COMMIT_MSG\n"
     echo "Valid format example:"
     echo "#issueNumber My commit message"
