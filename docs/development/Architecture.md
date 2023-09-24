@@ -1,7 +1,7 @@
 # System Architecture
 
 ## Architectural pattern
-[Headless](https://www.infosys.com/services/digital-commerce/documents/headless-architecture.pdf)
+Separate Backend and Clients.
 
 ## System Design
 The system design takes motivation from [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) by [Robert C. Martin](https://en.wikipedia.org/wiki/Robert_C._Martin).
