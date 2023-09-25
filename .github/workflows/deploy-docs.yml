@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - master
-      - issue-9-doc-as-readable-site
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
