@@ -10,7 +10,7 @@ BloodConnect
 - Make the directory executable by executing `chmod +x .githooks/*`.
 
 ## Development Home
-  - [Ticket Lifecycle]('./docs/development/TicketLifecycle.md')
-  - [Architecture]('./docs/development/Architecture.md')
-  - [Coding]('./docs/development/CodingGuideline.md')
-  - [PR]('./docs/development/PRGuideline.md')
+  - [Ticket Lifecycle](./docs/development/TicketLifecycle.md)
+  - [Architecture](./docs/development/Architecture.md)
+  - [Coding](./docs/development/CodingGuideline.md)
+  - [PR](./docs/development/PRGuideline.md)
