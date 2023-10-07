@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - master
-      - I#9-deploy-docs-only-for-changes-in-docs
     paths:
       - docs/**.md
 
