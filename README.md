@@ -10,7 +10,5 @@ BloodConnect
 - Make the directory executable by executing `chmod +x .githooks/*`.
 
 ## Development Home
-  - [Ticket Lifecycle](./docs/development/TicketLifecycle.md)
-  - [Architecture](./docs/development/Architecture.md)
-  - [Coding](./docs/development/CodingGuideline.md)
-  - [PR](./docs/development/PRGuideline.md)
+All documents are in docs directory. Please take a look at docs/README    
+And there is a static site for dev docs: https://craftsmenltd.github.io/BloodConnect
