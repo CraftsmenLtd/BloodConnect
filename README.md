@@ -12,3 +12,11 @@ BloodConnect
 ## Development Home
 All documents are in docs directory. Please take a look at docs/README    
 And there is a static site for dev docs: https://craftsmenltd.github.io/BloodConnect
+
+
+## Local Doc build
+Requirements: Docker need to be installed    
+```shell
+make sphinx-html
+```
+Then open `docs/_build/html/index.html` in a browser
