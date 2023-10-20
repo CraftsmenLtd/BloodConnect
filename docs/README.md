@@ -3,19 +3,19 @@
 Welcome to BloodConnect README site. Please follow the sitemap for detailed information and guidelines.
 
 ## Documentation Guideline
-For BloodConnect documentation we will use [reStructuredText](https://en.wikipedia.org/wiki/ReStructuredText) (RST, ReST or ReST)
+For BloodConnect documentation is being [reStructuredText](https://en.wikipedia.org/wiki/ReStructuredText) (RST, ReST or ReST)
 with [Sphinx](https://www.sphinx-doc.org/en/master/). There are few reasons behind it:
 
 - It is lightweight and better for technical documentation rather than Markdown
 - Generate output of multiple types of documentation (HTML, PDF, LaTeX etc.)
-- Math formula and better support for coding snippets
+- Math formula and better support for code snippets
 - Has built in support of using extensions
 
 Learn reStructuredText with Sphinx: https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html
 
 ### API Documentation
-For API documentation, [OpenAPI Specification](https://www.openapis.org/) formerly known as [Swagger Specification](https://swagger.io/docs/specification/about/) will be used.
-The current latest version of OpenAPI is 3.1.0 and it will be used for BloodConnect. OpenAPI specs can be written using [JSON](https://www.json.org/json-en.html) or [YAML](https://yaml.org/) format but JSON is the selected one for this project.    
+For API documentation, [OpenAPI Specification](https://www.openapis.org/) formerly known as [Swagger Specification](https://swagger.io/docs/specification/about/) is being used.
+The current latest version of OpenAPI is 3.1.0 and it is being used for BloodConnect. OpenAPI specs can be written using [JSON](https://www.json.org/json-en.html) or [YAML](https://yaml.org/) format but JSON is the selected one for this project.    
 
 Learn OpenAPI specs
 
@@ -43,10 +43,11 @@ DOT Language.
 Learn DOT Language: https://graphviz.org/doc/info/lang.html
 
 ### End User Documentation
-reStructuredText or HTML will be used and host as static site with the domain of BloodConnect 
+reStructuredText or HTML will be used and host as static site with the domain of BloodConnect   
+TBD: finalize later
 
 ### Readme, Code documentation and Pseudo code
-[Markdown](https://www.markdownguide.org/)  will be used for these purposes
+[Markdown](https://www.markdownguide.org/)  is being used for these purposes
 
 ## Development Docs
 - [System Architecture](./development/Architecture.md)
