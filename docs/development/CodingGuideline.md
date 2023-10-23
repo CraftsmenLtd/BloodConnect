@@ -22,4 +22,3 @@ The coding standards defined for this project is an adaptation of (though not ap
 - Use `as` **only when sure** that type casting is safe.
 - Use `never` where applicable.
 - Use `type` to define data strictures and types; use `interface` to define behavioural abstractions.
-- 
