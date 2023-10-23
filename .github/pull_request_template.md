@@ -35,6 +35,7 @@ Link to the relevant issue(s) or provide a clear description of the problem or f
 - [ ] I have followed the project's coding style and guidelines.
 - [ ] I have added appropriate test coverage to ensure the changes are functioning correctly.
 - [ ] I have checked for any potential conflicts with other branches or pull requests.
+- [ ] I have updated necessary OpenAPI specs
 
 ## Reviewer Request (optional)
 
