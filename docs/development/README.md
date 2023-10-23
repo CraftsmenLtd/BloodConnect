@@ -1,8 +1,8 @@
 ## Development Home
 - Guidelines
-  - [System Architecture](https://craftsmenltd.github.io/BloodConnect/development/Architecture.html)
-  - [Coding Guideline](https://craftsmenltd.github.io/BloodConnect/development/CodingGuideline.html)
-  - [Cloud Development Guideline](https://craftsmenltd.github.io/BloodConnect/development/CloudDevGuideline.html)
-  - [PR and Related Guideline](https://craftsmenltd.github.io/BloodConnect/development/Architecture.html)
-- [Ticket Lifecycle](https://craftsmenltd.github.io/BloodConnect/development/TicketLifecycle.html)
-- [Setting up for development](https://craftsmenltd.github.io/BloodConnect/development/Setup.html)
+  - [System Architecture](./Architecture.md)
+  - [Coding Guideline](./CodingGuideline.md)
+  - [Cloud Development Guideline](./CloudDevGuideline.md)
+  - [PR and Related Guideline](./PRGuideline.md)
+- [Ticket Lifecycle](./TicketLifecycle.md)
+- [Setting up for development](./Setup.md)
