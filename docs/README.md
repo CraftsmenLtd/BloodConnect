@@ -6,10 +6,10 @@ Welcome to BloodConnect README site. Please follow the sitemap for detailed info
 For BloodConnect documentation is being [reStructuredText](https://en.wikipedia.org/wiki/ReStructuredText) (RST, ReST or ReST)
 with [Sphinx](https://www.sphinx-doc.org/en/master/). There are few reasons behind it:
 
-- It is lightweight and better for technical documentation rather than Markdown
-- Generate output of multiple types of documentation (HTML, PDF, LaTeX etc.)
-- Math formula and better support for code snippets
-- Has built in support of using extensions
+- Lightweight and better for technical documentation rather than Markdown`.
+- Generation of output for multiple types of documentations (HTML, PDF, LaTeX etc.).
+- Math formula and better support for code snippets.
+- Built in support of using extensions.
 
 Learn reStructuredText with Sphinx: https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html
 
