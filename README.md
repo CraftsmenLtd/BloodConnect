@@ -20,3 +20,6 @@ Requirements: Docker need to be installed
 make sphinx-html
 ```
 Then open `docs/_build/html/index.html` in a browser
+```shell
+open ./docs/_build/html/index.html
+```
