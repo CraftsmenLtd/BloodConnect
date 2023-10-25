@@ -63,7 +63,6 @@ Development Docs
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   :name: melon
 
    development/Architecture
    development/TicketLifecycle
