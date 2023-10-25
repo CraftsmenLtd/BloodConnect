@@ -1,0 +1,38 @@
+name: Deploy Sphinx documentation to Github Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches:
+      - master
+      - I#40  # FIXME: remove this line
+    paths:
+      - docs/**.rst
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+
+jobs:
+  pages:
+    runs-on: ubuntu-20.04
+    steps:
+    - id: deployment
+      uses: sphinx-notes/pages@v3
+      with:
+        publish: false
+    - uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ${{ steps.deployment.outputs.artifact }}
