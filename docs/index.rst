@@ -5,7 +5,7 @@ Welcome to BloodConnect project documentation. Please follow the sitemap for det
 
 Documentation Guideline
 ~~~~~~~~~~~~~~~~~~~~~~~
-For BloodConnect documentation is being `reStructuredText <https://en.wikipedia.org/wiki/ReStructuredText>`_ (RST, ReST or ReST)
+For BloodConnect documentation is being `reStructuredText <https://en.wikipedia.org/wiki/ReStructuredText>`_ (RST, reST or ReST)
 with `Sphinx <https://www.sphinx-doc.org/en/master/>`_ There are few reasons behind it:
 
 - Lightweight and better for technical documentation rather than Markdown`.
