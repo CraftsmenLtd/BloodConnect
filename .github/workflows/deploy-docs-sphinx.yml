@@ -1,3 +1,4 @@
+# Guide: https://github.com/marketplace/actions/sphinx-to-github-pages
 name: Deploy Sphinx documentation to Github Pages
 
 on:
