@@ -1,4 +1,4 @@
-Welcome to BloodConnect!
+Documentation
 ========================
 Welcome to BloodConnect project documentation. Please follow the sitemap for detailed information and guidelines.
 
