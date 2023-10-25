@@ -21,11 +21,11 @@ Once the issue has been picked up by someone and is being worked on, it is moved
 
 Ready for Review
 ~~~~~~~~~~~~~~~~
-Once the changes have been finalized and a review is requested on a [PR](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests), it is moved to the `Ready for Review` list.
+Once the changes have been finalized and a review is requested on a `Pull Request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests>`_, it is moved to the `Ready for Review` list.
 
 Reviewing
 ~~~~~~~~~
-Once the PR associated with the issue is being reviewed by the reviewer, it is moved to the `Reviewing` list. If changes are requested on the PR, the issue moves back to `In Progress` list.
+Once the PR associated with the issue is being reviewed by the reviewer, it is moved to the `Reviewing` list. If changes are requested on the PR, the issue moves back to `In Progress`_. list.
 
 Ready to Merge
 ~~~~~~~~~~~~~~
