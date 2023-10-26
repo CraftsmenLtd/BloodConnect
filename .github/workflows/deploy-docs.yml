@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - master
-      - I#40  # FIXME: remove this line
     paths:
       - docs/**
   # Allows you to run this workflow manually from the Actions tab
