@@ -54,3 +54,4 @@ Terraform Guideline
     }
 
 - Must provide lambda description
+- Always format terraform using `terraform fmt` command before git commit
