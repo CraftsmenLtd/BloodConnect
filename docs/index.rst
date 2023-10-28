@@ -5,7 +5,7 @@ Welcome to BloodConnect project documentation. Please follow the sitemap for det
 
 Documentation Guideline
 ~~~~~~~~~~~~~~~~~~~~~~~
-For BloodConnect documentation is being `reStructuredText <https://en.wikipedia.org/wiki/ReStructuredText>`_ (RST, reST or ReST)
+For BloodConnect documentation, `reStructuredText <https://en.wikipedia.org/wiki/ReStructuredText>`_ (RST, reST or ReST) is being used
 with `Sphinx <https://www.sphinx-doc.org/en/master/>`_. There are few reasons behind it:
 
 - Lightweight and better for technical documentation rather than Markdown.
@@ -50,20 +50,17 @@ Learn DOT Language: https://graphviz.org/doc/info/lang.html
 End User Documentation
 ~~~~~~~~~~~~~~~~~~~~~~
 | reStructuredText or HTML will be used and host as static site with the domain of BloodConnect
-| TBD: finalize later
+| **TBD**: finalize later
 
 Readme, Code documentation and Pseudo code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 `Markdown <https://www.markdownguide.org/>`_ is being used for these purposes
 
 
-Development Docs
+Documents Index
 ~~~~~~~~~~~~~~~~
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   development/Architecture
-   development/TicketLifecycle
-   development/CodingGuideline
-   development/PRGuideline
+   development/index

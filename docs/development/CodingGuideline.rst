@@ -16,3 +16,12 @@ The coding standards defined for this project is an adaptation of (though not ap
 - Architectural boundaries should be respected. No set of code in the inner circle will be dependent on any code in the outer circle (in reference to the `Clean Architecture Diagram <https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg>`_.
 - `Design Patterns <https://en.wikipedia.org/wiki/Design_pattern>`_ should be used where applicable, but is should not come at the cost of manageability. Use your judgement to identify and apply the patterns.
 - `SOLID principles <https://en.wikipedia.org/wiki/SOLID>`_ should be respected.
+- Dependencies should be passed from the outer layer to the inner. References of interfaces should be used for type definition within the application layer, and not the implementation references. Avoid creating objects (`new` keyword) as much as possible within the application layer.
+
+TS specific Guidelines
+~~~~~~~~~~~~~~~~~~~~~~
+- **Do not use** `any`, use `unknown` instead.
+- **Do not use** `// @ts-ignore` unless absolutely necessary.
+- Use `as` **only when sure** that type casting is safe.
+- Use `never` where applicable.
+- Use `type` to define data strictures and types; use `interface` to define behavioural abstractions.
