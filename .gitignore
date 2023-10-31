@@ -1,6 +1,9 @@
 # IDE
 .idea
-.code
+.vscode
+
+# Docs build
+docs/_build
 
 # Logs
 logs
