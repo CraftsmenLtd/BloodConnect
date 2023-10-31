@@ -5,7 +5,7 @@ resource "aws_budgets_budget" "blood_connect_budget" {
   budget_type       = "COST"
   limit_amount      = var.budget_settings.amount
   limit_unit        = "USD"
-  time_period_end   = "3000-12-31_00:00"
+  time_period_end   = "2099-12-31_00:00"
   time_period_start = "2023-01-01_00:00"
   time_unit         = "MONTHLY"
 
