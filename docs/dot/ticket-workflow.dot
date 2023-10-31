@@ -1,0 +1,13 @@
+digraph {
+    graph [nodesep="0.5", ranksep="0.5"];
+    node [shape=egg style=filled]
+    "Backlog" -> "Todo";
+    "Todo" -> "In Progress";
+    "In Progress" -> "Ready to Review";
+    "In Progress" -> "Closed";
+    "Ready to Review" -> "Reviewing";
+    "Reviewing" -> "In Progress";
+    "Reviewing" -> "Closed";
+    "Reviewing" -> "Ready to Merge";
+    "Ready to Merge" -> "Done/Merged";
+}
