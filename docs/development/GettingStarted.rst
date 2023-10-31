@@ -5,6 +5,7 @@ Setup the Project
 Installation
 ~~~~~~~~~~~~
 - Clone the project.
+- From project root, execute `npm i`.
 
 Git Setup
 ~~~~~~~~~
