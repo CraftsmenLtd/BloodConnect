@@ -2,7 +2,7 @@
   "name": "blood-connect",
   "description": "Blood donation management application",
   "author": "Craftsmen Ltd.",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "license": "Apache-2.0",
   "scripts": {
     "test": "jest -- ",
