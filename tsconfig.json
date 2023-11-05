@@ -27,6 +27,6 @@
       "@application/*": ["core/application/*"],
     },
   },
-  "include": ["commons", "core", "clients", ".eslintrc.js", "babel.config.js", "jest.config.ts"],
+  "include": ["commons", "core", "clients", "babel.config.js", "jest.config.ts"],
   "exclude": ["node_modules/**/*", "dist", ".idea", ".vscode", ".github", "coverage"],
 }
