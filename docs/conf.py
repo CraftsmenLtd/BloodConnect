@@ -14,6 +14,7 @@ author = "Craftsmen Ltd"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = ["sphinx.ext.graphviz"]
+graphviz_output_format = 'svg'
 
 templates_path = ["templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
