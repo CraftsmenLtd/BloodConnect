@@ -1,29 +1,27 @@
-TODO: move me to docs/ dir
+======================
+Infrastructure as Code
+======================
 
-==========
-Deployment
-==========
-
-The `deployment` directory contains all `Infrastructure as Code (IaC) <https://en.wikipedia.org/wiki/Infrastructure_as_code>`_
+The `iac` directory contains all `Infrastructure as Code (IaC) <https://en.wikipedia.org/wiki/Infrastructure_as_code>`_
 
 Directory Structure
 ~~~~~~~~~~~~~~~~~~~
 
-This is deployment directory example:
+This is iac directory example:
 
 ::
     BloodConnect
-    └── deployment
+    └── iac
         ├── terraform
         │   ├── aws
-        │   │   ├── frontend
-        │   │   └── backend
+        │   │   ├── auth
+        │   │   └── donate
         │   └── gcp
         ├── serverless
         └── pulumi
 
 
-- `deployment` dir contains IaC tool names (e.g. `Terraform <https://www.terraform.io/>`_, `Pulumi <https://www.pulumi.com/>`_ etc.) which is being used to deploy. It can contains multiple tools.
+- `iac` dir contains IaC tool names (e.g. `Terraform <https://www.terraform.io/>`_, `Pulumi <https://www.pulumi.com/>`_ etc.) which is being used to deploy. It can contains multiple tools.
 - Each IaC tool named dir contains cloud platform dirs (e.g. `Amazon Web Services <https://aws.amazon.com/>`_, `Google Cloud Platform <https://cloud.google.com/>`_ etc.). It can contain multiple dirs.
 - Each IaC tool named dir contains core level codes which will work for all cloud platforms
 - Each cloud platform dir contains modules of the project with separate dirs (e.g. frontend, backend, services etc.)
@@ -31,7 +29,7 @@ This is deployment directory example:
 - IaC should have a runbook which will be used by deployment pipeline
 
 
-Deployment Coverage
+IaC Coverage
 ~~~~~~~~~~~~~~~~~~~
 - Terraform/AWS - initially starting with this one
 
