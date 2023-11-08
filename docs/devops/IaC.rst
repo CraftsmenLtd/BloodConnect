@@ -50,4 +50,8 @@ Terraform Guideline
  .. literalinclude:: ../codes/terraform/variable.tf
 
 - Must provide lambda description
-- Always format terraform using `terraform fmt` command before git commit
+- Always format terraform using `terraform fmt` command before git commit. There is a make command for it
+
+ .. code-block:: bash
+
+    make tf-fmt
