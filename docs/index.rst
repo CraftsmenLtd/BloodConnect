@@ -57,6 +57,21 @@ Readme, Code documentation and Pseudo code
 `Markdown <https://www.markdownguide.org/>`_ is being used for these purposes
 
 
+Doc build local environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Requirements: Docker need to be installed
+
+.. code-block:: bash
+
+   make sphinx-html
+
+Then open `docs/_build/html/index.html` in a browser
+
+.. code-block:: bash
+
+   open ./docs/_build/html/index.html
+
+
 Documents Index
 ~~~~~~~~~~~~~~~~
 
@@ -64,3 +79,4 @@ Documents Index
    :maxdepth: 1
 
    development/index
+   devops/index
