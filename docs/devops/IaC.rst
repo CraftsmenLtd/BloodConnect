@@ -9,7 +9,8 @@ Directory Structure
 
 This is iac directory example:
 
-::
+ .. code-block::
+
     BloodConnect
     └── iac
         ├── terraform
@@ -30,8 +31,8 @@ This is iac directory example:
 
 
 IaC Coverage
-~~~~~~~~~~~~~~~~~~~
-- Terraform/AWS - initially starting with this one
+~~~~~~~~~~~~
+- Terraform/AWS - initially starting with **Terraform Version: 1.6.3** and AWS
 
 Terraform Guideline
 ~~~~~~~~~~~~~~~~~~~
@@ -39,17 +40,14 @@ Terraform Guideline
 - Add a blank line at the end of each resource
 - A tag must be used to track payment
 - A terraform validation step must be added in build or release pipeline which will be executed before releasing
-- Must provide variable description and type
-..  code-block:: hcl2
-    variable "image_id" {
-      type = string
-    }
 
-    #prefered
-    variable "image_id" {
-      description = "ec2 image id"
-      type = string
-    }
+ .. code-block:: bash
+
+    terraform validate
+
+- Must provide variable description and type
+
+ .. literalinclude:: ../codes/terraform/variable.tf
 
 - Must provide lambda description
 - Always format terraform using `terraform fmt` command before git commit
