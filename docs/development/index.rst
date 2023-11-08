@@ -1,7 +1,7 @@
 ================
 Development Home
 ================
-This is development home with development related docs and guidelines.
+This is the development home page for development related docs and guidelines.
 
 Guidelines
 ~~~~~~~~~~

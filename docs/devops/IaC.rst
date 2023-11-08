@@ -7,7 +7,7 @@ The `iac` directory contains all `Infrastructure as Code (IaC) <https://en.wikip
 Directory Structure
 ~~~~~~~~~~~~~~~~~~~
 
-This is iac directory example:
+The Iac directory is as follows:
 
  .. code-block::
 
@@ -38,7 +38,7 @@ Terraform Guideline
 ~~~~~~~~~~~~~~~~~~~
 - Follow `HasiCorp <https://www.hashicorp.com/>`_ provided `styleguide <https://developer.hashicorp.com/terraform/language/syntax/style>`_
 - Add a blank line at the end of each resource
-- A tag must be used to track payment
+- A tag must be used to track cost
 - A terraform validation step must be added in build or release pipeline which will be executed before releasing
 
  .. code-block:: bash

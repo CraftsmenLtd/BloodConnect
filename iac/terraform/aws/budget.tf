@@ -1,5 +1,5 @@
 resource "aws_budgets_budget" "blood_connect_budget" {
-  count = (var.budget_settings.set_budget ? 1 : 0)
+  count = local.is_budget_set
 
   name              = "budget-monthly"
   budget_type       = "COST"
