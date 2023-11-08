@@ -5,4 +5,4 @@ sphinx-html:
 	docker run --rm -v $(PWD)/docs:/docs sphinxdoc/sphinx make html
 
 tf-fmt:
-	terraform -chdir=iac/terraform/aws fmt
+	terraform -chdir=iac/terraform/aws fmt -recursive
