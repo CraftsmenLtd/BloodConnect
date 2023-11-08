@@ -1,4 +1,4 @@
 module "auth" {
-  source = "./auth"
+  source      = "./auth"
   environment = var.environment
 }
