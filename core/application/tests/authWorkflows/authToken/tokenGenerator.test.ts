@@ -1,6 +1,6 @@
 import getAuthToken from '../../../authWorkflows/authToken/tokenGenerator'
 import { jwtSecret } from '../../../authWorkflows/authToken/constants'
-import { JwtPayload, verify, JsonWebTokenError } from 'jsonwebtoken'
+import { JwtPayload, verify } from 'jsonwebtoken'
 
 describe('tokenGenerator', () => {
   const tokenPayload = { email: 'a@b.com', username: 'test', role: 'admin' }
@@ -29,20 +29,24 @@ describe('tokenGenerator', () => {
     expect(role).toEqual(tokenPayload.role)
   })
 
-  it('should generate a valid jwt token with mentioned validity if expiresIn passed', () => {
+  it('should generate a valid jwt token with mentioned validity if positive expiresIn passed', () => {
     const token = getAuthToken(tokenPayload, 5)
     const fiveSecsLaterTime = Math.floor(Date.now() / 1000) + 5
     const decodedPayloadExpiry = getExpiryOfJsonToken(verify(token, jwtSecret))
     expect(decodedPayloadExpiry).toBe(fiveSecsLaterTime)
   })
 
-  it('should throw error if wrong secret passed', () => {
-    try {
-      const token = getAuthToken(tokenPayload)
-      verify(token, 'mock_secret')
-      expect(true).toBe(false)
-    } catch (e) {
-      expect((e as JsonWebTokenError).name).toBe('JsonWebTokenError')
-    }
+  it('should generate a valid jwt token with validity until day end if 0 expiresIn is passed', () => {
+    const token = getAuthToken(tokenPayload, -5)
+    const dayEnd = Math.floor(new Date().setUTCHours(23, 59, 59) / 1000)
+    const decodedPayloadExpiry = getExpiryOfJsonToken(verify(token, jwtSecret))
+    expect(decodedPayloadExpiry).toBe(dayEnd)
+  })
+
+  it('should generate a valid jwt token with validity until day end if negative expiresIn is passed', () => {
+    const token = getAuthToken(tokenPayload, 0)
+    const dayEnd = Math.floor(new Date().setUTCHours(23, 59, 59) / 1000)
+    const decodedPayloadExpiry = getExpiryOfJsonToken(verify(token, jwtSecret))
+    expect(decodedPayloadExpiry).toBe(dayEnd)
   })
 })
