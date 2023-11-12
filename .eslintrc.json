@@ -44,6 +44,9 @@
     "@typescript-eslint/space-before-function-paren": ["error", "never"],
     "@typescript-eslint/no-empty-interface": ["off"],
     "@typescript-eslint/no-empty-function": ["off"],
+    "@typescript-eslint/method-signature-style": ["off"],
+    "@typescript-eslint/restrict-template-expressions": ["off"],
+    "@typescript-eslint/consistent-type-imports": ["off"],
     "@typescript-eslint/member-delimiter-style": ["error", {
       "multiline": { "delimiter": "semi", "requireLast": true },
       "singleline": { "delimiter": "semi", "requireLast": false }

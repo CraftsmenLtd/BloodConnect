@@ -4,7 +4,7 @@
     "module": "commonjs",
     "jsx": "preserve",
     "moduleResolution": "node",
-    "importHelpers": true,
+    "importHelpers": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitAny": true,
