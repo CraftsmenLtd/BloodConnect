@@ -10,12 +10,13 @@ describe('tokenValidator', () => {
     const token = getAuthToken(tokenPayload)
     const jwtPayload = validateToken<typeof tokenPayload>(token)
     const { email, username, role } = jwtPayload
+
     expect(email).toEqual(tokenPayload.email)
     expect(username).toEqual(tokenPayload.username)
     expect(role).toEqual(tokenPayload.role)
   })
 
-  it('should return payload for valid token', () => {
+  it('should throw error if invalid token passed', () => {
     try {
       validateToken<typeof tokenPayload>('invalid_token_passed')
       expect(true).toBe(false)
@@ -24,7 +25,7 @@ describe('tokenValidator', () => {
     }
   })
 
-  it('should return payload for valid token', () => {
+  it('should throw error if expired token passed', () => {
     try {
       const expiredToken = sign(tokenPayload, jwtSecret, { expiresIn: -5 })
       validateToken<typeof tokenPayload>(expiredToken)
