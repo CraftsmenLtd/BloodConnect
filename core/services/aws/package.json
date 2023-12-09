@@ -1,0 +1,16 @@
+{
+  "name": "aws-common-dependencies",
+  "description": "Contains common dependencies for AWS",
+  "author": "Craftsmen Ltd.",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "cd ../ && npm run test -- core/application/tests/*"
+  },
+  "dependencies": {
+    "aws-lambda": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.130"
+  }
+}
