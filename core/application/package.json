@@ -1,6 +1,6 @@
 {
-  "name": "auth",
-  "description": "Auth service",
+  "name": "application",
+  "description": "Contains everything related to the logical implementation of the application",
   "author": "Craftsmen Ltd.",
   "version": "0.0.1",
   "license": "Apache-2.0",
