@@ -1,5 +1,5 @@
-export function getRemainingMsOfDay(dateNow = Date.now()): number {
-  return new Date().setUTCHours(23, 59, 59) - dateNow
+export function getRemainingSecsOfDay(dateNow = Date.now()): number {
+  return Math.round((new Date().setUTCHours(23, 59, 59) - dateNow) / 1000)
 }
 
 export function getDaysInSecs(dayCount: number): number {
