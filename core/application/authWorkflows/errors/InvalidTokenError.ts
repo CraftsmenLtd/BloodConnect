@@ -1,8 +1,8 @@
 import ApplicationError from '@commons/libs/errors/ApplicationError'
-import { GenericErrorCodes } from '@commons/libs/errors/errorCodes'
+import { GenericCodes } from '@commons/libs/constants/GenericCodes'
 
 export default class InvalidTokenError extends ApplicationError {
   constructor(message: string) {
-    super('InvalidTokenError', message, GenericErrorCodes.unauthorized)
+    super('InvalidTokenError', message, GenericCodes.unauthorized)
   }
 }
