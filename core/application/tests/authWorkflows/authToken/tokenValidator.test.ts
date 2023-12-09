@@ -1,13 +1,13 @@
 import { sign } from 'jsonwebtoken'
 import { jwtSecret } from '../../../authWorkflows/authToken/constants'
-import getAuthToken from '../../../authWorkflows/authToken/tokenGenerator'
+import getJwtToken from '../../../authWorkflows/authToken/tokenGenerator'
 import validateToken from '../../../authWorkflows/authToken/tokenValidator'
 
 describe('tokenValidator', () => {
   const tokenPayload = { email: 'a@b.com', username: 'test', role: 'admin' }
 
   it('should return payload for valid token', () => {
-    const token = getAuthToken(tokenPayload)
+    const token = getJwtToken(tokenPayload, 100)
     const jwtPayload = validateToken<typeof tokenPayload>(token)
     const { email, username, role } = jwtPayload
 
