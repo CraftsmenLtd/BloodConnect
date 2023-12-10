@@ -2,11 +2,11 @@
 import Environments from '@commons/libs/constants/Environments'
 import Logger from '@commons/libs/logger/Logger'
 
-class ApplicationLogger implements Logger {
+export class ApplicationLogger implements Logger {
   readonly shouldLog: boolean
 
   constructor(env: Environments) {
-    this.shouldLog = !(env === 'production')
+    this.shouldLog = !(env === 'production' || env === 'test')
   }
 
   info(...message: string[]): void {
