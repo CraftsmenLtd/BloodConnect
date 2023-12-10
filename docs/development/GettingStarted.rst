@@ -5,7 +5,24 @@ Setup the Project
 Installation
 ~~~~~~~~~~~~
 - Clone the project.
+- Install `npm`
+- Install `node18x` (added in .nvmrc)
 - From project root, execute `npm i`. `npm ci` can be used if preferred, if the `package.lock.json` is available.
+- Run `npm i` in the folders containing `package.json` to install all dependencies. `npm ci` can be used if preferred, and the `package.lock.json` is available. To run specific services/sub-modules, enter the directory containing the `package.json` file of that service/sub-module and execute the command. Currently, the following folders contain a `package.json` file:
+
+  - root
+  - core/application
+  - core/services/<cloud_provider>
+  - core/services/<cloud_provider>/<service_name> if needed
+
+Additional Commands
+~~~~~~~~~~~~~~~~~~~
+- Lint: `npm run lint`
+- Unit tests: Run the following commands from the root directory:
+
+  - `npm run test`: all tests 
+  - `npm run test -- <path_to_test_file>`: specific test file
+  - `npm run test -- <path_to_test_file> -t <describe_text_in_test>`: specific test segment
 
 Git Setup
 ~~~~~~~~~

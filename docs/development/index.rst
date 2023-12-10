@@ -14,6 +14,7 @@ Guidelines
    CloudDevGuideline
    PRGuideline
    TicketLifecycle
+   DirectoryOrganization
 
 Dive into the Code
 ~~~~~~~~~~~~~~~~~~
