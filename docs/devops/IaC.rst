@@ -32,7 +32,7 @@ The Iac directory is as follows:
 
 IaC Coverage
 ~~~~~~~~~~~~
-- Terraform/AWS - initially starting with **Terraform Version: 1.6.3** and AWS
+- Terraform/AWS - initially starting with **Terraform Version: 1.6.5** and AWS
 
 Terraform Guideline
 ~~~~~~~~~~~~~~~~~~~
