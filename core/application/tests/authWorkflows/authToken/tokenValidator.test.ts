@@ -16,6 +16,14 @@ describe('tokenValidator', () => {
     expect(role).toEqual(tokenPayload.role)
   })
 
+  it('should have exp defined in payload for valid token', () => {
+    const token = getJwtToken(tokenPayload, 100)
+    const jwtPayload = validateToken<typeof tokenPayload>(token)
+    const { exp } = jwtPayload
+
+    expect(exp).toBeDefined()
+  })
+
   it('should throw error if invalid token passed', () => {
     try {
       validateToken<typeof tokenPayload>('invalid_token_passed')
