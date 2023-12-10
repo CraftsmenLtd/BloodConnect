@@ -1,5 +1,5 @@
 import validateToken from '@application/authWorkflows/authToken/tokenValidator'
-import { getRefreshToken, getBearerAuthToken, getRefreshTokenValidityDaysForClient, getAuthToken } from '../../authWorkflows/authWorkflowUseCases'
+import { getRefreshToken, getBearerAuthToken, getAuthToken } from '../../authWorkflows/authWorkflowUseCases'
 import { getDaysInSecs } from '@commons/libs/dateTimeUtils'
 import { JwtPayload } from 'jsonwebtoken'
 
@@ -54,16 +54,6 @@ describe('authWorkflowUseCases', () => {
         const decodedPayloadExpiry = getExpiryOfJsonToken(validateToken(token))
         expect(decodedPayloadExpiry).toBe(dayEnd)
       })
-    })
-  })
-
-  describe('getRefreshTokenValidityDaysForClient', () => {
-    it('should return 7 for web client', () => {
-      expect(getRefreshTokenValidityDaysForClient('web')).toBe(7)
-    })
-
-    it('should return 30 for mobile client', () => {
-      expect(getRefreshTokenValidityDaysForClient('mobile')).toBe(30)
     })
   })
 
