@@ -5,6 +5,10 @@ import { getBearerAuthToken } from '@application/authWorkflows/authWorkflowUseCa
 import InvalidTokenError from '@application/authWorkflows/errors/InvalidTokenError'
 import appLogger from '@commons/libs/logger/ApplicationLogger'
 
+/**
+ * Authorizer lambda for ApiGateway. Validates the token from "Bearer token".
+ * Returns Unauthorized 401 for invalid token
+ */
 function tokenValidatorLambda(event: APIGatewayTokenAuthorizerEvent): APIGatewayAuthorizerResult | 'Unauthorized' {
   const token = getBearerAuthToken(event.authorizationToken)
   if (token !== undefined) {

@@ -7,6 +7,10 @@ import { HttpCodes } from '@commons/libs/constants/GenericCodes'
 import { getAuthToken } from '@application/authWorkflows/authWorkflowUseCases'
 import generateApiGatewayResponse from 'core/services/aws/commons/lambda/ApiGateway'
 
+/**
+ * Lambda associated with HTTP endpoint to refresh auth token. Seeks the refresh token in the request header with key refreshToken
+ * Returns a new auth token for a valid refresh token. Returns Unauthorized 401 otherwise.
+ */
 function refreshTokenLambda(event: APIGatewayProxyEvent): APIGatewayProxyResult {
   const token = event.headers.refreshToken
   if (token !== undefined) {
