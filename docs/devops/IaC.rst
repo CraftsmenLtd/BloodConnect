@@ -43,7 +43,8 @@ Terraform Guideline
 
  .. code-block:: bash
 
-    terraform validate
+    terraform validate  # Command of terraform to validate it
+    make run-command-tf-validate  # Validate terraform using dockerized dev environment
 
 - Must provide variable description and type
 
@@ -54,4 +55,4 @@ Terraform Guideline
 
  .. code-block:: bash
 
-    make tf-fmt
+    make run-command-tf-fmt
