@@ -26,9 +26,19 @@ Installation
 
 Additional Commands
 ~~~~~~~~~~~~~~~~~~~
-- Lint: `npm run lint`
-- Unit tests: Run the following commands from the root directory:
+- Lint
 
-  - `npm run test`: all tests 
-  - `npm run test -- <path_to_test_file>`: specific test file
-  - `npm run test -- <path_to_test_file> -t <describe_text_in_test>`: specific test segment
+.. code-block:: bash
+
+    make run-command-lint  # To run all project lints
+    make run-command-lint-code  # To run only code lints
+
+- Unit Tests
+
+.. code-block:: bash
+
+    make run-command-test  # Run all unittests
+
+FIXME: specific unit test inside docker
+- `npm run test -- <path_to_test_file>`: specific test file
+- `npm run test -- <path_to_test_file> -t <describe_text_in_test>`: specific test segment

@@ -17,6 +17,18 @@ tf-validate:
 	terraform -chdir=iac/terraform validate
 
 
+# Unittest
+test:
+	npm run test
+
+
+# Lint
+lint-code:
+	npm run lint
+
+lint: lint-code tf-validate
+
+
 # Docker dev environment
 build-runner-image:
 	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
