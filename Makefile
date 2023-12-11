@@ -4,11 +4,8 @@ DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -w /app
 DOCKER_ENV:=-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION
 
 # Documentation
-sphinx-init:
-	docker run -it --rm -v $(PWD)/docs:/docs sphinxdoc/sphinx sphinx-quickstart
-
 sphinx-html:
-	docker run --rm -v $(PWD)/docs:/docs sphinxdoc/sphinx make html
+	(cd docs && make html)
 
 
 # Terraform
