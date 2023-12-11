@@ -2,18 +2,27 @@
 Setup the Project
 =================
 
+Git Setup
+~~~~~~~~~
+- `Install Git<https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_ on your development environment.
+- Clone the project.
+
+.. code-block:: bash
+
+    git clone git@github.com:CraftsmenLtd/BloodConnect.git
+
+- Open the project in terminal/IDE.
+- Execute `git config core.hooksPath .githooks` to change the git hooks to `.githooks` directory.
+- Make the directory executable by executing `chmod +x .githooks/*`.
+
 Installation
 ~~~~~~~~~~~~
-- Clone the project.
-- Install `npm`
-- Install `node18x` (added in .nvmrc)
-- From project root, execute `npm i`. `npm ci` can be used if preferred, if the `package.lock.json` is available.
-- Run `npm i` in the folders containing `package.json` to install all dependencies. `npm ci` can be used if preferred, and the `package.lock.json` is available. To run specific services/sub-modules, enter the directory containing the `package.json` file of that service/sub-module and execute the command. Currently, the following folders contain a `package.json` file:
+- `Install Docker <https://docs.docker.com/engine/install/>`_ on your development environment
+- Build docker image if not
 
-  - root
-  - core/application
-  - core/services/<cloud_provider>
-  - core/services/<cloud_provider>/<service_name> if needed
+.. code-block:: bash
+
+    make build-runner-image
 
 Additional Commands
 ~~~~~~~~~~~~~~~~~~~
@@ -23,9 +32,3 @@ Additional Commands
   - `npm run test`: all tests 
   - `npm run test -- <path_to_test_file>`: specific test file
   - `npm run test -- <path_to_test_file> -t <describe_text_in_test>`: specific test segment
-
-Git Setup
-~~~~~~~~~
-- Open the project in terminal/IDE.
-- Execute `git config core.hooksPath .githooks` to change the git hooks to `.githooks` directory.
-- Make the directory executable by executing `chmod +x .githooks/*`.
