@@ -11,3 +11,4 @@ Docs
    :maxdepth: 2
 
    IaC
+   Pipelines
