@@ -12,8 +12,18 @@ Git Setup
     git clone git@github.com:CraftsmenLtd/BloodConnect.git
 
 - Open the project in terminal/IDE.
-- Execute `git config core.hooksPath .githooks` to change the git hooks to `.githooks` directory.
-- Make the directory executable by executing `chmod +x .githooks/*`.
+- Execute to change the git hooks to `.githooks` directory.
+
+ .. code-block:: bash
+
+    git config core.hooksPath .githooks
+
+- Make the directory executable
+
+ .. code-block:: bash
+
+    chmod +x .githooks/*
+
 
 Installation
 ~~~~~~~~~~~~
@@ -32,6 +42,7 @@ Additional Commands
 
     make run-command-lint  # To run all project lints
     make run-command-lint-code  # To run only code lints
+    make run-command-tf-validate  # To validate/lint terraform
 
 - Unit Tests
 
