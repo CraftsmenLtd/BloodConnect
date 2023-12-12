@@ -10,5 +10,6 @@ Docs
 .. toctree::
    :maxdepth: 2
 
+   DockerizedDev
    IaC
    Pipelines
