@@ -52,5 +52,5 @@
       "singleline": { "delimiter": "semi", "requireLast": false }
     }]
   },
-  "ignorePatterns": ["coverage/", "node_modules/"]
+  "ignorePatterns": ["coverage/", "node_modules/", "docs/", "iac/"]
 }
