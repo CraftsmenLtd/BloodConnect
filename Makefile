@@ -1,5 +1,5 @@
 RUNNER_IMAGE_NAME?=dev-image
-DOCKER_BUILD_EXTRA_ARGS?=
+DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.6.5" --build-arg="NODE_MAJOR=18"
 DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -w /app
 DOCKER_ENV:=-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION
 
@@ -15,6 +15,11 @@ tf-fmt:
 tf-validate:
 	terraform -chdir=iac/terraform init -input=false $(TF_BACKEND_CONFIG)
 	terraform -chdir=iac/terraform validate
+
+
+# Nodejs
+install-node-packages:
+	find . -type f -name package.json -not -path "**node_modules**" -execdir npm i \;
 
 
 # Unittest
@@ -35,3 +40,7 @@ build-runner-image:
 
 run-command-%:
 	docker run $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
+
+
+# Dev start project
+start-dev: build-runner-image run-command-install-node-packages
