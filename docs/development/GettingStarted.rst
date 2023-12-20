@@ -28,11 +28,11 @@ Git Setup
 Installation
 ~~~~~~~~~~~~
 - `Install Docker <https://docs.docker.com/engine/install/>`_ on your development environment
-- Build docker image if not
+- Build docker image and install necessary dependencies
 
  .. code-block:: bash
 
-    make build-runner-image
+    make start-dev
 
 Additional Commands
 ~~~~~~~~~~~~~~~~~~~
@@ -42,7 +42,8 @@ Additional Commands
 
     make run-command-lint  # To run all project lints
     make run-command-lint-code  # To run only code lints
-    make run-command-tf-validate  # To validate/lint terraform
+    make run-command-tf-validate  # To validate/lint terraform codes
+    make run-command-tf-fmt  # To format terraform codes
 
 - Unit Tests
 
