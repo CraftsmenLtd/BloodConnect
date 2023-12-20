@@ -8,6 +8,8 @@ In this project, it is going to be used and `Dockerfile` in project root dir is 
 
 .. literalinclude:: ../../Dockerfile
 
+Library versions are provided as docker ARG e.g TERRAFORM_VERSION, NODE_MAJOR. A lightweight debian docker image is being used.
+
 Setup JetBrains IDE
 ~~~~~~~~~~~~~~~~~~~
 This guide includes dockerized development environment setup of JetBrains IDEs like WebStorm, IntelliJ IDEA, PyCharm etc.
