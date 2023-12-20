@@ -24,7 +24,7 @@ install-node-packages:
 
 # Unittest
 test:
-	npm run test
+	npm run test $(TEST_EXTRA_ARGS)
 
 
 # Lint
