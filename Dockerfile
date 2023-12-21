@@ -11,7 +11,7 @@ RUN apt update
 RUN apt install -y nodejs --no-install-recommends
 
 # Python
-RUN apt install -y build-essential zlib1g-dev libffi-dev libssl-dev --no-install-recommends
+RUN apt install -y build-essential zlib1g-dev libffi-dev libssl-dev libgdbm-dev libc6-dev libbz2-dev --no-install-recommends
 RUN cd tmp && wget https://www.python.org/ftp/python/3.11.3/Python-3.11.3.tgz && tar xzf Python-3.11.3.tgz
 RUN cd /tmp/Python-3.11.3 && ./configure --enable-optimizations && make install
 RUN pip3 install --upgrade pip
