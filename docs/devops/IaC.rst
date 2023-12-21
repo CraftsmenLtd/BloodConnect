@@ -56,3 +56,9 @@ Terraform Guideline
  .. code-block:: bash
 
     make run-command-tf-fmt
+
+- Check terraform static security using
+
+ .. code-block:: bash
+
+    make run-command-tf-security
