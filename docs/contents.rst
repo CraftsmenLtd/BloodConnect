@@ -61,7 +61,7 @@ Doc build local environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Requirements: Docker need to be installed
 
-Build docker image if not
+Build docker image if not already built
 
 .. code-block:: bash
 
