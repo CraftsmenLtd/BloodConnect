@@ -1,5 +1,5 @@
 RUNNER_IMAGE_NAME?=dev-image
-DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.6.5" --build-arg="NODE_MAJOR=18" --build-arg="CHECKOV_VERSION=3.1.40"
+DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.6.5" --build-arg="NODE_MAJOR=20" --build-arg="CHECKOV_VERSION=3.1.40" --build-arg="PYTHON_VERSION=3.11.3"
 DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -w /app
 DOCKER_ENV:=-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION
 
@@ -15,6 +15,9 @@ tf-fmt:
 tf-validate:
 	terraform -chdir=iac/terraform init -input=false $(TF_BACKEND_CONFIG)
 	terraform -chdir=iac/terraform validate
+
+tf-security:
+	checkov --directory iac/terraform
 
 
 # Nodejs
@@ -32,11 +35,6 @@ lint-code:
 	npm run lint
 
 lint: lint-code tf-validate
-
-
-# Security
-tf-security:
-	checkov --directory iac/terraform
 
 
 # Docker dev environment
