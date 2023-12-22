@@ -42,8 +42,8 @@ Additional Commands
 
     make run-command-lint  # To run all project lints
     make run-command-lint-code  # To run only code lints
-    make run-command-tf-validate  # To validate/lint terraform codes
-    make run-command-tf-fmt  # To format terraform codes
+    make run-command-tf-validate  # To validate/lint terraform code
+    make run-command-tf-fmt  # To format terraform code
 
 - Unit Tests
 
