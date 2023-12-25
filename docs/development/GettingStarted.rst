@@ -24,6 +24,15 @@ Additional Commands
   - `npm run test -- <path_to_test_file>`: specific test file
   - `npm run test -- <path_to_test_file> -t <describe_text_in_test>`: specific test segment
 
+Building and Bundling
+^^^^^^^^^^^^^^^^^^^^^
+- Services: Run the following commands from `core/services/<cloud_provider>`. The generated files are placed inside `core/services/<cloud_provider>/.build`.
+
+  - `npm run build-service --name=<service_name>`: specific service.
+  - `npm run build-all`: all services.
+  - `npm run package-service --name=<service_name>`: creates zip files for the particular service to be deployed to cloud in `.build/zips`.
+  - `npm run package-all`: creates zip files for all services to be deployed to cloud in `.build/zips`.
+
 Git Setup
 ~~~~~~~~~
 - Open the project in terminal/IDE.
