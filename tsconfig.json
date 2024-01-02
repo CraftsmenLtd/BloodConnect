@@ -28,5 +28,5 @@
     },
   },
   "include": ["commons", "core", "clients", "babel.config.js", "jest.config.ts", "jest.env.ts"],
-  "exclude": ["node_modules/**/*", "dist", ".idea", ".vscode", ".github", "coverage"],
+  "exclude": ["node_modules/**/*", "dist", ".idea", ".vscode", ".github", "coverage", ".build"],
 }

@@ -15,6 +15,9 @@ Please go through the :doc:`Architecture <./Architecture>` and the :doc:`Cloud D
         ├── application
         └── services
             ├── aws
+            |   |── .build
+            |   |    |── <list_of_services_containing_transpiled_files>
+            |   |    └── zips
             |   |── <list_of_services>
             |   └── commons
             └── gCloud
@@ -25,3 +28,5 @@ Please go through the :doc:`Architecture <./Architecture>` and the :doc:`Cloud D
 - **application**: Contains all *application/business logic* of the system. This is the default place where all the codes will reside, unless there is a reason to put it elsewhere. It will contain all the *application logic*, that is not coupled to infrastructure or i/o. All codes here can be imported and reused in other modules and services. As mentioned in the `Architecture` document, the directory structure here will reflect the use cases of the system, not the tech or tool or anything in the i/o periphery.
 - **services**: Contains microservices organized in different cloud solution/hosting providers. This is the place where the application layer logics will be exposed to be used through the infrastructure. Currently, only `aws` implementation is added here, but similar implementations for other providers can be added here.
 - **<service_provider>/commons**: Contains the common libraries and dependencies across services to be used by the different services; that are coupled with the hosting/cloud service provider.
+- **.build**: Contains the transpiled files.
+- **.build/zips**: Contains the zipped transpiled files to be deployed to lambdas.
