@@ -132,3 +132,6 @@ dist
 # Terraform
 .terraform*
 terraform.tfstate*
+
+# Temp builds
+.build
