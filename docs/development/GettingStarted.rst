@@ -54,14 +54,18 @@ Additional Commands
 
 FIXME: specific unit test inside docker
 
-- `npm run test -- <path_to_test_file>`: specific test file
-- `npm run test -- <path_to_test_file> -t <describe_text_in_test>`: specific test segment
+| `npm run test -- <path_to_test_file>`: specific test file
+| `npm run test -- <path_to_test_file> -t <describe_text_in_test>`: specific test segment
 
-Building and Bundling
-~~~~~~~~~~~~~~~~~~~~~
-- Services: Run the following commands from `core/services/<cloud_provider>`. The generated files are placed inside `core/services/<cloud_provider>/.build`.
+- The generated files are placed inside `core/services/<cloud_provider>/.build`.
 
-  - `npm run build-service --name=<service_name>`: specific service.
-  - `npm run build-all`: all services.
-  - `npm run package-service --name=<service_name>`: creates zip files for the particular service to be deployed to cloud in `.build/zips`.
-  - `npm run package-all`: creates zip files for all services to be deployed to cloud in `.build/zips`.
+ .. code-block:: bash
+
+    make run-command-build  # build all services and keep files in `.build` directory.
+    make run-command-package  # build all and creates zip files for all services to be deployed to cloud in `.build/zips`.
+
+
+FIXME: commands for single service build and package
+
+| `npm run build-service --name=<service_name>`: specific service.
+| `npm run package-service --name=<service_name>`: creates zip files for the particular service to be deployed to cloud in `.build/zips`.

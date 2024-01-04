@@ -24,6 +24,12 @@ tf-security:
 install-node-packages:
 	find . -type f -name package.json -not -path "**node_modules**" -execdir npm i \;
 
+build:
+	cd core/services/aws && npm run build-all
+
+package:
+	cd core/services/aws && npm run package-all
+
 
 # Unittest
 test:
@@ -39,7 +45,7 @@ lint: lint-code tf-validate
 
 # Docker dev environment
 build-runner-image:
-	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
+	docker build --no-cache -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
 	docker run $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
