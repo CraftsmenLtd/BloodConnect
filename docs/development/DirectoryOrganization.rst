@@ -4,7 +4,7 @@ Directory Organization
 
 Please go through the :doc:`Architecture <./Architecture>` and the :doc:`Cloud Development Guidelines <./CloudDevGuideline>` for understanding the motivation behind the directory organization.
 
- .. code-block::
+ .. code-block:: text
 
     BloodConnect
     └── clients
