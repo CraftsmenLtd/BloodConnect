@@ -2,7 +2,7 @@ name: "Continuous Deployment"
 
 on:
   push:
-    branches: [master]
+    branches: [I-#17/CI-CD]
     tags:
       - "**"
 
@@ -46,12 +46,6 @@ jobs:
     environment: production
 
     steps:
-    - name: Checkout Branch
-      uses: actions/checkout@v3
-
-    - name: Build Runner Image
-      run: make build-runner-image
-
     - name: Run Terraform Validation
       run: make run-command-validate-terraform
 
