@@ -32,7 +32,7 @@ env:
 
 jobs:
 
-  deploy-terraform:
+  lint-test-security:
     name: Deploy Terraform
     runs-on: ubuntu-22.04
     environment: production
