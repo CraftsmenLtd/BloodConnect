@@ -33,7 +33,6 @@ jobs:
     name: Deploy Terraform
     runs-on: ubuntu-22.04
     environment: production
-    needs: build-image
 
     steps:
     - name: Run Terraform Validation
