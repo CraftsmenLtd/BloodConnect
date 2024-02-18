@@ -44,6 +44,9 @@ jobs:
       - name: Build Runner Image
         run: make build-runner-image
 
+      - name: Install Node Modules
+        run: make run-command-install-node-packages
+
       - name: Unittest
         run: make run-command-test
 
