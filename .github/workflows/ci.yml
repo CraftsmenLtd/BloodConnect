@@ -1,4 +1,7 @@
 name: "Continuous Deployment"
+# This pipeline will run for all dev branches with push codes
+# It will not run for master branch and git tags
+# It will run all tests, lints and security checks
 
 on:
   push:
@@ -35,8 +38,17 @@ jobs:
     environment: production
 
     steps:
-    - name: Run Terraform Validation
-      run: make run-command-validate-terraform
+      - name: Checkout Branch
+        uses: actions/checkout@v3
 
-    - name: Deploy
-      run: make run-command-deploy
+      - name: Build Runner Image
+        run: make build-runner-image
+
+      - name: Unittest
+        run: make run-command-test
+
+      - name: Lint Code
+        run: make run-command-lint-code
+
+      - name: Terraform Validation
+        run: make run-command-validate-terraform
