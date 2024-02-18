@@ -20,14 +20,6 @@ concurrency:
   group: ${{ github.ref }}
 
 env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-  TF_BACKEND_BUCKET_NAME: ${{ secrets.TF_BACKEND_BUCKET_NAME }}
-  TF_BACKEND_BUCKET_KEY: ${{ secrets.TF_BACKEND_BUCKET_KEY }}
-  TF_BACKEND_BUCKET_REGION: ${{ secrets.TF_BACKEND_BUCKET_REGION }}
-  TF_VARS: >-
-    -var="environment=${{ vars.ENVIRONMENT }}"
   RUNNER_IMAGE_NAME: github-runner-image
 
 jobs:
