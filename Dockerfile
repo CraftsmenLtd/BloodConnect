@@ -2,7 +2,6 @@ FROM debian:buster-slim
 
 # Common tools
 RUN apt update && apt install -y ca-certificates curl gnupg make zip unzip wget apt-utils  \
-    build-essential zlib1g-dev libffi-dev libssl-dev libgdbm-dev libc6-dev libbz2-dev \
     python3-sphinx graphviz \
     --no-install-recommends
 
