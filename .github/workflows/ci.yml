@@ -5,9 +5,8 @@ name: "Continuous Deployment"
 
 on:
   push:
-    branches: [I-#17/CI-CD]
-    tags:
-      - "**"
+    branches-ignore:
+      - 'master'
 
 permissions:
   contents: read
