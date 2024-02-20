@@ -132,6 +132,9 @@ dist
 # Terraform
 .terraform*
 terraform.tfstate*
+localstack_providers_override.tf
+tf-apply.out
+tf-destroy.out
 
 # Temp builds
 .build

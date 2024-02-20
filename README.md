@@ -6,6 +6,9 @@ BloodConnect
 
 <br>
 <br>
+For mac os Docker
+/root/.cache/localstack-cli/
+/root/.cache/localstack/
 
 Opensource supported by    
 <a href="https://jb.gg/OpenSourceSupport">
