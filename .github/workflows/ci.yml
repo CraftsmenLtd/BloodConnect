@@ -43,7 +43,6 @@ jobs:
           echo "::set-output name=md5::$md5"
 
       - name: Set Runner Image Name
-        id: set_runner_image_name
         run: echo "RUNNER_IMAGE_NAME=${{ env.CONTAINER_REGISTRY }}/craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}" >> $GITHUB_ENV
 
       - name: 'Login to GitHub Container Registry'
