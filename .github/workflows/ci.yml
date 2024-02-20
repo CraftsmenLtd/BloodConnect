@@ -40,6 +40,13 @@ jobs:
           md5=$(md5sum "${{ env.DOCKERFILE_PATH }}" | awk '{ print $1 }')
           echo "::set-output name=md5::$md5"
 
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
       - name: Pull Docker Image
         id: pull_docker_image
         run: |
