@@ -23,7 +23,6 @@ endif
 # Localstack
 localstack-start:
 	localstack start -d
-	sleep 30
 
 localstack-create-backend-bucket:
 	awslocal s3 mb s3://$(TF_BACKEND_BUCKET_NAME) --region=$(TF_BACKEND_BUCKET_REGION) || true
