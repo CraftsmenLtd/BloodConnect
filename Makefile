@@ -14,7 +14,7 @@ sphinx-html:
 	(cd docs && make html)
 
 ifeq ($(DEPLOYMENT_ENVIRONMENT),localstack)
-    TF_RUNNER:=tflocal
+    TF_RUNNER:=AWS_ACCESS_KEY_ID=localstack AWS_SECRET_ACCESS_KEY=localstack AWS_REGION=eu-west-1 tflocal
     TF_INIT_PREREQUISITES=localstack-start localstack-create-backend-bucket
 else
     TF_RUNNER:=terraform
@@ -26,6 +26,8 @@ localstack-start:
 
 localstack-create-backend-bucket:
 	awslocal s3 mb s3://$(TF_BACKEND_BUCKET_NAME) --region=$(TF_BACKEND_BUCKET_REGION) || true
+
+localstack-
 
 # Terraform
 tf-init: $(TF_INIT_PREREQUISITES)
