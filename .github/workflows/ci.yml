@@ -61,9 +61,6 @@ jobs:
             docker push ${{ env.CONTAINER_REGISTRY }}/craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}
           fi
 
-      - name: Build Runner Image
-        run: make build-runner-image
-
       - name: Install Node Modules
         run: make run-command-install-node-packages
 
