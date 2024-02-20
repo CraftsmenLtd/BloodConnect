@@ -56,13 +56,12 @@ jobs:
       - name: Pull Docker Image
         id: pull_docker_image
         run: |
-          if docker pull ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}; then
+          if docker pull ${{ env.RUNNER_IMAGE_NAME }}; then
             echo "Using existing Docker image."
           else
             echo "Docker image not found. Building and pushing new image."
             make build-runner-image
-            # docker tag ${{ env.RUNNER_IMAGE_NAME }} ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}
-            docker push ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}
+            docker push ${{ env.RUNNER_IMAGE_NAME }}
           fi
       
       - name: Install Node Modules
