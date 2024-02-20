@@ -22,7 +22,7 @@ endif
 
 # Localstack
 localstack-start:
-	localstack start -d
+	HOSTNAME_EXTERNAL=localstack localstack start -d 
 
 localstack-create-backend-bucket:
 	awslocal s3 mb s3://$(TF_BACKEND_BUCKET_NAME) --region=$(TF_BACKEND_BUCKET_REGION) || true
