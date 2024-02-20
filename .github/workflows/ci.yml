@@ -46,7 +46,10 @@ jobs:
 
       - name: Terraform Validation
         run: make run-command-tf-validate
-
+      
+      - name: Terraform Test
+        run: docker ps
+      
       - name: Terraform Initialization
         run: make run-command-tf-init
       
