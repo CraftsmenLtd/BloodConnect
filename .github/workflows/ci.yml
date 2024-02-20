@@ -57,11 +57,11 @@ jobs:
         run: docker pull ${{ env.RUNNER_IMAGE_NAME }}
         
       - name: Build Docker Image
-        if: always() && steps.pull_docker_image.outcome == 'failure'
+        if: success() && steps.pull_docker_image.outcome == 'failure'
         run: make build-runner-image
 
       - name: Push Docker Image
-        if: always() && steps.pull_docker_image.outcome == 'failure'
+        if: success() && steps.pull_docker_image.outcome == 'failure'
         run: docker push ${{ env.RUNNER_IMAGE_NAME }}
       
       - name: Install Node Modules
