@@ -21,7 +21,7 @@ concurrency:
   group: ${{ github.ref }}
 
 env:
-  RUNNER_IMAGE_NAME: BloodConnect-Ci-Image
+  RUNNER_IMAGE_NAME: blood-connect-ci-image
   DOCKERFILE_PATH: ./Dockerfile
   CONTAINER_REGISTRY: ghcr.io
 
