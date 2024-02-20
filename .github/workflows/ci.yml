@@ -52,7 +52,7 @@ jobs:
       - name: Pull Docker Image
         id: pull_docker_image
         run: |
-          if docker pull ${{ env.CONTAINER_REGISTRY }}/${{ github.actor }}/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}; then
+          if docker pull ${{ env.CONTAINER_REGISTRY }}/craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}; then
             echo "Using existing Docker image."
           else
             echo "Docker image not found. Building and pushing new image."
