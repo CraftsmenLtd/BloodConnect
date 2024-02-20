@@ -79,4 +79,6 @@ jobs:
 
       - name: Terraform Initialization
         run: make run-command-tf-init
-      
+
+      - name: Terraform Plan
+        run: make run-command-tf-plan
