@@ -66,6 +66,9 @@ jobs:
           fi
 
       - name: Install Node Modules
+        run: docker images
+      
+      - name: Install Node Modules
         run: make run-command-install-node-packages
 
       - name: Unittest
