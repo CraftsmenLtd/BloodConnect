@@ -64,9 +64,6 @@ jobs:
             # docker tag ${{ env.RUNNER_IMAGE_NAME }} ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}
             docker push ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}
           fi
-
-      - name: Install Node Modules
-        run: docker images
       
       - name: Install Node Modules
         run: make run-command-install-node-packages
