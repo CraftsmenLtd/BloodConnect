@@ -10,6 +10,8 @@ on:
 
 permissions:
   contents: read
+  packages: write
+
 
 defaults:
   run:
@@ -55,8 +57,8 @@ jobs:
           else
             echo "Docker image not found. Building and pushing new image."
             make build-runner-image
-            docker tag ${{ env.RUNNER_IMAGE_NAME }} ${{ env.CONTAINER_REGISTRY }}/${{ github.actor }}/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}
-            docker push ${{ env.CONTAINER_REGISTRY }}/${{ github.actor }}/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}
+            docker tag ${{ env.RUNNER_IMAGE_NAME }} ${{ env.CONTAINER_REGISTRY }}/craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}
+            docker push ${{ env.CONTAINER_REGISTRY }}/craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}
           fi
 
       - name: Build Runner Image
