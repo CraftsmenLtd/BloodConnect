@@ -44,7 +44,7 @@ jobs:
 
       - name: Set Runner Image Name
         id: set_runner_image_name
-        run: echo "RUNNER_IMAGE_NAME=craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}" >> $GITHUB_ENV
+        run: echo "RUNNER_IMAGE_NAME=${{ env.CONTAINER_REGISTRY }}/craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}" >> $GITHUB_ENV
 
       - name: 'Login to GitHub Container Registry'
         uses: docker/login-action@v1
@@ -61,7 +61,7 @@ jobs:
           else
             echo "Docker image not found. Building and pushing new image."
             make build-runner-image
-            docker tag ${{ env.RUNNER_IMAGE_NAME }} ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}
+            # docker tag ${{ env.RUNNER_IMAGE_NAME }} ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}
             docker push ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}
           fi
 
