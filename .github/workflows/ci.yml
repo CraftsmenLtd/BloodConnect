@@ -47,7 +47,7 @@ jobs:
             echo "Using existing Docker image."
           else
             echo "Docker image not found. Building and pushing new image."
-            docker build -t ${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }} .
+            make build-runner-image
             docker tag ${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }} ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}
             docker push ${{ env.CONTAINER_REGISTRY }}/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}
           fi
