@@ -1,7 +1,7 @@
 DEPLOYMENT_ENVIRONMENT?=localstack
 RUNNER_IMAGE_NAME?=dev-image
 DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.6.5" --build-arg="NODE_MAJOR=20" --build-arg="CHECKOV_VERSION=3.1.40" --build-arg="PYTHON_VERSION=3.11.3"
-DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -w /app
+DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -v /var/run/docker.sock:/var/run/docker.sock -w /app
 DOCKER_ENV:=-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION
 TF_BACKEND_BUCKET_NAME?=localstack
 TF_BACKEND_BUCKET_KEY?=localstack
@@ -71,7 +71,7 @@ build-runner-image:
 	docker build --no-cache -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
-	docker run $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
+	docker run --privileged $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
 
 # Dev start project
 start-dev: build-runner-image run-command-install-node-packages

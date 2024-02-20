@@ -1,7 +1,8 @@
-FROM debian:buster-slim
+FROM debian:bookworm-slim
 
 # Common tools
-RUN apt update && apt install -y ca-certificates curl gnupg make zip unzip wget apt-utils  \
+RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip wget apt-utils \
+    python3 python3-pip python3-dev \
     python3-sphinx graphviz \
     --no-install-recommends
 
@@ -17,3 +18,12 @@ ARG TERRAFORM_VERSION
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -P /tmp/
 RUN unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
 RUN rm /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+
+# Aws
+RUN pip3 install awscli awscli-local localstack terraform-local --break-system-packages
+
+# Install Docker
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
