@@ -71,7 +71,7 @@ build-runner-image:
 	docker build --no-cache -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
-	docker run --privileged -it $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
+	docker run --privileged -t $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
 
 # Dev start project
 start-dev: build-runner-image run-command-install-node-packages
