@@ -55,14 +55,15 @@ jobs:
 
       - name: Pull Docker Image
         id: pull_docker_image
-        run: |
-          if docker pull ${{ env.RUNNER_IMAGE_NAME }}; then
-            echo "Using existing Docker image."
-          else
-            echo "Docker image not found. Building and pushing new image."
-            make build-runner-image
-            docker push ${{ env.RUNNER_IMAGE_NAME }}
-          fi
+        run: docker pull ${{ env.RUNNER_IMAGE_NAME }}
+        
+      - name: Build Docker Image
+        if: steps.pull_docker_image.outcome == 'failure'
+        run: make build-runner-image
+
+      - name: Push Docker Image
+        if: steps.pull_docker_image.outcome == 'failure'
+        run: docker push ${{ env.RUNNER_IMAGE_NAME }}
       
       - name: Install Node Modules
         run: make run-command-install-node-packages
@@ -75,12 +76,7 @@ jobs:
 
       - name: Terraform Validation
         run: make run-command-tf-validate
-      
-      - name: Terraform Test
-        run: |
-          docker container logs localstack-main 
-          cat /etc/hosts
-      
+
       - name: Terraform Initialization
         run: make run-command-tf-init
       
