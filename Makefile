@@ -27,8 +27,6 @@ localstack-start:
 localstack-create-backend-bucket:
 	awslocal s3 mb s3://$(TF_BACKEND_BUCKET_NAME) --region=$(TF_BACKEND_BUCKET_REGION) || true
 
-localstack-
-
 # Terraform
 tf-init: $(TF_INIT_PREREQUISITES)
 	$(TF_RUNNER) -chdir=iac/terraform init -input=false $(TF_BACKEND_CONFIG) 
