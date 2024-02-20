@@ -32,10 +32,10 @@ tf-init: $(TF_INIT_PREREQUISITES)
 	$(TF_RUNNER) -chdir=iac/terraform init -input=false $(TF_BACKEND_CONFIG) 
 
 tf-plan: $(TF_INIT_PREREQUISITES) tf-init
-	$(TF_RUNNER) -chdir=iac/terraform plan $(TF_BACKEND_CONFIG)
+	$(TF_RUNNER) -chdir=iac/terraform plan
 
 tf-apply: $(TF_INIT_PREREQUISITES) tf-init
-	$(TF_RUNNER) -chdir=iac/terraform apply -input=false --auto-approve $(TF_BACKEND_CONFIG)
+	$(TF_RUNNER) -chdir=iac/terraform apply -input=false --auto-approve
 
 tf-fmt:
 	terraform -chdir=iac/terraform fmt -recursive
