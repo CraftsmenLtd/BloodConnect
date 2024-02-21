@@ -93,7 +93,6 @@ jobs:
       - name: Set Environment Variables for Dev Deployment
         run: |
           echo "FORMATTED_BRANCH_NAME=i-$(echo "${{ github.ref }}" | sed 's|.*/\(.*\)|\1|; s/#//')" >> $GITHUB_ENV
-
           echo "DEPLOYMENT_ENVIRONMENT=dev-${{ env.FORMATTED_BRANCH_NAME }}" >> $GITHUB_ENV
           echo "TF_VARS_aws_environment=dev-${{ env.FORMATTED_BRANCH_NAME }}" >> $GITHUB_ENV
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
