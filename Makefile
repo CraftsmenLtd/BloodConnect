@@ -2,15 +2,12 @@ DEPLOYMENT_ENVIRONMENT?=localstack
 RUNNER_IMAGE_NAME?=dev-image
 DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.7.3" --build-arg="NODE_MAJOR=20" --build-arg="CHECKOV_VERSION=3.1.40" --build-arg="PYTHON_VERSION=3.11.3"
 DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -v /var/run/docker.sock:/var/run/docker.sock -w /app
-DOCKER_ENV="--env-file <$(shell echo ${ALL_DOCKER_ENV})"
 TF_BACKEND_BUCKET_NAME?=localstack
 TF_BACKEND_BUCKET_KEY?=localstack
 TF_BACKEND_BUCKET_REGION?=us-east-1
 TF_BACKEND_CONFIG:=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" --backend-config="key=$(TF_BACKEND_BUCKET_KEY)" --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
 TF_INIT_PREREQUISITES:=
 
-test2:
-	echo $(DOCKER_ENV)
 
 # Documentation
 sphinx-html:
@@ -74,7 +71,7 @@ build-runner-image:
 	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
-	docker run --privileged -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
+	docker run --privileged -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(foreach env,$(ALL_DOCKER_ENV),--env $(env)) $(RUNNER_IMAGE_NAME) make $*
 
 # Dev start project
 start-dev: build-runner-image run-command-install-node-packages build package tf-init tf-apply
