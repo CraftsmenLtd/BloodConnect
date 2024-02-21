@@ -5,7 +5,7 @@ DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -v /var/run/docker.sock:/var/run/docker
 DOCKER_ENV:=-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION
 TF_BACKEND_BUCKET_NAME?=localstack
 TF_BACKEND_BUCKET_KEY?=localstack
-TF_BACKEND_BUCKET_REGION?=eu-west-1
+TF_BACKEND_BUCKET_REGION?=us-east-1
 TF_BACKEND_CONFIG:=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" --backend-config="key=$(TF_BACKEND_BUCKET_KEY)" --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
 TF_INIT_PREREQUISITES:=
 
@@ -14,7 +14,7 @@ sphinx-html:
 	(cd docs && make html)
 
 ifeq ($(DEPLOYMENT_ENVIRONMENT),localstack)
-    TF_RUNNER:=AWS_ACCESS_KEY_ID=localstack AWS_SECRET_ACCESS_KEY=localstack AWS_REGION=eu-west-1 tflocal
+    TF_RUNNER:=tflocal
     TF_INIT_PREREQUISITES=localstack-start localstack-create-backend-bucket
 else
     TF_RUNNER:=terraform
