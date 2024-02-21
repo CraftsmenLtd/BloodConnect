@@ -52,7 +52,7 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Pull Docker Image
+      - name: Attempt to Pull Docker Image
         id: pull_docker_image
         run: docker pull ${{ env.RUNNER_IMAGE_NAME }}
         continue-on-error: true
