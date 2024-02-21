@@ -95,7 +95,6 @@ jobs:
       - name: Set Environment Variables for Dev Deployment
         run: |
           echo "DEPLOYMENT_ENVIRONMENT=dev-${{ env.FORMATTED_BRANCH_NAME }}" >> $GITHUB_ENV
-          echo "TF_VARS_aws_environment=dev-${{ env.FORMATTED_BRANCH_NAME }}" >> $GITHUB_ENV
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
@@ -103,10 +102,11 @@ jobs:
           echo "TF_BACKEND_BUCKET_KEY=dev/${{ env.FORMATTED_BRANCH_NAME }}.tfstate" >> $GITHUB_ENV
           echo "TF_BACKEND_BUCKET_REGION=ap-south-1" >> $GITHUB_ENV
 
-      - name: Set Environment Variables for Docker Environment
+      - name: Set Environment Variables for Dev Deployment
         run: |
-          ALL_DOCKER_ENV=$(cat $GITHUB_ENV)
-          echo "::set-env name=ALL_DOCKER_ENV::$ALL_DOCKER_ENV"
+            echo "TF_VARS=\
+            -var='aws_environment=${{ env.FORMATTED_BRANCH_NAME }}'" \
+            >> $GITHUB_ENV
 
       - name: Terraform Initialization Dev
         run: make run-command-tf-init
