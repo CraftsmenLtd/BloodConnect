@@ -19,7 +19,6 @@ module "api_auth_refresh_token" {
   api_path = "refresh-token"
   methods  = ["POST"]
 
-  account_id    = data.aws_caller_identity.current.account_id
   region        = data.aws_region.current.name
   environment   = var.environment
   rest_api_id   = var.api_gw_rest_api_id
