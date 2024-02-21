@@ -2,12 +2,15 @@ DEPLOYMENT_ENVIRONMENT?=localstack
 RUNNER_IMAGE_NAME?=dev-image
 DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.7.3" --build-arg="NODE_MAJOR=20" --build-arg="CHECKOV_VERSION=3.1.40" --build-arg="PYTHON_VERSION=3.11.3"
 DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -v /var/run/docker.sock:/var/run/docker.sock -w /app
-DOCKER_ENV:=-e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION
+DOCKER_ENV="--env-file <$(shell echo ${ALL_DOCKER_ENV})"
 TF_BACKEND_BUCKET_NAME?=localstack
 TF_BACKEND_BUCKET_KEY?=localstack
 TF_BACKEND_BUCKET_REGION?=us-east-1
 TF_BACKEND_CONFIG:=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" --backend-config="key=$(TF_BACKEND_BUCKET_KEY)" --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
 TF_INIT_PREREQUISITES:=
+
+test2:
+	echo $(DOCKER_ENV)
 
 # Documentation
 sphinx-html:
