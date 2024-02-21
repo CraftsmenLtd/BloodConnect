@@ -6,8 +6,9 @@ RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip w
     python3-sphinx graphviz \
     --no-install-recommends
 
-# Aws
-RUN pip3 install awscli awscli-local localstack terraform-local --break-system-packages
+# AWS
+ARG CHECKOV_VERSION
+RUN pip3 install awscli awscli-local localstack terraform-local checkov==${CHECKOV_VERSION} --break-system-packages
 
 # Nodejs
 ARG NODE_MAJOR
@@ -22,7 +23,7 @@ RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform
 RUN unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
 RUN rm /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
-# Install Docker
+# Docker
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
