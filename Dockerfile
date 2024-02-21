@@ -6,6 +6,9 @@ RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip w
     python3-sphinx graphviz \
     --no-install-recommends
 
+# Aws
+RUN pip3 install awscli awscli-local localstack terraform-local --break-system-packages
+
 # Nodejs
 ARG NODE_MAJOR
 RUN mkdir -p /etc/apt/keyrings && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
@@ -18,9 +21,6 @@ ARG TERRAFORM_VERSION
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -P /tmp/
 RUN unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin
 RUN rm /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-
-# Aws
-RUN pip3 install awscli awscli-local localstack terraform-local --break-system-packages
 
 # Install Docker
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
