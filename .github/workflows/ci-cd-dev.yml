@@ -101,6 +101,9 @@ jobs:
           echo "TF_BACKEND_BUCKET_NAME=bloodconnect-ci-dev" >> $GITHUB_ENV
           echo "TF_BACKEND_BUCKET_KEY=dev/${{ env.FORMATTED_BRANCH_NAME }}.tfstate" >> $GITHUB_ENV
           echo "TF_BACKEND_BUCKET_REGION=ap-south-1" >> $GITHUB_ENV
+    
+      - name: Set Environment Variables for Dev Deployment
+        run: echo $FORMATTED_BRANCH_NAME
 
       - name: Terraform Initialization Dev
         run: make run-command-tf-init
