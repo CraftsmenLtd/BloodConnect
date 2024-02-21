@@ -55,36 +55,30 @@ jobs:
       - name: Pull Docker Image
         id: pull_docker_image
         run: docker pull ${{ env.RUNNER_IMAGE_NAME }}
-      
+        continue-on-error: true
         
       - name: Build Docker Image
-        if: failure()
+        if: steps.pull_docker_image.outcome == 'failure'
         run: make build-runner-image
 
       - name: Push Docker Image
-        if: success()
+        if: steps.pull_docker_image.outcome == 'failure'
         run: docker push ${{ env.RUNNER_IMAGE_NAME }}
       
       - name: Install Node Modules
-        if: success()
         run: make run-command-install-node-packages
 
       - name: Unittest
-        if: success()
         run: make run-command-test
 
       - name: Lint Code
-        if: success()
         run: make run-command-lint-code
 
       - name: Terraform Validation
-        if: success()
         run: make run-command-tf-validate
 
       - name: Terraform Initialization
-        if: success()
         run: make run-command-tf-init
 
       - name: Terraform Plan
-        if: success()
         run: make run-command-tf-plan
