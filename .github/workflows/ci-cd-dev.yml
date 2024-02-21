@@ -45,7 +45,7 @@ jobs:
       - name: Set Runner Image Name
         run: |
             echo "RUNNER_IMAGE_NAME=${{ env.CONTAINER_REGISTRY }}/craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}" >> $GITHUB_ENV
-            echo "FORMATTED_BRANCH_NAME=i-$(echo "${{ github.ref }}" | sed 's|.*/\(.*\)|\1|; s/#//')" >> $GITHUB_ENV
+            echo "FORMATTED_BRANCH_NAME=i-$(echo "${{ github.ref }}" | sed 's/I-\(#\([0-9]\+\)\).*$/i-\1/'" >> $GITHUB_ENV
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
@@ -103,7 +103,7 @@ jobs:
           echo "TF_BACKEND_BUCKET_REGION=ap-south-1" >> $GITHUB_ENV
     
       - name: Set Environment Variables for Dev Deployment
-        run: echo $DEPLOYMENT_ENVIRONMENT
+        run: echo $GITHUB_ENV
 
       - name: Terraform Initialization Dev
         run: make run-command-tf-init
