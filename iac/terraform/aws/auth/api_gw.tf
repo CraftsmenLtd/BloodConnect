@@ -1,0 +1,32 @@
+# auth
+resource "aws_api_gateway_resource" "auth_api_resource" {
+  rest_api_id = var.api_gw_rest_api_id
+  parent_id   = var.api_gw_root_resource_id
+  path_part   = "auth"
+}
+
+#resource "aws_lambda_alias" "refresh_token_lambda_alias" {
+#  name             = local.prefix
+#  description      = "Callback lambda alias for api gateway module"
+#  function_name    = aws_lambda_function.lambda_functions[local.lambda_options.medialive-callback.name].arn
+#  function_version = "$LATEST"
+#}
+
+# auth/refresh-token
+module "api_auth_refresh_token" {
+  source = "./../api_gw"
+
+  api_path = "refresh-token"
+  methods  = ["POST"]
+
+  account_id    = data.aws_caller_identity.current.account_id
+  region        = data.aws_region.current.name
+  environment   = var.environment
+  rest_api_id   = var.api_gw_rest_api_id
+  parent_api_id = aws_api_gateway_resource.auth_api_resource.id
+
+  api_key_required = false
+
+  enable_lambda_integration = true
+  lambda_function_arn       = aws_lambda_function.lambda_functions[local.lambda_options.refresh-token.name].arn
+}
