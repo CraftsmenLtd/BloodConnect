@@ -91,6 +91,7 @@ jobs:
         run: make run-command-tf-apply
 
       - name: Set Environment Variables for Dev Deployment
+        shell: bash
         run: |
           echo "FORMATTED_BRANCH_NAME=i-$(echo "${{ github.ref }}" | sed 's|.*/\(.*\)|\1|; s/#//')" >> $GITHUB_ENV
           echo "DEPLOYMENT_ENVIRONMENT=dev-${{ env.FORMATTED_BRANCH_NAME }}" >> $GITHUB_ENV
