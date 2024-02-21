@@ -108,7 +108,7 @@ jobs:
 
       - name: Set Environment Variables for Dev Deployment
         run: |
-          echo "ALL_DOCKER_ENV=$GITHUB_ENV" >> $GITHUB_ENV
+          echo "ALL_DOCKER_ENV=$(GITHUB_ENV)" >> $GITHUB_ENV
         
       - name: Set Environment Variables for Dev Deployment
         run: echo $GITHUB_ENV
