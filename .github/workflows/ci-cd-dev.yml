@@ -76,7 +76,7 @@ jobs:
         run: make run-command-lint-code
 
       - name: Package Code
-        run: make run-command-build
+        run: make run-command-package
 
       - name: Terraform Validation
         run: make run-command-tf-validate
