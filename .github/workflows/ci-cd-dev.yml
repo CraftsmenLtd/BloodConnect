@@ -104,7 +104,7 @@ jobs:
           echo "TF_BACKEND_BUCKET_REGION=ap-south-1" >> $GITHUB_ENV
     
       - name: Set Environment Variables for Dev Deployment
-        run: echo $FORMATTED_BRANCH_NAME
+        run: echo $DEPLOYMENT_ENVIRONMENT
 
       - name: Terraform Initialization Dev
         run: make run-command-tf-init
