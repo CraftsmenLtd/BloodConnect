@@ -66,19 +66,25 @@ jobs:
         run: docker push ${{ env.RUNNER_IMAGE_NAME }}
       
       - name: Install Node Modules
+        if: success()
         run: make run-command-install-node-packages
 
       - name: Unittest
+        if: success()
         run: make run-command-test
 
       - name: Lint Code
+        if: success()
         run: make run-command-lint-code
 
       - name: Terraform Validation
+        if: success()
         run: make run-command-tf-validate
 
       - name: Terraform Initialization
+        if: success()
         run: make run-command-tf-init
 
       - name: Terraform Plan
+        if: success()
         run: make run-command-tf-plan
