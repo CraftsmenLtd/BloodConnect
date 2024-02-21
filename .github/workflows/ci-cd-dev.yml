@@ -69,11 +69,17 @@ jobs:
       - name: Install Node Modules
         run: make run-command-install-node-packages
 
-      - name: Unittest
+      - name: Unit Test Code
         run: make run-command-test
 
       - name: Lint Code
         run: make run-command-lint-code
+
+      - name: Build Code
+        run: make run-command-build
+
+      - name: Package Code
+        run: make run-command-build
 
       - name: Terraform Validation
         run: make run-command-tf-validate
@@ -90,14 +96,14 @@ jobs:
       - name: Set Environment Variables for Dev Deployment
         run: |
           echo "FORMATTED_BRANCH_NAME=i-$(echo "${{ github.ref }}" | sed 's|.*/\(.*\)|\1|; s/#//')" >> $GITHUB_ENV
-          
+
           echo "DEPLOYMENT_ENVIRONMENT=dev-${{ env.FORMATTED_BRANCH_NAME }}" >> $GITHUB_ENV
           echo "TF_VARS_aws_environment=dev-${{ env.FORMATTED_BRANCH_NAME }}" >> $GITHUB_ENV
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
           echo "TF_BACKEND_BUCKET_NAME=bloodconnect-ci-dev" >> $GITHUB_ENV
-          echo "TF_BACKEND_BUCKET_KEY=${{ env.FORMATTED_BRANCH_NAME }}/state.tfstate" >> $GITHUB_ENV
+          echo "TF_BACKEND_BUCKET_KEY=dev/${{ env.FORMATTED_BRANCH_NAME }}.tfstate" >> $GITHUB_ENV
           echo "TF_BACKEND_BUCKET_REGION=ap-south-1" >> $GITHUB_ENV
 
       - name: Terraform Initialization Dev

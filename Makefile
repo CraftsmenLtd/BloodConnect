@@ -56,7 +56,7 @@ build:
 package:
 	cd core/services/aws && npm run package-all
 
-# Unittest
+# Unit Test
 test:
 	npm run test $(TEST_EXTRA_ARGS)
 
@@ -74,4 +74,4 @@ run-command-%:
 	docker run --privileged -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
 
 # Dev start project
-start-dev: build-runner-image run-command-install-node-packages
+start-dev: build-runner-image run-command-install-node-packages build package tf-init tf-apply

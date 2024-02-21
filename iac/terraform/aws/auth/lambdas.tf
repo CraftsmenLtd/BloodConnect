@@ -1,12 +1,12 @@
 locals {
   lambda_options = {
     refresh-token = {
-      name    = "refresh-token"
+      name     = "refresh-token"
       zip_path = "${path.module}/../../../../core/services/aws/.build/zips/refreshToken.zip"
-      policy  = data.aws_iam_policy_document.lambda_common_policy
-      handler = "refreshToken.default"
+      policy   = data.aws_iam_policy_document.lambda_common_policy
+      handler  = "refreshToken.default"
       env_variables = {
-        foo                   = "bar"
+        foo = "bar"
       }
     }
   }
