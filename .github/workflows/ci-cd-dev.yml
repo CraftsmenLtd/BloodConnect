@@ -83,6 +83,9 @@ jobs:
       - name: Terraform Validation
         run: make run-command-tf-validate
 
+      - name: Terraform Security
+        run: make run-command-tf-security
+
       - name: Terraform Initialization Localstack
         run: make run-command-tf-init
 
