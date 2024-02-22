@@ -9,11 +9,14 @@ DOCKER_ENV?=-e AWS_ACCESS_KEY_ID -e DEPLOYMENT_ENVIRONMENT -e AWS_SECRET_ACCESS_
 TF_BACKEND_CONFIG:=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" --backend-config="key=$(TF_BACKEND_BUCKET_KEY)" --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
 TF_INIT_PREREQUISITES:=
 TF_CHECKOV_SKIP:=--skip-check CKV_AWS_117,CKV_AWS_50,CKV_AWS_116,CKV_AWS_272,CKV_AWS_115
+DOCKER_CHECKOV_SKIP:=--skip-check CKV_DOCKER_9
 
 # Documentation
 sphinx-html:
 	(cd docs && make html)
 
+
+# Deployment
 ifeq ($(DEPLOYMENT_ENVIRONMENT),localstack)
     TF_RUNNER:=tflocal
     TF_INIT_PREREQUISITES=localstack-start localstack-create-backend-bucket
@@ -21,12 +24,17 @@ else
     TF_RUNNER:=terraform
 endif
 
+check-docker:
+	checkov --directory . --framework dockerfile
+
+
 # Localstack
 localstack-start:
 	HOSTNAME_EXTERNAL=localhost localstack start -d 
 
 localstack-create-backend-bucket:
 	awslocal s3 mb s3://$(TF_BACKEND_BUCKET_NAME) --region=$(TF_BACKEND_BUCKET_REGION) || true
+
 
 # Terraform
 tf-init: $(TF_INIT_PREREQUISITES)
@@ -47,6 +55,7 @@ tf-validate: tf-init
 tf-security: tf-init
 	checkov --directory iac/terraform $(TF_CHECKOV_SKIP)
 
+
 # Nodejs
 install-node-packages:
 	find . -type f -name package.json -not -path "**node_modules**" -execdir npm i \;
@@ -57,15 +66,18 @@ build:
 package:
 	cd core/services/aws && npm run package-all
 
+
 # Unit Test
 test:
 	npm run test $(TEST_EXTRA_ARGS)
+
 
 # Lint
 lint-code:
 	npm run lint
 
 lint: lint-code tf-validate
+
 
 # Docker dev environment
 build-runner-image:
@@ -76,6 +88,7 @@ test2:
 
 run-command-%:
 	docker run --privileged -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
+
 
 # Dev start project
 start-dev: build-runner-image run-command-install-node-packages build package tf-init tf-apply

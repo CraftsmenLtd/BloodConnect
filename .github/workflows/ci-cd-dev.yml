@@ -64,6 +64,9 @@ jobs:
         if: steps.pull_docker_image.outcome == 'failure'
         run: make build-runner-image
 
+      - name: Check Docker Image
+        run: make check-docker
+
       - name: Push Docker Image
         if: steps.pull_docker_image.outcome == 'failure'
         run: docker push ${{ env.RUNNER_IMAGE_NAME }}
@@ -119,4 +122,3 @@ jobs:
 
       - name: Terraform Apply Dev
         run: make run-command-tf-apply
-      
