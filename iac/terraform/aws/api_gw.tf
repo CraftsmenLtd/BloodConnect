@@ -5,6 +5,10 @@ resource "aws_api_gateway_rest_api" "rest_api" {
     "application/binary",
     "application/bxf+xml",
   ]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_api_gateway_usage_plan" "api_usage_plan" {

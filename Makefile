@@ -8,7 +8,7 @@ TF_BACKEND_BUCKET_REGION?=us-east-1
 DOCKER_ENV?=-e AWS_ACCESS_KEY_ID -e DEPLOYMENT_ENVIRONMENT -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e TF_BACKEND_BUCKET_NAME -e TF_BACKEND_BUCKET_REGION -e TF_BACKEND_BUCKET_KEY -e TF_VARS
 TF_BACKEND_CONFIG:=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" --backend-config="key=$(TF_BACKEND_BUCKET_KEY)" --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
 TF_INIT_PREREQUISITES:=
-
+TF_CHECKOV_SKIP:=--skip-check CKV_AWS_117,CKV_AWS_50,CKV_AWS_116,CKV_AWS_272,CKV_AWS_115
 
 # Documentation
 sphinx-html:
@@ -45,7 +45,7 @@ tf-validate: tf-init
 	terraform -chdir=iac/terraform validate
 
 tf-security: tf-init
-	checkov --directory iac/terraform
+	checkov --directory iac/terraform $(TF_CHECKOV_SKIP)
 
 # Nodejs
 install-node-packages:

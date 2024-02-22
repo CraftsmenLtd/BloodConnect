@@ -22,6 +22,7 @@ resource "aws_lambda_function" "lambda_functions" {
   runtime          = var.lambda_runtime
   timeout          = lookup(each.value, "timeout", 60)
   memory_size      = lookup(each.value, "memory_size", 128)
+  kms_key_arn      = var.lambda_env_var_kms_arn
 
   environment {
     variables = lookup(each.value, "env_variables", {})

@@ -5,13 +5,6 @@ resource "aws_api_gateway_resource" "auth_api_resource" {
   path_part   = "auth"
 }
 
-#resource "aws_lambda_alias" "refresh_token_lambda_alias" {
-#  name             = local.prefix
-#  description      = "Callback lambda alias for api gateway module"
-#  function_name    = aws_lambda_function.lambda_functions[local.lambda_options.medialive-callback.name].arn
-#  function_version = "$LATEST"
-#}
-
 # auth/refresh-token
 module "api_auth_refresh_token" {
   source = "./../api_gw"
