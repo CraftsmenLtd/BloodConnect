@@ -9,7 +9,7 @@
   },
   "type": "module",
   "scripts": {
-    "test": "jest -- ",
+    "test": "jest",
     "lint": "eslint ."
   },
   "devDependencies": {
