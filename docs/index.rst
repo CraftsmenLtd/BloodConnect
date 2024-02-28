@@ -86,5 +86,6 @@ Documents Index
 .. toctree::
    :maxdepth: 1
 
+   architecture/index
    development/index
    devops/index

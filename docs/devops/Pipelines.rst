@@ -11,7 +11,7 @@ This pipeline is responsible to deploy sphinx docs
 
 
 Continuous Deployment???? for dev?
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This is the pipeline used by developers. It includes
 - Run unit tests
 - Run JS lint
