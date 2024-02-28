@@ -100,24 +100,16 @@ When you make changes to the code base and want to run things to test; you can a
  .. code-block:: bash
 
     make run-command-test  # Run all unittests
-
-
- FIXME: specific unit test inside docker
-
- | `npm run test -- <path_to_test_file>`: specific test file
- | `npm run test -- <path_to_test_file> -t <describe_text_in_test>`: specific test segment
+    make run-command-test EXTRA_ARGS="'-- <path_to_test_file>'"  # specific test file
+    make run-command-test  EXTRA_ARGS="'-- <path_to_test_file> -t <describe_text_in_test>'"  # specific test segment
 
 - Build Code
  The generated files are placed inside `core/services/<cloud_provider>/.build`.
 
  .. code-block:: bash
 
-    make run-command-build  # build all services and keep files in `.build` directory.
-
-
- FIXME: commands for single service build and package
-
- | `npm run build-service --name=<service_name>`: specific service.
+    make run-command-build-node-all  # build all services and keep files in `.build` directory.
+    make run-command-build-node-service --name=<service_name>`: specific service.
 
 - Package Code
 

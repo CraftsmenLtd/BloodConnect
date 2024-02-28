@@ -70,8 +70,8 @@ tf-security: tf-init
 install-node-packages:
 	find . -type f -name package.json -not -path "**node_modules**" -execdir npm i \;
 
-build:
-	cd core/services/aws && npm run build-all
+build-node-%:
+	cd core/services/aws && npm run build-$* $(EXTRA_ARGS)
 
 package:
 	cd core/services/aws && npm run package-all
@@ -79,7 +79,7 @@ package:
 
 # Unit Test
 test:
-	npm run test $(TEST_EXTRA_ARGS)
+	npm run test $(EXTRA_ARGS)
 
 
 # Lint
@@ -94,7 +94,7 @@ build-runner-image:
 	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
-	docker run --privileged -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $*
+	docker run --privileged -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $* EXTRA_ARGS=$(EXTRA_ARGS)
 
 # Dev start project
-start-dev: build-runner-image run-command-install-node-packages run-command-build run-command-package run-command-tf-init run-command-tf-plan-apply run-command-tf-apply
+start-dev: build-runner-image run-command-install-node-packages run-command-build-node-all run-command-package run-command-tf-init run-command-tf-plan-apply run-command-tf-apply
