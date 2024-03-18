@@ -9,7 +9,3 @@ output "path" {
 output "methods" {
   value = var.methods
 }
-
-output "lambda_function_arn" {
-  value = var.lambda_function_arn
-}

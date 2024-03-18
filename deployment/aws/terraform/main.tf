@@ -1,4 +1,5 @@
-module "terraform" {
-  source          = "../../../iac/terraform"
-  aws_environment = var.aws_environment
+module "aws" {
+  source              = "../../../iac/terraform/aws"
+  environment         = var.aws_environment
+  bloodconnect_domain = var.bloodconnect_domain
 }

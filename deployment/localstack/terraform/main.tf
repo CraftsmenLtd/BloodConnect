@@ -1,4 +1,5 @@
-module "terraform" {
-  source          = "../../../iac/terraform"
-  aws_environment = "localstack"
+module "aws" {
+  source              = "../../../iac/terraform/aws"
+  environment         = "localstack"
+  bloodconnect_domain = "bloodconnect.net"
 }
