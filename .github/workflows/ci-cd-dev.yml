@@ -118,7 +118,7 @@ jobs:
         run: make run-command-tf-init
 
       - name: Terraform Plan Dev
-        run: make run-command-tf-plan
+        run: make run-command-tf-plan-apply
 
       - name: Terraform Apply Dev
         run: make run-command-tf-apply
