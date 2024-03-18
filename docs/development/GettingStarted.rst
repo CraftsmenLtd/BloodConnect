@@ -109,17 +109,14 @@ When you make changes to the code base and want to run things to test; you can a
  .. code-block:: bash
 
     make run-command-build-node-all  # build all services and keep files in `.build` directory.
-    make run-command-build-node-service --name=<service_name>`: specific service.
+    make run-command-build-node-service --name=<service_name>: specific service.
 
 - Package Code
 
  .. code-block:: bash
 
-    make run-command-package  # build all and creates zip files for all services to be deployed to cloud in `.build/zips`.
-
- FIXME: commands for single service build and package
-
- | `npm run package-service --name=<service_name>`: creates zip files for the particular service to be deployed to cloud in `.build/zips`.
+    make run-command-package-all  # build all and creates zip files for all services to be deployed to cloud in `.build/zips`.
+    make run-command-package-service --name=<service_name>  # build all and creates zip files for a particular services to be deployed to cloud in `.build/zips`.
 
 - Plan Localstack Terraform Deployment
 

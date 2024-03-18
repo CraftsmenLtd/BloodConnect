@@ -73,8 +73,8 @@ install-node-packages:
 build-node-%:
 	cd core/services/aws && npm run build-$* $(EXTRA_ARGS)
 
-package:
-	cd core/services/aws && npm run package-all
+package-%:
+	cd core/services/aws && npm run package-$*
 
 
 # Unit Test
@@ -96,5 +96,7 @@ build-runner-image:
 run-command-%:
 	docker run --privileged -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $* EXTRA_ARGS=$(EXTRA_ARGS)
 
-# Dev start project
-start-dev: build-runner-image run-command-install-node-packages run-command-build-node-all run-command-package run-command-tf-init run-command-tf-plan-apply run-command-tf-apply
+# Dev commands
+start-dev: build-runner-image run-command-install-node-packages run-dev
+
+run-dev: run-command-build-node-all run-command-package-all run-command-tf-init run-command-tf-plan-apply run-command-tf-apply
