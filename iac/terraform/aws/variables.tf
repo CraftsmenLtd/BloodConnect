@@ -9,11 +9,6 @@ variable "billing_tag" {
   default     = "billing"
 }
 
-variable "bloodconnect_domain" {
-  type = string
-  description = "BloodConnect project main domain"
-}
-
 variable "budget_settings" {
   type = object({
     set_budget = bool
