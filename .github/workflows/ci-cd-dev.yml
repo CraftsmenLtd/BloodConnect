@@ -65,7 +65,7 @@ jobs:
         run: make build-runner-image
 
       - name: Check Docker Image
-        run: make check-docker
+        run: make run-command-check-docker
 
       - name: Push Docker Image
         if: steps.pull_docker_image.outcome == 'failure'
