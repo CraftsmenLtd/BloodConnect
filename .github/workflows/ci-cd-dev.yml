@@ -93,7 +93,7 @@ jobs:
         run: make run-command-tf-init
 
       - name: Terraform Plan Localstack
-        run: make run-command-tf-plan
+        run: make run-command-tf-plan-apply
 
       - name: Terraform Apply Localstack
         run: make run-command-tf-apply
