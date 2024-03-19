@@ -33,6 +33,18 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   }
 }
 
+resource "aws_api_gateway_method_settings" "api_gw_settings" {
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
+  stage_name  = aws_api_gateway_deployment.api_deployment.stage_name
+  method_path = "*/*"
+
+  settings {
+    logging_level = "INFO"
+    data_trace_enabled = true
+    metrics_enabled = true
+  }
+}
+
 #resource "aws_api_gateway_domain_name" "api_gw_domain_name" {
 #  domain_name     = "${var.environment}.${var.bloodconnect_domain}"
 #}
