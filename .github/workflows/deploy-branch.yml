@@ -3,7 +3,7 @@ name: "Branch Deployment"
 # It will deploy dev branch to test/dev environment
 
 on:
-  push:
+  workflow_dispatch:
     branches:
       - "foo" # Stop deploying on every push
     branches-ignore:
