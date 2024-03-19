@@ -2,8 +2,13 @@ name: "Branch Deployment"
 # This pipeline will run manually for all dev branches on code push
 # It will deploy dev branch to test/dev environment
 
+#on:
+#  workflow_dispatch:
+
 on:
-  workflow_dispatch:
+  push:
+    branches-ignore:
+      - 'master'
 
 permissions:
   contents: read
