@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  swagger:
+    image: swaggerapi/swagger-ui
+    container_name: swagger
+    environment:
+      - SWAGGER_JSON=/openapi/api.yaml
+    ports:
+      - "8083:8080"
+    volumes:
+      - ./v1:/openapi
+    restart: always
+
+  redoc:
+    image: redocly/redoc
+    container_name: redocly
+    environment:
+      - SPEC_URL=swagger/api.yaml
+    ports:
+      - "8080:80"
+    volumes:
+      - ./v1:/usr/share/nginx/html/swagger/
+    restart: always

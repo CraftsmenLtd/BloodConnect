@@ -1,0 +1,29 @@
+openapi: "3.1.0"
+
+info:
+  title: BloodConnect API Documentation
+  version: "v1"
+  description: This is the specification of responses
+
+paths: {}
+
+components:
+  responses:
+    401AccessDenied:
+      description: Access Denied.
+      content:
+        application/json:
+          schema: { $ref: "schemas.yaml#/components/schemas/Error" }
+          example:
+            error:
+              code: "401"
+              message: "Access denied"
+    404NotExist:
+      description: Resource does not exist.
+      content:
+        application/json:
+          schema: { $ref: "schemas.yaml#/components/schemas/Error" }
+          example:
+            error:
+              code: "404"
+              message: "Resource does not exist"

@@ -1,0 +1,14 @@
+openapi: "3.1.0"
+
+info:
+  title: BloodConnect API Documentation
+  version: "v1"
+  description: This is the specification of examples
+
+
+paths: {}
+
+components:
+  examples:
+    RefreshToken:
+      refresh-token: "1114c6ba-3975-4840-bed1-88183ca4d9c6"
