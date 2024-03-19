@@ -17,6 +17,8 @@ This is the pipeline used by developers. It includes
 - Run JS lint
 - Validate Terraform
 - Terraform static security check
+- Docker static security check
+- OpenAPI specs lint
 - Install to localstack
 - Run system integration tests using localstack
 - Deploy AWS dev environment
