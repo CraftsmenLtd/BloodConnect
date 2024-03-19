@@ -39,9 +39,11 @@ resource "aws_api_gateway_method_settings" "api_gw_settings" {
   method_path = "*/*"
 
   settings {
-    logging_level = "INFO"
-    data_trace_enabled = true
-    metrics_enabled = true
+    caching_enabled      = true
+    metrics_enabled      = false
+    logging_level        = "INFO"
+    cache_data_encrypted = true
+    data_trace_enabled   = false
   }
 }
 
