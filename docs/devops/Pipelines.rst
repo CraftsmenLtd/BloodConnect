@@ -22,3 +22,7 @@ This is the pipeline used by developers. It will run on every push on dev branch
 - OpenAPI specs lint
 - Install to localstack
 - Run system integration tests using localstack
+
+Branch Deployment
+~~~~~~~~~~~~~~~~~
+Branch deployment manually which is being used for deploying dev branches.
