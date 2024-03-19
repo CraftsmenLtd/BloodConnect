@@ -1,10 +1,11 @@
 name: "Branch Deployment"
-# This pipeline will run for all dev branches on code push
-# It will not run for master branch and git tags
-# It will run all tests, lints and security checks and deploy
+# This pipeline will run manually for all dev branches on code push
+# It will deploy dev branch to test/dev environment
 
 on:
   push:
+    branches:
+      - "foo" # Stop deploying on every push
     branches-ignore:
       - 'master'
 
