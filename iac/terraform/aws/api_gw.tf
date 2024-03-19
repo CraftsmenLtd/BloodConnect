@@ -33,6 +33,24 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   }
 }
 
+resource "aws_iam_role" "api_gw_cloudwatch_role" {
+  name               = "${var.environment}-api-gw-cloudwatch-role"
+  assume_role_policy = data.aws_iam_policy_document.api_gw_policy.json
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "api_gw_policy_attachment" {
+  role       = aws_iam_role.api_gw_cloudwatch_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+}
+
+resource "aws_api_gateway_account" "main" {
+  cloudwatch_role_arn = aws_iam_role.api_gw_cloudwatch_role.arn
+}
+
 resource "aws_api_gateway_method_settings" "api_gw_settings" {
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
   stage_name  = aws_api_gateway_deployment.api_deployment.stage_name
