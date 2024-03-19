@@ -86,7 +86,10 @@ test:
 lint-code:
 	npm run lint
 
-lint: lint-code tf-validate
+lint-api:
+	spectral lint docs/openapi/v1/api.yaml --ruleset docs/openapi/.spectral.yaml
+
+lint: lint-code tf-validate lint-api
 
 
 # Docker dev environment

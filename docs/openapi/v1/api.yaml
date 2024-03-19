@@ -2,6 +2,8 @@ openapi: "3.1.0"
 tags:
   - name: bloodconnect
     description: API Endpoints for BloodConnect
+  - name: bloodconnect-auth
+    description: Auth module of BloodConnect
 
 info:
   title: BloodConnect API Documentation
@@ -10,8 +12,7 @@ info:
     name: Craftsmen Ltd.
     url: "https://craftsmenltd.com/"
   license:
-    name: Apache
-    identifier: "Apache-2.0"
+    name: Apache 2.0
     url: "https://www.apache.org/licenses/LICENSE-2.0"
   description: |
     TBD
@@ -28,7 +29,7 @@ paths:
   /auth/refresh-token:
     post:
       operationId: refreshToken
-      tags: [auth]
+      tags: [bloodconnect-auth]
       summary: Get a api refresh token
       description: |
         TBD

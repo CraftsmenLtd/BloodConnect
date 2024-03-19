@@ -70,7 +70,10 @@ jobs:
       - name: Push Docker Image
         if: steps.pull_docker_image.outcome == 'failure'
         run: docker push ${{ env.RUNNER_IMAGE_NAME }}
-      
+
+      - name: Validate OpenAPI specs
+        run: make run-command-lint-api
+
       - name: Install Node Modules
         run: make run-command-install-node-packages
 

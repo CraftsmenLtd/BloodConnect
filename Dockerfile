@@ -13,6 +13,12 @@ RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip a
 ARG CHECKOV_VERSION
 RUN pip3 install awscli awscli-local localstack terraform-local checkov==${CHECKOV_VERSION} --break-system-packages
 
+# Terraform
+ARG TERRAFORM_VERSION
+RUN curl -o /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
+    unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin && \
+    rm /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+
 # Setup Nodejs and Docker Repo
 ARG NODE_MAJOR
 RUN mkdir -p /etc/apt/keyrings && \
@@ -21,11 +27,8 @@ RUN mkdir -p /etc/apt/keyrings && \
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-# Terraform
-ARG TERRAFORM_VERSION
-RUN curl -o /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
-    unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin && \
-    rm /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-
 # Install Nodejs and Docker
 RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io nodejs --no-install-recommends
+
+# Install spectral: API linter
+RUN npm install -g @stoplight/spectral-cli
