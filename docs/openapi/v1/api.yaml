@@ -1,0 +1,41 @@
+openapi: "3.1.0"
+tags:
+  - name: bloodconnect
+    description: API Endpoints for BloodConnect
+
+info:
+  title: BloodConnect API Documentation
+  version: "v1"
+  contact:
+    name: Craftsmen Ltd.
+    url: "https://craftsmenltd.com/"
+  license:
+    name: Apache
+    identifier: "Apache-2.0"
+    url: "https://www.apache.org/licenses/LICENSE-2.0"
+  description: |
+    TBD
+
+servers:
+  - url: "http://45jqfspwlj.execute-api.localhost.localstack.cloud:4566/localstack"
+    description: Temp
+  - url: "http://localhost:4566/v1"
+    description: Local
+  - url: "https://prod.bloodconnect.net/v1"
+    description: Production
+
+paths:
+  /auth/refresh-token:
+    post:
+      operationId: refreshToken
+      tags: [auth]
+      summary: Get a api refresh token
+      description: |
+        TBD
+      responses:
+        "200":
+          description: |
+            TBD
+          content:
+            application/json:
+              schema: { $ref: "schemas.yaml#/components/schemas/RefreshTokenResponse" }
