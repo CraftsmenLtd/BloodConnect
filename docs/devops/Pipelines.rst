@@ -7,12 +7,13 @@ Each file will work as a single pipeline.
 
 Deploy Docs
 ~~~~~~~~~~~~
-This pipeline is responsible to deploy sphinx docs
+This pipeline is responsible to deploy sphinx docs. The pipeline will run only on push/merge to master.
+And then will deploy latest documentation to github pages.
 
 
-Continuous Deployment???? for dev?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-This is the pipeline used by developers. It includes
+Continuous Integration
+~~~~~~~~~~~~~~~~~~~~~~
+This is the pipeline used by developers. It will run on every push on dev branches except master. It includes
 - Run unit tests
 - Run JS lint
 - Validate Terraform
@@ -21,4 +22,3 @@ This is the pipeline used by developers. It includes
 - OpenAPI specs lint
 - Install to localstack
 - Run system integration tests using localstack
-- Deploy AWS dev environment

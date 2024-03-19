@@ -29,8 +29,8 @@ env:
 
 jobs:
 
-  lint-test-security-deploy:
-    name: Lint, Test, Security and Deploy Terraform
+  dev-env-deploy:
+    name: Dev Environment Deployment
     runs-on: ubuntu-22.04
     environment: dev
 
@@ -73,29 +73,8 @@ jobs:
       - name: Install Node Modules
         run: make run-command-install-node-packages
 
-      - name: Unit Test Code
-        run: make run-command-test
-
-      - name: Lint Code
-        run: make run-command-lint-code
-
       - name: Package Code
         run: make run-command-package-all
-
-      - name: Terraform Validation
-        run: make run-command-tf-validate
-
-      # - name: Terraform Security
-      #   run: make run-command-tf-security
-
-      - name: Terraform Initialization Localstack
-        run: make run-command-tf-init
-
-      - name: Terraform Plan Localstack
-        run: make run-command-tf-plan-apply
-
-      - name: Terraform Apply Localstack
-        run: make run-command-tf-apply
 
       - name: Set Environment Variables for Dev Deployment
         run: |
@@ -121,13 +100,13 @@ jobs:
 
       - name: Terraform Apply Dev
         run: make run-command-tf-apply
-        id: apply_dev_environemnt
+        id: apply_dev_environment
 
       - name: Terraform Plan Destroy Dev
-        if: always() && steps.apply_dev_environemnt.outcome == 'failure'
+        if: always() && steps.apply_dev_environment.outcome == 'failure'
         run: make run-command-tf-plan-destroy
-        id: plan_destroy_dev_environemnt
+        id: plan_destroy_dev_environment
 
       - name: Terraform Destroy Dev
         run: make run-command-tf-plan-destroy
-        if: always() && steps.plan_destroy_dev_environemnt.outcome == 'failure'
+        if: always() && steps.plan_destroy_dev_environment.outcome == 'failure'
