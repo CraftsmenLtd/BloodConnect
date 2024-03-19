@@ -5,7 +5,7 @@ name: "Branch Deployment"
 on:
   push:
     branches:
-      - foo
+      - 'foo'
   workflow_dispatch:
 
 
