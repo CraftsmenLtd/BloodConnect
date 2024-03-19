@@ -4,8 +4,8 @@ name: "Branch Deployment"
 
 on:
   push:
-    branches:
-      - 'foo'
+    branches-ignore:
+      - 'master'
   workflow_dispatch:
 
 
