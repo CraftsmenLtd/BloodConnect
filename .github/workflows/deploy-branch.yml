@@ -4,8 +4,6 @@ name: "Branch Deployment"
 
 on:
   workflow_dispatch:
-    branches-ignore:
-      - 'master'
 
 permissions:
   contents: read
