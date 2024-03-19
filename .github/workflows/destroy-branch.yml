@@ -47,7 +47,7 @@ jobs:
             echo "FORMATTED_BRANCH_NAME=i-$(echo "${{ github.ref }}" | sed -E 's/^.*\/([A-Za-z])-#([0-9]+)\/.*/\1-\2/' | awk '{print tolower($0)}')" >> $GITHUB_ENV
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{github.actor}}
