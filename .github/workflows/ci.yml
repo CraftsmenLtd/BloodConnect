@@ -29,9 +29,9 @@ env:
 jobs:
 
   lint-test-security:
-    name: Lint, Test, Security and Deploy Terraform
+    name: Lint, Test and Security Check
     runs-on: ubuntu-22.04
-    environment: dev
+    environment: ci
 
     steps:
       - name: Checkout Branch

@@ -27,7 +27,7 @@ jobs:
     name: Docs
     runs-on: ubuntu-20.04
     environment:
-      name: github-pages
+      name: docs
       url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       pages: write
