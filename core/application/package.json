@@ -1,0 +1,16 @@
+{
+  "name": "application",
+  "description": "Contains everything related to the logical implementation of the application",
+  "author": "Craftsmen Ltd.",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "cd ../ && npm run test -- core/application/tests/*"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.4"
+  }
+}

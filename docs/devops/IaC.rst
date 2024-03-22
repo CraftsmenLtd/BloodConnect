@@ -9,7 +9,7 @@ Directory Structure
 
 The Iac directory is as follows:
 
- .. code-block::
+ .. code-block:: text
 
     BloodConnect
     └── iac
@@ -32,7 +32,7 @@ The Iac directory is as follows:
 
 IaC Coverage
 ~~~~~~~~~~~~
-- Terraform/AWS - initially starting with **Terraform Version: 1.6.3** and AWS
+- Terraform/AWS - initially starting with **Terraform Version: 1.6.5** and AWS
 
 Terraform Guideline
 ~~~~~~~~~~~~~~~~~~~
@@ -43,7 +43,8 @@ Terraform Guideline
 
  .. code-block:: bash
 
-    terraform validate
+    terraform validate  # Command of terraform to validate it
+    make run-command-tf-validate  # Validate terraform using dockerized dev environment
 
 - Must provide variable description and type
 
@@ -54,4 +55,10 @@ Terraform Guideline
 
  .. code-block:: bash
 
-    make tf-fmt
+    make run-command-tf-fmt
+
+- Check terraform static security using
+
+ .. code-block:: bash
+
+    make run-command-tf-security

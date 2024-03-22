@@ -1,0 +1,11 @@
+# Global patterns
+*.pyc
+*.pyo
+*.so
+
+# Directories
+.idea/
+.vscode/
+coverage/
+htmlcov/
+__pycache__/

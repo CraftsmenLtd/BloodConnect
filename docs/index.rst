@@ -61,9 +61,17 @@ Doc build local environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Requirements: Docker need to be installed
 
+Build docker image if not already built
+
 .. code-block:: bash
 
-   make sphinx-html
+    make build-runner-image
+
+Make sphinx html docs
+
+.. code-block:: bash
+
+   make run-command-sphinx-html
 
 Then open `docs/_build/html/index.html` in a browser
 
@@ -78,5 +86,6 @@ Documents Index
 .. toctree::
    :maxdepth: 1
 
+   architecture/index
    development/index
    devops/index

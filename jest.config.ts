@@ -3,7 +3,7 @@
  * https://jestjs.io/docs/configuration
  */
 
-import type { Config } from 'jest'
+import { Config } from 'jest'
 
 const config: Config = {
   // All imported modules in your tests should be mocked automatically
@@ -36,15 +36,24 @@ const config: Config = {
   coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
-  // coverageReporters: [
-  //   "json",
-  //   "text",
-  //   "lcov",
-  //   "clover"
-  // ],
+  coverageReporters: [
+    // 'json',
+    'text',
+    // 'text-summary',
+    // 'lcov',
+    // 'clover',
+    'json-summary'
+  ],
 
   // An object that configures minimum threshold enforcement for coverage results
-  // coverageThreshold: undefined,
+  coverageThreshold: {
+    global: {
+      // branches: 100,
+      functions: 60
+      // lines: 100,
+      // statements: 60
+    }
+  },
 
   // A path to a custom dependency extractor
   // dependencyExtractor: undefined,
@@ -92,7 +101,7 @@ const config: Config = {
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
     '^@commons/(.*)$': '<rootDir>/commons/$1',
-    '^@application/(.*)$': '<rootDir>/commons/application/$1'
+    '^@application/(.*)$': '<rootDir>/core/application/$1'
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -137,7 +146,9 @@ const config: Config = {
   // runner: "jest-runner",
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
-  // setupFiles: [],
+  setupFiles: [
+    '<rootDir>/jest.env.ts'
+  ],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   // setupFilesAfterEnv: [],

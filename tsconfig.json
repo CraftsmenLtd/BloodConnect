@@ -4,7 +4,7 @@
     "module": "commonjs",
     "jsx": "preserve",
     "moduleResolution": "node",
-    "importHelpers": true,
+    "importHelpers": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitAny": true,
@@ -27,6 +27,6 @@
       "@application/*": ["core/application/*"],
     },
   },
-  "include": ["commons", "core", "clients", "babel.config.js", "jest.config.ts"],
-  "exclude": ["node_modules/**/*", "dist", ".idea", ".vscode", ".github", "coverage"],
+  "include": ["commons", "core", "clients", "babel.config.js", "jest.config.ts", "jest.env.ts"],
+  "exclude": ["node_modules/**/*", "dist", ".idea", ".vscode", ".github", "coverage", ".build"],
 }

@@ -9,11 +9,11 @@ Guidelines
 .. toctree::
    :maxdepth: 2
 
-   Architecture
    CodingGuideline
    CloudDevGuideline
    PRGuideline
    TicketLifecycle
+   DirectoryOrganization
 
 Dive into the Code
 ~~~~~~~~~~~~~~~~~~

@@ -1,5 +1,5 @@
 # Guide: https://github.com/marketplace/actions/sphinx-to-github-pages
-name: Deploy Sphinx documentation to Github Pages
+name: Docs Deployment
 
 on:
   # Runs on pushes targeting the default branch
@@ -8,8 +8,6 @@ on:
       - master
     paths:
       - docs/**
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -29,7 +27,7 @@ jobs:
     name: Docs
     runs-on: ubuntu-20.04
     environment:
-      name: github-pages
+      name: docs
       url: ${{ steps.deployment.outputs.page_url }}
     permissions:
       pages: write
