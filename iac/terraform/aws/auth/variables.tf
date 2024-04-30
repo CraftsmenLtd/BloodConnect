@@ -18,8 +18,3 @@ variable "api_gw_root_resource_id" {
   type        = string
   description = "API Gateway REST API Root resource id"
 }
-
-variable "lambda_env_var_kms_arn" {
-  type        = string
-  description = "AWS Lambda environment variable encryption using KMS"
-}

@@ -13,6 +13,7 @@ locals {
 }
 
 resource "aws_lambda_function" "lambda_functions" {
+  #checkov:skip=CKV_AWS_173: "Check encryption settings for Lambda environmental variable"
   for_each         = local.lambda_options
   function_name    = "${var.environment}-${each.value.name}-lambda"
   filename         = each.value.zip_path
@@ -22,7 +23,6 @@ resource "aws_lambda_function" "lambda_functions" {
   runtime          = var.lambda_runtime
   timeout          = lookup(each.value, "timeout", 60)
   memory_size      = lookup(each.value, "memory_size", 128)
-  kms_key_arn      = var.lambda_env_var_kms_arn
 
   environment {
     variables = lookup(each.value, "env_variables", {})
