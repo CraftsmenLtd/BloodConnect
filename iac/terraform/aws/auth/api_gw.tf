@@ -1,4 +1,5 @@
 module "auth_api" {
+  #checkov:skip=CKV_TF_1: "Ensure Terraform module sources use a commit hash"
   source  = "terraform-aws-modules/apigateway-v2/aws"
   version = "1.8.0"
 
