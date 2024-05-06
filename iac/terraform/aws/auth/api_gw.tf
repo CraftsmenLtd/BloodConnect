@@ -29,7 +29,7 @@ module "auth_api" {
     }
   }
 
-  depends_on = aws_lambda_function.lambda_functions
+  depends_on = [aws_lambda_function.lambda_functions]
 }
 
 resource "aws_lambda_permission" "api_gw_lambda_execution_permission" {
