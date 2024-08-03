@@ -13,6 +13,8 @@ TF_BACKEND_CONFIG=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" --backend-
 TF_INIT_PREREQUISITES:=
 TF_CHECKOV_SKIP:=--skip-check CKV_AWS_117,CKV_AWS_50,CKV_AWS_116,CKV_AWS_272,CKV_AWS_115
 DOCKER_CHECKOV_SKIP:=--skip-check CKV_DOCKER_9
+DOCKER_LOCALSTACK_CONTAINER_NAME?=bloodconnect-dev-localstack
+DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
 
 # Documentation
 sphinx-html:
@@ -36,8 +38,8 @@ check-docker:
 
 # Localstack
 localstack-start:
-	docker rm -f localstack
-	docker run --rm --privileged -itd -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack
+	docker rm -f $(DOCKER_LOCALSTACK_CONTAINER_NAME)
+	docker run --rm --privileged --name $(DOCKER_LOCALSTACK_CONTAINER_NAME) -itd -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack
 
 localstack-create-backend-bucket:
 	awslocal s3api create-bucket --bucket $(TF_BACKEND_BUCKET_NAME) --create-bucket-configuration LocationConstraint=$(TF_BACKEND_BUCKET_REGION) || true
@@ -101,7 +103,7 @@ build-runner-image:
 	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
-	docker run --rm -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $* EXTRA_ARGS=$(EXTRA_ARGS)
+	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $* EXTRA_ARGS=$(EXTRA_ARGS)
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
