@@ -43,16 +43,6 @@ Pre-requisites
 
         apt install make gnu
 
-- OS specific setup
-    * MacOS
-     Since macos does not share files and folders automatically with docker, you need to add special files for our local setup to work. Please follow the steps below.
-
-     - Open Docker Desktop
-     - Open Settings
-     - Click Resources -> File sharing
-     - Add `/root/.cache/localstack-cli/` and `/root/.cache/localstack/` to the list of files
-     - Click Apply and restart
-
 First Time Install
 ~~~~~~~~~~~~~~~~~~
 Make sure your docker is up and running. Ensure you don't have any containers named `localstack-main` running as well.
