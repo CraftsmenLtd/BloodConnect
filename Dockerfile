@@ -11,7 +11,7 @@ RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip a
 
 # AWS
 ARG CHECKOV_VERSION
-RUN pip3 install awscli awscli-local localstack terraform-local checkov==${CHECKOV_VERSION} --break-system-packages
+RUN pip3 install awscli awscli-local terraform-local checkov==${CHECKOV_VERSION} --break-system-packages
 
 # Terraform
 ARG TERRAFORM_VERSION

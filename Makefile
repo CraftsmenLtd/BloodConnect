@@ -1,7 +1,8 @@
 DEPLOYMENT_ENVIRONMENT?=localstack
 RUNNER_IMAGE_NAME?=dev-image
+DOCKER_SOCK_MOUNT?=-v /var/run/docker.sock:/var/run/docker.sock
 DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.7.3" --build-arg="NODE_MAJOR=20" --build-arg="CHECKOV_VERSION=3.1.40"
-DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -v /var/run/docker.sock:/var/run/docker.sock -w /app
+DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -w /app
 DOCKER_ENV?=-e AWS_ACCESS_KEY_ID -e DEPLOYMENT_ENVIRONMENT -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e TF_BACKEND_BUCKET_NAME -e TF_BACKEND_BUCKET_REGION -e TF_BACKEND_BUCKET_KEY -e TF_VARS
 TF_BACKEND_BUCKET_KEY?=localstack
 TF_BACKEND_BUCKET_REGION?=ap-south-1
@@ -19,7 +20,7 @@ sphinx-html:
 # Deployment
 ifeq ($(DEPLOYMENT_ENVIRONMENT),localstack)
     TF_RUNNER:=tflocal
-    TF_INIT_PREREQUISITES=localstack-start localstack-create-backend-bucket
+    TF_INIT_PREREQUISITES=localstack-create-backend-bucket
     TF_DIR=deployment/localstack/terraform
 else
     TF_RUNNER:=terraform
@@ -33,7 +34,7 @@ check-docker:
 
 # Localstack
 localstack-start:
-	localstack start -d
+	docker run --rm -itd -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack
 
 localstack-create-backend-bucket:
 	awslocal s3api create-bucket --bucket $(TF_BACKEND_BUCKET_NAME) --create-bucket-configuration LocationConstraint=$(TF_BACKEND_BUCKET_REGION) || true
@@ -100,6 +101,6 @@ run-command-%:
 	docker run --rm --privileged -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $* EXTRA_ARGS=$(EXTRA_ARGS)
 
 # Dev commands
-start-dev: build-runner-image run-command-install-node-packages run-dev
+start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
 run-dev: run-command-build-node-all run-command-package-all run-command-tf-init run-command-tf-plan-apply run-command-tf-apply
