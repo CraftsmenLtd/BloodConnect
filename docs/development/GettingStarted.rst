@@ -67,7 +67,12 @@ You should hopefully see some terraform output variables being spat at you if ev
 
 Regular Development
 ~~~~~~~~~~~~~~~~~~~
-When you make changes to the code base and want to run things to test; you can always just run the `First Time Install`_. But a more efficient way might be to
+When you make changes to the code base and want to run things to test; you can always just run the 
+ .. code-block:: bash
+
+    make run-dev
+
+But a more efficient way might be to pick and choose what needs doing,
 
 - Install New node modules
 
