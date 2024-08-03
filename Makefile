@@ -36,6 +36,7 @@ check-docker:
 
 # Localstack
 localstack-start:
+	docker rm -f localstack
 	docker run --rm --privileged -itd -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack
 
 localstack-create-backend-bucket:
