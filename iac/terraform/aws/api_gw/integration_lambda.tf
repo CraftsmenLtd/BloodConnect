@@ -6,7 +6,7 @@ resource "aws_api_gateway_integration" "lambda_integration" {
   http_method             = element(aws_api_gateway_method.methods.*.http_method, count.index)
   type                    = "AWS_PROXY"
   integration_http_method = "POST"
-  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_function_arn}:${var.environment}/invocations"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${var.lambda_function_arn}:$LATEST/invocations"
 
   credentials      = var.enable_lambda_integration ? aws_iam_role.lambda_invoke_role[0].arn : ""
   content_handling = "CONVERT_TO_BINARY"

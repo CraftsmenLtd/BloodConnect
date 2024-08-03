@@ -3,9 +3,11 @@ RUNNER_IMAGE_NAME?=dev-image
 DOCKER_SOCK_MOUNT?=-v /var/run/docker.sock:/var/run/docker.sock
 DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.7.3" --build-arg="NODE_MAJOR=20" --build-arg="CHECKOV_VERSION=3.1.40"
 DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -w /app
-DOCKER_ENV?=-e AWS_ACCESS_KEY_ID -e DEPLOYMENT_ENVIRONMENT -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e TF_BACKEND_BUCKET_NAME -e TF_BACKEND_BUCKET_REGION -e TF_BACKEND_BUCKET_KEY -e TF_VARS
+AWS_DEFAULT_REGION?=ap-south-1
+AWS_REGION?=$(AWS_DEFAULT_REGION)
+DOCKER_ENV?=-e AWS_ACCESS_KEY_ID -e DEPLOYMENT_ENVIRONMENT -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_REGION -e TF_BACKEND_BUCKET_NAME -e TF_BACKEND_BUCKET_REGION -e TF_BACKEND_BUCKET_KEY -e TF_VARS
 TF_BACKEND_BUCKET_KEY?=localstack
-TF_BACKEND_BUCKET_REGION?=ap-south-1
+TF_BACKEND_BUCKET_REGION?=$(AWS_DEFAULT_REGION)
 TF_BACKEND_BUCKET_NAME?=localstack
 TF_BACKEND_CONFIG=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" --backend-config="key=$(TF_BACKEND_BUCKET_KEY)" --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
 TF_INIT_PREREQUISITES:=
@@ -34,7 +36,7 @@ check-docker:
 
 # Localstack
 localstack-start:
-	docker run --rm -itd -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack
+	docker run --rm --privileged -itd -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack
 
 localstack-create-backend-bucket:
 	awslocal s3api create-bucket --bucket $(TF_BACKEND_BUCKET_NAME) --create-bucket-configuration LocationConstraint=$(TF_BACKEND_BUCKET_REGION) || true
@@ -98,7 +100,7 @@ build-runner-image:
 	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
-	docker run --rm --privileged -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $* EXTRA_ARGS=$(EXTRA_ARGS)
+	docker run --rm -t --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $* EXTRA_ARGS=$(EXTRA_ARGS)
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
