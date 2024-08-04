@@ -21,7 +21,6 @@ concurrency:
   group: ${{ github.ref }}
 
 env:
-  RUNNER_IMAGE_NAME: bloodconnect-ci-image
   DOCKERFILE_PATH: ./Dockerfile
   CONTAINER_REGISTRY: ghcr.io
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true

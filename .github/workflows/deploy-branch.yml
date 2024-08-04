@@ -18,14 +18,13 @@ concurrency:
   group: ${{ github.ref }}
 
 env:
-  RUNNER_IMAGE_NAME: bloodconnect-ci-image
   DOCKERFILE_PATH: ./Dockerfile
   CONTAINER_REGISTRY: ghcr.io
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
-  dev-env-deploy:
-    name: Dev Environment Deployment
+  dev-env-destroy:
+    name: Dev Environment Destruction
     runs-on: ubuntu-22.04
     environment: dev
 
@@ -35,14 +34,10 @@ jobs:
 
       - name: Get Dockerfile MD5
         id: dockerfile_md5
-        run: |
-          md5=$(md5sum "${{ env.DOCKERFILE_PATH }}" | awk '{ print $1 }')
-          echo "::set-output name=md5::$md5"
+        run: echo "md5=$(md5sum "${{ env.DOCKERFILE_PATH }}" | awk '{ print $1 }')" >> $GITHUB_OUTPUT
 
       - name: Set Runner Image Name
-        run: |
-          echo "RUNNER_IMAGE_NAME=${{ env.CONTAINER_REGISTRY }}/craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}" >> $GITHUB_ENV
-          echo "FORMATTED_BRANCH_NAME=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_ENV
+        run: echo "RUNNER_IMAGE_NAME=${{ env.CONTAINER_REGISTRY }}/craftsmenltd/bloodconnect-ci-image:${{ steps.dockerfile_md5.outputs.md5 }}" >> $GITHUB_ENV
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -80,18 +75,13 @@ jobs:
 
       - name: Set Environment Variables for Dev Deployment
         run: |
-          echo "DEPLOYMENT_ENVIRONMENT=${{ env.FORMATTED_BRANCH_NAME }}" >> $GITHUB_ENV
+          echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_ENV
           echo "TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev" >> $GITHUB_ENV
-          echo "TF_BACKEND_BUCKET_KEY=dev/${{ env.FORMATTED_BRANCH_NAME }}.tfstate" >> $GITHUB_ENV
+          echo "TF_BACKEND_BUCKET_KEY=dev/${{ env.DEPLOYMENT_ENVIRONMENT }}.tfstate" >> $GITHUB_ENV
           echo "TF_BACKEND_BUCKET_REGION=ap-south-1" >> $GITHUB_ENV
           echo "AWS_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
           echo "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
-
-      - name: Set Terraform Variables for Dev Deployment
-        run: |
-          echo "TF_VARS=\
-          -var='aws_environment=${{ env.DEPLOYMENT_ENVIRONMENT }}'" \
-          >> $GITHUB_ENV
+          echo "TF_VAR_aws_environment=${{ env.DEPLOYMENT_ENVIRONMENT }}" >> $GITHUB_ENV
 
       - name: Terraform Initialization Dev
         run: make run-command-tf-init

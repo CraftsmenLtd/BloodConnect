@@ -197,9 +197,9 @@ The table below explains the variables that needs to be passed
      - This sets up the aws region to use, the value should be ap-south-1
      - ap-south-1
      - 
-   * - TF_VARS
-     - This is a crucial value, this dictates everything that gets passed into terraform as defined `deployment/aws/terraform/variables.tf <https://github.com/CraftsmenLtd/BloodConnect/tree/master/deployment/aws/terraform/variables.tf>`_. You need to pass all variables into this single environment variable.
-     - "-var='aws_environment=sakib-branch'"
+   * - TF_VAR_<the_variable_name>
+     - This is a crucial value, this dictates everything that gets passed into terraform as defined `deployment/aws/terraform/variables.tf <https://github.com/CraftsmenLtd/BloodConnect/tree/master/deployment/aws/terraform/variables.tf>`_.
+     - sakib-branch
      - 
 
 With all that lets make an example command. The following command will initiate terraform.
@@ -219,7 +219,7 @@ Or
     TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
-    TF_VARS="-var='aws_environment=sakib-branch'" \
+    TF_VAR_aws_environment=sakib-branch \
     make run-command-tf-init
 
 Now lets plan to apply this.
@@ -230,7 +230,7 @@ Now lets plan to apply this.
     TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
-    TF_VARS="-var='aws_environment=sakib-branch'" \
+    TF_VAR_aws_environment=sakib-branch \
     make run-command-tf-plan-apply
 
 And applying this.
@@ -241,7 +241,7 @@ And applying this.
     TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
-    TF_VARS="-var='aws_environment=sakib-branch'" \
+    TF_VAR_aws_environment=sakib-branch \
     make run-command-tf-apply
 
 
@@ -253,7 +253,7 @@ And planning to destroy this.
     TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
-    TF_VARS="-var='aws_environment=sakib-branch'" \
+    TF_VAR_aws_environment=sakib-branch \
     make run-command-tf-plan-destroy
 
 And finally destroying this.
@@ -264,7 +264,7 @@ And finally destroying this.
     TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
-    TF_VARS="-var='aws_environment=sakib-branch'" \
+    TF_VAR_aws_environment=sakib-branch \
     make run-command-tf-destroy
 
 If you don't want to be using such a long command you can always export the stuff that are static to you. For example, 
@@ -272,7 +272,7 @@ If you don't want to be using such a long command you can always export the stuf
 .. code-block:: bash
     export DEPLOYMENT_ENVIRONMENT=sakib-branch
 
-Now I don't need to be passing that every time. Ofcourse this means if you want to test in it localstack you will have to unset,
+Now we don't need to be passing that every time. Ofcourse this means if you want to test in it localstack you will have to unset,
 
 .. code-block:: bash
     unset DEPLOYMENT_ENVIRONMENT
