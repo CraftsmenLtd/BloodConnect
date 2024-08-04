@@ -86,6 +86,11 @@ jobs:
       - name: Package Code
         run: make run-command-package-all
 
+      - name: Start Localstack
+        run: make localstack-start
+
+
+
       - name: Terraform Validation
         run: make run-command-tf-validate
 
