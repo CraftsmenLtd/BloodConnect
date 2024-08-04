@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 
 defaults:
@@ -67,11 +68,16 @@ jobs:
         if: always() && steps.build_docker_image.outcome == 'failure'
         run: docker push ${{ env.RUNNER_IMAGE_NAME }}
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
       - name: Set Environment Variables for Dev Destroy
         run: |
           echo "DEPLOYMENT_ENVIRONMENT=dev-${{ env.FORMATTED_BRANCH_NAME }}" >> $GITHUB_ENV
-          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
           echo "TF_BACKEND_BUCKET_NAME=bloodconnect-ci-dev" >> $GITHUB_ENV
           echo "TF_BACKEND_BUCKET_KEY=dev/${{ env.FORMATTED_BRANCH_NAME }}.tfstate" >> $GITHUB_ENV

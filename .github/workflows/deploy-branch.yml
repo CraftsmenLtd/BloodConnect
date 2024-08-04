@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 
 defaults:
@@ -72,6 +73,7 @@ jobs:
 
       - name: Package Code
         run: make run-command-package-all
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -98,9 +100,9 @@ jobs:
       - name: Terraform Plan Apply Dev
         run: make run-command-tf-plan-apply
 
-      # - name: Terraform Apply Dev
-      #   run: make run-command-tf-apply
-      #   id: apply_dev_environment
+      - name: Terraform Apply Dev
+        run: make run-command-tf-apply
+        id: apply_dev_environment
 
       - name: Terraform Plan Destroy Dev
         if: always() && steps.apply_dev_environment.outcome == 'failure'
