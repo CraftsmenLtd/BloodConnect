@@ -112,5 +112,5 @@ jobs:
         id: plan_destroy_dev_environment
 
       - name: Terraform Destroy Dev
-        run: make run-command-tf-plan-destroy
+        run: make run-command-tf-destroy
         if: always() && steps.plan_destroy_dev_environment.outcome == 'success'

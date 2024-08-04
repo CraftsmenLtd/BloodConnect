@@ -96,4 +96,4 @@ jobs:
         run: make run-command-tf-plan-destroy
 
       - name: Terraform Destroy Dev
-        run: make run-command-tf-plan-destroy
+        run: make run-command-tf-destroy
