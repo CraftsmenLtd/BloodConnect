@@ -3,6 +3,10 @@ name: Aws Environment Terraform
 on:
   workflow_call:
     inputs:
+      docker_image:
+        description: 'The runner image to be used'
+        required: true
+        type: string
       github_environment:
         description: 'Defines the github environemnt for secrets'
         required: true
@@ -46,26 +50,19 @@ defaults:
   run:
     shell: bash
 
-concurrency:
-  group: ${{ github.ref }}
-
 env:
-  DOCKERFILE_PATH: ./Dockerfile
-  CONTAINER_REGISTRY: ghcr.io
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
   aws-terraform-env:
-    environment: ${{ inputs.github_environment }}
     name: Aws Environment Terraform
     runs-on: ubuntu-22.04
-
+    environment: ${{ inputs.github_environment }}
+    env:
+      RUNNER_IMAGE_NAME: ${{ inputs.docker_image }}
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v3
-
-      - name: Set Runner Image Name
-        run: echo "RUNNER_IMAGE_NAME=${{ env.CONTAINER_REGISTRY }}/craftsmenltd/bloodconnect-ci-image:$(md5sum ${{ env.DOCKERFILE_PATH }} | awk '{ print $1 }')" >> $GITHUB_ENV
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -73,20 +70,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Attempt to Pull Docker Image
-        id: pull_docker_image
-        run: docker pull ${{ env.RUNNER_IMAGE_NAME }}
-        continue-on-error: true
-
-      - name: Build Docker Image
-        if: always() && steps.pull_docker_image.outcome == 'failure'
-        run: make build-runner-image
-        id: build_docker_image
-
-      - name: Push Docker Image
-        if: always() && steps.build_docker_image.outcome == 'failure'
-        run: docker push ${{ env.RUNNER_IMAGE_NAME }}
 
       - name: Install Node Modules
         run: make run-command-install-node-packages

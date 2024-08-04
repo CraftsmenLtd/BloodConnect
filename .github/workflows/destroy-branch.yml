@@ -3,29 +3,54 @@ name: "Branch Destruction"
 on:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.ref }}
+
 jobs:
-  set-destruction-environment:
-    name: Set Destruction Environment
+  set-deployment-environment:
+    name: Set Deployment Environment
     runs-on: ubuntu-22.04
-    outputs:
-      deployment_environment: ${{ steps.set_destruction_env.outputs.deployment_environment }}
     steps:
       - name: Set Deployment Environment
-        id: set_destruction_env
-        run: echo "deployment_environment=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
+        id: set_deployment_env
+        run: echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
+    outputs:
+          deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
 
-  branch-destruction:
-    name: Branch Destruction
-    needs: set-destruction-environment
+  set-runner-image-name:
+    name: Set Runner Image Name
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v3
+
+      - name: Set Runner Image
+        id: set_runner_image
+        run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
+    outputs:
+            runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
+
+  handle-docker-image:
+    name: Handle Docker Image
+    needs: set-runner-image-name
+    uses: ./.github/workflows/docker-image.yml
     secrets: inherit
+    with:
+      runner_image_name: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
+
+  destroy-branch:
+    name: Destroy Branch
+    secrets: inherit
+    needs: [set-deployment-environment, set-runner-image-name, handle-docker-image]
     uses: ./.github/workflows/aws-terraform.yml
     with:
-      deployment_environment: ${{ needs.set-destruction-environment.outputs.deployment_environment }}
+      docker_image: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
       github_environment: dev
+      deployment_environment: ${{ needs.set-deployment-environment.outputs.deployment_environment }}
       tf_backend_bucket_name: terraform-bloodconnect-ci-dev
-      tf_backend_bucket_key: dev/${{ needs.set-destruction-environment.outputs.deployment_environment }}.tfstate
+      tf_backend_bucket_key: dev/${{ needs.set-deployment-environment.outputs.deployment_environment }}.tfstate
       tf_backend_bucket_region: ap-south-1
       aws_region: ap-south-1
-      tf_action: destroy
+      tf_action: apply
       tf_vars: |
-        TF_VAR_aws_environment=${{ needs.set-destruction-environment.outputs.deployment_environment }}
+        TF_VAR_aws_environment=${{ needs.set-deployment-environment.outputs.deployment_environment }}
