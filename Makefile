@@ -24,7 +24,6 @@ sphinx-html:
 # Deployment
 ifeq ($(DEPLOYMENT_ENVIRONMENT),localstack)
     TF_RUNNER:=tflocal
-    TF_INIT_PREREQUISITES=localstack-create-backend-bucket
     TF_DIR=deployment/localstack/terraform
 else
     TF_RUNNER:=terraform
@@ -41,13 +40,8 @@ localstack-start:
 	docker rm -f $(DOCKER_LOCALSTACK_CONTAINER_NAME)
 	docker run --rm --privileged --name $(DOCKER_LOCALSTACK_CONTAINER_NAME) -itd -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack
 
-localstack-create-backend-bucket:
-	awslocal s3api create-bucket --bucket $(TF_BACKEND_BUCKET_NAME) --create-bucket-configuration LocationConstraint=$(TF_BACKEND_BUCKET_REGION) || true
-	awslocal s3api put-bucket-policy --bucket $(TF_BACKEND_BUCKET_NAME) --policy '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:ListBucket","Resource":"arn:aws:s3:::$(TF_BACKEND_BUCKET_NAME)"},{"Effect":"Allow","Action":["s3:GetObject","s3:PutObject"],"Resource":"arn:aws:s3:::$(TF_BACKEND_BUCKET_NAME)/$(TF_BACKEND_BUCKET_KEY)"}]}'
-
-
 # Terraform
-tf-init: $(TF_INIT_PREREQUISITES)
+tf-init:
 	$(TF_RUNNER) -chdir=$(TF_DIR) init -input=false $(TF_BACKEND_CONFIG)
 
 tf-plan-apply:
