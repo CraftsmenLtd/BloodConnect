@@ -1,93 +1,33 @@
 name: "Branch Deployment"
-# This pipeline will run manually for all dev branches on code push
-# It will deploy dev branch to test/dev environment
 
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read
-  packages: write
-  id-token: write
-
-defaults:
-  run:
-    shell: bash
-
-concurrency:
-  group: ${{ github.ref }}
-
-env:
-  DOCKERFILE_PATH: ./Dockerfile
-  CONTAINER_REGISTRY: ghcr.io
-  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
-  dev-env-destroy:
-    name: Dev Environment Destruction
+
+  set-deployment-environment:
+    name: Set Deployment Environment
     runs-on: ubuntu-22.04
-    environment: dev
-
+    outputs:
+      deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
     steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v3
+      - name: Set Deployment Environment
+        id: set_deployment_env
+        run: echo "deployment_environment=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
 
-      - name: Get Dockerfile MD5
-        id: dockerfile_md5
-        run: echo "md5=$(md5sum "${{ env.DOCKERFILE_PATH }}" | awk '{ print $1 }')" >> $GITHUB_OUTPUT
-
-      - name: Set Runner Image Name
-        run: echo "RUNNER_IMAGE_NAME=${{ env.CONTAINER_REGISTRY }}/craftsmenltd/bloodconnect-ci-image:${{ steps.dockerfile_md5.outputs.md5 }}" >> $GITHUB_ENV
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Attempt to Pull Docker Image
-        id: pull_docker_image
-        run: docker pull ${{ env.RUNNER_IMAGE_NAME }}
-        continue-on-error: true
-
-      - name: Build Docker Image
-        if: always() && steps.pull_docker_image.outcome == 'failure'
-        run: make build-runner-image
-        id: build_docker_image
-
-      - name: Push Docker Image
-        if: always() && steps.build_docker_image.outcome == 'failure'
-        run: docker push ${{ env.RUNNER_IMAGE_NAME }}
-
-      - name: Install Node Modules
-        run: make run-command-install-node-packages
-
-      - name: Package Code
-        run: make run-command-package-all
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          role-session-name: GitHubActions
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
-
-      - name: Set Environment Variables for Dev Deployment
-        run: |
-          echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_ENV
-          echo "TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev" >> $GITHUB_ENV
-          echo "TF_BACKEND_BUCKET_KEY=dev/${{ env.DEPLOYMENT_ENVIRONMENT }}.tfstate" >> $GITHUB_ENV
-          echo "TF_BACKEND_BUCKET_REGION=ap-south-1" >> $GITHUB_ENV
-          echo "AWS_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
-          echo "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
-          echo "TF_VAR_aws_environment=${{ env.DEPLOYMENT_ENVIRONMENT }}" >> $GITHUB_ENV
-
-      - name: Terraform Initialization Dev
-        run: make run-command-tf-init
-
-      - name: Terraform Plan Apply Dev
-        run: make run-command-tf-plan-apply
-
-      - name: Terraform Apply Dev
-        run: make run-command-tf-apply
+  branch-deployment:
+    name: Branch Deployment
+    needs: set-deployment-environment
+    secrets: inherit
+    uses: ./.github/workflows/aws-terraform.yml
+    with:
+      github_environment: dev
+      deployment_environment: ${{ needs.set-deployment-environment.outputs.deployment_environment }}
+      tf_backend_bucket_name: terraform-bloodconnect-ci-dev
+      tf_backend_bucket_key: dev/${{ needs.set-deployment-environment.outputs.deployment_environment }}.tfstate
+      tf_backend_bucket_region: ap-south-1
+      aws_region: ap-south-1
+      tf_action: apply
+      tf_vars: |
+        TF_VAR_aws_environment=${{ needs.set-deployment-environment.outputs.deployment_environment }}

@@ -1,95 +1,31 @@
-name: "Branch Destroy"
-# This pipeline will run for all dev branches on manual trigger
-# It will not run for master branch and git tags
-# It will only run destroy
+name: "Branch Destruction"
 
 on:
-  workflow_dispatch: 
-
-permissions:
-  contents: read
-  packages: write
-  id-token: write
-
-
-defaults:
-  run:
-    shell: bash
-
-concurrency:
-  group: ${{ github.ref }}
-
-env:
-  DOCKERFILE_PATH: ./Dockerfile
-  CONTAINER_REGISTRY: ghcr.io
-  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+  workflow_dispatch:
 
 jobs:
-  dev-env-deploy:
-    name: Dev Environment Deployment
+  set-destruction-environment:
+    name: Set Destruction Environment
     runs-on: ubuntu-22.04
-    environment: dev
-
+    outputs:
+      deployment_environment: ${{ steps.set_destruction_env.outputs.deployment_environment }}
     steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v3
+      - name: Set Deployment Environment
+        id: set_destruction_env
+        run: echo "deployment_environment=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
 
-      - name: Get Dockerfile MD5
-        id: dockerfile_md5
-        run: echo "md5=$(md5sum "${{ env.DOCKERFILE_PATH }}" | awk '{ print $1 }')" >> $GITHUB_OUTPUT
-
-      - name: Set Runner Image Name
-        run: echo "RUNNER_IMAGE_NAME=${{ env.CONTAINER_REGISTRY }}/craftsmenltd/bloodconnect-ci-image:${{ steps.dockerfile_md5.outputs.md5 }}" >> $GITHUB_ENV
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Attempt to Pull Docker Image
-        id: pull_docker_image
-        run: docker pull ${{ env.RUNNER_IMAGE_NAME }}
-        continue-on-error: true
-
-      - name: Build Docker Image
-        if: always() && steps.pull_docker_image.outcome == 'failure'
-        run: make build-runner-image
-        id: build_docker_image
-
-      - name: Push Docker Image
-        if: always() && steps.build_docker_image.outcome == 'failure'
-        run: docker push ${{ env.RUNNER_IMAGE_NAME }}
-
-      - name: Install Node Modules
-        run: make run-command-install-node-packages
-
-      - name: Package Code
-        run: make run-command-package-all
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          role-session-name: GitHubActions
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
-
-      - name: Set Environment Variables for Dev Deployment
-        run: |
-          echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_ENV
-          echo "TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev" >> $GITHUB_ENV
-          echo "TF_BACKEND_BUCKET_KEY=dev/${{ env.DEPLOYMENT_ENVIRONMENT }}.tfstate" >> $GITHUB_ENV
-          echo "TF_BACKEND_BUCKET_REGION=ap-south-1" >> $GITHUB_ENV
-          echo "AWS_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
-          echo "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
-          echo "TF_VAR_aws_environment=${{ env.DEPLOYMENT_ENVIRONMENT }}" >> $GITHUB_ENV
-
-      - name: Terraform Initialization Dev
-        run: make run-command-tf-init
-
-      - name: Terraform Plan Destroy Dev
-        run: make run-command-tf-plan-destroy
-
-      - name: Terraform Destroy Dev
-        run: make run-command-tf-destroy
+  branch-destruction:
+    name: Branch Destruction
+    needs: set-destruction-environment
+    secrets: inherit
+    uses: ./.github/workflows/aws-terraform.yml
+    with:
+      deployment_environment: ${{ needs.set-destruction-environment.outputs.deployment_environment }}
+      github_environment: dev
+      tf_backend_bucket_name: terraform-bloodconnect-ci-dev
+      tf_backend_bucket_key: dev/${{ needs.set-destruction-environment.outputs.deployment_environment }}.tfstate
+      tf_backend_bucket_region: ap-south-1
+      aws_region: ap-south-1
+      tf_action: destroy
+      tf_vars: |
+        TF_VAR_aws_environment=${{ needs.set-destruction-environment.outputs.deployment_environment }}
