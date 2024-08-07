@@ -158,7 +158,7 @@ This needs a bit of setup. Firstly you will have to assume the deployment role t
     --role-session-name <a random session name> \
     --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
     --output text))
-
+Note: The above role is maintained in this repo: https://github.com/CraftsmenLtd/Bloodconnect-oidc
 You can now start creating the command, there are a few variables that terraform needs. You can export them as environment variables or you can pass them as arguments to the make command.
 
 .. code-block:: bash
