@@ -208,7 +208,7 @@ With all that lets make an example command. The following command will initiate 
     make run-command-tf-init \
     DEPLOYMENT_ENVIRONMENT=sakib-branch \
     TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
+    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
     TF_VARS="-var='aws_environment=sakib-branch'"
@@ -216,7 +216,7 @@ Or
 .. code-block:: bash
     DEPLOYMENT_ENVIRONMENT=sakib-branch \
     TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
+    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
     TF_VAR_aws_environment=sakib-branch \
@@ -227,7 +227,7 @@ Now lets plan to apply this.
 .. code-block:: bash
     DEPLOYMENT_ENVIRONMENT=sakib-branch \
     TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
+    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
     TF_VAR_aws_environment=sakib-branch \
@@ -238,7 +238,7 @@ And applying this.
 .. code-block:: bash
     DEPLOYMENT_ENVIRONMENT=sakib-branch \
     TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
+    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
     TF_VAR_aws_environment=sakib-branch \
@@ -250,7 +250,7 @@ And planning to destroy this.
 .. code-block:: bash
     DEPLOYMENT_ENVIRONMENT=sakib-branch \
     TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
+    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
     TF_VAR_aws_environment=sakib-branch \
@@ -261,7 +261,7 @@ And finally destroying this.
 .. code-block:: bash
     DEPLOYMENT_ENVIRONMENT=sakib-branch \
     TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch \
+    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
     TF_BACKEND_BUCKET_REGION=ap-south-1 \
     AWS_REGION=ap-south-1 \
     TF_VAR_aws_environment=sakib-branch \
