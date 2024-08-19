@@ -1,7 +1,4 @@
 name: "Continuous Integration"
-# This pipeline will run for all dev branches with push codes
-# It will not run for master branch and git tags
-# It will run all tests, lints and security checks
 
 on:
   push:
@@ -12,7 +9,6 @@ permissions:
   contents: read
   packages: write
 
-
 defaults:
   run:
     shell: bash
@@ -21,55 +17,47 @@ concurrency:
   group: ${{ github.ref }}
 
 env:
-  RUNNER_IMAGE_NAME: bloodconnect-ci-image
-  DOCKERFILE_PATH: ./Dockerfile
-  CONTAINER_REGISTRY: ghcr.io
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
-
-  lint-test-security:
-    name: Lint, Test and Security Check
+  set-runner-image-name:
+    name: Set Runner Image Name
     runs-on: ubuntu-22.04
-    environment: ci
-
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v3
-      
-      - name: Get Dockerfile MD5
-        id: dockerfile_md5
-        run: |
-          md5=$(md5sum "${{ env.DOCKERFILE_PATH }}" | awk '{ print $1 }')
-          echo "::set-output name=md5::$md5"
 
-      - name: Set Runner Image Name
-        run: |
-            echo "RUNNER_IMAGE_NAME=${{ env.CONTAINER_REGISTRY }}/craftsmenltd/${{ env.RUNNER_IMAGE_NAME }}:${{ steps.dockerfile_md5.outputs.md5 }}" >> $GITHUB_ENV
-            echo "FORMATTED_BRANCH_NAME=i-$(echo "${{ github.ref }}" | sed 's|.*/\(.*\)|\1|; s/#//')" >> $GITHUB_ENV
+      - name: Set Runner Image
+        id: set_runner_image
+        run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
+    outputs:
+            runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
+
+  handle-docker-image:
+    name: Handle Docker Image
+    needs: set-runner-image-name
+    uses: ./.github/workflows/docker-image.yml
+    secrets: inherit
+    with:
+      runner_image_name: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
+
+  lint-test-security:
+    name: Lint, Test and Security Check
+    needs: [set-runner-image-name, handle-docker-image]
+    runs-on: ubuntu-22.04
+    environment: ci
+    env:
+      RUNNER_IMAGE_NAME: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v3
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Attempt to Pull Docker Image
-        id: pull_docker_image
-        run: docker pull ${{ env.RUNNER_IMAGE_NAME }}
-        continue-on-error: true
-        
-      - name: Build Docker Image
-        if: steps.pull_docker_image.outcome == 'failure'
-        run: make build-runner-image
-
-      - name: Check Docker Image
-        run: make run-command-check-docker
-
-      - name: Push Docker Image
-        if: steps.pull_docker_image.outcome == 'failure'
-        run: docker push ${{ env.RUNNER_IMAGE_NAME }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate OpenAPI specs
         run: make run-command-lint-api
@@ -86,11 +74,14 @@ jobs:
       - name: Package Code
         run: make run-command-package-all
 
-      - name: Terraform Validation
-        run: make run-command-tf-validate
+      - name: Start Localstack
+        run: make localstack-start
 
       - name: Terraform Security
         run: make run-command-tf-security
+
+      - name: Terraform Validation
+        run: make run-command-tf-validate
 
       - name: Terraform Initialization Localstack
         run: make run-command-tf-init

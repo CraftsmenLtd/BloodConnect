@@ -5,14 +5,11 @@ DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.7.3" --build-arg="NODE
 DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -w /app
 AWS_DEFAULT_REGION?=ap-south-1
 AWS_REGION?=$(AWS_DEFAULT_REGION)
-DOCKER_ENV?=-e AWS_ACCESS_KEY_ID -e DEPLOYMENT_ENVIRONMENT -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_REGION -e TF_BACKEND_BUCKET_NAME -e TF_BACKEND_BUCKET_REGION -e TF_BACKEND_BUCKET_KEY -e TF_VARS
-TF_BACKEND_BUCKET_KEY?=localstack
-TF_BACKEND_BUCKET_REGION?=$(AWS_DEFAULT_REGION)
-TF_BACKEND_BUCKET_NAME?=localstack
+TF_VARS=$(shell env | grep '^TF_VAR_' | awk '{print "-e", $$1}')
+DOCKER_ENV?=-e AWS_ACCESS_KEY_ID -e DEPLOYMENT_ENVIRONMENT -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e AWS_DEFAULT_REGION -e AWS_REGION -e TF_BACKEND_BUCKET_NAME -e TF_BACKEND_BUCKET_REGION -e TF_BACKEND_BUCKET_KEY $(TF_VARS)
 TF_BACKEND_CONFIG=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" --backend-config="key=$(TF_BACKEND_BUCKET_KEY)" --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
-TF_INIT_PREREQUISITES:=
-TF_CHECKOV_SKIP:=--skip-check CKV_AWS_117,CKV_AWS_50,CKV_AWS_116,CKV_AWS_272,CKV_AWS_115
-DOCKER_CHECKOV_SKIP:=--skip-check CKV_DOCKER_9
+TF_CHECKOV_SKIP?=--skip-check CKV_AWS_117,CKV_AWS_50,CKV_AWS_116,CKV_AWS_272,CKV_AWS_115
+DOCKER_CHECKOV_SKIP?=--skip-check CKV_DOCKER_9
 DOCKER_LOCALSTACK_CONTAINER_NAME?=bloodconnect-dev-localstack
 DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
 
@@ -24,7 +21,6 @@ sphinx-html:
 # Deployment
 ifeq ($(DEPLOYMENT_ENVIRONMENT),localstack)
     TF_RUNNER:=tflocal
-    TF_INIT_PREREQUISITES=localstack-create-backend-bucket
     TF_DIR=deployment/localstack/terraform
 else
     TF_RUNNER:=terraform
@@ -41,20 +37,15 @@ localstack-start:
 	docker rm -f $(DOCKER_LOCALSTACK_CONTAINER_NAME)
 	docker run --rm --privileged --name $(DOCKER_LOCALSTACK_CONTAINER_NAME) -itd -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack
 
-localstack-create-backend-bucket:
-	awslocal s3api create-bucket --bucket $(TF_BACKEND_BUCKET_NAME) --create-bucket-configuration LocationConstraint=$(TF_BACKEND_BUCKET_REGION) || true
-	awslocal s3api put-bucket-policy --bucket $(TF_BACKEND_BUCKET_NAME) --policy '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:ListBucket","Resource":"arn:aws:s3:::$(TF_BACKEND_BUCKET_NAME)"},{"Effect":"Allow","Action":["s3:GetObject","s3:PutObject"],"Resource":"arn:aws:s3:::$(TF_BACKEND_BUCKET_NAME)/$(TF_BACKEND_BUCKET_KEY)"}]}'
-
-
 # Terraform
-tf-init: $(TF_INIT_PREREQUISITES)
+tf-init:
 	$(TF_RUNNER) -chdir=$(TF_DIR) init -input=false $(TF_BACKEND_CONFIG)
 
 tf-plan-apply:
-	$(TF_RUNNER) -chdir=$(TF_DIR) plan $(TF_VARS) -input=false -out=tf-apply.out
+	$(TF_RUNNER) -chdir=$(TF_DIR) plan -input=false -out=tf-apply.out
 
 tf-plan-destroy:
-	$(TF_RUNNER) -chdir=$(TF_DIR) plan $(TF_VARS) -input=false -out=tf-destroy.out --destroy
+	$(TF_RUNNER) -chdir=$(TF_DIR) plan -input=false -out=tf-destroy.out --destroy
 
 tf-apply:
 	$(TF_RUNNER) -chdir=$(TF_DIR) apply -input=false tf-apply.out
