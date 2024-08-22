@@ -141,7 +141,7 @@ You might want to deploy your code into aws to have a fully fledged environment.
 
 - Git Commit
 
-.. image:: ../assets/branch-deploy.png
+.. image:: ../assets/images/branch-deploy.png
    :width: 600
 
 Here you can manually trigger the branch-deploy pipeline that will deploy your changes described at `deployment/aws/terraform/variables.tf <https://github.com/CraftsmenLtd/BloodConnect/tree/master/deployment/aws/terraform/variables.tf>`_.
