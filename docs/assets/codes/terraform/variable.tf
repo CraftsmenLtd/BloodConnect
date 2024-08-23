@@ -1,9 +1,9 @@
-variable "image_id_wrong" {
+variable "image_id_1" {
   type = string
 }
 
-#prefered
-variable "image_id_right" {
+# preferred
+variable "image_id_2" {
   description = "ec2 image id"
   type        = string
 }
