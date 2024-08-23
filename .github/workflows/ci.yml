@@ -3,7 +3,7 @@ name: "Continuous Integration"
 on:
   push:
     branches-ignore:
-      - 'master'
+      - "master"
 
 permissions:
   contents: read
@@ -31,7 +31,7 @@ jobs:
         id: set_runner_image
         run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
     outputs:
-            runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
+        runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
 
   handle-docker-image:
     name: Handle Docker Image
