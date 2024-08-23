@@ -48,7 +48,7 @@ Terraform Guideline
 
 - Must provide variable description and type
 
- .. literalinclude:: ../codes/terraform/variable.tf
+ .. literalinclude:: ../assets/codes/terraform/variable.tf
 
 - Must provide lambda description
 - Always format terraform using `terraform fmt` command before git commit. There is a make command for it

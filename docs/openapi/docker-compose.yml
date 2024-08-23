@@ -11,14 +11,3 @@ services:
     volumes:
       - ./v1:/openapi
     restart: always
-
-  redoc:
-    image: redocly/redoc
-    container_name: redocly
-    environment:
-      - SPEC_URL=swagger/api.yaml
-    ports:
-      - "8080:80"
-    volumes:
-      - ./v1:/usr/share/nginx/html/swagger/
-    restart: always

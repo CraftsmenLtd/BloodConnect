@@ -45,6 +45,6 @@ An issue can end up in this list due one of the following reasons:
 
 A comment containing reference to relevant issues and links is expected in the issues that end up in this list. These issues may be `Archived` after certain number of days.
 
-.. graphviz:: ../dot/ticket-workflow.dot
+.. graphviz:: ../assets/dot/ticket-workflow.dot
    :align: left
    :alt: Ticket Workflow

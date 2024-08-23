@@ -21,3 +21,11 @@ Dive into the Code
    :maxdepth: 2
 
    GettingStarted
+
+
+OpenAPI Specs
+~~~~~~~~~~~~~
+.. toctree::
+   :maxdepth: 2
+
+   OpenApiSpecs

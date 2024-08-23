@@ -16,6 +16,8 @@ jobs:
   docker-image:
     name: Check Docker Image
     runs-on: ubuntu-22.04
+    env:
+      RUNNER_IMAGE_NAME: ${{ inputs.runner_image_name }}
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v3
