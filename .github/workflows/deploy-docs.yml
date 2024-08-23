@@ -35,6 +35,8 @@ jobs:
     steps:
     - name: Install Dot Binary
       run: sudo apt-get install -y graphviz
+    - name: Install python packages
+      run: pip3 install sphinxcontrib-openapi sphinx-rtd-theme
     - name: Deploy Docs
       id: deployment
       uses: sphinx-notes/pages@v3
