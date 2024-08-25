@@ -32,5 +32,5 @@ html_static_path = ["static"]
 html_css_files = [
     "css/custom.css"
 ]
-html_logo = "static/images/Blood-Connect-Icon.jpg"
+html_logo = "static/images/Blood-Connect-Icon.png"
 html_favicon = "static/images/favicon.ico"
