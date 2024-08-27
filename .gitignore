@@ -4,6 +4,7 @@
 
 # Docs build
 docs/_build
+docs/**/combined.yaml
 
 # Logs
 logs

@@ -25,7 +25,7 @@ Dive into the Code
 
 OpenAPI Specs
 ~~~~~~~~~~~~~
-.. toctree::
-   :maxdepth: 2
 
-   OpenApiSpecs
+.. raw:: html
+
+   Check out the open api specs <a href="../openapi/api.html">here</a>

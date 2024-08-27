@@ -15,9 +15,9 @@ author = "Craftsmen Ltd"
 
 extensions = [
     "sphinx.ext.graphviz",
-    "sphinxcontrib.openapi"
+    "sphinxcontrib.redoc"
 ]
-graphviz_output_format = 'svg'
+graphviz_output_format = "svg"
 
 templates_path = ["templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
@@ -34,3 +34,9 @@ html_css_files = [
 ]
 html_logo = "static/images/BloodConnect-icon.png"
 html_favicon = "static/images/favicon.ico"
+
+redoc = [{
+    "name": "BloodConnect API",
+    "page": "openapi/api",
+    "spec": f"openapi/v1/combined.yaml"
+}]

@@ -15,6 +15,7 @@ DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
 
 # Documentation
 sphinx-html:
+	redocly bundle docs/openapi/v1/api.yaml -o docs/openapi/v1/combined.yaml
 	(cd docs && make html)
 
 

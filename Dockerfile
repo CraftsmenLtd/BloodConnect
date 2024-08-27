@@ -11,7 +11,7 @@ RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip a
 
 # Python Packages
 ARG CHECKOV_VERSION
-RUN pip3 install awscli awscli-local terraform-local checkov==${CHECKOV_VERSION} sphinxcontrib-openapi sphinx-rtd-theme --break-system-packages
+RUN pip3 install awscli awscli-local terraform-local checkov==${CHECKOV_VERSION} sphinxcontrib-redoc sphinx-rtd-theme --break-system-packages
 
 # Terraform
 ARG TERRAFORM_VERSION
@@ -28,7 +28,7 @@ RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /
     echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 # Install Nodejs and Docker
-RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io nodejs --no-install-recommends
+RUN apt update && apt install -y nodejs --no-install-recommends
 
 # Install spectral: API linter
-RUN npm install -g @stoplight/spectral-cli
+RUN npm install -g @stoplight/spectral-cli @redocly/cli@latest
