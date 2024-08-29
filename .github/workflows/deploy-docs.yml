@@ -42,6 +42,10 @@ jobs:
     name: Docs
     needs: [set-runner-image-name, handle-docker-image]
     runs-on: ubuntu-20.04
+    permissions:
+      pages: write
+      id-token: write
+      packages: read
     container:
       image: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
       credentials:
@@ -50,9 +54,6 @@ jobs:
     environment:
       name: docs
       url: ${{ steps.deployment.outputs.page_url }}
-    permissions:
-      pages: write
-      id-token: write
     steps:
     - name: Deploy Docs
       id: deployment

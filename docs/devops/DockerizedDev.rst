@@ -13,4 +13,3 @@ Library versions are provided as docker ARG e.g TERRAFORM_VERSION, NODE_MAJOR. A
 Setup JetBrains IDE
 ~~~~~~~~~~~~~~~~~~~
 This guide includes dockerized development environment setup of JetBrains IDEs like WebStorm, IntelliJ IDEA, PyCharm etc.
-
