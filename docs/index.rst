@@ -39,7 +39,7 @@ And project design docs is written using reStructuredText.
 
 User Story
 ~~~~~~~~~~
-`Gherkin syntax <https://cucumber.io/docs/gherkin/>`_ is being used for user story without and technical specification.
+`Gherkin syntax <https://cucumber.io/docs/gherkin/>`_ is being used for user story without technical specification.
 
 Graph and Flow diagrams
 ~~~~~~~~~~~~~~~~~~~~~~~
