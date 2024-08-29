@@ -23,9 +23,35 @@ concurrency:
 
 
 jobs:
+  set-runner-image-name:
+    name: Set Runner Image Name
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v3
+
+      - name: Set Runner Image
+        id: set_runner_image
+        run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
+    outputs:
+      runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
+
+  handle-docker-image:
+    name: Handle Docker Image
+    needs: set-runner-image-name
+    uses: ./.github/workflows/docker-image.yml
+    secrets: inherit
+    with:
+      runner_image_name: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
+
   pages:
     name: Docs
     runs-on: ubuntu-20.04
+    container:
+      image: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     environment:
       name: docs
       url: ${{ steps.deployment.outputs.page_url }}
@@ -33,10 +59,6 @@ jobs:
       pages: write
       id-token: write
     steps:
-    - name: Install Dot Binary
-      run: sudo apt-get install -y graphviz
-    - name: Install python packages
-      run: pip3 install sphinxcontrib-redoc sphinx-rtd-theme
     - name: Deploy Docs
       id: deployment
       uses: sphinx-notes/pages@v3

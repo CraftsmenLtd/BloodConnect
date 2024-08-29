@@ -15,7 +15,7 @@ jobs:
         id: set_deployment_env
         run: echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
     outputs:
-          deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
+      deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
 
   set-runner-image-name:
     name: Set Runner Image Name
@@ -28,7 +28,7 @@ jobs:
         id: set_runner_image
         run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
     outputs:
-            runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
+      runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
 
   handle-docker-image:
     name: Handle Docker Image
