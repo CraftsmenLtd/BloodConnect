@@ -26,3 +26,7 @@ This is the pipeline used by developers. It will run on every push on dev branch
 Branch Deployment
 ~~~~~~~~~~~~~~~~~
 Branch deployment manually which is being used for deploying dev branches.
+
+Branch Destroy
+~~~~~~~~~~~~~~
+Destroy resources that are created on Branch Deployment
