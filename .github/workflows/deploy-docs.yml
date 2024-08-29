@@ -31,10 +31,11 @@ jobs:
         run: sudo apt-get install -y graphviz
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
-      - name: Install Python Packages
-        run: pip3 install sphinxcontrib-redoc sphinx-rtd-theme jinja2==3.1
       - name: Combine OpenAPI specs
-        run: redocly bundle docs/openapi/v1/api.yaml -o docs/openapi/v1/combined.yaml
+        run: redocly bundle openapi/v1/api.yaml -o openapi/v1/combined.yaml
       - name: Deploy Docs
         id: deployment
         uses: sphinx-notes/pages@v3
+        with:
+          documentation_path: "./docs"
+          requirements_path: "./docs/requirements.txt"

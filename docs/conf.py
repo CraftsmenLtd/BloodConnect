@@ -35,6 +35,7 @@ html_css_files = [
 html_logo = "static/images/BloodConnect-icon.png"
 html_favicon = "static/images/favicon.ico"
 
+redoc_uri = "https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"
 redoc = [{
     "name": "BloodConnect API",
     "page": "openapi/api",

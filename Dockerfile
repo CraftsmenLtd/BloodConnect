@@ -11,7 +11,12 @@ RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip a
 
 # Python Packages
 ARG CHECKOV_VERSION
-RUN pip3 install awscli awscli-local terraform-local checkov==${CHECKOV_VERSION} sphinxcontrib-redoc sphinx-rtd-theme --break-system-packages
+RUN pip3 install awscli awscli-local terraform-local checkov==${CHECKOV_VERSION} --break-system-packages
+
+# Docs requirements
+COPY docs/requirements.txt /tmp
+RUN pip3 install -r /tmp/requirements.txt --break-system-packages
+RUN rm /tmp/requirements.txt
 
 # Terraform
 ARG TERRAFORM_VERSION
