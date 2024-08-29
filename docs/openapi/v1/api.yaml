@@ -18,10 +18,6 @@ info:
     TBD
 
 servers:
-  - url: "http://45jqfspwlj.execute-api.localhost.localstack.cloud:4566/localstack"
-    description: Temp
-  - url: "http://localhost:4566/v1"
-    description: Local
   - url: "https://prod.bloodconnect.net/v1"
     description: Production
 

@@ -12,6 +12,10 @@ defaults:
   run:
     shell: bash
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   docker-image:
     name: Check Docker Image
