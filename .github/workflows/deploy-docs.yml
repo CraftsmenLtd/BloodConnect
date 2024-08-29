@@ -29,8 +29,12 @@ jobs:
     steps:
       - name: Install Dot Binary
         run: sudo apt-get install -y graphviz
+      - name: Install Redoc
+        run: npm install -g @redocly/cli@latest
       - name: Install Python Packages
-        run: pip3 install sphinxcontrib-redoc sphinx-rtd-theme
+        run: pip3 install sphinxcontrib-redoc sphinx-rtd-theme jinja2==3.1
+      - name: Combine OpenAPI specs
+        run: redocly bundle docs/openapi/v1/api.yaml -o docs/openapi/v1/combined.yaml
       - name: Deploy Docs
         id: deployment
         uses: sphinx-notes/pages@v3
