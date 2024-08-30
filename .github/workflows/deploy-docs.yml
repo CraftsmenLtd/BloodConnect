@@ -27,18 +27,18 @@ jobs:
       name: docs
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v3
       - name: Install Dot Binary
         run: sudo apt-get install -y graphviz
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
-      - name: Test LS
-        run: ls -l /home/runner/work
       - name: Combine OpenAPI specs
-        working-directory: openapi/v1
-        run: redocly bundle api.yaml -o combined.yaml
+        run: redocly bundle docs/openapi/v1/api.yaml -o docs/openapi/v1/combined.yaml
       - name: Deploy Docs
         id: deployment
         uses: sphinx-notes/pages@v3
         with:
+          checkout: false
           documentation_path: "./docs"
           requirements_path: "./docs/requirements.txt"
