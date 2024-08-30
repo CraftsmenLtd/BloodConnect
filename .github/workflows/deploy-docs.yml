@@ -32,7 +32,8 @@ jobs:
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
       - name: Combine OpenAPI specs
-        run: redocly bundle ${{ inputs.documentation_path }}/openapi/v1/api.yaml -o ${{ inputs.documentation_path }}/openapi/v1/combined.yaml
+        working-directory: ${{ documentation_path }}/openapi/v1
+        run: redocly bundle api.yaml -o combined.yaml
       - name: Deploy Docs
         id: deployment
         uses: sphinx-notes/pages@v3
