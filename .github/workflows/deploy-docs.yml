@@ -32,7 +32,7 @@ jobs:
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
       - name: Test LS
-        run: ls -l /home/runner/work/BloodConnect
+        run: ls -l /home/runner/work
       - name: Combine OpenAPI specs
         working-directory: openapi/v1
         run: redocly bundle api.yaml -o combined.yaml
