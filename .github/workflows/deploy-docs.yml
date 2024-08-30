@@ -31,8 +31,10 @@ jobs:
         run: sudo apt-get install -y graphviz
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
+      - name: Test LS
+        run: ls -l /home/runner/work/BloodConnect/BloodConnect
       - name: Combine OpenAPI specs
-        working-directory: docs/openapi/v1
+        working-directory: openapi/v1
         run: redocly bundle api.yaml -o combined.yaml
       - name: Deploy Docs
         id: deployment
