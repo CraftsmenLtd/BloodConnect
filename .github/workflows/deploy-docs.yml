@@ -32,7 +32,7 @@ jobs:
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
       - name: Combine OpenAPI specs
-        working-directory: ${{ inputs.documentation_path }}/openapi/v1
+        working-directory: ./docs/openapi/v1
         run: redocly bundle api.yaml -o combined.yaml
       - name: Deploy Docs
         id: deployment
