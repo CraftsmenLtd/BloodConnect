@@ -2,8 +2,6 @@ openapi: "3.1.0"
 tags:
   - name: bloodconnect
     description: API Endpoints for BloodConnect
-  - name: bloodconnect-auth
-    description: Auth module of BloodConnect
 
 info:
   title: BloodConnect API Documentation
