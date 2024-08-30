@@ -23,7 +23,6 @@ paths:
   /auth/refresh-token:
     post:
       operationId: refreshToken
-      tags: [bloodconnect-auth]
       summary: Get a api refresh token
       description: |
         TBD
