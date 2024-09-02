@@ -1,41 +1,21 @@
 locals {
+  lambda_archive_path = "${path.module}/../../../../core/services/aws/.build/zips"
   lambda_options = {
     refresh-token = {
-      name     = "refresh-token"
-      zip_path = "${path.module}/../../../../core/services/aws/.build/zips/refreshToken.zip"
-      policy   = data.aws_iam_policy_document.lambda_common_policy
-      handler  = "refreshToken.default"
+      name      = "refresh-token"
+      zip_path  = "${local.lambda_archive_path}/refreshToken.zip"
+      handler   = "refreshToken.default"
+      statement = local.policies.common_policies
       env_variables = {
         foo = "bar"
       }
     },
     register-org = {
-      name          = "register-org"
-      zip_path      = "${path.module}/../../../../core/services/aws/.build/zips/registerOrg.zip"
-      policy        = data.aws_iam_policy_document.lambda_common_policy
-      handler       = "registerOrg.default"
+      name      = "register-org"
+      zip_path  = "${local.lambda_archive_path}/registerOrg.zip"
+      handler   = "registerOrg.default"
+      statement = local.policies.common_policies
       env_variables = {}
     }
-  }
-}
-
-resource "aws_lambda_function" "lambda_functions" {
-  #checkov:skip=CKV_AWS_173: "Check encryption settings for Lambda environmental variable"
-  for_each         = local.lambda_options
-  function_name    = "${var.environment}-${each.value.name}-lambda"
-  filename         = each.value.zip_path
-  source_code_hash = filebase64sha256(each.value.zip_path)
-  handler          = each.value.handler
-  role             = aws_iam_role.lambda_roles[each.key].arn
-  runtime          = var.lambda_runtime
-  timeout          = lookup(each.value, "timeout", 60)
-  memory_size      = lookup(each.value, "memory_size", 128)
-
-  environment {
-    variables = lookup(each.value, "env_variables", {})
-  }
-
-  lifecycle {
-    create_before_destroy = true
   }
 }
