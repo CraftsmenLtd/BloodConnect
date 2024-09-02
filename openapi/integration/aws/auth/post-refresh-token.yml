@@ -1,0 +1,24 @@
+type: "aws"
+httpMethod: "POST"
+uri: "arn:aws:apigateway:<<AWS_REGION>>:lambda:path/2015-03-31/functions/arn:aws:lambda:<<AWS_REGION>>:<<ACCOUNT_ID>>:function:<<ENVIRONMENT>>-register-org-lambda/invocations"
+responses:
+  default:
+    statusCode: "200"
+    responseParameters:
+      method.response.header.Access-Control-Allow-Methods: "'POST'"
+      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      method.response.header.Access-Control-Allow-Origin: "'*'"
+    responseTemplates:
+      application/json: |
+        #set($inputRoot = $input.path('$'))
+        #set($context.responseOverride.status = $inputRoot.statusCode)
+        $inputRoot.body
+requestTemplates:
+  application/json: |
+    #set($inputRoot = $input.path('$'))
+    {
+      "organizationName": "$inputRoot.organizationName",
+      "email": "$inputRoot.email",
+      "phoneNumber": "$inputRoot.phoneNumber"
+    }
+passthroughBehavior: "never"
