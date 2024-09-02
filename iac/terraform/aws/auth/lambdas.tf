@@ -8,6 +8,13 @@ locals {
       env_variables = {
         foo = "bar"
       }
+    },
+    register-org = {
+      name          = "register-org"
+      zip_path      = "${path.module}/../../../../core/services/aws/.build/zips/registerOrg.zip"
+      policy        = data.aws_iam_policy_document.lambda_common_policy
+      handler       = "registerOrg.default"
+      env_variables = {}
     }
   }
 }
