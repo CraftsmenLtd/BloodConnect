@@ -9,9 +9,15 @@ RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip a
     python3-sphinx graphviz \
     --no-install-recommends
 
+# AWS CLI v2
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip" && \
+    unzip /tmp/awscliv2.zip -d /tmp && \
+    /tmp/aws/install && \
+    rm -rf /tmp/aws /tmp/awscliv2.zip
+
 # Python Packages
 ARG CHECKOV_VERSION
-RUN pip3 install awscli awscli-local terraform-local checkov==${CHECKOV_VERSION} --break-system-packages
+RUN pip3 install awscli-local terraform-local checkov==${CHECKOV_VERSION} --break-system-packages
 
 # Docs requirements
 COPY docs/requirements.txt /tmp
