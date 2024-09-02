@@ -28,7 +28,7 @@ variable "budget_settings" {
 variable "openapi_files_path" {
   type        = string
   description = "OpenApi files path"
-  default     = "../../../openapi/"
+  default     = "../../../openapi"
 }
 
 variable "openapi_version" {
