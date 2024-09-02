@@ -24,3 +24,21 @@ variable "budget_settings" {
     emails     = []
   }
 }
+
+variable "openapi_files_path" {
+  type        = string
+  description = "OpenApi files path"
+  default     = "../../../openapi/"
+}
+
+variable "openapi_version" {
+  type        = string
+  description = "OpenApi version"
+  default     = "v1"
+}
+
+variable "merged_openapi_file_name" {
+  type        = string
+  description = "Merged OpenAPI file"
+  default     = "mergedOpenApi.json"
+}
