@@ -2,7 +2,8 @@
 set -e
 
 BASE_DIR="$OPENAPI_DIR/paths"
-
+pwd
+ls -al
 # Update integration references in the YAML file
 updateIntegrationsFilesRef() {
     local file="$1"
