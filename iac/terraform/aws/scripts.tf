@@ -1,3 +1,22 @@
+resource "null_resource" "run_update_methods_integrations_script" {
+  provisioner "local-exec" {
+    environment = {
+      OPENAPI_DIRECTORY = var.openapi_files_path
+      API_VERSION       = var.openapi_version
+      CLOUD_PROVIDER    = "aws"
+    }
+    command = "${path.module}/scripts/updateOpenApiIntegrations.sh"
+  }
+
+  depends_on = [
+    aws_api_gateway_rest_api.rest_api
+  ]
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+}
+
 resource "null_resource" "run_prep_openapi_script" {
   provisioner "local-exec" {
     environment = {
@@ -14,6 +33,7 @@ resource "null_resource" "run_prep_openapi_script" {
 
   depends_on = [
     aws_api_gateway_rest_api.rest_api,
+    null_resource.run_update_methods_integrations_script
   ]
 
   triggers = {

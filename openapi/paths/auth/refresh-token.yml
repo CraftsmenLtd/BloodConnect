@@ -21,6 +21,7 @@ post:
             type: "string"
       content: {}
   x-amazon-apigateway-request-validator: "ValidateBodyAndQuery"
+  x-amazon-apigateway-integration: "{{post-refresh-token.yml}}"
 
 options:
   responses:
