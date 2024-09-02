@@ -1,0 +1,75 @@
+post:
+  operationId: "RegisterOrg"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "./../../components/schemas/schemas.yml#/RegisterOrgRequest"
+  responses:
+    "200":
+      description: "200 response"
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: "string"
+        Access-Control-Allow-Methods:
+          schema:
+            type: "string"
+        Access-Control-Allow-Headers:
+          schema:
+            type: "string"
+      content: {}
+  x-amazon-apigateway-request-validator: "ValidateBodyAndQuery"
+  x-amazon-apigateway-integration:
+    type: "aws"
+    httpMethod: "POST"
+    uri: "arn:aws:apigateway:<<AWS_REGION>>:lambda:path/2015-03-31/functions/arn:aws:lambda:<<AWS_REGION>>:<<ACCOUNT_ID>>:function:<<ENVIRONMENT>>-register-org-lambda/invocations"
+    responses:
+      default:
+        statusCode: "200"
+        responseParameters:
+          method.response.header.Access-Control-Allow-Methods: "'POST'"
+          method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          method.response.header.Access-Control-Allow-Origin: "'*'"
+        responseTemplates:
+          application/json: |
+            #set($inputRoot = $input.path('$'))
+            #set($context.responseOverride.status = $inputRoot.statusCode)
+            $inputRoot.body
+    requestTemplates:
+      application/json: |
+        #set($inputRoot = $input.path('$'))
+        {
+          "organizationName": "$inputRoot.organizationName",
+          "email": "$inputRoot.email",
+          "phoneNumber": "$inputRoot.phoneNumber"
+        }
+    passthroughBehavior: "never"
+
+options:
+  responses:
+    "200":
+      description: "200 response"
+      headers:
+        Access-Control-Allow-Origin:
+          schema:
+            type: "string"
+        Access-Control-Allow-Methods:
+          schema:
+            type: "string"
+        Access-Control-Allow-Headers:
+          schema:
+            type: "string"
+      content: {}
+  x-amazon-apigateway-integration:
+    type: "mock"
+    responses:
+      default:
+        statusCode: "200"
+        responseParameters:
+          method.response.header.Access-Control-Allow-Methods: "'OPTIONS'"
+          method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          method.response.header.Access-Control-Allow-Origin: "'*'"
+    requestTemplates:
+      application/json: '{"statusCode":200}'
+    passthroughBehavior: "when_no_match"
