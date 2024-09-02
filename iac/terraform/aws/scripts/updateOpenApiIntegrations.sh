@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BASE_DIR="$OPENAPI_DIR/paths"
+BASE_DIR="$OPENAPI_DIRECTORY/paths"
 
 # Update integration references in the YAML file
 updateIntegrationsFilesRef() {
