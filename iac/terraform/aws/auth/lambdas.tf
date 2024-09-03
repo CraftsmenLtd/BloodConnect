@@ -10,7 +10,10 @@ locals {
       }
     }
   }
+
+  
 }
+
 
 resource "aws_lambda_function" "lambda_functions" {
   #checkov:skip=CKV_AWS_173: "Check encryption settings for Lambda environmental variable"

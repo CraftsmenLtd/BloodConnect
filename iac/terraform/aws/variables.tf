@@ -24,3 +24,8 @@ variable "budget_settings" {
     emails     = []
   }
 }
+
+variable "hosted_zone_id" {
+    description = "hosted zone id for bloodconnect.net"
+    type = string
+}
