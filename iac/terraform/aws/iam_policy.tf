@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "api_gw_policy" {
   version = "2012-10-17"
 
   statement {
-    sid = "ApiGwPolicy"
+    sid    = "ApiGwPolicy"
     effect = "Allow"
 
     principals {

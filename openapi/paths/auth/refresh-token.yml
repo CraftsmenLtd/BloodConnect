@@ -24,6 +24,8 @@ post:
             type: "string"
       content: {}
   x-amazon-apigateway-request-validator: "ValidateBodyAndQuery"
+  x-amazon-apigateway-integration:
+    $ref: ./../../integration/aws/auth/post-refresh-token.yml
 
 options:
     $ref: ./../cors-options.yml
