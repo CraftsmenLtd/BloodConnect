@@ -1,6 +1,6 @@
 type: "aws"
 httpMethod: "POST"
-uri: "arn:aws:apigateway:<<AWS_REGION>>:lambda:path/2015-03-31/functions/arn:aws:lambda:<<AWS_REGION>>:<<ACCOUNT_ID>>:function:<<ENVIRONMENT>>-register-org-lambda/invocations"
+uri: "<<REFRESH_TOKEN_INVOCATION_ARN>>"
 responses:
   default:
     statusCode: "200"
