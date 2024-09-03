@@ -85,7 +85,7 @@ lint-code:
 	npm run lint
 
 lint-api:
-	spectral lint docs/openapi/v1/api.yaml --ruleset docs/openapi/.spectral.yaml
+	spectral lint openapi/versions/v1.yml --ruleset openapi/.spectral.yml
 
 lint: lint-code tf-validate lint-api
 
