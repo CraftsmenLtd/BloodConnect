@@ -13,7 +13,7 @@ locals {
     register-organization = {
       name          = "register-organization"
       handler       = "registerOrganization.default"
-      zip_path      = "${local.lambda_archive_path}/registerOrg.zip"
+      zip_path      = "${local.lambda_archive_path}/registerOrganization.zip"
       statement     = local.policies.common_policies
       env_variables = {}
     }
