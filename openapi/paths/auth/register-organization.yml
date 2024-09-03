@@ -20,7 +20,8 @@ post:
             type: "string"
       content: {}
   x-amazon-apigateway-request-validator: "ValidateBodyAndQuery"
-  x-amazon-apigateway-integration: "{{post-register-organization.yml}}"
+  x-amazon-apigateway-integration:
+    $ref: ./../../integration/aws/auth/post-register-organization.yml
 
 options:
   responses:
