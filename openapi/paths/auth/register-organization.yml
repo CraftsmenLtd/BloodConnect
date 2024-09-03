@@ -4,7 +4,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: "./../../components/schemas/schemas.yml#/RegisterOrgRequest"
+          $ref: "./../../components/schemas/auth/register-organization-payload.yml#/RegisterOrgRequest"
   responses:
     "200":
       description: "200 response"
