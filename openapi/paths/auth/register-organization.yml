@@ -1,5 +1,5 @@
 post:
-  operationId: "RegisterOrg"
+  operationId: "RegisterOrganization"
   requestBody:
     content:
       application/json:

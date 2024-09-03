@@ -27,8 +27,8 @@ paths:
   /auth/refresh-token:
     $ref: "./../paths/auth/refresh-token.yml"
 
-  /auth/register-org:
-    $ref: "./../paths/auth/register-org.yml"
+  /auth/register-organization:
+    $ref: "./../paths/auth/register-organization.yml"
 
 components:
   schemas:
