@@ -1,4 +1,4 @@
-RegisterOrgRequest:
+RegisterOrganizationRequest:
   type: "object"
   required:
     - organizationName
