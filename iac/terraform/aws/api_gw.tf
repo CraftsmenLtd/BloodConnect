@@ -25,7 +25,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   stage_name  = var.environment
 
   depends_on = [
-    null_resource.run_import_open_api_script
+    null_resource.run_update_and_import_open_api_script
   ]
 
   lifecycle {
