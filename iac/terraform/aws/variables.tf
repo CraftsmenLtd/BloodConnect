@@ -25,11 +25,6 @@ variable "budget_settings" {
   }
 }
 
-variable "hosted_zone_id" {
-    description = "hosted zone id for bloodconnect.net"
-    type = string
-}
-
 variable "openapi_directory" {
   type        = string
   description = "OpenApi files path"

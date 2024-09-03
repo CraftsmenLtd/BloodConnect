@@ -17,7 +17,5 @@ locals {
       statement     = local.policies.common_policies
       env_variables = {}
     }
-  }
-
-  
+  }  
 }
