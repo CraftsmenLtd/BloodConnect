@@ -9,11 +9,11 @@ locals {
         foo = "bar"
       }
     },
-    register-org = {
-      name          = "register-org"
-      zip_path      = "${path.module}/../../../../core/services/aws/.build/zips/registerOrg.zip"
+    register-organization = {
+      name          = "register-organization"
+      zip_path      = "${path.module}/../../../../core/services/aws/.build/zips/registerOrganization.zip"
       policy        = data.aws_iam_policy_document.lambda_common_policy
-      handler       = "registerOrg.default"
+      handler       = "registerOrganization.default"
       env_variables = {}
     }
   }
