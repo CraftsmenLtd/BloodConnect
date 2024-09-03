@@ -25,7 +25,7 @@ variable "budget_settings" {
   }
 }
 
-variable "openapi_files_path" {
+variable "openapi_directory" {
   type        = string
   description = "OpenApi files path"
   default     = "../../../openapi"
@@ -37,7 +37,7 @@ variable "openapi_version" {
   default     = "v1"
 }
 
-variable "merged_openapi_file_name" {
+variable "merged_openapi_file" {
   type        = string
   description = "Merged OpenAPI file"
   default     = "mergedOpenApi.json"
