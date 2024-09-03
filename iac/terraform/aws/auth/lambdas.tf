@@ -18,6 +18,4 @@ locals {
       env_variables = {}
     }
   }
-
-  
 }
