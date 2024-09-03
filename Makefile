@@ -14,9 +14,11 @@ DOCKER_LOCALSTACK_CONTAINER_NAME?=bloodconnect-dev-localstack
 DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
 
 # Documentation
-sphinx-html:
-	redocly bundle docs/openapi/v1/api.yaml -o docs/openapi/v1/combined.yaml
+sphinx-html: bundle-openapi
 	(cd docs && make html)
+
+bundle-openapi:
+	redocly bundle openapi/versions/v1.yml -o docs/openapi/v1.yml
 
 
 # Deployment

@@ -8,6 +8,7 @@ on:
       - master
     paths:
       - docs/**
+      - openapi/**
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -34,7 +35,7 @@ jobs:
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
       - name: Combine OpenAPI specs
-        run: redocly bundle docs/openapi/v1/api.yaml -o docs/openapi/v1/combined.yaml
+        run: redocly bundle openapi/versions/v1.yml -o docs/openapi/v1.yml
       - name: Deploy Docs
         id: deployment
         uses: sphinx-notes/pages@v3
