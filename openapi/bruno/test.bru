@@ -4,8 +4,12 @@ meta {
   seq: 3
 }
 
-get {
-  url: http://hu5yu3x7lg.execute-api.localhost.localstack.cloud:4566/localstack
+post {
+  url: http://hu5yu3x7lg.execute-api.localhost.localstack.cloud:4566/localstack/auth/refresh-token
   body: none
   auth: none
+}
+
+headers {
+  refreshToken: none
 }

@@ -4,8 +4,12 @@ meta {
   seq: 3
 }
 
-get {
-  url: {{protocol}}://{{base_url}}/get
+post {
+  url: {{protocol}}://{{base_url}}/auth/refresh-token
   body: none
   auth: none
+}
+
+headers {
+  refreshToken: none
 }
