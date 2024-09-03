@@ -4,7 +4,7 @@
 
 # Docs build
 docs/_build
-docs/**/combined.yaml
+docs/openapi
 
 # Logs
 logs

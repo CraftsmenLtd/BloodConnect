@@ -1,6 +1,0 @@
-extends: spectral:oas
-rules:
-  openapi-tags: true
-  operation-tags: true
-  operation-operationId: false
-  operation-description: true
