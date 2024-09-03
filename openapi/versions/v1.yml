@@ -32,7 +32,6 @@ paths:
 
 components:
   schemas:
-    $ref: "./../components/schemas/schemas.yml"
 
 x-amazon-apigateway-request-validators:
   $ref: "./../validators.yml"

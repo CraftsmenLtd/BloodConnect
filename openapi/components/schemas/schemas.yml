@@ -1,2 +1,0 @@
-RegisterOrgRequest:
-  $ref: "./auth/RegisterOrgRequest.yml"
