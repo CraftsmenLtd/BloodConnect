@@ -37,8 +37,8 @@ variable "openapi_version" {
   default     = "v1"
 }
 
-variable "merged_openapi_file" {
+variable "combined_openapi_file" {
   type        = string
-  description = "Merged OpenAPI file"
-  default     = "mergedOpenApi.json"
+  description = "Combined OpenAPI file"
+  default     = "combined-openapi.json"
 }

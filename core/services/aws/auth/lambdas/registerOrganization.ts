@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 
-async function RegisterOrgLambda(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+async function RegisterOrganizationLambda(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   const response: APIGatewayProxyResult = {
     statusCode: 200,
     body: JSON.stringify({
@@ -12,4 +12,4 @@ async function RegisterOrgLambda(event: APIGatewayProxyEvent): Promise<APIGatewa
   return response
 }
 
-export default RegisterOrgLambda
+export default RegisterOrganizationLambda
