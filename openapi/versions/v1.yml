@@ -7,6 +7,7 @@ tags:
 
 info:
   title: BloodConnect API <<ENVIRONMENT>>
+  description: "BloodConnect API"
   version: "when_no_match"
   contact:
     name: Craftsmen Ltd.
@@ -29,9 +30,6 @@ paths:
 
   /auth/register-organization:
     $ref: "./../paths/auth/register-organization.yml"
-
-components:
-  schemas:
 
 x-amazon-apigateway-request-validators:
   $ref: "./../validators.yml"
