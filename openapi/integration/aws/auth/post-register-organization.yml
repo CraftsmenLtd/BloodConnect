@@ -1,6 +1,6 @@
 type: "aws"
 httpMethod: "POST"
-uri: "<<REGISTER_ORGANIZATION_INVOCATION_ARN>>"
+uri: ${REGISTER_ORGANIZATION_INVOCATION_ARN}"
 responses:
   default:
     statusCode: "200"
@@ -17,6 +17,8 @@ requestTemplates:
   application/json: |
     #set($inputRoot = $input.path('$'))
     {
-      "email": "$inputRoot.email"
+      "organizationName": "$inputRoot.organizationName",
+      "email": "$inputRoot.email",
+      "phoneNumber": "$inputRoot.phoneNumber"
     }
 passthroughBehavior: "never"

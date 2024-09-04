@@ -6,7 +6,7 @@ tags:
     description: Auth module of BloodConnect
 
 info:
-  title: BloodConnect API <<ENVIRONMENT>>
+  title: BloodConnect API ${ENVIRONMENT}
   description: "BloodConnect API"
   version: "when_no_match"
   contact:
@@ -17,12 +17,12 @@ info:
     url: "https://www.apache.org/licenses/LICENSE-2.0"
 
 servers:
-  - url: "http://<<API_GATEWAY_ID>>.execute-api.localhost.localstack.cloud:4566/<<ENVIRONMENT>>"
+  - url: "http://<<API_GATEWAY_ID>>.execute-api.localhost.localstack.cloud:4566/${ENVIRONMENT}"
     description: localstack
-  - url: "http://localhost:4566/<<API_VERSION>>"
+  - url: "http://localhost:4566/${API_VERSION}"
     description: Local
-  - url: "https://<<ENVIRONMENT>>.bloodconnect.net/<<API_VERSION>>"
-    description: <<ENVIRONMENT>>
+  - url: "https://${ENVIRONMENT}.bloodconnect.net/${API_VERSION}"
+    description: ${ENVIRONMENT}
 
 paths:
   /auth/refresh-token:
