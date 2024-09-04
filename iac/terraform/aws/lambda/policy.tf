@@ -12,12 +12,11 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
   }
 }
 
-data "aws_iam_policy_document" "lambda_policies" {
-  for_each = var.lambda_options
-  version  = "2012-10-17"
+data "aws_iam_policy_document" "lambda_policy" {
+  version = "2012-10-17"
 
   dynamic "statement" {
-    for_each = each.value.statement
+    for_each = var.lambda_option.statement
     content {
       sid       = statement.value.sid
       actions   = statement.value.actions
