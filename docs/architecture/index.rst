@@ -10,3 +10,4 @@ Guidelines
    :maxdepth: 2
 
    Architecture
+   SystemDesign
