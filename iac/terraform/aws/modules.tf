@@ -6,6 +6,6 @@ module "auth" {
 }
 
 module "route53" {
-  source = "./route53"
+  source         = "./route53"
   hosted_zone_id = var.hosted_zone_id
 }

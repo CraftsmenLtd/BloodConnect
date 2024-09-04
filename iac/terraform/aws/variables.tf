@@ -43,6 +43,6 @@ variable "combined_openapi_file" {
   default     = "combined-openapi.json"
 }
 variable "hosted_zone_id" {
-    description = "hosted zone id for bloodconnect.net"
-    type = string
+  description = "hosted zone id for bloodconnect.net"
+  type        = string
 }
