@@ -46,6 +46,7 @@ tf-init:
 	$(TF_RUNNER) -chdir=$(TF_DIR) init -input=false $(TF_BACKEND_CONFIG)
 
 tf-plan-apply:
+	touch $(TF_DIR)/combined-openapi.json
 	$(TF_RUNNER) -chdir=$(TF_DIR) plan -input=false -out=tf-apply.out
 
 tf-plan-destroy:
@@ -87,8 +88,8 @@ test:
 lint-code:
 	npm run lint
 
-lint-api:
-	spectral lint openapi/versions/v1.yml --ruleset openapi/.spectral.yml
+lint-api: bundle-openapi
+	spectral lint docs/openapi/v1.yml --ruleset openapi/.spectral.yml
 
 lint: lint-code tf-validate lint-api
 
