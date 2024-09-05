@@ -42,3 +42,8 @@ variable "combined_openapi_file" {
   description = "Combined OpenAPI file"
   default     = "combined-openapi.json"
 }
+
+variable "hosted_zone_id" {
+  type        = string
+  description = "DNS hosted zone id"
+}
