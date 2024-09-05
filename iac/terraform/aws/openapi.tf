@@ -21,7 +21,7 @@ data "template_file" "openapi_definition" {
     ENVIRONMENT = var.environment
     API_VERSION = var.openapi_version
     },
-    module.auth.lambda_invoke_arns
+    local.all_lambda_invoke_arns
   )
 
   depends_on = [

@@ -103,15 +103,6 @@ run-command-%:
 	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) make $* EXTRA_ARGS=$(EXTRA_ARGS)
 
 # Dev commands
-start-dev: run-command-clean-files build-runner-image localstack-start run-command-install-node-packages run-dev
+start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
 run-dev: run-command-build-node-all run-command-package-all run-command-tf-init run-command-tf-plan-apply run-command-tf-apply
-
-clean-files:
-	ls -al
-	rm -R $(TF_DIR)/.terraform || true
-	rm $(TF_DIR)/.terraform* || true
-	rm $(TF_DIR)/localstack_providers_override* || true
-	rm $(TF_DIR)/terraform.tfstate* || true
-	rm $(TF_DIR)/tf-apply.out || true
-	rm $(TF_DIR)/combinedopenapi.json || true
