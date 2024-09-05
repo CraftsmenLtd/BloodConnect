@@ -1,8 +1,0 @@
-type: "aws_proxy"
-httpMethod: "POST"
-uri: "${REFRESH_TOKEN_INVOCATION_ARN}"
-responses:
-  default:
-    statusCode: "200"
-passthroughBehavior: "never"
-contentHandling: "CONVERT_TO_TEXT"

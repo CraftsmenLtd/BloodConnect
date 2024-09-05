@@ -1,0 +1,48 @@
+{
+  "post": {
+    "operationId": "RegisterOrganization",
+    "description": "Register organization account",
+    "tags": [
+      "bloodconnect-auth"
+    ],
+    "requestBody": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./../../components/schemas/auth/register-organization-payload.json#/RegisterOrganizationRequest"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "200 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {}
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/auth/post-register-organization.json"
+    }
+  },
+  "options": {
+    "$ref": "./../cors-options.json"
+  }
+}
