@@ -19,7 +19,7 @@ sphinx-html: bundle-openapi
 	(cd docs && make html)
 
 bundle-openapi:
-	redocly bundle openapi/versions/v1.yml -o docs/openapi/v1.yml
+	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json
 
 
 # Deployment
@@ -90,7 +90,7 @@ lint-code:
 	npm run lint
 
 lint-api: bundle-openapi
-	spectral lint docs/openapi/v1.yml --ruleset openapi/.spectral.yml
+	spectral lint docs/openapi/v1.json --ruleset openapi/.spectral.json
 
 lint: lint-code tf-validate lint-api
 

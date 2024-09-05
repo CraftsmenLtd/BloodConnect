@@ -4,6 +4,7 @@
     "openapi-tags": true,
     "operation-tags": true,
     "operation-operationId": false,
-    "operation-description": true
+    "operation-description": true,
+    "oas3-server-variables": "off"
   }
 }
