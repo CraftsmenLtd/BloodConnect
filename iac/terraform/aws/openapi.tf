@@ -1,6 +1,6 @@
 resource "null_resource" "run_update_and_import_open_api_script" {
   provisioner "local-exec" {
-    command = "redocly bundle ${var.openapi_directory}/versions/${var.openapi_version}.json -o ${var.combined_openapi_file}"
+    command = "redocly bundle ${var.openapi_directory}/versions/${var.api_version}.json -o ${var.combined_openapi_file}"
   }
 
   triggers = {
@@ -19,7 +19,7 @@ data "template_file" "openapi_definition" {
 
   vars = merge({
     ENVIRONMENT = var.environment
-    API_VERSION = var.openapi_version
+    API_VERSION = var.api_version
     },
     local.all_lambda_invoke_arns
   )

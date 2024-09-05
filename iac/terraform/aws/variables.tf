@@ -31,14 +31,14 @@ variable "openapi_directory" {
   default     = "../../../openapi"
 }
 
-variable "openapi_version" {
+variable "api_version" {
   type        = string
-  description = "OpenApi version"
+  description = "Api version"
   default     = "v1"
 }
 
 variable "combined_openapi_file" {
   type        = string
   description = "Combined OpenAPI file"
-  default     = "combined-openapi.json"
+  default     = "openapi.json"
 }

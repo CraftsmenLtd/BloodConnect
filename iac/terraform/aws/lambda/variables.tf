@@ -18,10 +18,9 @@ variable "lambda_architecture" {
 variable "lambda_option" {
   description = "Lambda function configuration"
   type = object({
-    name                = string
-    zip_path            = string
-    handler             = string
-    openapi_placeholder = string
+    name     = string
+    zip_path = string
+    handler  = string
     statement = list(object({
       sid       = string
       actions   = list(string)

@@ -46,11 +46,11 @@ tf-init:
 	$(TF_RUNNER) -chdir=$(TF_DIR) init -input=false $(TF_BACKEND_CONFIG)
 
 tf-plan-apply:
-	touch $(TF_DIR)/combined-openapi.json
+	touch $(TF_DIR)/openapi.json
 	$(TF_RUNNER) -chdir=$(TF_DIR) plan -input=false -out=tf-apply.out
 
 tf-plan-destroy:
-	touch $(TF_DIR)/combined-openapi.json
+	touch $(TF_DIR)/openapi.json
 	$(TF_RUNNER) -chdir=$(TF_DIR) plan -input=false -out=tf-destroy.out --destroy
 
 tf-apply:
