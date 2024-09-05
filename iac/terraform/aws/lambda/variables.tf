@@ -15,9 +15,9 @@ variable "lambda_architecture" {
   default     = ["arm64"]
 }
 
-variable "lambda_options" {
-  description = "Map of Lambda function configurations"
-  type = map(object({
+variable "lambda_option" {
+  description = "Lambda function configuration"
+  type = object({
     name     = string
     zip_path = string
     handler  = string
@@ -29,5 +29,5 @@ variable "lambda_options" {
     env_variables = map(string)
     timeout       = optional(number, 60)
     memory_size   = optional(number, 128)
-  }))
+  })
 }

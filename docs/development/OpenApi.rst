@@ -10,4 +10,4 @@ Guideline
 
 .. raw:: html
 
-   Check out the open api specs <a href="../openapi/api.html">here</a>.
+   Check out the open api specs <a href="../openapi/api.html">HERE</a>.

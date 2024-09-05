@@ -14,14 +14,14 @@ And then will deploy latest documentation to github pages.
 Continuous Integration
 ~~~~~~~~~~~~~~~~~~~~~~
 This is the pipeline used by developers. It will run on every push on dev branches except master. It includes
-- Run unit tests
-- Run JS lint
-- Validate Terraform
-- Terraform static security check
-- Docker static security check
-- OpenAPI specs lint
-- Install to localstack
-- Run system integration tests using localstack
+* Run unit tests
+* Run JS lint
+* Validate Terraform
+* Terraform static security check
+* Docker static security check
+* OpenAPI specs lint
+* Install to localstack
+* Run system integration tests using localstack
 
 Branch Deployment
 ~~~~~~~~~~~~~~~~~

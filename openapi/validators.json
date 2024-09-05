@@ -1,0 +1,6 @@
+{
+  "ValidateBodyAndQuery": {
+    "validateRequestParameters": true,
+    "validateRequestBody": true
+  }
+}

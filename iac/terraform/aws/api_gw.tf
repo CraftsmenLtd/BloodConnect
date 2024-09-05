@@ -5,6 +5,7 @@ resource "aws_api_gateway_rest_api" "rest_api" {
     "application/binary",
     "application/bxf+xml",
   ]
+  body = data.template_file.openapi_definition.rendered
 
   lifecycle {
     create_before_destroy = true

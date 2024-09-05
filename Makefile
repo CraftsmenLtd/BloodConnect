@@ -15,10 +15,11 @@ DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
 
 # Documentation
 sphinx-html: bundle-openapi
+	rm -rf docs/_build
 	(cd docs && make html)
 
 bundle-openapi:
-	redocly bundle openapi/versions/v1.yml -o docs/openapi/v1.yml
+	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json
 
 
 # Deployment
@@ -45,9 +46,11 @@ tf-init:
 	$(TF_RUNNER) -chdir=$(TF_DIR) init -input=false $(TF_BACKEND_CONFIG)
 
 tf-plan-apply:
+	touch $(TF_DIR)/openapi.json
 	$(TF_RUNNER) -chdir=$(TF_DIR) plan -input=false -out=tf-apply.out
 
 tf-plan-destroy:
+	touch $(TF_DIR)/openapi.json
 	$(TF_RUNNER) -chdir=$(TF_DIR) plan -input=false -out=tf-destroy.out --destroy
 
 tf-apply:
@@ -86,8 +89,8 @@ test:
 lint-code:
 	npm run lint
 
-lint-api:
-	spectral lint openapi/versions/v1.yml --ruleset openapi/.spectral.yml
+lint-api: bundle-openapi
+	spectral lint docs/openapi/v1.json --ruleset openapi/.spectral.json
 
 lint: lint-code tf-validate lint-api
 
