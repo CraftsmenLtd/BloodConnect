@@ -5,7 +5,7 @@ resource "aws_api_gateway_rest_api" "rest_api" {
     "application/binary",
     "application/bxf+xml",
   ]
-  body = jsonencode(templatefile(
+  body = jsondecode(templatefile(
     var.combined_openapi_file,
     merge({
         ENVIRONMENT = var.environment
