@@ -66,6 +66,19 @@ resource "aws_api_gateway_method_settings" "api_gw_settings" {
   }
 }
 
+resource "aws_lambda_permission" "lambda_invoke_permission" {
+  for_each = {
+    for lambda in local.all_lambda_metadata : lambda.lambda_function_name => lambda
+  }
+
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = each.value.lambda_function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*"
+}
+
 #resource "aws_api_gateway_domain_name" "api_gw_domain_name" {
 #  domain_name     = "${var.environment}.${var.bloodconnect_domain}"
 #}
