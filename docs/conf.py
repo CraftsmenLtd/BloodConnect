@@ -39,5 +39,5 @@ redoc_uri = "https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"
 redoc = [{
     "name": "BloodConnect API",
     "page": "openapi/api",
-    "spec": f"openapi/v1.yml"
+    "spec": f"openapi/v1.json"
 }]
