@@ -24,7 +24,7 @@ bundle-openapi:
 	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json
 
 replace-dev-url:
-	local_base_url=$$(make tf-output-aws_invoke_base_url | tail -n 1); \
+	local_base_url=$$(make run-command-tf-output-aws_invoke_base_url | tail -n 1); \
 	if [[ "$$OSTYPE" == "darwin"* ]]; then \
 		command_prefix="''"; \
 	else \
