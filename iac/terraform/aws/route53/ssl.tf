@@ -6,6 +6,7 @@ provider "aws" {
 resource "aws_acm_certificate" "ssl_certificate" {
   domain_name       = var.domain_name
   validation_method = var.domain_validation_method
+  provider = aws.region
 
   subject_alternative_names = [
     "www.${var.domain_name}",
