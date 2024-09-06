@@ -8,12 +8,6 @@ resource "null_resource" "run_update_and_import_open_api_script" {
   }
 }
 
-locals {
-  all_lambda_invoke_arns = merge(
-    module.auth.lambda_invoke_arns
-  )
-}
-
 data "template_file" "openapi_definition" {
   template = file(var.combined_openapi_file)
 
