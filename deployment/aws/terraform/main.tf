@@ -5,5 +5,6 @@ module "aws" {
 }
 
 data "aws_route53_zone" "route53_zone" {
-  name         = "bloodconnect.net"
+  name         = var.domain_name
 }
+
