@@ -18,8 +18,13 @@ sphinx-html: bundle-openapi
 	rm -rf docs/_build
 	(cd docs && make html)
 
+
+# API
 bundle-openapi:
 	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json
+
+replace-dev-url:
+	sed -i "s/<<local_base_url>>/$(make run-command-tf-output-aws_invoke_base_url)/g" openapi/bruno/environments/local.bru
 
 
 # Deployment
@@ -68,6 +73,9 @@ tf-validate: tf-init
 tf-security: tf-init
 	checkov --directory $(TF_DIR) $(TF_CHECKOV_SKIP)
 
+tf-output-%:
+	terraform output -raw $*
+
 
 # Nodejs
 install-node-packages:
@@ -105,4 +113,4 @@ run-command-%:
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
-run-dev: run-command-build-node-all run-command-package-all run-command-tf-init run-command-tf-plan-apply run-command-tf-apply
+run-dev: run-command-build-node-all run-command-package-all run-command-tf-init run-command-tf-plan-apply run-command-tf-apply replace-dev-url

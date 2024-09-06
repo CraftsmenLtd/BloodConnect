@@ -5,7 +5,15 @@ resource "aws_api_gateway_rest_api" "rest_api" {
     "application/binary",
     "application/bxf+xml",
   ]
-  body = data.template_file.openapi_definition.rendered
+  body = templatefile(
+    var.combined_openapi_file,
+    merge({
+        ENVIRONMENT = var.environment
+        API_VERSION = var.api_version
+      },
+      local.all_lambda_invoke_arns
+    )
+  )
 
   lifecycle {
     create_before_destroy = true
@@ -26,7 +34,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   stage_name  = var.environment
 
   depends_on = [
-    null_resource.run_update_and_import_open_api_script
+    null_resource.update_and_import_open_api_script
   ]
 
   lifecycle {
