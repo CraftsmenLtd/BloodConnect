@@ -24,7 +24,13 @@ bundle-openapi:
 	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json
 
 replace-dev-url:
-	sed -i "s/<<local_base_url>>/$(make run-command-tf-output-aws_invoke_base_url)/g" openapi/bruno/environments/local.bru
+	local_base_url=$$(make tf-output-aws_invoke_base_url | tail -n 1); \
+	if [[ "$$OSTYPE" == "darwin"* ]]; then \
+		command_prefix="''"; \
+	else \
+		command_prefix=""; \
+	fi; \
+	sed -i $$command_prefix "s|<<local_base_url>>|$$local_base_url|g" openapi/bruno/environments/local.bru
 
 
 # Deployment
@@ -65,16 +71,16 @@ tf-destroy:
 	$(TF_RUNNER) -chdir=$(TF_DIR) apply -input=false tf-destroy.out
 
 tf-fmt:
-	terraform -chdir=iac/terraform fmt -recursive
+	$(TF_RUNNER) -chdir=iac/terraform fmt -recursive
 
 tf-validate: tf-init
-	terraform -chdir=$(TF_DIR) validate
+	$(TF_RUNNER) -chdir=$(TF_DIR) validate
 
 tf-security: tf-init
 	checkov --directory $(TF_DIR) $(TF_CHECKOV_SKIP)
 
 tf-output-%:
-	terraform output -raw $*
+	$(TF_RUNNER) -chdir=$(TF_DIR) output -raw $*
 
 
 # Nodejs
