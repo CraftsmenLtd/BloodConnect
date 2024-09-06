@@ -5,7 +5,7 @@ resource "aws_api_gateway_rest_api" "rest_api" {
     "application/binary",
     "application/bxf+xml",
   ]
-  body = templatefile(
+  body = jsonencode(templatefile(
     var.combined_openapi_file,
     merge({
         ENVIRONMENT = var.environment
@@ -13,7 +13,11 @@ resource "aws_api_gateway_rest_api" "rest_api" {
       },
       local.all_lambda_invoke_arns
     )
-  )
+  ))
+
+  depends_on = [
+    null_resource.update_and_import_open_api_script
+  ]
 
   lifecycle {
     create_before_destroy = true
