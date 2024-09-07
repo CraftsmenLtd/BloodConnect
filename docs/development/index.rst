@@ -13,6 +13,7 @@ Guidelines
    CloudDevGuideline
    PRGuideline
    TicketLifecycle
+   BranchManagement
    DirectoryOrganization
 
 Dive into the Code
