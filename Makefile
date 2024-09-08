@@ -106,3 +106,10 @@ run-command-%:
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
 run-dev: run-command-build-node-all run-command-package-all run-command-tf-init run-command-tf-plan-apply run-command-tf-apply
+
+swagger-ui:
+	docker-compose -f openapi/docker-compose.yml up -d --build
+
+swagger-ui-restart:
+	docker-compose -f openapi/docker-compose.yml down
+	make swagger-ui
