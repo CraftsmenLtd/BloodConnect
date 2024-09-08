@@ -45,6 +45,15 @@
       "$ref": "./../paths/auth/register-organization.json"
     }
   },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
   "x-amazon-apigateway-request-validators": {
     "$ref": "./../validators.json"
   }

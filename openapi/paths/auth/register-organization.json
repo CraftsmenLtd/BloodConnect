@@ -40,7 +40,12 @@
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
       "$ref": "./../../integration/aws/auth/post-register-organization.json"
-    }
+    },
+    "security": [
+      {
+        "BearerAuth": []
+      }
+    ]
   },
   "options": {
     "$ref": "./../cors-options.json"
