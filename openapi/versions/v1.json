@@ -8,12 +8,16 @@
     {
       "name": "bloodconnect-auth",
       "description": "Auth module of BloodConnect"
+    },
+    {
+      "name": "cors-options",
+      "description": "API Endpoints for BloodConnect cors options"
     }
   ],
   "info": {
     "title": "BloodConnect API ${ENVIRONMENT}",
     "description": "BloodConnect API",
-    "version": "when_no_match",
+    "version": "${API_VERSION}",
     "contact": {
       "name": "Craftsmen Ltd.",
       "url": "https://craftsmenltd.com/"
@@ -25,8 +29,8 @@
   },
   "servers": [
     {
-      "url": "http://localhost:4566/${API_VERSION}",
-      "description": "Local"
+      "url": "http://API_GATEWAY_ID.execute-api.localhost.localstack.cloud:4566/localstack",
+      "description": "localstack"
     },
     {
       "url": "https://${ENVIRONMENT}.bloodconnect.net/${API_VERSION}",
