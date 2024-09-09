@@ -11,7 +11,7 @@ Guidelines
 
    CodingGuideline
    CloudDevGuideline
-   PRGuideline
+   GitWorkflow
    TicketLifecycle
    DirectoryOrganization
 
