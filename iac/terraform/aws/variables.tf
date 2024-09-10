@@ -25,6 +25,11 @@ variable "budget_settings" {
   }
 }
 
+variable "domain_name" {
+  type    = string
+  default = ""
+}
+
 variable "openapi_directory" {
   type        = string
   description = "OpenApi files path"
