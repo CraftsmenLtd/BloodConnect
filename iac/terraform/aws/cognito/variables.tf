@@ -9,23 +9,14 @@ variable "lambda_runtime" {
   default     = "nodejs20.x"
 }
 
-variable "user_pool_name" {
-  type    = string
-  default = "user_pool"
-}
-
 variable "verified_domain_arn" {
   type = string
 }
 
-variable "table_arn" {
+variable "dynamodb_table_arn" {
   type = string
 }
 
 variable "domain_name" {
-  type = string
-}
-
-variable "table_name" {
   type = string
 }

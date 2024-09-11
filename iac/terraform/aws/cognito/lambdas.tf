@@ -1,24 +1,25 @@
 locals {
   lambda_archive_path = "${path.module}/../../../../core/services/aws/.build/zips"
   lambda_options = {
-    custom_email_template = {
-      name          = "custom-email-template"
-      handler       = "customEmailTemplate.default"
-      zip_path      = "${local.lambda_archive_path}/customEmailTemplate.zip"
+    cognito_custom_message_trigger = {
+      name          = "cognito-custom-message-trigger"
+      handler       = "cognitoCustomMessageTrigger.handler"
+      zip_path      = "${local.lambda_archive_path}/cognitoCustomMessageTrigger.zip"
       statement     = local.policies.common_policies
       env_variables = {}
     },
-    post_confirmation = {
-      name      = "post-confirmation"
-      handler   = "postConfirmation.default"
-      zip_path  = "${local.lambda_archive_path}/postConfirmation.zip"
+    cognito_post_confirmation_trigger = {
+      name      = "cognito-post-confirmation-trigger"
+      handler   = "cognitoPostConfirmationTrigger.handler"
+      zip_path  = "${local.lambda_archive_path}/cognitoPostConfirmationTrigger.zip"
       statement = concat(local.policies.common_policies, local.policies.dynamodb_policy)
       env_variables = {
-        DYNAMODB_TABLE = "${var.table_name}"
+        DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
       }
     }
   }
 }
+
 
 module "lambda" {
   for_each      = local.lambda_options
