@@ -22,7 +22,7 @@ locals {
           "dynamodb:GetItem",
           "dynamodb:UpdateItem"
         ]
-        resources = [var.table_arn]
+        resources = [var.dynamodb_table_arn]
       }
     ]
   }

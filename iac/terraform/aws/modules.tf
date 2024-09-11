@@ -9,16 +9,14 @@ module "database" {
 }
 
 module "domain_verification" {
-  source      = "./domainVerification"
+  source      = "./domain_verification"
   domain_name = var.domain_name
 }
 
 module "cognito" {
-  source              = "./auth_cognito"
+  source              = "./cognito"
   environment         = var.environment
   verified_domain_arn = module.domain_verification.ses_domain_identity_arn
-  table_arn           = module.database.dynamodb_table_arn
-  user_pool_name      = "user_pool"
+  dynamodb_table_arn  = module.database.dynamodb_table_arn
   domain_name         = var.domain_name
-  table_name          = module.database.dynamodb_table_name
 }
