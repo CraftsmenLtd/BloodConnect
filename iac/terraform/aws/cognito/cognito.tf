@@ -1,5 +1,9 @@
+locals {
+  from_email_address = "no-reply@${var.domain_name}"
+}
+
 resource "aws_cognito_user_pool" "user_pool" {
-  name = "${var.environment}-${var.user_pool_name}"
+  name = "${var.environment}-user-pool"
 
   schema {
     attribute_data_type = "String"
@@ -26,8 +30,8 @@ resource "aws_cognito_user_pool" "user_pool" {
   username_attributes      = ["email"]
 
   lambda_config {
-    custom_message    = module.lambda["custom_email_template"].lambda_arn
-    post_confirmation = module.lambda["post_confirmation"].lambda_arn
+    custom_message    = module.lambda["cognito_custom_message_trigger"].lambda_arn
+    post_confirmation = module.lambda["cognito_post_confirmation_trigger"].lambda_arn
   }
 
   password_policy {
@@ -50,13 +54,13 @@ resource "aws_cognito_user_pool" "user_pool" {
   mfa_configuration = "OFF"
   email_configuration {
     email_sending_account = "DEVELOPER"
-    from_email_address    = "no-reply@${var.domain_name}"
+    from_email_address    = local.from_email_address
     source_arn            = var.verified_domain_arn
   }
 }
 
 resource "aws_cognito_user_pool_client" "app_pool_client" {
-  name                                 = "${var.environment}-app_pool_client"
+  name                                 = "${var.environment}-app-pool-client"
   user_pool_id                         = aws_cognito_user_pool.user_pool.id
   generate_secret                      = false
   allowed_oauth_flows_user_pool_client = true

@@ -23,7 +23,7 @@ function postConfirmationLambda(
     }
 
     const params = {
-      TableName: process.env.DYNAMODB_TABLE,
+      TableName: process.env.DYNAMODB_TABLE_NAME,
       Item: userData
     }
 
