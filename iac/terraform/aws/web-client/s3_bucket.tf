@@ -14,6 +14,41 @@ resource "aws_s3_bucket" "log_store" {
   }
 }
 
+resource "aws_s3_bucket" "cloudtrail_bucket" {
+  bucket = "${var.domain_name}-log-cloudtrail"
+
+  tags = {
+    Name = "CloudTrail Logs"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "cloudtrail_logs_public_access_block" {
+  bucket = aws_s3_bucket.cloudtrail_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_public_access_block" "static_site_public_access_block" {
+  bucket = aws_s3_bucket.static_site.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_public_access_block" "log_store_public_access_block" {
+  bucket = aws_s3_bucket.log_store.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 resource "aws_s3_bucket" "cloudfront_failover_bucket" {
   bucket = "${var.domain_name}-failover"
 }
@@ -47,7 +82,7 @@ resource "aws_s3_bucket_policy" "log_store_policy" {
         Principal = {
           Service = "cloudfront.amazonaws.com"
         },
-        Action = "s3:PutObject",
+        Action   = "s3:PutObject",
         Resource = "${aws_s3_bucket.log_store.arn}/*",
         Condition = {
           StringEquals = {
@@ -59,4 +94,4 @@ resource "aws_s3_bucket_policy" "log_store_policy" {
   })
 }
 
-data aws_caller_identity "current" {}
+data "aws_caller_identity" "current" {}

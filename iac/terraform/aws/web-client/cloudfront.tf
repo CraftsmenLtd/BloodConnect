@@ -1,6 +1,6 @@
 resource "aws_cloudfront_distribution" "cdn" {
-#checkov:skip=CKV_AWS_68: "CloudFront Distribution should have WAF enabled"
-#checkov:skip=CKV2_AWS_47: "Ensure AWS CloudFront attached WAFv2 WebACL is configured with AMR for Log4j Vulnerability"
+  #checkov:skip=CKV_AWS_68: "CloudFront Distribution should have WAF enabled"
+  #checkov:skip=CKV2_AWS_47: "CloudFront Distribution should have WAF enabled"
   origin {
     domain_name = aws_s3_bucket.static_site.bucket_regional_domain_name
     origin_id   = "S3PrimaryOrigin"

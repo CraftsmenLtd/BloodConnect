@@ -17,6 +17,6 @@ variable "domain_name" {
 
 variable "cloudfront_response_policy_id" {
   description = "Cloudfront Managed response header policy id for CORS policy"
-  type = string
-  default = "5cc3b908-e619-4b99-88e5-2cf7f45965bd"
+  type        = string
+  default     = "5cc3b908-e619-4b99-88e5-2cf7f45965bd"
 }
