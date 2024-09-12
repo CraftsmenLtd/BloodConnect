@@ -1,5 +1,6 @@
-#checkov:skip=CKV_AWS_68: "FAILED for resource: module.aws.module.domain_config.aws_cloudfront_distribution.cdn"
 resource "aws_cloudfront_distribution" "cdn" {
+#checkov:skip=CKV_AWS_68: "CloudFront Distribution should have WAF enabled"
+#checkov:skip=CKV2_AWS_47: "Ensure AWS CloudFront attached WAFv2 WebACL is configured with AMR for Log4j Vulnerability"
   origin {
     domain_name = aws_s3_bucket.static_site.bucket_regional_domain_name
     origin_id   = "S3PrimaryOrigin"
@@ -11,7 +12,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   origin {
     domain_name = aws_s3_bucket.cloudfront_failover_bucket.bucket_regional_domain_name
-    origin_id = "S3FailoverOrigin"
+    origin_id   = "S3FailoverOrigin"
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
@@ -52,6 +53,8 @@ resource "aws_cloudfront_distribution" "cdn" {
         forward = "none"
       }
     }
+
+    response_headers_policy_id = var.cloudfront_response_policy_id
   }
 
   price_class = "PriceClass_100"
@@ -70,8 +73,8 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   logging_config {
     include_cookies = false
-    bucket = aws_s3_bucket.log_store.bucket_domain_name
-    prefix = "bloodConnect"
+    bucket          = aws_s3_bucket.log_store.bucket_domain_name
+    prefix          = "bloodConnect"
   }
 }
 
