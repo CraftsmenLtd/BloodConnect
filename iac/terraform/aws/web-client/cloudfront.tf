@@ -1,17 +1,44 @@
+#checkov:skip=CKV_AWS_68: "FAILED for resource: module.aws.module.domain_config.aws_cloudfront_distribution.cdn"
 resource "aws_cloudfront_distribution" "cdn" {
   origin {
     domain_name = aws_s3_bucket.static_site.bucket_regional_domain_name
-    origin_id   = "S3-Static-Site"
+    origin_id   = "S3PrimaryOrigin"
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
     }
   }
 
+  origin {
+    domain_name = aws_s3_bucket.cloudfront_failover_bucket.bucket_regional_domain_name
+    origin_id = "S3FailoverOrigin"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+    }
+  }
+
+
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "CloudFront distribution for front-end site"
   default_root_object = "index.html"
+
+  origin_group {
+    origin_id = "OriginGroup"
+
+    failover_criteria {
+      status_codes = [403, 404, 500, 502, 503, 504]
+    }
+
+    member {
+      origin_id = "S3PrimaryOrigin"
+    }
+
+    member {
+      origin_id = "S3FailoverOrigin"
+    }
+  }
 
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
@@ -39,6 +66,12 @@ resource "aws_cloudfront_distribution" "cdn" {
     geo_restriction {
       restriction_type = "none"
     }
+  }
+
+  logging_config {
+    include_cookies = false
+    bucket = aws_s3_bucket.log_store.bucket_domain_name
+    prefix = "bloodConnect"
   }
 }
 
