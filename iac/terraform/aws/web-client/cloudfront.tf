@@ -8,10 +8,10 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
-  enabled              = true
-  is_ipv6_enabled      = true
-  comment              = "CloudFront distribution for front-end site"
-  default_root_object  = "index.html"
+  enabled             = true
+  is_ipv6_enabled     = true
+  comment             = "CloudFront distribution for front-end site"
+  default_root_object = "index.html"
 
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
@@ -30,9 +30,9 @@ resource "aws_cloudfront_distribution" "cdn" {
   price_class = "PriceClass_100"
 
   viewer_certificate {
-    acm_certificate_arn            = data.aws_acm_certificate.certificate.arn
-    ssl_support_method              = "sni-only"
-    minimum_protocol_version        = "TLSv1.2_2018"
+    acm_certificate_arn      = data.aws_acm_certificate.certificate.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2018"
   }
 
   restrictions {
@@ -43,9 +43,9 @@ resource "aws_cloudfront_distribution" "cdn" {
 }
 
 data "aws_acm_certificate" "certificate" {
-  domain       = var.domain_name
-  statuses     = ["ISSUED"]
-  most_recent  = true
+  domain      = var.domain_name
+  statuses    = ["ISSUED"]
+  most_recent = true
 }
 
 resource "aws_cloudfront_origin_access_identity" "oai" {

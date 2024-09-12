@@ -6,9 +6,9 @@ resource "aws_apigatewayv2_api" "api_main" {
 }
 
 resource "aws_apigatewayv2_domain_name" "main_custom_domain" {
-  domain_name     = local.www_domain
+  domain_name = local.www_domain
   domain_name_configuration {
-    certificate_arn = var.acm_certificate_arn
+    certificate_arn = data.aws_acm_certificate.certificate.arn
     endpoint_type   = "REGIONAL"
     security_policy = "TLS_1_2"
   }
@@ -21,9 +21,9 @@ resource "aws_apigatewayv2_api" "api_subdomain" {
 }
 
 resource "aws_apigatewayv2_domain_name" "subdomain_custom_domain" {
-  domain_name     = local.api_subdomain_name
+  domain_name = local.api_subdomain_name
   domain_name_configuration {
-    certificate_arn = var.acm_certificate_arn
+    certificate_arn = data.aws_acm_certificate.certificate.arn
     endpoint_type   = "REGIONAL"
     security_policy = "TLS_1_2"
   }
