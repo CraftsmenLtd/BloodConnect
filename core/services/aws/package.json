@@ -16,8 +16,9 @@
     "package-service": "npm run build-service && npm run package"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.648.0",
-    "@aws-sdk/lib-dynamodb": "^3.648.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.650.0",
+    "@aws-sdk/client-dynamodb": "^3.650.0",
+    "@aws-sdk/lib-dynamodb": "^3.650.0",
     "aws-lambda": "^1.0.7",
     "ksuid": "^3.0.0"
   },
