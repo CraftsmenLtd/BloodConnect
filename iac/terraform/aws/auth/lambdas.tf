@@ -17,7 +17,10 @@ locals {
       zip_path                   = "${local.lambda_archive_path}/registerOrganization.zip"
       statement                  = local.policies.common_policies
       invocation_arn_placeholder = "REGISTER_ORGANIZATION_INVOCATION_ARN"
-      env_variables              = {}
+      env_variables = {
+        USER_POOL_ID = var.user_pool_id,
+        CLIENT_ID    = var.client_id
+      }
     }
   }
 }

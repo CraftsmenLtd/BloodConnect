@@ -52,11 +52,11 @@ resource "aws_cognito_user_pool" "user_pool" {
     email_subject        = "Your Verification Code"
   }
   mfa_configuration = "OFF"
-  email_configuration {
-    email_sending_account = "DEVELOPER"
-    from_email_address    = local.from_email_address
-    source_arn            = var.verified_domain_arn
-  }
+  # email_configuration {
+  #   email_sending_account = "DEVELOPER"
+  #   from_email_address    = local.from_email_address
+  #   source_arn            = var.verified_domain_arn
+  # }
 }
 
 resource "aws_cognito_user_pool_client" "app_pool_client" {

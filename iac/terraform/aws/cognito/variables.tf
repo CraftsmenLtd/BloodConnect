@@ -9,9 +9,9 @@ variable "lambda_runtime" {
   default     = "nodejs20.x"
 }
 
-variable "verified_domain_arn" {
-  type = string
-}
+# variable "verified_domain_arn" {
+#   type = string
+# }
 
 variable "dynamodb_table_arn" {
   type = string
