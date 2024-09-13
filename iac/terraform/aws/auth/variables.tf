@@ -8,6 +8,11 @@ variable "user_pool_id" {
   description = "Cognito user pool ID"
 }
 
+variable "user_pool_arn" {
+  type        = string
+  description = "Cognito user pool arn"
+}
+
 variable "client_id" {
   type        = string
   description = "Cognito client ID"

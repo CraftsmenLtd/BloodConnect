@@ -11,10 +11,9 @@ const ORGANIZATION_GROUP = 'organization';
 
 const client = new CognitoIdentityProviderClient({ region });
 
-async function RegisterOrganizationLambda(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+async function RegisterOrganizationLambda(event: any): Promise<APIGatewayProxyResult> {
   try {
-    const requestBody = JSON.parse(event.body || '{}');
-    const { email, organizationName } = requestBody;
+    const { email, organizationName } = event;
 
     if (!email || !organizationName) {
       return {

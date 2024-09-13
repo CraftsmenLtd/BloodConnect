@@ -13,6 +13,17 @@ locals {
           "arn:aws:logs:*:*:*"
         ]
       }
+    ],
+    cognito_policies = [
+      {
+        sid = "CognitoPolicy"
+        actions = [
+          "cognito-idp:AdminCreateUser"
+        ]
+        resources = [
+          var.user_pool_arn
+        ]
+      }
     ]
   }
 }

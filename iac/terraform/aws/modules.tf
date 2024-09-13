@@ -1,8 +1,9 @@
 module "auth" {
-  source      = "./auth"
-  environment = var.environment
-  user_pool_id = module.cognito.user_pool_id
-  client_id    = module.cognito.client_id
+  source        = "./auth"
+  environment   = var.environment
+  user_pool_id  = module.cognito.user_pool_id
+  client_id     = module.cognito.client_id
+  user_pool_arn = module.cognito.user_pool_arn
 }
 
 module "database" {
