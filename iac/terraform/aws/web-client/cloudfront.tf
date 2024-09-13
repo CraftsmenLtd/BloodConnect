@@ -70,12 +70,6 @@ resource "aws_cloudfront_distribution" "cdn" {
       restriction_type = "none"
     }
   }
-
-  logging_config {
-    include_cookies = false
-    bucket          = aws_s3_bucket.log_store.bucket_domain_name
-    prefix          = "bloodConnect"
-  }
 }
 
 data "aws_acm_certificate" "certificate" {
