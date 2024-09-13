@@ -16,7 +16,7 @@
     }
   },
   "requestTemplates": {
-    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"organizationName\": \"$inputRoot.organizationName\",\n  \"email\": \"$inputRoot.email\",\n  \"phoneNumber\": \"$inputRoot.phoneNumber\"\n}"
+    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"organizationName\": \"$inputRoot.organizationName\",\n  \"email\": \"$inputRoot.email\",\n  \"password\": \"$inputRoot.password\"\n}"
   },
   "passthroughBehavior": "never"
 }

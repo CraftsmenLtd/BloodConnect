@@ -11,14 +11,14 @@
       "email": {
         "type": "string"
       },
-      "phoneNumber": {
+      "password": {
         "type": "string"
       }
     },
     "example": {
       "organizationName": "org name",
       "email": "newuser@example.com",
-      "phoneNumber": "+8801XXXXXXXXX"
+      "password": "ABab@#12"
     }
   }
 }
