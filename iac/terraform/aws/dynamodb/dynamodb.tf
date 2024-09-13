@@ -15,4 +15,23 @@ resource "aws_dynamodb_table" "blood_connect_data" {
     name = "sk"
     type = "S"
   }
+
+  # GSI attributes
+  attribute {
+    name = "gsiPk"
+    type = "S"
+  }
+
+  attribute {
+    name = "gsiSk"
+    type = "S"
+  }
+
+  # Adding the GSI
+  global_secondary_index {
+    name            = "gsi-index"
+    hash_key        = "gsiPk"
+    range_key       = "gsiSk"
+    projection_type = "ALL"
+  }
 }
