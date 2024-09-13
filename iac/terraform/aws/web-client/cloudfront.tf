@@ -73,7 +73,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 }
 
 data "aws_acm_certificate" "certificate" {
-  domain      = var.domain_name
+  domain      = local.web-client-domain
   statuses    = ["ISSUED"]
   most_recent = true
 }

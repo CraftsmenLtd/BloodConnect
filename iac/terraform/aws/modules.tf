@@ -3,6 +3,7 @@ module "auth" {
   environment = var.environment
 }
 
-module "domain_config" {
-  source = "./web-client"
+module "web-client" {
+  source      = "./web-client"
+  environment = var.environment
 }

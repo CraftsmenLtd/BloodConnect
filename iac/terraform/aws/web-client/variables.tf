@@ -1,15 +1,9 @@
-locals {
-  api_subdomain_name = "api.${var.domain_name}"
-  www_domain         = "www.${var.domain_name}"
-}
-
-variable "bucket_name" {
-  description = "S3 bucket name to store the static website"
+variable "environment" {
   type        = string
-  default     = "blood-connect-application"
+  description = "Deployment environment"
 }
 
-variable "domain_name" {
+variable "base_domain_name" {
   description = "The domain name for the web client"
   type        = string
   default     = "bloodconnect.net"

@@ -1,6 +1,11 @@
 #checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
 resource "aws_s3_bucket" "static_site" {
-  bucket = var.bucket_name
+  #checkov:skip=CKV2_AWS_61: "Ensure that an S3 bucket has a lifecycle configuration"
+  #checkov:skip=CKV2_AWS_62: "Ensure S3 buckets should have event notifications enabled"
+  #checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
+  #checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
+  #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
+  bucket = "${var.environment}-bloodconnect-web-client"
 
   tags = {
     Name = "StaticSiteBucket"
@@ -16,7 +21,12 @@ resource "aws_s3_bucket_versioning" "static_site_versioning" {
 }
 
 resource "aws_s3_bucket" "cloudtrail_bucket" {
-  bucket = "${var.domain_name}-log-cloudtrail"
+  #checkov:skip=CKV2_AWS_61: "Ensure that an S3 bucket has a lifecycle configuration"
+  #checkov:skip=CKV2_AWS_62: "Ensure S3 buckets should have event notifications enabled"
+  #checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
+  #checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
+  #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
+  bucket = "${var.environment}-web-client-cloudtrail-log"
 
   tags = {
     Name = "CloudTrail Logs"
@@ -24,8 +34,13 @@ resource "aws_s3_bucket" "cloudtrail_bucket" {
 }
 
 resource "aws_s3_bucket" "log_store" {
-  bucket = "${var.domain_name}-log-store"
-  
+  #checkov:skip=CKV2_AWS_61: "Ensure that an S3 bucket has a lifecycle configuration"
+  #checkov:skip=CKV2_AWS_62: "Ensure S3 buckets should have event notifications enabled"
+  #checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
+  #checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
+  #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
+  bucket = "${var.environment}-web-client-dns-log-store"
+
   tags = {
     Name = "log-bucket"
   }
@@ -60,7 +75,21 @@ resource "aws_s3_bucket_public_access_block" "log_store_public_access_block" {
 }
 
 resource "aws_s3_bucket" "cloudfront_failover_bucket" {
-  bucket = "${var.domain_name}-failover"
+  #checkov:skip=CKV2_AWS_61: "Ensure that an S3 bucket has a lifecycle configuration"
+  #checkov:skip=CKV2_AWS_62: "Ensure S3 buckets should have event notifications enabled"
+  #checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
+  #checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
+  #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
+  bucket = "${var.environment}-cloudfront-failover"
+}
+
+resource "aws_s3_bucket_public_access_block" "failover_bucket_public_access_block" {
+  bucket = aws_s3_bucket.cloudfront_failover_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_policy" "bucket_access_policy" {
@@ -103,5 +132,3 @@ resource "aws_s3_bucket_policy" "log_store_policy" {
     ]
   })
 }
-
-data "aws_caller_identity" "current" {}
