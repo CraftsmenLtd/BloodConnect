@@ -23,6 +23,15 @@ resource "aws_s3_bucket" "cloudtrail_bucket" {
   }
 }
 
+resource "aws_s3_bucket" "log_store" {
+  bucket = "${var.domain_name}-log-store"
+  
+  tags = {
+    Name = "log-bucket"
+  }
+}
+
+
 resource "aws_s3_bucket_public_access_block" "cloudtrail_logs_public_access_block" {
   bucket = aws_s3_bucket.cloudtrail_bucket.id
 
