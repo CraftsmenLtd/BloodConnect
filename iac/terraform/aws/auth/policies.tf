@@ -16,7 +16,8 @@ locals {
       {
         sid = "CognitoPolicy"
         actions = [
-          "cognito-idp:AdminCreateUser"
+          "cognito-idp:AdminCreateUser",
+          "cognito-idp:AdminAddUserToGroup"
         ]
         resources = [var.user_pool_arn]
       }

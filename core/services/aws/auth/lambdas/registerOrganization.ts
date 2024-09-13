@@ -8,7 +8,7 @@ import { DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-
 
 const region = process.env.AWS_REGION;
 const USER_POOL_ID = process.env.USER_POOL_ID;
-const DYNAMODB_TABLE_NAME = process.env.DYNAMODB_TABLE_NAME;
+const DYNAMODB_TABLE_ARN = process.env.DYNAMODB_TABLE_ARN;
 const ORGANIZATION_GROUP = 'organization';
 
 const cognitoClient = new CognitoIdentityProviderClient({ region });
@@ -27,7 +27,7 @@ async function RegisterOrganizationLambda(event: any): Promise<APIGatewayProxyRe
 
     // Step 1: Check if the organization exists in DynamoDB
     const getItemParams = {
-      TableName: DYNAMODB_TABLE_NAME!,
+      TableName: DYNAMODB_TABLE_ARN!,
       Key: {
         pk: { S: `ORG#${email}` }, // Partition key as ORG#<email>
         sk: { S: 'PROFILE' },      // Sort key as PROFILE
@@ -47,7 +47,7 @@ async function RegisterOrganizationLambda(event: any): Promise<APIGatewayProxyRe
 
     // Step 3: If the organization does not exist, add it
     const putItemParams = {
-      TableName: DYNAMODB_TABLE_NAME!,
+      TableName: DYNAMODB_TABLE_ARN!,
       Item: {
         pk: { S: `ORG#${email}` },        // Partition key
         sk: { S: 'PROFILE' },             // Sort key
@@ -84,7 +84,7 @@ async function RegisterOrganizationLambda(event: any): Promise<APIGatewayProxyRe
     await cognitoClient.send(addUserToGroupCommand); // Wait for the user to be added to the group
 
     return {
-      statusCode: 201,
+      statusCode: 200,
       body: JSON.stringify({
         message: 'User successfully registered, organization created, and added to the organization group',
         data: createUserResponse,
