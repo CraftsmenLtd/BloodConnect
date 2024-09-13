@@ -9,9 +9,7 @@ locals {
           "logs:PutLogEvents",
           "logs:DescribeLogStreams"
         ]
-        resources = [
-          "arn:aws:logs:*:*:*"
-        ]
+        resources = ["arn:aws:logs:*:*:*"]
       }
     ],
     cognito_policies = [
@@ -20,9 +18,18 @@ locals {
         actions = [
           "cognito-idp:AdminCreateUser"
         ]
-        resources = [
-          var.user_pool_arn
+        resources = [var.user_pool_arn]
+      }
+    ],
+    dynamodb_policies = [
+      {
+        sid = "DynamodbPolicy"
+        actions = [
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:UpdateItem"
         ]
+        resources = [var.dynamodb_table_arn]
       }
     ]
   }
