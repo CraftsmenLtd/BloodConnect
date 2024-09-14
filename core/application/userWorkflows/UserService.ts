@@ -1,5 +1,5 @@
 import { GenericCodes } from '@commons/libs/constants/GenericCodes'
-import UserRepository from '../policies/repositories/UserRepository'
+import UserRepository from '../technicalImpl/policies/repositories/UserRepository'
 import UserOperationError from './UserOperationError'
 import { UserDTO } from '@commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/ksuidGenerator'

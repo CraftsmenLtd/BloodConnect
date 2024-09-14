@@ -1,6 +1,6 @@
 import { HasDateTimeLog } from '@commons/dto/DtoCommon'
 import { UserDTO } from '@commons/dto/UserDTO'
-import DbModelDtoConverter from './DbModelDtoConverter'
+import DbModelDtoConverter from '../DbModelDtoConverter'
 
 type UserFields = Omit<UserDTO, 'id' | 'registrationDate'> & HasDateTimeLog & {
   pk: `USER#${string}`;

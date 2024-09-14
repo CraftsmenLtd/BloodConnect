@@ -1,10 +1,10 @@
-import Repository from '@application/policies/repositories/Repository'
+import Repository from '@application/technicalImpl/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb'
 import { DTO } from '@commons/dto/DtoCommon'
 import { GenericCodes } from '@commons/libs/constants/GenericCodes'
 import DatabaseError from '@commons/libs/errors/DatabaseError'
-import DbModelDtoConverter from 'core/services/aws/commons/ddb/models/DbModelDtoConverter'
+import DbModelDtoConverter from '@application/technicalImpl/models/DbModelDtoConverter'
 
 export default class DynamoDbTableOperations<Dto extends DTO, ModelConverter extends DbModelDtoConverter<Dto>> implements Repository<Dto> {
   constructor(
