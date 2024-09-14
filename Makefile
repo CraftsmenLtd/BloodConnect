@@ -89,6 +89,10 @@ test:
 lint-code:
 	npm run lint
 
+# Type Check
+type-check:
+	npm run type-check
+
 lint-api: bundle-openapi
 	spectral lint docs/openapi/v1.json --ruleset openapi/.spectral.json
 
