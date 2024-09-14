@@ -1,4 +1,4 @@
-import { DTO, HasIdentifier } from './DtoCommon'
+import { DTO, HasIdentifier } from './DTOCommon'
 
 export type UserDTO = DTO & HasIdentifier & {
   email: string;

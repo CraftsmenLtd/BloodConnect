@@ -1,4 +1,4 @@
-import { HasDateTimeLog } from '@commons/dto/DtoCommon'
+import { HasDateTimeLog } from '@commons/dto/DTOCommon'
 import { UserDTO } from '@commons/dto/UserDTO'
 import DbModelDtoConverter from '../DbModelDtoConverter'
 

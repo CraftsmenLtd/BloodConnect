@@ -10,7 +10,9 @@
   "type": "module",
   "scripts": {
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "type-check": "tsc --skipLibCheck",
+    "verify": "npm run test && npm run lint && npm run type-check"
   },
   "devDependencies": {
     "@types/jest": "^29.5.7",
