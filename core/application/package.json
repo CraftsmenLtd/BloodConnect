@@ -9,8 +9,6 @@
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2",
-    "@aws-sdk/client-dynamodb": "^3.648.0",
-    "@aws-sdk/lib-dynamodb": "^3.648.0",
     "ksuid": "^3.0.0"
   },
   "devDependencies": {
