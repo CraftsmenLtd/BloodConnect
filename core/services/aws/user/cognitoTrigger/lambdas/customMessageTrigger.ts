@@ -6,12 +6,12 @@ function customEmailTemplateLambda(event: CustomMessageTriggerEvent): { emailSub
   const { userAttributes: { name }, codeParameter } = event.request
   switch (event.triggerSource) {
     case 'CustomMessage_SignUp': {
-      const { title, message } = userService.getPostSignUpMessage(name, codeParameter)
-      return { emailSubject: title, emailMessage: message }
+      const { title, content } = userService.getPostSignUpMessage(name, codeParameter)
+      return { emailSubject: title, emailMessage: content }
     }
     case 'CustomMessage_ForgotPassword':{
-      const { title, message } = userService.getForgotPasswordMessage(name, codeParameter)
-      return { emailSubject: title, emailMessage: message }
+      const { title, content } = userService.getForgotPasswordMessage(name, codeParameter)
+      return { emailSubject: title, emailMessage: content }
     }
   }
 }

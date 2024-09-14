@@ -1,8 +1,10 @@
 import { GenericCodes } from '@commons/libs/constants/GenericCodes'
-import UserRepository from '../technicalImpl/policies/repositories/UserRepository'
 import UserOperationError from './UserOperationError'
 import { UserDTO } from '@commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/ksuidGenerator'
+import { GenericMessage } from '@commons/dto/MessageDTO'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from './userMessages'
+import Repository from '@application/technicalImpl/policies/repositories/Repository'
 
 type UserAttributes = {
   email: string;
@@ -10,10 +12,8 @@ type UserAttributes = {
   phone_number: string;
 }
 
-type UserNotificationMessage = { title: string; message: string }
-
 export class UserService {
-  async createNewUser(userAttributes: UserAttributes, userRepository: UserRepository): Promise<UserDTO> {
+  async createNewUser(userAttributes: UserAttributes, userRepository: Repository<UserDTO>): Promise<UserDTO> {
     try {
       return userRepository.create({
         id: generateUniqueID(),
@@ -27,23 +27,11 @@ export class UserService {
     }
   }
 
-  getPostSignUpMessage(userName: string, securityCode: string): UserNotificationMessage {
-    return {
-      title: 'Welcome to Blood Connect!',
-      message: `Hello ${userName},<br/><br/>
-                Welcome! Please verify your email using the following code: ${securityCode}.<br/><br/>
-                Thanks!`
-    }
+  getPostSignUpMessage(userName: string, securityCode: string): GenericMessage {
+    return getEmailVerificationMessage(userName, securityCode)
   }
 
-  getForgotPasswordMessage(userName: string, securityCode: string): UserNotificationMessage {
-    return {
-      title: 'Reset your password for Blood Connect',
-      message: `Hello ${userName},<br/><br/>
-                You have requested to reset your password.<br/>
-                Use the following code to reset your password: ${securityCode}<br/><br/>
-                If you did not request this, please ignore this email.<br/><br/>
-                Thanks!`
-    }
+  getForgotPasswordMessage(userName: string, securityCode: string): GenericMessage {
+    return getPasswordResetVerificationMessage(userName, securityCode)
   }
 }
