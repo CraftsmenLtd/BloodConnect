@@ -18,7 +18,7 @@
     "example": {
       "organizationName": "org name",
       "email": "newuser@example.com",
-      "password": "ABab@#12"
+      "password": "ABab@#1234"
     }
   }
 }

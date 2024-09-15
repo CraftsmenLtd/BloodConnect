@@ -3,6 +3,7 @@ import {
   CognitoIdentityProviderClient,
   AdminCreateUserCommand,
   AdminAddUserToGroupCommand,
+  AdminSetUserPasswordCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import {
   DynamoDBClient,
@@ -23,6 +24,8 @@ const dynamoClient = new DynamoDBClient({ region });
 async function RegisterOrganizationLambda(
   event: any
 ): Promise<APIGatewayProxyResult> {
+  
+  console.log("Received event:", JSON.stringify(event, null, 2));
   try {
     const { email, organizationName, password } = event;
 
@@ -69,11 +72,10 @@ async function RegisterOrganizationLambda(
     const putItemCommand = new PutItemCommand(putItemParams);
     await dynamoClient.send(putItemCommand); // Add the new organization
 
-    // Step 4: Create the user in Cognito, with password
+    // Step 4: Create the user in Cognito
     const createUserParams = {
       UserPoolId: USER_POOL_ID!,
       Username: email,
-      TemporaryPassword: password, // Use the provided password
       UserAttributes: [
         { Name: "email", Value: email },
         { Name: "name", Value: organizationName }, // Adding organization name as the user's name
@@ -85,7 +87,18 @@ async function RegisterOrganizationLambda(
     const createUserCommand = new AdminCreateUserCommand(createUserParams);
     const createUserResponse = await cognitoClient.send(createUserCommand);
 
-    // Step 5: Add the user to the "organization" group
+    // Step 5: Set the user's permanent password
+    const setPasswordParams = {
+      UserPoolId: USER_POOL_ID!,
+      Username: email,
+      Password: password,
+      Permanent: true, // Set password as permanent
+    };
+
+    const setPasswordCommand = new AdminSetUserPasswordCommand(setPasswordParams);
+    await cognitoClient.send(setPasswordCommand);
+
+    // Step 6: Add the user to the "organization" group
     const addToGroupParams = {
       UserPoolId: USER_POOL_ID!,
       Username: email,
