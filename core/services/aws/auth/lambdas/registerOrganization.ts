@@ -27,7 +27,7 @@ async function RegisterOrganizationLambda(
   
   console.log("Received event:", JSON.stringify(event, null, 2));
   try {
-    const { email, organizationName, password } = event;
+    const { email, organizationName, password , phoneNumber} = event;
 
     if (!email || !organizationName || !password) {
       return generateApiGatewayResponse(
@@ -66,6 +66,7 @@ async function RegisterOrganizationLambda(
         sk: { S: "PROFILE" }, // Sort key
         email: { S: email }, // Email
         organizationName: { S: organizationName }, // Organization Name
+        phoneNumber: { S: phoneNumber },
       },
     };
 
@@ -78,7 +79,8 @@ async function RegisterOrganizationLambda(
       Username: email,
       UserAttributes: [
         { Name: "email", Value: email },
-        { Name: "name", Value: organizationName }, // Adding organization name as the user's name
+        { Name: "name", Value: organizationName },
+        { Name: "phone_number", Value: phoneNumber },
       ],
       DesiredDeliveryMediums: ["EMAIL"],
       ForceAliasCreation: false,
