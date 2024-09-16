@@ -1,19 +1,27 @@
 import { UserService } from '@application/userWorkflows/UserService'
-import { CustomMessageTriggerEvent } from 'aws-lambda'
+import { GenericMessage } from '@commons/dto/MessageDTO'
+import { Callback, Context, CustomMessageTriggerEvent } from 'aws-lambda'
 
-function customEmailTemplateLambda(event: CustomMessageTriggerEvent): { emailSubject: string; emailMessage: string } | undefined {
+function customEmailTemplateLambda(event: CustomMessageTriggerEvent, _: Context,
+  callback: Callback<CustomMessageTriggerEvent>): void {
   const userService = new UserService()
   const { userAttributes: { name }, codeParameter } = event.request
+  let emailContent: GenericMessage
   switch (event.triggerSource) {
-    case 'CustomMessage_SignUp': {
-      const { title, content } = userService.getPostSignUpMessage(name, codeParameter)
-      return { emailSubject: title, emailMessage: content }
-    }
-    case 'CustomMessage_ForgotPassword':{
-      const { title, content } = userService.getForgotPasswordMessage(name, codeParameter)
-      return { emailSubject: title, emailMessage: content }
-    }
+    case 'CustomMessage_SignUp':
+      emailContent = userService.getPostSignUpMessage(name, codeParameter)
+      break
+    case 'CustomMessage_ForgotPassword':
+      emailContent = userService.getForgotPasswordMessage(name, codeParameter)
+      break
+    default:
+      callback(null, event)
+      return
   }
+  const { title, content } = emailContent
+  event.response.emailSubject = title
+  event.response.emailMessage = content
+  callback(null, event)
 }
 
 export default customEmailTemplateLambda

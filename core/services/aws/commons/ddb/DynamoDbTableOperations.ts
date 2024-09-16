@@ -22,6 +22,7 @@ export default class DynamoDbTableOperations<
       Item: this.modelAdapter.fromDto(item)
     })
     const putCommandOutput = await this.client.send(command)
+    console.log('putCommandOutput', putCommandOutput)
     if (putCommandOutput.Attributes != null) {
       return this.modelAdapter.toDto(putCommandOutput.Attributes as DbFields)
     }
