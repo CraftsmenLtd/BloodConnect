@@ -1,9 +1,8 @@
 import { PostConfirmationTriggerEvent } from 'aws-lambda'
 import { UserService } from '@application/userWorkflows/UserService'
 import { UserDTO } from '@commons/dto/UserDTO'
-import DbModelDtoConverter from '@application/technicalImpl/models/DbModelDtoConverter'
 import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperations'
-import UserDdbModel from '@application/technicalImpl/models/nosql/UserModel'
+import UserModel, { UserFields } from '@application/technicalImpl/dbModels/UserModel'
 
 async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Promise<void> {
   if (event.triggerSource !== 'PostConfirmation_ConfirmSignUp') {
@@ -16,7 +15,7 @@ async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Prom
     name: event.request.userAttributes.name ?? '',
     phone_number: event.request.userAttributes.phone_number ?? ''
   }
-  await userService.createNewUser(userAttributes, new DynamoDbTableOperations<UserDTO, DbModelDtoConverter<UserDTO>>(new UserDdbModel()))
+  await userService.createNewUser(userAttributes, new DynamoDbTableOperations<UserDTO, UserFields, UserModel>(new UserModel()))
 }
 
 export default postConfirmationLambda

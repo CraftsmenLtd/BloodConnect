@@ -1,11 +1,10 @@
 import { GenericCodes } from '@commons/libs/constants/GenericCodes'
-import UserRepository from '../technicalImpl/policies/repositories/UserRepository'
 import UserOperationError from './UserOperationError'
 import { UserDTO } from '@commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/ksuidGenerator'
-import EmailVerificationMessage from '@application/userWorkflows/messages/EmailVerification'
-import ForgotPassword from '@application/userWorkflows/messages/ForgotPassword'
 import { GenericMessage } from '@commons/dto/MessageDTO'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from './userMessages'
+import Repository from '@application/technicalImpl/policies/repositories/Repository'
 
 type UserAttributes = {
   email: string;
@@ -14,7 +13,7 @@ type UserAttributes = {
 }
 
 export class UserService {
-  async createNewUser(userAttributes: UserAttributes, userRepository: UserRepository): Promise<UserDTO> {
+  async createNewUser(userAttributes: UserAttributes, userRepository: Repository<UserDTO>): Promise<UserDTO> {
     try {
       return userRepository.create({
         id: generateUniqueID(),
@@ -29,10 +28,10 @@ export class UserService {
   }
 
   getPostSignUpMessage(userName: string, securityCode: string): GenericMessage {
-    return new EmailVerificationMessage(userName, securityCode).getMessage()
+    return getEmailVerificationMessage(userName, securityCode)
   }
 
   getForgotPasswordMessage(userName: string, securityCode: string): GenericMessage {
-    return new ForgotPassword(userName, securityCode).getMessage()
+    return getPasswordResetVerificationMessage(userName, securityCode)
   }
 }
