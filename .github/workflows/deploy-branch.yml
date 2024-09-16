@@ -54,5 +54,5 @@ jobs:
       tf_action: apply
       tf_vars: |
         TF_VAR_aws_environment=${{ needs.set-deployment-environment.outputs.deployment_environment }}
-        TF_VAR_bloodconect_domain=${{ vars.BLOODCONNECT_DOMAIN }}
+        TF_VAR_bloodconnect_domain=${{ vars.BLOODCONNECT_DOMAIN }}
 
