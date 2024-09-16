@@ -17,6 +17,12 @@ jobs:
     outputs:
       deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
 
+  test-environment:
+    name: test Environment
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo ${{ vars.BLOODCONNECT_DOMAIN }}
+
   set-runner-image-name:
     name: Set Runner Image Name
     runs-on: ubuntu-22.04
