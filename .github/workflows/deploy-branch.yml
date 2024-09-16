@@ -21,7 +21,7 @@ jobs:
     name: test Environment
     runs-on: ubuntu-22.04
     steps:
-      - run: echo ${{ vars.BLOODCONNECT_DOMAIN }}
+      - run: echo ${{ secrets.BLOODCONNECT_DOMAIN }}
 
   set-runner-image-name:
     name: Set Runner Image Name
@@ -60,5 +60,5 @@ jobs:
       tf_action: apply
       tf_vars: |
         TF_VAR_aws_environment=${{ needs.set-deployment-environment.outputs.deployment_environment }}
-        TF_VAR_bloodconnect_domain=${{ vars.BLOODCONNECT_DOMAIN }}
+        TF_VAR_bloodconnect_domain=${{ secrets.BLOODCONNECT_DOMAIN }}
 
