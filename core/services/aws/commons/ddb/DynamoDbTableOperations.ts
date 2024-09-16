@@ -17,14 +17,16 @@ export default class DynamoDbTableOperations<
   ) {}
 
   async create(item: Dto): Promise<Dto> {
+    const items = this.modelAdapter.fromDto(item)
     const command = new PutCommand({
       TableName: this.getTableName(),
-      Item: this.modelAdapter.fromDto(item)
+      Item: items
     })
     const putCommandOutput = await this.client.send(command)
-    console.log('putCommandOutput', putCommandOutput)
-    if (putCommandOutput.Attributes != null) {
-      return this.modelAdapter.toDto(putCommandOutput.Attributes as DbFields)
+    console.log(putCommandOutput, putCommandOutput?.$metadata, putCommandOutput?.$metadata?.httpStatusCode)
+    if (putCommandOutput?.$metadata?.httpStatusCode === 200) {
+      console.log(items, this.modelAdapter.toDto(items))
+      return this.modelAdapter.toDto(items)
     }
     throw new Error('Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined')
   }

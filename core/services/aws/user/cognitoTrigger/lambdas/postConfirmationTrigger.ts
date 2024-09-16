@@ -4,9 +4,9 @@ import { UserDTO } from '@commons/dto/UserDTO'
 import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperations'
 import UserModel, { UserFields } from '@application/technicalImpl/dbModels/UserModel'
 
-async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Promise<void> {
+async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Promise<PostConfirmationTriggerEvent> {
   if (event.triggerSource !== 'PostConfirmation_ConfirmSignUp') {
-    return
+    return event
   }
 
   const userService = new UserService()
@@ -15,7 +15,9 @@ async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Prom
     name: event.request.userAttributes.name ?? '',
     phone_number: event.request.userAttributes.phone_number ?? ''
   }
-  await userService.createNewUser(userAttributes, new DynamoDbTableOperations<UserDTO, UserFields, UserModel>(new UserModel()))
+  const response = await userService.createNewUser(userAttributes, new DynamoDbTableOperations<UserDTO, UserFields, UserModel>(new UserModel()))
+  console.log(response)
+  return event
 }
 
 export default postConfirmationLambda
