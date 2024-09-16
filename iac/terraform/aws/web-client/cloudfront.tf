@@ -28,7 +28,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   default_root_object = "index.html"
 
   origin_group {
-    origin_id = "OriginGroup"
+    origin_id = "${var.environment}-OriginGroupId"
 
     failover_criteria {
       status_codes = [403, 404, 500, 502, 503, 504]
@@ -46,7 +46,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id       = "S3-Static-Site"
+    target_origin_id       = "${var.environment}-OriginGroupId"
     viewer_protocol_policy = "redirect-to-https"
 
     forwarded_values {
