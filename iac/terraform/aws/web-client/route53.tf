@@ -1,15 +1,15 @@
 locals {
-  web-client-domain = "${var.environment}.${var.base_domain_name}"
+  web-client-domain = "${var.environment}.${var.bloodconnect_domain}"
 }
 
-resource "aws_route53_zone" "main" {
+data "aws_route53_zone" "main" {
   #checkov:skip=CKV2_AWS_39: "Ensure Domain Name System (DNS) query logging is enabled for Amazon Route 53 hosted zones"
   #checkov:skip=CKV2_AWS_38: "Ensure Domain Name System Security Extensions (DNSSEC) signing is enabled for Amazon Route 53 public hosted zones"
-  name = var.base_domain_name
+  name = var.bloodconnect_domain
 }
 
 resource "aws_route53_record" "root" {
-  zone_id = aws_route53_zone.main.zone_id
+  zone_id = data.aws_route53_zone.main.zone_id
   name    = local.web-client-domain
   type    = "A"
 

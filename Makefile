@@ -39,7 +39,7 @@ check-docker:
 # Localstack
 localstack-start:
 	docker rm -f $(DOCKER_LOCALSTACK_CONTAINER_NAME)
-	docker run --rm --privileged --name $(DOCKER_LOCALSTACK_CONTAINER_NAME) -itd -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack
+	docker run --rm --privileged --name $(DOCKER_LOCALSTACK_CONTAINER_NAME) -itd -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack-pro
 
 # Terraform
 tf-init:

@@ -3,10 +3,9 @@ variable "environment" {
   description = "Deployment environment"
 }
 
-variable "base_domain_name" {
+variable "bloodconnect_domain" {
   description = "The domain name for the web client"
   type        = string
-  default     = "bloodconnect.net"
 }
 
 variable "cloudfront_response_policy_id" {
