@@ -54,3 +54,4 @@ jobs:
       tf_action: destroy
       tf_vars: |
         TF_VAR_aws_environment=${{ needs.set-deployment-environment.outputs.deployment_environment }}
+        TF_VAR_bloodconect_domain=${{ vars.BLOODCONNECT_DOMAIN }}
