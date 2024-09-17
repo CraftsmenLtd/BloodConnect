@@ -56,7 +56,7 @@ resource "aws_cloudfront_distribution" "cdn" {
       }
     }
 
-    response_headers_policy_id = var.cloudfront_response_policy_id
+    response_headers_policy_id = var.cloudfront_header_response_policy_id
   }
 
   price_class = "PriceClass_100"
