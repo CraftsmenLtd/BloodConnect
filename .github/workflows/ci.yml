@@ -71,6 +71,9 @@ jobs:
       - name: Lint Code
         run: make run-command-lint-code
 
+      - name: Code Type Check
+        run: make run-command-type-check
+
       - name: Package Code
         run: make run-command-package-all
 
