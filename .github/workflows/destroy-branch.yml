@@ -10,12 +10,17 @@ jobs:
   set-deployment-environment:
     name: Set Deployment Environment
     runs-on: ubuntu-22.04
+    environment: dev
     steps:
       - name: Set Deployment Environment
         id: set_deployment_env
         run: echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
+      - name: Set Terraform Environment Variables
+        id: set_terraform_env_vars
+        run: echo "BLOODCONNECT_DOMAIN=${{ vars.BLOODCONNECT_DOMAIN }}" >> $GITHUB_OUTPUT
     outputs:
-          deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
+      deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
+      bloodconnect_domain: ${{ steps.set_terraform_env_vars.outputs.bloodconnect_domain }}
 
   set-runner-image-name:
     name: Set Runner Image Name
@@ -54,4 +59,4 @@ jobs:
       tf_action: destroy
       tf_vars: |
         TF_VAR_aws_environment=${{ needs.set-deployment-environment.outputs.deployment_environment }}
-        TF_VAR_bloodconnect_domain=${{ vars.BLOODCONNECT_DOMAIN }}
+        TF_VAR_bloodconnect_domain=${{ needs.set-deployment-environment.outputs.bloodconnect_domain }}
