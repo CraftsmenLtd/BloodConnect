@@ -18,5 +18,5 @@ module "cognito" {
   environment         = var.environment
   verified_domain_arn = data.aws_ses_domain_identity.existing_domain.arn
   dynamodb_table_arn  = module.database.dynamodb_table_arn
-  domain_name         = var.domain_name
+  domain_name         = var.bloodconnect_domain
 }
