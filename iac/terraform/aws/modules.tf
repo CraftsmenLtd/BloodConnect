@@ -16,7 +16,7 @@ module "database" {
 module "cognito" {
   source              = "./cognito"
   environment         = var.environment
-  verified_domain_arn = module.domain_verification.ses_domain_identity_arn
+  verified_domain_arn = data.aws_ses_domain_identity.existing_domain.arn
   dynamodb_table_arn  = module.database.dynamodb_table_arn
   domain_name         = var.domain_name
 }
