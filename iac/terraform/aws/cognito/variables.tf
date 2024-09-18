@@ -17,6 +17,6 @@ variable "dynamodb_table_arn" {
   type = string
 }
 
-variable "domain_name" {
+variable "from_email_address" {
   type = string
 }

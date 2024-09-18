@@ -1,7 +1,3 @@
-locals {
-  from_email_address = "no-reply@${var.domain_name}"
-}
-
 resource "aws_cognito_user_pool" "user_pool" {
   name = "${var.environment}-user-pool"
 
@@ -54,7 +50,7 @@ resource "aws_cognito_user_pool" "user_pool" {
   mfa_configuration = "OFF"
   email_configuration {
     email_sending_account = "DEVELOPER"
-    from_email_address    = local.from_email_address
+    from_email_address    = var.from_email_address
     source_arn            = var.verified_domain_arn
   }
 }
