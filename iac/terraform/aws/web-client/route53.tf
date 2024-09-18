@@ -1,5 +1,5 @@
 locals {
-  web-client-domain = var.lambda_option.name == "master" ? var.bloodconnect_domain : "${var.environment}.${var.bloodconnect_domain}"
+  web-client-domain = var.environment == "master" ? "${var.environment}.${var.bloodconnect_domain}" : var.bloodconnect_domain
 }
 
 data "aws_route53_zone" "main" {
