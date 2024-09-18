@@ -8,10 +8,10 @@ module "database" {
   environment = var.environment
 }
 
-module "domain_verification" {
-  source      = "./domain_verification"
-  domain_name = var.domain_name
-}
+# module "domain_verification" {
+#   source      = "./domain_verification"
+#   domain_name = var.domain_name
+# }
 
 module "cognito" {
   source              = "./cognito"
