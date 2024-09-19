@@ -25,6 +25,24 @@ All these steps are demanding and manual, and burns valuable time in an emergenc
 
 **Data visualization and reporting** will be simpler for blood donation organizations.
 
+## Our Amazing Contributors 🌟
+
+We're incredibly grateful to all the wonderful people who have contributed to BloodConnect! 🩸💖. Every contribution, big or small, code or non-code, makes a significant impact. Here's our wall of fame:
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+Want to join this awesome list? It's easy! 
+1. Contribute to the project in any way (code, design, docs, ideas, etc.)
+2. Comment on an issue or pull request with: `@all-contributors please add @yourGitHubUsername for contribution1, contribution2`. Replace `contribution1, contribution2` with your [contribution types](https://allcontributors.org/docs/en/emoji-key). Our friendly bot will then add you to this list!
+
+Check out the [emoji key](https://allcontributors.org/docs/en/emoji-key) for contribution types. Together, we're making a difference! 💪🩸
+
 ## Get Involved
 
 Want to contribute? The source code is available under [Apache 2.0](./LICENSE) License. Please go through our [Developer Docs](https://craftsmenltd.github.io/BloodConnect) for more details.
