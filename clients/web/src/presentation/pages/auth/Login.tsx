@@ -10,7 +10,7 @@ import {
 import InputField from '@/presentation/components/input-fields';
 import { Toast } from '@/presentation/components/toast';
 import { DashboardPath, SignupPath } from '@/constants/routeConsts';
-import useAuthenticatedUser from '@/application/hooks/useAuthenticatedUser';
+import useAuthenticatedUser from '@shared/hooks/useAuthenticatedUser';
 import Button from '@/presentation/components/button';
 
 const Login: React.FC = () => {

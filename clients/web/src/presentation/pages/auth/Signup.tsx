@@ -8,7 +8,7 @@ import PasswordField from '@/presentation/components/input-fields/PasswordInput'
 import { Toast } from '@/presentation/components/toast';
 import { toastHideDisappearTime } from '@/constants/common';
 import { DashboardPath, LoginPath } from '@/constants/routeConsts';
-import useAuthenticatedUser from '@/application/hooks/useAuthenticatedUser';
+import useAuthenticatedUser from '@shared/hooks/useAuthenticatedUser';
 import { validatePassword } from '@/utils/validationUtils';
 import { MdOutlineMail, HiOutlinePhone } from '@/presentation/assets/icons';
 
