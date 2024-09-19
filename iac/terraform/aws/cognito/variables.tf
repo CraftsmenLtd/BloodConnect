@@ -20,3 +20,8 @@ variable "dynamodb_table_arn" {
 variable "from_email_address" {
   type = string
 }
+
+variable "password_length" {
+  type    = number
+  default = 10
+}
