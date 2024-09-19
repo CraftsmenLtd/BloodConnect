@@ -4,7 +4,7 @@ locals {
 
 variable "environment" {
   type        = string
-  description = "Deployment environment"
+  description = "Deployment environment and resource prefix"
 }
 
 variable "bloodconnect_domain" {
