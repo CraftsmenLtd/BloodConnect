@@ -4,7 +4,10 @@
       "@typescript-eslint/parser": [".ts", ".tsx"]
     },
     "import/resolver": {
-      "typescript": {}
+      "typescript": {},
+      "node": {
+        "moduleDirectory": ["node_modules", "clients/web/node_modules"]
+      }
     }
   },
   "parser": "@typescript-eslint/parser",

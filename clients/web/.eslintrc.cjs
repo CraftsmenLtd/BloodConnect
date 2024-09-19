@@ -2,6 +2,7 @@ module.exports = {
   root: true,
   env: { browser: true, es2020: true },
   extends: [
+    '../../.eslintrc.json', 
     'airbnb',
     'airbnb-typescript',
     'airbnb/hooks',
@@ -27,7 +28,7 @@ module.exports = {
       },
     },
   },
-  ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts', 'node_modules'],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts', 'node_modules', 'tailwind.config.js', 'vite-env.d.ts'],
   plugins: ['react', '@typescript-eslint', 'prettier'],
   rules: {
     'prettier/prettier': [
@@ -57,14 +58,5 @@ module.exports = {
     ],
     '@typescript-eslint/no-explicit-any': 'off',
     'import/prefer-default-export': 'off',
-    'jsx-a11y/control-has-associated-label': 'off',
-    '@typescript-eslint/no-unused-expressions': 'off',
-    'jsx-a11y/anchor-is-valid': 'off',
-    'jsx-a11y/label-has-associated-control': 'off',
-    'react/require-default-props': 'off',
-    'no-param-reassign': 'off',
-    'jsx-a11y/no-noninteractive-element-interactions': 'off',
-    'jsx-a11y/click-events-have-key-events': 'off',
-    'jsx-a11y/no-static-element-interactions': 'off',
   },
 };
