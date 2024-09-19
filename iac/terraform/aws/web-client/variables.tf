@@ -18,3 +18,15 @@ variable "acm_certificate_arn" {
   description = "ARN forn bloodconnect SSL certification"
   type        = string
 }
+
+variable "cloudfront_distribution_origin_id" {
+  description = "Origin id used in origin block in aws cloudfron distribution"
+  type = string
+  default = "S3PrimaryOrigin"
+}
+
+variable "cloudfront_distribution_failover_origin_id" {
+  description  = "Origin Id for failover bucket on cloudfront distribution"
+  type = string
+  default = "S3FailoverOrigin"
+}

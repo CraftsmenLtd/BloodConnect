@@ -5,25 +5,25 @@ resource "aws_cloudfront_distribution" "cdn" {
   #checkov:skip=CKV2_AWS_32: "Ensure CloudFront distribution has a response headers policy attached"
   origin {
     domain_name = aws_s3_bucket.static_site.bucket_regional_domain_name
-    origin_id   = "S3PrimaryOrigin"
+    origin_id   = var.cloudfront_distribution_origin_id
 
     s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+      origin_access_identity = aws_cloudfront_origin_access_identity.s3_static_bucket_oai.cloudfront_access_identity_path
     }
   }
 
   origin {
     domain_name = aws_s3_bucket.cloudfront_failover_bucket.bucket_regional_domain_name
-    origin_id   = "S3FailoverOrigin"
+    origin_id   = var.cloudfront_distribution_failover_origin_id
 
     s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+      origin_access_identity = aws_cloudfront_origin_access_identity.s3_static_bucket_oai.cloudfront_access_identity_path
     }
   }
 
 
   enabled             = true
-  is_ipv6_enabled     = true
+  is_ipv6_enabled     = false
   comment             = "CloudFront distribution for front-end site"
   default_root_object = "index.html"
 
@@ -31,15 +31,15 @@ resource "aws_cloudfront_distribution" "cdn" {
     origin_id = "${var.environment}-OriginGroupId"
 
     failover_criteria {
-      status_codes = [403, 404, 500, 502, 503, 504]
+      status_codes = [401, 403, 404, 500, 502, 503, 504]
     }
 
     member {
-      origin_id = "S3PrimaryOrigin"
+      origin_id = var.cloudfront_distribution_origin_id
     }
 
     member {
-      origin_id = "S3FailoverOrigin"
+      origin_id = var.cloudfront_distribution_failover_origin_id
     }
   }
 
@@ -74,6 +74,6 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 }
 
-resource "aws_cloudfront_origin_access_identity" "oai" {
+resource "aws_cloudfront_origin_access_identity" "s3_static_bucket_oai" {
   comment = "OAI for S3 Static Site"
 }

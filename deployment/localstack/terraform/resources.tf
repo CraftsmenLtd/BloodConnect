@@ -1,4 +1,4 @@
-resource "aws_acm_certificate" "name" {
+resource "aws_acm_certificate" "ssl_certificate_localstack" {
   domain_name       = "example.com"
   validation_method = "DNS"
 
