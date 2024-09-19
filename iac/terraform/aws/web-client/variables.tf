@@ -8,7 +8,7 @@ variable "environment" {
 }
 
 variable "bloodconnect_domain" {
-  description = "The domain name for the web client"
+  description = "Bloodconnect root domain"
   type        = string
 }
 
