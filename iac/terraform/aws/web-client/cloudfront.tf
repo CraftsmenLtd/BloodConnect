@@ -31,7 +31,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     origin_id = "${var.environment}-OriginGroupId"
 
     failover_criteria {
-      status_codes = [401, 403, 404, 500, 502, 503, 504]
+      status_codes = [400, 403, 404, 500, 502, 503, 504]
     }
 
     member {
