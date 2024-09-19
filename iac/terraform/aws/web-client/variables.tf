@@ -1,3 +1,7 @@
+locals {
+  web-client-domain = var.environment == "master" ? var.bloodconnect_domain : "${var.environment}.${var.bloodconnect_domain}"
+}
+
 variable "environment" {
   type        = string
   description = "Deployment environment"
