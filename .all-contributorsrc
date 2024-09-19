@@ -1,0 +1,27 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "Shahed-Chy-Suzan",
+      "name": "Shahed Chy Suzan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62619497?v=4",
+      "profile": "https://shahed-chy-suzan.github.io/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "BloodConnect",
+  "projectOwner": "CraftsmenLtd"
+}
