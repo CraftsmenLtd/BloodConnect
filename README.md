@@ -1,4 +1,7 @@
 # BloodConnect
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 In a poor healthcare management ecosystem, getting access to blood for patients in case of need is a hassle and time consuming process; time that we don’t always have in emergency situations. `BloodConnect` tries to improve the blood donation process through connecting donors, blood banks and existing organizations who are assisting finding donors in times of need, by providing a platform.
 
@@ -35,3 +38,24 @@ Opensource supported by
 <a href="https://jb.gg/OpenSourceSupport">
   <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" alt="JetBrains" width="100"/>
 </a>
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://shahed-chy-suzan.github.io/"><img src="https://avatars.githubusercontent.com/u/62619497?v=4?s=100" width="100px;" alt="Shahed Chy Suzan"/><br /><sub><b>Shahed Chy Suzan</b></sub></a><br /><a href="https://github.com/CraftsmenLtd/BloodConnect/commits?author=Shahed-Chy-Suzan" title="Code">💻</a> <a href="https://github.com/CraftsmenLtd/BloodConnect/commits?author=Shahed-Chy-Suzan" title="Documentation">📖</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
