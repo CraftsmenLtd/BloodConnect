@@ -58,5 +58,7 @@ module.exports = {
     ],
     '@typescript-eslint/no-explicit-any': 'off',
     'import/prefer-default-export': 'off',
+    'react/require-default-props': 'off',
+    'jsx-a11y/label-has-associated-control': 'off',
   },
 };

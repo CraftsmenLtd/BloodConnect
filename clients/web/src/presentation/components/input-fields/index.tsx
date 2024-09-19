@@ -1,10 +1,11 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 interface InputFieldProps {
   type: string;
   placeholder?: string;
   label?: string;
-  className: string;
+  className?: string;
   icon?: React.ReactNode;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -36,7 +37,7 @@ const InputField: React.FC<InputFieldProps> = ({
           onFocus={onFocus}
           onBlur={onBlur}
         />
-        {icon && (
+        {icon != null && (
           <span className="absolute right-4 top-4 text-primary text-xl">
             {icon}
           </span>
@@ -44,6 +45,18 @@ const InputField: React.FC<InputFieldProps> = ({
       </div>
     </div>
   );
+};
+
+InputField.propTypes = {
+  type: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  className: PropTypes.string,
+  icon: PropTypes.node,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
 };
 
 export default InputField;

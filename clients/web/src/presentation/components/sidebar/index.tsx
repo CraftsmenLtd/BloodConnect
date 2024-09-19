@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { signOut } from 'aws-amplify/auth';
-import { LoginPath } from '@/constants/routeConsts';
+import { LoginPath } from '@constants/routeConsts';
+import PropTypes from 'prop-types';
 import SidebarLink from './SidebarLink';
 import {
   FaMoon,
@@ -26,8 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-
-  const sidebar = useRef<any>(null);
+  const sidebar = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (sidebarExpanded) {
@@ -57,18 +57,20 @@ const Sidebar: React.FC<SidebarProps> = ({
       }}
     >
       <div className="flex p-1">
-        <div
+        <button
+          type="button"
           className="cursor-pointer"
           onClick={() => {
             onToggle(!sidebarExpanded);
           }}
+          aria-label="Toggle Sidebar"
         >
           <img
             src="/blood-connect-icon.svg"
             alt="Blood Connect Logo"
             className="w-12 h-12"
           />
-        </div>
+        </button>
       </div>
 
       <div className="no-scrollbar flex flex-col overflow-y-auto">
@@ -109,13 +111,22 @@ const Sidebar: React.FC<SidebarProps> = ({
               icon={<MdLogout size={24} />}
               label="Logout"
               sidebarExpanded={sidebarExpanded}
-              onClick={handleSignOut}
+              onClick={() => {
+                void handleSignOut();
+              }}
             />
           </ul>
         </nav>
       </div>
     </aside>
   );
+};
+
+Sidebar.propTypes = {
+  sidebarExpanded: PropTypes.bool.isRequired,
+  onToggle: PropTypes.func.isRequired,
+  theme: PropTypes.string.isRequired,
+  toggleTheme: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

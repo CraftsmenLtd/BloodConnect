@@ -1,6 +1,7 @@
+import PropTypes from 'prop-types';
 import { NavLink, useLocation } from 'react-router-dom';
 import { ReactNode } from 'react';
-import { cn } from '@/utils';
+import { cn } from '@utils';
 
 interface SidebarLinkProps {
   to?: string;
@@ -15,7 +16,7 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
   to = '',
   icon,
   label,
-  active,
+  active = false,
   sidebarExpanded,
   onClick,
 }) => {
@@ -23,7 +24,7 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
   return (
     <li>
       <NavLink
-        to={to || pathname}
+        to={to !== '' || pathname !== ''}
         onClick={onClick}
         className={cn(
           'group relative flex items-center gap-2 rounded-sm py-2 px-2.5 transition-all duration-300 ease-in-out',
@@ -40,6 +41,15 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
       </NavLink>
     </li>
   );
+};
+
+SidebarLink.propTypes = {
+  to: PropTypes.string,
+  icon: PropTypes.node.isRequired,
+  label: PropTypes.string.isRequired,
+  active: PropTypes.bool,
+  sidebarExpanded: PropTypes.bool.isRequired,
+  onClick: PropTypes.func,
 };
 
 export default SidebarLink;

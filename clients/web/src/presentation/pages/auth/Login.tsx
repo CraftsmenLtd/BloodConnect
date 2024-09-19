@@ -1,17 +1,17 @@
 import { signIn } from 'aws-amplify/auth';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import useAuthenticatedUser from '@shared/hooks/useAuthenticatedUser';
 import {
   FaRegEye,
   FaRegEyeSlash,
   MdOutlineMail,
-} from '@/presentation/assets/icons';
+} from '@presentation/assets/icons';
 
-import InputField from '@/presentation/components/input-fields';
-import { Toast } from '@/presentation/components/toast';
-import { DashboardPath, SignupPath } from '@/constants/routeConsts';
-import useAuthenticatedUser from '@shared/hooks/useAuthenticatedUser';
-import Button from '@/presentation/components/button';
+import InputField from '@presentation/components/input-fields';
+import { Toast } from '@presentation/components/toast';
+import { DashboardPath, SignupPath } from '@constants/routeConsts';
+import Button from '@presentation/components/button';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ const Login: React.FC = () => {
     setLoading(false);
   };
   useEffect(() => {
-    if (user) {
+    if (user != null) {
       navigate(DashboardPath);
     }
   }, [user, navigate]);
@@ -65,7 +65,12 @@ const Login: React.FC = () => {
       <div className="w-full max-w-md p-6 rounded-lg shadow-lg">
         <h2 className="font-bold text-xl text-center mb-6">Sign In</h2>
 
-        <form onSubmit={handleLogin}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleLogin(e);
+          }}
+        >
           <InputField
             type="email"
             placeholder="Enter your email"
@@ -105,7 +110,10 @@ const Login: React.FC = () => {
 
           <div className="mb-4">
             <p className="text-sm">
-              <Link to="" className="text-blue-500 hover:underline">
+              <Link
+                to="/forgot-password"
+                className="text-blue-500 hover:underline"
+              >
                 Forgot your password?
               </Link>
             </p>

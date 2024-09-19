@@ -1,17 +1,17 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import FullPageLoader from '@/presentation/components/loader/FullPageLoader';
-import * as RouteConsts from '@/constants/routeConsts';
-import useAuthenticatedUser from '@shared/hooks/useAuthenticatedUser.ts';
-import DefaultLayout from '@/presentation/layout/DefaultLayout';
+import useAuthenticatedUser from '@shared/hooks/useAuthenticatedUser';
+import FullPageLoader from '@presentation/components/loader/FullPageLoader';
+import * as RouteConsts from '@constants/routeConsts';
+import DefaultLayout from '@presentation/layout/DefaultLayout';
 
 export function ProtectedRoute() {
   const { user, loading } = useAuthenticatedUser();
 
-  if (loading) {
+  if (loading === true) {
     return <FullPageLoader />;
   }
 
-  if (!user) {
+  if (user == null) {
     return <Navigate to={RouteConsts.LoginPath} />;
   }
 

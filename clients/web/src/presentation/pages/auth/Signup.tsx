@@ -2,28 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import authService from '@shared/services/authService';
-import Button from '@/presentation/components/button';
-import InputField from '@/presentation/components/input-fields';
-import PasswordField from '@/presentation/components/input-fields/PasswordInput';
-import { Toast } from '@/presentation/components/toast';
-import { toastHideDisappearTime } from '@/constants/common';
-import { DashboardPath, LoginPath } from '@/constants/routeConsts';
 import useAuthenticatedUser from '@shared/hooks/useAuthenticatedUser';
-import { validatePassword } from '@/utils/validationUtils';
-import { MdOutlineMail, HiOutlinePhone } from '@/presentation/assets/icons';
+import Button from '@presentation/components/button';
+import InputField from '@presentation/components/input-fields';
+import PasswordField from '@presentation/components/input-fields/PasswordInput';
+import { Toast } from '@presentation/components/toast';
+import { toastHideDisappearTime } from '@constants/common';
+import { DashboardPath, LoginPath } from '@constants/routeConsts';
+import { validatePassword } from '@utils/validationUtils';
+import { MdOutlineMail, HiOutlinePhone } from '@presentation/assets/icons';
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [organizationName, setorganizationName] = useState('');
+  const [organizationName, setOrganizationName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('+88');
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const [toastClass, setToastClass] = useState('');
   const { user } = useAuthenticatedUser();
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleError = (error: string) => {
     setToastMsg(error);
@@ -38,13 +38,13 @@ const SignUp: React.FC = () => {
   const handleSignUp = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationError = validatePassword(password, confirmPassword);
-    if (validationError) {
+    if (validationError != null) {
       handleError(validationError);
       return;
     }
 
     try {
-      setloading(true);
+      setLoading(true);
 
       const resp = await authService.registerOrganization({
         email,
@@ -58,12 +58,13 @@ const SignUp: React.FC = () => {
       }
     } catch (error: any) {
       handleError(error.message);
+    } finally {
+      setLoading(false);
     }
-    setloading(false);
   };
 
   useEffect(() => {
-    if (user) {
+    if (user != null) {
       navigate(DashboardPath);
     }
   }, [user, navigate]);
@@ -74,14 +75,19 @@ const SignUp: React.FC = () => {
         <div>
           <h2 className="font-bold text-xl text-center mb-6">Sign Up</h2>
 
-          <form onSubmit={handleSignUp}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void handleSignUp(e);
+            }}
+          >
             <InputField
               type="text"
               label="Organization Name"
               placeholder="Enter your organization name"
               value={organizationName}
               onChange={(e) => {
-                setorganizationName(e.target.value);
+                setOrganizationName(e.target.value);
               }}
             />
 

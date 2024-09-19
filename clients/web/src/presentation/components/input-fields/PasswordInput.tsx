@@ -1,16 +1,15 @@
 import React, { ChangeEvent, useState } from 'react';
-import { FaRegEye, FaRegEyeSlash } from '@/presentation/assets/icons';
-import InputField from '@/presentation/components/input-fields/index';
+import { FaRegEye, FaRegEyeSlash } from '@presentation/assets/icons';
+import InputField from '@presentation/components/input-fields/index';
 import {
   PasswordState,
   PasswordValidator,
-} from '@/presentation/components/validators/Password';
+} from '@presentation/components/validators/Password';
 
 interface PasswordFieldProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  className?: string;
   placeholder: string;
 }
 
