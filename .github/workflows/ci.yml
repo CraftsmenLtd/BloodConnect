@@ -30,8 +30,13 @@ jobs:
       - name: Set Runner Image
         id: set_runner_image
         run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
+
+      - name: Set Localstack auth token
+        id: set_localstack_auth_token
+        run: echo "LOCALSTACK_AUTH_TOKEN=${{ secrets.LOCALSTACK_AUTH_TOKEN }}" >> $GITHUB_OUTPUT
     outputs:
         runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
+        localstack_auth_token: ${{ steps.set_localstack_auth_token.outputs.localstack_auth_token }}
 
   handle-docker-image:
     name: Handle Docker Image
@@ -58,6 +63,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Environment Variables
+        run: |
+          echo "LOCALSTACK_AUTH_TOKEN=${{ needs.set-runner-image-name.outputs.localstack_auth_token }}" >> $GITHUB_ENV
 
       - name: Validate OpenAPI specs
         run: make run-command-lint-api
