@@ -1,17 +1,17 @@
 import { signIn } from 'aws-amplify/auth';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import useAuthenticatedUser from '@shared/hooks/useAuthenticatedUser';
+import useAuthenticatedUser from '@web/hooks/useAuthenticatedUser';
 import {
   FaRegEye,
   FaRegEyeSlash,
   MdOutlineMail,
-} from '@presentation/assets/icons';
+} from '@web/presentation/assets/icons';
 
-import InputField from '@presentation/components/input-fields';
-import { Toast } from '@presentation/components/toast';
-import { DashboardPath, SignupPath } from '@constants/routeConsts';
-import Button from '@presentation/components/button';
+import InputField from '@web/presentation/components/input-fields';
+import { Toast } from '@web/presentation/components/toast';
+import { DashboardPath, SignupPath } from '@web/constants/routeConsts';
+import Button from '@web/presentation/components/button';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

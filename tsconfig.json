@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
+    "module": "esnext",
     "jsx": "preserve",
     "moduleResolution": "node",
     "importHelpers": false,
@@ -23,10 +23,13 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
+      "*": ["node_modules/*", "clients/web/node_modules/*"],
       "@commons/*": ["commons/*"],
       "@application/*": ["core/application/*"],
+      "@web/*": ["clients/web/src/*"],
+      "@shared/*": ["clients/shared/*"],
     },
   },
   "include": ["commons", "core", "clients", "babel.config.js", "jest.config.ts", "jest.env.ts"],
-  "exclude": ["node_modules/**/*", "dist", ".idea", ".vscode", ".github", "coverage", ".build"],
+  "exclude": ["node_modules/**/*", "dist/", ".idea", ".vscode", ".github", "coverage", ".build", "clients/web/tailwind.config.js"]
 }

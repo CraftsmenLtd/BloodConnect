@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface ExampleState {
+export interface ExampleState {
   data: any;
   loading: boolean;
   error: string | null;

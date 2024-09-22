@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import authService from '@shared/services/authService';
-import useAuthenticatedUser from '@shared/hooks/useAuthenticatedUser';
-import Button from '@presentation/components/button';
-import InputField from '@presentation/components/input-fields';
-import PasswordField from '@presentation/components/input-fields/PasswordInput';
-import { Toast } from '@presentation/components/toast';
-import { toastHideDisappearTime } from '@constants/common';
-import { DashboardPath, LoginPath } from '@constants/routeConsts';
-import { validatePassword } from '@utils/validationUtils';
-import { MdOutlineMail, HiOutlinePhone } from '@presentation/assets/icons';
+import useAuthenticatedUser from '@web/hooks/useAuthenticatedUser';
+import Button from '@web/presentation/components/button';
+import InputField from '@web/presentation/components/input-fields';
+import PasswordField from '@web/presentation/components/input-fields/PasswordInput';
+import { Toast } from '@web/presentation/components/toast';
+import { toastHideDisappearTime } from '@web/constants/common';
+import { DashboardPath, LoginPath } from '@web/constants/routeConsts';
+import { validatePassword } from '@web/utils/validationUtils';
+import { MdOutlineMail, HiOutlinePhone } from '@web/presentation/assets/icons';
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const SignUp: React.FC = () => {
     }, toastHideDisappearTime);
   };
 
-  const handleSignUp = async (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationError = validatePassword(password, confirmPassword);
     if (validationError != null) {

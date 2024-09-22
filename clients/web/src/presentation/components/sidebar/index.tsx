@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { signOut } from 'aws-amplify/auth';
-import { LoginPath } from '@constants/routeConsts';
+import { LoginPath } from '@web/constants/routeConsts';
 import PropTypes from 'prop-types';
 import SidebarLink from './SidebarLink';
 import {
@@ -51,10 +51,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           ? 'w-[var(--sidebar-expanded-width)]'
           : 'w-[var(--sidebar-collapsed-width)]'
       }`}
-      style={{
-        '--sidebar-expanded-width': '200px',
-        '--sidebar-collapsed-width': '60px',
-      }}
     >
       <div className="flex p-1">
         <button

@@ -17,13 +17,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      // web src directories
-      '@presentation': resolve(__dirname, 'src/presentation'),
-      '@constants': resolve(__dirname, 'src/constants'),
-      '@types': resolve(__dirname, 'src/types'),
-      '@utils': resolve(__dirname, 'src/utils'),
-      '@redux': resolve(__dirname, 'src/redux'),
-
+      '@web': resolve(__dirname, 'src'),
       // other directories
       '@shared': resolve(__dirname, '../shared'),
       '@commons': resolve(__dirname, '../../commons')

@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import { NavLink, useLocation } from 'react-router-dom';
 import { ReactNode } from 'react';
-import { cn } from '@utils';
+import { cn } from '@web/utils';
 
 interface SidebarLinkProps {
-  to?: string;
+  to?: string | null;
   icon: ReactNode;
   label: string;
   active?: boolean;
@@ -13,7 +13,7 @@ interface SidebarLinkProps {
 }
 
 const SidebarLink: React.FC<SidebarLinkProps> = ({
-  to = '',
+  to = null,
   icon,
   label,
   active = false,
@@ -21,24 +21,47 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
   onClick,
 }) => {
   const { pathname } = useLocation();
+
+  const commonClasses = cn(
+    'group relative flex items-center gap-2 rounded-sm py-2 px-2.5 transition-all duration-300 ease-in-out',
+    { 'bg-primary': active }
+  );
+
+  const labelClasses = `transition-opacity duration-300 ${sidebarExpanded ? 'opacity-100' : 'opacity-0'} ${sidebarExpanded ? 'visible' : 'invisible'} whitespace-nowrap`;
+
   return (
     <li>
-      <NavLink
-        to={to !== '' || pathname !== ''}
-        onClick={onClick}
-        className={cn(
-          'group relative flex items-center gap-2 rounded-sm py-2 px-2.5 transition-all duration-300 ease-in-out',
-          { 'bg-primary': active }
-        )}
-      >
-        <span className="flex-shrink-0">{icon}</span>
-        <span
-          className={`transition-opacity duration-300 ${sidebarExpanded ? 'opacity-100' : 'opacity-0'} ${sidebarExpanded ? 'visible' : 'invisible'} whitespace-nowrap`}
-          style={{ width: sidebarExpanded ? 'auto' : '0', overflow: 'hidden' }}
+      {to !== null ? (
+        <NavLink
+          to={to !== '' ? to : pathname}
+          onClick={onClick}
+          className={commonClasses}
         >
-          {label}
-        </span>
-      </NavLink>
+          <span className="flex-shrink-0">{icon}</span>
+          <span
+            className={labelClasses}
+            style={{
+              width: sidebarExpanded ? 'auto' : '0',
+              overflow: 'hidden',
+            }}
+          >
+            {label}
+          </span>
+        </NavLink>
+      ) : (
+        <button onClick={onClick} className={commonClasses}>
+          <span className="flex-shrink-0">{icon}</span>
+          <span
+            className={labelClasses}
+            style={{
+              width: sidebarExpanded ? 'auto' : '0',
+              overflow: 'hidden',
+            }}
+          >
+            {label}
+          </span>
+        </button>
+      )}
     </li>
   );
 };

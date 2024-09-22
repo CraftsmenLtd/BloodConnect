@@ -1,5 +1,9 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import exampleReducer from './exampleReducer';
+import exampleReducer, { ExampleState } from './exampleReducer';
+
+export interface RootState {
+  example: ExampleState;
+}
 
 const rootReducer = combineReducers({
   example: exampleReducer,

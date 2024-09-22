@@ -1,5 +1,5 @@
 import React, { ReactNode, useState, useEffect } from 'react';
-import Sidebar from '@presentation/components/sidebar';
+import Sidebar from '@web/presentation/components/sidebar';
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const storedSidebarState = localStorage.getItem('sidebar-expanded');

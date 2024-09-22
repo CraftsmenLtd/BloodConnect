@@ -53,12 +53,13 @@ module.exports = {
       'error',
       {
         props: true,
-        ignorePropertyModificationsFor: ['state'], // Ignore for 'state' parameter in Redux Toolkit
+        ignorePropertyModificationsFor: ['state']
       },
     ],
     '@typescript-eslint/no-explicit-any': 'off',
     'import/prefer-default-export': 'off',
     'react/require-default-props': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
+    'import/no-extraneous-dependencies': 'off',
   },
 };

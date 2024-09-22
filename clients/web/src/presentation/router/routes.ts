@@ -1,5 +1,5 @@
-import * as RouteConsts from '@constants/routeConsts';
-import { RouteConfig } from '@types/routeConfig';
+import * as RouteConsts from '@web/constants/routeConsts';
+import { RouteConfig } from '@web/types/routeConfig';
 
 export const AppRoutes: RouteConfig[] = [
   {
