@@ -1,14 +1,15 @@
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import RegisterScreen from './src/authentication/register/UI/RegisterScreen'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from './src/context/ThemeContext'
+import Navigator from './src/navigation/Navigator'
 
 export default function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <SafeAreaView style={{ flex: 1 }}>
-          <RegisterScreen />
-        </SafeAreaView>
+        <NavigationContainer>
+          <Navigator />
+        </NavigationContainer>
       </ThemeProvider>
     </SafeAreaProvider>
   )

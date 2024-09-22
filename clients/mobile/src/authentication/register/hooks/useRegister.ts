@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
 import { isRequired, isValidEmail, isValidPassword, isValidPhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
-// import { registerUser } from '../services/authService'
-// import { useNavigation } from '@react-navigation/native'
+import { RegisterScreenNavigationProp } from '../../../navigation/navigationTypes'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -23,6 +23,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useRegister = (): any => {
+  const navigation = useNavigation<RegisterScreenNavigationProp>()
   const [registerCredential, setRegisterCredential] = useState<RegisterCredential>(
     initializeState<RegisterCredential>(Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
   )
@@ -30,8 +31,6 @@ export const useRegister = (): any => {
     Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
   )
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-
-  // const navigation = useNavigation()
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     setRegisterCredential(prevState => ({
@@ -50,7 +49,7 @@ export const useRegister = (): any => {
   }
 
   const handleRegister = async(): Promise<void> => {
-    console.log('REGISTER')
+    navigation.navigate('OTP', { email: registerCredential.email })
   }
 
   return {
