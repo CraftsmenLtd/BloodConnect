@@ -6,4 +6,5 @@ module "auth" {
 module "web-client" {
   source      = "./web-client"
   environment = var.environment
+  acm_certificate_arn = data.aws_acm_certificate.certificate.arn
 }

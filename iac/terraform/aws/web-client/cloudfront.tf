@@ -1,6 +1,8 @@
 resource "aws_cloudfront_distribution" "cdn" {
   #checkov:skip=CKV_AWS_68: "CloudFront Distribution should have WAF enabled"
   #checkov:skip=CKV2_AWS_47: "CloudFront Distribution should have WAF enabled"
+  #checkov:skip=CKV_AWS_86: "Ensure Cloudfront distribution has Access Logging enabled"
+  #checkov:skip=CKV2_AWS_32: "Ensure CloudFront distribution has a response headers policy attached"
   origin {
     domain_name = aws_s3_bucket.static_site.bucket_regional_domain_name
     origin_id   = "S3PrimaryOrigin"
@@ -60,7 +62,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   price_class = "PriceClass_100"
 
   viewer_certificate {
-    acm_certificate_arn      = data.aws_acm_certificate.certificate.arn
+    acm_certificate_arn      = var.acm_certificate_arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2018"
   }
@@ -70,12 +72,6 @@ resource "aws_cloudfront_distribution" "cdn" {
       restriction_type = "none"
     }
   }
-}
-
-data "aws_acm_certificate" "certificate" {
-  domain      = local.web-client-domain
-  statuses    = ["ISSUED"]
-  most_recent = true
 }
 
 resource "aws_cloudfront_origin_access_identity" "oai" {

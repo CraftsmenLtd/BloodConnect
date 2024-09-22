@@ -42,3 +42,9 @@ variable "combined_openapi_file" {
   description = "Combined OpenAPI file"
   default     = "openapi.json"
 }
+
+variable "bloodconnect_domain" {
+  type = string
+  description = "Main domain name for BloodConnect"
+  default = "bloodconnect.net"
+}

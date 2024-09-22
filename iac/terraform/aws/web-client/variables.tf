@@ -14,3 +14,8 @@ variable "cloudfront_response_policy_id" {
   type        = string
   default     = "5cc3b908-e619-4b99-88e5-2cf7f45965bd"
 }
+
+variable "acm_certificate_arn" {
+  description = "ARN forn bloodconnect SSL certification"
+  type = string
+}
