@@ -49,7 +49,7 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
           </span>
         </NavLink>
       ) : (
-        <button onClick={onClick} className={commonClasses}>
+        <button type="button" onClick={onClick} className={commonClasses}>
           <span className="flex-shrink-0">{icon}</span>
           <span
             className={labelClasses}
