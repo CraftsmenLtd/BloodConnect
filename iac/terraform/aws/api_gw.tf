@@ -82,6 +82,7 @@ resource "aws_lambda_permission" "lambda_invoke_permission" {
 resource "aws_api_gateway_domain_name" "api_domain" {
   domain_name = local.apigateway-domain
   certificate_arn = data.aws_acm_certificate.certificate.arn
+  security_policy = "TLS_1_2"
 }
 
 resource "aws_api_gateway_base_path_mapping" "api_mapping" {
