@@ -78,3 +78,14 @@ resource "aws_lambda_permission" "lambda_invoke_permission" {
 
   source_arn = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*"
 }
+
+resource "aws_api_gateway_domain_name" "api_domain" {
+  domain_name = local.apigateway-domain
+  certificate_arn = data.aws_acm_certificate.certificate.arn
+}
+
+resource "aws_api_gateway_base_path_mapping" "api_mapping" {
+  domain_name = aws_api_gateway_domain_name.api_domain.domain_name
+  api_id      = aws_api_gateway_rest_api.rest_api.id
+  stage_name  = aws_api_gateway_deployment.api_deployment.stage_name
+}

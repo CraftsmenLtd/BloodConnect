@@ -8,6 +8,11 @@ variable "bloodconnect_domain" {
   type        = string
 }
 
+variable "route53_hosted_zone_id" {
+  description = "Route53 hosted zone id"
+  type        = string
+}
+
 variable "cloudfront_header_response_policy_id" {
   description = "Cloudfront Managed response header policy id for CORS policy"
   type        = string
@@ -21,12 +26,12 @@ variable "acm_certificate_arn" {
 
 variable "cloudfront_distribution_origin_id" {
   description = "Origin id used in origin block in aws cloudfron distribution"
-  type = string
-  default = "S3PrimaryOrigin"
+  type        = string
+  default     = "S3PrimaryOrigin"
 }
 
 variable "cloudfront_distribution_failover_origin_id" {
-  description  = "Origin Id for failover bucket on cloudfront distribution"
-  type = string
-  default = "S3FailoverOrigin"
+  description = "Origin Id for failover bucket on cloudfront distribution"
+  type        = string
+  default     = "S3FailoverOrigin"
 }
