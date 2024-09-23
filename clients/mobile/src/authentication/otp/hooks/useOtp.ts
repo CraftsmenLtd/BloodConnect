@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react'
 import { TextInput } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../navigation/navigationTypes'
+import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
+import { submitOtp } from '../../authService'
 
 export const useOtp = (): any => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,10 +28,13 @@ export const useOtp = (): any => {
     }
   }
 
-  const handleSubmit = (): void => {
-    setError(true)
-    // navigation.replace('OTP')
-    console.log('SUBMIT')
+  const handleSubmit = async(): Promise<void> => {
+    try {
+      const isSignUpComplete = await submitOtp(email, otp.join(''))
+      console.log('SIGN UP DONE', isSignUpComplete)
+    } catch (error) {
+      setError(true)
+    }
   }
 
   return {

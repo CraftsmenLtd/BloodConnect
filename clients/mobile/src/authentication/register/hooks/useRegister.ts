@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { isRequired, isValidEmail, isValidPassword, isValidPhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
-import { RegisterScreenNavigationProp } from '../../../navigation/navigationTypes'
+import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import { registerUser } from '../../authService'
 
 type CredentialKeys = keyof RegisterCredential
 
-interface RegisterCredential {
+export interface RegisterCredential {
   name: string;
   email: string;
   phoneNumber: string;
@@ -30,6 +31,7 @@ export const useRegister = (): any => {
   const [errors, setErrors] = useState<RegisterErrors>(initializeState<RegisterCredential>(
     Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
   )
+  const [signupError, setSignupError] = useState<string>('')
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
@@ -49,10 +51,18 @@ export const useRegister = (): any => {
   }
 
   const handleRegister = async(): Promise<void> => {
-    navigation.navigate('OTP', { email: registerCredential.email })
+    try {
+      const isConfirmationRequired = await registerUser(registerCredential)
+      if (isConfirmationRequired) {
+        navigation.navigate('OTP', { email: registerCredential.email })
+      }
+    } catch (error) {
+      setSignupError('Failed to sign up. Please try again later.')
+    }
   }
 
   return {
+    signupError,
     errors,
     registerCredential,
     handleInputChange,

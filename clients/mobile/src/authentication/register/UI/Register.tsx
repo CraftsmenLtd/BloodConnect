@@ -1,17 +1,17 @@
 import { Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import { Input } from '../../../components/inputElement/Input'
-import { useTheme } from '../../../hooks/useTheme'
-import { Theme } from '../../../theme'
+import { useTheme } from '../../../setup/theme/hooks/useTheme'
+import { Theme } from '../../../setup/theme'
 import { PasswordInput } from '../../../components/inputElement/PasswordInput'
 import { Button } from '../../../components/button/Button'
 import { useRegister } from '../hooks/useRegister'
-import { platform } from '../../../constant/platform'
+import { platform } from '../../../setup/constant/platform'
 import LinkWithText from '../../../components/button/LinkWithText'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function RegisterScreen() {
   const styles = createStyles(useTheme())
-  const { errors, registerCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleRegister } = useRegister()
+  const { errors, registerCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleRegister, signupError } = useRegister()
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -65,7 +65,7 @@ export default function RegisterScreen() {
             setIsVisible={setIsPasswordVisible}
             error={errors.password}
           />
-
+          {signupError !== '' && <Text style={styles.error}>{signupError}</Text>}
           <Button text="Register" onPress={handleRegister} />
 
           <LinkWithText
@@ -103,5 +103,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   loginLink: {
     color: theme.colors.primary
+  },
+  error: {
+    color: theme.colors.primary,
+    fontSize: theme.typography.errorFontSize,
+    textAlign: 'center'
   }
 })
