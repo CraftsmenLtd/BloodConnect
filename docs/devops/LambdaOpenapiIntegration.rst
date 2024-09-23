@@ -1,5 +1,5 @@
 =================================================================================
-Creating a Module for Multiple Lambda Functions and Integrating them with OpenAPI
+Module With Multiple Lambda Functions and Integrating With OpenAPI
 =================================================================================
 This guide combines two processes: creating a Terraform module that defines and deploys multiple AWS Lambda functions with their associated IAM policies, and integrating those Lambda functions into an OpenAPI specification. We'll use **test** as a sample module for defining Lambda functions, and demonstrate how to add a new ``test-api`` Lambda function to the OpenAPI specification using API Gateway for integration.
 
@@ -50,7 +50,8 @@ In ``lambdas.tf``, configure the settings for each Lambda function, such as the 
     }
 
 Explanation:
-- **lambda_options**: Defines each Lambda function's configuration, including:
+
+- ``lambda_options``: Defines each Lambda function's configuration including:
 
   - ``name``: Lambda function name.
   - ``handler``: Lambda function entry point.
@@ -300,15 +301,17 @@ File: ``openapi/integration/aws/test/post-test-api.json``
     }
 
 Explanation:
-- **`uri`**: Uses the Lambda function ARN placeholder (`${TEST_API_INVOCATION_ARN}`), which will be replaced with the actual ARN of your Lambda function during deployment.
+
+- **uri**: Uses the Lambda function ARN placeholder (`TEST_API_INVOCATION_ARN`), which will be replaced with the actual ARN of your Lambda function during deployment.
 - **Response mapping**: Defines how responses are handled, including setting status codes and headers.
-- **Request mapping**: Transforms the incoming request to the format required by the Lambda function. The transformation is done using Velocity Template Language (VTL). For More details read this https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html
+- **Request mapping**: Transforms the incoming request to the format required by the Lambda function. The transformation is done using Velocity Template Language (VTL). For more details read this `VTL <https://docs.aws.amazon.com/apigateway/latest/developerguide/models-mappings.html>`_ documentation.
 
 5. **Referencing the New API Path in the OpenAPI Spec**
 
-Finally, update the main OpenAPI spec file (`versions/v1.json`) to include the new `test-api` path.
+Finally, update the main OpenAPI spec file (``versions/v1.json``) to include the new ``test-api``` path.
 
-File: `openapi/versions/v1.json`
+File: ``openapi/versions/v1.json``
+
 .. code-block::
 
     {
