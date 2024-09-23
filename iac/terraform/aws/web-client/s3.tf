@@ -66,40 +66,11 @@ resource "aws_s3_bucket_public_access_block" "failover_bucket_public_access_bloc
 resource "aws_s3_bucket_policy" "bucket_access_policy" {
   bucket = aws_s3_bucket.static_site.id
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "s3:GetObject"
-        Effect = "Allow"
-        Principal = {
-          AWS = "${aws_cloudfront_origin_access_identity.s3_static_bucket_oai.iam_arn}"
-        }
-        Resource = "${aws_s3_bucket.static_site.arn}/*"
-      }
-    ]
-  })
+  policy = data.aws_iam_policy_document.bucket_access_policy_document.json
 }
 
 resource "aws_s3_bucket_policy" "log_store_policy" {
   bucket = aws_s3_bucket.log_store.id
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          Service = "cloudfront.amazonaws.com"
-        },
-        Action   = "s3:PutObject",
-        Resource = "${aws_s3_bucket.log_store.arn}/*",
-        Condition = {
-          StringEquals = {
-            "AWS:SourceArn" = "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cdn.id}"
-          }
-        }
-      }
-    ]
-  })
+  policy = data.aws_iam_policy_document.log_store_policy_document.json
 }
