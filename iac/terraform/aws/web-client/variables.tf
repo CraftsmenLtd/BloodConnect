@@ -25,7 +25,7 @@ variable "acm_certificate_arn" {
 }
 
 variable "cloudfront_distribution_origin_id" {
-  description = "Origin id used in origin block in aws cloudfron distribution"
+  description = "Origin id used in origin block in aws cloudfront distribution"
   type        = string
   default     = "S3PrimaryOrigin"
 }
@@ -34,4 +34,10 @@ variable "cloudfront_distribution_failover_origin_id" {
   description = "Origin Id for failover bucket on cloudfront distribution"
   type        = string
   default     = "S3FailoverOrigin"
+}
+
+variable "cloudfront_access_region" {
+  description = "Request allowed from regions on cloudfront"
+  type = list(string)
+  default = [ "BD" ]
 }
