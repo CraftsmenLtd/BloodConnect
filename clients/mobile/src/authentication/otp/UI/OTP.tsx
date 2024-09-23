@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text, TextInput } from 'react-native'
-import { useTheme } from '../../../hooks/useTheme'
-import { Theme } from '../../../theme'
+import { useTheme } from '../../../setup/theme/hooks/useTheme'
+import { Theme } from '../../../setup/theme'
 import { Button } from '../../../components/button/Button'
 import { useOtp } from '../hooks/useOtp'
 import LinkWithText from '../../../components/button/LinkWithText'

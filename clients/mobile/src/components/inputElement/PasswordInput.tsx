@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
-import { useTheme } from '../../hooks/useTheme'
-import { Theme } from '../../theme'
+import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { Theme } from '../../setup/theme'
 import { InputProps } from './types'
 import { commonStyles } from './commonStyles'
 

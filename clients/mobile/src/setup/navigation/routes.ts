@@ -1,5 +1,5 @@
-import Register from '../authentication/register/UI/Register'
-import OTP from '../authentication/otp/UI/OTP'
+import Register from '../../authentication/register/UI/Register'
+import OTP from '../../authentication/otp/UI/OTP'
 
 export const routes = [
   {

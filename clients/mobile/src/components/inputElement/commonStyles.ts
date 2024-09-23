@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { Theme } from '../../theme'
+import { Theme } from '../../setup/theme'
 
 export const commonStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   inputContainer: {

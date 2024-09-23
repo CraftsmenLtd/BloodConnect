@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { useTheme } from '../../hooks/useTheme'
-import { Theme } from '../../theme'
+import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { Theme } from '../../setup/theme'
 
 interface LinkWithTextProps {
   staticText?: string;

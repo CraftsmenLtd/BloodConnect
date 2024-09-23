@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, TextInput, Text, StyleSheet, KeyboardTypeOptions } from 'react-native'
-import { useTheme } from '../../hooks/useTheme'
-import { Theme } from '../../theme'
+import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 import { InputProps } from './types'
 
