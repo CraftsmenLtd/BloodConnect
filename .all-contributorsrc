@@ -29,6 +29,20 @@
         "maintenance",
         "question"
       ]
+    },
+    {
+      "login": "Biplob14",
+      "name": "Sadekur Rahaman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11816821?v=4",
+      "profile": "https://github.com/Biplob14",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "ideas",
+        "question",
+        "research"
+      ]
     }
   ]
 }
