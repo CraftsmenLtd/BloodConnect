@@ -1,0 +1,15 @@
+{
+  "projectName": "BloodConnect",
+  "projectOwner": "CraftsmenLtd",
+  "files": [
+    "README.md"
+  ],
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "imageSize": 100,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "linkToUsage": true,
+  "contributors": []
+}
