@@ -17,6 +17,7 @@ variable "cloudfront_header_response_policy_id" {
   description = "Cloudfront Managed response header policy id for CORS policy"
   type        = string
   default     = "5cc3b908-e619-4b99-88e5-2cf7f45965bd"
+  # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-response-headers-policies.html
 }
 
 variable "acm_certificate_arn" {

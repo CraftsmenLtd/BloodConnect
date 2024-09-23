@@ -26,6 +26,22 @@ resource "aws_s3_bucket" "log_store" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "log_store_lifecycle" {
+  bucket = aws_s3_bucket.log_store.id
+
+  rule {
+    id = "log-expiration"
+    status = enabled
+
+    expiration {
+      days = 7
+    }
+    filter {
+      prefix = ""
+    }
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "static_site_public_access_block" {
   bucket = aws_s3_bucket.static_site.id
 
