@@ -1,4 +1,4 @@
-import { confirmSignUp, signUp } from 'aws-amplify/auth'
+import { confirmSignUp, signUp, signIn } from 'aws-amplify/auth'
 import { RegisterCredential } from './register/hooks/useRegister'
 
 export const registerUser = async(registerInfo: RegisterCredential): Promise<boolean> => {
@@ -28,6 +28,21 @@ export const submitOtp = async(email: string, otp: string): Promise<boolean> => 
       confirmationCode: otp
     })
     return nextStep.signUpStep === 'DONE'
+  } catch (error) {
+    throw Error('Error signing up:', error)
+  }
+}
+
+export const loginUser = async(email: string, password: string): Promise<boolean> => {
+  try {
+    const { isSignedIn } = await signIn({
+      username: email,
+      password,
+      options: {
+        authFlowType: 'USER_PASSWORD_AUTH'
+      }
+    })
+    return isSignedIn
   } catch (error) {
     throw Error('Error signing up:', error)
   }

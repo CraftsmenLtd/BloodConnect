@@ -5,7 +5,6 @@ import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navi
 import { submitOtp } from '../../authService'
 
 export const useOtp = (): any => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigation = useNavigation<OtpScreenNavigationProp>()
   const route = useRoute<OtpScreenRouteProp>()
   const { email } = route.params
@@ -31,7 +30,9 @@ export const useOtp = (): any => {
   const handleSubmit = async(): Promise<void> => {
     try {
       const isSignUpComplete = await submitOtp(email, otp.join(''))
-      console.log('SIGN UP DONE', isSignUpComplete)
+      if (isSignUpComplete) {
+        navigation.navigate('Profile')
+      }
     } catch (error) {
       setError(true)
     }

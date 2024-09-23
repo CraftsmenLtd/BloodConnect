@@ -4,19 +4,19 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
 import { PasswordInput } from '../../../components/inputElement/PasswordInput'
 import { Button } from '../../../components/button/Button'
-import { useRegister } from '../hooks/useRegister'
+import { useLogin } from '../hooks/useLogin'
 import { platform } from '../../../setup/constant/platform'
 import LinkWithText from '../../../components/button/LinkWithText'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 
-interface RegisterScreenProps {
-  navigation: RegisterScreenNavigationProp;
+interface LoginScreenProps {
+  navigation: LoginScreenNavigationProp;
 }
 
-export default function RegisterScreen({ navigation }: RegisterScreenProps) {
+export default function LoginScreen({ navigation }: LoginScreenProps) {
   const styles = createStyles(useTheme())
-  const { errors, registerCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleRegister, signupError } = useRegister()
+  const { loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError } = useLogin()
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -29,54 +29,39 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.title}>Register</Text>
-
-          <Input
-            name="name"
-            label="Name"
-            value={registerCredential.name}
-            onChangeText={handleInputChange}
-            placeholder="Jon Doe"
-            keyboardType="twitter"
-            error={errors.name}
-          />
+          <Text style={styles.title}>Login</Text>
 
           <Input
             name="email"
             label="Email"
-            value={registerCredential.email}
+            value={loginCredential.email}
             onChangeText={handleInputChange}
             placeholder="example@gmail.com"
             keyboardType="default"
-            error={errors.email}
-          />
-
-          <Input
-            name="phoneNumber"
-            label="Phone Number"
-            value={registerCredential.phoneNumber}
-            onChangeText={handleInputChange}
-            placeholder="01XXXXXXXXX"
-            keyboardType="phone-pad"
-            error={errors.phoneNumber}
           />
 
           <PasswordInput
             name="password"
             label="Password"
-            value={registerCredential.password}
+            value={loginCredential.password}
             onChangeText={handleInputChange}
             isVisible={isPasswordVisible}
             setIsVisible={setIsPasswordVisible}
-            error={errors.password}
           />
-          {signupError !== '' && <Text style={styles.error}>{signupError}</Text>}
-          <Button text="Register" onPress={handleRegister} />
+          {loginError !== '' && <Text style={styles.error}>{loginError}</Text>}
 
           <LinkWithText
-            staticText="Already have an account? "
-            linkText=" Login"
-            onPress={() => { navigation.navigate('Login') }}
+            staticText=""
+            linkText="Forgot Password?"
+            onPress={() => { console.log('Forgot Password flow') }}
+          />
+
+          <Button text="Login" onPress={handleLogin} />
+
+          <LinkWithText
+            staticText="Don't have an account? "
+            linkText=" Register"
+            onPress={() => { navigation.navigate('Register') }}
           />
         </ScrollView>
       </KeyboardAvoidingView>
@@ -100,14 +85,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20
-  },
-  registerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20
-  },
-  loginLink: {
-    color: theme.colors.primary
   },
   error: {
     color: theme.colors.primary,
