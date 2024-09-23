@@ -28,6 +28,11 @@ TF_BACKEND_CONFIG=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" \
                   --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
 
 # Checkov Skip Rules
+# CKV_AWS_117 - Ensure that AWS Lambda function is configured inside a VPC
+# CKV_AWS_50  - X-ray tracing is enabled for Lambda
+# CKV_AWS_116 - Ensure that AWS Lambda function is configured for a Dead Letter Queue(DLQ)
+# CKV_AWS_272 - Ensure AWS Lambda function is configured to validate code-signing
+# CKV_AWS_115 - Ensure that AWS Lambda function is configured for function-level concurrent execution limit
 TF_CHECKOV_SKIP?=--skip-check CKV_AWS_117,CKV_AWS_50,CKV_AWS_116,CKV_AWS_272,CKV_AWS_115
 DOCKER_CHECKOV_SKIP?=--skip-check CKV_DOCKER_9
 
@@ -44,7 +49,10 @@ bundle-openapi:
 	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json
 
 
-# Terraform base command
+# Terraform base command:
+# Depending on the deployment environment, we choose the appropriate Terraform command and directory.
+# If using LocalStack, the 'tflocal' command is used to run Terraform commands within LocalStack,
+# and the Terraform directory is set to 'deployment/localstack/terraform'.
 ifeq ($(DEPLOYMENT_ENVIRONMENT),localstack)
     TF_RUNNER := tflocal
     TF_DIR := deployment/localstack/terraform
@@ -135,7 +143,6 @@ start-dev: build-runner-image localstack-start run-command-install-node-packages
 
 run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
          run-command-tf-plan-apply run-command-tf-apply
-
 
 # Swagger UI
 swagger-ui:
