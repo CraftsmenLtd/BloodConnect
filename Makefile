@@ -102,6 +102,7 @@ tf-destroy:
 
 tf-fmt:
 	$(TF_RUNNER) -chdir=iac/terraform fmt -recursive
+	$(TF_RUNNER) -chdir=deployment fmt -recursive
 
 tf-validate: tf-init
 	$(TF_RUNNER) -chdir=$(TF_DIR) validate
