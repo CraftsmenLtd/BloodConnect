@@ -1,0 +1,66 @@
+{
+  "projectName": "BloodConnect",
+  "projectOwner": "CraftsmenLtd",
+  "files": [
+    "README.md"
+  ],
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "imageSize": 100,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "linkToUsage": true,
+  "contributors": [
+    {
+      "login": "KhirulIslam",
+      "name": "Md khirul Islam",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10114629?v=4",
+      "profile": "https://github.com/KhirulIslam",
+      "contributions": [
+        "projectManagement",
+        "research",
+        "review",
+        "talk",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "question"
+      ]
+    },
+    {
+      "login": "Biplob14",
+      "name": "Sadekur Rahaman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11816821?v=4",
+      "profile": "https://github.com/Biplob14",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "ideas",
+        "question",
+        "research"
+      ]
+    },
+    {
+      "login": "mahinuzzaman",
+      "name": "Mahinuzzaman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56755200?v=4",
+      "profile": "https://github.com/mahinuzzaman",
+      "contributions": [
+        "code",
+        "bug",
+        "review",
+        "talk",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "question"
+      ]
+    }
+  ]
+}
