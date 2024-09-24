@@ -90,6 +90,12 @@ But a more efficient way might be to pick and choose what needs doing,
     make run-command-tf-validate  # To validate/lint terraform code
     make run-command-tf-fmt  # To format terraform code
 
+- Type Check
+
+ .. code-block:: bash
+
+    make run-command-type-check  # To run all project type checks with Typescript
+
 - Unit Tests
 
  .. code-block:: bash
