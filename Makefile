@@ -45,8 +45,19 @@ sphinx-html: bundle-openapi
 	rm -rf docs/_build
 	(cd docs && make html)
 
+
+# API
 bundle-openapi:
 	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json
+
+replace-dev-url:
+	local_base_url=$$(make run-command-tf-output-aws_invoke_base_url | tail -n 1); \
+	if [[ "$$OSTYPE" == "darwin"* ]]; then \
+		command_prefix="''"; \
+	else \
+		command_prefix=""; \
+	fi; \
+	sed -i $$command_prefix "s|<<local_base_url>>|$$local_base_url|g" openapi/bruno/environments/local.bru
 
 
 # Terraform base command:
@@ -90,13 +101,17 @@ tf-destroy:
 	$(TF_RUNNER) -chdir=$(TF_DIR) apply -input=false tf-destroy.out
 
 tf-fmt:
-	terraform -chdir=iac/terraform fmt -recursive
+	$(TF_RUNNER) -chdir=iac/terraform fmt -recursive
+	$(TF_RUNNER) -chdir=deployment fmt -recursive
 
 tf-validate: tf-init
-	terraform -chdir=$(TF_DIR) validate
+	$(TF_RUNNER) -chdir=$(TF_DIR) validate
 
 tf-security: tf-init
 	checkov --directory $(TF_DIR) $(TF_CHECKOV_SKIP)
+
+tf-output-%:
+	$(TF_RUNNER) -chdir=$(TF_DIR) output -raw $*
 
 
 # Nodejs
@@ -142,7 +157,8 @@ run-command-%:
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
 run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
-         run-command-tf-plan-apply run-command-tf-apply
+         run-command-tf-plan-apply run-command-tf-apply replace-dev-url
+
 
 # Swagger UI
 swagger-ui:
