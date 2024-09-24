@@ -39,6 +39,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "log_store_lifecycle" {
     filter {
       prefix = ""
     }
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
   }
 }
 
