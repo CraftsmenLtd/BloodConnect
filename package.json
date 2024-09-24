@@ -10,6 +10,7 @@
   "type": "module",
   "scripts": {
     "test": "jest",
+    "type-check": "tsc --skipLibCheck",
     "lint": "eslint ."
   },
   "devDependencies": {

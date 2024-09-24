@@ -7,8 +7,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "BloodConnect"
-copyright = "2023, Craftsmen Ltd"
-author = "Craftsmen Ltd"
+# copyright = ""
+# author = ""
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

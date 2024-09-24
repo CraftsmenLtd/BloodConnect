@@ -1,7 +1,7 @@
 {
   "description": "Enable CORS",
   "tags": [
-    "bloodconnect"
+    "cors-options"
   ],
   "responses": {
     "200": {

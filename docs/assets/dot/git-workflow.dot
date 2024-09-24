@@ -1,0 +1,49 @@
+digraph {
+    rankdir=LR;
+    node [shape=circle, fontsize=10, width=0.5, height=0.5];
+    edge [fontsize=10];
+    label=<<B>Git Workflow</B>>
+
+    subgraph cluster_master {
+        label=<<B>master (staging)</B>>
+        fontsize=20;
+        color=none;
+        master1 [label="Commit 1"];
+        master2 [label="Commit 2"];
+        master3 [label="Commit 3"];
+        master4 [label="Commit 4"];
+        master5 [label="Commit 5"];
+        master6 [label="Commit 6"];
+        master7 [label="Commit 7"];
+    }
+
+    subgraph cluster_feature {
+        label=<<B>feature branch</B>>;
+        fontsize=20;
+        color=none;
+        feature1 [label="Commit A"];
+        feature2 [label="Commit B"];
+        feature3 [label="Commit C"];
+    }
+    
+    subgraph cluster_prod {
+        label=<<B>release</B>>;
+        fontsize=20;
+        color=none;
+        tag1 [label="1.0.0"];
+        tag2 [label="1.1.0"];
+        tag3 [label="1.1.5"];
+    }
+
+    master1 -> master2 -> master3 -> master4 -> master5 -> master6 -> master7;
+    master2 -> feature1 [style=dotted, label="new feature branch"];
+
+    feature1 -> feature2 -> feature3;
+    feature3 -> master5 [label="merge", style=dashed];
+
+    tag1 -> tag2 -> tag3;
+    master2 -> tag1 [label="git tag", style=dashed];
+    master4 -> tag2 [label="git tag", style=dashed];
+    master7 -> tag3 [label="git tag", style=dashed];
+
+}
