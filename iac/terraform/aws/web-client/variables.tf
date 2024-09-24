@@ -39,6 +39,6 @@ variable "cloudfront_distribution_failover_origin_id" {
 
 variable "cloudfront_access_region" {
   description = "Request allowed from regions on cloudfront"
-  type = list(string)
-  default = [ "BD" ]
+  type        = list(string)
+  default     = ["BD"]
 }

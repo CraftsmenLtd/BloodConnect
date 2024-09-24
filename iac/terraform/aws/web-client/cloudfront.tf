@@ -70,7 +70,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
-      locations = var.cloudfront_access_region
+      locations        = var.cloudfront_access_region
     }
   }
 }

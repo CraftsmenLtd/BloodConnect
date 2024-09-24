@@ -4,6 +4,6 @@ variable "aws_environment" {
 }
 
 variable "bloodconnect_domain" {
-  type = string
+  type        = string
   description = "Bloodconnect root domain"
 }

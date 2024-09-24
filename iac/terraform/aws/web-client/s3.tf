@@ -30,7 +30,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "log_store_lifecycle" {
   bucket = aws_s3_bucket.log_store.bucket
 
   rule {
-    id = "log-expiration"
+    id     = "log-expiration"
     status = "Enabled"
 
     expiration {

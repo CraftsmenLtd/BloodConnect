@@ -6,5 +6,5 @@ module "aws" {
   providers = {
     aws.us-east-1 = aws.us-east-1
   }
-  depends_on = [ aws_acm_certificate.ssl_certificate_localstack, aws_route53_zone.main ]
+  depends_on = [aws_acm_certificate.ssl_certificate_localstack, aws_route53_zone.main]
 }
