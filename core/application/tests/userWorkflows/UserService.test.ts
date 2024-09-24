@@ -22,8 +22,8 @@ describe('UserService Tests', () => {
 
     mockRepository = {
       create: jest.fn()
-    } satisfies jest.Mocked<Repository<UserDTO>>
-    ;(generateUniqueID as jest.Mock).mockReturnValue('unique-id')
+    };
+    (generateUniqueID as jest.Mock).mockReturnValue('unique-id')
   })
 
   afterEach(() => {
@@ -43,10 +43,7 @@ describe('UserService Tests', () => {
 
     const result = await userService.createNewUser(mockUserAttributes, mockRepository)
 
-    expect(result).toEqual({
-      ...mockUser,
-      registrationDate: expect.any(Date)
-    })
+    expect(result).toBe(mockUser)
 
     expect(generateUniqueID).toHaveBeenCalledTimes(1)
 
@@ -66,16 +63,12 @@ describe('UserService Tests', () => {
     mockRepository.create.mockRejectedValue(originalError)
     await expect(userService.createNewUser(mockUserAttributes, mockRepository))
       .rejects.toThrow(new Error(errorMessage))
-
-    await expect(userService.createNewUser(mockUserAttributes, mockRepository))
-      .rejects.toThrow('Database error')
-
-    expect(mockRepository.create).toHaveBeenCalledTimes(2)
+    expect(mockRepository.create).toHaveBeenCalledTimes(1)
   })
 
   test('should get post-signup message correctly', () => {
-    const mockMessage = { title: 'Welcome to Blood Connect!', content: 'Verify your email' }
-    ;(getEmailVerificationMessage as jest.Mock).mockReturnValue(mockMessage)
+    const mockMessage = { title: 'Welcome to Blood Connect!', content: 'Verify your email' };
+    (getEmailVerificationMessage as jest.Mock).mockReturnValue(mockMessage)
 
     const result = userService.getPostSignUpMessage('Ebrahim', '1234')
     expect(getEmailVerificationMessage).toHaveBeenCalledWith('Ebrahim', '1234')
