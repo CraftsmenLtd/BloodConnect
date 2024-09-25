@@ -1,6 +1,6 @@
 resource "aws_route53_record" "root" {
   zone_id = var.route53_hosted_zone_id
-  name    = local.web-client-domain
+  name    = local.web_client_domain
   type    = "A"
 
   alias {
