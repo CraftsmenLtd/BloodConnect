@@ -47,8 +47,3 @@ variable "combined_openapi_file" {
   description = "Combined OpenAPI file"
   default     = "openapi.json"
 }
-
-variable "from_email_address" {
-  type    = string
-  default = "no-reply"
-}

@@ -3,6 +3,10 @@ variable "environment" {
   description = "Deployment environment"
 }
 
+variable "bloodconnect_domain" {
+  type = string
+}
+
 variable "lambda_runtime" {
   type        = string
   description = "Lambda Runtime"
@@ -14,10 +18,6 @@ variable "verified_domain_arn" {
 }
 
 variable "dynamodb_table_arn" {
-  type = string
-}
-
-variable "from_email_address" {
   type = string
 }
 
