@@ -18,7 +18,7 @@ api.interceptors.request.use(
     }
     return config
   },
-  async(error) => await Promise.reject(error)
+  async(error) => Promise.reject(error)
 )
 
 export default api
