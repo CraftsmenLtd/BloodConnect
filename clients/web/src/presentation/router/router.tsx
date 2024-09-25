@@ -1,11 +1,11 @@
 import React from 'react';
 import { Navigate, Route, BrowserRouter, Routes } from 'react-router-dom';
-import FullPageLoader from '@web/presentation/components/loader/FullPageLoader';
-import { LoginPath } from '@web/constants/routeConsts';
-import { Pages } from '@web/presentation/pages';
-import { ProtectedRoute } from '@web/presentation/router/protectedRoutes';
-import { AppRoutes } from '@web/presentation/router/routes';
-import { RouteConfig } from '@web/types/routeConfig';
+import FullPageLoader from '../components/loader/FullPageLoader';
+import { LoginPath } from '../../constants/routeConsts';
+import { Pages } from '../pages';
+import { ProtectedRoute } from '../router/protectedRoutes';
+import { AppRoutes } from '../router/routes';
+import { RouteConfig } from '../../types/routeConfig';
 
 function RouterConfig() {
   return (

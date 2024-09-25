@@ -27,7 +27,7 @@
       "@commons/*": ["commons/*"],
       "@application/*": ["core/application/*"],
       "@web/*": ["clients/web/src/*"],
-      "@shared/*": ["clients/shared/*"],
+      "@client-commons/*": ["clients/commons/*"],
     },
   },
   "include": ["commons", "core", "clients", "babel.config.js", "jest.config.ts", "jest.env.ts"],

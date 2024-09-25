@@ -8,9 +8,9 @@
     "paths": {
       "*": ["node_modules/*"],
       "@web*": ["src/*"],
-      "@shared*": ["../shared/*"]
+      "@client-commons*": ["../commons/*"]
     },
   },
-  "include": ["src/**/*", "../shared/**/*"],
+  "include": ["src/**/*", "../commons/**/*"],
   "exclude": ["node_modules", "build", "dist", "coverage"],
 }

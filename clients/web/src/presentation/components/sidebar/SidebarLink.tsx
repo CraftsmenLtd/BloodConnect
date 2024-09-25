@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { NavLink, useLocation } from 'react-router-dom';
 import { ReactNode } from 'react';
-import { cn } from '@web/utils';
+import { cn } from '../../../utils';
 
 type SidebarLinkProps = {
   to?: string | null;

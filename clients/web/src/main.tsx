@@ -1,5 +1,5 @@
-import '@web/presentation/assets/styles/index.css';
-import awsConfig from '@web/config/awsExports';
+import './presentation/assets/styles/index.css';
+import awsConfig from './config/awsExports';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Amplify } from 'aws-amplify';
 import React from 'react';

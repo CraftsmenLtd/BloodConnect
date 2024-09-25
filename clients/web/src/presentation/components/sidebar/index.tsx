@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { signOut } from 'aws-amplify/auth';
-import { LoginPath } from '@web/constants/routeConsts';
+import { LoginPath } from '../../../constants/routeConsts';
 import PropTypes from 'prop-types';
 import SidebarLink from './SidebarLink';
 import {

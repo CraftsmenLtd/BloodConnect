@@ -1,5 +1,5 @@
 import './App.css';
-import RouterConfig from '@web/presentation/router/router';
+import RouterConfig from './presentation/router/router';
 
 const App = () => {
   return (

@@ -4,9 +4,9 @@ export const Pages: Record<
   string,
   React.LazyExoticComponent<React.FC<object>>
 > = {
-  Login: React.lazy(async () => import('@web/presentation/pages/auth/Login')),
-  Signup: React.lazy(async () => import('@web/presentation/pages/auth/Signup')),
+  Login: React.lazy(async () => import('./auth/Login')),
+  Signup: React.lazy(async () => import('./auth/Signup')),
   Dashboard: React.lazy(
-    async () => import('@web/presentation/pages/dashboard/Dashboard')
+    async () => import('./dashboard/Dashboard')
   ),
 };
