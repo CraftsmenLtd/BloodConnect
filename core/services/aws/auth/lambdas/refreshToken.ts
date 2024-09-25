@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { HttpCodes } from '@commons/libs/constants/GenericCodes'
+import { HTTP_CODES } from '@commons/libs/constants/GenericCodes'
 import { getAuthTokenFromRefreshToken } from '@application/authWorkflows/authWorkflowUseCases'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 
@@ -10,9 +10,9 @@ import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 function refreshTokenLambda(event: APIGatewayProxyEvent): APIGatewayProxyResult {
   const authToken = getAuthTokenFromRefreshToken(event.headers.refreshToken)
   if (authToken !== undefined) {
-    return generateApiGatewayResponse(authToken, HttpCodes.ok)
+    return generateApiGatewayResponse(authToken, HTTP_CODES.OK)
   }
-  return generateApiGatewayResponse('Unauthorized', HttpCodes.unauthorized)
+  return generateApiGatewayResponse('Unauthorized', HTTP_CODES.UNAUTHORIZED)
 }
 
 export default refreshTokenLambda

@@ -4,7 +4,7 @@ import { mockClient } from 'aws-sdk-client-mock'
 import { UserDTO } from '@commons/dto/UserDTO'
 import UserModel, { UserFields } from '@application/technicalImpl/dbModels/UserModel'
 import DatabaseError from '@commons/libs/errors/DatabaseError'
-import { GenericCodes } from '@commons/libs/constants/GenericCodes'
+import { GENERIC_CODES } from '@commons/libs/constants/GenericCodes'
 
 const ddbMock = mockClient(DynamoDBDocumentClient)
 
@@ -66,7 +66,7 @@ describe('DynamoDbTableOperations Tests', () => {
   test('should throw error when DynamoDB table name is not defined', () => {
     delete process.env.DYNAMODB_TABLE_NAME
     expect(() => dynamoDbOperations.getTableName()).toThrow(
-      new DatabaseError('DDB Table name not defined', GenericCodes.error)
+      new DatabaseError('DDB Table name not defined', GENERIC_CODES.ERROR)
     )
   })
 

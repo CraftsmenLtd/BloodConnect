@@ -3,7 +3,7 @@ import Repository from '@application/technicalImpl/policies/repositories/Reposit
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb'
 import { DTO } from '@commons/dto/DTOCommon'
-import { GenericCodes } from '@commons/libs/constants/GenericCodes'
+import { GENERIC_CODES } from '@commons/libs/constants/GenericCodes'
 import DatabaseError from '@commons/libs/errors/DatabaseError'
 
 export default class DynamoDbTableOperations<
@@ -31,7 +31,7 @@ export default class DynamoDbTableOperations<
 
   getTableName(): string {
     if (process.env.DYNAMODB_TABLE_NAME == null) {
-      throw new DatabaseError('DDB Table name not defined', GenericCodes.error)
+      throw new DatabaseError('DDB Table name not defined', GENERIC_CODES.ERROR)
     }
     return process.env.DYNAMODB_TABLE_NAME
   }

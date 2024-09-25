@@ -1,4 +1,4 @@
-import { GenericCodes } from '@commons/libs/constants/GenericCodes'
+import { GENERIC_CODES } from '@commons/libs/constants/GenericCodes'
 import UserOperationError from './UserOperationError'
 import { UserDTO } from '@commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/ksuidGenerator'
@@ -23,7 +23,7 @@ export class UserService {
         registrationDate: new Date()
       })
     } catch (error) {
-      throw new UserOperationError(`Failed to create new user. Error: ${error}`, GenericCodes.error)
+      throw new UserOperationError(`Failed to create new user. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
 

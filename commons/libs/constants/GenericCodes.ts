@@ -1,13 +1,13 @@
 // TODO: add  error categories and codes as necessary with further development. remove this comment when the all the codes needed for application are mostly covered
-export const GenericCodes = {
-  unauthorized: 401,
-  notFound: 404,
-  error: 500
+export const GENERIC_CODES = {
+  UNAUTHORIZED: 401,
+  NOT_FOUND: 404,
+  ERROR: 500
 }
 
-export const HttpCodes = {
-  ...GenericCodes,
-  ok: 200,
-  created: 201,
-  noContent: 204
+export const HTTP_CODES = {
+  ...GENERIC_CODES,
+  OK: 200,
+  CREATED: 201,
+  NO_CONTENT: 204
 }
