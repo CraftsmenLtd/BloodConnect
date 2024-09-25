@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { cn } from '@web/utils';
 
-interface SidebarLinkProps {
+type SidebarLinkProps = {
   to?: string | null;
   icon: ReactNode;
   label: string;

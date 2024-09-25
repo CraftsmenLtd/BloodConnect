@@ -1,3 +1,3 @@
-interface ImportMeta {
+type ImportMeta = {
   readonly env: ImportMetaEnv;
 }

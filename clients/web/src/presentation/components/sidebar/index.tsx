@@ -12,7 +12,7 @@ import {
   MdLogout,
 } from '../../assets/icons';
 
-interface SidebarProps {
+type SidebarProps = {
   sidebarExpanded: boolean;
   onToggle: (isExpanded: boolean) => void;
   theme: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export interface PasswordState {
+export type PasswordState = {
   length: boolean;
   uppercase: boolean;
   lowercase: boolean;
@@ -8,7 +8,7 @@ export interface PasswordState {
   symbol: boolean;
 }
 
-interface PasswordValidatorProps {
+type PasswordValidatorProps = {
   validation: PasswordState;
 }
 

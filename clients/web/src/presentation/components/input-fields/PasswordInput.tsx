@@ -6,7 +6,7 @@ import {
   PasswordValidator,
 } from '@web/presentation/components/validators/Password';
 
-interface PasswordFieldProps {
+type PasswordFieldProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;

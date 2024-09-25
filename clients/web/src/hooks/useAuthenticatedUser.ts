@@ -4,7 +4,7 @@ import {
 } from 'aws-amplify/auth';
 import { useEffect, useState } from 'react';
 
-interface UseAuthenticatedUserReturn {
+type UseAuthenticatedUserReturn = {
   user: FetchUserAttributesOutput | null;
   loading: boolean;
   error: string | null;

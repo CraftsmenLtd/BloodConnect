@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface ButtonProps {
+type ButtonProps = {
   type: string;
   value: string;
   className?: string;

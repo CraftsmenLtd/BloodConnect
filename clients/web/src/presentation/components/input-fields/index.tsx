@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-interface InputFieldProps {
+type InputFieldProps = {
   type: string;
   placeholder?: string;
   label?: string;
