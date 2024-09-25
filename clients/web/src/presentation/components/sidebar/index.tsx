@@ -1,23 +1,17 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { signOut } from 'aws-amplify/auth';
+import { userSignOut } from '@client-commons/services/awsAuth';
 import { LoginPath } from '../../../constants/routeConsts';
 import PropTypes from 'prop-types';
 import SidebarLink from './SidebarLink';
-import {
-  FaMoon,
-  FaSun,
-  MdDashboard,
-  MdSettings,
-  MdLogout,
-} from '../../assets/icons';
+import { FaMoon, FaSun, MdDashboard, MdSettings, MdLogout } from '../../assets/icons';
 
 type SidebarProps = {
   sidebarExpanded: boolean;
   onToggle: (isExpanded: boolean) => void;
   theme: string;
   toggleTheme: () => void;
-}
+};
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarExpanded,
@@ -39,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [sidebarExpanded, onToggle]);
 
   const handleSignOut = async () => {
-    await signOut();
+    await userSignOut();
     navigate(LoginPath);
   };
 

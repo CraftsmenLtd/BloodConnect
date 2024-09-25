@@ -1,13 +1,11 @@
 import './presentation/assets/styles/index.css';
-import awsConfig from './config/awsExports';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Amplify } from 'aws-amplify';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
 const queryClient = new QueryClient();
-Amplify.configure(awsConfig);
+import '@client-commons/config/amplify';
 
 const rootElement = document.getElementById('root');
 

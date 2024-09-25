@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import useAuthenticatedUser from '../../hooks/useAuthenticatedUser';
+import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser';
 import FullPageLoader from '../components/loader/FullPageLoader';
 import * as RouteConsts from '../../constants/routeConsts';
 import DefaultLayout from '../layout/DefaultLayout';

@@ -1,4 +1,4 @@
-import apiClient from '../config/apiConfig';
+import apiClient from '@client-commons/config/apiConfig';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 const fetchData = async <T>(endpoint: string): Promise<T> => {

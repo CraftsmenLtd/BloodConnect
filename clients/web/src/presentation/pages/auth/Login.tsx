@@ -1,7 +1,7 @@
-import { signIn } from 'aws-amplify/auth';
+import { userSignIn } from '@client-commons/services/awsAuth';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import useAuthenticatedUser from '../../../hooks/useAuthenticatedUser';
+import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser';
 import {
   FaRegEye,
   FaRegEyeSlash,
@@ -43,10 +43,7 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      await signIn({
-        username: email,
-        password,
-      });
+      await userSignIn(email, password);
       navigate(DashboardPath);
     } catch (error: any) {
       handleError(error.message);

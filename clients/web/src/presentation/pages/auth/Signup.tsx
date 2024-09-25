@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import authService from '@client-commons/services/authService';
-import useAuthenticatedUser from '../../../hooks/useAuthenticatedUser';
+import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser';
 import Button from '../../components/button';
 import InputField from '../../components/input-fields';
 import PasswordField from '../../components/input-fields/PasswordInput';
