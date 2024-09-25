@@ -9,5 +9,8 @@ module "web-client" {
   acm_certificate_arn    = data.aws_acm_certificate.certificate.arn
   bloodconnect_domain    = var.bloodconnect_domain
   route53_hosted_zone_id = data.aws_route53_zone.main.zone_id
-  PROD_ENVIRONMENT       = local.PROD_ENVIRONMENT
+}
+
+module "environments" {
+  source = "./environments"
 }
