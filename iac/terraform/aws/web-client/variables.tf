@@ -42,3 +42,8 @@ variable "cloudfront_access_region" {
   type        = list(string)
   default     = ["BD"]
 }
+
+variable "PROD_ENVIRONMENT" {
+  description = "production environment"
+  type        = string
+}
