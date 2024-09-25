@@ -15,7 +15,7 @@ describe('ApplicationLogger', () => {
   })
 
   it('should not log for production environments', () => {
-    const logger = getApplicationLogger(Environments.production)
+    const logger = getApplicationLogger(Environments.PRODUCTION)
     logger.info('test log')
     logger.debug('test log')
     logger.warn('test log')
@@ -28,7 +28,7 @@ describe('ApplicationLogger', () => {
   })
 
   it('should log for dev environments', () => {
-    const logger = getApplicationLogger(Environments.dev)
+    const logger = getApplicationLogger(Environments.DEV)
     logger.info('test log')
     logger.debug('test log')
     logger.warn('test log')
@@ -41,7 +41,7 @@ describe('ApplicationLogger', () => {
   })
 
   it('should log for qa environments', () => {
-    const logger = getApplicationLogger(Environments.qa)
+    const logger = getApplicationLogger(Environments.QA)
     logger.info('test log')
     logger.debug('test log')
     logger.warn('test log')
@@ -54,7 +54,7 @@ describe('ApplicationLogger', () => {
   })
 
   it('should log for local environments', () => {
-    const logger = getApplicationLogger(Environments.local)
+    const logger = getApplicationLogger(Environments.LOCAL)
     logger.info('test log')
     logger.debug('test log')
     logger.warn('test log')
