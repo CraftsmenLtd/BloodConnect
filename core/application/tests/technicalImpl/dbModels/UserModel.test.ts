@@ -3,11 +3,7 @@ import { UserDTO } from '@commons/dto/UserDTO'
 import { mockUserWithStringId, mockUserWithNumberId, expectedUser } from '@application/tests/mocks/mockUserData'
 
 describe('UserModel Unit Tests', () => {
-  let userModel: UserModel
-
-  beforeAll(() => {
-    userModel = new UserModel()
-  })
+  const userModel: UserModel = new UserModel()
 
   describe('getPrimaryIndex', () => {
     test('should return correct primary index with partitionKey and sortKey', () => {

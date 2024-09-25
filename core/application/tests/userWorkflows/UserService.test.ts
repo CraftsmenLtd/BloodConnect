@@ -4,13 +4,14 @@ import { generateUniqueID } from '../../utils/ksuidGenerator'
 import { UserDTO } from '@commons/dto/UserDTO'
 import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '@application/userWorkflows/userMessages'
 import { mockUserWithStringId } from '../mocks/mockUserData'
+import { mockRepository as importedMockRepository } from '../mocks/mockRepositories'
 
 jest.mock('../../utils/ksuidGenerator')
 jest.mock('@application/userWorkflows/userMessages')
 
 describe('UserService Tests', () => {
-  let userService: UserService
-  let mockRepository: jest.Mocked<Repository<UserDTO>>
+  const userService: UserService = new UserService()
+  const mockRepository: jest.Mocked<Repository<UserDTO>> = importedMockRepository
 
   const mockUserAttributes = {
     email: 'ebrahim@example.com',
@@ -19,11 +20,6 @@ describe('UserService Tests', () => {
   }
 
   beforeEach(() => {
-    userService = new UserService()
-
-    mockRepository = {
-      create: jest.fn()
-    };
     (generateUniqueID as jest.Mock).mockReturnValue('12345')
   })
 
@@ -63,8 +59,8 @@ describe('UserService Tests', () => {
   })
 
   test('should get forgot password message correctly', () => {
-    const mockMessage = { body: 'Reset your password for Blood Connect', subject: 'Reset your password' }
-    ;(getPasswordResetVerificationMessage as jest.Mock).mockReturnValue(mockMessage)
+    const mockMessage = { body: 'Reset your password for Blood Connect', subject: 'Reset your password' };
+    (getPasswordResetVerificationMessage as jest.Mock).mockReturnValue(mockMessage)
 
     const result = userService.getForgotPasswordMessage('Ebrahim', '1234')
     expect(getPasswordResetVerificationMessage).toHaveBeenCalledWith('Ebrahim', '1234')
