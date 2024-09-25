@@ -1,4 +1,4 @@
-import api from '@shared/config/apiConfig';
+import api from '@web/config/apiConfig';
 import {
   fetchDataFailure,
   fetchDataStart,

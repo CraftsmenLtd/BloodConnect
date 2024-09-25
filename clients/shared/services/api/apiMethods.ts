@@ -1,4 +1,4 @@
-import api from '../../config/apiConfig'
+import api from '@web/config/apiConfig'
 import { AxiosResponse } from 'axios'
 
 export const get = async(url: string, params?: object): Promise<AxiosResponse> => {

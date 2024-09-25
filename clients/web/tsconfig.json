@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"],
+      "@web*": ["src/*"],
+      "@shared*": ["../shared/*"]
+    },
+  },
+  "include": ["src/**/*", "../shared/**/*"],
+  "exclude": ["node_modules", "build", "dist", "coverage"],
+}
