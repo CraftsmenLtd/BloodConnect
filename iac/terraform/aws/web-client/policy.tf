@@ -24,6 +24,8 @@ data "aws_iam_policy_document" "bucket_access_policy_document" {
   statement {
     effect = "Allow"
 
+    actions = ["s3:GetObject"]
+
     principals {
       type        = "AWS"
       identifiers = [aws_cloudfront_origin_access_identity.s3_static_bucket_oai.iam_arn]
