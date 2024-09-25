@@ -37,9 +37,12 @@ const SignUp: React.FC = () => {
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { isValid, error } = validatePassword(password, confirmPassword);
-    if (isValid !== true) {
-      handleError(error);
+    const { isValid, errormessage } = validatePassword(
+      password,
+      confirmPassword
+    );
+    if (!isValid) {
+      handleError(errormessage);
       return;
     }
 
@@ -72,82 +75,80 @@ const SignUp: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="w-full max-w-md p-6 rounded-lg shadow-lg">
-        <div>
-          <h2 className="font-bold text-xl text-center mb-6">Sign Up</h2>
+        <h2 className="font-bold text-xl text-center mb-6">Sign Up</h2>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void handleSignUp(e);
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleSignUp(e);
+          }}
+        >
+          <InputField
+            type="text"
+            label="Organization Name"
+            placeholder="Enter your organization name"
+            value={organizationName}
+            onChange={(e) => {
+              setOrganizationName(e.target.value);
             }}
-          >
-            <InputField
-              type="text"
-              label="Organization Name"
-              placeholder="Enter your organization name"
-              value={organizationName}
-              onChange={(e) => {
-                setOrganizationName(e.target.value);
-              }}
+          />
+
+          <InputField
+            type="text"
+            label="Contact Number"
+            placeholder="Enter your contact number"
+            value={phoneNumber}
+            onChange={(e) => {
+              setPhoneNumber(e.target.value);
+            }}
+            icon={<HiOutlinePhone />}
+          />
+
+          <InputField
+            type="email"
+            label="Email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            icon={<MdOutlineMail />}
+          />
+
+          <PasswordField
+            label="Password"
+            value={password}
+            onChange={setPassword}
+            placeholder="Enter your password"
+          />
+
+          <PasswordField
+            label="Re-type Password"
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            placeholder="Re-enter your password"
+          />
+
+          <div className="mb-5">
+            <Button
+              type="submit"
+              value={loading ? 'Loading..' : 'Create account'}
+              className={`btn bg-primary w-full ${
+                loading ? 'cursor-not-allowed' : ''
+              } hover:bg-primary-focus`}
+              disabled={loading}
             />
+          </div>
 
-            <InputField
-              type="text"
-              label="Contact Number"
-              placeholder="Enter your contact number"
-              value={phoneNumber}
-              onChange={(e) => {
-                setPhoneNumber(e.target.value);
-              }}
-              icon={<HiOutlinePhone />}
-            />
-
-            <InputField
-              type="email"
-              label="Email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              icon={<MdOutlineMail />}
-            />
-
-            <PasswordField
-              label="Password"
-              value={password}
-              onChange={setPassword}
-              placeholder="Enter your password"
-            />
-
-            <PasswordField
-              label="Re-type Password"
-              value={confirmPassword}
-              onChange={setConfirmPassword}
-              placeholder="Re-enter your password"
-            />
-
-            <div className="mb-5">
-              <Button
-                type="submit"
-                value={loading ? 'Loading..' : 'Create account'}
-                className={`btn bg-primary w-full ${
-                  loading ? 'cursor-not-allowed' : ''
-                } hover:bg-primary-focus`}
-                disabled={loading}
-              />
-            </div>
-
-            <div className="mt-6 text-center">
-              <p>
-                Already have an account?{' '}
-                <Link to={LoginPath} className="text-primary">
-                  Login
-                </Link>
-              </p>
-            </div>
-          </form>
-        </div>
+          <div className="mt-6 text-center">
+            <p>
+              Already have an account?{' '}
+              <Link to={LoginPath} className="text-primary">
+                Login
+              </Link>
+            </p>
+          </div>
+        </form>
       </div>
       <Toast msg={toastMsg} className={toastClass} visible={toastVisible} />
     </div>

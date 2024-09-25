@@ -2,11 +2,7 @@ import { userSignIn } from '@client-commons/services/awsAuth';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser';
-import {
-  FaRegEye,
-  FaRegEyeSlash,
-  MdOutlineMail,
-} from '../../assets/icons';
+import { FaRegEye, FaRegEyeSlash, MdOutlineMail } from '../../assets/icons';
 
 import InputField from '../../components/input-fields';
 import { Toast } from '../../components/toast';

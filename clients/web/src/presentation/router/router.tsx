@@ -3,8 +3,8 @@ import { Navigate, Route, BrowserRouter, Routes } from 'react-router-dom';
 import FullPageLoader from '../components/loader/FullPageLoader';
 import { LoginPath } from '../../constants/routeConsts';
 import { Pages } from '../pages';
-import { ProtectedRoute } from '../router/protectedRoutes';
-import { AppRoutes } from '../router/routes';
+import { ProtectedRoute } from './protectedRoutes';
+import { AppRoutes } from './routes';
 import { RouteConfig } from '../../types/routeConfig';
 
 function RouterConfig() {

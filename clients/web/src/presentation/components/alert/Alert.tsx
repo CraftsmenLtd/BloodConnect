@@ -3,7 +3,7 @@ import React from 'react';
 type AlertProps = {
   type: 'success' | 'error' | 'warning';
   message: string;
-}
+};
 
 const alertStyles = {
   success: 'bg-green-50 border-green-500 text-green-700',

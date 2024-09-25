@@ -17,6 +17,7 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@types/react": "^18.3.8",
     "eslint": "^8.57.0",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"

@@ -10,7 +10,7 @@ type SidebarLinkProps = {
   active?: boolean;
   sidebarExpanded: boolean;
   onClick?: () => void;
-}
+};
 
 const SidebarLink: React.FC<SidebarLinkProps> = ({
   to = null,

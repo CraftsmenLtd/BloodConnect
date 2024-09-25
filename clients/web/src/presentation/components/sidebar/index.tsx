@@ -1,10 +1,16 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { userSignOut } from '@client-commons/services/awsAuth';
-import { LoginPath } from '../../../constants/routeConsts';
 import PropTypes from 'prop-types';
+import { LoginPath } from '../../../constants/routeConsts';
 import SidebarLink from './SidebarLink';
-import { FaMoon, FaSun, MdDashboard, MdSettings, MdLogout } from '../../assets/icons';
+import {
+  FaMoon,
+  FaSun,
+  MdDashboard,
+  MdSettings,
+  MdLogout,
+} from '../../assets/icons';
 
 type SidebarProps = {
   sidebarExpanded: boolean;

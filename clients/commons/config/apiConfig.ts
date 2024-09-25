@@ -2,7 +2,7 @@ import { fetchAuthSession } from '@aws-amplify/auth'
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: process.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -18,7 +18,7 @@ api.interceptors.request.use(
     }
     return config
   },
-  async(error) => Promise.reject(error)
+  async(error) => await Promise.reject(error)
 )
 
 export default api

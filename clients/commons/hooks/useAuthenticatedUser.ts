@@ -1,8 +1,8 @@
 import {
   fetchUserAttributes,
-  FetchUserAttributesOutput,
-} from 'aws-amplify/auth';
-import { useEffect, useState } from 'react';
+  FetchUserAttributesOutput
+} from 'aws-amplify/auth'
+import { useEffect, useState } from 'react'
 
 type UseAuthenticatedUserReturn = {
   user: FetchUserAttributesOutput | null;
@@ -11,33 +11,33 @@ type UseAuthenticatedUserReturn = {
 }
 
 const useAuthenticatedUser = (): UseAuthenticatedUserReturn => {
-  const [user, setUser] = useState<FetchUserAttributesOutput | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<FetchUserAttributesOutput | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchCurrentUser = async (): Promise<void> => {
+    const fetchCurrentUser = async(): Promise<void> => {
       try {
-        const currentUser = await fetchUserAttributes();
-        setUser(currentUser);
-        setError(null);
+        const currentUser = await fetchUserAttributes()
+        setUser(currentUser)
+        setError(null)
       } catch (e) {
-        setUser(null);
-        setError(e instanceof Error ? e.message : 'An error occurred');
+        setUser(null)
+        setError(e instanceof Error ? e.message : 'An error occurred')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
     fetchCurrentUser().catch((e) => {
       setError(
         e instanceof Error ? e.message : 'Failed to fetch user attributes:'
-      );
-      setLoading(false);
-    });
-  }, []);
+      )
+      setLoading(false)
+    })
+  }, [])
 
-  return { user, loading, error };
-};
+  return { user, loading, error }
+}
 
-export default useAuthenticatedUser;
+export default useAuthenticatedUser

@@ -1,7 +1,7 @@
 export const validatePassword = (
   password: string,
   confirmPassword: string
-): { isValid: boolean; error: string } => {
+): { isValid: boolean; errormessage: string } => {
   const policy = {
     MinimumLength: 8,
     RequireUppercase: true,
@@ -19,28 +19,43 @@ export const validatePassword = (
   } = policy;
 
   if (password.length < MinimumLength) {
-    return { isValid: false, error: `Password must be at least ${MinimumLength} characters long.` };
+    return {
+      isValid: false,
+      errormessage: `Password must be at least ${MinimumLength} characters long.`,
+    };
   }
 
   if (RequireUppercase && !/[A-Z]/.test(password)) {
-    return { isValid: false, error: 'Password must contain at least one uppercase letter.' };
+    return {
+      isValid: false,
+      errormessage: 'Password must contain at least one uppercase letter.',
+    };
   }
 
   if (RequireLowercase && !/[a-z]/.test(password)) {
-    return { isValid: false, error: 'Password must contain at least one lowercase letter.' };
+    return {
+      isValid: false,
+      errormessage: 'Password must contain at least one lowercase letter.',
+    };
   }
 
   if (RequireNumbers && !/\d/.test(password)) {
-    return { isValid: false, error: 'Password must contain at least one number.' };
+    return {
+      isValid: false,
+      errormessage: 'Password must contain at least one number.',
+    };
   }
 
   if (RequireSymbols && !/[^a-zA-Z0-9]/.test(password)) {
-    return { isValid: false, error: 'Password must contain at least one symbol.' };
+    return {
+      isValid: false,
+      errormessage: 'Password must contain at least one symbol.',
+    };
   }
 
   if (password !== confirmPassword) {
-    return { isValid: false, error: 'Passwords do not match.' };
+    return { isValid: false, errormessage: 'Passwords do not match.' };
   }
 
-  return { isValid: true, error: '' };
+  return { isValid: true, errormessage: '' };
 };

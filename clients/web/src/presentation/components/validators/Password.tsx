@@ -6,11 +6,11 @@ export type PasswordState = {
   lowercase: boolean;
   number: boolean;
   symbol: boolean;
-}
+};
 
 type PasswordValidatorProps = {
   validation: PasswordState;
-}
+};
 
 export const PasswordValidator: React.FC<PasswordValidatorProps> = ({
   validation,

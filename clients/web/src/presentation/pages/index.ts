@@ -6,7 +6,5 @@ export const Pages: Record<
 > = {
   Login: React.lazy(async () => import('./auth/Login')),
   Signup: React.lazy(async () => import('./auth/Signup')),
-  Dashboard: React.lazy(
-    async () => import('./dashboard/Dashboard')
-  ),
+  Dashboard: React.lazy(async () => import('./dashboard/Dashboard')),
 };

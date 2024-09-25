@@ -6,7 +6,7 @@ type ButtonProps = {
   className?: string;
   disabled?: boolean;
   onClick?: () => void;
-}
+};
 const Button: React.FC<ButtonProps> = ({
   type,
   value,
