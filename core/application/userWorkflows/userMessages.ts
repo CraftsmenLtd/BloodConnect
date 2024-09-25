@@ -1,21 +1,16 @@
 import { GenericMessage } from '@commons/dto/MessageDTO'
+import { EMAIL_VERIFICATION_TITLE, PASSWORD_RESET_TITLE, getEmailVerificationContent, getPasswordResetContent } from '@application/utils/messageConstants'
 
 export function getEmailVerificationMessage(userName: string, securityCode: string): GenericMessage {
   return {
-    title: 'Welcome to Blood Connect!',
-    content: `Hello ${userName},<br/><br/>
-              Welcome! Please verify your email using the following code: ${securityCode}.<br/><br/>
-              Thanks!`
+    title: EMAIL_VERIFICATION_TITLE,
+    content: getEmailVerificationContent(userName, securityCode)
   }
 }
 
 export function getPasswordResetVerificationMessage(userName: string, securityCode: string): GenericMessage {
   return {
-    title: 'Reset your password for Blood Connect',
-    content: `Hello ${userName},<br/><br/>
-              You have requested to reset your password.<br/>
-              Use the following code to reset your password: ${securityCode}<br/><br/>
-              If you did not request this, please ignore this email.<br/><br/>
-              Thanks!`
+    title: PASSWORD_RESET_TITLE,
+    content: getPasswordResetContent(userName, securityCode)
   }
 }

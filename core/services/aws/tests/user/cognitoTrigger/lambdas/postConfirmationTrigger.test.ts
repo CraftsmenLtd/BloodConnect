@@ -3,6 +3,7 @@ import { PostConfirmationTriggerEvent } from 'aws-lambda'
 import { UserService } from '@application/userWorkflows/UserService'
 import DynamoDbTableOperations from '../../../../commons/ddb/DynamoDbTableOperations'
 import { UserDTO } from '@commons/dto/UserDTO'
+import { getMockDynamoDbTableOperations, getMockEvent } from '../../../helpers/testHelpers'
 
 jest.mock('@application/userWorkflows/UserService')
 jest.mock('../../../../commons/ddb/DynamoDbTableOperations')
@@ -12,30 +13,10 @@ describe('postConfirmationLambda Tests', () => {
   let mockDynamoDbTableOperations: jest.Mocked<DynamoDbTableOperations<UserDTO, any, any>>
 
   beforeEach(() => {
-    mockEvent = {
-      triggerSource: 'PostConfirmation_ConfirmSignUp',
-      request: {
-        userAttributes: {
-          email: 'ebrahim@example.com',
-          name: 'Ebrahim',
-          phone_number: '1234567890'
-        }
-      },
-      response: {},
-      region: 'us-east-1',
-      userPoolId: 'us-east-1_123456',
-      callerContext: {
-        awsSdkVersion: '1',
-        clientId: 'abc123'
-      },
-      version: '1',
-      userName: 'ebrahim@example.com'
-    } satisfies PostConfirmationTriggerEvent
+    mockEvent = getMockEvent()
 
-    mockDynamoDbTableOperations = {
-      create: jest.fn()
-    } as unknown as jest.Mocked<DynamoDbTableOperations<UserDTO, any, any>>
-    ;(DynamoDbTableOperations as jest.Mock).mockImplementation(() => mockDynamoDbTableOperations)
+    mockDynamoDbTableOperations = getMockDynamoDbTableOperations();
+    (DynamoDbTableOperations as jest.Mock).mockImplementation(() => mockDynamoDbTableOperations)
 
     jest.spyOn(UserService.prototype, 'createNewUser').mockResolvedValue({
       id: 'unique-id',
