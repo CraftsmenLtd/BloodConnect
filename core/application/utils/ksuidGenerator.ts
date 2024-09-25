@@ -1,5 +1,5 @@
-import KSUID from 'ksuid'
+import { ulid } from 'ulid'
 
 export const generateUniqueID = (): string => {
-  return KSUID.randomSync().toString()
+  return ulid()
 }

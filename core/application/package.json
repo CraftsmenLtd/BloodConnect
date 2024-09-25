@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2",
-    "ksuid": "^3.0.0"
+    "ulid": "^2.3.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.4"
