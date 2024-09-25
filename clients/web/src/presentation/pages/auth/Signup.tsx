@@ -37,9 +37,9 @@ const SignUp: React.FC = () => {
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const validationError = validatePassword(password, confirmPassword);
-    if (validationError != null) {
-      handleError(validationError);
+    const { isValid, error } = validatePassword(password, confirmPassword);
+    if (isValid !== true) {
+      handleError(error);
       return;
     }
 
