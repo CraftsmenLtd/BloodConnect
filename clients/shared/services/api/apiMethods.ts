@@ -2,8 +2,7 @@ import api from '@web/config/apiConfig'
 import { AxiosResponse } from 'axios'
 
 export const get = async(url: string, params?: object): Promise<AxiosResponse> => {
-  const response = await api.get(url, { params })
-  return response
+  return api.get(url, { params })
 }
 
 export const getSingle = async(
@@ -11,13 +10,11 @@ export const getSingle = async(
   id: string | number,
   params?: object
 ): Promise<AxiosResponse> => {
-  const response = await api.get(`${url}/${id}`, { params })
-  return response
+  return api.get(`${url}/${id}`, { params })
 }
 
 export const post = async(url: string, data: object): Promise<AxiosResponse> => {
-  const response = await api.post(url, data)
-  return response
+  return api.post(url, data)
 }
 
 export const put = async(
@@ -25,11 +22,9 @@ export const put = async(
   id: string | number,
   data: object
 ): Promise<AxiosResponse> => {
-  const response = await api.put(`${url}/${id}`, data)
-  return response
+  return api.put(`${url}/${id}`, data)
 }
 
 export const del = async(url: string, id: string | number): Promise<AxiosResponse> => {
-  const response = await api.delete(`${url}/${id}`)
-  return response
+  return api.delete(`${url}/${id}`)
 }
