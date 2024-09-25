@@ -1,57 +1,16 @@
 import customEmailTemplateLambda from '../../../../user/cognitoTrigger/lambdas/customMessageTrigger'
 import { UserService } from '@application/userWorkflows/UserService'
 import { Callback, Context, CustomMessageTriggerEvent } from 'aws-lambda'
+import { customMessageLambdaMockEvent, lambdaMockContext } from '../../../helpers/testHelpers'
 
 jest.mock('@application/userWorkflows/UserService')
 
 describe('customEmailTemplateLambda Tests', () => {
-  let mockEvent: CustomMessageTriggerEvent
-  let mockCallback: Callback<CustomMessageTriggerEvent>
-  let mockContext: Context
+  let mockEvent: CustomMessageTriggerEvent = customMessageLambdaMockEvent
+  const mockCallback: Callback<CustomMessageTriggerEvent> = jest.fn()
+  const mockContext: Context = lambdaMockContext
 
   beforeEach(() => {
-    mockEvent = {
-      triggerSource: 'CustomMessage_SignUp',
-      request: {
-        userAttributes: {
-          name: 'Ebrahim'
-        },
-        codeParameter: '123456',
-        usernameParameter: '',
-        clientMetadata: {},
-        linkParameter: ''
-      },
-      response: {
-        emailSubject: '',
-        emailMessage: '',
-        smsMessage: ''
-      },
-      region: 'us-east-1',
-      userPoolId: 'us-east-1_123456',
-      callerContext: {
-        awsSdkVersion: '1',
-        clientId: 'abc123'
-      },
-      version: '1',
-      userName: 'ebrahim@example.com'
-    } satisfies CustomMessageTriggerEvent
-    mockContext = {
-      callbackWaitsForEmptyEventLoop: false,
-      functionName: 'test-function',
-      functionVersion: '1',
-      invokedFunctionArn: 'arn:aws:lambda:us-east-1:123456789012:function:test-function',
-      memoryLimitInMB: '128',
-      awsRequestId: '1234567890',
-      logGroupName: '/aws/lambda/test-function',
-      logStreamName: '2023/01/01/[$LATEST]12345678901234567890',
-      getRemainingTimeInMillis: jest.fn(),
-      done: jest.fn(),
-      fail: jest.fn(),
-      succeed: jest.fn()
-    } satisfies Context
-
-    mockCallback = jest.fn()
-
     jest.spyOn(UserService.prototype, 'getPostSignUpMessage').mockReturnValue({
       title: 'Welcome to Blood Connect!',
       content: 'Hello Ebrahim, please verify your email using code 123456'
@@ -67,7 +26,10 @@ describe('customEmailTemplateLambda Tests', () => {
   })
 
   test('should generate post-signup email for CustomMessage_SignUp trigger', () => {
-    mockEvent.triggerSource = 'CustomMessage_SignUp'
+    mockEvent = {
+      ...mockEvent,
+      triggerSource: 'CustomMessage_SignUp'
+    }
     customEmailTemplateLambda(mockEvent, mockContext, mockCallback)
 
     expect(UserService.prototype.getPostSignUpMessage).toHaveBeenCalledWith('Ebrahim', '123456')
@@ -77,7 +39,10 @@ describe('customEmailTemplateLambda Tests', () => {
   })
 
   test('should generate forgot-password email for CustomMessage_ForgotPassword trigger', () => {
-    mockEvent.triggerSource = 'CustomMessage_ForgotPassword'
+    mockEvent = {
+      ...mockEvent,
+      triggerSource: 'CustomMessage_ForgotPassword'
+    }
     customEmailTemplateLambda(mockEvent, mockContext, mockCallback)
 
     expect(UserService.prototype.getForgotPasswordMessage).toHaveBeenCalledWith('Ebrahim', '123456')
@@ -87,7 +52,10 @@ describe('customEmailTemplateLambda Tests', () => {
   })
 
   test('should do nothing for unsupported triggerSource', () => {
-    mockEvent.triggerSource = 'CustomMessage_AdminCreateUser'
+    mockEvent = {
+      ...mockEvent,
+      triggerSource: 'CustomMessage_AdminCreateUser'
+    }
     customEmailTemplateLambda(mockEvent, mockContext, mockCallback)
 
     expect(UserService.prototype.getPostSignUpMessage).not.toHaveBeenCalled()

@@ -3,6 +3,7 @@ import { UserService } from '@application/userWorkflows/UserService'
 import { generateUniqueID } from '../../utils/ksuidGenerator'
 import { UserDTO } from '@commons/dto/UserDTO'
 import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '@application/userWorkflows/userMessages'
+import { mockUserWithStringId } from '../mocks/mockUserData'
 
 jest.mock('../../utils/ksuidGenerator')
 jest.mock('@application/userWorkflows/userMessages')
@@ -23,7 +24,7 @@ describe('UserService Tests', () => {
     mockRepository = {
       create: jest.fn()
     };
-    (generateUniqueID as jest.Mock).mockReturnValue('unique-id')
+    (generateUniqueID as jest.Mock).mockReturnValue('12345')
   })
 
   afterEach(() => {
@@ -31,27 +32,13 @@ describe('UserService Tests', () => {
   })
 
   test('should create a new user successfully', async() => {
-    const mockUser: UserDTO = {
-      id: 'unique-id',
-      email: mockUserAttributes.email,
-      phone: mockUserAttributes.phone_number,
-      name: mockUserAttributes.name,
-      registrationDate: new Date()
-    }
-
-    mockRepository.create.mockResolvedValue(mockUser)
-
+    mockRepository.create.mockResolvedValue(mockUserWithStringId)
     const result = await userService.createNewUser(mockUserAttributes, mockRepository)
 
-    expect(result).toBe(mockUser)
-
+    expect(result).toBe(mockUserWithStringId)
     expect(generateUniqueID).toHaveBeenCalledTimes(1)
-
     expect(mockRepository.create).toHaveBeenCalledWith({
-      id: 'unique-id',
-      email: mockUserAttributes.email,
-      phone: mockUserAttributes.phone_number,
-      name: mockUserAttributes.name,
+      ...mockUserWithStringId,
       registrationDate: expect.any(Date)
     })
   })
