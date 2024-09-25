@@ -12,7 +12,7 @@ export default function Navigator() {
       },
       headerTitleAlign: 'center'
     }}>
-      {routes.map(({ name, component, options, protected: isProtected }) => {
+      {routes.map(({ name, component, options }) => {
         return <Stack.Screen key={name} name={name} component={component} options={options} />
       })}
     </Stack.Navigator>

@@ -17,7 +17,7 @@ export const registerUser = async(registerInfo: RegisterCredential): Promise<boo
     })
     return nextStep.signUpStep === 'CONFIRM_SIGN_UP'
   } catch (error) {
-    throw Error('Error signing up:', error)
+    throw new Error(`Error registering user: ${error instanceof Error ? error.message : error}`)
   }
 }
 
@@ -29,7 +29,7 @@ export const submitOtp = async(email: string, otp: string): Promise<boolean> => 
     })
     return nextStep.signUpStep === 'DONE'
   } catch (error) {
-    throw Error('Error signing up:', error)
+    throw new Error(`Error confirming sign-up with OTP: ${error instanceof Error ? error.message : error}`)
   }
 }
 
@@ -44,6 +44,6 @@ export const loginUser = async(email: string, password: string): Promise<boolean
     })
     return isSignedIn
   } catch (error) {
-    throw Error('Error signing up:', error)
+    throw new Error(`Error logging in user: ${error instanceof Error ? error.message : error}`)
   }
 }

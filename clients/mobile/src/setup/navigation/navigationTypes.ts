@@ -10,6 +10,7 @@ export type RootStackParamList = {
 
 export type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>
+export type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>
 
 export type OtpScreenNavigationProp = StackNavigationProp<RootStackParamList, 'OTP'>
 export type OtpScreenRouteProp = RouteProp<RootStackParamList, 'OTP'>

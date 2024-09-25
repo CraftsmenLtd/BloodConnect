@@ -1,9 +1,16 @@
+/* eslint-disable */
+// This page is not implemented yet just demo.
 import React from 'react'
 import { Text, Button, View, StyleSheet } from 'react-native'
 import { signOut } from 'aws-amplify/auth'
 import { useTheme } from '../setup/theme/hooks/useTheme'
+import { ProfileScreenNavigationProp } from '../setup/navigation/navigationTypes'
 
-export default function Profile({ navigation }) {
+interface ProfileScreenProps {
+  navigation: ProfileScreenNavigationProp;
+}
+
+export default function Profile({ navigation }: ProfileScreenProps) {
   const theme = useTheme()
 
   const handleSignOut = async (): Promise<void> => {
