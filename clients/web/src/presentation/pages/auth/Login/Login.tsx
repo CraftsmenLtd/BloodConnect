@@ -1,57 +1,27 @@
-import { userSignIn } from '@client-commons/services/awsAuth';
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser';
-import { FaRegEye, FaRegEyeSlash, MdOutlineMail } from '../../assets/icons';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { FaRegEye, FaRegEyeSlash, MdOutlineMail } from '../../../assets/icons';
 
-import InputField from '../../components/input-fields';
-import { Toast } from '../../components/toast';
-import { DashboardPath, SignupPath } from '../../../constants/routeConsts';
-import Button from '../../components/button';
+import InputField from '../../../components/input-fields';
+import { Toast } from '../../../components/toast';
+import { SignupPath } from '../../../../constants/routeConsts';
+import Button from '../../../components/button';
+import { useLogin } from './useLogin';
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
-  const [toastClass, setToastClass] = useState('');
-  const { user } = useAuthenticatedUser();
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleError = (error: string) => {
-    setToastMsg(error);
-    setToastClass('alert-error');
-    setToastVisible(true);
-
-    setTimeout(() => {
-      setToastVisible(false);
-    }, 3000);
-  };
-
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      await userSignIn(email, password);
-      navigate(DashboardPath);
-    } catch (error: any) {
-      handleError(error.message);
-    }
-
-    setLoading(false);
-  };
-  useEffect(() => {
-    if (user != null) {
-      navigate(DashboardPath);
-    }
-  }, [user, navigate]);
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    toastVisible,
+    toastMsg,
+    toastClass,
+    loading,
+    showPassword,
+    handleTogglePasswordVisibility,
+    handleLogin,
+  } = useLogin();
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -61,7 +31,7 @@ const Login: React.FC = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            void handleLogin(e);
+            void handleLogin();
           }}
         >
           <InputField

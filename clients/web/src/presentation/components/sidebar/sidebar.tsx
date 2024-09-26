@@ -1,9 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { userSignOut } from '@client-commons/services/awsAuth';
-import PropTypes from 'prop-types';
-import { LoginPath } from '../../../constants/routeConsts';
-import SidebarLink from './SidebarLink';
+import React from 'react';
 import {
   FaMoon,
   FaSun,
@@ -11,37 +6,26 @@ import {
   MdSettings,
   MdLogout,
 } from '../../assets/icons';
+import SidebarLink from './SidebarLink';
+import { useSidebar } from './useSidebar';
 
 type SidebarProps = {
   sidebarExpanded: boolean;
-  onToggle: (isExpanded: boolean) => void;
+  toggleSidebar: (isExpanded: boolean) => void;
   theme: string;
   toggleTheme: () => void;
 };
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarExpanded,
-  onToggle,
+  toggleSidebar,
   theme,
   toggleTheme,
 }) => {
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const sidebar = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (sidebarExpanded) {
-      document.querySelector('body')?.classList.add('sidebar-expanded');
-    } else {
-      document.querySelector('body')?.classList.remove('sidebar-expanded');
-    }
-    onToggle(sidebarExpanded);
-  }, [sidebarExpanded, onToggle]);
-
-  const handleSignOut = async () => {
-    await userSignOut();
-    navigate(LoginPath);
-  };
+  const { pathname, sidebar, handleToggleSidebar, handleSignOut } = useSidebar(
+    sidebarExpanded,
+    toggleSidebar
+  );
 
   return (
     <aside
@@ -56,9 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <button
           type="button"
           className="cursor-pointer"
-          onClick={() => {
-            onToggle(!sidebarExpanded);
-          }}
+          onClick={handleToggleSidebar}
           aria-label="Toggle Sidebar"
         >
           <img
@@ -114,13 +96,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
     </aside>
   );
-};
-
-Sidebar.propTypes = {
-  sidebarExpanded: PropTypes.bool.isRequired,
-  onToggle: PropTypes.func.isRequired,
-  theme: PropTypes.string.isRequired,
-  toggleTheme: PropTypes.func.isRequired,
 };
 
 export default Sidebar;
