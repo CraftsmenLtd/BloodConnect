@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { userSignOut } from '@client-commons/services/awsAuth';
+import PropTypes from 'prop-types';
 import { LoginPath } from '../../../constants/routeConsts';
 import SidebarLink from './SidebarLink';
 import {
@@ -113,6 +114,13 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
     </aside>
   );
+};
+
+Sidebar.propTypes = {
+  sidebarExpanded: PropTypes.bool.isRequired,
+  onToggle: PropTypes.func.isRequired,
+  theme: PropTypes.string.isRequired,
+  toggleTheme: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

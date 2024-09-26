@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { NavLink, useLocation } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { cn } from '../../../utils';
@@ -63,6 +64,15 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
       )}
     </li>
   );
+};
+
+SidebarLink.propTypes = {
+  to: PropTypes.string,
+  icon: PropTypes.node.isRequired,
+  label: PropTypes.string.isRequired,
+  active: PropTypes.bool,
+  sidebarExpanded: PropTypes.bool.isRequired,
+  onClick: PropTypes.func,
 };
 
 export default SidebarLink;

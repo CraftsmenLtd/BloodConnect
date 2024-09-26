@@ -3,13 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import authService from '@client-commons/services/authService';
 import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser';
+import { validatePassword } from '@client-commons/utils/validationUtils';
 import Button from '../../components/button';
 import InputField from '../../components/input-fields';
 import PasswordField from '../../components/input-fields/PasswordInput';
 import { Toast } from '../../components/toast';
 import { toastHideDisappearTime } from '../../../constants/common';
 import { DashboardPath, LoginPath } from '../../../constants/routeConsts';
-import { validatePassword } from '@client-commons/utils/validationUtils';
 import { MdOutlineMail, HiOutlinePhone } from '../../assets/icons';
 
 const SignUp: React.FC = () => {

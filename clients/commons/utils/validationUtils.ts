@@ -1,9 +1,9 @@
-const PASSWORD_MINIMUM_LENGTH = Number(process.env.PASSWORD_MINIMUM_LENGTH);
+const PASSWORD_MINIMUM_LENGTH = Number(process.env.PASSWORD_MINIMUM_LENGTH)
 
 type ValidationResult = {
   message: string;
   isValid: boolean;
-};
+}
 
 export const validatePassword = (
   password: string,
@@ -12,45 +12,45 @@ export const validatePassword = (
   passwordResults: ValidationResult[];
   confirmPasswordResult: ValidationResult;
 } => {
-  const passwordResults: ValidationResult[] = [];
+  const passwordResults: ValidationResult[] = []
 
-  const isLengthValid = password.length >= PASSWORD_MINIMUM_LENGTH;
+  const isLengthValid = password.length >= PASSWORD_MINIMUM_LENGTH
   passwordResults.push({
     message: `Min ${PASSWORD_MINIMUM_LENGTH} characters.`,
-    isValid: isLengthValid,
-  });
+    isValid: isLengthValid
+  })
 
-  const isUppercaseValid = /[A-Z]/.test(password);
+  const isUppercaseValid = /[A-Z]/.test(password)
   passwordResults.push({
     message: 'At least one uppercase letter.',
-    isValid: isUppercaseValid,
-  });
+    isValid: isUppercaseValid
+  })
 
-  const isLowercaseValid = /[a-z]/.test(password);
+  const isLowercaseValid = /[a-z]/.test(password)
   passwordResults.push({
     message: 'At least one lowercase letter.',
-    isValid: isLowercaseValid,
-  });
+    isValid: isLowercaseValid
+  })
 
-  const isNumberValid = /\d/.test(password);
+  const isNumberValid = /\d/.test(password)
   passwordResults.push({
     message: 'At least one number.',
-    isValid: isNumberValid,
-  });
+    isValid: isNumberValid
+  })
 
-  const isSymbolValid = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  const isSymbolValid = /[!@#$%^&*(),.?":{}|<>]/.test(password)
   passwordResults.push({
     message: 'At least one special character.',
-    isValid: isSymbolValid,
-  });
+    isValid: isSymbolValid
+  })
 
   const confirmPasswordResult: ValidationResult = {
     message:
       password === confirmPassword
         ? 'Passwords match.'
         : 'Passwords do not match.',
-    isValid: password === confirmPassword,
-  };
+    isValid: password === confirmPassword
+  }
 
-  return { passwordResults, confirmPasswordResult };
-};
+  return { passwordResults, confirmPasswordResult }
+}

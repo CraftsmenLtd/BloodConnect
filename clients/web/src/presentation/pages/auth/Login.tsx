@@ -126,7 +126,10 @@ const Login: React.FC = () => {
           <div className="text-center">
             <p className="text-sm">
               Don’t have an account?{' '}
-              <Link to={SignupPath} className="text-blue-500 hover:underline text-primary">
+              <Link
+                to={SignupPath}
+                className="text-blue-500 hover:underline text-primary"
+              >
                 Sign Up
               </Link>
             </p>
