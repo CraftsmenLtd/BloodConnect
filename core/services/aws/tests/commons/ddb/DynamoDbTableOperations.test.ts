@@ -7,16 +7,13 @@ import DatabaseError from '@commons/libs/errors/DatabaseError'
 import { GENERIC_CODES } from '@commons/libs/constants/GenericCodes'
 import { mockUserWithStringId, expectedUser } from '@application/tests/mocks/mockUserData'
 
-const ddbMock = mockClient(DynamoDBDocumentClient)
-
 describe('DynamoDbTableOperations Tests', () => {
-  let dynamoDbOperations: DynamoDbTableOperations<UserDTO, any, UserModel>
+  const ddbMock = mockClient(DynamoDBDocumentClient)
+  const dynamoDbOperations = new DynamoDbTableOperations<UserDTO, any, UserModel>(new UserModel())
 
   beforeEach(() => {
     ddbMock.reset()
     process.env.DYNAMODB_TABLE_NAME = 'TestTable'
-    dynamoDbOperations = new DynamoDbTableOperations(new UserModel())
-
     jest.spyOn(UserModel.prototype, 'fromDto').mockReturnValue(expectedUser)
   })
 
