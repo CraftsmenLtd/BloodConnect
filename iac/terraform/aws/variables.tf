@@ -25,6 +25,11 @@ variable "budget_settings" {
   }
 }
 
+variable "bloodconnect_domain" {
+  type        = string
+  description = "Bloodconnect root domain"
+}
+
 variable "openapi_directory" {
   type        = string
   description = "OpenApi files path"
