@@ -6,6 +6,7 @@ import {
   FaRegEye,
   FaRegEyeSlash,
   FaUpload,
+  FaCheck,
 } from 'react-icons/fa6';
 import { ImCross } from 'react-icons/im';
 import {
@@ -19,6 +20,7 @@ import {
 } from 'react-icons/md';
 import { HiOutlinePhone } from 'react-icons/hi';
 import { FaSun, FaMoon } from 'react-icons/fa';
+import { IoClose } from 'react-icons/io5';
 
 export {
   CgOrganisation,
@@ -39,4 +41,6 @@ export {
   MdLogout,
   FaSun,
   FaMoon,
+  FaCheck,
+  IoClose,
 };

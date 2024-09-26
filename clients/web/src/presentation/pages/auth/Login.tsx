@@ -105,7 +105,7 @@ const Login: React.FC = () => {
             <p className="text-sm">
               <Link
                 to="/forgot-password"
-                className="text-blue-500 hover:underline"
+                className="text-blue-500 hover:underline text-primary"
               >
                 Forgot your password?
               </Link>
@@ -118,7 +118,7 @@ const Login: React.FC = () => {
               value={loading ? 'Loading..' : 'Login'}
               className={`btn bg-primary text-white w-full ${
                 loading ? 'cursor-not-allowed' : ''
-              } hover:bg-primary-focus`}
+              } hover:bg-brandprimary_2`}
               disabled={loading}
             />
           </div>
@@ -126,7 +126,7 @@ const Login: React.FC = () => {
           <div className="text-center">
             <p className="text-sm">
               Don’t have an account?{' '}
-              <Link to={SignupPath} className="text-blue-500 hover:underline">
+              <Link to={SignupPath} className="text-blue-500 hover:underline text-primary">
                 Sign Up
               </Link>
             </p>

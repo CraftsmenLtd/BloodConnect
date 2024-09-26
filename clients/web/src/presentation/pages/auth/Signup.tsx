@@ -9,7 +9,7 @@ import PasswordField from '../../components/input-fields/PasswordInput';
 import { Toast } from '../../components/toast';
 import { toastHideDisappearTime } from '../../../constants/common';
 import { DashboardPath, LoginPath } from '../../../constants/routeConsts';
-import { validatePassword } from '../../../utils/validationUtils';
+import { validatePassword } from '@client-commons/utils/validationUtils';
 import { MdOutlineMail, HiOutlinePhone } from '../../assets/icons';
 
 const SignUp: React.FC = () => {
@@ -37,12 +37,15 @@ const SignUp: React.FC = () => {
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { isValid, errormessage } = validatePassword(
+    const { passwordResults, confirmPasswordResult } = validatePassword(
       password,
       confirmPassword
     );
-    if (!isValid) {
-      handleError(errormessage);
+
+    const isPasswordValid = passwordResults.every((result) => result.isValid);
+
+    if (!isPasswordValid || !confirmPasswordResult.isValid) {
+      handleError('Please fix the validation errors.');
       return;
     }
 
@@ -71,6 +74,11 @@ const SignUp: React.FC = () => {
       navigate(DashboardPath);
     }
   }, [user, navigate]);
+
+  const { passwordResults, confirmPasswordResult } = validatePassword(
+    password,
+    confirmPassword
+  );
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -120,6 +128,7 @@ const SignUp: React.FC = () => {
             value={password}
             onChange={setPassword}
             placeholder="Enter your password"
+            validationResults={passwordResults}
           />
 
           <PasswordField
@@ -127,6 +136,7 @@ const SignUp: React.FC = () => {
             value={confirmPassword}
             onChange={setConfirmPassword}
             placeholder="Re-enter your password"
+            validationResults={[confirmPasswordResult]}
           />
 
           <div className="mb-5">
@@ -135,7 +145,7 @@ const SignUp: React.FC = () => {
               value={loading ? 'Loading..' : 'Create account'}
               className={`btn bg-primary w-full ${
                 loading ? 'cursor-not-allowed' : ''
-              } hover:bg-primary-focus`}
+              } hover:bg-brandprimary_2`}
               disabled={loading}
             />
           </div>

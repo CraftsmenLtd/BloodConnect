@@ -1,13 +1,19 @@
 import React, { ChangeEvent, useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from '../../assets/icons';
 import InputField from './index';
-import { PasswordState, PasswordValidator } from '../validators/Password';
+import PasswordValidator from '../validators/Password';
+
+type ValidationResult = {
+  message: string;
+  isValid: boolean;
+};
 
 type PasswordFieldProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
+  validationResults: ValidationResult[];
 };
 
 const PasswordField: React.FC<PasswordFieldProps> = ({
@@ -15,32 +21,14 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
   value,
   onChange,
   placeholder,
+  validationResults,
 }) => {
-  const [validation, setValidation] = useState<PasswordState>({
-    length: false,
-    uppercase: false,
-    lowercase: false,
-    number: false,
-    symbol: false,
-  });
-  const [showValidation, setShowValidation] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     onChange(newValue);
-    const newValidation = {
-      length: newValue.length >= 8,
-      uppercase: /[A-Z]/.test(newValue),
-      lowercase: /[a-z]/.test(newValue),
-      number: /\d/.test(newValue),
-      symbol: /[^\w\s]/.test(newValue),
-    };
-    setValidation(newValidation);
-    setShowValidation(!Object.values(newValidation).every(Boolean));
   };
-
-  const allPasswordConditionsMet = Object.values(validation).every(Boolean);
 
   return (
     <div className="relative">
@@ -68,8 +56,8 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
           )
         }
       />
-      {!allPasswordConditionsMet && showValidation && (
-        <PasswordValidator validation={validation} />
+      {value !== '' && (
+        <PasswordValidator validationResults={validationResults} />
       )}
     </div>
   );
