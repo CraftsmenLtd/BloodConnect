@@ -1,17 +1,15 @@
-import Repository from '@application/technicalImpl/policies/repositories/Repository'
 import { UserService } from '@application/userWorkflows/UserService'
-import { generateUniqueID } from '../../utils/ksuidGenerator'
-import { UserDTO } from '@commons/dto/UserDTO'
+import { generateUniqueID } from '../../utils/idGenerator'
 import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '@application/userWorkflows/userMessages'
 import { mockUserWithStringId } from '../mocks/mockUserData'
 import { mockRepository as importedMockRepository } from '../mocks/mockRepositories'
 
-jest.mock('../../utils/ksuidGenerator')
+jest.mock('../../utils/idGenerator')
 jest.mock('@application/userWorkflows/userMessages')
 
 describe('UserService Tests', () => {
-  const userService: UserService = new UserService()
-  const mockRepository: jest.Mocked<Repository<UserDTO>> = importedMockRepository
+  const userService = new UserService()
+  const mockRepository = importedMockRepository
 
   const mockUserAttributes = {
     email: 'ebrahim@example.com',

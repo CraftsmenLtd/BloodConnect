@@ -1,14 +1,13 @@
 import customEmailTemplateLambda from '../../../../user/cognitoTrigger/lambdas/customMessageTrigger'
 import { UserService } from '@application/userWorkflows/UserService'
-import { Callback, Context, CustomMessageTriggerEvent } from 'aws-lambda'
-import { customMessageLambdaMockEvent, lambdaMockContext } from '../../../helpers/testHelpers'
+import { Callback, CustomMessageTriggerEvent } from 'aws-lambda'
+import { customMessageLambdaMockEvent, lambdaMockContext } from '../../../cannedData/lambdaEventMocks'
 
 jest.mock('@application/userWorkflows/UserService')
 
 describe('customEmailTemplateLambda Tests', () => {
-  let mockEvent: CustomMessageTriggerEvent = customMessageLambdaMockEvent
   const mockCallback: Callback<CustomMessageTriggerEvent> = jest.fn()
-  const mockContext: Context = lambdaMockContext
+  const mockContext = lambdaMockContext
 
   beforeEach(() => {
     jest.spyOn(UserService.prototype, 'getPostSignUpMessage').mockReturnValue({
@@ -26,10 +25,9 @@ describe('customEmailTemplateLambda Tests', () => {
   })
 
   test('should generate post-signup email for CustomMessage_SignUp trigger', () => {
-    mockEvent = {
-      ...mockEvent,
-      triggerSource: 'CustomMessage_SignUp'
-    }
+    const mockEvent = customMessageLambdaMockEvent
+    mockEvent.triggerSource = 'CustomMessage_SignUp'
+
     customEmailTemplateLambda(mockEvent, mockContext, mockCallback)
 
     expect(UserService.prototype.getPostSignUpMessage).toHaveBeenCalledWith('Ebrahim', '123456')
@@ -39,10 +37,9 @@ describe('customEmailTemplateLambda Tests', () => {
   })
 
   test('should generate forgot-password email for CustomMessage_ForgotPassword trigger', () => {
-    mockEvent = {
-      ...mockEvent,
-      triggerSource: 'CustomMessage_ForgotPassword'
-    }
+    const mockEvent = customMessageLambdaMockEvent
+    mockEvent.triggerSource = 'CustomMessage_ForgotPassword'
+
     customEmailTemplateLambda(mockEvent, mockContext, mockCallback)
 
     expect(UserService.prototype.getForgotPasswordMessage).toHaveBeenCalledWith('Ebrahim', '123456')
@@ -52,10 +49,9 @@ describe('customEmailTemplateLambda Tests', () => {
   })
 
   test('should do nothing for unsupported triggerSource', () => {
-    mockEvent = {
-      ...mockEvent,
-      triggerSource: 'CustomMessage_AdminCreateUser'
-    }
+    const mockEvent = customMessageLambdaMockEvent
+    mockEvent.triggerSource = 'CustomMessage_AdminCreateUser'
+
     customEmailTemplateLambda(mockEvent, mockContext, mockCallback)
 
     expect(UserService.prototype.getPostSignUpMessage).not.toHaveBeenCalled()

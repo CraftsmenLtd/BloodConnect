@@ -1,10 +1,4 @@
 import { CustomMessageTriggerEvent, PostConfirmationTriggerEvent, Context } from 'aws-lambda'
-import DynamoDbTableOperations from '../../commons/ddb/DynamoDbTableOperations'
-import { UserDTO } from '@commons/dto/UserDTO'
-
-export const mockDynamoDbOperations: jest.Mocked<DynamoDbTableOperations<UserDTO, any, any>> = {
-  create: jest.fn()
-} as unknown as jest.Mocked<DynamoDbTableOperations<UserDTO, any, any>>
 
 export const postConfirmationLambdaMockEvent: PostConfirmationTriggerEvent = {
   triggerSource: 'PostConfirmation_ConfirmSignUp',

@@ -1,17 +1,15 @@
 import postConfirmationLambda from '../../../../user/cognitoTrigger/lambdas/postConfirmationTrigger'
-import { PostConfirmationTriggerEvent } from 'aws-lambda'
 import { UserService } from '@application/userWorkflows/UserService'
 import DynamoDbTableOperations from '../../../../commons/ddb/DynamoDbTableOperations'
-import { UserDTO } from '@commons/dto/UserDTO'
-import { postConfirmationLambdaMockEvent, mockDynamoDbOperations } from '../../../helpers/testHelpers'
+import { postConfirmationLambdaMockEvent } from '../../../cannedData/lambdaEventMocks'
+import { mockDynamoDbOperations } from '../../../mock/dynamoDbMocks'
 import { mockUserWithStringId } from '@application/tests/mocks/mockUserData'
 
 jest.mock('@application/userWorkflows/UserService')
 jest.mock('../../../../commons/ddb/DynamoDbTableOperations')
 
 describe('postConfirmationLambda Tests', () => {
-  let mockEvent: PostConfirmationTriggerEvent = postConfirmationLambdaMockEvent
-  const mockDynamoDbTableOperations: jest.Mocked<DynamoDbTableOperations<UserDTO, any, any>> = mockDynamoDbOperations
+  const mockDynamoDbTableOperations = mockDynamoDbOperations
 
   beforeEach(() => {
     (DynamoDbTableOperations as jest.Mock).mockImplementation(() => mockDynamoDbTableOperations)
@@ -23,10 +21,8 @@ describe('postConfirmationLambda Tests', () => {
   })
 
   test('should return the event unchanged when triggerSource is not PostConfirmation_ConfirmSignUp', async() => {
-    mockEvent = {
-      ...mockEvent,
-      triggerSource: 'PostConfirmation_ConfirmForgotPassword'
-    }
+    const mockEvent = postConfirmationLambdaMockEvent
+    mockEvent.triggerSource = 'PostConfirmation_ConfirmForgotPassword'
 
     const result = await postConfirmationLambda(mockEvent)
     expect(UserService.prototype.createNewUser).not.toHaveBeenCalled()
@@ -34,10 +30,8 @@ describe('postConfirmationLambda Tests', () => {
   })
 
   test('should create a new user when triggerSource is PostConfirmation_ConfirmSignUp', async() => {
-    mockEvent = {
-      ...mockEvent,
-      triggerSource: 'PostConfirmation_ConfirmSignUp'
-    }
+    const mockEvent = postConfirmationLambdaMockEvent
+    mockEvent.triggerSource = 'PostConfirmation_ConfirmSignUp'
 
     const result = await postConfirmationLambda(mockEvent)
     expect(UserService.prototype.createNewUser).toHaveBeenCalledWith(

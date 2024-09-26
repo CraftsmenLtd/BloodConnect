@@ -1,9 +1,8 @@
-import UserModel, { UserFields } from '@application/technicalImpl/dbModels/UserModel'
-import { UserDTO } from '@commons/dto/UserDTO'
+import UserModel from '@application/technicalImpl/dbModels/UserModel'
 import { mockUserWithStringId, mockUserWithNumberId, expectedUser } from '@application/tests/mocks/mockUserData'
 
 describe('UserModel Unit Tests', () => {
-  const userModel: UserModel = new UserModel()
+  const userModel = new UserModel()
 
   describe('getPrimaryIndex', () => {
     test('should return correct primary index with partitionKey and sortKey', () => {
@@ -36,14 +35,14 @@ describe('UserModel Unit Tests', () => {
 
   describe('toDto', () => {
     test('should transform UserFields to UserDTO correctly', () => {
-      const mockUserFields: UserFields = { ...expectedUser }
-      const expectedUserDto: UserDTO = { ...mockUserWithStringId }
+      const mockUserFields = { ...expectedUser }
+      const expectedUserDto = { ...mockUserWithStringId }
       expect(userModel.toDto(mockUserFields)).toEqual(expectedUserDto)
     })
 
     test('should handle missing optional fields in UserFields', () => {
-      const mockUserFields: UserFields = { ...expectedUser }
-      const expectedUserDto: UserDTO = { ...mockUserWithStringId }
+      const mockUserFields = { ...expectedUser }
+      const expectedUserDto = { ...mockUserWithStringId }
       expect(userModel.toDto(mockUserFields)).toEqual(expectedUserDto)
     })
   })
