@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 
 type InputFieldProps = {
@@ -45,18 +44,6 @@ const InputField: React.FC<InputFieldProps> = ({
       </div>
     </div>
   );
-};
-
-InputField.propTypes = {
-  type: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  className: PropTypes.string,
-  icon: PropTypes.node,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  onFocus: PropTypes.func,
-  onBlur: PropTypes.func,
 };
 
 export default InputField;

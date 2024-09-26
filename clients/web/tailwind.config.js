@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        brandprimary2: '#a11918',
+        brandprimary_2: '#a11918',
       },
       fontSize: {
         'title-xxl': ['44px', '55px'],
