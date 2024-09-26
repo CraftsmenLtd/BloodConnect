@@ -140,3 +140,6 @@ deployment/**/openapi.json
 
 # Temp builds
 .build
+
+# Mobile app expo
+.expo

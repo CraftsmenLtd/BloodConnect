@@ -25,6 +25,7 @@ variable "budget_settings" {
   }
 }
 
+
 variable "openapi_directory" {
   type        = string
   description = "OpenApi files path"
