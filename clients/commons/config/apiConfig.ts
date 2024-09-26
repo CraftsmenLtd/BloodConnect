@@ -1,4 +1,4 @@
-import { fetchAuthSession } from '@aws-amplify/auth'
+import { getAuthSession } from '../platform/aws/auth/awsAuth'
 import axios from 'axios'
 
 const api = axios.create({
@@ -10,9 +10,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async(config) => {
-    const idToken = (
-      await fetchAuthSession()
-    ).tokens?.idToken?.toString()
+    const idToken = (await getAuthSession()).tokens?.idToken?.toString()
     if (idToken !== undefined && idToken !== null) {
       config.headers.Authorization = `Bearer ${idToken}`
     }

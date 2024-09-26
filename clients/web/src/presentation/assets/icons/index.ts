@@ -1,14 +1,14 @@
-import { CgOrganisation } from 'react-icons/cg';
-import { CiUser } from 'react-icons/ci';
+import { CgOrganisation } from 'react-icons/cg'
+import { CiUser } from 'react-icons/ci'
 import {
   FaAlignLeft,
   FaAngleDown,
   FaRegEye,
   FaRegEyeSlash,
   FaUpload,
-  FaCheck,
-} from 'react-icons/fa6';
-import { ImCross } from 'react-icons/im';
+  FaCheck
+} from 'react-icons/fa6'
+import { ImCross } from 'react-icons/im'
 import {
   MdOutlineMail,
   MdArrowDropDown,
@@ -16,11 +16,11 @@ import {
   MdMenu,
   MdSettings,
   MdLogout,
-  MdDashboard,
-} from 'react-icons/md';
-import { HiOutlinePhone } from 'react-icons/hi';
-import { FaSun, FaMoon } from 'react-icons/fa';
-import { IoClose } from 'react-icons/io5';
+  MdDashboard
+} from 'react-icons/md'
+import { HiOutlinePhone } from 'react-icons/hi'
+import { FaSun, FaMoon } from 'react-icons/fa'
+import { IoClose } from 'react-icons/io5'
 
 export {
   CgOrganisation,
@@ -42,5 +42,5 @@ export {
   FaSun,
   FaMoon,
   FaCheck,
-  IoClose,
-};
+  IoClose
+}

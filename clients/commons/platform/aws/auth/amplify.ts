@@ -1,5 +1,5 @@
 import { Amplify } from 'aws-amplify'
-import awsExports from './awsExports'
+import awsExports from '../config/awsExports'
 
 Amplify.configure(awsExports)
 

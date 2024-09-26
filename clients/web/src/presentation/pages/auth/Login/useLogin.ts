@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { userSignIn } from '@client-commons/services/awsAuth';
-import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser';
-import { DashboardPath } from '../../../../constants/routeConsts';
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { userSignIn } from '@client-commons/platform/aws/auth/awsAuth'
+import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser'
+import { DashboardPath } from '../../../../constants/routeConsts'
 
 interface UseLoginReturn {
   email: string;
@@ -19,48 +19,48 @@ interface UseLoginReturn {
 }
 
 export const useLogin = (): UseLoginReturn => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [toastVisible, setToastVisible] = useState<boolean>(false);
-  const [toastMsg, setToastMsg] = useState<string>('');
-  const [toastClass, setToastClass] = useState<string>('');
-  const { user } = useAuthenticatedUser();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const navigate = useNavigate()
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [toastVisible, setToastVisible] = useState<boolean>(false)
+  const [toastMsg, setToastMsg] = useState<string>('')
+  const [toastClass, setToastClass] = useState<string>('')
+  const { user } = useAuthenticatedUser()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [showPassword, setShowPassword] = useState<boolean>(false)
 
   useEffect(() => {
     if (user != null) {
-      navigate(DashboardPath);
+      navigate(DashboardPath)
     }
-  }, [user, navigate]);
+  }, [user, navigate])
 
   const handleTogglePasswordVisibility = (): void => {
-    setShowPassword(!showPassword);
-  };
+    setShowPassword(!showPassword)
+  }
 
   const handleError = (error: string): void => {
-    setToastMsg(error);
-    setToastClass('alert-error');
-    setToastVisible(true);
+    setToastMsg(error)
+    setToastClass('alert-error')
+    setToastVisible(true)
 
     setTimeout(() => {
-      setToastVisible(false);
-    }, 3000);
-  };
+      setToastVisible(false)
+    }, 3000)
+  }
 
-  const handleLogin = async (): Promise<void> => {
-    setLoading(true);
+  const handleLogin = async(): Promise<void> => {
+    setLoading(true)
 
     try {
-      await userSignIn(email, password);
-      navigate(DashboardPath);
+      await userSignIn(email, password)
+      navigate(DashboardPath)
     } catch (error: any) {
-      handleError(error.message);
+      handleError(error.message)
     }
 
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   return {
     email,
@@ -73,6 +73,6 @@ export const useLogin = (): UseLoginReturn => {
     loading,
     showPassword,
     handleTogglePasswordVisibility,
-    handleLogin,
-  };
-};
+    handleLogin
+  }
+}

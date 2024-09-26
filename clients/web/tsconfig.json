@@ -7,8 +7,8 @@
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"],
-      "@web*": ["src/*"],
-      "@client-commons*": ["../commons/*"]
+      "@client-commons*": ["../commons/*"],
+      "@commons*": ["../../commons/*"]
     },
   },
   "include": ["src/**/*", "../commons/**/*"],

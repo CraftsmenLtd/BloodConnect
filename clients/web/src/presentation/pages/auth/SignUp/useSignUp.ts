@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import authService from '@client-commons/services/authService';
-import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser';
-import { validatePassword } from '@client-commons/utils/validationUtils';
-import { toastHideDisappearTime } from '../../../../constants/common';
-import { DashboardPath, LoginPath } from '../../../../constants/routeConsts';
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import authService from '@client-commons/services/authService'
+import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser'
+import { validatePassword } from '@client-commons/utils/validationUtils'
+import { toastHideDisappearTime } from '../../../../constants/common'
+import { DashboardPath, LoginPath } from '../../../../constants/routeConsts'
 
 type UseSignUpReturnType = {
   email: string;
@@ -23,71 +23,71 @@ type UseSignUpReturnType = {
   toastClass: string;
   passwordValidation: ReturnType<typeof validatePassword>;
   loading: boolean;
-};
+}
 
 export const useSignUp = (): UseSignUpReturnType => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [organizationName, setOrganizationName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('+88');
-  const [toastVisible, setToastVisible] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
-  const [toastClass, setToastClass] = useState('');
-  const { user } = useAuthenticatedUser();
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [organizationName, setOrganizationName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('+88')
+  const [toastVisible, setToastVisible] = useState(false)
+  const [toastMsg, setToastMsg] = useState('')
+  const [toastClass, setToastClass] = useState('')
+  const { user } = useAuthenticatedUser()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (user != null) {
-      navigate(DashboardPath);
+      navigate(DashboardPath)
     }
-  }, [user, navigate]);
+  }, [user, navigate])
 
   const handleError = (error: string): void => {
-    setToastMsg(error);
-    setToastClass('alert-error');
-    setToastVisible(true);
+    setToastMsg(error)
+    setToastClass('alert-error')
+    setToastVisible(true)
 
     setTimeout(() => {
-      setToastVisible(false);
-    }, toastHideDisappearTime);
-  };
+      setToastVisible(false)
+    }, toastHideDisappearTime)
+  }
 
-  const handleSignUp = async (): Promise<void> => {
+  const handleSignUp = async(): Promise<void> => {
     const { passwordResults, confirmPasswordResult } = validatePassword(
       password,
       confirmPassword
-    );
+    )
 
-    const isPasswordValid = passwordResults.every((result) => result.isValid);
+    const isPasswordValid = passwordResults.every((result) => result.isValid)
 
     if (!isPasswordValid || !confirmPasswordResult.isValid) {
-      handleError('Please fix the validation errors.');
-      return;
+      handleError('Please fix the validation errors.')
+      return
     }
 
     try {
-      setLoading(true);
+      setLoading(true)
 
       const resp = await authService.registerOrganization({
         email,
         password,
         organizationName,
-        phoneNumber,
-      });
+        phoneNumber
+      })
 
       if (resp.status === 201) {
-        navigate(LoginPath);
+        navigate(LoginPath)
       }
     } catch (error: any) {
-      handleError(error.message);
+      handleError(error.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const passwordValidation = validatePassword(password, confirmPassword);
+  const passwordValidation = validatePassword(password, confirmPassword)
 
   return {
     email,
@@ -105,6 +105,6 @@ export const useSignUp = (): UseSignUpReturnType => {
     toastMsg,
     toastClass,
     passwordValidation,
-    loading,
-  };
-};
+    loading
+  }
+}

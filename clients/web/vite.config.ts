@@ -20,8 +20,6 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@web': resolve(__dirname, 'src'),
-      // other directories
       '@client-commons': resolve(__dirname, '../commons'),
       '@commons': resolve(__dirname, '../../commons')
     }

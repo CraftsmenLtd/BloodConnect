@@ -1,1 +1,1 @@
-export const toastHideDisappearTime: number = 3000;
+export const toastHideDisappearTime: number = 3000
