@@ -53,22 +53,74 @@
         "code",
         "bug",
         "review",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "question",
+        "research",
+        "test"
+      ]
+    },
+    {
+      "login": "melon-ruet",
+      "name": "Mahabubur Rahaman Melon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4718893?v=4",
+      "profile": "https://github.com/melon-ruet",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "research",
+        "review",
         "talk",
         "doc",
         "ideas",
         "infra",
         "mentoring",
         "maintenance",
+        "test",
         "question"
       ]
     },
     {
-      "login": "TahsinHani",
-      "name": "Tahsin Hani",
-      "avatar_url": "https://avatars.githubusercontent.com/u/65284841?v=4",
-      "profile": "https://github.com/TahsinHani",
+      "login": "sakibstark11",
+      "name": "Sakib Alam",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47223230?v=4",
+      "profile": "https://github.com/sakibstark11",
       "contributions": [
-        "design"
+        "code",
+        "projectManagement",
+        "research",
+        "review",
+        "talk",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "test",
+        "question"
+      ]
+    },
+    {
+      "login": "shuaibq3",
+      "name": "Shuaib",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5760035?v=4",
+      "profile": "https://github.com/shuaibq3",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "research",
+        "review",
+        "talk",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "test",
+        "question"
       ]
     },
     {
@@ -86,6 +138,15 @@
         "infra",
         "test",
         "question"
+      ]
+    },
+    {
+      "login": "TahsinHani",
+      "name": "Tahsin Hani",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65284841?v=4",
+      "profile": "https://github.com/TahsinHani",
+      "contributions": [
+        "design"
       ]
     }
   ]
