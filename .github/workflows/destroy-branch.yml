@@ -19,8 +19,8 @@ jobs:
         id: set_terraform_env_vars
         run: echo "BLOODCONNECT_DOMAIN=${{ vars.BLOODCONNECT_DOMAIN }}" >> $GITHUB_OUTPUT
     outputs:
-          deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
-          bloodconnect_domain: ${{ steps.set_terraform_env_vars.outputs.bloodconnect_domain }}
+      deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
+      bloodconnect_domain: ${{ steps.set_terraform_env_vars.outputs.bloodconnect_domain }}
 
   set-runner-image-name:
     name: Set Runner Image Name
