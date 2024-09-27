@@ -9,7 +9,7 @@
   "imageSize": 100,
   "commitType": "docs",
   "commitConvention": "angular",
-  "contributorsPerLine": 7,
+  "contributorsPerLine": 5,
   "linkToUsage": true,
   "contributors": [
     {
@@ -53,7 +53,6 @@
         "code",
         "bug",
         "review",
-        "talk",
         "doc",
         "ideas",
         "infra",
@@ -125,6 +124,23 @@
       ]
     },
     {
+      "login": "Shahed-Chy-Suzan",
+      "name": "Shahed Chy Suzan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62619497?v=4",
+      "profile": "https://shahed-chy-suzan.github.io/",
+      "contributions": [
+        "code",
+        "bug",
+        "research",
+        "doc",
+        "ideas",
+        "review",
+        "infra",
+        "test",
+        "question"
+      ]
+    },
+    {
       "login": "TahsinHani",
       "name": "Tahsin Hani",
       "avatar_url": "https://avatars.githubusercontent.com/u/65284841?v=4",
@@ -132,6 +148,6 @@
       "contributions": [
         "design"
       ]
-    },
+    }
   ]
 }
