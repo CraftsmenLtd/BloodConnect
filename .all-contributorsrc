@@ -9,7 +9,7 @@
   "imageSize": 100,
   "commitType": "docs",
   "commitConvention": "angular",
-  "contributorsPerLine": 7,
+  "contributorsPerLine": 5,
   "linkToUsage": true,
   "contributors": [
     {
@@ -53,12 +53,90 @@
         "code",
         "bug",
         "review",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "question",
+        "research",
+        "test"
+      ]
+    },
+    {
+      "login": "melon-ruet",
+      "name": "Mahabubur Rahaman Melon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4718893?v=4",
+      "profile": "https://github.com/melon-ruet",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "research",
+        "review",
         "talk",
         "doc",
         "ideas",
         "infra",
         "mentoring",
         "maintenance",
+        "test",
+        "question"
+      ]
+    },
+    {
+      "login": "sakibstark11",
+      "name": "Sakib Alam",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47223230?v=4",
+      "profile": "https://github.com/sakibstark11",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "research",
+        "review",
+        "talk",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "test",
+        "question"
+      ]
+    },
+    {
+      "login": "shuaibq3",
+      "name": "Shuaib",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5760035?v=4",
+      "profile": "https://github.com/shuaibq3",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "research",
+        "review",
+        "talk",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "test",
+        "question"
+      ]
+    },
+    {
+      "login": "Shahed-Chy-Suzan",
+      "name": "Shahed Chy Suzan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62619497?v=4",
+      "profile": "https://shahed-chy-suzan.github.io/",
+      "contributions": [
+        "code",
+        "bug",
+        "research",
+        "doc",
+        "ideas",
+        "review",
+        "infra",
+        "test",
         "question"
       ]
     },
