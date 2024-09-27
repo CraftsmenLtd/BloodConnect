@@ -90,6 +90,26 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "sakibstark11",
+      "name": "Sakib Alam",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47223230?v=4",
+      "profile": "https://github.com/sakibstark11",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "research",
+        "review",
+        "ideas",
+        "talk",
+        "doc",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "test",
+        "question"
+      ]
     }
   ]
 }
