@@ -61,6 +61,15 @@
         "maintenance",
         "question"
       ]
+    },
+    {
+      "login": "TahsinHani",
+      "name": "Tahsin Hani",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65284841?v=4",
+      "profile": "https://github.com/TahsinHani",
+      "contributions": [
+        "design"
+      ]
     }
   ]
 }
