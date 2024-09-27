@@ -70,6 +70,23 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "EbrahimAli-RU",
+      "name": "MD EBRAHIM ALI",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37172850?v=4",
+      "profile": "https://github.com/EbrahimAli-RU",
+      "contributions": [
+        "code",
+        "bug",
+        "research",
+        "doc",
+        "ideas",
+        "review",
+        "infra",
+        "test",
+        "question"
+      ]
     }
   ]
 }
