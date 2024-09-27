@@ -70,6 +70,26 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "shuaibq3",
+      "name": "Shuaib",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5760035?v=4",
+      "profile": "https://github.com/shuaibq3",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "research",
+        "review",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "talk",
+        "maintenance",
+        "test",
+        "question"
+      ]
     }
   ]
 }
