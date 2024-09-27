@@ -63,12 +63,43 @@
       ]
     },
     {
-      "login": "TahsinHani",
-      "name": "Tahsin Hani",
-      "avatar_url": "https://avatars.githubusercontent.com/u/65284841?v=4",
-      "profile": "https://github.com/TahsinHani",
+      "login": "melon-ruet",
+      "name": "Mahabubur Rahaman Melon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4718893?v=4",
+      "profile": "https://github.com/melon-ruet",
       "contributions": [
-        "design"
+        "code",
+        "projectManagement",
+        "research",
+        "review",
+        "talk",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "test",
+        "question"
+      ]
+    },
+    {
+      "login": "sakibstark11",
+      "name": "Sakib Alam",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47223230?v=4",
+      "profile": "https://github.com/sakibstark11",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "research",
+        "review",
+        "talk",
+        "doc",
+        "ideas",
+        "infra",
+        "mentoring",
+        "maintenance",
+        "test",
+        "question"
       ]
     },
     {
@@ -81,15 +112,24 @@
         "projectManagement",
         "research",
         "review",
+        "talk",
         "doc",
         "ideas",
         "infra",
         "mentoring",
-        "talk",
         "maintenance",
         "test",
         "question"
       ]
-    }
+    },
+    {
+      "login": "TahsinHani",
+      "name": "Tahsin Hani",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65284841?v=4",
+      "profile": "https://github.com/TahsinHani",
+      "contributions": [
+        "design"
+      ]
+    },
   ]
 }
