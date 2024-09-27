@@ -6,11 +6,11 @@ type ValidationResult = {
   isValid: boolean;
 };
 
-interface PasswordValidatorProps {
+type PasswordCriteriaCheckerProps = {
   validationResults: ValidationResult[];
 }
 
-const PasswordValidator: React.FC<PasswordValidatorProps> = ({
+const PasswordCriteriaChecker: React.FC<PasswordCriteriaCheckerProps> = ({
   validationResults,
 }) => {
   return (
@@ -35,4 +35,4 @@ const PasswordValidator: React.FC<PasswordValidatorProps> = ({
   );
 };
 
-export default PasswordValidator;
+export default PasswordCriteriaChecker;

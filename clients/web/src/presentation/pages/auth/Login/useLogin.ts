@@ -4,7 +4,7 @@ import { userSignIn } from '@client-commons/platform/aws/auth/awsAuth'
 import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser'
 import { DashboardPath } from '../../../../constants/routeConsts'
 
-interface UseLoginReturn {
+type UseLoginReturn = {
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   password: string;

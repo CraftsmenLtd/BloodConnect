@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from '../../assets/icons';
 import InputField from './index';
-import PasswordValidator from '../validators/Password';
+import PasswordCriteriaChecker from '../validators/Password';
 
 type ValidationResult = {
   message: string;
@@ -57,7 +57,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
         }
       />
       {value !== '' && (
-        <PasswordValidator validationResults={validationResults} />
+        <PasswordCriteriaChecker validationResults={validationResults} />
       )}
     </div>
   );
