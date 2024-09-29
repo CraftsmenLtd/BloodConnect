@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser'
-import { userSignIn } from '@client-commons/platform/aws/auth/awsAuth'
+import { getUser, userSignIn } from '@client-commons/platform/aws/auth/awsAuth'
 import useFetchData from '@client-commons/hooks/useFetchData'
 import { DashboardPath } from '../../../../constants/routeConsts'
 
@@ -26,22 +25,23 @@ export const useLogin = (): UseLoginReturn => {
   const [toastVisible, setToastVisible] = useState<boolean>(false)
   const [toastMsg, setToastMsg] = useState<string>('')
   const [toastClass, setToastClass] = useState<string>('')
-  const { user } = useAuthenticatedUser()
   const [showPassword, setShowPassword] = useState<boolean>(false)
 
   const [signIn, loading, , signInError] = useFetchData(userSignIn)
+  const [fetchUser, , user,] = useFetchData(getUser);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   useEffect(() => {
     if (user != null) {
       navigate(DashboardPath)
     }
-  }, [user])
-
-  useEffect(() => {
     if (signInError != null) {
       handleError(signInError)
     }
-  }, [signInError])
+  }, [user, signInError])
 
   const handleTogglePasswordVisibility = (): void => {
     setShowPassword(!showPassword)

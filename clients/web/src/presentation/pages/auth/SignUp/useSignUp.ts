@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import authService from '@client-commons/services/authService'
-import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser'
+import useFetchData from '@client-commons/hooks/useFetchData'
+import { getUser } from '@client-commons/platform/aws/auth/awsAuth'
 import { validatePassword } from '@client-commons/utils/validationUtils'
 import { toastHideDisappearTime } from '../../../../constants/common'
 import { DashboardPath, LoginPath } from '../../../../constants/routeConsts'
-import useFetchData from '@client-commons/hooks/useFetchData'
 
 type UseSignUpReturnType = {
   email: string;
@@ -36,21 +36,22 @@ export const useSignUp = (): UseSignUpReturnType => {
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMsg, setToastMsg] = useState('')
   const [toastClass, setToastClass] = useState('')
-  const { user } = useAuthenticatedUser()
 
   const [handleRegister, loading, , error] = useFetchData(authService.registerOrganization)
+  const [fetchUser, , user,] = useFetchData(getUser);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   useEffect(() => {
     if (user != null) {
       navigate(DashboardPath)
     }
-  }, [user, navigate])
-
-  useEffect(() => {
     if (error != null) {
       handleError(error)
     }
-  }, [error])
+  }, [user, navigate, error])
 
   const handleError = (error: string): void => {
     setToastMsg(error)
