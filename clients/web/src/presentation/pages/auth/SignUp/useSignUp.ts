@@ -5,6 +5,7 @@ import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser'
 import { validatePassword } from '@client-commons/utils/validationUtils'
 import { toastHideDisappearTime } from '../../../../constants/common'
 import { DashboardPath, LoginPath } from '../../../../constants/routeConsts'
+import useFetchData from '@client-commons/hooks/useFetchData'
 
 type UseSignUpReturnType = {
   email: string;
@@ -36,13 +37,20 @@ export const useSignUp = (): UseSignUpReturnType => {
   const [toastMsg, setToastMsg] = useState('')
   const [toastClass, setToastClass] = useState('')
   const { user } = useAuthenticatedUser()
-  const [loading, setLoading] = useState(false)
+
+  const [handleRegister, loading, , error] = useFetchData(authService.registerOrganization)
 
   useEffect(() => {
     if (user != null) {
       navigate(DashboardPath)
     }
   }, [user, navigate])
+
+  useEffect(() => {
+    if (error != null) {
+      handleError(error)
+    }
+  }, [error])
 
   const handleError = (error: string): void => {
     setToastMsg(error)
@@ -68,22 +76,16 @@ export const useSignUp = (): UseSignUpReturnType => {
     }
 
     try {
-      setLoading(true)
-
-      const resp = await authService.registerOrganization({
+      await handleRegister({
         email,
         password,
         organizationName,
         phoneNumber
       })
 
-      if (resp.status === 201) {
-        navigate(LoginPath)
-      }
+      navigate(LoginPath)
     } catch (error: any) {
       handleError(error.message)
-    } finally {
-      setLoading(false)
     }
   }
 

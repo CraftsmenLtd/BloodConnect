@@ -1,0 +1,36 @@
+import { useCallback, useState, useRef } from 'react'
+
+type UseFetchDataReturn<DataFetchType> = [
+  (...args: any[]) => Promise<void>,
+  boolean,
+  DataFetchType | undefined,
+  string | null
+]
+
+export default function useFetchData<DataFetchType>(
+  dataFetchFunction: (...args: any[]) => Promise<DataFetchType>
+): UseFetchDataReturn<DataFetchType> {
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState<DataFetchType | undefined>(undefined)
+  const [error, setError] = useState<string | null>(null)
+  const dataFetchFunctionRef = useRef(dataFetchFunction)
+
+  const executeFunction = useCallback(
+    async(...args: any[]): Promise<void> => {
+      setLoading(true)
+      setError(null)
+      try {
+        const result = await dataFetchFunctionRef.current(...args)
+        setData(result)
+      } catch (err) {
+        setData(undefined)
+        setError((err as Error).message)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [dataFetchFunctionRef]
+  )
+
+  return [executeFunction, loading, data, error] as const
+}

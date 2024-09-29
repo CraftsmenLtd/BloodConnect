@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { userSignIn } from '@client-commons/platform/aws/auth/awsAuth'
 import useAuthenticatedUser from '@client-commons/hooks/useAuthenticatedUser'
+import { userSignIn } from '@client-commons/platform/aws/auth/awsAuth'
+import useFetchData from '@client-commons/hooks/useFetchData'
 import { DashboardPath } from '../../../../constants/routeConsts'
 
 type UseLoginReturn = {
@@ -26,14 +27,21 @@ export const useLogin = (): UseLoginReturn => {
   const [toastMsg, setToastMsg] = useState<string>('')
   const [toastClass, setToastClass] = useState<string>('')
   const { user } = useAuthenticatedUser()
-  const [loading, setLoading] = useState<boolean>(false)
   const [showPassword, setShowPassword] = useState<boolean>(false)
+
+  const [signIn, loading, , signInError] = useFetchData(userSignIn)
 
   useEffect(() => {
     if (user != null) {
       navigate(DashboardPath)
     }
-  }, [user, navigate])
+  }, [user])
+
+  useEffect(() => {
+    if (signInError != null) {
+      handleError(signInError)
+    }
+  }, [signInError])
 
   const handleTogglePasswordVisibility = (): void => {
     setShowPassword(!showPassword)
@@ -50,16 +58,12 @@ export const useLogin = (): UseLoginReturn => {
   }
 
   const handleLogin = async(): Promise<void> => {
-    setLoading(true)
-
     try {
-      await userSignIn(email, password)
+      await signIn(email, password)
       navigate(DashboardPath)
     } catch (error: any) {
       handleError(error.message)
     }
-
-    setLoading(false)
   }
 
   return {
