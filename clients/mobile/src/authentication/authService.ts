@@ -1,4 +1,4 @@
-import { confirmSignUp, signUp, signIn } from 'aws-amplify/auth'
+import { confirmSignUp, signUp, signIn, signInWithRedirect } from 'aws-amplify/auth'
 import { RegisterCredential } from './register/hooks/useRegister'
 
 export const registerUser = async(registerInfo: RegisterCredential): Promise<boolean> => {
@@ -45,5 +45,13 @@ export const loginUser = async(email: string, password: string): Promise<boolean
     return isSignedIn
   } catch (error) {
     throw new Error(`Error logging in user: ${error instanceof Error ? error.message : error}`)
+  }
+}
+
+export const googleLogin = async(): Promise<void> => {
+  try {
+    await signInWithRedirect({ provider: 'Google' })
+  } catch (error) {
+    console.log(error)
   }
 }

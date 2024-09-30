@@ -16,7 +16,7 @@ interface RegisterScreenProps {
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
   const styles = createStyles(useTheme())
-  const { errors, registerCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleRegister, signupError } = useRegister()
+  const { errors, registerCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleRegister, signupError, handleGoogleLogin } = useRegister()
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -72,6 +72,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
           />
           {signupError !== '' && <Text style={styles.error}>{signupError}</Text>}
           <Button text="Register" onPress={handleRegister} />
+          <Button text="Login with Google" onPress={handleGoogleLogin} />
 
           <LinkWithText
             staticText="Already have an account? "

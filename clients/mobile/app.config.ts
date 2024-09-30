@@ -14,7 +14,10 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
   return {
     ...config,
     extra: {
-      ...ENV_VARS[ENV]
+      ...ENV_VARS[ENV],
+      eas: {
+        projectId: '1e1bfd4b-b929-41d8-b8f1-0d08220ac021'
+      }
     }
   }
 }

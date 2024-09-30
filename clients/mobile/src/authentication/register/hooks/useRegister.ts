@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import { isRequired, isValidEmail, isValidPassword, isValidPhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
-import { registerUser } from '../../authService'
+import { googleLogin, registerUser } from '../../authService'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -61,7 +61,16 @@ export const useRegister = (): any => {
     }
   }
 
+  const handleGoogleLogin = async(): Promise<void> => {
+    try {
+      await googleLogin()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return {
+    handleGoogleLogin,
     signupError,
     errors,
     registerCredential,
