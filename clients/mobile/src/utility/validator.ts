@@ -14,44 +14,50 @@ const passwordPolicy: PasswordPolicy = {
   require_symbols: true
 }
 
-export const isRequired = (value: string): string => {
+export const validateAndReturnRequiredFieldError = (value: string): string => {
   return value.trim().length === 0 ? 'This field is required' : ''
 }
 
-export const isValidEmail = (value: string): string => {
+export const validateEmailAndGetErrorMessage = (value: string): string => {
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
   return !emailRegex.test(value) ? 'Invalid email address' : ''
 }
 
-export const isValidPhoneNumber = (value: string): string => {
+export const validatePhoneNumberAndGetErrorMessage = (value: string): string => {
   const phoneRegex = /^\+?[1-9]\d{1,14}$/
   return !phoneRegex.test(value) ? 'Invalid phone number' : ''
 }
 
-export const isValidPassword = (value: string): string => {
-  let errorMsg = ''
+export const validatePasswordAndGetErrorMessage = (value: string): string => {
+  const tests = [
+    {
+      test: value.length >= passwordPolicy.minimum_length,
+      error: `Min ${passwordPolicy.minimum_length} chars`
+    },
+    {
+      test: !passwordPolicy.require_lowercase || /[a-z]/.test(value),
+      error: '1 lowercase'
+    },
+    {
+      test: !passwordPolicy.require_uppercase || /[A-Z]/.test(value),
+      error: '1 uppercase'
+    },
+    {
+      test: !passwordPolicy.require_numbers || /\d/.test(value),
+      error: '1 number'
+    },
+    {
+      test:
+        !passwordPolicy.require_symbols || /[!@#$%^&*(),.?":{}|<>]/.test(value),
+      error: '1 symbol'
+    }
+  ]
+  const errors = tests
+    .filter(({ test }) => !test)
+    .map(({ error }) => error)
+    .join(', ')
 
-  if (value.length < passwordPolicy.minimum_length) {
-    errorMsg += `Min ${passwordPolicy.minimum_length} chars. `
-  }
-
-  if (passwordPolicy.require_lowercase && !/[a-z]/.test(value)) {
-    errorMsg += '1 lowercase. '
-  }
-
-  if (passwordPolicy.require_uppercase && !/[A-Z]/.test(value)) {
-    errorMsg += '1 uppercase. '
-  }
-
-  if (passwordPolicy.require_numbers && !/\d/.test(value)) {
-    errorMsg += '1 number. '
-  }
-
-  if (passwordPolicy.require_symbols && !/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
-    errorMsg += '1 symbol. '
-  }
-
-  return errorMsg.trim().length === 0 ? '' : 'Password must contain:' + errorMsg.trim()
+  return (errors !== '') ? `Password must contain: ${errors}` : ''
 }
 
 export type ValidationRule = (value: string) => string
@@ -64,4 +70,11 @@ export const validateInput = (value: string, rules: ValidationRule[]): string =>
     }
   }
   return ''
+}
+
+export {
+  validateAndReturnRequiredFieldError as validateRequired,
+  validateEmailAndGetErrorMessage as validateEmail,
+  validatePhoneNumberAndGetErrorMessage as validatePhoneNumber,
+  validatePasswordAndGetErrorMessage as validatePassword
 }

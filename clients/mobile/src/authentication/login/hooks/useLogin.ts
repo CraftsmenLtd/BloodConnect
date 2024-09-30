@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { isRequired, isValidEmail, isValidPassword, ValidationRule } from '../../../utility/validator'
+import { validateRequired, ValidationRule } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { loginUser } from '../../authService'
@@ -13,8 +13,8 @@ export interface LoginCredential {
 }
 
 const validationRules: Record<CredentialKeys, ValidationRule[]> = {
-  email: [isRequired, isValidEmail],
-  password: [isRequired, isValidPassword]
+  email: [validateRequired],
+  password: [validateRequired]
 }
 
 export const useLogin = (): any => {
