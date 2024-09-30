@@ -39,20 +39,3 @@ jobs:
       deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
       aws_region: ap-south-1
       tf_action: apply
-
-  save-deployment-metadata:
-    name: Save Deployment Metadata
-    needs: [deploy-branch, setup-environment]
-    runs-on: ${{ vars.RUNNER_OS }}
-    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Save Deployment Info
-        uses: ./.github/actions/store-deployment-metadata
-        with:
-          environment_name: ${{ needs.setup-environment.outputs.deployment_environment }}
-          role_arn: ${{ secrets.AWS_ROLE_ARN }}
-          aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
-          bucket_name: ${{ vars.TERRAFORM_BACKEND_BUCKET_NAME }}

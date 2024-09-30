@@ -1,7 +1,8 @@
-name: "Branch Destruction"
+name: 🔥 Branch Destruction
 
 on:
   workflow_dispatch:
+  delete:
 
 concurrency:
   group: ${{ github.ref }}
@@ -10,46 +11,57 @@ permissions:
   contents: read
   packages: write
   id-token: write
-  
+
 jobs:
   setup-environment:
-    name: Set Deployment Environment
+    name: 🌱 Setup Environment
     runs-on: ${{ vars.RUNNER_OS }}
     environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set Deployment Environment
-        id: set_deployment_env
-        run: echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
-
-      - name: Fetch Deployment Metadata
-        id: fetch_branch_metadata
-        uses: ./.github/actions/fetch-deployment-metadata
-        with:
-          environment_name: ${{ steps.set_deployment_env.outputs.deployment_environment }}
-          role_arn: ${{ secrets.AWS_ROLE_ARN }}
-          aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
-          bucket_name: ${{ vars.TERRAFORM_BACKEND_BUCKET_NAME }}
+      - name: Get Branch Name
+        id: set_branch_name
+        run: echo "BRANCH_NAME=$(echo "${{ github.event.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
     outputs:
-      deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
-      last_deployed_commit: ${{ steps.fetch_branch_metadata.outputs.last_deployed_commit }}
+      branch_name: ${{ steps.set_branch_name.outputs.branch_name }}
 
-  handle-docker-image:
-    name: Handle Docker Image
-    uses: ./.github/workflows/docker-image.yml
-    secrets: inherit
+  destroy-terraform:
+    name: 🔥 Terraform Destruction
+    needs: [setup-environment]
+    runs-on: ${{ vars.RUNNER_OS }}
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-  destroy-branch:
-    name: Destroy Branch
-    secrets: inherit
-    needs: [setup-environment, handle-docker-image]
-    uses: ./.github/workflows/aws-terraform.yml
-    with:
-      docker_image: ${{ needs.handle-docker-image.outputs.runner_image_name }}
-      github_environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
-      deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
-      last_deployed_commit: ${{ needs.setup-environment.outputs.last_deployed_commit }}
-      aws_region: ap-south-1
-      tf_action: destroy
+      - name: Create Terraform Configuration
+        run: |
+          mkdir destroy
+          cat <<EOF > destroy/main.tf
+          provider "aws" {
+            region = "${{ vars.AWS_DEFAULT_REGION }}"
+          }
+
+          terraform {
+            backend "s3" {
+              bucket         = "${{ vars.TERRAFORM_BACKEND_BUCKET_NAME }}"
+              key            = "${{ vars.ENVIRONMENT_GITHUB_DEV }}/${{ needs.setup-environment.outputs.branch_name }}.tfstate"
+              region         = "${{ secrets.AWS_DEFAULT_REGION }}"
+            }
+          }
+          EOF
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: destroy
+
+      - name: Terraform Plan Destroy
+        run: terraform plan --destroy
+        working-directory: destroy
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
+        working-directory: destroy
