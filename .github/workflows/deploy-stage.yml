@@ -31,7 +31,7 @@ jobs:
   deploy-stage:
     name: 🚀 Deploy Stage Infrastructure
     secrets: inherit
-    needs: [handle-docker-image]
+    needs: [handle-docker-image, lint-test-security-checks]
     uses: ./.github/workflows/aws-terraform.yml
     with:
       docker_image: ${{ needs.handle-docker-image.outputs.runner_image_name }}

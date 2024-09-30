@@ -1,5 +1,5 @@
 # Guide: https://github.com/marketplace/actions/sphinx-to-github-pages
-name: Docs Deployment
+name: 📃 Docs Deployment
 
 on:
   # Runs on pushes targeting the default branch

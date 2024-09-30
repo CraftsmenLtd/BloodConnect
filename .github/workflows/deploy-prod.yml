@@ -38,12 +38,13 @@ jobs:
 
   handle-docker-image:
     name: 🐳 Handle Docker Image
+    needs: [check-tag-branch]
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
 
   lint-test-security-checks:
     name: 🧪 Lint, Test and Security Check
-    needs: [handle-docker-image]
+    needs: [handle-docker-image, check-tag-branch]
     uses: ./.github/workflows/ci-checks.yml
     secrets: inherit
     with:
@@ -53,7 +54,7 @@ jobs:
   deploy-production:
     name: 🚀 Deploy Branch Infrastructure
     secrets: inherit
-    needs: [handle-docker-image]
+    needs: [handle-docker-image, lint-test-security-checks]
     uses: ./.github/workflows/aws-terraform.yml
     with:
       docker_image: ${{ needs.handle-docker-image.outputs.runner_image_name }}
