@@ -1,5 +1,5 @@
-name: "Fetch Artifact"
-description: "Fetches deployment info from S3 and returns the last deployed commit."
+name: "Fetch Deployment Metadata"
+description: "Fetches deployment info from S3."
 inputs:
   environment_name:
     description: "Deployment Environment name"
@@ -24,12 +24,12 @@ runs:
         role-session-name: GitHubActions
         aws-region: ${{ inputs.aws_region }}
 
-    - name: Download Deployment Info JSON from S3
+    - name: Download Deployment Metadata JSON from S3
       run: |
         aws s3 cp s3://${{ inputs.bucket_name }}/deployment-info/${{ inputs.environment_name }}.json deployment-info.json
       shell: bash
 
-    - name: Read Last Deployed Commit
+    - name: Get Last Deployed Commit Hash
       id: read_commit
       run: |
         LAST_COMMIT=$(jq -r '.last_deployed_commit' deployment-info.json)

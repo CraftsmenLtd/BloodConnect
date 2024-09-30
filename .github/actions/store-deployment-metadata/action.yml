@@ -1,5 +1,5 @@
-name: "Save Deployment Info"
-description: "Saves the current branch's commit info as a JSON file and uploads it to S3."
+name: "Save Deployment Metadata"
+description: "Saves the current branch's commit info as JSON file and uploads it to S3."
 inputs:
   environment_name:
     description: "Deployment Environment name"
@@ -17,7 +17,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Save Deployment info as JSON
+    - name: Save Deployment Metadata
       run: |
         LATEST_COMMIT_HASH=$(git rev-parse HEAD)
         echo "{\"last_deployed_commit\": \"$LATEST_COMMIT_HASH\"}" > deployment-info.json
@@ -30,7 +30,7 @@ runs:
         role-session-name: GitHubActions
         aws-region: ${{ inputs.aws_region }}
 
-    - name: Upload Deployment Info JSON to S3
+    - name: Upload Deployment Metadata to S3
       run: |
         aws s3 cp deployment-info.json s3://${{ inputs.bucket_name }}/deployment-info/${{ inputs.environment_name }}.json
       shell: bash
