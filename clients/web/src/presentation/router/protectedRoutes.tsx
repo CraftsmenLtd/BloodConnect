@@ -7,17 +7,17 @@ import * as RouteConsts from '../../constants/routeConsts';
 import DefaultLayout from '../layout/DefaultLayout/DefaultLayout';
 
 export function ProtectedRoute() {
-  const [fetchUser, loading, user, ] = useFetchData(getUser);
+  const [fetchUser, loading, user, error] = useFetchData(getUser);
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-
-  if (loading == true || user == undefined) {
+  
+  if (loading == true || (user == undefined && error == null)) {
     return <FullPageLoader />;
   }
 
-  if (user == null) {
+  if (user == undefined && error != null) {
     return <Navigate to={RouteConsts.LoginPath} />;
   }
 

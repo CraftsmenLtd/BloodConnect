@@ -60,7 +60,7 @@ export const useLogin = (): UseLoginReturn => {
   const handleLogin = async(): Promise<void> => {
     try {
       await signIn(email, password)
-      navigate(DashboardPath)
+      void fetchUser()
     } catch (error: any) {
       handleError(error.message)
     }
