@@ -1,4 +1,4 @@
-name: "Branch Deployment"
+name: 🌿 Branch Deployment
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   setup-environment:
-    name: Set Deployment Environment
+    name: 🌱 Set Deployment Environment
     runs-on: ${{ vars.RUNNER_OS }}
     environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
     steps:
@@ -24,12 +24,12 @@ jobs:
       deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
 
   handle-docker-image:
-    name: Handle Docker Image
+    name: 🐳 Handle Docker Image
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
 
   deploy-branch:
-    name: Deploy Branch Infrastructure
+    name: 🚀 Deploy Branch Infrastructure
     secrets: inherit
     needs: [setup-environment, handle-docker-image]
     uses: ./.github/workflows/aws-terraform.yml

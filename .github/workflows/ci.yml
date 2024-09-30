@@ -1,4 +1,4 @@
-name: "Continuous Integration"
+name: 🧪 Continuous Integration
 
 on:
   push:
@@ -21,12 +21,12 @@ env:
 
 jobs:
   handle-docker-image:
-    name: Handle Docker Image
+    name: 🐳 Handle Docker Image
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
 
   lint-test-security-checks:
-    name: Lint, Test and Security Check
+    name: 🧪 Lint, Test and Security Check
     needs: [handle-docker-image]
     uses: ./.github/workflows/ci-checks.yml
     secrets: inherit

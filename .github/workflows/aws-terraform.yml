@@ -64,37 +64,34 @@ jobs:
       TF_VAR_aws_environment: ${{ inputs.deployment_environment }}
       TF_VAR_bloodconnect_domain: ${{ vars.BLOODCONNECT_DOMAIN }}
     steps:
-      - name: Checkout Branch
+      - name: 📥 Checkout Branch
         uses: actions/checkout@v4
 
-      - name: Login to GitHub Container Registry
+      - name: 🔐 Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Node Modules
+      - name: 📦 Install Node Modules
         run: make run-command-install-node-packages
 
-      - name: Package Code
+      - name: 🎁 Package Code
         run: make run-command-package-all
 
-      - name: Configure AWS Credentials
+      - name: 🔑 Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHubActions
           aws-region: ${{ inputs.aws_region }}
 
-      - name: Parse and Set Terraform Variables
-        run: echo "${{ inputs.tf_vars }}" | xargs -d '\n' -I {} echo {} >> $GITHUB_ENV
-
-      - name: Terraform Initialization
+      - name: 🛠️ Terraform Initialization
         run: make run-command-tf-init
 
-      - name: Terraform Plan ${{ inputs.tf_action }}
+      - name: 🗓️ Terraform Plan ${{ inputs.tf_action }}
         run: make run-command-tf-plan-${{ inputs.tf_action }}
 
-      - name: Terraform ${{ inputs.tf_action }}
+      - name: 🚀 Terraform ${{ inputs.tf_action }}
         run: make run-command-tf-${{ inputs.tf_action }}

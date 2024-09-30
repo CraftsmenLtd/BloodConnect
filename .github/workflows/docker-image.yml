@@ -17,36 +17,37 @@ permissions:
 
 jobs:
   docker-image-handling:
+    name: Docker Image Handling
     runs-on: ${{ vars.RUNNER_OS }}
     outputs:
       runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
     steps:
-      - name: Checkout Repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Generate Runner Image Name
+      - name: 🛠️ Generate Runner Image Name
         id: set_runner_image
         run: |
           RUNNER_IMAGE_NAME=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum Dockerfile | awk '{ print $1 }')
           echo "RUNNER_IMAGE_NAME=$RUNNER_IMAGE_NAME" >> $GITHUB_ENV
           echo "runner_image_name=$RUNNER_IMAGE_NAME" >> $GITHUB_OUTPUT
 
-      - name: Login to GitHub Container Registry
+      - name: 🔐 Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Attempt to Pull Docker Image
+      - name: ⬇️ Attempt to Pull Docker Image
         id: pull_docker_image
         run: docker manifest inspect $RUNNER_IMAGE_NAME
         continue-on-error: true
 
-      - name: Build Docker Image
+      - name: 🏗️ Build Docker Image
         if: steps.pull_docker_image.outcome == 'failure'
         run: make build-runner-image
 
-      - name: Push Docker Image
+      - name: 🚀 Push Docker Image
         if: steps.pull_docker_image.outcome == 'failure'
         run: docker push ${{ inputs.runner_image_name }}

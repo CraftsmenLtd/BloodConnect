@@ -1,4 +1,4 @@
-name: "Lint, Test and Security Check"
+name: Lint, Test and Security Check
 
 on:
   workflow_call:
@@ -14,58 +14,59 @@ on:
 
 jobs:
   lint-test-security:
+    name: Lint, Test and Security Check
     runs-on: ${{ vars.RUNNER_OS }}
     environment: ci
     env:
       RUNNER_IMAGE_NAME: ${{ inputs.runner_image_name }}
       LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
     steps:
-      - name: Checkout Branch
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Login to GitHub Container Registry
+      - name: 🔐 Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Validate OpenAPI specs
+      - name: 📑 Validate OpenAPI specs
         run: make run-command-lint-api
 
-      - name: Install Node Modules
+      - name: 📦 Install Node Modules
         run: make run-command-install-node-packages
 
-      - name: Unit Test Code
+      - name: 🧪 Unit Test Code
         run: make run-command-test
 
-      - name: Lint Code
+      - name: 🧐 Lint Code
         run: make run-command-lint-code
 
-      - name: Package Code
+      - name: 🎁 Package Code
         run: make run-command-package-all
 
-      - name: Start Localstack
+      - name: 🐬 Start Localstack
         run: make localstack-start
 
-      - name: Terraform Security
+      - name: 🛡️ Terraform Security
         run: make run-command-tf-security
 
-      - name: Terraform Validation
+      - name: 📑 Terraform Validation
         run: make run-command-tf-validate
 
-      - name: Terraform Initialization Localstack
+      - name: 🛠️ Terraform Initialization Localstack
         run: make run-command-tf-init
 
-      - name: Terraform Plan Localstack
+      - name: 🗓️ Terraform Plan Localstack
         if: ${{ inputs.is_deploy_localstack }}
         run: make run-command-tf-plan-apply
 
-      - name: Terraform Apply Localstack
+      - name: 🚀 Terraform Apply Localstack
         if: ${{ inputs.is_deploy_localstack }}
         run: make run-command-tf-apply
 
-      - name: Upload Coverage Report
+      - name: 📊 Upload Coverage Report
         if: success()
         uses: actions/upload-artifact@v4
         with:

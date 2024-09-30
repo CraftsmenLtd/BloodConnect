@@ -1,4 +1,4 @@
-name: "Production Deployment"
+name: 🌏 Production Deployment
 
 on:
   push:
@@ -37,12 +37,12 @@ jobs:
           fi
 
   handle-docker-image:
-    name: Handle Docker Image
+    name: 🐳 Handle Docker Image
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
 
   lint-test-security-checks:
-    name: Lint, Test and Security Check
+    name: 🧪 Lint, Test and Security Check
     needs: [handle-docker-image]
     uses: ./.github/workflows/ci-checks.yml
     secrets: inherit
@@ -51,7 +51,7 @@ jobs:
       is_deploy_localstack: false
 
   deploy-production:
-    name: Deploy Branch Infrastructure
+    name: 🚀 Deploy Branch Infrastructure
     secrets: inherit
     needs: [handle-docker-image]
     uses: ./.github/workflows/aws-terraform.yml
