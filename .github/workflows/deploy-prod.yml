@@ -48,6 +48,7 @@ jobs:
     secrets: inherit
     with:
       runner_image_name: ${{ needs.handle-docker-image.outputs.runner_image_name }}
+      is_deploy_localstack: false
 
   deploy-production:
     name: Deploy Branch Infrastructure

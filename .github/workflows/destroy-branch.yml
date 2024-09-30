@@ -6,6 +6,11 @@ on:
 concurrency:
   group: ${{ github.ref }}
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  
 jobs:
   setup-environment:
     name: Set Deployment Environment
