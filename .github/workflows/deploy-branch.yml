@@ -7,56 +7,47 @@ concurrency:
   group: ${{ github.ref }}
 
 jobs:
-  set-deployment-environment:
+  setup-environment:
     name: Set Deployment Environment
-    runs-on: ubuntu-22.04
-    environment: dev
+    runs-on: ${{ vars.RUNNER_OS }}
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
     steps:
       - name: Set Deployment Environment
         id: set_deployment_env
         run: echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
-      - name: Set Terraform Environment Variables
-        id: set_terraform_env_vars
-        run: echo "BLOODCONNECT_DOMAIN=${{ vars.BLOODCONNECT_DOMAIN }}" >> $GITHUB_OUTPUT
     outputs:
       deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
-      bloodconnect_domain: ${{ steps.set_terraform_env_vars.outputs.bloodconnect_domain }}
-
-  set-runner-image-name:
-    name: Set Runner Image Name
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v3
-
-      - name: Set Runner Image
-        id: set_runner_image
-        run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
-    outputs:
-      runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
 
   handle-docker-image:
     name: Handle Docker Image
-    needs: set-runner-image-name
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
-    with:
-      runner_image_name: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
 
   deploy-branch:
-    name: Deploy Branch
+    name: Deploy Branch Infrastructure
     secrets: inherit
-    needs: [set-deployment-environment, set-runner-image-name, handle-docker-image]
+    needs: [setup-environment, handle-docker-image]
     uses: ./.github/workflows/aws-terraform.yml
     with:
-      docker_image: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
-      github_environment: dev
-      deployment_environment: ${{ needs.set-deployment-environment.outputs.deployment_environment }}
-      tf_backend_bucket_name: terraform-bloodconnect-ci-dev
-      tf_backend_bucket_key: dev/${{ needs.set-deployment-environment.outputs.deployment_environment }}.tfstate
-      tf_backend_bucket_region: ap-south-1
+      docker_image: ${{ needs.handle-docker-image.outputs.runner_image_name }}
+      github_environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+      deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
       aws_region: ap-south-1
       tf_action: apply
-      tf_vars: |
-        TF_VAR_aws_environment=${{ needs.set-deployment-environment.outputs.deployment_environment }}
-        TF_VAR_bloodconnect_domain=${{ needs.set-deployment-environment.outputs.bloodconnect_domain }}
+
+  save-deployment-metadata:
+    name: Save Deployment Metadata
+    needs: [deploy-branch, setup-environment]
+    runs-on: ${{ vars.RUNNER_OS }}
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Save Deployment Info
+        uses: ./.github/actions/store-deployment-metadata
+        with:
+          environment_name: ${{ needs.setup-environment.outputs.deployment_environment }}
+          role_arn: ${{ secrets.AWS_ROLE_ARN }}
+          aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
+          bucket_name: ${{ vars.TERRAFORM_BACKEND_BUCKET_NAME }}
