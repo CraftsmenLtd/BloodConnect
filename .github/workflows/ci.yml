@@ -12,7 +12,7 @@ permissions:
 defaults:
   run:
     shell: bash
-
+      
 concurrency:
   group: ${{ github.ref }}
 
@@ -20,81 +20,15 @@ env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
-  set-runner-image-name:
-    name: Set Runner Image Name
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v3
-
-      - name: Set Runner Image
-        id: set_runner_image
-        run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
-    outputs:
-        runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
-
   handle-docker-image:
     name: Handle Docker Image
-    needs: set-runner-image-name
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
-    with:
-      runner_image_name: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
 
-  lint-test-security:
+  lint-test-security-checks:
     name: Lint, Test and Security Check
-    needs: [set-runner-image-name, handle-docker-image]
-    runs-on: ubuntu-22.04
-    environment: ci
-    env:
-      RUNNER_IMAGE_NAME: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
-    steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set Environment Variables
-        run: |
-          echo "LOCALSTACK_AUTH_TOKEN=${{ secrets.LOCALSTACK_AUTH_TOKEN }}" >> $GITHUB_ENV
-
-      - name: Validate OpenAPI specs
-        run: make run-command-lint-api
-
-      - name: Install Node Modules
-        run: make run-command-install-node-packages
-
-      - name: Unit Test Code
-        run: make run-command-test
-
-      - name: Lint Code
-        run: make run-command-lint-code
-
-      - name: Code Type Check
-        run: make run-command-type-check
-
-      - name: Package Code
-        run: make run-command-package-all
-
-      - name: Start Localstack
-        run: make localstack-start
-
-      - name: Terraform Security
-        run: make run-command-tf-security
-
-      - name: Terraform Validation
-        run: make run-command-tf-validate
-
-      - name: Terraform Initialization Localstack
-        run: make run-command-tf-init
-
-      - name: Terraform Plan Localstack
-        run: make run-command-tf-plan-apply
-
-      - name: Terraform Apply Localstack
-        run: make run-command-tf-apply
+    needs: [handle-docker-image]
+    uses: ./.github/workflows/ci-checks.yml
+    secrets: inherit
+    with:
+      runner_image_name: ${{ needs.handle-docker-image.outputs.runner_image_name }}
