@@ -14,21 +14,21 @@ const passwordPolicy: PasswordPolicy = {
   require_symbols: true
 }
 
-export const validateAndReturnRequiredFieldError = (value: string): string => {
-  return value.trim().length === 0 ? 'This field is required' : ''
+export const validateAndReturnRequiredFieldError = (value: string): string | null => {
+  return value.trim().length === 0 ? 'This field is required' : null
 }
 
-export const validateEmailAndGetErrorMessage = (value: string): string => {
+export const validateEmailAndGetErrorMessage = (value: string): string | null => {
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
-  return !emailRegex.test(value) ? 'Invalid email address' : ''
+  return !emailRegex.test(value) ? 'Invalid email address' : null
 }
 
-export const validatePhoneNumberAndGetErrorMessage = (value: string): string => {
+export const validatePhoneNumberAndGetErrorMessage = (value: string): string | null => {
   const phoneRegex = /^\+?[1-9]\d{1,14}$/
-  return !phoneRegex.test(value) ? 'Invalid phone number' : ''
+  return !phoneRegex.test(value) ? 'Invalid phone number' : null
 }
 
-export const validatePasswordAndGetErrorMessage = (value: string): string => {
+export const checkErrorsInPassword = (value: string): string | null => {
   const tests = [
     {
       test: value.length >= passwordPolicy.minimum_length,
@@ -57,24 +57,24 @@ export const validatePasswordAndGetErrorMessage = (value: string): string => {
     .map(({ error }) => error)
     .join(', ')
 
-  return (errors !== '') ? `Password must contain: ${errors}` : ''
+  return (errors !== '') ? `Password must contain: ${errors}` : null
 }
 
-export type ValidationRule = (value: string) => string
+export type ValidationRule = (value: string) => string | null
 
-export const validateInput = (value: string, rules: ValidationRule[]): string => {
+export const validateInput = (value: string, rules: ValidationRule[]): string | null => {
   for (const rule of rules) {
     const error = rule(value)
-    if (error !== '') {
+    if (error !== null) {
       return error
     }
   }
-  return ''
+  return null
 }
 
 export {
   validateAndReturnRequiredFieldError as validateRequired,
   validateEmailAndGetErrorMessage as validateEmail,
   validatePhoneNumberAndGetErrorMessage as validatePhoneNumber,
-  validatePasswordAndGetErrorMessage as validatePassword
+  checkErrorsInPassword as validatePassword
 }

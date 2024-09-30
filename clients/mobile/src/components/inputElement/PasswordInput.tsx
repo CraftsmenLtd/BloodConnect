@@ -28,7 +28,7 @@ export const PasswordInput = ({ name, label, value, onChangeText, isVisible, set
           <FontAwesome name={isVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
         </TouchableOpacity>
       </View>
-      {error !== '' && <Text style={styles.error}>{error}</Text>}
+      {error !== null && <Text style={styles.error}>{error}</Text>}
     </View>
   )
 }

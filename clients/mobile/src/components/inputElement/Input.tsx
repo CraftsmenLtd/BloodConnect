@@ -22,7 +22,7 @@ export const Input = ({ name, label, value, onChangeText, placeholder, error, ke
         onChangeText={(text) => { onChangeText(name, text) }}
         keyboardType={keyboardType}
       />
-      {error !== '' && <Text style={styles.error}>{error}</Text>}
+      {error !== null && <Text style={styles.error}>{error}</Text>}
     </View>
   )
 }
