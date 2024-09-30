@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from 'react'
+import { useCallback, useState, useRef, useEffect } from 'react'
 
 type UseFetchDataReturn<DataFetchType> = [
   (...args: any[]) => Promise<void>,
@@ -8,7 +8,8 @@ type UseFetchDataReturn<DataFetchType> = [
 ]
 
 export default function useFetchData<DataFetchType>(
-  dataFetchFunction: (...args: any[]) => Promise<DataFetchType>
+  dataFetchFunction: (...args: any[]) => Promise<DataFetchType>,
+  executeNow = false
 ): UseFetchDataReturn<DataFetchType> {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<DataFetchType | undefined>(undefined)
@@ -31,6 +32,10 @@ export default function useFetchData<DataFetchType>(
     },
     [dataFetchFunctionRef]
   )
+
+  useEffect(() => {
+    if (executeNow) void executeFunction()
+  }, [])
 
   return [executeFunction, loading, data, error] as const
 }

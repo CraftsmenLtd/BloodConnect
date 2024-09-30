@@ -38,11 +38,7 @@ export const useSignUp = (): UseSignUpReturnType => {
   const [toastClass, setToastClass] = useState('')
 
   const [handleRegister, loading, , error] = useFetchData(authService.registerOrganization)
-  const [fetchUser, , user] = useFetchData(getUser)
-
-  useEffect(() => {
-    void fetchUser()
-  }, [fetchUser])
+  const [, , user] = useFetchData(getUser, true)
 
   useEffect(() => {
     if (user != null) {

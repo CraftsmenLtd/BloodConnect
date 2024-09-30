@@ -28,11 +28,7 @@ export const useLogin = (): UseLoginReturn => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
 
   const [signIn, loading, , signInError] = useFetchData(userSignIn)
-  const [fetchUser, , user] = useFetchData(getUser)
-
-  useEffect(() => {
-    void fetchUser()
-  }, [fetchUser])
+  const [fetchUser, , user] = useFetchData(getUser, true)
 
   useEffect(() => {
     if (user != null) {

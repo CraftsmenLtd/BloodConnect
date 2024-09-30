@@ -92,7 +92,7 @@ const SignUp: React.FC = () => {
           <div className="mb-5">
             <Button
               type="submit"
-              value={loading ? 'Loading..' : 'Create account'}
+              value={loading ? 'Loading..' : 'Create Account'}
               className={`btn bg-primary text-white w-full ${loading ? 'cursor-not-allowed' : ''} hover:bg-brandprimary_2`}
               disabled={loading}
             />

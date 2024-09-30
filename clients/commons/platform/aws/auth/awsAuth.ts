@@ -1,21 +1,12 @@
-import { signOut, signIn, fetchUserAttributes, fetchAuthSession } from 'aws-amplify/auth'
-import { UserDTO } from '@commons/dto/UserDTO'
+import { signOut, signIn, fetchUserAttributes, fetchAuthSession, FetchUserAttributesOutput, AuthSession } from 'aws-amplify/auth'
 
-export const userSignOut = async(): Promise<void> => {
-  await signOut()
-}
+export const userSignOut = async(): Promise<void> => signOut()
 
-export const userSignIn = async(email: string, password: string): Promise<any> => {
-  return await signIn({
-    username: email,
-    password
-  })
-}
+export const userSignIn = async(email: string, password: string): Promise<any> => signIn({
+  username: email,
+  password
+})
 
-export const getUser = async(): Promise<UserDTO> => {
-  return await fetchUserAttributes() as UserDTO
-}
+export const getUser = async(): Promise<FetchUserAttributesOutput> => fetchUserAttributes()
 
-export const getAuthSession = async(): Promise<any> => {
-  return await fetchAuthSession()
-}
+export const getAuthSession = async(): Promise<AuthSession> => fetchAuthSession()

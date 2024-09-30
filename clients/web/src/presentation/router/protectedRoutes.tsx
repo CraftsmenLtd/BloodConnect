@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import useFetchData from '@client-commons/hooks/useFetchData';
 import { getUser } from '@client-commons/platform/aws/auth/awsAuth';
@@ -7,11 +6,8 @@ import * as RouteConsts from '../../constants/routeConsts';
 import DefaultLayout from '../layout/DefaultLayout/DefaultLayout';
 
 export function ProtectedRoute() {
-  const [fetchUser, loading, user, error] = useFetchData(getUser);
+  const [, loading, user, error] = useFetchData(getUser, true);
 
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
   
   if (loading == true || (user == undefined && error == null)) {
     return <FullPageLoader />;
