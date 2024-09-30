@@ -1,0 +1,42 @@
+name: "Fetch Artifact"
+description: "Fetches deployment info from S3 and returns the last deployed commit."
+inputs:
+  environment_name:
+    description: "Deployment Environment name"
+    required: true
+  role_arn:
+    description: "AWS Role ARN to assume"
+    required: true
+  aws_region:
+    description: "AWS Region"
+    required: true
+  bucket_name:
+    description: "S3 Bucket name"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.role_arn }}
+        role-session-name: GitHubActions
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Download Deployment Info JSON from S3
+      run: |
+        aws s3 cp s3://${{ inputs.bucket_name }}/deployment-info/${{ inputs.environment_name }}.json deployment-info.json
+      shell: bash
+
+    - name: Read Last Deployed Commit
+      id: read_commit
+      run: |
+        LAST_COMMIT=$(jq -r '.last_deployed_commit' deployment-info.json)
+        echo "last_deployed_commit=$LAST_COMMIT" >> $GITHUB_OUTPUT
+      shell: bash
+
+outputs:
+  last_deployed_commit:
+    description: "The last deployed commit hash"
+    value: "${{ steps.read_commit.outputs.last_deployed_commit }}"
