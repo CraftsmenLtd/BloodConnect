@@ -1,12 +1,12 @@
-output "PROD" {
-  value       = "prod"
+output "PRODUCTION" {
+  value       = "production"
   description = "Static Environment Strings for Production"
 }
-output "TEST" {
-  value       = "prod"
-  description = "Static Environment Strings for Testing"
+output "DEV" {
+  value       = "dev"
+  description = "Static Environment Strings for Development"
 }
 output "STAGE" {
-  value       = "prod"
+  value       = "stage"
   description = "Static Environment Strings for Staging"
 }

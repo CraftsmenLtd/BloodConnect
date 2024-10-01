@@ -1,5 +1,5 @@
 # Guide: https://github.com/marketplace/actions/sphinx-to-github-pages
-name: Docs Deployment
+name: 📃 Docs Deployment
 
 on:
   # Runs on pushes targeting the default branch
@@ -16,11 +16,10 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-
 jobs:
   pages:
     name: Docs Publish
-    runs-on: ubuntu-20.04
+    runs-on: ${{ vars.RUNNER_OS }}
     permissions:
       pages: write
       id-token: write
@@ -30,12 +29,16 @@ jobs:
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v3
+
       - name: Install Dot Binary
         run: sudo apt-get install -y graphviz
+
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
+
       - name: Combine OpenAPI specs
         run: redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json
+
       - name: Deploy Docs
         id: deployment
         uses: sphinx-notes/pages@v3

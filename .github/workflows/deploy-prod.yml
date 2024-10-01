@@ -1,0 +1,64 @@
+name: 🌏 Production Deployment
+
+on:
+  push:
+    tags:
+      - "*"
+
+concurrency:
+  group: ${{ github.ref }}
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  check-tag-branch:
+    name: Check Tag Hash Against Master Branch Hash
+    runs-on: ${{ vars.RUNNER_OS }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Get Tag and Master Commit Hashes
+        id: check_hashes
+        run: |
+          # Get the commit hash associated with the tag
+          COMMIT_HASH_TAG=$(git show-ref --tags -d | grep ${GITHUB_REF#refs/tags/} | awk '{print $1}')
+
+          # Get the commit hash from the master branch
+          COMMIT_HASH_MASTER=$(git rev-parse origin/master)
+
+          # Compare the two commit hashes
+          if [ "$COMMIT_HASH_TAG" != "$COMMIT_HASH_MASTER" ]; then
+            echo "Error: Commit hashes do not match. Stopping the pipeline."
+            exit 1
+          fi
+
+  build-push-docker-image:
+    name: 🐳 Build and Push Docker Image
+    needs: [check-tag-branch]
+    uses: ./.github/workflows/docker-image.yml
+    secrets: inherit
+
+  lint-test-security-checks:
+    name: 🧪 Lint, Test and Security Check
+    needs: [build-push-docker-image, check-tag-branch]
+    uses: ./.github/workflows/ci-checks.yml
+    secrets: inherit
+    with:
+      runner_image_name: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      is_deploy_localstack: false
+
+  deploy-production:
+    name: 🚀 Deploy Branch Infrastructure
+    secrets: inherit
+    needs: [build-push-docker-image, lint-test-security-checks]
+    uses: ./.github/workflows/aws-terraform.yml
+    with:
+      docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      github_environment: ${{ vars.ENVIRONMENT_GITHUB_PRODUCTION }}
+      deployment_environment: ${{ vars.ENVIRONMENT_GITHUB_PRODUCTION }}
+      aws_region: ap-south-1
+      tf_action: apply

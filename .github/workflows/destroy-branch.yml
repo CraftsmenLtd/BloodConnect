@@ -1,62 +1,67 @@
-name: "Branch Destruction"
+name: 🔥 Branch Destruction
 
 on:
   workflow_dispatch:
+  delete:
 
 concurrency:
   group: ${{ github.ref }}
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
-  set-deployment-environment:
-    name: Set Deployment Environment
-    runs-on: ubuntu-22.04
-    environment: dev
+  setup-environment:
+    name: 🌱 Setup Environment
+    runs-on: ${{ vars.RUNNER_OS }}
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
     steps:
-      - name: Set Deployment Environment
-        id: set_deployment_env
-        run: echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
-      - name: Set Terraform Environment Variables
-        id: set_terraform_env_vars
-        run: echo "BLOODCONNECT_DOMAIN=${{ vars.BLOODCONNECT_DOMAIN }}" >> $GITHUB_OUTPUT
+      - name: Get Branch Name
+        id: set_branch_name
+        run: echo "BRANCH_NAME=$(echo "${{ github.event.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
     outputs:
-      deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
-      bloodconnect_domain: ${{ steps.set_terraform_env_vars.outputs.bloodconnect_domain }}
+      branch_name: ${{ steps.set_branch_name.outputs.branch_name }}
 
-  set-runner-image-name:
-    name: Set Runner Image Name
-    runs-on: ubuntu-22.04
+  destroy-terraform:
+    name: 🔥 Terraform Destruction
+    needs: [setup-environment]
+    runs-on: ${{ vars.RUNNER_OS }}
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
     steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Set Runner Image
-        id: set_runner_image
-        run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
-    outputs:
-            runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
+      - name: Create Terraform Configuration
+        run: |
+          mkdir destroy
+          cat <<EOF > destroy/main.tf
+          provider "aws" {
+            region = "${{ vars.AWS_DEFAULT_REGION }}"
+          }
 
-  handle-docker-image:
-    name: Handle Docker Image
-    needs: set-runner-image-name
-    uses: ./.github/workflows/docker-image.yml
-    secrets: inherit
-    with:
-      runner_image_name: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
+          terraform {
+            backend "s3" {
+              bucket         = "${{ vars.TERRAFORM_BACKEND_BUCKET_NAME }}"
+              key            = "${{ vars.ENVIRONMENT_GITHUB_DEV }}/${{ needs.setup-environment.outputs.branch_name }}.tfstate"
+              region         = "${{ secrets.AWS_DEFAULT_REGION }}"
+            }
+          }
+          EOF
 
-  destroy-branch:
-    name: Destroy Branch
-    secrets: inherit
-    needs: [set-deployment-environment, set-runner-image-name, handle-docker-image]
-    uses: ./.github/workflows/aws-terraform.yml
-    with:
-      docker_image: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
-      github_environment: dev
-      deployment_environment: ${{ needs.set-deployment-environment.outputs.deployment_environment }}
-      tf_backend_bucket_name: terraform-bloodconnect-ci-dev
-      tf_backend_bucket_key: dev/${{ needs.set-deployment-environment.outputs.deployment_environment }}.tfstate
-      tf_backend_bucket_region: ap-south-1
-      aws_region: ap-south-1
-      tf_action: destroy
-      tf_vars: |
-        TF_VAR_aws_environment=${{ needs.set-deployment-environment.outputs.deployment_environment }}
-        TF_VAR_bloodconnect_domain=${{ needs.set-deployment-environment.outputs.bloodconnect_domain }}
+      - name: Terraform Init
+        run: terraform init
+        working-directory: destroy
+
+      - name: Terraform Plan Destroy
+        run: terraform plan --destroy
+        working-directory: destroy
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
+        working-directory: destroy
