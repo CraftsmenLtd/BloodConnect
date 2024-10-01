@@ -20,15 +20,15 @@ on:
         required: true
         type: string
       tf_backend_bucket_name:
-        description: "Terraform backend bucket Name"
+        description: "Terraform backend bucket name. If empty, will default to 'TERRAFORM_BACKEND_BUCKET_NAME' from repository variables."
         required: false
         type: string
       tf_backend_bucket_key:
-        description: "Terraform backend bucket Key"
+        description: "Terraform backend bucket key. If empty, will default to value '{github_environment}/{deployment_environment}.tfstate'."
         required: false
         type: string
       tf_backend_bucket_region:
-        description: "Terraform backend bucket Region"
+        description: "Terraform backend bucket region. If empty, will default to value of 'aws_region' input."
         required: false
         type: string
       aws_region:

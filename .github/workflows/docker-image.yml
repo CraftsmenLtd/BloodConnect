@@ -1,11 +1,11 @@
-name: Docker Image Handling
+name: Docker Image Management
 
 on:
   workflow_call:
     outputs:
       runner_image_name:
-        description: "Runner Image Name"
-        value: ${{ jobs.docker-image-handling.outputs.runner_image_name }}
+        description: "Runner Image Name generated from the Dockerfile."
+        value: ${{ jobs.docker-image-management.outputs.runner_image_name }}
 
 defaults:
   run:
@@ -16,8 +16,8 @@ permissions:
   packages: write
 
 jobs:
-  docker-image-handling:
-    name: Docker Image Handling
+  docker-image-management:
+    name: Docker Image Management
     runs-on: ${{ vars.RUNNER_OS }}
     outputs:
       runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
@@ -39,7 +39,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: ⬇️ Attempt to Pull Docker Image
+      - name: ⬇️ Attempt to Pull Existing Docker Image
         id: pull_docker_image
         run: docker manifest inspect $RUNNER_IMAGE_NAME
         continue-on-error: true
@@ -50,4 +50,4 @@ jobs:
 
       - name: 🚀 Push Docker Image
         if: steps.pull_docker_image.outcome == 'failure'
-        run: docker push ${{ inputs.runner_image_name }}
+        run: docker push $RUNNER_IMAGE_NAME
