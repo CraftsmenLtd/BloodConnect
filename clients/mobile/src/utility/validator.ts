@@ -24,7 +24,7 @@ export const validateEmailAndGetErrorMessage = (value: string): string | null =>
 }
 
 export const validatePhoneNumberAndGetErrorMessage = (value: string): string | null => {
-  const phoneRegex = /^\+?[1-9]\d{1,14}$/
+  const phoneRegex = /^[+]{1}(?:[0-9\-()/.]\s?){6,15}[0-9]{1}$/
   return !phoneRegex.test(value) ? 'Invalid phone number' : null
 }
 
@@ -47,8 +47,7 @@ export const checkErrorsInPassword = (value: string): string | null => {
       error: '1 number'
     },
     {
-      test:
-        !passwordPolicy.require_symbols || /[!@#$%^&*(),.?":{}|<>]/.test(value),
+      test: !passwordPolicy.require_symbols || /[!@#$%^&*(),.?":{}|<>]/.test(value),
       error: '1 symbol'
     }
   ]
