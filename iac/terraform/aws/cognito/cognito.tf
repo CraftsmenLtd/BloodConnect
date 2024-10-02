@@ -68,3 +68,17 @@ resource "aws_cognito_user_pool_client" "app_pool_client" {
   supported_identity_providers         = ["COGNITO"]
   explicit_auth_flows                  = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
 }
+
+resource "aws_cognito_user_group" "user_group" {
+  user_pool_id = aws_cognito_user_pool.user_pool.id
+  name         = "user"
+  description  = "Standard user group"
+  precedence   = 1
+}
+
+resource "aws_cognito_user_group" "organization_group" {
+  user_pool_id = aws_cognito_user_pool.user_pool.id
+  name         = "organization"
+  description  = "Organization user group"
+  precedence   = 0
+}
