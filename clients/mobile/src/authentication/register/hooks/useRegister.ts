@@ -4,6 +4,7 @@ import { validateRequired, validateEmail, validatePassword, validatePhoneNumber,
 import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { registerUser } from '../../authService'
+import { SCREENS } from '../../../setup/constant/screens'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -54,7 +55,7 @@ export const useRegister = (): any => {
     try {
       const isConfirmationRequired = await registerUser(registerCredential)
       if (isConfirmationRequired) {
-        navigation.navigate('OTP', { email: registerCredential.email })
+        navigation.navigate(SCREENS.OTP, { email: registerCredential.email })
       }
     } catch (error) {
       setSignupError('Failed to sign up. Please try again later.')

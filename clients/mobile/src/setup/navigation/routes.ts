@@ -2,28 +2,29 @@ import Register from '../../authentication/register/UI/Register'
 import OTP from '../../authentication/otp/UI/OTP'
 import Login from '../../authentication/login/UI/Login'
 import Profile from '../../userWorkflow/Profile'
+import { SCREENS } from '../constant/screens'
 
 export const routes = [
   {
-    name: 'Register',
+    name: SCREENS.REGISTER,
     component: Register,
     options: { headerShown: false },
     protected: false
   },
   {
-    name: 'OTP',
+    name: SCREENS.OTP,
     component: OTP,
     options: { headerShown: true },
     protected: false
   },
   {
-    name: 'Login',
+    name: SCREENS.LOGIN,
     component: Login,
     options: { headerShown: false },
     protected: false
   },
   {
-    name: 'Profile',
+    name: SCREENS.PROFILE,
     component: Profile,
     options: { headerShown: false },
     protected: false

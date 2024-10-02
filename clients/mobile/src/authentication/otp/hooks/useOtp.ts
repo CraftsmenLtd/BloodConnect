@@ -3,6 +3,7 @@ import { TextInput } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
 import { submitOtp } from '../../authService'
+import { SCREENS } from '../../../setup/constant/screens'
 
 export const useOtp = (): any => {
   const navigation = useNavigation<OtpScreenNavigationProp>()
@@ -31,7 +32,7 @@ export const useOtp = (): any => {
     try {
       const isSignUpComplete = await submitOtp(email, otp.join(''))
       if (isSignUpComplete) {
-        navigation.navigate('Profile')
+        navigation.navigate(SCREENS.PROFILE)
       }
     } catch (error) {
       setError(true)

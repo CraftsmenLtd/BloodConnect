@@ -1,8 +1,4 @@
-interface PlarformType {
-  IOS: string;
-  ANDROID: string;
-}
-export const platform: PlarformType = {
+export const platform = {
   IOS: 'ios',
   ANDROID: 'android'
 }

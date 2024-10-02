@@ -4,7 +4,7 @@ import {
   validatePhoneNumber,
   validatePassword,
   validateInput
-} from '../../utility/validator'
+} from '../../src/utility/validator'
 
 describe('Validation Functions', () => {
   describe('validateRequired', () => {

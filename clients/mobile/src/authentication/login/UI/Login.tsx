@@ -9,6 +9,7 @@ import { platform } from '../../../setup/constant/platform'
 import LinkWithText from '../../../components/button/LinkWithText'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import { SCREENS } from '../../../setup/constant/screens'
 
 interface LoginScreenProps {
   navigation: LoginScreenNavigationProp;
@@ -61,7 +62,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           <LinkWithText
             staticText="Don't have an account? "
             linkText=" Register"
-            onPress={() => { navigation.navigate('Register') }}
+            onPress={() => { navigation.navigate(SCREENS.REGISTER) }}
           />
         </ScrollView>
       </KeyboardAvoidingView>

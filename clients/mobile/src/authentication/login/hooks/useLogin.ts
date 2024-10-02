@@ -4,6 +4,7 @@ import { validateRequired, ValidationRule } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { loginUser } from '../../authService'
+import { SCREENS } from '../../../setup/constant/screens'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -37,7 +38,7 @@ export const useLogin = (): any => {
     try {
       const isLoginSucess = await loginUser(loginCredential.email, loginCredential.password)
       if (isLoginSucess) {
-        navigation.navigate('Profile')
+        navigation.navigate(SCREENS.PROFILE)
       }
     } catch (error) {
       setLoginError('Invalid Email or Password.')

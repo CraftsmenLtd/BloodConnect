@@ -1,12 +1,13 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { routes } from './routes'
+import { SCREENS } from '../constant/screens'
 
 const Stack = createStackNavigator()
 
 export default function Navigator() {
   return (
-    <Stack.Navigator initialRouteName="Register" screenOptions={{
+    <Stack.Navigator initialRouteName={SCREENS.REGISTER} screenOptions={{
       headerStyle: {
         height: 70
       },
