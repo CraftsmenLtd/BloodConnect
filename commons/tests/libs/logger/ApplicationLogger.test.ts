@@ -1,4 +1,4 @@
-import getApplicationLogger from '@commons/libs/logger/ApplicationLogger'
+import getApplicationLogger from '../../../../commons/libs/logger/ApplicationLogger'
 
 describe('ApplicationLogger', () => {
   let logMock: jest.SpyInstance

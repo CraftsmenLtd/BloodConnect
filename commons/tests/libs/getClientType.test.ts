@@ -1,4 +1,4 @@
-import getClientType from '@commons/libs/getClientType'
+import getClientType from '../../../commons/libs/getClientType'
 
 describe('getClientType', () => {
   // iPhone|iPad|iPod|webOS|Android|Windows Phone|BlackBerry

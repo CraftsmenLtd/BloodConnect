@@ -1,5 +1,5 @@
 import InvalidTokenError from '../../../authWorkflows/errors/InvalidTokenError'
-import { GenericCodes } from '@commons/libs/constants/GenericCodes'
+import { GenericCodes } from '../.../../../../../../commons/libs/constants/GenericCodes'
 
 describe('InvalidTokenError', () => {
   it('should contain correct name and errorCode', () => {
