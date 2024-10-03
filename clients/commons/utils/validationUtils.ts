@@ -12,43 +12,36 @@ export const validatePassword = (
   passwordResults: ValidationResult[];
   confirmPasswordResult: ValidationResult;
 } => {
-  const passwordResults: ValidationResult[] = []
+  const tests = [
+    {
+      test: password.length >= PASSWORD_MINIMUM_LENGTH,
+      message: `Min ${PASSWORD_MINIMUM_LENGTH} characters.`
+    },
+    {
+      test: /[A-Z]/.test(password),
+      message: 'At least one uppercase letter.'
+    },
+    {
+      test: /[a-z]/.test(password),
+      message: 'At least one lowercase letter.'
+    },
+    {
+      test: /\d/.test(password),
+      message: 'At least one number.'
+    },
+    {
+      test: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      message: 'At least one special character.'
+    }
+  ]
 
-  const isLengthValid = password.length >= PASSWORD_MINIMUM_LENGTH
-  passwordResults.push({
-    message: `Min ${PASSWORD_MINIMUM_LENGTH} characters.`,
-    isValid: isLengthValid
-  })
-
-  const isUppercaseValid = /[A-Z]/.test(password)
-  passwordResults.push({
-    message: 'At least one uppercase letter.',
-    isValid: isUppercaseValid
-  })
-
-  const isLowercaseValid = /[a-z]/.test(password)
-  passwordResults.push({
-    message: 'At least one lowercase letter.',
-    isValid: isLowercaseValid
-  })
-
-  const isNumberValid = /\d/.test(password)
-  passwordResults.push({
-    message: 'At least one number.',
-    isValid: isNumberValid
-  })
-
-  const isSymbolValid = /[!@#$%^&*(),.?":{}|<>]/.test(password)
-  passwordResults.push({
-    message: 'At least one special character.',
-    isValid: isSymbolValid
-  })
+  const passwordResults = tests.map(({ test, message }) => ({
+    message,
+    isValid: test
+  }))
 
   const confirmPasswordResult: ValidationResult = {
-    message:
-      password === confirmPassword
-        ? 'Passwords match.'
-        : 'Passwords do not match.',
+    message: password === confirmPassword ? 'Passwords match.' : 'Passwords do not match.',
     isValid: password === confirmPassword
   }
 
