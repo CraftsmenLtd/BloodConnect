@@ -77,9 +77,3 @@ resource "aws_lambda_permission" "lambda_invoke_permission" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*"
 }
-
-resource "aws_api_gateway_stage" "rest_api_stage" {
-  deployment_id = aws_api_gateway_deployment.api_deployment.id
-  rest_api_id   = aws_api_gateway_rest_api.rest_api.id
-  stage_name    = var.environment
-}
