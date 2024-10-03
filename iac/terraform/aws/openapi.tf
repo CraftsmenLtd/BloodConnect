@@ -12,7 +12,7 @@ data "template_file" "openapi_definition" {
   template = file(var.combined_openapi_file)
 
   vars = merge({
-    ENVIRONMENT = var.environment
+    ENVIRONMENT = var.environment 
     API_VERSION = var.api_version
     },
     local.all_lambda_invoke_arns
