@@ -172,6 +172,6 @@ swagger-ui-restart:
 # Mobile
 start-mobile:
 	docker rm -f $(DOCKER_MOBILE_CONTAINER_NAME)
-	docker run --rm -t --name $(DOCKER_MOBILE_CONTAINER_NAME) --network host -p 8081:8082 \
+	docker run --rm -t --name $(DOCKER_MOBILE_CONTAINER_NAME) --network host -p 8081:8081 \
 			$(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) \
 			$(RUNNER_IMAGE_NAME) npm run start --prefix clients/mobile
