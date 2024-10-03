@@ -58,7 +58,7 @@ resource "aws_cognito_user_pool" "user_pool" {
 }
 
 resource "aws_cognito_user_pool_domain" "name" {
-  domain = var.bloodconnect_domain
+  domain = "bloodconnect"
   user_pool_id = aws_cognito_user_pool.user_pool.id
 }
 
