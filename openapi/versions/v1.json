@@ -47,14 +47,10 @@
   },
   "components": {
     "securitySchemes": {
-      "cognito_auth": {
-        "type": "oauth2",
-        "flows": {
-          "implicit": {
-            "authorizationUrl": "https://<cognito_domain>.auth.<region>.amazoncognito.com/login",
-            "scopes": {}
-          }
-        }
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   },
