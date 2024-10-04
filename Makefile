@@ -39,6 +39,7 @@ DOCKER_CHECKOV_SKIP?=--skip-check CKV_DOCKER_9
 # Container Names
 DOCKER_LOCALSTACK_CONTAINER_NAME?=bloodconnect-dev-localstack
 DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
+DOCKER_REDOCLY_CONTAINER_NAME=bloodconnect-redocly-container
 
 # Documentation
 sphinx-html: bundle-openapi
@@ -149,9 +150,9 @@ build-runner-image:
 	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
-	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
-	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
-	           make $* EXTRA_ARGS=$(EXTRA_ARGS)
+	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) -e S3_HOSTNAME=localhost --network host \
+	    $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
+	    make $* EXTRA_ARGS=$(EXTRA_ARGS)
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
@@ -159,11 +160,12 @@ start-dev: build-runner-image localstack-start run-command-install-node-packages
 run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
          run-command-tf-plan-apply run-command-tf-apply replace-dev-url
 
+stop-dev:
+	docker rm -f $(DOCKER_REDOCLY_CONTAINER_NAME) $(DOCKER_DEV_CONTAINER_NAME) $(DOCKER_LOCALSTACK_CONTAINER_NAME)
 
-# Swagger UI
-swagger-ui:
-	docker compose -f openapi/docker-compose.yml up -d --build
-
-swagger-ui-restart:
-	docker compose -f openapi/docker-compose.yml down
-	make swagger-ui
+# Redocly UI
+redocly:
+	docker rm -f $(DOCKER_REDOCLY_CONTAINER_NAME)
+	docker run -d --rm --name $(DOCKER_REDOCLY_CONTAINER_NAME) -p 8008:80 \
+  		-v ${PWD}/deployment/localstack/terraform/openapi.json:/usr/share/nginx/html/openapi.json \
+  		-e SPEC_URL=openapi.json redocly/redoc

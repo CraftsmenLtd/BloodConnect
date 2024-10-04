@@ -1,10 +1,11 @@
 resource "null_resource" "update_and_import_open_api_script" {
   provisioner "local-exec" {
+    when = create
     command = "redocly bundle ${var.openapi_directory}/versions/${var.api_version}.json -o ${var.combined_openapi_file}"
   }
 
   triggers = {
-    always_run = timestamp()
+    directory_md5 = sha1(join("", [for f in fileset(var.openapi_directory, "**"): filesha1("${var.openapi_directory}/${f}")])) 
   }
 }
 
