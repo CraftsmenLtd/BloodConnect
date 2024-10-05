@@ -63,6 +63,8 @@ jobs:
       AWS_DEFAULT_REGION: ${{ inputs.aws_region }}
       TF_VAR_aws_environment: ${{ inputs.deployment_environment }}
       TF_VAR_bloodconnect_domain: ${{ vars.BLOODCONNECT_DOMAIN }}
+      TF_VAR_google_client_id: ${{ secrets.GOOGLE_CLIENT_ID }}
+      TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
     steps:
       - name: 📥 Checkout Branch
         uses: actions/checkout@v4
