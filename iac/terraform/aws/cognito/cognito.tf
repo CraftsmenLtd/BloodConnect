@@ -75,6 +75,22 @@ resource "aws_cognito_identity_provider" "google" {
   }
 }
 
+resource "aws_cognito_identity_provider" "facebook" {
+  user_pool_id  = aws_cognito_user_pool.user_pool.id
+  provider_name = "Facebook"
+  provider_type = "Facebook"
+  provider_details = {
+    client_id        = var.facebook_client_id
+    client_secret    = var.facebook_client_secret
+    authorize_scopes = "public_profile,email"
+  }
+  attribute_mapping = {
+    email    = "email"
+    name     = "name"
+    username = "id"
+  }
+}
+
 resource "aws_cognito_user_pool_client" "app_pool_client" {
   name                                 = "${var.environment}-app-pool-client"
   user_pool_id                         = aws_cognito_user_pool.user_pool.id
@@ -84,11 +100,12 @@ resource "aws_cognito_user_pool_client" "app_pool_client" {
   allowed_oauth_flows                  = ["code"]
   callback_urls                        = ["myapp://callback"]
   logout_urls                          = ["myapp://signout"]
-  supported_identity_providers         = ["COGNITO", "Google"]
+  supported_identity_providers         = ["COGNITO", "Google", "Facebook"]
   explicit_auth_flows                  = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
 
   depends_on = [
-    aws_cognito_identity_provider.google
+    aws_cognito_identity_provider.google,
+    aws_cognito_identity_provider.facebook
   ]
 }
 
