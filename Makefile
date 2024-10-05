@@ -39,6 +39,7 @@ DOCKER_CHECKOV_SKIP?=--skip-check CKV_DOCKER_9
 # Container Names
 DOCKER_LOCALSTACK_CONTAINER_NAME?=bloodconnect-dev-localstack
 DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
+DOCKER_MOBILE_CONTAINER_NAME?=bloodconnect-mobile
 
 # Documentation
 sphinx-html: bundle-openapi
@@ -167,3 +168,10 @@ swagger-ui:
 swagger-ui-restart:
 	docker compose -f openapi/docker-compose.yml down
 	make swagger-ui
+
+# Mobile
+start-mobile:
+	docker rm -f $(DOCKER_MOBILE_CONTAINER_NAME)
+	docker run --rm -t --name $(DOCKER_MOBILE_CONTAINER_NAME) --network host -p 8081:8081 \
+			$(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) \
+			$(RUNNER_IMAGE_NAME) npm run start --prefix clients/mobile
