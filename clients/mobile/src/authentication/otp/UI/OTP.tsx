@@ -49,7 +49,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     paddingTop: '15%',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    backgroundColor: theme.colors.white
   },
   title: {
     fontSize: 24,

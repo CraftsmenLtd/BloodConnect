@@ -7,11 +7,14 @@ const Stack = createStackNavigator()
 
 export default function Navigator() {
   return (
-    <Stack.Navigator initialRouteName={SCREENS.REGISTER} screenOptions={{
+    <Stack.Navigator initialRouteName={SCREENS.WELCOME} screenOptions={{
       headerStyle: {
-        height: 70
+        height: 75
       },
-      headerTitleAlign: 'center'
+      headerTitleAlign: 'center',
+      headerTitleStyle: {
+        fontSize: 20
+      }
     }}>
       {routes.map(({ name, component, options }) => {
         return <Stack.Screen key={name} name={name} component={component} options={options} />

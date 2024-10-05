@@ -1,7 +1,13 @@
 import { confirmSignUp, signUp, signIn } from 'aws-amplify/auth'
-import { RegisterCredential } from './register/hooks/useRegister'
 
-export const registerUser = async(registerInfo: RegisterCredential): Promise<boolean> => {
+export interface UserRegistrationCredentials {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+}
+
+export const registerUser = async(registerInfo: UserRegistrationCredentials): Promise<boolean> => {
   try {
     const { nextStep } = await signUp({
       username: registerInfo.email,

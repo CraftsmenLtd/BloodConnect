@@ -5,6 +5,7 @@ import { Text, Button, View, StyleSheet } from 'react-native'
 import { signOut } from 'aws-amplify/auth'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import { ProfileScreenNavigationProp } from '../setup/navigation/navigationTypes'
+import { SCREENS } from '../setup/constant/screens'
 
 interface ProfileScreenProps {
   navigation: ProfileScreenNavigationProp;
@@ -16,7 +17,7 @@ export default function Profile({ navigation }: ProfileScreenProps) {
   const handleSignOut = async (): Promise<void> => {
     try {
       await signOut()
-      navigation.navigate('Login')
+      navigation.navigate(SCREENS.PROFILE)
     } catch (error) {
       console.error('Error signing out:', error)
     }

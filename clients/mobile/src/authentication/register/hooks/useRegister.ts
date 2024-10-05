@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { validateRequired, validateEmail, validatePassword, validatePhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
+import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
-import { registerUser } from '../../authService'
 import { SCREENS } from '../../../setup/constant/screens'
 
 type CredentialKeys = keyof RegisterCredential
@@ -12,7 +11,6 @@ export interface RegisterCredential {
   name: string;
   email: string;
   phoneNumber: string;
-  password: string;
 }
 
 interface RegisterErrors extends RegisterCredential {}
@@ -20,8 +18,7 @@ interface RegisterErrors extends RegisterCredential {}
 const validationRules: Record<CredentialKeys, ValidationRule[]> = {
   name: [validateRequired],
   email: [validateRequired, validateEmail],
-  phoneNumber: [validateRequired, validatePhoneNumber],
-  password: [validateRequired, validatePassword]
+  phoneNumber: [validateRequired, validatePhoneNumber]
 }
 
 export const useRegister = (): any => {
@@ -32,8 +29,6 @@ export const useRegister = (): any => {
   const [errors, setErrors] = useState<RegisterErrors>(initializeState<RegisterCredential>(
     Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
   )
-  const [signupError, setSignupError] = useState<string>('')
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     setRegisterCredential(prevState => ({
@@ -51,24 +46,24 @@ export const useRegister = (): any => {
     }))
   }
 
-  const handleRegister = async(): Promise<void> => {
-    try {
-      const isConfirmationRequired = await registerUser(registerCredential)
-      if (isConfirmationRequired) {
-        navigation.navigate(SCREENS.OTP, { email: registerCredential.email })
-      }
-    } catch (error) {
-      setSignupError('Failed to sign up. Please try again later.')
-    }
-  }
+  const isButtonDisabled = useMemo(() => {
+    return !(
+      Object.values(registerCredential).every(value => value !== '') &&
+      Object.values(errors).every(error => error === null)
+    )
+  }, [registerCredential, errors])
 
+  const handleRegister = async(): Promise<void> => {
+    navigation.navigate(SCREENS.SET_PASSWORD, {
+      params: { ...registerCredential, password: '' },
+      fromScreen: SCREENS.REGISTER
+    })
+  }
   return {
-    signupError,
     errors,
     registerCredential,
     handleInputChange,
-    isPasswordVisible,
-    setIsPasswordVisible,
+    isButtonDisabled,
     handleRegister
   }
 }

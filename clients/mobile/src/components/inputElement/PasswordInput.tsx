@@ -4,10 +4,11 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { InputProps } from './types'
 import { commonStyles } from './commonStyles'
+import { Dispatch, SetStateAction } from 'react'
 
 interface PasswordInputProps extends Omit<InputProps, 'placeholder'> {
   isVisible: boolean;
-  setIsVisible: (isVisible: boolean) => boolean;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
 }
 
 export const PasswordInput = ({ name, label, value, onChangeText, isVisible, setIsVisible, error }: PasswordInputProps) => {
@@ -24,7 +25,7 @@ export const PasswordInput = ({ name, label, value, onChangeText, isVisible, set
           value={value}
           onChangeText={(text) => { onChangeText(name, text) }}
         />
-        <TouchableOpacity onPress={() => setIsVisible(!isVisible)} style={styles.eyeIcon}>
+        <TouchableOpacity onPress={() => { setIsVisible((prevState) => { return !prevState }) }} style={styles.eyeIcon}>
           <FontAwesome name={isVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
         </TouchableOpacity>
       </View>
