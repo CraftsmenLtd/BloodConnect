@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import { validateRequired, ValidationRule } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
-import { loginUser } from '../../authService'
+import { loginUser, googleLogin } from '../../authService'
 import { SCREENS } from '../../../setup/constant/screens'
 
 type CredentialKeys = keyof LoginCredential
@@ -26,6 +26,7 @@ export const useLogin = (): any => {
 
   const [loginError, setLoginError] = useState<string>('')
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const [socialLoginError, setSocialLoginError] = useState<string>('')
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     setLoginCredential(prevState => ({
@@ -45,12 +46,23 @@ export const useLogin = (): any => {
     }
   }
 
+  const handleGoogleSignIn = async(): Promise<void> => {
+    try {
+      await googleLogin()
+      navigation.navigate(SCREENS.PROFILE)
+    } catch (error) {
+      setSocialLoginError('Failed to sign in with Google.')
+    }
+  }
+
   return {
     loginError,
     loginCredential,
     handleInputChange,
     isPasswordVisible,
     setIsPasswordVisible,
-    handleLogin
+    handleLogin,
+    handleGoogleSignIn,
+    socialLoginError
   }
 }
