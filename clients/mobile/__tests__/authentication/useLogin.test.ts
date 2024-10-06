@@ -2,10 +2,12 @@
 import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useLogin } from '../../src/authentication/login/hooks/useLogin'
-import { loginUser } from '../../src/authentication/authService'
+import { loginUser, googleLogin, facebookLogin } from '../../src/authentication/authService'
 
 jest.mock('../../src/authentication/authService', () => ({
-  loginUser: jest.fn()
+  loginUser: jest.fn(),
+  googleLogin: jest.fn(),
+  facebookLogin: jest.fn()
 }))
 
 describe('useLogin Hook', () => {
@@ -24,7 +26,9 @@ describe('useLogin Hook', () => {
     expect(result.current.loginCredential).toEqual(expectedValues)
     expect(result.current.loginError).toBe('')
     expect(result.current.isPasswordVisible).toBe(false)
+    expect(result.current.socialLoginError).toBe('')
   })
+
   test('should toggle password visibility', () => {
     const { result } = renderHook(() => useLogin())
 
@@ -72,5 +76,57 @@ describe('useLogin Hook', () => {
     })
 
     expect(result.current.loginError).toBe('Invalid Email or Password.')
+  })
+
+  test('should handle Google sign-in successfully', async() => {
+    const { result } = renderHook(() => useLogin());
+    (googleLogin as jest.Mock).mockResolvedValue(undefined)
+
+    await act(async() => {
+      await result.current.handleGoogleSignIn()
+    })
+
+    expect(googleLogin).toHaveBeenCalled()
+    expect(mockedNavigate).toHaveBeenCalledWith('Profile')
+    expect(result.current.socialLoginError).toBe('')
+  })
+
+  test('should handle Google sign-in failure', async() => {
+    const { result } = renderHook(() => useLogin());
+    (googleLogin as jest.Mock).mockRejectedValue(new Error('Google login failed'))
+
+    await act(async() => {
+      await result.current.handleGoogleSignIn()
+    })
+
+    expect(googleLogin).toHaveBeenCalled()
+    expect(mockedNavigate).not.toHaveBeenCalled()
+    expect(result.current.socialLoginError).toBe('Failed to sign in with Google.')
+  })
+
+  test('should handle Facebook sign-in successfully', async() => {
+    const { result } = renderHook(() => useLogin());
+    (facebookLogin as jest.Mock).mockResolvedValue(undefined)
+
+    await act(async() => {
+      await result.current.handleFacebookSignIn()
+    })
+
+    expect(facebookLogin).toHaveBeenCalled()
+    expect(mockedNavigate).toHaveBeenCalledWith('Profile')
+    expect(result.current.socialLoginError).toBe('')
+  })
+
+  test('should handle Facebook sign-in failure', async() => {
+    const { result } = renderHook(() => useLogin());
+    (facebookLogin as jest.Mock).mockRejectedValue(new Error('Facebook login failed'))
+
+    await act(async() => {
+      await result.current.handleFacebookSignIn()
+    })
+
+    expect(facebookLogin).toHaveBeenCalled()
+    expect(mockedNavigate).not.toHaveBeenCalled()
+    expect(result.current.socialLoginError).toBe('Failed to sign in with Facebook.')
   })
 })
