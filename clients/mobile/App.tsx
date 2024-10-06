@@ -21,7 +21,7 @@ Amplify.configure({
           scopes: ['email', 'profile', 'openid'],
           redirectSignIn: ['myapp://callback'],
           redirectSignOut: ['myapp://signout'],
-          providers: ['Google'],
+          providers: ['Google', 'Facebook'],
           responseType: 'code'
         }
       }

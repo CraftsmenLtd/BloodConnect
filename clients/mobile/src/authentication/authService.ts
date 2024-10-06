@@ -61,3 +61,11 @@ export const googleLogin = async(): Promise<void> => {
     throw new Error(`Error logging with google: ${error instanceof Error ? error.message : error}`)
   }
 }
+
+export const facebookLogin = async(): Promise<void> => {
+  try {
+    await signInWithRedirect({ provider: 'Facebook' })
+  } catch (error) {
+    throw new Error(`Error logging with facebook: ${error instanceof Error ? error.message : error}`)
+  }
+}

@@ -18,7 +18,7 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const styles = createStyles(useTheme())
-  const { loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, socialLoginError } = useLogin()
+  const { loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
 
   return (
     <AuthLayout>
@@ -57,6 +57,12 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         text="Continue with Google"
         onPress={handleGoogleSignIn}
         icon={require('../../../../assets/google-icon.png')}
+      />
+
+      <SocialButton
+        text="Continue via Facebook"
+        onPress={handleFacebookSignIn}
+        icon={require('../../../../assets/facebook-icon.png')}
       />
 
       <LinkWithText

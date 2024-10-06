@@ -4,7 +4,7 @@ import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, v
 import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import { googleLogin } from '../../authService'
+import { googleLogin, facebookLogin } from '../../authService'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -71,6 +71,15 @@ export const useRegister = (): any => {
     }
   }
 
+  const handleFacebookSignIn = async(): Promise<void> => {
+    try {
+      await facebookLogin()
+      navigation.navigate(SCREENS.PROFILE)
+    } catch (error) {
+      setSocialLoginError('Failed to sign in with Facebook.')
+    }
+  }
+
   return {
     errors,
     registerCredential,
@@ -78,6 +87,7 @@ export const useRegister = (): any => {
     isButtonDisabled,
     handleRegister,
     handleGoogleSignIn,
+    handleFacebookSignIn,
     socialLoginError
   }
 }

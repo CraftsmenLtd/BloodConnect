@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import { validateRequired, ValidationRule } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
-import { loginUser, googleLogin } from '../../authService'
+import { loginUser, googleLogin, facebookLogin } from '../../authService'
 import { SCREENS } from '../../../setup/constant/screens'
 
 type CredentialKeys = keyof LoginCredential
@@ -55,6 +55,15 @@ export const useLogin = (): any => {
     }
   }
 
+  const handleFacebookSignIn = async(): Promise<void> => {
+    try {
+      await facebookLogin()
+      navigation.navigate(SCREENS.PROFILE)
+    } catch (error) {
+      setSocialLoginError('Failed to sign in with Facebook.')
+    }
+  }
+
   return {
     loginError,
     loginCredential,
@@ -63,6 +72,7 @@ export const useLogin = (): any => {
     setIsPasswordVisible,
     handleLogin,
     handleGoogleSignIn,
+    handleFacebookSignIn,
     socialLoginError
   }
 }
