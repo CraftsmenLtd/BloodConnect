@@ -9,6 +9,7 @@ import { registerUser } from '../../authService'
 export const PASSWORD_INPUT_NAME = 'password'
 
 type CredentialKeys = keyof Password
+type errorMessageType = string | null
 
 export interface Password {
   password: string;
@@ -44,7 +45,7 @@ export const useSetPassword = (): any => {
   }
 
   const handleInputValidation = (name: CredentialKeys, value: string): void => {
-    let errorMsg = null
+    let errorMsg: errorMessageType = null
     if (name === PASSWORD_INPUT_NAME) {
       errorMsg = validateInput(value, validationRules[name])
     } else {
@@ -72,7 +73,6 @@ export const useSetPassword = (): any => {
         navigation.navigate(SCREENS.OTP, { email: params.email })
       }
     } catch (error) {
-      console.log(error)
       setError('Failed to sign up. Please try again later.')
     }
   }
