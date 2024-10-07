@@ -1,0 +1,20 @@
+{
+  "type": "aws",
+  "httpMethod": "GET",
+  "uri": "${HEALTH_CHECK_INVOCATION_ARN}",
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'GET'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
+      }
+    }
+  },
+  "passthroughBehavior": "when_no_match",
+  "contentHandling": "CONVERT_TO_TEXT"
+}

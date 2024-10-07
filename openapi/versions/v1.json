@@ -38,8 +38,8 @@
     }
   ],
   "paths": {
-    "/auth/refresh-token": {
-      "$ref": "./../paths/auth/refresh-token.json"
+    "/auth/health-check": {
+      "$ref": "./../paths/auth/health-check.json"
     },
     "/auth/register-organization": {
       "$ref": "./../paths/auth/register-organization.json"

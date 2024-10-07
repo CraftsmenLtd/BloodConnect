@@ -167,18 +167,14 @@ After deploying the Lambda functions, you can integrate them into your OpenAPI s
     │   └── v1.json                       # Main OpenAPI configuration
     ├── paths/
     │   └── test/
-    │       ├── refresh-token.json
-    │       ├── register-organization.json
     │       └── test-api.json              # New path for the test Lambda function
     ├── components/
     │   └── schemas/
     │       └── test/
-    │           ├── register-organization-payload.json
     │           └── test-api-payload.json  # Request payload schema for test-api
     ├── integration/
     │   └── aws/
     │       └── test/
-    │           ├── post-register-organization.json
     │           └── post-test-api.json     # Integration for test-api with Lambda
 
 2. **Defining the New API Path**

@@ -1,19 +1,9 @@
 {
-  "post": {
-    "description": "Refresh Token POST method",
-    "operationId": "RefreshToken",
+  "get": {
+    "description": "Health Check Get method",
+    "operationId": "HealthCheck",
     "tags": [
       "bloodconnect-auth"
-    ],
-    "parameters": [
-      {
-        "in": "header",
-        "name": "refreshToken",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
     ],
     "responses": {
       "200": {
@@ -40,7 +30,7 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../../integration/aws/auth/post-refresh-token.json"
+      "$ref": "./../../integration/aws/auth/get-health-check.json"
     }
   },
   "options": {
