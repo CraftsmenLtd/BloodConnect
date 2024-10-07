@@ -1,11 +1,12 @@
-import { signUp, confirmSignUp, signIn } from 'aws-amplify/auth'
-import { registerUser, submitOtp, loginUser } from '../../src/authentication/authService'
+import { signUp, confirmSignUp, signIn, signInWithRedirect } from 'aws-amplify/auth'
+import { registerUser, submitOtp, loginUser, googleLogin, facebookLogin } from '../../src/authentication/authService'
 import { RegisterCredential } from '../../src/authentication/register/hooks/useRegister'
 
 jest.mock('aws-amplify/auth', () => ({
   signUp: jest.fn(),
   confirmSignUp: jest.fn(),
-  signIn: jest.fn()
+  signIn: jest.fn(),
+  signInWithRedirect: jest.fn()
 }))
 
 describe('AuthService', () => {
@@ -17,7 +18,7 @@ describe('AuthService', () => {
   }
 
   afterEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
   describe('registerUser', () => {
@@ -122,6 +123,40 @@ describe('AuthService', () => {
     test('should throw a generic error if login fails without a specific error message', async() => {
       (signIn as jest.Mock).mockRejectedValue('Unexpected Error')
       await expect(loginUser(email, password)).rejects.toThrow('Error logging in user: Unexpected Error')
+    })
+  })
+
+  describe('googleLogin', () => {
+    test('should call signInWithRedirect with Google provider', async() => {
+      await googleLogin()
+      expect(signInWithRedirect).toHaveBeenCalledWith({ provider: 'Google' })
+    })
+
+    test('should throw an error if Google sign-in fails with Error object', async() => {
+      (signInWithRedirect as jest.Mock).mockRejectedValue(new Error('Google sign-in failed'))
+      await expect(googleLogin()).rejects.toThrow('Error logging with google: Google sign-in failed')
+    })
+
+    test('should throw an error if Google sign-in fails with non-Error object', async() => {
+      (signInWithRedirect as jest.Mock).mockRejectedValue('Unexpected error')
+      await expect(googleLogin()).rejects.toThrow('Error logging with google: Unexpected error')
+    })
+  })
+
+  describe('facebookLogin', () => {
+    test('should call signInWithRedirect with Facebook provider', async() => {
+      await facebookLogin()
+      expect(signInWithRedirect).toHaveBeenCalledWith({ provider: 'Facebook' })
+    })
+
+    test('should throw an error if Facebook sign-in fails with Error object', async() => {
+      (signInWithRedirect as jest.Mock).mockRejectedValue(new Error('Facebook sign-in failed'))
+      await expect(facebookLogin()).rejects.toThrow('Error logging with facebook: Facebook sign-in failed')
+    })
+
+    test('should throw an error if Facebook sign-in fails with non-Error object', async() => {
+      (signInWithRedirect as jest.Mock).mockRejectedValue('Unexpected error')
+      await expect(facebookLogin()).rejects.toThrow('Error logging with facebook: Unexpected error')
     })
   })
 })
