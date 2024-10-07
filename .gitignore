@@ -140,3 +140,9 @@ deployment/**/openapi.json
 
 # Temp builds
 .build
+
+# Mobile app expo
+.expo
+
+# temporary: ignore generated bruno environment file
+local.bru

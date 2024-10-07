@@ -1,4 +1,4 @@
-name: "Branch Deployment"
+name: 🌿 Branch Deployment
 
 on:
   workflow_dispatch:
@@ -6,10 +6,16 @@ on:
 concurrency:
   group: ${{ github.ref }}
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
-  set-deployment-environment:
-    name: Set Deployment Environment
-    runs-on: ubuntu-22.04
+  setup-environment:
+    name: 🌱 Set Deployment Environment
+    runs-on: ${{ vars.RUNNER_OS }}
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
     steps:
       - name: Set Deployment Environment
         id: set_deployment_env
@@ -17,40 +23,19 @@ jobs:
     outputs:
       deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
 
-  set-runner-image-name:
-    name: Set Runner Image Name
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v3
-
-      - name: Set Runner Image
-        id: set_runner_image
-        run: echo "runner_image_name=ghcr.io/craftsmenltd/bloodconnect-ci-image:$(md5sum ./Dockerfile | awk '{ print $1 }')" >> $GITHUB_OUTPUT
-    outputs:
-      runner_image_name: ${{ steps.set_runner_image.outputs.runner_image_name }}
-
-  handle-docker-image:
-    name: Handle Docker Image
-    needs: set-runner-image-name
+  build-push-docker-image:
+    name: 🐳 Build and Push Docker Image
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
-    with:
-      runner_image_name: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
 
   deploy-branch:
-    name: Deploy Branch
+    name: 🚀 Deploy Branch Infrastructure
     secrets: inherit
-    needs: [set-deployment-environment, set-runner-image-name, handle-docker-image]
+    needs: [setup-environment, build-push-docker-image]
     uses: ./.github/workflows/aws-terraform.yml
     with:
-      docker_image: ${{ needs.set-runner-image-name.outputs.runner_image_name }}
-      github_environment: dev
-      deployment_environment: ${{ needs.set-deployment-environment.outputs.deployment_environment }}
-      tf_backend_bucket_name: terraform-bloodconnect-ci-dev
-      tf_backend_bucket_key: dev/${{ needs.set-deployment-environment.outputs.deployment_environment }}.tfstate
-      tf_backend_bucket_region: ap-south-1
+      docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      github_environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+      deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
       aws_region: ap-south-1
       tf_action: apply
-      tf_vars: |
-        TF_VAR_aws_environment=${{ needs.set-deployment-environment.outputs.deployment_environment }}
