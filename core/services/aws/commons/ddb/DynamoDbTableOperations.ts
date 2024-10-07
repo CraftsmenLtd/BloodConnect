@@ -1,10 +1,10 @@
-import { DbModelDtoAdapter, NosqlModel } from '@application/technicalImpl/dbModels/DbModelDefinitions'
-import Repository from '@application/technicalImpl/policies/repositories/Repository'
+import { DbModelDtoAdapter, NosqlModel } from '../../../../application/technicalImpl/dbModels/DbModelDefinitions'
+import Repository from '../../../../application/technicalImpl/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb'
-import { DTO } from '@commons/dto/DTOCommon'
-import { GENERIC_CODES } from '@commons/libs/constants/GenericCodes'
-import DatabaseError from '@commons/libs/errors/DatabaseError'
+import { DTO } from '../../../../../commons/dto/DTOCommon'
+import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
+import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
 
 export default class DynamoDbTableOperations<
   Dto extends DTO,

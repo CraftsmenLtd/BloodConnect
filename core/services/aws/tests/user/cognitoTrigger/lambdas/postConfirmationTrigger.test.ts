@@ -1,11 +1,11 @@
 import postConfirmationLambda from '../../../../user/cognitoTrigger/lambdas/postConfirmationTrigger'
-import { UserService } from '@application/userWorkflows/UserService'
+import { UserService } from '../../../../../../application/userWorkflows/UserService'
 import DynamoDbTableOperations from '../../../../commons/ddb/DynamoDbTableOperations'
 import { postConfirmationLambdaMockEvent } from '../../../cannedData/lambdaEventMocks'
 import { mockDynamoDbOperations } from '../../../mock/dynamoDbMocks'
-import { mockUserWithStringId } from '@application/tests/mocks/mockUserData'
+import { mockUserWithStringId } from '../../../../../../application/tests/mocks/mockUserData'
 
-jest.mock('@application/userWorkflows/UserService')
+jest.mock('../../../../../../application/userWorkflows/UserService')
 jest.mock('../../../../commons/ddb/DynamoDbTableOperations')
 
 describe('postConfirmationLambda Tests', () => {

@@ -1,4 +1,4 @@
-import { UserDTO } from '@commons/dto/UserDTO'
+import { UserDTO } from '../../../../commons/dto/UserDTO'
 import { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
 export type UserFields = Omit<UserDTO, 'id' | 'registrationDate'> & HasTimeLog & {

@@ -1,10 +1,12 @@
-import { GENERIC_CODES } from '@commons/libs/constants/GenericCodes'
+// import { GENERIC_CODES } from '@commons/libs/constants/GenericCodes'
+import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import UserOperationError from './UserOperationError'
-import { UserDTO } from '@commons/dto/UserDTO'
+// import { UserDTO } from '@commons/dto/UserDTO'
+import { UserDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import { GenericMessage } from '@commons/dto/MessageDTO'
+import { GenericMessage } from '../../../commons/dto/MessageDTO'
 import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from './userMessages'
-import Repository from '@application/technicalImpl/policies/repositories/Repository'
+import Repository from '../technicalImpl/policies/repositories/Repository'
 
 type UserAttributes = {
   email: string;

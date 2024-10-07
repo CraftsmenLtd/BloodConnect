@@ -1,5 +1,7 @@
-import UserModel from '@application/technicalImpl/dbModels/UserModel'
-import { mockUserWithStringId, mockUserWithNumberId, expectedUser } from '@application/tests/mocks/mockUserData'
+// import UserModel from '@application/technicalImpl/dbModels/UserModel'
+import UserModel from '../../../technicalImpl/dbModels/UserModel'
+import { mockUserWithStringId, mockUserWithNumberId, expectedUser } from '../../mocks/mockUserData'
+// import { mockUserWithStringId, mockUserWithNumberId, expectedUser } from '@application/tests/mocks/mockUserData'
 
 describe('UserModel Unit Tests', () => {
   const userModel = new UserModel()

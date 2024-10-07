@@ -1,4 +1,4 @@
-import { replaceTemplatePlaceholders } from '@application/utils/formatString'
+import { replaceTemplatePlaceholders } from '../../utils/formatString'
 
 describe('replaceTemplatePlaceholders', () => {
   it('should replace placeholders with the corresponding values', () => {
