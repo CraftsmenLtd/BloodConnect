@@ -64,3 +64,8 @@ variable "cloudfront_access_region" {
   type        = list(string)
   default     = ["BD"]
 }
+
+variable "bloodconnect_environment_domain" {
+  type        = string
+  description = "Bloodconnect domain for this environment"
+}

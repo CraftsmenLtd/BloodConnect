@@ -3,6 +3,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   #checkov:skip=CKV2_AWS_47: "CloudFront Distribution should have WAF enabled"
   #checkov:skip=CKV_AWS_86: "Ensure Cloudfront distribution has Access Logging enabled"
   #checkov:skip=CKV2_AWS_32: "Ensure CloudFront distribution has a response headers policy attached"
+  aliases = [var.bloodconnect_environment_domain]
   origin {
     domain_name = var.static_site_bucket.bucket_regional_domain_name
     origin_id   = var.cloudfront_distribution_origin_id
