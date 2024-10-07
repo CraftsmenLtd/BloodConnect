@@ -4,7 +4,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   #checkov:skip=CKV_AWS_86: "Ensure Cloudfront distribution has Access Logging enabled"
   #checkov:skip=CKV2_AWS_32: "Ensure CloudFront distribution has a response headers policy attached"
   origin {
-    domain_name = aws_s3_bucket.static_site.bucket_regional_domain_name
+    domain_name = var.static_site_bucket.bucket_regional_domain_name
     origin_id   = var.cloudfront_distribution_origin_id
 
     s3_origin_config {
@@ -13,11 +13,23 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   origin {
-    domain_name = aws_s3_bucket.cloudfront_failover_bucket.bucket_regional_domain_name
+    domain_name = var.failover_bucket.bucket_regional_domain_name
     origin_id   = var.cloudfront_distribution_failover_origin_id
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.s3_static_bucket_oai.cloudfront_access_identity_path
+    }
+  }
+
+  origin {
+    domain_name = "${var.rest_api_id}.execute-api.${data.aws_region.current.name}.amazonaws.com"
+    origin_id   = "APIGatewayOrigin"
+
+    custom_origin_config {
+      origin_protocol_policy = "https-only"
+      http_port              = 80
+      https_port             = 443
+      origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
 
@@ -57,6 +69,21 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
 
     response_headers_policy_id = var.cloudfront_header_response_policy_id
+  }
+
+  ordered_cache_behavior {
+    path_pattern           = "/api/*"
+    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    target_origin_id       = "APIGatewayOrigin"
+    viewer_protocol_policy = "redirect-to-https"
+
+    forwarded_values {
+      query_string = true
+      cookies {
+        forward = "all"
+      }
+    }
   }
 
   price_class = "PriceClass_100"

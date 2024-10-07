@@ -4,7 +4,8 @@ variable "environment" {
 }
 
 variable "bloodconnect_domain" {
-  type = string
+  type        = string
+  description = "Domain name for the BloodConnect application"
 }
 
 variable "lambda_runtime" {
@@ -14,14 +15,17 @@ variable "lambda_runtime" {
 }
 
 variable "verified_domain_arn" {
-  type = string
+  type        = string
+  description = "ARN of the verified domain for email sending"
 }
 
 variable "dynamodb_table_arn" {
-  type = string
+  type        = string
+  description = "ARN of the DynamoDB tablee"
 }
 
 variable "password_length" {
-  type    = number
-  default = 10
+  type        = number
+  description = "Minimum length of passwords"
+  default     = 10
 }

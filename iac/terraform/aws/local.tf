@@ -7,5 +7,5 @@ locals {
     for lambda in local.all_lambda_metadata :
     lambda.invocation_arn_placeholder => lambda.lambda_invoke_arn
   })
-  apigateway_domain = var.environment == module.environments.PRODUCTION ? "api.${var.bloodconnect_domain}" : "${var.environment}-api.${var.bloodconnect_domain}"
+  bloodconnect_environment_domain = var.environment == module.environments.PRODUCTION ? var.bloodconnect_domain : "${var.environment}.${var.bloodconnect_domain}"
 }

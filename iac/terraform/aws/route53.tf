@@ -4,3 +4,15 @@ data "aws_route53_zone" "main" {
   name         = var.bloodconnect_domain
   private_zone = false
 }
+
+resource "aws_route53_record" "root" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = local.bloodconnect_environment_domain
+  type    = "A"
+
+  alias {
+    name                   = module.CloudFront.cloudfront_cdn_domain_name
+    zone_id                = module.CloudFront.cloudfront_cdn_hosted_zone_id
+    evaluate_target_health = false
+  }
+}

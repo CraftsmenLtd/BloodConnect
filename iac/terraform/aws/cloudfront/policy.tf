@@ -1,3 +1,14 @@
+
+resource "aws_s3_bucket_policy" "bucket_access_policy" {
+  bucket = var.static_site_bucket.id
+  policy = data.aws_iam_policy_document.bucket_access_policy_document.json
+}
+
+resource "aws_s3_bucket_policy" "log_store_policy" {
+  bucket = var.log_store_bucket.id
+  policy = data.aws_iam_policy_document.log_store_policy_document.json
+}
+
 data "aws_iam_policy_document" "log_store_policy_document" {
   statement {
     effect = "Allow"
@@ -9,7 +20,7 @@ data "aws_iam_policy_document" "log_store_policy_document" {
 
     actions = ["s3:PutObject"]
 
-    resources = ["${aws_s3_bucket.log_store.arn}/*"]
+    resources = ["${var.log_store_bucket.arn}/*"]
 
     condition {
       test     = "StringEquals"
@@ -18,7 +29,6 @@ data "aws_iam_policy_document" "log_store_policy_document" {
     }
   }
 }
-
 
 data "aws_iam_policy_document" "bucket_access_policy_document" {
   statement {
@@ -31,6 +41,6 @@ data "aws_iam_policy_document" "bucket_access_policy_document" {
       identifiers = [aws_cloudfront_origin_access_identity.s3_static_bucket_oai.iam_arn]
     }
 
-    resources = ["${aws_s3_bucket.static_site.arn}/*"]
+    resources = ["${var.static_site_bucket.arn}/*"]
   }
 }
