@@ -1,8 +1,8 @@
-import validateToken from '@application/authWorkflows/authToken/tokenValidator'
+import validateToken from '../../../application/authWorkflows/authToken/tokenValidator'
 import { getRefreshToken, getBearerAuthToken, getAuthToken, getAuthTokenFromRefreshToken, getPayloadFromBearerToken } from '../../authWorkflows/authWorkflowUseCases'
-import { getDaysInSecs } from '@commons/libs/dateTimeUtils'
+import { getDaysInSecs } from '../../../../commons/libs/dateTimeUtils'
 import { JwtPayload } from 'jsonwebtoken'
-import { ApplicationLogger } from '@commons/libs/logger/ApplicationLogger'
+import { ApplicationLogger } from '../../../../commons/libs/logger/ApplicationLogger'
 
 describe('authWorkflowUseCases', () => {
   const tokenPayload = { email: 'a@b.com', username: 'test', role: 'admin' }

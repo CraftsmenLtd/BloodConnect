@@ -1,4 +1,4 @@
-import { getPayloadFromBearerToken } from '@application/authWorkflows/authWorkflowUseCases'
+import { getPayloadFromBearerToken } from '../../../../../application/authWorkflows/authWorkflowUseCases'
 import { APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult } from 'aws-lambda'
 
 /**

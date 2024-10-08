@@ -1,9 +1,9 @@
 import customEmailTemplateLambda from '../../../../user/cognitoTrigger/lambdas/customMessageTrigger'
-import { UserService } from '@application/userWorkflows/UserService'
+import { UserService } from '../../../../../../application/userWorkflows/UserService'
 import { Callback, CustomMessageTriggerEvent } from 'aws-lambda'
 import { customMessageLambdaMockEvent, lambdaMockContext } from '../../../cannedData/lambdaEventMocks'
 
-jest.mock('@application/userWorkflows/UserService')
+jest.mock('../../../../../../application/userWorkflows/UserService')
 
 describe('customEmailTemplateLambda Tests', () => {
   const mockCallback: Callback<CustomMessageTriggerEvent> = jest.fn()

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import Environments from '@commons/libs/constants/Environments'
-import Logger from '@commons/libs/logger/Logger'
+import Environments from '../../../commons/libs/constants/Environments'
+import Logger from '../../../commons/libs/logger/Logger'
 
 export class ApplicationLogger implements Logger {
   readonly shouldLog: boolean

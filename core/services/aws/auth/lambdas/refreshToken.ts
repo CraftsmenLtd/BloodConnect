@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { HTTP_CODES } from '@commons/libs/constants/GenericCodes'
-import { getAuthTokenFromRefreshToken } from '@application/authWorkflows/authWorkflowUseCases'
+import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
+import { getAuthTokenFromRefreshToken } from '../../../../application/authWorkflows/authWorkflowUseCases'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 
 /**

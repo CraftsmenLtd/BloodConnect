@@ -1,6 +1,6 @@
-import { GenericMessage } from '@commons/dto/MessageDTO'
-import { EMAIL_VERIFICATION_CONTENT, EMAIL_VERIFICATION_TITLE, PASSWORD_RESET_CONTENT, PASSWORD_RESET_TITLE } from '@application/utils/messageConstants'
-import { replaceTemplatePlaceholders } from '@application/utils/formatString'
+import { GenericMessage } from '../../../commons/dto/MessageDTO'
+import { EMAIL_VERIFICATION_CONTENT, EMAIL_VERIFICATION_TITLE, PASSWORD_RESET_CONTENT, PASSWORD_RESET_TITLE } from '../utils/messageConstants'
+import { replaceTemplatePlaceholders } from '../utils/formatString'
 
 export function getEmailVerificationMessage(userName: string, securityCode: string): GenericMessage {
   return {

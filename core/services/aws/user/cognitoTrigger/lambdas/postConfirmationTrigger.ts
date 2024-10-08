@@ -1,8 +1,8 @@
 import { PostConfirmationTriggerEvent } from 'aws-lambda'
-import { UserService } from '@application/userWorkflows/UserService'
-import { UserDTO } from '@commons/dto/UserDTO'
+import { UserService } from '../../../../../application/userWorkflows/UserService'
+import { UserDTO } from '../../../../../../commons/dto/UserDTO'
 import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperations'
-import UserModel, { UserFields } from '@application/technicalImpl/dbModels/UserModel'
+import UserModel, { UserFields } from '../../../../../application/technicalImpl/dbModels/UserModel'
 
 async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Promise<PostConfirmationTriggerEvent> {
   if (event.triggerSource !== 'PostConfirmation_ConfirmSignUp') {

@@ -1,4 +1,4 @@
-import { DTO } from '@commons/dto/DTOCommon'
+import { DTO } from '../../../../commons/dto/DTOCommon'
 
 interface DbModel {}
 

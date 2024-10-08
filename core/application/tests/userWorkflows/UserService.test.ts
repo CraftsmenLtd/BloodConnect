@@ -1,11 +1,11 @@
-import { UserService } from '@application/userWorkflows/UserService'
+import { UserService } from '../../userWorkflows/UserService'
 import { generateUniqueID } from '../../utils/idGenerator'
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '@application/userWorkflows/userMessages'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '../../userWorkflows/userMessages'
 import { mockUserWithStringId } from '../mocks/mockUserData'
 import { mockRepository as importedMockRepository } from '../mocks/mockRepositories'
 
 jest.mock('../../utils/idGenerator')
-jest.mock('@application/userWorkflows/userMessages')
+jest.mock('../../userWorkflows/userMessages')
 
 describe('UserService Tests', () => {
   const userService = new UserService()

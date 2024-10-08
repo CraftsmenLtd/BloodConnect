@@ -1,7 +1,7 @@
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '@application/userWorkflows/userMessages'
-import { GenericMessage } from '@commons/dto/MessageDTO'
-import { EMAIL_VERIFICATION_TITLE, EMAIL_VERIFICATION_CONTENT, PASSWORD_RESET_CONTENT, PASSWORD_RESET_TITLE } from '@application/utils/messageConstants'
-import { replaceTemplatePlaceholders } from '@application/utils/formatString'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '../../userWorkflows/userMessages'
+import { GenericMessage } from '../../../../commons/dto/MessageDTO'
+import { EMAIL_VERIFICATION_TITLE, EMAIL_VERIFICATION_CONTENT, PASSWORD_RESET_CONTENT, PASSWORD_RESET_TITLE } from '../../utils/messageConstants'
+import { replaceTemplatePlaceholders } from '../../utils/formatString'
 
 describe('User Message Functions', () => {
   const userName = 'Ebrahim'
