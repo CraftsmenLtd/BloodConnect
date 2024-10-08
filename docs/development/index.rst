@@ -35,3 +35,4 @@ Mobile App
    :maxdepth: 2
 
    MobileAppDevelopment
+   SSOSetupGuide

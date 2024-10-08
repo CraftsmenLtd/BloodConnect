@@ -28,7 +28,6 @@ export default function Profile({ navigation }: ProfileScreenProps) {
       await Promise.all([Cache.clear(), clearAllStorage()])
       await signOut()
       navigation.navigate(SCREENS.LOGIN)
-      console.log('Signed out, cleared storage & cache, and navigated to Login screen')
     } catch (error) {
       console.error('Error during sign out:', error instanceof Error ? error.message : 'Unknown error');
       if (error instanceof Error && error.name === 'UserNotAuthenticatedException') {
