@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_role" {
-  name               = "${var.environment}-${var.lambda_option.name}-lambda-role"
+  name               = "${var.environment}-${var.lambda_option.name}-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
 
   lifecycle {

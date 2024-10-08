@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "lambda_function" {
   #checkov:skip=CKV_AWS_173: "Check encryption settings for Lambda environmental variable"
-  function_name    = "${var.environment}-${var.lambda_option.name}-lambda"
+  function_name    = "${var.environment}-${var.lambda_option.name}"
   filename         = var.lambda_option.zip_path
   source_code_hash = filebase64sha256(var.lambda_option.zip_path)
   handler          = var.lambda_option.handler
