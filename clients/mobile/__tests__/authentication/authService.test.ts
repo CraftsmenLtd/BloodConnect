@@ -1,6 +1,5 @@
 import { signUp, confirmSignUp, signIn, signInWithRedirect } from 'aws-amplify/auth'
-import { registerUser, submitOtp, loginUser, googleLogin, facebookLogin } from '../../src/authentication/authService'
-import { RegisterCredential } from '../../src/authentication/register/hooks/useRegister'
+import { registerUser, submitOtp, loginUser, UserRegistrationCredentials, googleLogin, facebookLogin } from '../../src/authentication/authService'
 
 jest.mock('aws-amplify/auth', () => ({
   signUp: jest.fn(),
@@ -10,7 +9,7 @@ jest.mock('aws-amplify/auth', () => ({
 }))
 
 describe('AuthService', () => {
-  const mockRegisterInfo: RegisterCredential = {
+  const mockRegisterInfo: UserRegistrationCredentials = {
     name: 'Ebrahim',
     email: 'ebrahim@example.com',
     phoneNumber: '+1234567890',

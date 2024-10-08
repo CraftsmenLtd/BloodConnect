@@ -8,7 +8,8 @@
     "test": "cd ../ && npm run test -- core/application/tests/*"
   },
   "dependencies": {
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "ulid": "^2.3.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.4"

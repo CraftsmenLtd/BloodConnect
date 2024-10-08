@@ -1,4 +1,5 @@
-import getApplicationLogger from '../../../../commons/libs/logger/ApplicationLogger'
+import Environments from '../../../libs/constants/Environments'
+import getApplicationLogger from '../../../libs/logger/ApplicationLogger'
 
 describe('ApplicationLogger', () => {
   let logMock: jest.SpyInstance
@@ -14,7 +15,7 @@ describe('ApplicationLogger', () => {
   })
 
   it('should not log for production environments', () => {
-    const logger = getApplicationLogger('production')
+    const logger = getApplicationLogger(Environments.PRODUCTION)
     logger.info('test log')
     logger.debug('test log')
     logger.warn('test log')
@@ -27,7 +28,7 @@ describe('ApplicationLogger', () => {
   })
 
   it('should log for dev environments', () => {
-    const logger = getApplicationLogger('dev')
+    const logger = getApplicationLogger(Environments.DEV)
     logger.info('test log')
     logger.debug('test log')
     logger.warn('test log')
@@ -40,7 +41,7 @@ describe('ApplicationLogger', () => {
   })
 
   it('should log for qa environments', () => {
-    const logger = getApplicationLogger('qa')
+    const logger = getApplicationLogger(Environments.QA)
     logger.info('test log')
     logger.debug('test log')
     logger.warn('test log')
@@ -53,7 +54,7 @@ describe('ApplicationLogger', () => {
   })
 
   it('should log for local environments', () => {
-    const logger = getApplicationLogger('local')
+    const logger = getApplicationLogger(Environments.LOCAL)
     logger.info('test log')
     logger.debug('test log')
     logger.warn('test log')

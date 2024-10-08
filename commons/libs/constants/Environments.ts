@@ -1,3 +1,3 @@
-type Environments = 'local' | 'dev' | 'qa' | 'production' | 'test'
+enum Environments { LOCAL = 'local', DEV = 'dev', QA = 'qa', PRODUCTION = 'production', TEST = 'test' }
 
 export default Environments

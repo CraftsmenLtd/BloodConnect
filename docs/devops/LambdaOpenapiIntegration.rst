@@ -1,6 +1,6 @@
-=================================================================================
-Module With Multiple Lambda Functions and Integrating With OpenAPI
-=================================================================================
+=============================================
+Lambda Functions and Integrating With OpenAPI
+=============================================
 This guide combines two processes: creating a Terraform module that defines and deploys multiple AWS Lambda functions with their associated IAM policies, and integrating those Lambda functions into an OpenAPI specification. We'll use **test** as a sample module for defining Lambda functions, and demonstrate how to add a new ``test-api`` Lambda function to the OpenAPI specification using API Gateway for integration.
 
 Part 1: Create a module with lambda functions

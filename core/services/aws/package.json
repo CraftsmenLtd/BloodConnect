@@ -6,20 +6,23 @@
   "license": "Apache-2.0",
   "scripts": {
     "clear-build-dir": "rm -rf .build",
-    "find-lambdas": "find ${npm_config_root_path} ! -path \"node_modules/*\" ! -path \"commons/*\" -name *.${npm_config_filetype}",
+    "find-lambdas": "find ${npm_config_root_path} ! -path \"*node_modules/*\" ! -name \"jest.config.ts\" -name \"*.${npm_config_filetype}\" ! -path \"*tests/*\" ! -path \"*commons/*\"",
     "build": "lambdas=$(npm run -s find-lambdas --root_path=${npm_config_name} --filetype=ts) && esbuild $lambdas --bundle --minify --sourcemap --platform=node --target=node20 --outdir=${npm_config_out_dir}",
     "build-all": "npm run clear-build-dir && npm run build --name=** --out_dir=.build",
     "build-service": "npm run clear-build-dir && npm run build --out_dir=.build/${npm_config_name}/lambdas",
-    "recreate-zip-dir": "rm -rf .build/zips && mkdir .build/zips", 
-    "package":"lambdaJs=$(npm run -s find-lambdas --root_path=.build/${npm_config_name} --filetype=js) && npm run recreate-zip-dir && for file in $lambdaJs; do zip -j \"${file%.*}.zip\" \"$file\"; mv \"${file%.*}.zip\" .build/zips/; done",
-    "package-all": "npm run build-all && npm run package --name=**", 
+    "recreate-zip-dir": "rm -rf .build/zips && mkdir .build/zips",
+    "package": "lambdaJs=$(npm run -s find-lambdas --root_path=.build/${npm_config_name} --filetype=js) && npm run recreate-zip-dir && for file in $lambdaJs; do zip -j \"${file%.*}.zip\" \"$file\"; mv \"${file%.*}.zip\" .build/zips/; done",
+    "package-all": "npm run build-all && npm run package --name=**",
     "package-service": "npm run build-service && npm run package"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.651.1",
+    "@aws-sdk/lib-dynamodb": "^3.651.1",
     "aws-lambda": "^1.0.7"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.130",
+    "aws-sdk-client-mock": "^4.0.1",
     "esbuild": "^0.19.10"
   }
 }

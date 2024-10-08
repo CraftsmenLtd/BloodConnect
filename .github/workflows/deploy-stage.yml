@@ -1,18 +1,40 @@
-name: "Stage Deployment"
+name: 🏗️ Stage Deployment
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 concurrency:
   group: ${{ github.ref }}
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
-  set-deployment-environment:
-    name: Set Deployment Environment
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Set Deployment Environment
-        id: set_deployment_env
-        run: echo "DEPLOYMENT_ENVIRONMENT=stage" >> $GITHUB_OUTPUT
-    outputs:
-      deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
+  build-push-docker-image:
+    name: 🐳 Build and Push Docker Image
+    uses: ./.github/workflows/docker-image.yml
+    secrets: inherit
+
+  lint-test-security-checks:
+    name: 🧪 Lint, Test and Security Check
+    needs: [build-push-docker-image]
+    uses: ./.github/workflows/ci-checks.yml
+    secrets: inherit
+    with:
+      runner_image_name: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+
+  deploy-stage:
+    name: 🚀 Deploy Stage Infrastructure
+    secrets: inherit
+    needs: [build-push-docker-image, lint-test-security-checks]
+    uses: ./.github/workflows/aws-terraform.yml
+    with:
+      docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      github_environment: ${{ vars.ENVIRONMENT_GITHUB_STAGE }}
+      deployment_environment: ${{ vars.ENVIRONMENT_GITHUB_STAGE }}
+      aws_region: ap-south-1
+      tf_action: apply
