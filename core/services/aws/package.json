@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "clear-build-dir": "rm -rf .build",
-    "find-lambdas": "find ${npm_config_root_path} ! -path \"node_modules/*\" ! -path \"commons/*\" -name *.${npm_config_filetype}",
+    "find-lambdas": "find ${npm_config_root_path} ! -path \"*node_modules/*\" ! -name \"jest.config.ts\" -name \"*.${npm_config_filetype}\" ! -path \"*tests/*\" ! -path \"*commons/*\"",
     "build": "lambdas=$(npm run -s find-lambdas --root_path=${npm_config_name} --filetype=ts) && esbuild $lambdas --bundle --minify --sourcemap --platform=node --target=node20 --outdir=${npm_config_out_dir}",
     "build-all": "npm run clear-build-dir && npm run build --name=** --out_dir=.build",
     "build-service": "npm run clear-build-dir && npm run build --out_dir=.build/${npm_config_name}/lambdas",

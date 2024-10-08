@@ -1,7 +1,5 @@
-// import { GENERIC_CODES } from '@commons/libs/constants/GenericCodes'
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import UserOperationError from './UserOperationError'
-// import { UserDTO } from '@commons/dto/UserDTO'
 import { UserDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { GenericMessage } from '../../../commons/dto/MessageDTO'
