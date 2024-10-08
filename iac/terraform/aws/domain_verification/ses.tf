@@ -1,6 +1,7 @@
 resource "aws_ses_domain_identity" "verified_domain" {
   domain = var.domain_name
 }
+
 data "aws_route53_zone" "selected" {
   name         = aws_ses_domain_identity.verified_domain.domain
   private_zone = false
@@ -23,6 +24,6 @@ resource "aws_route53_record" "dkim_records" {
   zone_id = data.aws_route53_zone.selected.zone_id
   name    = "${aws_ses_domain_dkim.domain_dkim.dkim_tokens[count.index]}._domainkey"
   type    = "CNAME"
-  ttl     = "600"
+  ttl     = 600
   records = ["${aws_ses_domain_dkim.domain_dkim.dkim_tokens[count.index]}.dkim.amazonses.com"]
 }

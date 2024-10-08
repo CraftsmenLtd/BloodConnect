@@ -1,4 +1,3 @@
-#checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
 resource "aws_s3_bucket" "static_site" {
   #checkov:skip=CKV2_AWS_61: "Ensure that an S3 bucket has a lifecycle configuration"
   #checkov:skip=CKV2_AWS_62: "Ensure S3 buckets should have event notifications enabled"
@@ -19,8 +18,9 @@ resource "aws_s3_bucket" "log_store" {
   #checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
   #checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
   #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
-  bucket = "${var.environment}-web-client-dns-log-store"
   #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
+  bucket = "${var.environment}-web-client-dns-log-store"
+
   tags = {
     Name = "log-bucket"
   }

@@ -1,15 +1,15 @@
 variable "environment" {
   type        = string
-  description = "Deployment environment and resource prefix"
+  description = "Deployment environment"
 }
 
 variable "acm_certificate_arn" {
-  description = "ARN forn bloodconnect SSL certification"
+  description = "ARN for bloodconnect SSL certification"
   type        = string
 }
 
 variable "static_site_bucket" {
-  description = "The static site S3 bucket"
+  description = "S3 bucket for the static site hosting"
   type = object({
     id                          = string
     arn                         = string
@@ -18,7 +18,7 @@ variable "static_site_bucket" {
 }
 
 variable "failover_bucket" {
-  description = "The failover S3 bucket"
+  description = "S3 bucket for the failover in CloudFront"
   type = object({
     id                          = string
     arn                         = string
@@ -27,7 +27,7 @@ variable "failover_bucket" {
 }
 
 variable "log_store_bucket" {
-  description = "The log store S3 bucket"
+  description = "S3 bucket for storing CloudFront logs"
   type = object({
     id                          = string
     arn                         = string
@@ -36,7 +36,7 @@ variable "log_store_bucket" {
 }
 
 variable "rest_api_id" {
-  description = ""
+  description = "ID of the API Gateway used for REST API"
   type        = string
 }
 
@@ -57,6 +57,12 @@ variable "cloudfront_distribution_failover_origin_id" {
   description = "Origin Id for failover bucket on cloudfront distribution"
   type        = string
   default     = "S3FailoverOrigin"
+}
+
+variable "cloudfront_distribution_apigateway_origin_id" {
+  description = "Origin ID for the API Gateway in the CloudFront distribution"
+  type        = string
+  default     = "APIGatewayOrigin"
 }
 
 variable "cloudfront_access_region" {

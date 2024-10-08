@@ -16,7 +16,7 @@ variable "budget_settings" {
     threshold  = number
     emails     = list(string)
   })
-  description = "aws budget settings"
+  description = "AWS budget settings"
   default = {
     set_budget = false
     amount     = 0
@@ -24,7 +24,6 @@ variable "budget_settings" {
     emails     = []
   }
 }
-
 
 variable "openapi_directory" {
   type        = string
@@ -47,4 +46,10 @@ variable "combined_openapi_file" {
 variable "bloodconnect_domain" {
   type        = string
   description = "Bloodconnect root domain"
+}
+
+variable "lambda_archive_path" {
+  type        = string
+  description = "Path to the Lambda function zip archives"
+  default     = "${path.module}/../../../../core/services/aws/.build/zips"
 }

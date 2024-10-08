@@ -3,7 +3,15 @@ resource "aws_cloudfront_distribution" "cdn" {
   #checkov:skip=CKV2_AWS_47: "CloudFront Distribution should have WAF enabled"
   #checkov:skip=CKV_AWS_86: "Ensure Cloudfront distribution has Access Logging enabled"
   #checkov:skip=CKV2_AWS_32: "Ensure CloudFront distribution has a response headers policy attached"
-  aliases = [var.bloodconnect_environment_domain]
+
+  aliases             = [var.bloodconnect_environment_domain]
+  enabled             = true
+  is_ipv6_enabled     = false
+  comment             = "CloudFront distribution for front-end site"
+  default_root_object = "index.html"
+  price_class         = "PriceClass_100"
+
+  # S3 Primary Origin (Static Site)
   origin {
     domain_name = var.static_site_bucket.bucket_regional_domain_name
     origin_id   = var.cloudfront_distribution_origin_id
@@ -13,6 +21,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
+  # S3 Failover Origin
   origin {
     domain_name = var.failover_bucket.bucket_regional_domain_name
     origin_id   = var.cloudfront_distribution_failover_origin_id
@@ -22,9 +31,10 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
+  # API Gateway Origin (for /api routes)
   origin {
     domain_name = "${var.rest_api_id}.execute-api.${data.aws_region.current.name}.amazonaws.com"
-    origin_id   = "APIGatewayOrigin"
+    origin_id   = var.cloudfront_distribution_apigateway_origin_id
 
     custom_origin_config {
       origin_protocol_policy = "https-only"
@@ -33,12 +43,6 @@ resource "aws_cloudfront_distribution" "cdn" {
       origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
-
-
-  enabled             = true
-  is_ipv6_enabled     = false
-  comment             = "CloudFront distribution for front-end site"
-  default_root_object = "index.html"
 
   origin_group {
     origin_id = "${var.environment}-OriginGroupId"
@@ -76,7 +80,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     path_pattern           = "/api/*"
     allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods         = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id       = "APIGatewayOrigin"
+    target_origin_id       = var.cloudfront_distribution_apigateway_origin_id
     viewer_protocol_policy = "redirect-to-https"
 
     forwarded_values {
@@ -86,8 +90,6 @@ resource "aws_cloudfront_distribution" "cdn" {
       }
     }
   }
-
-  price_class = "PriceClass_100"
 
   viewer_certificate {
     acm_certificate_arn      = var.acm_certificate_arn
