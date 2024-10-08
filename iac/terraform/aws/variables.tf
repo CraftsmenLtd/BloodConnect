@@ -47,9 +47,3 @@ variable "bloodconnect_domain" {
   type        = string
   description = "Bloodconnect root domain"
 }
-
-variable "lambda_archive_path" {
-  type        = string
-  description = "Path to the Lambda function zip archives"
-  default     = "${path.module}/../../../../core/services/aws/.build/zips"
-}

@@ -3,8 +3,9 @@ module "environments" {
 }
 
 module "auth" {
-  source      = "./auth"
-  environment = var.environment
+  source              = "./auth"
+  environment         = var.environment
+  lambda_archive_path = local.lambda_archive_path
 }
 
 module "web-client" {
@@ -34,4 +35,5 @@ module "cognito" {
   verified_domain_arn = data.aws_ses_domain_identity.existing_domain.arn
   dynamodb_table_arn  = module.database.dynamodb_table_arn
   bloodconnect_domain = var.bloodconnect_domain
+  lambda_archive_path = local.lambda_archive_path
 }
