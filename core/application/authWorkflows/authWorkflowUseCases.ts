@@ -1,10 +1,10 @@
-import ClientType from '@commons/libs/constants/ClientType'
+import ClientType from '../../../commons/libs/constants/ClientType'
 import getJwtToken from './authToken/tokenGenerator'
-import { getDaysInSecs, getRemainingSecsOfDay } from '@commons/libs/dateTimeUtils'
-import validateToken from '@application/authWorkflows/authToken/tokenValidator'
-import appLogger from '@commons/libs/logger/ApplicationLogger'
-import { executionEnv } from '@application/authWorkflows/authToken/constants'
-import InvalidTokenError from '@application/authWorkflows/errors/InvalidTokenError'
+import { getDaysInSecs, getRemainingSecsOfDay } from '../../../commons/libs/dateTimeUtils'
+import validateToken from '../../application/authWorkflows/authToken/tokenValidator'
+import appLogger from '../../../commons/libs/logger/ApplicationLogger'
+import { executionEnv } from '../../application/authWorkflows/authToken/constants'
+import InvalidTokenError from '../../application/authWorkflows/errors/InvalidTokenError'
 
 const RefreshTokenValidityInDaysForClient: Record<ClientType, number> = {
   mobile: 30,

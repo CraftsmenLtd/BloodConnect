@@ -23,8 +23,15 @@ Dive into the Code
    GettingStarted
 
 OpenAPI
-~~~~~~~~~~~~~~~~~~
+~~~~~~~
 .. toctree::
    :maxdepth: 2
 
    OpenApi
+
+Mobile App
+~~~~~~~~~~
+.. toctree::
+   :maxdepth: 2
+
+   MobileAppDevelopment

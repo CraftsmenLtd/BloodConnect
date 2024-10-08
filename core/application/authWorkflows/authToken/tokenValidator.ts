@@ -1,4 +1,4 @@
-import InvalidTokenError from '@application/authWorkflows/errors/InvalidTokenError'
+import InvalidTokenError from '../../../application/authWorkflows/errors/InvalidTokenError'
 import { verify } from 'jsonwebtoken'
 import { jwtSecret } from './constants'
 
