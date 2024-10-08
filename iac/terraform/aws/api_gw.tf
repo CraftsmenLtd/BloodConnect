@@ -23,7 +23,7 @@ resource "aws_api_gateway_usage_plan" "api_usage_plan" {
 
 resource "aws_api_gateway_deployment" "api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
-  stage_name  = var.environment
+  stage_name  = "api"
 
   depends_on = [
     null_resource.update_and_import_open_api_script
@@ -75,6 +75,5 @@ resource "aws_lambda_permission" "lambda_invoke_permission" {
   action        = "lambda:InvokeFunction"
   function_name = each.value.lambda_function_name
   principal     = "apigateway.amazonaws.com"
-
-  source_arn = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*"
+  source_arn    = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*"
 }

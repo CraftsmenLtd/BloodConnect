@@ -16,7 +16,7 @@ variable "budget_settings" {
     threshold  = number
     emails     = list(string)
   })
-  description = "aws budget settings"
+  description = "AWS budget settings"
   default = {
     set_budget = false
     amount     = 0
@@ -24,7 +24,6 @@ variable "budget_settings" {
     emails     = []
   }
 }
-
 
 variable "openapi_directory" {
   type        = string

@@ -1,6 +1,6 @@
 variable "environment" {
   type        = string
-  description = "Deployment environment and resource prefix"
+  description = "Deployment environment"
 }
 
 variable "lambda_runtime" {
@@ -11,7 +11,7 @@ variable "lambda_runtime" {
 
 variable "lambda_architecture" {
   type        = list(string)
-  description = "Lambda ArchitectureInfo"
+  description = "Lambda Architecture"
   default     = ["arm64"]
 }
 
