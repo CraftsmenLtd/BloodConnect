@@ -1,0 +1,31 @@
+{
+  "CreateDonationRequestModel": {
+    "type": "object",
+    "required": [
+      "seekerId",
+      "bloodGroup",
+      "location",
+      "donationDateTime"
+    ],
+    "properties": {
+      "seekerId": {
+        "type": "string"
+      },
+      "bloodGroup": {
+        "type": "string"
+      },
+      "location": {
+        "type": "string"
+      },
+      "donationDateTime": {
+        "type": "string"
+      }
+    },
+    "example": {
+      "seekerId": "lkjhasdfka-qrwerie-sfsdl6usdf",
+      "bloodGroup": "O-",
+      "location": "Baridhara, dhaka",
+      "donationDateTime": "2023-09-20T15:00:00Z"
+    }
+  }
+}

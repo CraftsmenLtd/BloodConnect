@@ -8,7 +8,7 @@ export type HasTimeLog = {
 }
 
 export interface DbModelDtoAdapter<Dto extends DTO, DbFields = Record<string, unknown>> {
-  fromDto(userDto: Dto): DbFields;
+  fromDto(dto: Dto): DbFields;
   toDto(dbFields: DbFields): Dto;
 }
 
