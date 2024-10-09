@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "BloodConnect",
+    "slug": "bloodconnect",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,25 +13,25 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.mobile",
+      "bundleIdentifier": "net.bloodconnect.app",
       "infoPlist": {
         "CFBundleURLTypes": [
           {
             "CFBundleURLSchemes": [
-              "myapp"
+              "bloodconnect"
             ]
           }
         ]
       }
     },
     "android": {
-      "package": "com.example.mobile",
+      "package": "net.bloodconnect.app",
       "intentFilters": [
         {
           "action": "VIEW",
           "data": [
             {
-              "scheme": "myapp",
+              "scheme": "bloodconnect",
               "host": "callback"
             }
           ],

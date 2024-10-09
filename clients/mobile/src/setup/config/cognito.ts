@@ -11,8 +11,8 @@ export const awsCognitoConfiguration = {
         oauth: {
           domain: AWS_COGNITO_DOMAIN,
           scopes: ['email', 'profile', 'openid'],
-          redirectSignIn: ['myapp://callback'],
-          redirectSignOut: ['myapp://signout'],
+          redirectSignIn: ['bloodconnect://callback'],
+          redirectSignOut: ['bloodconnect://signout'],
           responseType: 'code' as const,
           socialproviders: ['Google', 'Facebook']
         }
