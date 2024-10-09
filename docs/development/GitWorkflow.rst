@@ -13,6 +13,8 @@ In case of working in a branch that will eventually end up as a PR, the branch n
 
 For example, the github issue number of the requirement to add this page to our documentation site is 47. Following the above guideline, the branch that implements this change is named `I47-branch-mgt-doc`.
 
+Since we are concatenating the branch name with resource names, ensure the branch name length is kept within limits. For example, AWS Lambda allows a maximum of 64 characters for names. Therefore, ensure `branchName + resourceName <= 64 characters`.
+
 Commits
 ~~~~~~~
 - Individual commits must be buildable. They may be incomplete in terms of feature implementation, but they should not result in build errors.
