@@ -1,11 +1,16 @@
 import { DbModelDtoAdapter, NosqlModel } from '../../../../application/technicalImpl/dbModels/DbModelDefinitions'
 import Repository from '../../../../application/technicalImpl/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
 
+interface CreateUpdateExpressionsReturnType {
+  updateExpression: string[];
+  expressionAttribute: Record<string, any>;
+  expressionAttributeNames: Record<string, any>;
+}
 export default class DynamoDbTableOperations<
   Dto extends DTO,
   DbFields extends Record<string, unknown>,
@@ -29,10 +34,52 @@ export default class DynamoDbTableOperations<
     throw new Error('Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined')
   }
 
+  async update(item: Dto): Promise<Dto> {
+    const items = this.modelAdapter.fromDto(item)
+    const primaryKeyName = this.modelAdapter.getPrimaryIndex()
+    const updatedItem = this.removePrimaryKey(primaryKeyName.partitionKey as string, items, primaryKeyName.sortKey as string)
+    const { updateExpression, expressionAttribute, expressionAttributeNames } = this.createUpdateExpressions(updatedItem)
+    const input: UpdateCommandInput = {
+      TableName: this.getTableName(),
+      Key: {
+        [primaryKeyName.partitionKey]: items[primaryKeyName.partitionKey]
+      },
+      UpdateExpression: `SET ${updateExpression.join(', ')}`,
+      ExpressionAttributeValues: expressionAttribute,
+      ExpressionAttributeNames: expressionAttributeNames
+    }
+
+    await this.client.send(new UpdateCommand(input))
+    return this.modelAdapter.toDto(items)
+  }
+
   getTableName(): string {
     if (process.env.DYNAMODB_TABLE_NAME == null) {
       throw new DatabaseError('DDB Table name not defined', GENERIC_CODES.ERROR)
     }
     return process.env.DYNAMODB_TABLE_NAME
+  }
+
+  private createUpdateExpressions(item: Record<string, any>): CreateUpdateExpressionsReturnType {
+    const updateExpression: string[] = []
+    const expressionAttribute: Record<string, any> = {}
+    const expressionAttributeNames: Record<string, any> = {}
+    Object.keys(item).forEach((key) => {
+      const placeholder = `:p${key}`
+      const alias = `#a${key}`
+      updateExpression.push(`${alias} = ${placeholder}`)
+      expressionAttribute[placeholder] = item[key]
+      expressionAttributeNames[alias] = key
+    })
+    return { updateExpression, expressionAttribute, expressionAttributeNames }
+  }
+
+  private removePrimaryKey(partitionKeyName: string, item: Record<string, any>, sortKeyName?: string): Record<string, any> {
+    const { [partitionKeyName]: _, ...rest } = { ...item }
+    if (sortKeyName != null && sortKeyName !== '' && sortKeyName !== undefined) {
+      const { [sortKeyName]: __, ...itemWithoutPrimaryKey } = rest
+      return itemWithoutPrimaryKey
+    }
+    return rest
   }
 }
