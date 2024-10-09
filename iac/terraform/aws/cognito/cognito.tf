@@ -79,12 +79,10 @@ resource "aws_cognito_user_group" "user_group" {
   user_pool_id = aws_cognito_user_pool.user_pool.id
   name         = "user"
   description  = "Standard user group"
-  precedence   = 1
 }
 
 resource "aws_cognito_user_group" "organization_group" {
   user_pool_id = aws_cognito_user_pool.user_pool.id
   name         = "organization"
   description  = "Organization user group"
-  precedence   = 0
 }
