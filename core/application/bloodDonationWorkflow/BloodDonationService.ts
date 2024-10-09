@@ -6,35 +6,35 @@ import Repository from '../technicalImpl/policies/repositories/Repository'
 
 // TODO: add all the needed fields
 type BloodDonationAttributes = {
-  phone: string;
+  seekerId: string;
   bloodGroup: string;
   location: string;
-  donationDate: string;
+  donationDateTime: Date;
 }
 
 export class BloodDonationService {
-  async createBloodDonaiton(donationAttributes: BloodDonationAttributes, bloodDonaitonRepository: Repository<DonationDTO>): Promise<Partial<DonationDTO>> {
+  async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<Partial<DonationDTO>> {
     try {
-      return bloodDonaitonRepository.create({
+      return bloodDonationRepository.create({
         id: generateUniqueID(),
-        phone: donationAttributes.phone,
+        seekerId: donationAttributes.seekerId,
         bloodGroup: donationAttributes.bloodGroup,
         location: donationAttributes.location,
-        donationDate: new Date(donationAttributes.donationDate)
+        donationDateTime: new Date(donationAttributes.donationDateTime)
       })
     } catch (error) {
       throw new BloodDonationOperationError(`Failed to update blood finding post. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
 
-  async updateBloodDonaiton(donationAttributes: BloodDonationAttributes, bloodDonaitonRepository: Repository<DonationDTO>): Promise<Partial<DonationDTO>> {
+  async updateBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<Partial<DonationDTO>> {
     try {
-      return bloodDonaitonRepository.update({
+      return bloodDonationRepository.update({
         id: generateUniqueID(),
-        phone: donationAttributes.phone,
+        seekerId: donationAttributes.seekerId,
         bloodGroup: donationAttributes.bloodGroup,
         location: donationAttributes.location,
-        donationDate: new Date(donationAttributes.donationDate)
+        donationDateTime: new Date(donationAttributes.donationDateTime)
       })
     } catch (error) {
       throw new BloodDonationOperationError(`Failed to update blood finding post. Error: ${error}`, GENERIC_CODES.ERROR)

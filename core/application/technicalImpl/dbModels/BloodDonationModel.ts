@@ -1,7 +1,7 @@
 import { DonationDTO } from '../../../../commons/dto/DonationDTO'
 import { DbModelDtoAdapter, HasTimeLog, NosqlModel, IndexDefinitions, DbIndex, IndexType } from './DbModelDefinitions'
 
-export type DonationFields = Omit<DonationDTO, 'id' | 'donationDate'> & HasTimeLog & {
+export type DonationFields = Omit<DonationDTO, 'id' | 'donationDateTime'> & HasTimeLog & {
   pk: `BLOOD_REQ#${string}`;
   sk: 'BLOOD_REQ';
 }
@@ -19,18 +19,18 @@ export class BloodDonationModel implements NosqlModel<DonationFields>, DbModelDt
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(userDto: DonationDTO): DonationFields {
-    const { id, donationDate, ...remainingDonationData } = userDto
+  fromDto(donationDto: DonationDTO): DonationFields {
+    const { id, donationDateTime, ...remainingDonationData } = donationDto
     return {
       pk: `BLOOD_REQ#${typeof id === 'string' ? id : id.toString()}`,
       sk: 'BLOOD_REQ',
       ...remainingDonationData,
-      createdAt: donationDate.toISOString()
+      createdAt: donationDateTime.toISOString()
     }
   }
 
   toDto(dbFields: DonationFields): DonationDTO {
-    const { pk, sk, createdAt, ...remainingUserFields } = dbFields
-    return { ...remainingUserFields, id: pk.replace('USER#', ''), donationDate: new Date(createdAt) }
+    const { pk, sk, createdAt, ...remainingDonationFields } = dbFields
+    return { ...remainingDonationFields, id: pk.replace('BLOOD_REQ#', ''), donationDateTime: new Date(createdAt) }
   }
 }
