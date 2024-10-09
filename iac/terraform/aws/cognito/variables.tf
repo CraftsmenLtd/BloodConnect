@@ -4,26 +4,29 @@ variable "environment" {
 }
 
 variable "bloodconnect_domain" {
-  type = string
-}
-
-variable "lambda_runtime" {
   type        = string
-  description = "Lambda Runtime"
-  default     = "nodejs20.x"
+  description = "Domain name for the BloodConnect application"
 }
 
 variable "verified_domain_arn" {
-  type = string
+  type        = string
+  description = "ARN of the verified domain for sending emails"
 }
 
 variable "dynamodb_table_arn" {
-  type = string
+  type        = string
+  description = "ARN of the DynamoDB table"
 }
 
 variable "password_length" {
-  type    = number
-  default = 10
+  type        = number
+  description = "Minimum length of passwords"
+  default     = 10
+}
+
+variable "lambda_archive_path" {
+  type        = string
+  description = "Path to the Lambda function zip archives"
 }
 
 variable "google_client_id" {
