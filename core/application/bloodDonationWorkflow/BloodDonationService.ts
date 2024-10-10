@@ -3,41 +3,59 @@ import BloodDonationOperationError from './BloodDonationOperationError'
 import { DonationDTO } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import Repository from '../technicalImpl/policies/repositories/Repository'
-
-// TODO: add all the needed fields
-type BloodDonationAttributes = {
-  seekerId: string;
-  bloodGroup: string;
-  location: string;
-  donationDateTime: Date;
-}
+import { generateGeohash } from '../utils/geohash'
+import { validateInputWithRules } from '../utils/validator'
+import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes } from './Types'
 
 export class BloodDonationService {
-  async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<Partial<DonationDTO>> {
+  async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
     try {
-      return bloodDonationRepository.create({
+      const validationResponse = validateInputWithRules({ bloodQuantity: donationAttributes.bloodQuantity, donationDateTime: donationAttributes.donationDateTime }, validationRules)
+      if (validationResponse !== null) {
+        return validationResponse
+      }
+      await bloodDonationRepository.create({
         id: generateUniqueID(),
-        seekerId: donationAttributes.seekerId,
-        bloodGroup: donationAttributes.bloodGroup,
-        location: donationAttributes.location,
-        donationDateTime: new Date(donationAttributes.donationDateTime)
+        ...donationAttributes,
+        status: 'accepted',
+        geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
+        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString()
       })
+      return 'We have accepted you request we will let you know when we will found donar.'
     } catch (error) {
-      throw new BloodDonationOperationError(`Failed to update blood finding post. Error: ${error}`, GENERIC_CODES.ERROR)
+      throw new BloodDonationOperationError(`Failed to submit blood donation request. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
 
-  async updateBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<Partial<DonationDTO>> {
+  async updateBloodDonation(donationAttributes: UpdateBloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
     try {
-      return bloodDonationRepository.update({
-        id: generateUniqueID(),
-        seekerId: donationAttributes.seekerId,
-        bloodGroup: donationAttributes.bloodGroup,
-        location: donationAttributes.location,
-        donationDateTime: new Date(donationAttributes.donationDateTime)
-      })
+      const { requestPostId, donationDateTime, ...restAttributes } = donationAttributes
+
+      const item = await bloodDonationRepository.getItem(`BLOOD_REQ#${donationAttributes.seekerId}`, `BLOOD_REQ#${requestPostId}`)
+      if (item === null) {
+        return 'No item found.'
+      }
+      console.log('item', item)
+      if (item?.status !== undefined && item.status === 'completed') {
+        return 'This request is completed you can\'t update'
+      }
+      const updateData: Partial<DonationDTO> = {
+        ...restAttributes,
+        id: requestPostId
+      }
+      console.log('updateData', updateData)
+      if (donationDateTime !== undefined) {
+        updateData.donationDateTime = new Date(donationDateTime).toISOString()
+        const validationResponse = validateInputWithRules({ donationDateTime }, validationRules)
+        if (validationResponse !== null) {
+          return validationResponse
+        }
+      }
+      await bloodDonationRepository.update(updateData)
+      return 'We have updated your we will let you know update.'
     } catch (error) {
-      throw new BloodDonationOperationError(`Failed to update blood finding post. Error: ${error}`, GENERIC_CODES.ERROR)
+      console.log(error)
+      throw new BloodDonationOperationError(`Failed to update blood donation post. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
 }

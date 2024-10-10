@@ -1,6 +1,6 @@
 # Environment Variables
 DEPLOYMENT_ENVIRONMENT?=localstack
-LOCALSTACK_AUTH_TOKEN?=set-localstack-auth-token
+LOCALSTACK_AUTH_TOKEN?=ls-COrU8504-2220-MONI-PicE-BEPuquPOfcd6
 RUNNER_IMAGE_NAME?=dev-image
 DOCKER_SOCK_MOUNT?=-v /var/run/docker.sock:/var/run/docker.sock
 DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.7.3" \

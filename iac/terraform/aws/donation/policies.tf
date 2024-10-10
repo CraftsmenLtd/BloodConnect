@@ -22,6 +22,16 @@ locals {
         ]
         resources = [var.dynamodb_table_arn]
       }
+    ],
+    dynamodb_update_policy = [
+      {
+        sid = "DynamodbUpdatePolicy"
+        actions = [
+          "dynamodb:UpdateItem",
+          "dynamodb:GetItem",
+        ]
+        resources = [var.dynamodb_table_arn]
+      }
     ]
   }
 }

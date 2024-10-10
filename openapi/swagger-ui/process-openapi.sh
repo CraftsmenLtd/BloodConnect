@@ -8,6 +8,8 @@ API_GATEWAY_LIST=$(awslocal apigateway get-rest-apis --endpoint-url=$LOCALSTACK_
 # Extract the API ID for the API named 'localstack-api'
 API_GATEWAY_ID=$(echo "$API_GATEWAY_LIST" | jq -r '.items[] | select(.name=="localstack-api") | .id')
 
+echo "$API_GATEWAY_ID"
+
 if [ -z "$API_GATEWAY_ID" ]; then
   echo "API Gateway ID not found for 'localstack-api'"
   exit 1

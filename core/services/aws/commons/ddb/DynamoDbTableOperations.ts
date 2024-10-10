@@ -1,7 +1,7 @@
 import { DbModelDtoAdapter, NosqlModel } from '../../../../application/technicalImpl/dbModels/DbModelDefinitions'
 import Repository from '../../../../application/technicalImpl/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb'
 import { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
@@ -35,22 +35,62 @@ export default class DynamoDbTableOperations<
   }
 
   async update(item: Dto): Promise<Dto> {
-    const items = this.modelAdapter.fromDto(item)
-    const primaryKeyName = this.modelAdapter.getPrimaryIndex()
-    const updatedItem = this.removePrimaryKey(primaryKeyName.partitionKey as string, items, primaryKeyName.sortKey as string)
-    const { updateExpression, expressionAttribute, expressionAttributeNames } = this.createUpdateExpressions(updatedItem)
-    const input: UpdateCommandInput = {
-      TableName: this.getTableName(),
-      Key: {
+    try {
+      const items = this.modelAdapter.fromDto(item)
+      const primaryKeyName = this.modelAdapter.getPrimaryIndex()
+      const updatedItem = this.removePrimaryKey(primaryKeyName.partitionKey as string, items, primaryKeyName.sortKey as string)
+      const { updateExpression, expressionAttribute, expressionAttributeNames } = this.createUpdateExpressions(updatedItem)
+      const keyObject: Record<string, DbFields[keyof DbFields]> = {
         [primaryKeyName.partitionKey]: items[primaryKeyName.partitionKey]
-      },
-      UpdateExpression: `SET ${updateExpression.join(', ')}`,
-      ExpressionAttributeValues: expressionAttribute,
-      ExpressionAttributeNames: expressionAttributeNames
-    }
+      }
+      if (typeof primaryKeyName.sortKey === 'string') {
+        keyObject[primaryKeyName.sortKey] = items[primaryKeyName.sortKey] as DbFields[keyof DbFields]
+      }
 
-    await this.client.send(new UpdateCommand(input))
-    return this.modelAdapter.toDto(items)
+      const input: UpdateCommandInput = {
+        TableName: this.getTableName(),
+        Key: keyObject,
+        UpdateExpression: `SET ${updateExpression.join(', ')}`,
+        ExpressionAttributeValues: expressionAttribute,
+        ExpressionAttributeNames: expressionAttributeNames
+      }
+
+      const updateCommandOutput = await this.client.send(new UpdateCommand(input))
+
+      if (updateCommandOutput?.$metadata?.httpStatusCode === 200) {
+        return this.modelAdapter.toDto(items)
+      }
+      throw new Error('Failed to update item in DynamoDB. HTTP Status Code: ' + updateCommandOutput.$metadata?.httpStatusCode)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+      throw new Error(`Failed to update item in ${this.getTableName()}. Error: ${errorMessage}`)
+    }
+  }
+
+  async getItem(partitionKey: string, sortKey?: string): Promise<Dto | null> {
+    try {
+      const primaryKeyName = this.modelAdapter.getPrimaryIndex()
+      const key: Record<string, DbFields[keyof DbFields]> = {
+        [primaryKeyName.partitionKey]: partitionKey as DbFields[keyof DbFields]
+      }
+
+      if (sortKey !== undefined && typeof primaryKeyName.sortKey === 'string') {
+        key[primaryKeyName.sortKey] = sortKey as DbFields[keyof DbFields]
+      }
+      const input: GetCommandInput = {
+        TableName: this.getTableName(),
+        Key: key
+      }
+
+      const result = await this.client.send(new GetCommand(input))
+      if (result.Item === null || result.Item === undefined) {
+        return null
+      }
+
+      return this.modelAdapter.toDto(result.Item as DbFields)
+    } catch (error) {
+      throw new DatabaseError('Failed to fetch item from DynamoDB', GENERIC_CODES.ERROR)
+    }
   }
 
   getTableName(): string {
@@ -60,10 +100,10 @@ export default class DynamoDbTableOperations<
     return process.env.DYNAMODB_TABLE_NAME
   }
 
-  private createUpdateExpressions(item: Record<string, any>): CreateUpdateExpressionsReturnType {
+  private createUpdateExpressions(item: Record<string, unknown>): CreateUpdateExpressionsReturnType {
     const updateExpression: string[] = []
-    const expressionAttribute: Record<string, any> = {}
-    const expressionAttributeNames: Record<string, any> = {}
+    const expressionAttribute: Record<string, unknown> = {}
+    const expressionAttributeNames: Record<string, unknown> = {}
     Object.keys(item).forEach((key) => {
       const placeholder = `:p${key}`
       const alias = `#a${key}`
@@ -74,7 +114,7 @@ export default class DynamoDbTableOperations<
     return { updateExpression, expressionAttribute, expressionAttributeNames }
   }
 
-  private removePrimaryKey(partitionKeyName: string, item: Record<string, any>, sortKeyName?: string): Record<string, any> {
+  private removePrimaryKey(partitionKeyName: string, item: Record<string, unknown>, sortKeyName?: string): Record<string, unknown> {
     const { [partitionKeyName]: _, ...rest } = { ...item }
     if (sortKeyName != null && sortKeyName !== '' && sortKeyName !== undefined) {
       const { [sortKeyName]: __, ...itemWithoutPrimaryKey } = rest

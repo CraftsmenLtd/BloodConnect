@@ -1,0 +1,65 @@
+{
+  "UpdateDonationRequestModel": {
+    "type": "object",
+    "required": [
+      "seekerId",
+      "requestPostId"
+    ],
+    "properties": {
+      "seekerId": {
+        "type": "string"
+      },
+      "requestPostId": {
+        "type": "string"
+      },
+      "bloodQuantity": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 10
+      },
+      "urgencyLevel": {
+        "type": "string",
+        "enum": ["regular", "urgent"]
+      },
+      "donationDateTime": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "contactInfo": {
+        "type": "object",
+        "required": ["name", "phone"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^[+]?[0-9]{1,3}?[0-9]{10}$"
+          }
+        }
+      },
+      "transportationInfo": {
+        "type": "string"
+      },
+      "shortDescription": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "not": {
+      "properties": {
+        "neededBloodGroup": {},
+        "location": {},
+        "latitude": {},
+        "longitude": {}
+      },
+      "required": ["neededBloodGroup", "location", "latitude", "longitude"]
+    },
+    "example": {
+      "seekerId": "lkjhasdfka-qrwerie-sfsdl6usdf",
+      "requestPostId": "01J9TGD6A4BTWZGHC52ASJ4XSM",
+      "bloodQuantity": 2
+    }
+  }
+}

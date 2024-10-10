@@ -2,20 +2,46 @@ import { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
+import { UpdateBloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { DonationDTO } from '../../../../commons/dto/DonationDTO'
 import { BloodDonationModel, DonationFields } from '../../../application/technicalImpl/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 
-async function updateBloodDonationLambda(event: DonationDTO): Promise<APIGatewayProxyResult> {
-  const bloodDonationService = new BloodDonationService()
-  const bloodDonationAttributes = {
-    seekerId: event.seekerId,
-    bloodGroup: event.bloodGroup,
-    location: event.location,
-    donationDateTime: event.donationDateTime
+const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [
+  'bloodQuantity',
+  'urgencyLevel',
+  'donationDateTime',
+  'contactInfo',
+  'patientCondition',
+  'patientName',
+  'transportationInfo',
+  'shortDescription'
+]
+
+type RequiredAttributes = Pick<UpdateBloodDonationAttributes, 'requestPostId' | 'seekerId'>
+type OptionalAttributes = Partial<Omit<UpdateBloodDonationAttributes, 'requestPostId' | 'seekerId'>>
+
+const bloodDonationService = new BloodDonationService()
+
+async function updateBloodDonationLambda(event: UpdateBloodDonationAttributes): Promise<APIGatewayProxyResult> {
+  try {
+    console.log('event', event)
+    const bloodDonationAttributes: RequiredAttributes & OptionalAttributes = {
+      requestPostId: event.requestPostId,
+      seekerId: event.seekerId,
+      ...Object.fromEntries(
+        Object.entries(event)
+          .filter(([key]) => allowedKeys.includes(key as keyof UpdateBloodDonationAttributes))
+          .filter(([_, value]) => value !== undefined && value !== '')
+      )
+    }
+    console.log('bloodDonationAttributes', bloodDonationAttributes)
+    const response = await bloodDonationService.updateBloodDonation(bloodDonationAttributes, new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel()))
+    return generateApiGatewayResponse(response, HTTP_CODES.OK)
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
-  await bloodDonationService.updateBloodDonation(bloodDonationAttributes, new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel()))
-  return generateApiGatewayResponse('Unauthorized', HTTP_CODES.UNAUTHORIZED)
 }
 
 export default updateBloodDonationLambda
