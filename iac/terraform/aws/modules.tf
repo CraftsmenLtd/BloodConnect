@@ -36,4 +36,5 @@ module "cognito" {
   dynamodb_table_arn  = module.database.dynamodb_table_arn
   bloodconnect_domain = var.bloodconnect_domain
   lambda_archive_path = local.lambda_archive_path
+  bloodconnect_environment_domain = local.bloodconnect_environment_domain
 }

@@ -28,3 +28,8 @@ variable "lambda_archive_path" {
   type        = string
   description = "Path to the Lambda function zip archives"
 }
+
+variable "bloodconnect_environment_domain" {
+  type = string
+  description = "Bloodconnect Environment Domain"
+}
