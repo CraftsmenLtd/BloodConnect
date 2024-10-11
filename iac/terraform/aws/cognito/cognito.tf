@@ -90,6 +90,21 @@ resource "aws_cognito_identity_provider" "facebook" {
     email    = "email"
     name     = "name"
     username = "id"
+resource "aws_cognito_user_pool_domain" "name" {
+  domain = "auth-${var.environment}.${var.bloodconnect_domain}"
+  user_pool_id = aws_cognito_user_pool.user_pool.id
+  certificate_arn = var.acm_certificate_arn
+}
+
+resource "aws_route53_record" "cognito_user_pool_custom_domain" {
+  name    = aws_cognito_user_pool_domain.name.domain
+  type    = "A"
+  zone_id = var.hosted_zone_id
+  alias {
+    evaluate_target_health = false
+
+    name    = aws_cognito_user_pool_domain.name.cloudfront_distribution
+    zone_id = aws_cognito_user_pool_domain.name.cloudfront_distribution_zone_id
   }
 }
 
