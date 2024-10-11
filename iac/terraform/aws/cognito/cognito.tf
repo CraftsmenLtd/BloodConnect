@@ -57,11 +57,6 @@ resource "aws_cognito_user_pool" "user_pool" {
   }
 }
 
-resource "aws_cognito_user_pool_domain" "name" {
-  domain = "${split(".", var.bloodconnect_domain)[0]}"
-  user_pool_id = aws_cognito_user_pool.user_pool.id
-}
-
 resource "aws_cognito_user_pool_client" "app_pool_client" {
   name                                 = "${var.environment}-app-pool-client"
   user_pool_id                         = aws_cognito_user_pool.user_pool.id
