@@ -97,14 +97,14 @@ resource "aws_cognito_user_pool_domain" "name" {
 }
 
 resource "aws_route53_record" "cognito_user_pool_custom_domain" {
-  name    = aws_cognito_user_pool_domain.name.domain
+  name    = aws_cognito_user_pool_domain.set_custom_domain.domain
   type    = "A"
   zone_id = var.hosted_zone_id
   alias {
     evaluate_target_health = false
 
-    name    = aws_cognito_user_pool_domain.name.cloudfront_distribution
-    zone_id = aws_cognito_user_pool_domain.name.cloudfront_distribution_zone_id
+    name    = aws_cognito_user_pool_domain.set_custom_domain.cloudfront_distribution
+    zone_id = aws_cognito_user_pool_domain.set_custom_domain.cloudfront_distribution_zone_id
   }
 }
 
