@@ -7,7 +7,7 @@ data "aws_route53_zone" "main" {
 
 resource "aws_route53_record" "root" {
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = var.bloodconnect_domain
+  name    = local.bloodconnect_environment_domain
   type    = "A"
 
   alias {
