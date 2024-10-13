@@ -16,3 +16,11 @@ resource "aws_route53_record" "root" {
     evaluate_target_health = false
   }
 }
+
+resource "null_resource" "wait_for_route53" {
+  depends_on = [aws_route53_record.root]
+}
+
+output "wait_for_route53" {
+  value = null_resource.wait_for_route53.id
+}

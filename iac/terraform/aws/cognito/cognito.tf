@@ -96,6 +96,7 @@ resource "aws_cognito_user_pool_domain" "set_custom_domain" {
   domain = "auth-${var.environment}.${var.bloodconnect_domain}"
   user_pool_id = aws_cognito_user_pool.user_pool.id
   certificate_arn = var.acm_certificate_arn
+  depends_on = [var.wait_for_route53]
 }
 
 resource "aws_route53_record" "cognito_user_pool_custom_domain" {
