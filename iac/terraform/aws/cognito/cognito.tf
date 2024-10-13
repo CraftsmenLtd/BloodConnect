@@ -90,7 +90,9 @@ resource "aws_cognito_identity_provider" "facebook" {
     email    = "email"
     name     = "name"
     username = "id"
-resource "aws_cognito_user_pool_domain" "name" {
+  }
+}
+resource "aws_cognito_user_pool_domain" "set_custom_domain" {
   domain = "auth-${var.environment}.${var.bloodconnect_domain}"
   user_pool_id = aws_cognito_user_pool.user_pool.id
   certificate_arn = var.acm_certificate_arn
