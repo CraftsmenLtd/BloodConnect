@@ -93,6 +93,8 @@ resource "aws_cognito_identity_provider" "facebook" {
   }
 }
 resource "aws_cognito_user_pool_domain" "set_custom_domain" {
+  count = var.environment == module.environments.PRODUCTION ? 1 : 0
+
   domain = "${var.environment}.${var.bloodconnect_domain}"
   user_pool_id = aws_cognito_user_pool.user_pool.id
   certificate_arn = var.acm_certificate_arn
@@ -100,14 +102,16 @@ resource "aws_cognito_user_pool_domain" "set_custom_domain" {
 }
 
 resource "aws_route53_record" "cognito_user_pool_custom_domain" {
-  name    = aws_cognito_user_pool_domain.set_custom_domain.domain
+  count = var.environment == module.environments.PRODUCTION ? 1 : 0
+
+  name    = aws_cognito_user_pool_domain.set_custom_domain[0].domain
   type    = "A"
   zone_id = var.hosted_zone_id
   alias {
     evaluate_target_health = false
 
-    name    = aws_cognito_user_pool_domain.set_custom_domain.cloudfront_distribution
-    zone_id = aws_cognito_user_pool_domain.set_custom_domain.cloudfront_distribution_zone_id
+    name    = aws_cognito_user_pool_domain.set_custom_domain[0].cloudfront_distribution
+    zone_id = aws_cognito_user_pool_domain.set_custom_domain[0].cloudfront_distribution_zone_id
   }
 }
 
