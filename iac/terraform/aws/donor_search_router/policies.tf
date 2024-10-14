@@ -22,7 +22,7 @@ locals {
           "dynamodb:GetItem",
           "dynamodb:UpdateItem"
         ]
-        resources = [aws_dynamodb_table.donor_requests_table.arn]
+        resources = [var.dynamodb_table_arn]
       }
     ],
     sfn_policy = [
@@ -32,15 +32,6 @@ locals {
           "states:StartExecution"
         ]
         resources = ["*"]
-      }
-    ],
-    sqs_policy = [
-      {
-        sid = "SqsPolicy"
-        actions = [
-          "sqs:SendMessage"
-        ]
-        resources = [aws_sqs_queue.donor_search_retry_queue.arn]
       }
     ]
   }

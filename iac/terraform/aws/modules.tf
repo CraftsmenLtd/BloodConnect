@@ -38,9 +38,18 @@ module "cognito" {
   lambda_archive_path = local.lambda_archive_path
 }
 
-module "doner_search_router" {
-  source              = "./doner_search_router"
+module "donor_search_router" {
+  source              = "./donor_search_router"
   environment         = var.environment
   lambda_archive_path = local.lambda_archive_path
   dynamodb_table_arn  = module.database.dynamodb_table_arn
+  donor_search_sf_arn = module.donor_search_sf.donor_search_sf_arn
+}
+
+module "donor_search_sf" {
+  source              = "./donor_search_sf"
+  environment         = var.environment
+  lambda_archive_path = local.lambda_archive_path
+  dynamodb_table_arn  = module.database.dynamodb_table_arn
+  donor_search_retry_queue_url  = module.donor_search_router.donor_search_retry_queue_url
 }

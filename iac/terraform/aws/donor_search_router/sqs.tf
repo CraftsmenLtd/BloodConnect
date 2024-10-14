@@ -23,14 +23,14 @@ resource "aws_sqs_queue" "donor_search_dlq" {
 
 resource "aws_lambda_event_source_mapping" "donor_search_event_source" {
   event_source_arn = aws_sqs_queue.donor_search_queue.arn
-  function_name    = module.lambda["doner-request-router"].lambda_arn
+  function_name    = module.lambda["donor-request-router"].lambda_arn
   batch_size       = 10
   enabled          = true
 }
 
 resource "aws_lambda_event_source_mapping" "donor_search_retry_event_source" {
   event_source_arn = aws_sqs_queue.donor_search_retry_queue.arn
-  function_name    = module.lambda["doner-request-router"].lambda_arn
+  function_name    = module.lambda["donor-request-router"].lambda_arn
   batch_size       = 10
   enabled          = true
 }
