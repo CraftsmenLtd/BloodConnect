@@ -1,0 +1,94 @@
+{
+  "CreateDonationRequestModel": {
+    "type": "object",
+    "required": [
+      "seekerId",
+      "neededBloodGroup",
+      "bloodQuantity",
+      "urgencyLevel",
+      "location",
+      "latitude",
+      "longitude",
+      "donationDateTime",
+      "contactInfo"
+    ],
+    "properties": {
+      "seekerId": {
+        "type": "string"
+      },
+      "patientName": {
+        "type": "string",
+        "minLength": 1
+      },
+      "neededBloodGroup": {
+        "type": "string",
+        "enum": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+      },
+      "bloodQuantity": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 10
+      },
+      "urgencyLevel": {
+        "type": "string",
+        "enum": ["regular", "urgent"]
+      },
+      "location": {
+        "type": "string",
+        "minLength": 1
+      },
+      "latitude": {
+        "type": "number",
+        "minimum": -90,
+        "maximum": 90
+      },
+      "longitude": {
+        "type": "number",
+        "minimum": -180,
+        "maximum": 180
+      },
+      "donationDateTime": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "contactInfo": {
+        "type": "object",
+        "required": ["name", "phone"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^[+]?[0-9]{1,3}?[0-9]{10}$"
+          }
+        }
+      },
+      "transportationInfo": {
+        "type": "string"
+      },
+      "shortDescription": {
+        "type": "string"
+      }
+    },
+    "example": {
+      "seekerId": "lkjhasdfka-qrwerie-sfsdl6usdf",
+      "patientName": "John Doe",
+      "neededBloodGroup": "O-",
+      "bloodQuantity": 2,
+      "urgencyLevel": "urgent",
+      "location": "Baridhara, Dhaka",
+      "latitude": 23.7936,
+      "longitude": 90.4043,
+      "donationDateTime": "2023-09-20T15:00:00Z",
+      "contactInfo": {
+        "name": "Jane Doe",
+        "phone": "+880123456789"
+      },
+      "patientCondition": "Stable",
+      "transportationInfo": "Car available",
+      "shortDescription": "Need blood urgently for surgery."
+    }
+  }
+}
