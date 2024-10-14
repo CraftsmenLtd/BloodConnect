@@ -94,15 +94,15 @@ resource "aws_cognito_identity_provider" "facebook" {
 }
 
 resource "aws_cognito_user_pool_domain" "set_custom_domain_prod" {
-  count = var.environment == module.environments.PRODUCTION ? 1 : 0
+  count = local.isProduction
 
-  domain          = "${var.bloodconnect_domain}"
+  domain          = var.bloodconnect_domain
   user_pool_id    = aws_cognito_user_pool.user_pool.id
   certificate_arn = var.acm_certificate_arn
 }
 
 resource "aws_cognito_user_pool_domain" "set_custom_domain" {
-  count = var.environment == module.environments.PRODUCTION ? 0 : 1
+  count = local.isNonProduction
 
   domain          = replace(replace(replace(replace("${var.environment}", "aws", ""), "amazon", ""), "cognito", ""), "-", "")
   user_pool_id    = aws_cognito_user_pool.user_pool.id
@@ -110,7 +110,7 @@ resource "aws_cognito_user_pool_domain" "set_custom_domain" {
 }
 
 resource "aws_route53_record" "cognito_user_pool_custom_domain" {
-  count = var.environment == module.environments.PRODUCTION ? 1 : 0
+  count = local.isProduction
 
   name    = aws_cognito_user_pool_domain.set_custom_domain_prod[0].domain
   type    = "A"

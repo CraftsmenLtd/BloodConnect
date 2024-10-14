@@ -67,11 +67,11 @@ variable "facebook_client_secret" {
   }
 }
 variable "acm_certificate_arn" {
-  type = string
+  type        = string
   description = "ARN for bloodconnect SSL certification"
 }
 
 variable "hosted_zone_id" {
-  type = string
+  type        = string
   description = "Route53 zone ID"
 }
