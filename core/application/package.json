@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.2",
+    "ngeohash": "^0.6.3",
     "ulid": "^2.3.0"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.4"
+    "@types/jsonwebtoken": "^9.0.4",
+    "@types/ngeohash": "^0.6.8"
   }
 }
