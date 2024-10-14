@@ -50,7 +50,7 @@ export class BloodDonationService {
         }
       }
       await bloodDonationRepository.update(updateData)
-      return 'We have updated your we will let you know update.'
+      return 'We have updated your request, we will let you know update.'
     } catch (error) {
       throw new BloodDonationOperationError(`Failed to update blood donation post. Error: ${error}`, GENERIC_CODES.ERROR)
     }

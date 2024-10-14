@@ -19,16 +19,23 @@ export function validateBloodQuantity(bloodQuantity: number): null | string {
 
 export type ValidationRule<T> = (value: T) => null | string
 
-export function validateInputWithRules<T extends Record<string, unknown>>(inputs: T, rules: Record<keyof T, Array<ValidationRule<unknown>>>): string | null {
+export function validateInputWithRules<T extends Record<string, unknown>>(
+  inputs: T,
+  rules: Record<keyof T, Array<ValidationRule<unknown>>>
+): string | null {
   for (const key in rules) {
     const value = inputs[key]
     const validators = rules[key]
 
     for (const validator of validators) {
-      const result = validator(value)
-
-      if (typeof result === 'string') {
-        return `${key}: ${result}`
+      try {
+        const result = validator(value)
+        if (typeof result === 'string') {
+          return `${key}: ${result}`
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+        return `${key}: ${errorMessage}`
       }
     }
   }
