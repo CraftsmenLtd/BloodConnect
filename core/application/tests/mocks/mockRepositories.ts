@@ -1,7 +1,4 @@
-import Repository from '../../technicalImpl/policies/repositories/Repository'
-import { UserDTO } from '../../../../commons/dto/UserDTO'
-
-export const mockRepository: jest.Mocked<Repository<UserDTO>> = {
+export const mockRepository = {
   create: jest.fn(),
   update: jest.fn(),
   getItem: jest.fn()
