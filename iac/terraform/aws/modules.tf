@@ -37,3 +37,10 @@ module "cognito" {
   bloodconnect_domain = var.bloodconnect_domain
   lambda_archive_path = local.lambda_archive_path
 }
+
+module "doner_search_router" {
+  source              = "./doner_search_router"
+  environment         = var.environment
+  lambda_archive_path = local.lambda_archive_path
+  dynamodb_table_arn  = module.database.dynamodb_table_arn
+}
