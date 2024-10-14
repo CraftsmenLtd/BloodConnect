@@ -93,7 +93,7 @@ resource "aws_cognito_identity_provider" "facebook" {
   }
 }
 resource "aws_cognito_user_pool_domain" "set_custom_domain" {
-  domain = "auth-${var.environment}.${var.bloodconnect_domain}"
+  domain = "${var.environment}.${var.bloodconnect_domain}"
   user_pool_id = aws_cognito_user_pool.user_pool.id
   certificate_arn = var.acm_certificate_arn
   depends_on = [var.wait_for_route53]
