@@ -92,26 +92,34 @@ resource "aws_cognito_identity_provider" "facebook" {
     username = "id"
   }
 }
-resource "aws_cognito_user_pool_domain" "set_custom_domain" {
+
+resource "aws_cognito_user_pool_domain" "set_custom_domain_prod" {
   count = var.environment == module.environments.PRODUCTION ? 1 : 0
 
-  domain = "${var.environment}.${var.bloodconnect_domain}"
-  user_pool_id = aws_cognito_user_pool.user_pool.id
+  domain          = "${var.bloodconnect_domain}"
+  user_pool_id    = aws_cognito_user_pool.user_pool.id
   certificate_arn = var.acm_certificate_arn
-  depends_on = [var.wait_for_route53]
+}
+
+resource "aws_cognito_user_pool_domain" "set_custom_domain" {
+  count = var.environment == module.environments.PRODUCTION ? 0 : 1
+
+  domain          = replace(replace(replace(replace("${var.environment}", "aws", ""), "amazon", ""), "cognito", ""), "-", "")
+  user_pool_id    = aws_cognito_user_pool.user_pool.id
+  certificate_arn = var.acm_certificate_arn
 }
 
 resource "aws_route53_record" "cognito_user_pool_custom_domain" {
   count = var.environment == module.environments.PRODUCTION ? 1 : 0
 
-  name    = aws_cognito_user_pool_domain.set_custom_domain[0].domain
+  name    = aws_cognito_user_pool_domain.set_custom_domain_prod[0].domain
   type    = "A"
   zone_id = var.hosted_zone_id
   alias {
     evaluate_target_health = false
 
-    name    = aws_cognito_user_pool_domain.set_custom_domain[0].cloudfront_distribution
-    zone_id = aws_cognito_user_pool_domain.set_custom_domain[0].cloudfront_distribution_zone_id
+    name    = aws_cognito_user_pool_domain.set_custom_domain_prod[0].cloudfront_distribution
+    zone_id = aws_cognito_user_pool_domain.set_custom_domain_prod[0].cloudfront_distribution_zone_id
   }
 }
 

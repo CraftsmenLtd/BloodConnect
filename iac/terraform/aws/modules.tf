@@ -42,5 +42,5 @@ module "cognito" {
   facebook_client_secret = var.facebook_client_secret
   acm_certificate_arn = data.aws_acm_certificate.certificate.arn
   hosted_zone_id      = data.aws_route53_zone.main.zone_id
-  wait_for_route53 = null_resource.wait_for_route53.id
+  wait_for_route53    = null_resource.wait_for_route53.id
 }
