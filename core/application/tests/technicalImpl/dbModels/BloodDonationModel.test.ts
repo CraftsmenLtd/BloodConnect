@@ -16,8 +16,8 @@ describe('BloodDonationModel', () => {
       const result = bloodDonationModel.toDto({ ...donationFields, createdAt: '2024-10-10T00:00:00Z' })
       expect(result).toEqual({
         ...donationDto,
-        id: 'user456',
-        seekerId: 'req123'
+        id: 'req123',
+        seekerId: 'user456'
       })
     })
   })

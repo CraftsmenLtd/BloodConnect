@@ -43,7 +43,7 @@
     },
     "security": [
       {
-        "BearerAuth": []
+        "CognitoAuthorizer": []
       }
     ]
   },
@@ -88,7 +88,12 @@
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
       "$ref": "./../integration/aws/donations/patch-donation.json"
-    }
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
   },
   "options": {
     "$ref": "./cors-options.json"
