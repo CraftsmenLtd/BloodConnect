@@ -140,11 +140,6 @@ resource "aws_cognito_user_pool_client" "app_pool_client" {
   ]
 }
 
-resource "aws_cognito_user_pool_domain" "cognito_domain" {
-  domain       = "${var.environment}-auth-domain"
-  user_pool_id = aws_cognito_user_pool.user_pool.id
-}
-
 resource "aws_cognito_user_group" "user_group" {
   user_pool_id = aws_cognito_user_pool.user_pool.id
   name         = "user"
