@@ -6,7 +6,7 @@ describe('UserModel Unit Tests', () => {
 
   describe('getPrimaryIndex', () => {
     test('should return correct primary index with partitionKey and sortKey', () => {
-      const expectedPrimaryIndex = { partitionKey: 'pk', sortKey: 'sk' }
+      const expectedPrimaryIndex = { partitionKey: 'PK', sortKey: 'SK' }
       expect(userModel.getPrimaryIndex()).toEqual(expectedPrimaryIndex)
     })
   })

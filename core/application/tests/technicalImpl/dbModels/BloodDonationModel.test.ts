@@ -25,7 +25,7 @@ describe('BloodDonationModel', () => {
   describe('getPrimaryIndex', () => {
     it('should return the correct primary index', () => {
       const result = bloodDonationModel.getPrimaryIndex()
-      expect(result).toEqual({ partitionKey: 'pk', sortKey: 'sk' })
+      expect(result).toEqual({ partitionKey: 'PK', sortKey: 'SK' })
     })
   })
 

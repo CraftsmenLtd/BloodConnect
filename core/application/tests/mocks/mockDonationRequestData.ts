@@ -39,8 +39,8 @@ export const donationDto: DonationDTO = {
 }
 
 export const donationFields: DonationFields = {
-  pk: 'BLOOD_REQ#user456',
-  sk: 'BLOOD_REQ#req123',
+  PK: 'BLOOD_REQ#user456',
+  SK: 'BLOOD_REQ#req123',
   neededBloodGroup: 'A+',
   bloodQuantity: 2,
   urgencyLevel: 'urgent',
