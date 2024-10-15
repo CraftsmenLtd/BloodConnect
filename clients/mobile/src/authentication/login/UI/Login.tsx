@@ -9,6 +9,8 @@ import LinkWithText from '../../../components/button/LinkWithText'
 import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import AuthLayout from '../../AuthLayout'
+import { SocialButton } from '../../../components/button/SocialButton'
+import { Divider } from '../../../components/button/Divider'
 
 interface LoginScreenProps {
   navigation: LoginScreenNavigationProp;
@@ -16,7 +18,7 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const styles = createStyles(useTheme())
-  const { loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError } = useLogin()
+  const { loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
 
   return (
     <AuthLayout>
@@ -46,6 +48,22 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       />
 
       <Button text="Login" onPress={handleLogin} />
+
+      <Divider text="Or" />
+
+      {socialLoginError !== '' && <Text style={styles.error}>{socialLoginError}</Text>}
+
+      <SocialButton
+        text="Continue with Google"
+        onPress={handleGoogleSignIn}
+        icon={require('../../../../assets/google-icon.png')}
+      />
+
+      <SocialButton
+        text="Continue via Facebook"
+        onPress={handleFacebookSignIn}
+        icon={require('../../../../assets/facebook-icon.png')}
+      />
 
       <LinkWithText
         staticText="Don't have an account? "

@@ -30,10 +30,14 @@ module "database" {
 }
 
 module "cognito" {
-  source              = "./cognito"
-  environment         = var.environment
-  verified_domain_arn = data.aws_ses_domain_identity.existing_domain.arn
-  dynamodb_table_arn  = module.database.dynamodb_table_arn
-  bloodconnect_domain = var.bloodconnect_domain
-  lambda_archive_path = local.lambda_archive_path
+  source                 = "./cognito"
+  environment            = var.environment
+  verified_domain_arn    = data.aws_ses_domain_identity.existing_domain.arn
+  dynamodb_table_arn     = module.database.dynamodb_table_arn
+  bloodconnect_domain    = var.bloodconnect_domain
+  lambda_archive_path    = local.lambda_archive_path
+  google_client_id       = var.google_client_id
+  google_client_secret   = var.google_client_secret
+  facebook_client_id     = var.facebook_client_id
+  facebook_client_secret = var.facebook_client_secret
 }

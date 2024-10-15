@@ -28,3 +28,41 @@ variable "lambda_archive_path" {
   type        = string
   description = "Path to the Lambda function zip archives"
 }
+
+variable "google_client_id" {
+  description = "Google OAuth Client ID"
+  type        = string
+
+  validation {
+    condition     = length(var.google_client_id) > 0
+    error_message = "The google_client_id value must be set."
+  }
+}
+
+variable "google_client_secret" {
+  description = "Google OAuth Client Secret"
+  type        = string
+
+  validation {
+    condition     = length(var.google_client_secret) > 0
+    error_message = "The google_client_secret value must be set."
+  }
+}
+
+variable "facebook_client_id" {
+  description = "Facebook OAuth App ID as per https://developers.facebook.com/apps/"
+  type        = string
+  validation {
+    condition     = length(var.facebook_client_id) > 0
+    error_message = "The facebook_client_id value must be set."
+  }
+}
+
+variable "facebook_client_secret" {
+  description = "Facebook OAuth App Secret as per https://developers.facebook.com/apps/"
+  type        = string
+  validation {
+    condition     = length(var.facebook_client_secret) > 0
+    error_message = "The facebook_client_secret value must be set."
+  }
+}
