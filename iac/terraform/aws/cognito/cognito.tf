@@ -104,7 +104,7 @@ resource "aws_cognito_user_pool_domain" "set_custom_domain_prod" {
 resource "aws_cognito_user_pool_domain" "set_custom_domain" {
   count = local.isNonProduction
 
-  domain          = replace(replace(replace(replace("${var.environment}", "aws", ""), "amazon", ""), "cognito", ""), "-", "")
+  domain          = local.cognito_domain_name
   user_pool_id    = aws_cognito_user_pool.user_pool.id
   certificate_arn = var.acm_certificate_arn
 }
