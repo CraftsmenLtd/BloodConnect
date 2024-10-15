@@ -1,11 +1,12 @@
 services:
   swagger-ui:
-    image: nginx:alpine
+    build: .
     container_name: swagger-ui
     ports:
       - "8080:80"
-    volumes:
-      - ./swagger-ui/index.html:/usr/share/nginx/html/index.html
+    entrypoint: ["/bin/sh", "-c", "bin/sh /generate-token.sh"]
+    environment:
+      - LOCALSTACK_ENDPOINT=http://host.docker.internal:4566
     depends_on:
       - nginx
 
