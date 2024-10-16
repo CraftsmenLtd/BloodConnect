@@ -7,7 +7,7 @@ const Stack = createStackNavigator()
 
 export default function Navigator() {
   return (
-    <Stack.Navigator initialRouteName={SCREENS.WELCOME} screenOptions={{
+    <Stack.Navigator initialRouteName={SCREENS.DONATION} screenOptions={{
       headerStyle: {
         height: 75
       },
