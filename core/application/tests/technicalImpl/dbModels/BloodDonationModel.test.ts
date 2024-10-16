@@ -1,4 +1,5 @@
-import { BloodDonationModel } from '../../../technicalImpl/dbModels/BloodDonationModel'
+import { BloodDonationModel, BLOOD_REQUEST_LSISK_PREFIX } from '../../../technicalImpl/dbModels/BloodDonationModel'
+import { DonationStatus } from '../../../../../commons/dto/DonationDTO'
 import { donationDto, donationFields } from '../../mocks/mockDonationRequestData'
 
 describe('BloodDonationModel', () => {
@@ -17,7 +18,8 @@ describe('BloodDonationModel', () => {
       expect(result).toEqual({
         ...donationDto,
         id: 'req123',
-        seekerId: 'user456'
+        seekerId: 'user456',
+        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#req123`
       })
     })
   })

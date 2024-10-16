@@ -1,6 +1,6 @@
 import { BloodDonationAttributes } from '../../bloodDonationWorkflow/Types'
-import { DonationFields } from '../../technicalImpl/dbModels/BloodDonationModel'
-import { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import { DonationFields, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
+import { DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 
 export const donationAttributes: BloodDonationAttributes = {
   seekerId: 'lkjhasdfka-qrwerie-sfsdl6usdf',
@@ -31,7 +31,7 @@ export const donationDto: DonationDTO = {
   longitude: -74.0060,
   geohash: 'dr5regw3',
   donationDateTime: '2024-10-10T00:00:00Z',
-  status: 'accepted',
+  status: DonationStatus.PENDING,
   contactInfo: {
     name: 'John Doe',
     phone: '123456789'
@@ -39,8 +39,9 @@ export const donationDto: DonationDTO = {
 }
 
 export const donationFields: DonationFields = {
-  PK: 'BLOOD_REQ#user456',
-  SK: 'BLOOD_REQ#req123',
+  PK: `${BLOOD_REQUEST_PK_PREFIX}#user456`,
+  SK: `${BLOOD_REQUEST_PK_PREFIX}#req123`,
+  LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#req123`,
   neededBloodGroup: 'A+',
   bloodQuantity: 2,
   urgencyLevel: 'urgent',
@@ -49,7 +50,7 @@ export const donationFields: DonationFields = {
   longitude: -74.0060,
   geohash: 'dr5regw3',
   donationDateTime: '2024-10-10T00:00:00Z',
-  status: 'accepted',
+  status: DonationStatus.PENDING,
   contactInfo: {
     name: 'John Doe',
     phone: '123456789'

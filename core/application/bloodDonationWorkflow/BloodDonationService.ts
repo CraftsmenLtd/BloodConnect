@@ -1,6 +1,6 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
-import { DonationDTO } from '../../../commons/dto/DonationDTO'
+import { DonationDTO, DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import Repository from '../technicalImpl/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
@@ -17,11 +17,11 @@ export class BloodDonationService {
       await bloodDonationRepository.create({
         id: generateUniqueID(),
         ...donationAttributes,
-        status: 'accepted',
+        status: DonationStatus.PENDING,
         geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
         donationDateTime: new Date(donationAttributes.donationDateTime).toISOString()
       })
-      return 'We have accepted you request we will let you know when we will found donar.'
+      return 'We have accepted your request, and we will let you know when we find a donor.'
     } catch (error) {
       throw new BloodDonationOperationError(`Failed to submit blood donation request. Error: ${error}`, GENERIC_CODES.ERROR)
     }
@@ -31,12 +31,12 @@ export class BloodDonationService {
     try {
       const { requestPostId, donationDateTime, ...restAttributes } = donationAttributes
 
-      const item = await bloodDonationRepository.getItem(`BLOOD_REQ#${donationAttributes.seekerId}`, `BLOOD_REQ#${requestPostId}`)
+      const item = await bloodDonationRepository.getItem(`BLOOD_REQUEST_PK_PREFIX#${donationAttributes.seekerId}`, `BLOOD_REQUEST_PK_PREFIX#${requestPostId}`)
       if (item === null) {
-        return 'No item found.'
+        return 'Item not found.'
       }
-      if (item?.status !== undefined && item.status === 'completed') {
-        return 'This request is completed you can\'t update'
+      if (item?.status !== undefined && item.status === DonationStatus.COMPLETED) {
+        return 'You can\'t update a completed request'
       }
       const updateData: Partial<DonationDTO> = {
         ...restAttributes,
@@ -50,7 +50,7 @@ export class BloodDonationService {
         }
       }
       await bloodDonationRepository.update(updateData)
-      return 'We have updated your request, we will let you know update.'
+      return 'We have updated your request and will let you know once there is an update.'
     } catch (error) {
       throw new BloodDonationOperationError(`Failed to update blood donation post. Error: ${error}`, GENERIC_CODES.ERROR)
     }

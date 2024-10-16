@@ -3,6 +3,11 @@ import { DTO, HasIdentifier } from './DTOCommon'
 export type BloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 export type UrgencyLevel = 'regular' | 'urgent'
 
+export enum DonationStatus {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+}
+
 export type DonationDTO = DTO & HasIdentifier & {
   seekerId: string;
   neededBloodGroup: BloodGroup;
@@ -13,7 +18,7 @@ export type DonationDTO = DTO & HasIdentifier & {
   longitude: number;
   geohash: string;
   donationDateTime: string;
-  status: 'pending' | 'accepted' | 'completed';
+  status: DonationStatus;
   contactInfo: { name: string; phone: string };
   patientName?: string;
   transportationInfo?: string;
