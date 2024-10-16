@@ -51,31 +51,31 @@ resource "aws_iam_role_policy_attachment" "attach_logging_policy" {
   role       = aws_iam_role.step_function_role.name
 }
 
-resource "aws_sfn_state_machine" "donor_search_state_machine" {
-  name     = "${var.environment}-donor-search-state-machine"
-  role_arn = aws_iam_role.step_function_role.arn
+# resource "aws_sfn_state_machine" "donor_search_state_machine" {
+#   name     = "${var.environment}-donor-search-state-machine"
+#   role_arn = aws_iam_role.step_function_role.arn
 
-  definition = <<EOF
-    {
-      "Comment": "State machine for donor search process",
-      "StartAt": "DonorNotification",
-      "States": {
-        "DonorNotification": {
-          "Type": "Pass",
-          "Result": "Hello World",
-          "End": true
-        }
-      }
-    }
-  EOF
+#   definition = <<EOF
+#     {
+#       "Comment": "State machine for donor search process",
+#       "StartAt": "DonorNotification",
+#       "States": {
+#         "DonorNotification": {
+#           "Type": "Pass",
+#           "Result": "Hello World",
+#           "End": true
+#         }
+#       }
+#     }
+#   EOF
 
-  logging_configuration {
-    level                  = "ALL"
-    include_execution_data = true
-    log_destination        = aws_cloudwatch_log_group.donor_search_state_machine_logs.arn
-  }
+#   logging_configuration {
+#     level                  = "ALL"
+#     include_execution_data = true
+#     log_destination        = aws_cloudwatch_log_group.donor_search_state_machine_logs.arn
+#   }
 
-  tracing_configuration {
-    enabled = true
-  }
-}
+#   tracing_configuration {
+#     enabled = true
+#   }
+# }

@@ -5,13 +5,13 @@ resource "aws_cognito_user_pool" "user_pool" {
     attribute_data_type = "String"
     name                = "email"
     required            = true
-    mutable             = true
+    mutable             = false
   }
 
   schema {
     attribute_data_type = "String"
     name                = "name"
-    required            = true
+    required            = false
     mutable             = true
   }
 
@@ -104,8 +104,8 @@ resource "aws_cognito_user_pool_domain" "set_custom_domain_prod" {
 resource "aws_cognito_user_pool_domain" "set_custom_domain" {
   count = local.NonProductionEnvironment
 
-  domain          = local.cognito_domain_name
-  user_pool_id    = aws_cognito_user_pool.user_pool.id
+  domain       = local.cognito_domain_name
+  user_pool_id = aws_cognito_user_pool.user_pool.id
 }
 
 resource "aws_route53_record" "cognito_user_pool_custom_domain" {
