@@ -43,3 +43,20 @@ module "cognito" {
   acm_certificate_arn    = data.aws_acm_certificate.certificate.arn
   hosted_zone_id         = data.aws_route53_zone.main.zone_id
 }
+
+module "donor_search_router" {
+  source              = "./donor_search_router"
+  environment         = var.environment
+  lambda_archive_path = local.lambda_archive_path
+  dynamodb_table_arn  = module.database.dynamodb_table_arn
+  donor_search_sf_arn = ""
+}
+
+# module "donor_search_sf" {
+#   source                       = "./donor_search_sf"
+#   environment                  = var.environment
+#   lambda_archive_path          = local.lambda_archive_path
+#   dynamodb_table_arn           = module.database.dynamodb_table_arn
+#   donor_search_retry_queue_url = module.donor_search_router.donor_search_retry_queue_url
+#   donor_search_retry_queue_arn = module.donor_search_router.donor_search_retry_queue_arn
+# }

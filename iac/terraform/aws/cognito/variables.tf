@@ -66,6 +66,7 @@ variable "facebook_client_secret" {
     error_message = "The facebook_client_secret value must be set."
   }
 }
+
 variable "acm_certificate_arn" {
   type        = string
   description = "ARN for bloodconnect SSL certification"
