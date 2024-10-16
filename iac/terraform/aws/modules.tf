@@ -40,4 +40,6 @@ module "cognito" {
   google_client_secret   = var.google_client_secret
   facebook_client_id     = var.facebook_client_id
   facebook_client_secret = var.facebook_client_secret
+  acm_certificate_arn    = data.aws_acm_certificate.certificate.arn
+  hosted_zone_id         = data.aws_route53_zone.main.zone_id
 }
