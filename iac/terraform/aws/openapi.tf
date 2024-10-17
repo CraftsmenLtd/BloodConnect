@@ -4,7 +4,7 @@ resource "null_resource" "update_and_import_open_api_script" {
   }
 
   triggers = {
-    always_run = timestamp()
+    always_run = directory_md5 = sha1(join("", [for f in fileset(var.openapi_directory, "**"): filesha1("${var.openapi_directory}/${f}")])) 
   }
 }
 
