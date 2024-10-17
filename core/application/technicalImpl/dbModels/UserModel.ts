@@ -2,8 +2,8 @@ import { UserDTO } from '../../../../commons/dto/UserDTO'
 import { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
 export type UserFields = Omit<UserDTO, 'id' | 'registrationDate'> & HasTimeLog & {
-  pk: `USER#${string}`;
-  sk: 'PROFILE';
+  PK: `USER#${string}`;
+  SK: 'PROFILE';
 }
 
 export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdapter<UserDTO, UserFields> {
@@ -12,7 +12,7 @@ export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdap
   }
 
   getPrimaryIndex(): DbIndex<UserFields> {
-    return { partitionKey: 'pk', sortKey: 'sk' }
+    return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
   getIndex(indexType: IndexType, indexName: string): DbIndex<UserFields> | undefined {
@@ -22,15 +22,15 @@ export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdap
   fromDto(userDto: UserDTO): UserFields {
     const { id, registrationDate, ...remainingUser } = userDto
     return {
-      pk: `USER#${typeof id === 'string' ? id : id.toString()}`,
-      sk: 'PROFILE',
+      PK: `USER#${typeof id === 'string' ? id : id.toString()}`,
+      SK: 'PROFILE',
       ...remainingUser,
       createdAt: registrationDate.toISOString()
     }
   }
 
   toDto(dbFields: UserFields): UserDTO {
-    const { pk, sk, createdAt, ...remainingUserFields } = dbFields
-    return { ...remainingUserFields, id: pk.replace('USER#', ''), registrationDate: new Date(createdAt) }
+    const { PK, SK, createdAt, ...remainingUserFields } = dbFields
+    return { ...remainingUserFields, id: PK.replace('USER#', ''), registrationDate: new Date(createdAt) }
   }
 }

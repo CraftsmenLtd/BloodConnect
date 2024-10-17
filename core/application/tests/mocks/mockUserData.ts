@@ -15,8 +15,8 @@ export const mockUserWithNumberId: UserDTO = {
 }
 
 export const expectedUser: UserFields = {
-  pk: 'USER#12345',
-  sk: 'PROFILE',
+  PK: 'USER#12345',
+  SK: 'PROFILE',
   email: 'ebrahim@example.com',
   name: 'Ebrahim',
   phone: '1234567890',

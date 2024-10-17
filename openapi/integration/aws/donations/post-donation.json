@@ -1,0 +1,22 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "${CREATE_BLOOD_DONATION_INVOCATION_ARN}",
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'POST'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
+      }
+    }
+  },
+  "requestTemplates": {
+    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"seekerId\": \"$inputRoot.seekerId\",\n  \"neededBloodGroup\": \"$inputRoot.neededBloodGroup\",\n  \"bloodQuantity\": $inputRoot.bloodQuantity,\n  \"urgencyLevel\": \"$inputRoot.urgencyLevel\",\n  \"location\": \"$inputRoot.location\",\n  \"latitude\": $inputRoot.latitude,\n  \"longitude\": $inputRoot.longitude,\n  \"donationDateTime\": \"$inputRoot.donationDateTime\",\n  \"contactInfo\": {\n    \"name\": \"$inputRoot.contactInfo.name\",\n    \"phone\": \"$inputRoot.contactInfo.phone\"\n  },\n  \"patientCondition\": \"$inputRoot.patientCondition\",\n  \"transportationInfo\": \"$inputRoot.transportationInfo\",\n  \"shortDescription\": \"$inputRoot.shortDescription\"\n}"
+  },
+  "passthroughBehavior": "never"
+}

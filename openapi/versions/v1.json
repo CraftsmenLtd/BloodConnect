@@ -10,6 +10,10 @@
       "description": "Auth module of BloodConnect"
     },
     {
+      "name": "bloodconnect-donation",
+      "description": "Donation module of BloodConnect"
+    },
+    {
       "name": "cors-options",
       "description": "API Endpoints for BloodConnect cors options"
     }
@@ -43,6 +47,9 @@
     },
     "/auth/register-organization": {
       "$ref": "./../paths/auth/register-organization.json"
+    },
+    "/donations": {
+      "$ref": "./../paths/donations.json"
     }
   },
   "components": {
