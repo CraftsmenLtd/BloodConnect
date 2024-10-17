@@ -40,6 +40,10 @@
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
       "$ref": "./../integration/aws/donations/post-donation.json"
+    },
+    "x-amazon-apigateway-throttling": {
+      "rate-limit": 10,
+      "burst-limit": 5
     }
   },
   "patch": {
@@ -84,11 +88,10 @@
     "x-amazon-apigateway-integration": {
       "$ref": "./../integration/aws/donations/patch-donation.json"
     },
-    "security": [
-      {
-        "CognitoAuthorizer": []
-      }
-    ]
+    "x-amazon-apigateway-throttling": {
+      "rate-limit": 10,
+      "burst-limit": 5
+    }
   },
   "options": {
     "$ref": "./cors-options.json"

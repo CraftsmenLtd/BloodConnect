@@ -77,3 +77,35 @@ resource "aws_lambda_permission" "lambda_invoke_permission" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*"
 }
+
+
+resource "aws_api_gateway_usage_plan" "blood_donation_request_usage_plan" {
+  name        = "${var.environment}-blood-donation-request-usage-plan"
+  description = "Usage plan for blood donation requests"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.rest_api.id
+    stage  = aws_api_gateway_deployment.api_deployment.stage_name
+  }
+
+  quota_settings {
+    limit  = 10
+    offset = 0
+    period = "DAY"
+  }
+
+  throttle_settings {
+    burst_limit = 5
+    rate_limit  = 10
+  }
+}
+
+resource "aws_api_gateway_api_key" "blood_donation_request_api_key" {
+  name = "${var.environment}-blood-donation-request-api-key"
+}
+
+resource "aws_api_gateway_usage_plan_key" "blood_donation_request_usage_plan_key" {
+  key_id        = aws_api_gateway_api_key.blood_donation_request_api_key.id
+  key_type      = "API_KEY"
+  usage_plan_id = aws_api_gateway_usage_plan.blood_donation_request_usage_plan.id
+}
