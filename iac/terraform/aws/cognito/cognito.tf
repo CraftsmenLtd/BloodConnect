@@ -2,26 +2,28 @@ resource "aws_cognito_user_pool" "user_pool" {
   name = "${var.environment}-user-pool"
 
   schema {
-    attribute_data_type = "String"
-    name                = "email"
-    required            = true
-    mutable             = false
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    mutable                  = false
+    name                     = "email"
+    required                 = true
   }
-
   schema {
-    attribute_data_type = "String"
-    name                = "name"
-    required            = false
-    mutable             = true
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    mutable                  = true
+    name                     = "name"
+    required                 = false
+    string_attribute_constraints {}
   }
-
   schema {
-    attribute_data_type = "String"
-    name                = "phone_number"
-    required            = false
-    mutable             = true
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    mutable                  = true
+    name                     = "phone_number"
+    required                 = false
+    string_attribute_constraints {}
   }
-
   auto_verified_attributes = ["email"]
   username_attributes      = ["email"]
 
