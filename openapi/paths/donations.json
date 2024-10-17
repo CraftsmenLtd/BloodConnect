@@ -40,12 +40,7 @@
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
       "$ref": "./../integration/aws/donations/post-donation.json"
-    },
-    "security": [
-      {
-        "CognitoAuthorizer": []
-      }
-    ]
+    }
   },
   "patch": {
     "operationId": "UpdateDonation",
