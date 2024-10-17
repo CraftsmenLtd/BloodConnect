@@ -4,6 +4,7 @@ import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, v
 import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
+import { googleLogin, facebookLogin } from '../../authService'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -29,6 +30,7 @@ export const useRegister = (): any => {
   const [errors, setErrors] = useState<RegisterErrors>(initializeState<RegisterCredential>(
     Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
   )
+  const [socialLoginError, setSocialLoginError] = useState<string>('')
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     setRegisterCredential(prevState => ({
@@ -59,11 +61,33 @@ export const useRegister = (): any => {
       fromScreen: SCREENS.REGISTER
     })
   }
+
+  const handleGoogleSignIn = async(): Promise<void> => {
+    try {
+      await googleLogin()
+      navigation.navigate(SCREENS.PROFILE)
+    } catch (error) {
+      setSocialLoginError('Failed to sign in with Google.')
+    }
+  }
+
+  const handleFacebookSignIn = async(): Promise<void> => {
+    try {
+      await facebookLogin()
+      navigation.navigate(SCREENS.PROFILE)
+    } catch (error) {
+      setSocialLoginError('Failed to sign in with Facebook.')
+    }
+  }
+
   return {
     errors,
     registerCredential,
     handleInputChange,
     isButtonDisabled,
-    handleRegister
+    handleRegister,
+    handleGoogleSignIn,
+    handleFacebookSignIn,
+    socialLoginError
   }
 }

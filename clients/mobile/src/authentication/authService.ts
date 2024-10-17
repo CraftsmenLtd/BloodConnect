@@ -1,4 +1,4 @@
-import { confirmSignUp, signUp, signIn } from 'aws-amplify/auth'
+import { confirmSignUp, signUp, signIn, signInWithRedirect } from 'aws-amplify/auth'
 
 export interface UserRegistrationCredentials {
   name: string;
@@ -51,5 +51,21 @@ export const loginUser = async(email: string, password: string): Promise<boolean
     return isSignedIn
   } catch (error) {
     throw new Error(`Error logging in user: ${error instanceof Error ? error.message : error}`)
+  }
+}
+
+export const googleLogin = async(): Promise<void> => {
+  try {
+    await signInWithRedirect({ provider: 'Google' })
+  } catch (error) {
+    throw new Error(`Error logging with google: ${error instanceof Error ? error.message : error}`)
+  }
+}
+
+export const facebookLogin = async(): Promise<void> => {
+  try {
+    await signInWithRedirect({ provider: 'Facebook' })
+  } catch (error) {
+    throw new Error(`Error logging with facebook: ${error instanceof Error ? error.message : error}`)
   }
 }

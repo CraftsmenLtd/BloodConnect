@@ -5,7 +5,7 @@ resource "aws_cognito_user_pool" "user_pool" {
     attribute_data_type = "String"
     name                = "email"
     required            = true
-    mutable             = false
+    mutable             = true
   }
 
   schema {
@@ -18,7 +18,7 @@ resource "aws_cognito_user_pool" "user_pool" {
   schema {
     attribute_data_type = "String"
     name                = "phone_number"
-    required            = true
+    required            = false
     mutable             = true
   }
 
@@ -57,17 +57,87 @@ resource "aws_cognito_user_pool" "user_pool" {
   }
 }
 
+resource "aws_cognito_identity_provider" "google" {
+  user_pool_id  = aws_cognito_user_pool.user_pool.id
+  provider_name = "Google"
+  provider_type = "Google"
+
+  provider_details = {
+    client_id        = var.google_client_id
+    client_secret    = var.google_client_secret
+    authorize_scopes = "openid email profile"
+  }
+
+  attribute_mapping = {
+    email          = "email"
+    name           = "name"
+    phone_number   = "phone_number"
+    email_verified = "email_verified"
+    username       = "sub"
+  }
+}
+
+resource "aws_cognito_identity_provider" "facebook" {
+  user_pool_id  = aws_cognito_user_pool.user_pool.id
+  provider_name = "Facebook"
+  provider_type = "Facebook"
+  provider_details = {
+    client_id        = var.facebook_client_id
+    client_secret    = var.facebook_client_secret
+    authorize_scopes = "public_profile,email"
+  }
+  attribute_mapping = {
+    email    = "email"
+    name     = "name"
+    username = "id"
+  }
+}
+
+resource "aws_cognito_user_pool_domain" "set_custom_domain_prod" {
+  count = local.productionEnvironment
+
+  domain          = var.bloodconnect_domain
+  user_pool_id    = aws_cognito_user_pool.user_pool.id
+  certificate_arn = var.acm_certificate_arn
+}
+
+resource "aws_cognito_user_pool_domain" "set_custom_domain" {
+  count = local.NonProductionEnvironment
+
+  domain          = local.cognito_domain_name
+  user_pool_id    = aws_cognito_user_pool.user_pool.id
+}
+
+resource "aws_route53_record" "cognito_user_pool_custom_domain" {
+  count = local.productionEnvironment
+
+  name    = aws_cognito_user_pool_domain.set_custom_domain_prod[0].domain
+  type    = "CNAME"
+  zone_id = var.hosted_zone_id
+  alias {
+    evaluate_target_health = false
+
+    name    = aws_cognito_user_pool_domain.set_custom_domain_prod[0].cloudfront_distribution
+    zone_id = aws_cognito_user_pool_domain.set_custom_domain_prod[0].cloudfront_distribution_zone_id
+  }
+}
+
 resource "aws_cognito_user_pool_client" "app_pool_client" {
   name                                 = "${var.environment}-app-pool-client"
   user_pool_id                         = aws_cognito_user_pool.user_pool.id
   generate_secret                      = false
   allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_scopes                 = ["openid", "email", "profile"]
   allowed_oauth_flows                  = ["code"]
-  allowed_oauth_scopes                 = ["openid", "email"]
-  callback_urls                        = ["myapp://callback"]
-  logout_urls                          = ["myapp://signout"]
-  supported_identity_providers         = ["COGNITO"]
+  callback_urls                        = ["bloodconnect://callback"]
+  logout_urls                          = ["bloodconnect://signout"]
+  supported_identity_providers         = ["COGNITO", "Google", "Facebook"]
   explicit_auth_flows                  = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
+
+  depends_on = [
+    aws_cognito_identity_provider.google,
+    aws_cognito_identity_provider.facebook
+  ]
 }
 
 resource "aws_cognito_user_group" "user_group" {

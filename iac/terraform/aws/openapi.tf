@@ -12,8 +12,8 @@ data "template_file" "openapi_definition" {
   template = file(var.combined_openapi_file)
 
   vars = merge({
-    ENVIRONMENT = var.environment
-    API_VERSION = var.api_version
+    ENVIRONMENT   = var.environment
+    API_VERSION   = var.api_version
     USER_POOL_ARN = module.cognito.user_pool_arn
     },
     local.all_lambda_invoke_arns

@@ -6,6 +6,9 @@ import { signOut } from 'aws-amplify/auth'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import { ProfileScreenNavigationProp } from '../setup/navigation/navigationTypes'
 import { SCREENS } from '../setup/constant/screens'
+import { Cache } from 'aws-amplify/utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 interface ProfileScreenProps {
   navigation: ProfileScreenNavigationProp;
@@ -14,12 +17,22 @@ interface ProfileScreenProps {
 export default function Profile({ navigation }: ProfileScreenProps) {
   const theme = useTheme()
 
+  const clearAllStorage = async () => {
+    if (Platform.OS !== 'web') {
+      await AsyncStorage.clear();
+    }
+  };
+
   const handleSignOut = async (): Promise<void> => {
     try {
+      await Promise.all([Cache.clear(), clearAllStorage()])
       await signOut()
-      navigation.navigate(SCREENS.PROFILE)
+      navigation.navigate(SCREENS.LOGIN)
     } catch (error) {
-      console.error('Error signing out:', error)
+      console.error('Error during sign out:', error instanceof Error ? error.message : 'Unknown error');
+      if (error instanceof Error && error.name === 'UserNotAuthenticatedException') {
+        navigation.navigate(SCREENS.LOGIN);
+      }
     }
   }
 
