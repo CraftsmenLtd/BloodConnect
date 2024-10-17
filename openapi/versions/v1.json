@@ -65,6 +65,11 @@
           ],
           "type": "cognito_user_pools"
         }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header"
       }
     }
   },

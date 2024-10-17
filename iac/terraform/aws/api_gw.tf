@@ -109,3 +109,14 @@ resource "aws_api_gateway_usage_plan_key" "blood_donation_request_usage_plan_key
   key_type      = "API_KEY"
   usage_plan_id = aws_api_gateway_usage_plan.blood_donation_request_usage_plan.id
 }
+
+resource "aws_api_gateway_method_settings" "blood_donation_request_settings" {
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
+  stage_name  = aws_api_gateway_deployment.api_deployment.stage_name
+  method_path = "donations/*"
+
+  settings {
+    throttling_rate_limit  = 10
+    throttling_burst_limit = 5
+  }
+}
