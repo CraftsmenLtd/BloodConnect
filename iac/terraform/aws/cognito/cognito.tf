@@ -2,24 +2,28 @@ resource "aws_cognito_user_pool" "user_pool" {
   name = "${var.environment}-user-pool"
 
   schema {
-    attribute_data_type = "String"
-    name                = "email"
-    required            = true
-    mutable             = true
+    attribute_data_type      = "String"
+    name                     = "email"
+    required                 = true
+    mutable                  = true
+    developer_only_attribute = false
   }
 
   schema {
-    attribute_data_type = "String"
-    name                = "name"
-    required            = true
-    mutable             = true
+    attribute_data_type      = "String"
+    name                     = "name"
+    required                 = true
+    mutable                  = true
+    developer_only_attribute = false
   }
 
   schema {
-    attribute_data_type = "String"
-    name                = "phone_number"
-    required            = false
-    mutable             = true
+    attribute_data_type      = "String"
+    name                     = "phone_number"
+    required                 = false
+    mutable                  = true
+    developer_only_attribute = false
+    string_attribute_constraints {}
   }
 
   auto_verified_attributes = ["email"]
@@ -104,8 +108,8 @@ resource "aws_cognito_user_pool_domain" "set_custom_domain_prod" {
 resource "aws_cognito_user_pool_domain" "set_custom_domain" {
   count = local.NonProductionEnvironment
 
-  domain          = local.cognito_domain_name
-  user_pool_id    = aws_cognito_user_pool.user_pool.id
+  domain       = local.cognito_domain_name
+  user_pool_id = aws_cognito_user_pool.user_pool.id
 }
 
 resource "aws_route53_record" "cognito_user_pool_custom_domain" {
