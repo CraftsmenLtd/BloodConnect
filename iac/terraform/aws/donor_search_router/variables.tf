@@ -7,3 +7,8 @@ variable "dynamodb_table_arn" {
   type        = string
   description = "ARN of the DynamoDB table"
 }
+
+variable "donor_search_sf_arn" {
+  type        = string
+  description = "donor search sf arn"
+}

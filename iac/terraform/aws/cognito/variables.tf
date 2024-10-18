@@ -24,11 +24,6 @@ variable "password_length" {
   default     = 10
 }
 
-variable "lambda_archive_path" {
-  type        = string
-  description = "Path to the Lambda function zip archives"
-}
-
 variable "google_client_id" {
   description = "Google OAuth Client ID"
   type        = string
@@ -66,6 +61,7 @@ variable "facebook_client_secret" {
     error_message = "The facebook_client_secret value must be set."
   }
 }
+
 variable "acm_certificate_arn" {
   type        = string
   description = "ARN for bloodconnect SSL certification"

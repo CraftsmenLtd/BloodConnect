@@ -1,0 +1,3 @@
+module "environments" {
+  source = "../environments"
+}

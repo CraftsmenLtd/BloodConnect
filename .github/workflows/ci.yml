@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - "master"
+      - "154-donor-router-tf"
 
 permissions:
   contents: read
