@@ -42,8 +42,8 @@
       "$ref": "./../integration/aws/donations/post-donation.json"
     },
     "x-amazon-apigateway-throttling": {
-      "rate-limit": 10,
-      "burst-limit": 5
+      "rate-limit": 50,
+      "burst-limit": 20
     }
   },
   "patch": {
@@ -89,8 +89,8 @@
       "$ref": "./../integration/aws/donations/patch-donation.json"
     },
     "x-amazon-apigateway-throttling": {
-      "rate-limit": 10,
-      "burst-limit": 5
+      "rate-limit": 50,
+      "burst-limit": 20
     }
   },
   "options": {

@@ -89,14 +89,14 @@ resource "aws_api_gateway_usage_plan" "blood_donation_request_usage_plan" {
   }
 
   quota_settings {
-    limit  = 10
+    limit  = 50
     offset = 0
     period = "DAY"
   }
 
   throttle_settings {
-    burst_limit = 5
-    rate_limit  = 10
+    burst_limit = 20
+    rate_limit  = 50
   }
 }
 
