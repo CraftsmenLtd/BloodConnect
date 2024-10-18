@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import { SetPasswordRouteProp, SetPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import { registerUser } from '../../authService'
+import { formatErrorMessage } from '../../../utility/formatte'
 
 export const PASSWORD_INPUT_NAME = 'password'
 
@@ -25,6 +26,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 
 export const useSetPassword = (): any => {
   const navigation = useNavigation<SetPasswordScreenNavigationProp>()
+  const [loading, setLoading] = useState(false)
   const { params: routeParams } = useRoute<SetPasswordRouteProp>()
   const [newPassword, setNewPassword] = useState<Password>(
     initializeState<Password>(Object.keys(validationRules) as Array<keyof Password>, '')
@@ -66,6 +68,7 @@ export const useSetPassword = (): any => {
   }, [newPassword, errors])
 
   const handleSetPassword = async(): Promise<void> => {
+    setLoading(true)
     const { params } = routeParams
     try {
       const isSuccess = await registerUser({ ...params, password: newPassword.password })
@@ -73,7 +76,10 @@ export const useSetPassword = (): any => {
         navigation.navigate(SCREENS.OTP, { email: params.email })
       }
     } catch (error) {
-      setError('Failed to sign up. Please try again later.')
+      const errorMessage = formatErrorMessage(error)
+      setError(errorMessage)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -84,6 +90,7 @@ export const useSetPassword = (): any => {
     handleSetPassword,
     errors,
     error,
-    isButtonDisabled
+    isButtonDisabled,
+    loading
   }
 }

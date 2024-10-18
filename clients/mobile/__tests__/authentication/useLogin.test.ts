@@ -1,8 +1,8 @@
-// import '../__mocks__/reactNavigation.mock'
-import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
+import { mockedNavigate, mockDispatch } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useLogin } from '../../src/authentication/login/hooks/useLogin'
 import { loginUser, googleLogin, facebookLogin } from '../../src/authentication/authService'
+import { CommonActions } from '@react-navigation/native'
 
 jest.mock('../../src/authentication/authService', () => ({
   loginUser: jest.fn(),
@@ -56,14 +56,25 @@ describe('useLogin Hook', () => {
   })
 
   test('should navigate to Profile screen on successful login', async() => {
+    const mockAccessToken = 'mockAccessToken'
+    const mockIdToken = 'mockIdToken'
+
     const { result } = renderHook(() => useLogin());
-    (loginUser as jest.Mock).mockResolvedValue(true)
+    (loginUser as jest.Mock).mockResolvedValue({
+      accessToken: mockAccessToken,
+      idToken: mockIdToken,
+      isSignedIn: true
+    })
 
     await act(async() => {
       await result.current.handleLogin()
     })
-
-    expect(mockedNavigate).toHaveBeenCalledWith('Profile')
+    expect(mockDispatch).toHaveBeenCalledWith(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Profile' }]
+      })
+    )
   })
 
   test('should set loginError on login failure', async() => {

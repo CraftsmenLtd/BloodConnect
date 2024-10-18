@@ -59,15 +59,26 @@ describe('useOtp Hook', () => {
   })
 
   test('should submit OTP and navigate on success', async() => {
-    const { result } = renderHook(() => useOtp());
+    const mockEmail = 'test@example.com'
+    const mockAccessToken = 'mockAccessToken'
+    const mockIdToken = 'mockIdToken'
 
-    (submitOtp as jest.Mock).mockResolvedValue(true)
+    const { result } = renderHook(() => useOtp())
+
+    result.current.email = mockEmail;
+
+    (submitOtp as jest.Mock).mockResolvedValue({
+      isSucessRegister: true,
+      accessToken: mockAccessToken,
+      idToken: mockIdToken
+    })
 
     await act(async() => {
       await result.current.handleSubmit()
     })
 
     expect(submitOtp).toHaveBeenCalledTimes(1)
+    expect(submitOtp).toHaveBeenCalledWith(mockEmail, result.current.otp.join(''))
     expect(mockedNavigate).toHaveBeenCalledWith('Profile')
   })
 

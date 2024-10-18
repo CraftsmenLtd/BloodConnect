@@ -76,6 +76,6 @@ describe('useSetPassword Hook', () => {
     await act(async() => {
       await result.current.handleSetPassword()
     })
-    expect(result.current.error).toBe('Failed to sign up. Please try again later.')
+    expect(result.current.error).toBe('An unexpected error occurred: Registration failed')
   })
 })

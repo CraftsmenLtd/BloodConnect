@@ -13,7 +13,7 @@ export const awsCognitoConfiguration = {
           scopes: ['email', 'profile', 'openid'],
           redirectSignIn: ['bloodconnect://callback'],
           redirectSignOut: ['bloodconnect://signout'],
-          responseType: 'code' as const,
+          responseType: 'token' as const,
           socialproviders: ['Google', 'Facebook']
         }
       }

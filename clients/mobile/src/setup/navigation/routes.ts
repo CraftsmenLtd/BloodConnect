@@ -5,6 +5,7 @@ import Profile from '../../userWorkflow/Profile'
 import { SCREENS } from '../constant/screens'
 import Welcome from '../../welcome/WelcomeScreen'
 import SetPassword from '../../authentication/setPassword/UI/SetPassword'
+import CreateBloodRequest from '../../donationWorkflow/Donation'
 
 export const routes = [
   {
@@ -41,6 +42,12 @@ export const routes = [
     name: SCREENS.PROFILE,
     component: Profile,
     options: { headerShown: false },
-    protected: false
+    protected: true
+  },
+  {
+    name: SCREENS.DONATION,
+    component: CreateBloodRequest,
+    options: { headerShown: true, headerTitle: 'Create Blood Request' },
+    protected: true
   }
 ]

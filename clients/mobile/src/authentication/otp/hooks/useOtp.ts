@@ -1,15 +1,17 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import { TextInput } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
 import { submitOtp } from '../../authService'
 import { SCREENS } from '../../../setup/constant/screens'
+import { useAuth } from '../../useAuth'
 
 export const useOtp = (): any => {
+  const auth = useAuth()
   const navigation = useNavigation<OtpScreenNavigationProp>()
   const route = useRoute<OtpScreenRouteProp>()
   const { email } = route.params
-
+  const [loading, setLoading] = useState(false)
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [error, setError] = useState<boolean>(false)
   const inputRefs = useRef<Array<TextInput | null>>([])
@@ -28,14 +30,24 @@ export const useOtp = (): any => {
     }
   }
 
+  const isButtonDisabled = useMemo(() => {
+    return otp.join('').trim().length !== 6
+  }, [otp])
+
   const handleSubmit = async(): Promise<void> => {
+    setLoading(true)
     try {
-      const isSignUpComplete = await submitOtp(email, otp.join(''))
-      if (isSignUpComplete) {
+      const { isSucessRegister, accessToken, idToken } = await submitOtp(email, otp.join(''))
+      if (isSucessRegister) {
+        auth?.setAccessToken(accessToken)
+        auth?.setIdToken(idToken)
+        auth?.setIsAuthenticated(true)
         navigation.navigate(SCREENS.PROFILE)
       }
     } catch (error) {
       setError(true)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -45,6 +57,8 @@ export const useOtp = (): any => {
     error,
     inputRefs,
     handleOtpChange,
-    handleSubmit
+    handleSubmit,
+    loading,
+    isButtonDisabled
   }
 }

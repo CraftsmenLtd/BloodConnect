@@ -3,6 +3,22 @@ import { RouteProp } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { UserRegistrationCredentials } from '../../authentication/authService'
 
+export type DonationScreenParams = {
+  seekerId: string;
+  requestPostId: string;
+  patientName: string;
+  neededBloodGroup: string;
+  bloodQuantity: string;
+  urgencyLevel: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  donationDateTime: Date;
+  contactNumber: string;
+  transportationInfo: string;
+  shortDescription: string;
+}
+
 export type RootStackParamList = {
   [SCREENS.WELCOME]: undefined;
   [SCREENS.REGISTER]: undefined;
@@ -10,6 +26,7 @@ export type RootStackParamList = {
   [SCREENS.OTP]: { email: string };
   [SCREENS.SET_PASSWORD]: { params: UserRegistrationCredentials; fromScreen: SCREENS };
   [SCREENS.PROFILE]: undefined;
+  [SCREENS.DONATION]: { data: DonationScreenParams | null; isUpdating: boolean };
 }
 
 export type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.WELCOME>
@@ -17,7 +34,9 @@ export type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamLis
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.LOGIN>
 export type SetPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.SET_PASSWORD>
 export type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.PROFILE>
+export type DonationScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONATION>
 
 export type OtpScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.OTP>
 export type OtpScreenRouteProp = RouteProp<RootStackParamList, SCREENS.OTP>
 export type SetPasswordRouteProp = RouteProp<RootStackParamList, SCREENS.SET_PASSWORD>
+export type DonationScreenRouteProp = RouteProp<RootStackParamList, SCREENS.DONATION>

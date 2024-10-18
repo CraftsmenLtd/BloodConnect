@@ -12,5 +12,8 @@ export const commonStyles = (theme: Theme): ReturnType<typeof StyleSheet.create>
   error: {
     color: theme.colors.primary,
     fontSize: theme.typography.errorFontSize
+  },
+  asterisk: {
+    color: theme.colors.primary
   }
 })

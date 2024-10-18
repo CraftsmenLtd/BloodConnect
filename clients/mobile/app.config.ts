@@ -4,12 +4,13 @@ import { ExpoConfig } from '@expo/config-types'
 export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
   const ENV = process.env.APP_ENV ?? 'development'
 
-  const ENV_VARS: Record<string, { AWS_USER_POOL_ID?: string; AWS_USER_POOL_CLIENT_ID?: string; AWS_COGNITO_DOMAIN?: string; EAS_PROJECT_ID?: string }> = {
+  const ENV_VARS: Record<string, { AWS_USER_POOL_ID?: string; AWS_USER_POOL_CLIENT_ID?: string; AWS_COGNITO_DOMAIN?: string; EAS_PROJECT_ID?: string; API_BASE_URL?: string }> = {
     development: {
       AWS_USER_POOL_ID: process.env.AWS_USER_POOL_ID,
       AWS_USER_POOL_CLIENT_ID: process.env.AWS_USER_POOL_CLIENT_ID,
       AWS_COGNITO_DOMAIN: process.env.AWS_COGNITO_DOMAIN,
-      EAS_PROJECT_ID: process.env.EAS_PROJECT_ID
+      EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,
+      API_BASE_URL: process.env.API_BASE_URL
     }
   }
 

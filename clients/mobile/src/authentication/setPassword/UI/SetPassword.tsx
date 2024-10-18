@@ -12,7 +12,7 @@ export default function SetPassword(): JSX.Element {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false)
 
-  const { newPassword, errors, handleInputChange, handleSetPassword, error, isButtonDisabled } = useSetPassword()
+  const { newPassword, errors, handleInputChange, handleSetPassword, error, isButtonDisabled, loading } = useSetPassword()
 
   return (
     <AuthLayout>
@@ -37,7 +37,7 @@ export default function SetPassword(): JSX.Element {
       />
 
       {error !== '' && <Text style={styles.error}>{error}</Text>}
-      <Button text="Set Password" onPress={handleSetPassword} disabled={isButtonDisabled} />
+      <Button text="Set Password" onPress={handleSetPassword} disabled={isButtonDisabled} loading={loading} />
     </AuthLayout>
   )
 }

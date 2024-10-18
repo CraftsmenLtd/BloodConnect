@@ -18,7 +18,7 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const styles = createStyles(useTheme())
-  const { loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
+  const { loading, loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
 
   return (
     <AuthLayout>
@@ -47,7 +47,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         onPress={() => { console.log('Forgot Password flow') }}
       />
 
-      <Button text="Login" onPress={handleLogin} />
+      <Button text="Login" onPress={handleLogin} loading={loading} />
 
       <Divider text="Or" />
 
