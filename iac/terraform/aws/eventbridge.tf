@@ -109,7 +109,6 @@ resource "aws_iam_role_policy" "eventbridge_cloudwatch_policy" {
   })
 }
 
-
 resource "aws_iam_role" "eventbridge_role" {
   name = "${var.environment}-eventbridge-dynamodb-stream-role"
 
@@ -140,7 +139,7 @@ resource "aws_iam_role_policy" "eventbridge_policy" {
           "dynamodb:DescribeStream",
           "dynamodb:ListStreams"
         ]
-        Resource = aws_dynamodb_table.blood_connect_data.stream_arn
+        Resource = module.database.dynamodb_table_stream_arn
       },
       {
         Effect = "Allow"
