@@ -1,35 +1,9 @@
-resource "aws_cloudwatch_event_rule" "donation_request_rule" {
-  name        = "${var.environment}-donation-request-rule"
-  description = "Capture blood donation request creations and updates"
-
-  event_pattern = jsonencode({
-    source      = ["aws.dynamodb"]
-    detail-type = ["AWS DynamoDB Stream Event"]
-    detail = {
-      eventName = ["INSERT", "MODIFY"]
-      dynamodb = {
-        Keys = {
-          PK = {
-            S = [{ prefix = "BLOOD_REQ#" }]
-          }
-        }
-      }
-    }
-  })
-}
-
 resource "aws_sqs_queue" "donor_search_queue" {
   name                      = "${var.environment}-donor-search-queue"
   delay_seconds             = 0
   max_message_size          = 262144
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
-}
-
-resource "aws_cloudwatch_event_target" "donor_search_queue_target" {
-  rule      = aws_cloudwatch_event_rule.donation_request_rule.name
-  target_id = "DonorSearchQueue"
-  arn       = aws_sqs_queue.donor_search_queue.arn
 }
 
 resource "aws_sqs_queue_policy" "donor_search_queue_policy" {
@@ -39,71 +13,24 @@ resource "aws_sqs_queue_policy" "donor_search_queue_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "AllowEventBridgeSendMessage"
+        Sid    = "AllowEventBridgePipeSendMessage"
         Effect = "Allow"
         Principal = {
-          Service = "events.amazonaws.com"
+          Service = "pipes.amazonaws.com"
         }
         Action   = "sqs:SendMessage"
         Resource = aws_sqs_queue.donor_search_queue.arn
-        Condition = {
-          ArnEquals = {
-            "aws:SourceArn" = aws_cloudwatch_event_rule.donation_request_rule.arn
-          }
-        }
       }
     ]
   })
 }
 
-resource "aws_cloudwatch_log_group" "eventbridge_log_group" {
-  name = "/aws/events/${aws_cloudwatch_event_rule.donation_request_rule.name}"
+resource "aws_cloudwatch_log_group" "eventbridge_pipe_log_group" {
+  name = "/aws/pipes/${var.environment}-donation-request-pipe"
 }
 
-resource "aws_cloudwatch_event_target" "log_group_target" {
-  rule      = aws_cloudwatch_event_rule.donation_request_rule.name
-  target_id = "SendToCloudWatchLogs"
-  arn       = aws_cloudwatch_log_group.eventbridge_log_group.arn
-}
-
-resource "aws_iam_role" "eventbridge_cloudwatch_role" {
-  name = "${var.environment}-eventbridge-cloudwatch-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "events.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy" "eventbridge_cloudwatch_policy" {
-  name = "${var.environment}-eventbridge-cloudwatch-policy"
-  role = aws_iam_role.eventbridge_cloudwatch_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ]
-        Resource = "${aws_cloudwatch_log_group.eventbridge_log_group.arn}:*"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role" "eventbridge_role" {
-  name = "${var.environment}-eventbridge-dynamodb-stream-role"
+resource "aws_iam_role" "eventbridge_pipe_role" {
+  name = "${var.environment}-eventbridge-pipe-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -111,15 +38,15 @@ resource "aws_iam_role" "eventbridge_role" {
       Action = "sts:AssumeRole"
       Effect = "Allow"
       Principal = {
-        Service = "events.amazonaws.com"
+        Service = "pipes.amazonaws.com"
       }
     }]
   })
 }
 
-resource "aws_iam_role_policy" "eventbridge_policy" {
-  name = "${var.environment}-eventbridge-dynamodb-stream-policy"
-  role = aws_iam_role.eventbridge_role.id
+resource "aws_iam_role_policy" "eventbridge_pipe_policy" {
+  name = "${var.environment}-eventbridge-pipe-policy"
+  role = aws_iam_role.eventbridge_pipe_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -127,13 +54,72 @@ resource "aws_iam_role_policy" "eventbridge_policy" {
       {
         Effect = "Allow"
         Action = [
+          "dynamodb:DescribeStream",
           "dynamodb:GetRecords",
           "dynamodb:GetShardIterator",
-          "dynamodb:DescribeStream",
           "dynamodb:ListStreams"
         ]
         Resource = module.database.dynamodb_table_stream_arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:SendMessage"
+        ]
+        Resource = aws_sqs_queue.donor_search_queue.arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "${aws_cloudwatch_log_group.eventbridge_pipe_log_group.arn}:*"
       }
     ]
   })
+}
+
+resource "aws_pipes_pipe" "donation_request_pipe" {
+  name     = "${var.environment}-donation-request-pipe"
+  role_arn = aws_iam_role.eventbridge_pipe_role.arn
+  source   = module.database.dynamodb_table_stream_arn
+  target   = aws_sqs_queue.donor_search_queue.arn
+
+  source_parameters {
+    dynamodb_stream_parameters {
+      starting_position = "LATEST"
+      batch_size        = 1
+    }
+
+    filter_criteria {
+      filter {
+        pattern = jsonencode({
+          eventName : ["INSERT", "MODIFY"],
+          dynamodb : {
+            NewImage : {
+              PK : {
+                S : [{ prefix : "BLOOD_REQ#" }]
+              }
+            }
+          }
+        })
+      }
+    }
+  }
+
+  target_parameters {
+    sqs_queue_parameters {
+      message_group_id = "donation-requests"
+    }
+  }
+
+  log_configuration {
+    include_execution_data = ["ALL"]
+    level                  = "INFO"
+    cloudwatch_logs_log_destination {
+      log_group_arn = aws_cloudwatch_log_group.eventbridge_pipe_log_group.arn
+    }
+  }
 }
