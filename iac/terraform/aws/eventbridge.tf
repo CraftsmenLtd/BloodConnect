@@ -10,7 +10,7 @@ resource "aws_cloudwatch_event_rule" "donation_request_rule" {
       dynamodb = {
         Keys = {
           PK = {
-            S = [{prefix = "BLOOD_REQ#"}]
+            S = [{ prefix = "BLOOD_REQ#" }]
           }
         }
       }
@@ -26,12 +26,14 @@ resource "aws_sqs_queue" "donor_search_queue" {
   receive_wait_time_seconds = 10
 }
 
+# EventBridge Target (SQS)
 resource "aws_cloudwatch_event_target" "donor_search_queue_target" {
   rule      = aws_cloudwatch_event_rule.donation_request_rule.name
   target_id = "DonorSearchQueue"
   arn       = aws_sqs_queue.donor_search_queue.arn
 }
 
+# SQS Queue Policy
 resource "aws_sqs_queue_policy" "donor_search_queue_policy" {
   queue_url = aws_sqs_queue.donor_search_queue.id
 
@@ -51,6 +53,57 @@ resource "aws_sqs_queue_policy" "donor_search_queue_policy" {
             "aws:SourceArn" = aws_cloudwatch_event_rule.donation_request_rule.arn
           }
         }
+      }
+    ]
+  })
+}
+
+# CloudWatch Log Group
+resource "aws_cloudwatch_log_group" "eventbridge_log_group" {
+  name              = "/aws/events/${aws_cloudwatch_event_rule.donation_request_rule.name}"
+  retention_in_days = 14
+}
+
+# EventBridge Target (CloudWatch Logs)
+resource "aws_cloudwatch_event_target" "log_group_target" {
+  rule      = aws_cloudwatch_event_rule.donation_request_rule.name
+  target_id = "SendToCloudWatchLogs"
+  arn       = aws_cloudwatch_log_group.eventbridge_log_group.arn
+}
+
+# IAM Role for EventBridge to write to CloudWatch Logs
+resource "aws_iam_role" "eventbridge_cloudwatch_role" {
+  name = "${var.environment}-eventbridge-cloudwatch-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "events.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# IAM Policy for EventBridge to write to CloudWatch Logs
+resource "aws_iam_role_policy" "eventbridge_cloudwatch_policy" {
+  name = "${var.environment}-eventbridge-cloudwatch-policy"
+  role = aws_iam_role.eventbridge_cloudwatch_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "${aws_cloudwatch_log_group.eventbridge_log_group.arn}:*"
       }
     ]
   })
