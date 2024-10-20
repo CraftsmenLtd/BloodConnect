@@ -7,7 +7,6 @@ resource "aws_cloudwatch_event_rule" "donation_request_rule" {
     detail-type = ["AWS DynamoDB Stream Event"]
     detail = {
       eventName = ["INSERT", "MODIFY"]
-      tableName = [aws_dynamodb_table.blood_connect_data.name]
       dynamodb = {
         Keys = {
           PK = {
