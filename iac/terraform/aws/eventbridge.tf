@@ -26,15 +26,12 @@ resource "aws_sqs_queue" "donor_search_queue" {
   receive_wait_time_seconds = 10
 }
 
-# EventBridge Target (SQS)
 resource "aws_cloudwatch_event_target" "donor_search_queue_target" {
   rule      = aws_cloudwatch_event_rule.donation_request_rule.name
   target_id = "DonorSearchQueue"
   arn       = aws_sqs_queue.donor_search_queue.arn
-  role_arn  = aws_iam_role.eventbridge_role.arn
 }
 
-# SQS Queue Policy
 resource "aws_sqs_queue_policy" "donor_search_queue_policy" {
   queue_url = aws_sqs_queue.donor_search_queue.id
 
@@ -59,19 +56,16 @@ resource "aws_sqs_queue_policy" "donor_search_queue_policy" {
   })
 }
 
-# CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "eventbridge_log_group" {
   name = "/aws/events/${aws_cloudwatch_event_rule.donation_request_rule.name}"
 }
 
-# EventBridge Target (CloudWatch Logs)
 resource "aws_cloudwatch_event_target" "log_group_target" {
   rule      = aws_cloudwatch_event_rule.donation_request_rule.name
   target_id = "SendToCloudWatchLogs"
   arn       = aws_cloudwatch_log_group.eventbridge_log_group.arn
 }
 
-# IAM Role for EventBridge to write to CloudWatch Logs
 resource "aws_iam_role" "eventbridge_cloudwatch_role" {
   name = "${var.environment}-eventbridge-cloudwatch-role"
 
@@ -89,7 +83,6 @@ resource "aws_iam_role" "eventbridge_cloudwatch_role" {
   })
 }
 
-# IAM Policy for EventBridge to write to CloudWatch Logs
 resource "aws_iam_role_policy" "eventbridge_cloudwatch_policy" {
   name = "${var.environment}-eventbridge-cloudwatch-policy"
   role = aws_iam_role.eventbridge_cloudwatch_role.id
@@ -140,11 +133,6 @@ resource "aws_iam_role_policy" "eventbridge_policy" {
           "dynamodb:ListStreams"
         ]
         Resource = module.database.dynamodb_table_stream_arn
-      },
-      {
-        Effect = "Allow"
-        Action = ["sqs:SendMessage"]
-        Resource = aws_sqs_queue.donor_search_queue.arn
       }
     ]
   })
