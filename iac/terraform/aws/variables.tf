@@ -69,3 +69,33 @@ variable "facebook_client_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "api_quota_limit" {
+  description = "The maximum number of requests that can be made in a given time period"
+  type        = number
+  default     = 10
+}
+
+variable "api_quota_offset" {
+  description = "The number of requests subtracted from the given limit in the initial time period"
+  type        = number
+  default     = 0
+}
+
+variable "api_quota_period" {
+  description = "The time period in which the limit applies. Valid values are 'DAY', 'WEEK' or 'MONTH'"
+  type        = string
+  default     = "DAY"
+}
+
+variable "api_throttle_burst_limit" {
+  description = "The API Gateway throttle burst limit"
+  type        = number
+  default     = 5
+}
+
+variable "api_throttle_rate_limit" {
+  description = "The API Gateway throttle rate limit"
+  type        = number
+  default     = 10
+}

@@ -35,6 +35,22 @@
           }
         },
         "content": {}
+      },
+      "429": {
+        "description": "Too Many Requests",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Rate limit exceeded. Please try again later."
+                }
+              }
+            }
+          }
+        }
       }
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
@@ -44,12 +60,12 @@
     "security": [
       {
         "CognitoAuthorizer": []
+      },
+      {
+        "api_key": []
       }
     ],
-    "x-amazon-apigateway-throttling": {
-      "rate-limit": 50,
-      "burst-limit": 20
-    }
+    "x-amazon-apigateway-api-key-source": "HEADER"
   },
   "patch": {
     "operationId": "UpdateDonation",
@@ -87,6 +103,22 @@
           }
         },
         "content": {}
+      },
+      "429": {
+        "description": "Too Many Requests",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Rate limit exceeded. Please try again later."
+                }
+              }
+            }
+          }
+        }
       }
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
@@ -96,12 +128,12 @@
     "security": [
       {
         "CognitoAuthorizer": []
+      },
+      {
+        "api_key": []
       }
     ],
-    "x-amazon-apigateway-throttling": {
-      "rate-limit": 50,
-      "burst-limit": 20
-    }
+    "x-amazon-apigateway-api-key-source": "HEADER"
   },
   "options": {
     "$ref": "./cors-options.json"
