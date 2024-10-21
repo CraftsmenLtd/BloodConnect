@@ -31,7 +31,7 @@ In ``lambdas.tf``, configure the settings for each Lambda function, such as the 
         function-one = {
           name                       = "function-one"
           handler                    = "functionOne.default"
-          zip_path                   = "${var.lambda_archive_path}/functionOne.zip"
+          zip_path                   = "functionOne.zip"
           statement                  = local.policies.common_policies
           invocation_arn_placeholder = "FUNCTION_ONE_INVOCATION_ARN"   # Placeholder for OpenAPI integration
           env_variables = {
@@ -41,7 +41,7 @@ In ``lambdas.tf``, configure the settings for each Lambda function, such as the 
         function-two = {
           name                       = "function-two"
           handler                    = "functionTwo.default"
-          zip_path                   = "${var.lambda_archive_path}/functionTwo.zip"
+          zip_path                   = "functionTwo.zip"
           statement                  = local.policies.common_policies
           invocation_arn_placeholder = "FUNCTION_TWO_INVOCATION_ARN"
           env_variables              = {}
@@ -132,11 +132,6 @@ In ``variables.tf``, define the necessary variables for the module, such as ``en
     variable "environment" {
       type        = string
       description = "Deployment environment (e.g., dev, stage, prod)"
-    }
-
-    variable "lambda_archive_path" {
-      type        = string
-      description = "Path to the directory where Lambda zip files are stored"
     }
 
 8. **Updating the Root Module Metadata**
