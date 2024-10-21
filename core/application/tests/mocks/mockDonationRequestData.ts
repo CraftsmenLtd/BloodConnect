@@ -12,10 +12,7 @@ export const donationAttributes: BloodDonationAttributes = {
   latitude: 23.7936,
   longitude: 90.4043,
   donationDateTime: '2023-09-20T15:00:00Z',
-  contactInfo: {
-    name: 'Jane Doe',
-    phone: '+880123456789'
-  },
+  contactNumber: '123456789',
   transportationInfo: 'Car available',
   shortDescription: 'Need blood urgently for surgery.'
 }
@@ -32,10 +29,7 @@ export const donationDto: DonationDTO = {
   geohash: 'dr5regw3',
   donationDateTime: '2024-10-10T00:00:00Z',
   status: DonationStatus.PENDING,
-  contactInfo: {
-    name: 'John Doe',
-    phone: '123456789'
-  }
+  contactNumber: '123456789'
 }
 
 export const donationFields: DonationFields = {
@@ -51,9 +45,6 @@ export const donationFields: DonationFields = {
   geohash: 'dr5regw3',
   donationDateTime: '2024-10-10T00:00:00Z',
   status: DonationStatus.PENDING,
-  contactInfo: {
-    name: 'John Doe',
-    phone: '123456789'
-  },
+  contactNumber: '123456789',
   createdAt: '2024-10-10T00:00:00Z'
 }

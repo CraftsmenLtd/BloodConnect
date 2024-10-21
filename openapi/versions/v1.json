@@ -49,7 +49,7 @@
       "$ref": "./../paths/auth/register-organization.json"
     },
     "/donations": {
-      "$ref": "./../paths/donations.json"
+      "$ref": "./../paths/donations/donations.json"
     }
   },
   "components": {

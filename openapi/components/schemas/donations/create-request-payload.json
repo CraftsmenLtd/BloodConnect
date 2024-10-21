@@ -10,15 +10,11 @@
       "latitude",
       "longitude",
       "donationDateTime",
-      "contactInfo"
+      "contactNumber"
     ],
     "properties": {
       "seekerId": {
         "type": "string"
-      },
-      "patientName": {
-        "type": "string",
-        "minLength": 1
       },
       "neededBloodGroup": {
         "type": "string",
@@ -51,19 +47,13 @@
         "type": "string",
         "format": "date-time"
       },
-      "contactInfo": {
-        "type": "object",
-        "required": ["name", "phone"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 2
-          },
-          "phone": {
-            "type": "string",
-            "pattern": "^[+]?[0-9]{1,3}?[0-9]{10}$"
-          }
-        }
+      "contactNumber": {
+        "type": "string",
+        "pattern": "^\\+8801[3-9]\\d{8}$"
+      },
+      "patientName": {
+        "type": "string",
+        "minLength": 1
       },
       "transportationInfo": {
         "type": "string"
@@ -82,11 +72,7 @@
       "latitude": 23.7936,
       "longitude": 90.4043,
       "donationDateTime": "2024-10-20T15:00:00Z",
-      "contactInfo": {
-        "name": "Jane Doe",
-        "phone": "+880123456789"
-      },
-      "patientCondition": "Stable",
+      "contactNumber": "+880123456789",
       "transportationInfo": "Car available",
       "shortDescription": "Need blood urgently for surgery."
     }

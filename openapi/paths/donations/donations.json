@@ -9,7 +9,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "./../components/schemas/donations/create-request-payload.json#/CreateDonationRequestModel"
+            "$ref": "./../../components/schemas/donations/create-request-payload.json#/CreateDonationRequestModel"
           }
         }
       }
@@ -39,7 +39,7 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../integration/aws/donations/post-donation.json"
+      "$ref": "./../../integration/aws/donations/post-donation.json"
     },
     "security": [
       {
@@ -57,7 +57,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "./../components/schemas/donations/update-request-payload.json#/UpdateDonationRequestModel"
+            "$ref": "./../../components/schemas/donations/update-request-payload.json#/UpdateDonationRequestModel"
           }
         }
       }
@@ -87,7 +87,7 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../integration/aws/donations/patch-donation.json"
+      "$ref": "./../../integration/aws/donations/patch-donation.json"
     },
     "security": [
       {
@@ -96,6 +96,6 @@
     ]
   },
   "options": {
-    "$ref": "./cors-options.json"
+    "$ref": "./../cors-options.json"
   }
 }
