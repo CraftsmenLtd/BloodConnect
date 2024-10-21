@@ -109,12 +109,6 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
     }
   }
 
-  target_parameters {
-    sqs_queue_parameters {
-      message_group_id = "donation-requests"
-    }
-  }
-
   log_configuration {
     include_execution_data = ["ALL"]
     level                  = "INFO"
