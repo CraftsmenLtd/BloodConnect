@@ -1,0 +1,11 @@
+{
+  "Comment": "State machine for donor search process",
+  "StartAt": "HelloWorld",
+  "States": {
+    "HelloWorld": {
+      "Type": "Pass",
+      "Result": "Hello World",
+      "End": true
+    }
+  }
+}
