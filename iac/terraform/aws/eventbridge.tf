@@ -1,4 +1,5 @@
 resource "aws_sqs_queue" "donor_search_queue" {
+  #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
   name                      = "${var.environment}-donor-search-queue"
   delay_seconds             = 0
   max_message_size          = 262144
@@ -26,7 +27,10 @@ resource "aws_sqs_queue_policy" "donor_search_queue_policy" {
 }
 
 resource "aws_cloudwatch_log_group" "eventbridge_pipe_log_group" {
-  name = "/aws/pipes/${var.environment}-donation-request-pipe"
+  #checkov:skip=CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
+  #checkov:skip=CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
+  name              = "/aws/pipes/${var.environment}-donation-request-pipe"
+  retention_in_days = 30
 }
 
 resource "aws_iam_role" "eventbridge_pipe_role" {

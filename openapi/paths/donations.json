@@ -41,6 +41,11 @@
     "x-amazon-apigateway-integration": {
       "$ref": "./../integration/aws/donations/post-donation.json"
     },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ],
     "x-amazon-apigateway-throttling": {
       "rate-limit": 50,
       "burst-limit": 20
@@ -88,6 +93,11 @@
     "x-amazon-apigateway-integration": {
       "$ref": "./../integration/aws/donations/patch-donation.json"
     },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ],
     "x-amazon-apigateway-throttling": {
       "rate-limit": 50,
       "burst-limit": 20
