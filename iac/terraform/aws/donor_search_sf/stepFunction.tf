@@ -35,16 +35,16 @@ resource "aws_iam_policy" "step_function_logging_policy" {
     {
       "Effect": "Allow",
       "Action": [
-          "logs:CreateLogDelivery",
-          "logs:GetLogDelivery",
-          "logs:UpdateLogDelivery",
-          "logs:DeleteLogDelivery",
-          "logs:ListLogDeliveries",
-          "logs:PutResourcePolicy",
-          "logs:DescribeResourcePolicies",
-          "logs:DescribeLogGroups"
+        "logs:CreateLogDelivery",
+        "logs:GetLogDelivery",
+        "logs:UpdateLogDelivery",
+        "logs:DeleteLogDelivery",
+        "logs:ListLogDeliveries",
+        "logs:PutResourcePolicy",
+        "logs:DescribeResourcePolicies",
+        "logs:DescribeLogGroups"
       ],
-      "Resource": "${aws_cloudwatch_log_group.donor_search_state_machine_logs.arn}:*"
+      "Resource": "*"
     }
   ]
 }
