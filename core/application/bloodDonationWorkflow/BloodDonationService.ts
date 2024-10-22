@@ -72,21 +72,24 @@ export class BloodDonationService {
       if (existingItem === null) {
         return 'Item not found.'
       }
-      if (existingItem?.status !== undefined && existingItem.status === DonationStatus.COMPLETED) {
+      if (existingItem.status === DonationStatus.COMPLETED || existingItem.status === DonationStatus.EXPIRED) {
         return 'You can\'t update the donation request'
       }
+
       const retryCount = existingItem?.retryCount ?? 0
+      const updateData: Partial<DonationDTO> = {
+        ...existingItem,
+        id: requestPostId,
+        retryCount: retryCount + 1
+      }
 
       if (retryCount >= MAX_RETRY_COUNT) {
-        const updateData: Partial<DonationDTO> = {
-          ...existingItem,
-          id: requestPostId,
-          status: DonationStatus.EXPIRED,
-          retryCount: retryCount + 1
-        }
+        updateData.status = DonationStatus.EXPIRED
         await bloodDonationRepository.update(updateData)
         return 'Donor search expired after max retries.'
       }
+
+      await bloodDonationRepository.update(updateData)
 
       const stepFunctionInput: StepFunctionInput = {
         seekerId: donorRoutingAttributes.seekerId,
