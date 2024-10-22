@@ -6,6 +6,7 @@ import Repository from '../technicalImpl/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
 import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes } from './Types'
+import { BLOOD_REQUEST_PK_PREFIX } from '../technicalImpl/dbModels/BloodDonationModel'
 
 export class BloodDonationService {
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
@@ -31,7 +32,7 @@ export class BloodDonationService {
     try {
       const { requestPostId, donationDateTime, ...restAttributes } = donationAttributes
 
-      const item = await bloodDonationRepository.getItem(`BLOOD_REQUEST_PK_PREFIX#${donationAttributes.seekerId}`, `BLOOD_REQUEST_PK_PREFIX#${requestPostId}`)
+      const item = await bloodDonationRepository.getItem(`${BLOOD_REQUEST_PK_PREFIX}#${donationAttributes.seekerId}`, `${BLOOD_REQUEST_PK_PREFIX}#${requestPostId}`)
       if (item === null) {
         return 'Item not found.'
       }

@@ -7,6 +7,7 @@ import { validateInputWithRules } from '../../utils/validator'
 import BloodDonationOperationError from '../../bloodDonationWorkflow/BloodDonationOperationError'
 import { donationAttributes } from '../mocks/mockDonationRequestData'
 import { mockRepository as importedMockRepository } from '../mocks/mockRepositories'
+import { BLOOD_REQUEST_PK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
 
 jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
@@ -81,7 +82,7 @@ describe('BloodDonationService', () => {
 
       const result = await bloodDonationService.updateBloodDonation(donationAttributes, bloodDonationRepository)
 
-      expect(bloodDonationRepository.getItem).toHaveBeenCalledWith('BLOOD_REQUEST_PK_PREFIX#user123', 'BLOOD_REQUEST_PK_PREFIX#req123')
+      expect(bloodDonationRepository.getItem).toHaveBeenCalledWith(`${BLOOD_REQUEST_PK_PREFIX}#user123`, `${BLOOD_REQUEST_PK_PREFIX}#req123`)
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(expect.objectContaining({ id: 'req123', donationDateTime: expect.any(String) }))
       expect(result).toBe('We have updated your request and will let you know once there is an update.')
     })
