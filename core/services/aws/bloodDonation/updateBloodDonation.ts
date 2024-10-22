@@ -29,6 +29,7 @@ async function updateBloodDonationLambda(event: UpdateBloodDonationAttributes): 
     const bloodDonationAttributes: RequiredAttributes & OptionalAttributes = {
       requestPostId: event.requestPostId,
       seekerId: event.seekerId,
+      createdAt: event.createdAt,
       ...Object.fromEntries(
         Object.entries(event)
           .filter(([key]) => allowedKeys.includes(key as keyof UpdateBloodDonationAttributes))

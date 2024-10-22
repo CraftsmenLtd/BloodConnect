@@ -33,6 +33,10 @@ export class BloodDonationService {
       const { requestPostId, donationDateTime, createdAt, ...restAttributes } = donationAttributes
       // eslint-disable-next-line no-console
       console.log(donationAttributes)
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (!createdAt) {
+        return 'Created is required for updating the donation request.'
+      }
 
       const item = await bloodDonationRepository.getItem(`${BLOOD_REQUEST_PK_PREFIX}#${donationAttributes.seekerId}`, `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`)
       if (item === null) {

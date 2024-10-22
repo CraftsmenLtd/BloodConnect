@@ -42,6 +42,9 @@
       "transportationInfo": {
         "type": "string"
       },
+      "createdAt": {
+        "type": "string"
+      },
       "shortDescription": {
         "type": "string"
       }
