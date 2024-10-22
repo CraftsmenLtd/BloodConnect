@@ -7,10 +7,20 @@ import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
 import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes } from './Types'
 import { BLOOD_REQUEST_PK_PREFIX } from '../technicalImpl/dbModels/BloodDonationModel'
+import { ThrottlingService } from './ThrottlingService'
 
 export class BloodDonationService {
+  private readonly throttlingService: ThrottlingService
+
+  constructor() {
+    this.throttlingService = new ThrottlingService()
+  }
+
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
     try {
+      // Check throttling first
+      await this.throttlingService.checkRequestLimit(donationAttributes.seekerId)
+
       const validationResponse = validateInputWithRules({ bloodQuantity: donationAttributes.bloodQuantity, donationDateTime: donationAttributes.donationDateTime }, validationRules)
       if (validationResponse !== null) {
         return validationResponse
@@ -24,7 +34,13 @@ export class BloodDonationService {
       })
       return 'We have accepted your request, and we will let you know when we find a donor.'
     } catch (error) {
-      throw new BloodDonationOperationError(`Failed to submit blood donation request. Error: ${error}`, GENERIC_CODES.ERROR)
+      if (error instanceof BloodDonationOperationError) {
+        throw error
+      }
+      throw new BloodDonationOperationError(
+        `Failed to submit blood donation request. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
   }
 
