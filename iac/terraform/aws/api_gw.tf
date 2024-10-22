@@ -37,6 +37,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   stage_name  = "api"
 
   depends_on = [
+    aws_api_gateway_gateway_response.throttled_response,
     null_resource.update_and_import_open_api_script
   ]
 
@@ -105,10 +106,15 @@ resource "aws_api_gateway_gateway_response" "throttled_response" {
   status_code   = "429"
 
   response_templates = {
-    "application/json" = "{\"message\": \"Rate limit exceeded. Please try again later.\"}"
+    "application/json" = <<EOF
+    {
+      "message": "Rate limit exceeded. Please try again later. Only 10 donor search requests are allowed per day."
+    }
+    EOF
   }
 
   response_parameters = {
     "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
+    "gatewayresponse.header.Content-Type"                = "'application/json'"
   }
 }

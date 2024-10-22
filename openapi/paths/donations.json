@@ -38,6 +38,13 @@
       },
       "429": {
         "description": "Too Many Requests",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
         "content": {
           "application/json": {
             "schema": {
@@ -52,6 +59,9 @@
           }
         }
       }
+    },
+    "x-amazon-apigateway-response-template": {
+      "application/json": "{\"message\": \"Rate limit exceeded. Please try again later. Only 10 donor search requests are allowed per day.\"}"
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
