@@ -62,12 +62,6 @@ resource "aws_sfn_state_machine" "donor_search_state_machine" {
 
   definition = file("${path.module}/doner_search_sf.json")
 
-  lifecycle {
-    ignore_changes = [
-      definition
-    ]
-  }
-
   logging_configuration {
     level                  = "ALL"
     include_execution_data = true
