@@ -30,9 +30,11 @@ export class BloodDonationService {
 
   async updateBloodDonation(donationAttributes: UpdateBloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
     try {
-      const { requestPostId, donationDateTime, ...restAttributes } = donationAttributes
+      const { requestPostId, donationDateTime, createdAt, ...restAttributes } = donationAttributes
+      // eslint-disable-next-line no-console
+      console.log(donationAttributes)
 
-      const item = await bloodDonationRepository.getItem(`${BLOOD_REQUEST_PK_PREFIX}#${donationAttributes.seekerId}`, `${BLOOD_REQUEST_PK_PREFIX}#${requestPostId}`)
+      const item = await bloodDonationRepository.getItem(`${BLOOD_REQUEST_PK_PREFIX}#${donationAttributes.seekerId}`, `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`)
       if (item === null) {
         return 'Item not found.'
       }

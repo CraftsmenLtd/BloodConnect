@@ -15,7 +15,8 @@ const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [
   'patientCondition',
   'patientName',
   'transportationInfo',
-  'shortDescription'
+  'shortDescription',
+  'createdAt'
 ]
 
 type RequiredAttributes = Pick<UpdateBloodDonationAttributes, 'requestPostId' | 'seekerId'>

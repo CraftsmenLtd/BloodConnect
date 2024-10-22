@@ -6,7 +6,7 @@ export const BLOOD_REQUEST_LSISK_PREFIX = 'STATUS'
 
 export type DonationFields = Omit<DonationDTO, 'id' | 'seekerId'> & HasTimeLog & {
   PK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}`;
-  SK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}`;
+  SK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}#${string}`;
   LSI1SK: `${typeof BLOOD_REQUEST_LSISK_PREFIX}#${string}#${string}`;
 }
 
@@ -25,17 +25,18 @@ export class BloodDonationModel implements NosqlModel<DonationFields>, DbModelDt
 
   fromDto(donationDto: DonationDTO): DonationFields {
     const { seekerId, id, ...remainingDonationData } = donationDto
+    const postCreationDate = new Date().toISOString()
     return {
       PK: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
-      SK: `${BLOOD_REQUEST_PK_PREFIX}#${id}`,
+      SK: `${BLOOD_REQUEST_PK_PREFIX}#${postCreationDate}#${id}`,
       LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${id}`,
       ...remainingDonationData,
-      createdAt: new Date().toISOString()
+      createdAt: postCreationDate
     }
   }
 
   toDto(dbFields: DonationFields): DonationDTO {
     const { PK, SK, createdAt, ...remainingDonationFields } = dbFields
-    return { ...remainingDonationFields, id: SK.replace(`${BLOOD_REQUEST_PK_PREFIX}#`, ''), seekerId: PK.replace(`${BLOOD_REQUEST_PK_PREFIX}#`, '') }
+    return { ...remainingDonationFields, id: SK.replace(`${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#`, ''), seekerId: PK.replace(`${BLOOD_REQUEST_PK_PREFIX}#`, '') }
   }
 }
