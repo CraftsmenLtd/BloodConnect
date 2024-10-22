@@ -106,15 +106,14 @@ resource "aws_api_gateway_gateway_response" "throttled_response" {
   status_code   = "429"
 
   response_templates = {
-    "application/json" = <<EOF
-    {
-      "message": "Rate limit exceeded. Please try again later. Only 10 donor search requests are allowed per day."
-    }
-    EOF
+    "application/json" = jsonencode({
+      message = "Rate limit exceeded. Only 10 donor search requests are allowed per day. Please try again tomorrow."
+    })
   }
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
-    "gatewayresponse.header.Content-Type"                = "'application/json'"
+    "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'",
+    "gatewayresponse.header.Content-Type" = "'application/json'",
+    "gatewayresponse.header.x-amzn-ErrorType" = "'ThrottlingException'"
   }
 }

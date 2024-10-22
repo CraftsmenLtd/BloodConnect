@@ -13,6 +13,16 @@
       "responseTemplates": {
         "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
       }
+    },
+    "429": {
+      "statusCode": "429",
+      "responseTemplates": {
+        "application/json": "{\"message\": \"Rate limit exceeded. Only 10 donor search requests are allowed per day. Please try again tomorrow.\"}"
+      },
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Content-Type": "'application/json'"
+      }
     }
   },
   "requestTemplates": {

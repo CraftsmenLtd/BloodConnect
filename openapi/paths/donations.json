@@ -52,16 +52,13 @@
               "properties": {
                 "message": {
                   "type": "string",
-                  "example": "Rate limit exceeded. Please try again later."
+                  "example": "Rate limit exceeded. Only 10 donor search requests are allowed per day. Please try again tomorrow."
                 }
               }
             }
           }
         }
       }
-    },
-    "x-amazon-apigateway-response-template": {
-      "application/json": "{\"message\": \"Rate limit exceeded. Please try again later. Only 10 donor search requests are allowed per day.\"}"
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
@@ -116,6 +113,13 @@
       },
       "429": {
         "description": "Too Many Requests",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
         "content": {
           "application/json": {
             "schema": {
@@ -123,7 +127,7 @@
               "properties": {
                 "message": {
                   "type": "string",
-                  "example": "Rate limit exceeded. Please try again later."
+                  "example": "Rate limit exceeded. Only 10 donor search requests are allowed per day. Please try again tomorrow."
                 }
               }
             }
