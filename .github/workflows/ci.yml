@@ -32,4 +32,4 @@ jobs:
     secrets: inherit
     with:
       runner_image_name: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
-      is_deploy_localstack: false
+      is_deploy_localstack: true
