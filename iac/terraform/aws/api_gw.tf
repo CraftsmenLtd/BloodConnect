@@ -37,7 +37,6 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   stage_name  = "api"
 
   depends_on = [
-    aws_api_gateway_gateway_response.throttled_response,
     null_resource.update_and_import_open_api_script
   ]
 
