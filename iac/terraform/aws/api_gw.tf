@@ -112,8 +112,6 @@ resource "aws_api_gateway_gateway_response" "throttled_response" {
   }
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'",
-    "gatewayresponse.header.Content-Type" = "'application/json'",
-    "gatewayresponse.header.x-amzn-ErrorType" = "'ThrottlingException'"
+    "gatewayresponse.header.Access-Control-Allow-Origin" = "'*'"
   }
 }
