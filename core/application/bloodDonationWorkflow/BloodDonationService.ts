@@ -9,7 +9,7 @@ import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes
 import { StepFunctionModel } from '../technicalImpl/stepFunctions/StepFunctionModel'
 import { BLOOD_REQUEST_PK_PREFIX } from '../technicalImpl/dbModels/BloodDonationModel'
 
-const MAX_RETRY_COUNT = 2
+const MAX_RETRY_COUNT = Number(process.env.MAX_RETRY_COUNT)
 
 export class BloodDonationService {
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
