@@ -1,6 +1,5 @@
 locals {
-  is_budget_set       = var.budget_settings.set_budget ? 1 : 0
-  lambda_archive_path = "${path.module}/../../../core/services/aws/.build/zips"
+  is_budget_set = var.budget_settings.set_budget ? 1 : 0
 
   all_lambda_metadata = concat(
     module.auth.lambda_metadata,

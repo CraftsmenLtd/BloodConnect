@@ -1,8 +1,5 @@
 {
   "description": "Enable CORS",
-  "tags": [
-    "cors-options"
-  ],
   "responses": {
     "200": {
       "description": "200 response",
