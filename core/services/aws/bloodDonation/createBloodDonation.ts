@@ -6,6 +6,7 @@ import { BloodDonationAttributes } from '../../../application/bloodDonationWorkf
 import { DonationDTO } from '../../../../commons/dto/DonationDTO'
 import { BloodDonationModel, DonationFields } from '../../../application/technicalImpl/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
+import BloodDonationOperationError from '@application/bloodDonationWorkflow/BloodDonationOperationError'
 
 const bloodDonationService = new BloodDonationService()
 
@@ -30,8 +31,12 @@ async function createBloodDonationLambda(event: BloodDonationAttributes): Promis
     )
     return generateApiGatewayResponse(response, HTTP_CODES.OK)
   } catch (error) {
+    // const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    // return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
+
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-    return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
+    const errorCode = error instanceof BloodDonationOperationError ? error.errorCode : HTTP_CODES.ERROR
+    return generateApiGatewayResponse(`Error: ${errorMessage}`, errorCode)
   }
 }
 

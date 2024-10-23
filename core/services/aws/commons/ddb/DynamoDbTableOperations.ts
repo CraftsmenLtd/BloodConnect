@@ -1,7 +1,7 @@
 import { DbModelDtoAdapter, NosqlModel } from '../../../../application/technicalImpl/dbModels/DbModelDefinitions'
-import Repository from '../../../../application/technicalImpl/policies/repositories/Repository'
+import Repository, { QueryParams } from '../../../../application/technicalImpl/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
@@ -32,6 +32,22 @@ export default class DynamoDbTableOperations<
       return this.modelAdapter.toDto(items)
     }
     throw new Error('Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined')
+  }
+
+  async query(params: QueryParams): Promise<Dto[]> {
+    try {
+      const command = new QueryCommand({
+        TableName: this.getTableName(),
+        KeyConditionExpression: params.keyConditionExpression,
+        ExpressionAttributeValues: params.expressionAttributeValues
+      })
+
+      const result = await this.client.send(command)
+      // return (result.Items || []).map(item => this.modelAdapter.toDto(item as DbFields))
+      return (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields))
+    } catch (error) {
+      throw new DatabaseError('Failed to query items from DynamoDB', GENERIC_CODES.ERROR)
+    }
   }
 
   async update(item: Dto): Promise<Dto> {

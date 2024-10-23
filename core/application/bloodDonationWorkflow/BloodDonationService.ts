@@ -6,14 +6,15 @@ import Repository from '../technicalImpl/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
 import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes } from './Types'
-import { BLOOD_REQUEST_PK_PREFIX } from '../technicalImpl/dbModels/BloodDonationModel'
 import { ThrottlingService } from './ThrottlingService'
+import { BloodRequestThrottlingOperations } from '../../services/aws/commons/ddb/BloodRequestThrottlingOperations'
+import { BLOOD_REQUEST_PK_PREFIX } from '@application/technicalImpl/dbModels/BloodDonationModel'
 
 export class BloodDonationService {
   private readonly throttlingService: ThrottlingService
 
   constructor() {
-    this.throttlingService = new ThrottlingService()
+    this.throttlingService = new ThrottlingService(new BloodRequestThrottlingOperations())
   }
 
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
