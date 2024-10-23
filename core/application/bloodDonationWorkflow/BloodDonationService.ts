@@ -59,6 +59,8 @@ export class BloodDonationService {
       if (item === null) {
         return 'Item not found.'
       }
+      // eslint-disable-next-line no-console
+      console.log('item', item)
       if (item?.status !== undefined && item.status === DonationStatus.COMPLETED) {
         return 'You can\'t update a completed request'
       }
