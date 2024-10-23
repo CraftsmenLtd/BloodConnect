@@ -31,9 +31,6 @@ async function createBloodDonationLambda(event: BloodDonationAttributes): Promis
     )
     return generateApiGatewayResponse(response, HTTP_CODES.OK)
   } catch (error) {
-    // const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-    // return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
-
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
     const errorCode = error instanceof BloodDonationOperationError ? error.errorCode : HTTP_CODES.ERROR
     return generateApiGatewayResponse(`Error: ${errorMessage}`, errorCode)

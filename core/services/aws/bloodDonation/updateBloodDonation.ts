@@ -25,11 +25,11 @@ type OptionalAttributes = Partial<Omit<UpdateBloodDonationAttributes, 'requestPo
 const bloodDonationService = new BloodDonationService()
 
 async function updateBloodDonationLambda(event: UpdateBloodDonationAttributes): Promise<APIGatewayProxyResult> {
+  console.log('event', event)
   try {
     const bloodDonationAttributes: RequiredAttributes & OptionalAttributes = {
       requestPostId: event.requestPostId,
       seekerId: event.seekerId,
-      createdAt: event.createdAt,
       ...Object.fromEntries(
         Object.entries(event)
           .filter(([key]) => allowedKeys.includes(key as keyof UpdateBloodDonationAttributes))

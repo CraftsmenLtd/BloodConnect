@@ -18,31 +18,31 @@ export class BloodDonationService {
   }
 
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
-    // try {
-    // Check throttling first
-    await this.throttlingService.checkRequestLimit(donationAttributes.seekerId)
+    try {
+      // Check throttling first
+      await this.throttlingService.checkRequestLimit(donationAttributes.seekerId)
 
-    const validationResponse = validateInputWithRules({ bloodQuantity: donationAttributes.bloodQuantity, donationDateTime: donationAttributes.donationDateTime }, validationRules)
-    if (validationResponse !== null) {
-      return validationResponse
+      const validationResponse = validateInputWithRules({ bloodQuantity: donationAttributes.bloodQuantity, donationDateTime: donationAttributes.donationDateTime }, validationRules)
+      if (validationResponse !== null) {
+        return validationResponse
+      }
+      await bloodDonationRepository.create({
+        id: generateUniqueID(),
+        ...donationAttributes,
+        status: DonationStatus.PENDING,
+        geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
+        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString()
+      })
+      return 'We have accepted your request, and we will let you know when we find a donor.'
+    } catch (error) {
+      if (error instanceof BloodDonationOperationError) {
+        throw error
+      }
+      throw new BloodDonationOperationError(
+        `Failed to submit blood donation request. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
-    await bloodDonationRepository.create({
-      id: generateUniqueID(),
-      ...donationAttributes,
-      status: DonationStatus.PENDING,
-      geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
-      donationDateTime: new Date(donationAttributes.donationDateTime).toISOString()
-    })
-    return 'We have accepted your request, and we will let you know when we find a donor.'
-    // } catch (error) {
-    //   if (error instanceof BloodDonationOperationError) {
-    //     throw error
-    //   }
-    //   throw new BloodDonationOperationError(
-    //     `Failed to submit blood donation request. Error: ${error}`,
-    //     GENERIC_CODES.ERROR
-    //   )
-    // }
   }
 
   async updateBloodDonation(donationAttributes: UpdateBloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {

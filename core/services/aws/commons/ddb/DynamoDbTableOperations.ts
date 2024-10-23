@@ -35,19 +35,18 @@ export default class DynamoDbTableOperations<
   }
 
   async query(params: QueryParams): Promise<Dto[]> {
-    // try {
-    const command = new QueryCommand({
-      TableName: this.getTableName(),
-      KeyConditionExpression: params.keyConditionExpression,
-      ExpressionAttributeValues: params.expressionAttributeValues
-    })
+    try {
+      const command = new QueryCommand({
+        TableName: this.getTableName(),
+        KeyConditionExpression: params.keyConditionExpression,
+        ExpressionAttributeValues: params.expressionAttributeValues
+      })
 
-    const result = await this.client.send(command)
-    // return (result.Items || []).map(item => this.modelAdapter.toDto(item as DbFields))
-    return (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields))
-    // } catch (error) {
-    //   throw new DatabaseError('Failed to query items from DynamoDB', GENERIC_CODES.ERROR)
-    // }
+      const result = await this.client.send(command)
+      return (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields))
+    } catch (error) {
+      throw new DatabaseError('Failed to query items from DynamoDB', GENERIC_CODES.ERROR)
+    }
   }
 
   async update(item: Dto): Promise<Dto> {
