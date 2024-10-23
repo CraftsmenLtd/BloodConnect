@@ -25,6 +25,7 @@ type OptionalAttributes = Partial<Omit<UpdateBloodDonationAttributes, 'requestPo
 const bloodDonationService = new BloodDonationService()
 
 async function updateBloodDonationLambda(event: UpdateBloodDonationAttributes): Promise<APIGatewayProxyResult> {
+  // eslint-disable-next-line no-console
   console.log('event', event)
   try {
     const bloodDonationAttributes: RequiredAttributes & OptionalAttributes = {
