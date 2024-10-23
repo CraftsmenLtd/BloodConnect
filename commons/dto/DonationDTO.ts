@@ -23,4 +23,5 @@ export type DonationDTO = DTO & HasIdentifier & {
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
+  createdAt?: string;
 }

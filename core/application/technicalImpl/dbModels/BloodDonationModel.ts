@@ -25,7 +25,7 @@ export class BloodDonationModel implements NosqlModel<DonationFields>, DbModelDt
 
   fromDto(donationDto: DonationDTO): DonationFields {
     const { seekerId, id, ...remainingDonationData } = donationDto
-    const postCreationDate = new Date().toISOString()
+    const postCreationDate = remainingDonationData.createdAt ?? new Date().toISOString()
     return {
       PK: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
       SK: `${BLOOD_REQUEST_PK_PREFIX}#${postCreationDate}#${id}`,
