@@ -18,6 +18,12 @@ export class BloodRequestThrottlingOperations extends DynamoDbTableOperations<Do
     }
 
     const items = await this.query(queryParams)
+    // eslint-disable-next-line no-console
+    console.log('items BloodRequestThrottlingOperations', items)
+    // eslint-disable-next-line no-console
+    console.log('items BloodRequestThrottlingOperations', items.length)
+    // eslint-disable-next-line no-console
+    console.log('items BloodRequestThrottlingOperations', items?.length ?? 0)
     // return items.length
     return items?.length ?? 0
   }
