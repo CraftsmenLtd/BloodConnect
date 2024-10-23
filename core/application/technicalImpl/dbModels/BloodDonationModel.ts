@@ -26,12 +26,12 @@ export class BloodDonationModel implements NosqlModel<DonationFields>, DbModelDt
   fromDto(donationDto: DonationDTO): DonationFields {
     const { seekerId, id, ...remainingDonationData } = donationDto
     // eslint-disable-next-line no-console
-    console.log('postCreationDate', donationDto)
+    console.log('BloodDonationModel.ts - fromDto - donationDto', donationDto)
     // eslint-disable-next-line no-console
-    console.log('postCreationDate', remainingDonationData)
+    console.log('BloodDonationModel.ts - fromDto - remainingDonationData', remainingDonationData)
     const postCreationDate = remainingDonationData.createdAt ?? new Date().toISOString()
     // eslint-disable-next-line no-console
-    console.log('postCreationDate', postCreationDate)
+    console.log('BloodDonationModel.ts - fromDto - postCreationDate', postCreationDate)
     return {
       PK: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
       SK: `${BLOOD_REQUEST_PK_PREFIX}#${postCreationDate}#${id}`,
@@ -43,6 +43,12 @@ export class BloodDonationModel implements NosqlModel<DonationFields>, DbModelDt
 
   toDto(dbFields: DonationFields): DonationDTO {
     const { PK, SK, createdAt, ...remainingDonationFields } = dbFields
-    return { ...remainingDonationFields, id: SK.replace(`${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#`, ''), seekerId: PK.replace(`${BLOOD_REQUEST_PK_PREFIX}#`, '') }
+    // eslint-disable-next-line no-console
+    console.log('BloodDonationModel.ts - dbFields', dbFields)
+    // eslint-disable-next-line no-console
+    console.log('BloodDonationModel.ts - createdAt', createdAt)
+    // eslint-disable-next-line no-console
+    console.log('BloodDonationModel.ts - remainingDonationFields', remainingDonationFields)
+    return { ...remainingDonationFields, id: SK.replace(`${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#`, ''), seekerId: PK.replace(`${BLOOD_REQUEST_PK_PREFIX}#`, ''), createdAt }
   }
 }

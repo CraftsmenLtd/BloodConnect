@@ -51,7 +51,11 @@ export default class DynamoDbTableOperations<
 
   async update(item: Dto): Promise<Dto> {
     try {
+      // eslint-disable-next-line no-console
+      console.log('DynamoDbTableOperations.ts - update item before fromDto', item)
       const items = this.modelAdapter.fromDto(item)
+      // eslint-disable-next-line no-console
+      console.log('DynamoDbTableOperations.ts - update items after fromDto', items)
       const primaryKeyName = this.modelAdapter.getPrimaryIndex()
       const updatedItem = this.removePrimaryKey(primaryKeyName.partitionKey as string, items, primaryKeyName.sortKey as string)
       const { updateExpression, expressionAttribute, expressionAttributeNames } = this.createUpdateExpressions(updatedItem)
@@ -98,10 +102,13 @@ export default class DynamoDbTableOperations<
       }
 
       const result = await this.client.send(new GetCommand(input))
+      // eslint-disable-next-line no-console
+      console.log('DynamoDbTableOperations.ts - result', result)
       if (result.Item === null || result.Item === undefined) {
         return null
       }
-
+      // eslint-disable-next-line no-console
+      console.log('DynamoDbTableOperations.ts - return', this.modelAdapter.toDto(result.Item as DbFields))
       return this.modelAdapter.toDto(result.Item as DbFields)
     } catch (error) {
       throw new DatabaseError('Failed to fetch item from DynamoDB', GENERIC_CODES.ERROR)

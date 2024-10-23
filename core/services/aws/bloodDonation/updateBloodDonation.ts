@@ -38,7 +38,7 @@ async function updateBloodDonationLambda(event: UpdateBloodDonationAttributes): 
       )
     }
     // eslint-disable-next-line no-console
-    console.log('bloodDonationAttributes', bloodDonationAttributes)
+    console.log('bloodDonationAttributes in serv', bloodDonationAttributes)
     const response = await bloodDonationService.updateBloodDonation(bloodDonationAttributes, new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel()))
     return generateApiGatewayResponse(response, HTTP_CODES.OK)
   } catch (error) {

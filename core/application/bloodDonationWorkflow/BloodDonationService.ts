@@ -49,7 +49,7 @@ export class BloodDonationService {
     try {
       const { requestPostId, donationDateTime, createdAt, ...restAttributes } = donationAttributes
       // eslint-disable-next-line no-console
-      console.log(donationAttributes)
+      console.log('donationAttributes in appli', donationAttributes)
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!createdAt) {
         return 'Created is required for updating the donation request.'
@@ -60,13 +60,14 @@ export class BloodDonationService {
         return 'Item not found.'
       }
       // eslint-disable-next-line no-console
-      console.log('item', item)
+      console.log('BloodDonationService.ts - item', item)
       if (item?.status !== undefined && item.status === DonationStatus.COMPLETED) {
         return 'You can\'t update a completed request'
       }
       const updateData: Partial<DonationDTO> = {
         ...restAttributes,
-        id: requestPostId
+        id: requestPostId,
+        createdAt
       }
       if (donationDateTime !== undefined) {
         updateData.donationDateTime = new Date(donationDateTime).toISOString()
@@ -75,6 +76,8 @@ export class BloodDonationService {
           return validationResponse
         }
       }
+      // eslint-disable-next-line no-console
+      console.log('BloodDonationService.ts - updateData', updateData)
       await bloodDonationRepository.update(updateData)
       return 'We have updated your request and will let you know once there is an update.'
     } catch (error) {
