@@ -1,8 +1,10 @@
+// src/lambdas/postConfirmationLambda.ts
 import { PostConfirmationTriggerEvent } from 'aws-lambda'
 import { UserService } from '../../../../../application/userWorkflows/UserService'
 import { UserDTO } from '../../../../../../commons/dto/UserDTO'
 import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperations'
 import UserModel, { UserFields } from '../../../../../application/technicalImpl/dbModels/UserModel'
+import { updateCognitoUserInfo } from '../../../commons/cognito/CognitoOperations'
 
 async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Promise<PostConfirmationTriggerEvent> {
   if (event.triggerSource !== 'PostConfirmation_ConfirmSignUp') {
@@ -15,7 +17,18 @@ async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Prom
     name: event.request.userAttributes.name ?? '',
     phone_number: event.request.userAttributes.phone_number ?? ''
   }
-  await userService.createNewUser(userAttributes, new DynamoDbTableOperations<UserDTO, UserFields, UserModel>(new UserModel()))
+
+  const dbResponse = await userService.createNewUser(userAttributes, new DynamoDbTableOperations<UserDTO, UserFields, UserModel>(new UserModel()))
+
+  const cognitoAttributes = {
+    'custom:userId': dbResponse.id.toString()
+  }
+  await updateCognitoUserInfo({
+    userPoolId: event.userPoolId,
+    username: event.userName,
+    attributes: cognitoAttributes
+  })
+
   return event
 }
 
