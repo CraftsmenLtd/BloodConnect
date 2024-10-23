@@ -13,16 +13,17 @@ export class ThrottlingService {
 
   async checkRequestLimit(seekerId: string): Promise<void> {
     // try {
-      const datePrefix = this.getCurrentDatePrefix()
-      const requestCount = await this.throttlingRepository.getDailyRequestCount(seekerId, datePrefix)
-      console.log('date and reqcount', datePrefix,requestCount)
+    const datePrefix = this.getCurrentDatePrefix()
+    const requestCount = await this.throttlingRepository.getDailyRequestCount(seekerId, datePrefix)
+    // eslint-disable-next-line no-console
+    console.log('date and reqcount', datePrefix, requestCount)
 
-      if (requestCount >= this.MAX_REQUESTS_PER_DAY) {
-        throw new BloodDonationOperationError(
+    if (requestCount >= this.MAX_REQUESTS_PER_DAY) {
+      throw new BloodDonationOperationError(
           `Daily request limit exceeded. Maximum ${this.MAX_REQUESTS_PER_DAY} requests allowed per day.`,
           GENERIC_CODES.TOO_MANY_REQUESTS
-        )
-      }
+      )
+    }
     // } catch (error) {
     //   if (error instanceof BloodDonationOperationError) {
     //     throw error
@@ -31,7 +32,7 @@ export class ThrottlingService {
     //     `Failed to check request limit: ${error}`,
     //     GENERIC_CODES.ERROR
     //   )
-    }
+    // }
   }
 }
 
