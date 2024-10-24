@@ -19,19 +19,11 @@ resource "aws_cognito_user_pool" "user_pool" {
 
   schema {
     attribute_data_type      = "String"
-    name                     = "phone_number"
-    required                 = false
-    mutable                  = true
-    developer_only_attribute = false
-    string_attribute_constraints {}
-  }
-
-  schema {
-    attribute_data_type      = "String"
     name                     = "userId"
     required                 = false
     mutable                  = true
     developer_only_attribute = false
+    string_attribute_constraints {}
   }
 
   auto_verified_attributes = ["email"]
