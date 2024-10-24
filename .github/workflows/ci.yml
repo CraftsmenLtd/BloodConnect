@@ -53,5 +53,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 📦 Install Node Modules
+        run: make run-command-install-node-packages
+
       - name: 🧪 Run End to End Test
         run: make run-command-end-to-end

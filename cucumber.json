@@ -1,9 +1,6 @@
 {
     "default": {
-        "parallel": 2,
-        "format": [
-            "html:cucumber-report.html"
-        ],
+        "parallel": 10,
         "paths": [
             "e2e/features"
         ],
