@@ -8,24 +8,24 @@ export enum QueryConditionOperator {
   BETWEEN = 'BETWEEN'
 }
 
-export interface QueryCondition {
-  attributeName: string;
+export interface QueryCondition<T extends Record<string, unknown>> {
+  attributeName: keyof T;
   operator: QueryConditionOperator;
-  attributeValue: any;
-  attributeValue2?: any; // For BETWEEN operator
+  attributeValue: string | number;
+  attributeValue2?: string | number;
 }
 
 export interface QueryOptions {
   indexName?: string;
   limit?: number;
   scanIndexForward?: boolean;
-  exclusiveStartKey?: Record<string, any>;
+  exclusiveStartKey?: Record<string, unknown>;
   filterExpression?: string;
-  filterExpressionValues?: Record<string, any>;
+  filterExpressionValues?: Record<string, unknown>;
 }
 
-export interface QueryInput {
-  partitionKeyCondition: QueryCondition;
-  sortKeyCondition?: QueryCondition;
+export interface QueryInput<T extends Record<string, unknown>> {
+  partitionKeyCondition: QueryCondition<T>;
+  sortKeyCondition?: QueryCondition<T>;
   options?: QueryOptions;
 }

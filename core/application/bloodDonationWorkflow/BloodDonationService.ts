@@ -7,33 +7,34 @@ import Repository from '../technicalImpl/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
 import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes } from './Types'
-import { BLOOD_REQUEST_PK_PREFIX } from '../technicalImpl/dbModels/BloodDonationModel'
-import { QueryConditionOperator } from '../technicalImpl/policies/repositories/QueryTypes'
+import { BLOOD_REQUEST_PK_PREFIX, BloodDonationModel, DonationFields } from '../technicalImpl/dbModels/BloodDonationModel'
+import { QueryConditionOperator, QueryInput } from '../technicalImpl/policies/repositories/QueryTypes'
 
 export class BloodDonationService {
-  async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
+  async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO, DonationFields>): Promise<string> {
     try {
-    // Check throttling using query
       const maxPostRequestPerDay = 10
       const datePrefix = new Date().toISOString().split('T')[0]
+      const model = new BloodDonationModel()
+      const primaryIndex = model.getPrimaryIndex()
 
-      const queryResult = await bloodDonationRepository.query({
+      const query: QueryInput<DonationFields> = {
         partitionKeyCondition: {
-          attributeName: 'PK',
+          attributeName: primaryIndex.partitionKey,
           operator: QueryConditionOperator.EQUALS,
           attributeValue: `${BLOOD_REQUEST_PK_PREFIX}#${donationAttributes.seekerId}`
-        },
-        sortKeyCondition: {
-          attributeName: 'SK',
+        }
+      }
+
+      if (primaryIndex.sortKey != null) {
+        query.sortKeyCondition = {
+          attributeName: primaryIndex.sortKey,
           operator: QueryConditionOperator.BEGINS_WITH,
           attributeValue: `${BLOOD_REQUEST_PK_PREFIX}#${datePrefix}`
         }
-      })
+      }
 
-      // eslint-disable-next-line no-console
-      console.log('queryResult', queryResult)
-      // eslint-disable-next-line no-console
-      console.log('queryResult count', queryResult.items.length)
+      const queryResult = await bloodDonationRepository.query(query)
 
       if (queryResult.items.length >= maxPostRequestPerDay) {
         throw new ThrottlingError(

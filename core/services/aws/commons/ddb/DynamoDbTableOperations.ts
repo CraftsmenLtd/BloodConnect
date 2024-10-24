@@ -16,7 +16,7 @@ export default class DynamoDbTableOperations<
   Dto extends DTO,
   DbFields extends Record<string, unknown>,
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
-> implements Repository<Dto> {
+> implements Repository<Dto, DbFields> {
   constructor(
     private readonly modelAdapter: ModelAdapter,
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION }))
@@ -35,7 +35,7 @@ export default class DynamoDbTableOperations<
     throw new Error('Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined')
   }
 
-  async query(queryInput: QueryInput): Promise<{ items: Dto[]; lastEvaluatedKey?: Record<string, any> }> {
+  async query(queryInput: QueryInput<DbFields>): Promise<{ items: Dto[]; lastEvaluatedKey?: Record<string, unknown> }> {
     try {
       const { keyConditionExpression, expressionAttributeValues, expressionAttributeNames } =
         this.buildKeyConditionExpression(queryInput.partitionKeyCondition, queryInput.sortKeyCondition)
@@ -47,10 +47,6 @@ export default class DynamoDbTableOperations<
         ExpressionAttributeNames: expressionAttributeNames
       }
 
-      // eslint-disable-next-line no-console
-      console.log('queryCommandInput', queryCommandInput)
-
-      // Handle options with proper null checks
       if (queryInput.options != null) {
         const {
           indexName,
@@ -86,10 +82,6 @@ export default class DynamoDbTableOperations<
       }
 
       const result = await this.client.send(new QueryCommand(queryCommandInput))
-      // eslint-disable-next-line no-console
-      console.log('result:', result)
-      // eslint-disable-next-line no-console
-      console.log('items:', (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields)))
 
       return {
         items: (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields)),
@@ -104,29 +96,27 @@ export default class DynamoDbTableOperations<
   }
 
   private buildKeyConditionExpression(
-    partitionKeyCondition: QueryCondition,
-    sortKeyCondition?: QueryCondition
+    partitionKeyCondition: QueryCondition<DbFields>,
+    sortKeyCondition?: QueryCondition<DbFields>
   ): {
       keyConditionExpression: string;
-      expressionAttributeValues: Record<string, any>;
-      expressionAttributeNames: Record<string, any>;
+      expressionAttributeValues: Record<string, unknown>;
+      expressionAttributeNames: Record<string, string>;
     } {
-    const expressionAttributeValues: Record<string, any> = {}
-    const expressionAttributeNames: Record<string, any> = {}
+    const expressionAttributeValues: Record<string, unknown> = {}
+    const expressionAttributeNames: Record<string, string> = {}
 
-    // Build partition key condition
-    const pkName = `#${partitionKeyCondition.attributeName}`
-    const pkValue = `:${partitionKeyCondition.attributeName}`
-    expressionAttributeNames[pkName] = partitionKeyCondition.attributeName
+    const pkName = `#${String(partitionKeyCondition.attributeName)}`
+    const pkValue = `:${String(partitionKeyCondition.attributeName)}`
+    expressionAttributeNames[pkName] = String(partitionKeyCondition.attributeName)
     expressionAttributeValues[pkValue] = partitionKeyCondition.attributeValue
 
     let keyConditionExpression = `${pkName} ${partitionKeyCondition.operator} ${pkValue}`
 
-    // Add sort key condition if provided
     if (sortKeyCondition != null) {
-      const skName = `#${sortKeyCondition.attributeName}`
-      const skValue = `:${sortKeyCondition.attributeName}`
-      expressionAttributeNames[skName] = sortKeyCondition.attributeName
+      const skName = `#${String(sortKeyCondition.attributeName)}`
+      const skValue = `:${String(sortKeyCondition.attributeName)}`
+      expressionAttributeNames[skName] = String(sortKeyCondition.attributeName)
       expressionAttributeValues[skValue] = sortKeyCondition.attributeValue
 
       switch (sortKeyCondition.operator) {
@@ -136,7 +126,7 @@ export default class DynamoDbTableOperations<
         case QueryConditionOperator.BETWEEN: {
           const value2 = sortKeyCondition.attributeValue2
           if (value2 != null && value2 !== '') {
-            const skValue2 = `:${sortKeyCondition.attributeName}2`
+            const skValue2 = `:${String(sortKeyCondition.attributeName)}2`
             expressionAttributeValues[skValue2] = value2
             keyConditionExpression += ` AND ${skName} BETWEEN ${skValue} AND ${skValue2}`
           } else {
@@ -151,9 +141,6 @@ export default class DynamoDbTableOperations<
           keyConditionExpression += ` AND ${skName} ${sortKeyCondition.operator} ${skValue}`
       }
     }
-
-    // eslint-disable-next-line no-console
-    console.log('keyConditionExpression', 'expressionAttributeValues', 'expressionAttributeNames', keyConditionExpression, expressionAttributeValues, expressionAttributeNames)
 
     return {
       keyConditionExpression,
