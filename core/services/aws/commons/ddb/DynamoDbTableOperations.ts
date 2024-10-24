@@ -1,7 +1,8 @@
 import { DbModelDtoAdapter, NosqlModel } from '../../../../application/technicalImpl/dbModels/DbModelDefinitions'
-import Repository, { QueryParams } from '../../../../application/technicalImpl/policies/repositories/Repository'
+import Repository from '../../../../application/technicalImpl/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand, QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb'
+import { QueryInput, QueryCondition, QueryConditionOperator } from '../../../../application/technicalImpl/policies/repositories/QueryTypes'
 import { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
@@ -34,28 +35,136 @@ export default class DynamoDbTableOperations<
     throw new Error('Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined')
   }
 
-  async query(params: QueryParams): Promise<Dto[]> {
+  async query(queryInput: QueryInput): Promise<{ items: Dto[]; lastEvaluatedKey?: Record<string, any> }> {
     try {
-      const command = new QueryCommand({
-        TableName: this.getTableName(),
-        KeyConditionExpression: params.keyConditionExpression,
-        ExpressionAttributeValues: params.expressionAttributeValues
-      })
+      const { keyConditionExpression, expressionAttributeValues, expressionAttributeNames } =
+        this.buildKeyConditionExpression(queryInput.partitionKeyCondition, queryInput.sortKeyCondition)
 
-      const result = await this.client.send(command)
-      return (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields))
+      const queryCommandInput: QueryCommandInput = {
+        TableName: this.getTableName(),
+        KeyConditionExpression: keyConditionExpression,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ExpressionAttributeNames: expressionAttributeNames
+      }
+
+      // eslint-disable-next-line no-console
+      console.log('queryCommandInput', queryCommandInput)
+
+      // Handle options with proper null checks
+      if (queryInput.options != null) {
+        const {
+          indexName,
+          limit,
+          scanIndexForward,
+          exclusiveStartKey,
+          filterExpression,
+          filterExpressionValues
+        } = queryInput.options
+
+        if (indexName != null && indexName.trim() !== '') {
+          queryCommandInput.IndexName = indexName
+        }
+        if (limit != null && limit > 0) {
+          queryCommandInput.Limit = limit
+        }
+        if (scanIndexForward != null) {
+          queryCommandInput.ScanIndexForward = scanIndexForward
+        }
+        if (exclusiveStartKey != null && Object.keys(exclusiveStartKey).length > 0) {
+          queryCommandInput.ExclusiveStartKey = exclusiveStartKey
+        }
+        if (filterExpression != null && filterExpression.trim() !== '') {
+          queryCommandInput.FilterExpression = filterExpression
+
+          if (filterExpressionValues != null && Object.keys(filterExpressionValues).length > 0) {
+            queryCommandInput.ExpressionAttributeValues = {
+              ...queryCommandInput.ExpressionAttributeValues,
+              ...filterExpressionValues
+            }
+          }
+        }
+      }
+
+      const result = await this.client.send(new QueryCommand(queryCommandInput))
+      // eslint-disable-next-line no-console
+      console.log('result:', result)
+      // eslint-disable-next-line no-console
+      console.log('items:', (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields)))
+
+      return {
+        items: (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields)),
+        lastEvaluatedKey: result.LastEvaluatedKey
+      }
     } catch (error) {
-      throw new DatabaseError('Failed to query items from DynamoDB', GENERIC_CODES.ERROR)
+      throw new DatabaseError(
+        `Failed to query items from DynamoDB: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        GENERIC_CODES.ERROR
+      )
+    }
+  }
+
+  private buildKeyConditionExpression(
+    partitionKeyCondition: QueryCondition,
+    sortKeyCondition?: QueryCondition
+  ): {
+      keyConditionExpression: string;
+      expressionAttributeValues: Record<string, any>;
+      expressionAttributeNames: Record<string, any>;
+    } {
+    const expressionAttributeValues: Record<string, any> = {}
+    const expressionAttributeNames: Record<string, any> = {}
+
+    // Build partition key condition
+    const pkName = `#${partitionKeyCondition.attributeName}`
+    const pkValue = `:${partitionKeyCondition.attributeName}`
+    expressionAttributeNames[pkName] = partitionKeyCondition.attributeName
+    expressionAttributeValues[pkValue] = partitionKeyCondition.attributeValue
+
+    let keyConditionExpression = `${pkName} ${partitionKeyCondition.operator} ${pkValue}`
+
+    // Add sort key condition if provided
+    if (sortKeyCondition != null) {
+      const skName = `#${sortKeyCondition.attributeName}`
+      const skValue = `:${sortKeyCondition.attributeName}`
+      expressionAttributeNames[skName] = sortKeyCondition.attributeName
+      expressionAttributeValues[skValue] = sortKeyCondition.attributeValue
+
+      switch (sortKeyCondition.operator) {
+        case QueryConditionOperator.BEGINS_WITH:
+          keyConditionExpression += ` AND begins_with(${skName}, ${skValue})`
+          break
+        case QueryConditionOperator.BETWEEN: {
+          const value2 = sortKeyCondition.attributeValue2
+          if (value2 != null && value2 !== '') {
+            const skValue2 = `:${sortKeyCondition.attributeName}2`
+            expressionAttributeValues[skValue2] = value2
+            keyConditionExpression += ` AND ${skName} BETWEEN ${skValue} AND ${skValue2}`
+          } else {
+            throw new DatabaseError(
+              'BETWEEN operator requires a non-empty second value',
+              GENERIC_CODES.ERROR
+            )
+          }
+          break
+        }
+        default:
+          keyConditionExpression += ` AND ${skName} ${sortKeyCondition.operator} ${skValue}`
+      }
+    }
+
+    // eslint-disable-next-line no-console
+    console.log('keyConditionExpression', 'expressionAttributeValues', 'expressionAttributeNames', keyConditionExpression, expressionAttributeValues, expressionAttributeNames)
+
+    return {
+      keyConditionExpression,
+      expressionAttributeValues,
+      expressionAttributeNames
     }
   }
 
   async update(item: Dto): Promise<Dto> {
     try {
-      // eslint-disable-next-line no-console
-      console.log('DynamoDbTableOperations.ts - update item before fromDto', item)
       const items = this.modelAdapter.fromDto(item)
-      // eslint-disable-next-line no-console
-      console.log('DynamoDbTableOperations.ts - update items after fromDto', items)
       const primaryKeyName = this.modelAdapter.getPrimaryIndex()
       const updatedItem = this.removePrimaryKey(primaryKeyName.partitionKey as string, items, primaryKeyName.sortKey as string)
       const { updateExpression, expressionAttribute, expressionAttributeNames } = this.createUpdateExpressions(updatedItem)
@@ -102,13 +211,9 @@ export default class DynamoDbTableOperations<
       }
 
       const result = await this.client.send(new GetCommand(input))
-      // eslint-disable-next-line no-console
-      console.log('DynamoDbTableOperations.ts - result', result)
       if (result.Item === null || result.Item === undefined) {
         return null
       }
-      // eslint-disable-next-line no-console
-      console.log('DynamoDbTableOperations.ts - return', this.modelAdapter.toDto(result.Item as DbFields))
       return this.modelAdapter.toDto(result.Item as DbFields)
     } catch (error) {
       throw new DatabaseError('Failed to fetch item from DynamoDB', GENERIC_CODES.ERROR)

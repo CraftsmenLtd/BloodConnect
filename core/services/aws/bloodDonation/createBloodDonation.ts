@@ -6,7 +6,7 @@ import { BloodDonationAttributes } from '../../../application/bloodDonationWorkf
 import { DonationDTO } from '../../../../commons/dto/DonationDTO'
 import { BloodDonationModel, DonationFields } from '../../../application/technicalImpl/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
-import BloodDonationOperationError from '@application/bloodDonationWorkflow/BloodDonationOperationError'
+import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 
 const bloodDonationService = new BloodDonationService()
 

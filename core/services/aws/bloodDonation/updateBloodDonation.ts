@@ -25,8 +25,6 @@ type OptionalAttributes = Partial<Omit<UpdateBloodDonationAttributes, 'requestPo
 const bloodDonationService = new BloodDonationService()
 
 async function updateBloodDonationLambda(event: UpdateBloodDonationAttributes): Promise<APIGatewayProxyResult> {
-  // eslint-disable-next-line no-console
-  console.log('event', event)
   try {
     const bloodDonationAttributes: RequiredAttributes & OptionalAttributes = {
       requestPostId: event.requestPostId,
@@ -37,8 +35,6 @@ async function updateBloodDonationLambda(event: UpdateBloodDonationAttributes): 
           .filter(([_, value]) => value !== undefined && value !== '')
       )
     }
-    // eslint-disable-next-line no-console
-    console.log('bloodDonationAttributes in serv', bloodDonationAttributes)
     const response = await bloodDonationService.updateBloodDonation(bloodDonationAttributes, new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel()))
     return generateApiGatewayResponse(response, HTTP_CODES.OK)
   } catch (error) {
