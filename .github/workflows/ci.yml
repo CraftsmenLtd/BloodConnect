@@ -36,10 +36,11 @@ jobs:
 
   end-to-end-test:
     name: End to End Test
+    needs: [build-push-docker-image, lint-test-security-checks]
     runs-on: ${{ vars.RUNNER_OS }}
     environment: ci
     env:
-      RUNNER_IMAGE_NAME: ${{ inputs.runner_image_name }}
+      RUNNER_IMAGE_NAME: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
     steps:
       - name: 📥 Checkout Repository
