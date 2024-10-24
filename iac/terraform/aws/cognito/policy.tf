@@ -31,7 +31,8 @@ locals {
         actions = [
           "cognito-idp:AdminUpdateUserAttributes"
         ]
-        resources = ["*"]
+        resources = [
+        "arn:aws:cognito-idp:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:userpool/*"]
       }
     ]
   }
