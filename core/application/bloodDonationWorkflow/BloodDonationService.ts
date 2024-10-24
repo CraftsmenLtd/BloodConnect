@@ -12,7 +12,9 @@ export class BloodDonationService {
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
     try {
       const validationResponse = validateInputWithRules({ bloodQuantity: donationAttributes.bloodQuantity, donationDateTime: donationAttributes.donationDateTime }, validationRules)
+      console.log('validationResponse', validationResponse)
       if (validationResponse !== null) {
+        console.log('IF validationResponse', validationResponse)
         throw new Error(validationResponse)
       }
       await bloodDonationRepository.create({
@@ -22,8 +24,10 @@ export class BloodDonationService {
         geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
         donationDateTime: new Date(donationAttributes.donationDateTime).toISOString()
       })
+      console.log('AFTER')
       return 'We have accepted your request, and we will let you know when we find a donor.'
     } catch (error) {
+      console.log('Service Catch', error)
       throw new BloodDonationOperationError(`${error}`, GENERIC_CODES.ERROR)
     }
   }

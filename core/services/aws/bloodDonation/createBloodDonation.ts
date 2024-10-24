@@ -25,10 +25,12 @@ async function createBloodDonationLambda(event: BloodDonationAttributes): Promis
       contactNumber: event.contactNumber,
       transportationInfo: event.transportationInfo
     }
+    console.log('bloodDonationAttributes', bloodDonationAttributes)
     const response = await bloodDonationService.createBloodDonation(
       bloodDonationAttributes,
       new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel())
     )
+    console.log('response', response)
     return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
