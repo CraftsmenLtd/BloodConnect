@@ -4,7 +4,7 @@ FROM --platform=linux/amd64 debian:bookworm-slim
 
 # Common tools
 #checkov:skip=CKV_DOCKER_9: "Ensure that APT isn't used"
-RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip apt-utils apt-transport-https software-properties-common \
+RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip apt-utils apt-transport-https software-properties-common procps \
     python3 python3-pip python3-dev \
     python3-sphinx graphviz \
     --no-install-recommends
