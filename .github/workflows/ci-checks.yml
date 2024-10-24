@@ -7,10 +7,10 @@ on:
         description: "Name of the runner image"
         required: true
         type: string
-      is_deploy_localstack:
+      deploy_localstack:
         description: "Whether to run Terraform plan and apply steps"
         type: boolean
-        default: true
+        default: false
 
 jobs:
   lint-test-security:
@@ -59,11 +59,11 @@ jobs:
         run: make run-command-tf-init
 
       - name: 🗓️ Terraform Plan Localstack
-        if: ${{ inputs.is_deploy_localstack }}
+        if: ${{ inputs.deploy_localstack }}
         run: make run-command-tf-plan-apply
 
       - name: 🚀 Terraform Apply Localstack
-        if: ${{ inputs.is_deploy_localstack }}
+        if: ${{ inputs.deploy_localstack }}
         run: make run-command-tf-apply
 
       - name: 📊 Upload Coverage Report
