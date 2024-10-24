@@ -24,6 +24,16 @@ locals {
         ]
         resources = [var.dynamodb_table_arn]
       }
+    ],
+    cognito_policy = [
+      {
+        sid = "CognitoPolicy"
+        actions = [
+          "cognito-idp:AdminUpdateUserAttributes"
+        ]
+        resources = [
+        "arn:aws:cognito-idp:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:userpool/*"]
+      }
     ]
   }
 }

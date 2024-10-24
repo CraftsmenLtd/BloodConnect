@@ -11,6 +11,7 @@ const bloodDonationService = new BloodDonationService()
 
 async function createBloodDonationLambda(event: BloodDonationAttributes): Promise<APIGatewayProxyResult> {
   try {
+    console.log('EVENT CREATE DONATION', event)
     const bloodDonationAttributes = {
       seekerId: event.seekerId,
       patientName: event.patientName,
