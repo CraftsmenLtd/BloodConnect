@@ -126,23 +126,26 @@ package-%:
 	cd core/services/aws && npm run package-$*
 
 
-# Unit Test
+# Tests
 test:
 	npm run test $(EXTRA_ARGS)
 
+end-to-end:
+	npm run e2e $(EXTRA_ARGS)
 
 # Lint
 lint-code:
 	npm run lint
 
-# Type Check
-type-check:
-	npm run type-check
-	
 lint-api: bundle-openapi
 	spectral lint docs/openapi/v1.json --ruleset openapi/.spectral.json
 
 lint: lint-code tf-validate lint-api
+
+
+# Type Check
+type-check:
+	npm run type-check
 
 
 # Docker dev environment
@@ -153,6 +156,7 @@ run-command-%:
 	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
 	           make $* EXTRA_ARGS=$(EXTRA_ARGS)
+
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
@@ -168,6 +172,7 @@ swagger-ui:
 swagger-ui-restart:
 	docker compose -f openapi/docker-compose.yml down
 	make swagger-ui
+
 
 # Mobile
 start-mobile:

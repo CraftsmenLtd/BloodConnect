@@ -131,6 +131,12 @@ But a more efficient way might be to pick and choose what needs doing,
 
     make run-command-tf-apply
 
+- Run End to End test
+
+ .. code-block:: bash
+
+    make run-command-end-to-end
+
 As you've noticed; we prefix commands with `run-command-` keyword; this lets us execute command inside our locally available dev docker image thus saving you the hassle of having to manage:
 
  - Terraform

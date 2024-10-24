@@ -146,3 +146,6 @@ deployment/**/openapi.json
 
 # temporary: ignore generated bruno environment file
 local.bru
+
+# cucumber
+cucumber-report.html
