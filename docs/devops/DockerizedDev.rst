@@ -18,6 +18,7 @@ This `GUIDE <https://www.jetbrains.com/help/idea/connect-to-devcontainer.html#ne
 
 .. |container-ico| image:: ../assets/images/dockerize-intellij-icon.png
 
+- Download and install `Jetbrains Gateway <https://www.jetbrains.com/remote-development/gateway>`_
 - Right click on the project name in `Project` view and select New>.devcontainer
 - In the popup panel, select `Existing Dockerfile` from `Dev Container Template` dropdown and click `OK`
 - It will create a `.devcontainer` directory in the project root and there will be a `devcontainer.json` file
