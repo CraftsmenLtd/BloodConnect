@@ -46,24 +46,22 @@ resource "aws_iam_role" "api_gw_role" {
 resource "aws_iam_policy" "api_gw_dynamodb_policy" {
   name        = "${var.environment}-api-gw-dynamodb-policy"
   description = "Policy allowing API Gateway to query DynamoDB tables"
+  policy      = data.aws_iam_policy_document.api_gw_dynamodb_policy.json
+}
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "dynamodb:Query",
-          "dynamodb:GetItem"
-        ]
-        Effect = "Allow"
-        Resource = [
-          "${module.database.dynamodb_table_arn}",
-          "${module.database.dynamodb_table_arn}/index/LSI1",
-          "${module.database.dynamodb_table_arn}/index/GSI1"
-        ]
-      }
+data "aws_iam_policy_document" "api_gw_dynamodb_policy" {
+  statement {
+    actions = [
+      "dynamodb:Query",
+      "dynamodb:GetItem",
     ]
-  })
+    effect = "Allow"
+    resources = [
+      module.database.dynamodb_table_arn,
+      "${module.database.dynamodb_table_arn}/index/LSI1",
+      "${module.database.dynamodb_table_arn}/index/GSI1",
+    ]
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "api_gw_dynamodb_policy_attachment" {
