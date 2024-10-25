@@ -17,7 +17,7 @@
     }
   },
   "requestTemplates": {
-    "application/json": "{\n\"TableName\": \"${DYNAMODB_TABLE_NAME}\",\n\"IndexName\": \"LSI1\",\n\"KeyConditionExpression\": \"PK = :PK and begins_with(LSI1SK, :LSI1SK)\",\n\"ExpressionAttributeValues\": {\n\":PK\": {\"S\": \"BLOOD_REQ#$context.authorizer.claims['custom:userId']\"},\n\":LSI1SK\": {\"S\": \"STATUS#$input.params('status')\"}\n}\n}"
+    "application/json": "{\n \"TableName\": \"${DYNAMODB_TABLE_NAME}\",\n \"KeyConditionExpression\": \"PK = :PK\",\n \"ExpressionAttributeValues\": {\n \":PK\": {\"S\": \"BLOOD_REQ#$context.authorizer.claims['custom:userId']\"}\n },\n \"ScanIndexForward\": false\n}"
   },
   "passthroughBehavior": "never"
 }
