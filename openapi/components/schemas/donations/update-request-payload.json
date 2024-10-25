@@ -2,13 +2,9 @@
   "UpdateDonationRequestModel": {
     "type": "object",
     "required": [
-      "seekerId",
       "requestPostId"
     ],
     "properties": {
-      "seekerId": {
-        "type": "string"
-      },
       "requestPostId": {
         "type": "string"
       },
@@ -57,7 +53,6 @@
       "required": ["neededBloodGroup", "location", "latitude", "longitude"]
     },
     "example": {
-      "seekerId": "lkjhasdfka-qrwerie-sfsdl6usdf",
       "requestPostId": "01J9TGD6A4BTWZGHC52ASJ4XSM",
       "bloodQuantity": 2
     }
