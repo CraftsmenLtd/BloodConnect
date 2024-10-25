@@ -2,7 +2,6 @@
   "CreateDonationRequestModel": {
     "type": "object",
     "required": [
-      "seekerId",
       "neededBloodGroup",
       "bloodQuantity",
       "urgencyLevel",
@@ -13,9 +12,6 @@
       "contactInfo"
     ],
     "properties": {
-      "seekerId": {
-        "type": "string"
-      },
       "patientName": {
         "type": "string",
         "minLength": 1
@@ -73,7 +69,6 @@
       }
     },
     "example": {
-      "seekerId": "lkjhasdfka-qrwerie-sfsdl6usdf",
       "patientName": "John Doe",
       "neededBloodGroup": "O-",
       "bloodQuantity": 2,

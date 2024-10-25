@@ -7,6 +7,10 @@ resource "aws_cognito_user_pool" "user_pool" {
     required                 = true
     mutable                  = true
     developer_only_attribute = false
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 2048
+    }
   }
 
   schema {
@@ -15,6 +19,10 @@ resource "aws_cognito_user_pool" "user_pool" {
     required                 = true
     mutable                  = true
     developer_only_attribute = false
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 2048
+    }
   }
 
   schema {
@@ -23,7 +31,10 @@ resource "aws_cognito_user_pool" "user_pool" {
     required                 = false
     mutable                  = true
     developer_only_attribute = false
-    string_attribute_constraints {}
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 2048
+    }
   }
 
   schema {
@@ -32,6 +43,10 @@ resource "aws_cognito_user_pool" "user_pool" {
     required                 = false
     mutable                  = true
     developer_only_attribute = false
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 2048
+    }
   }
 
   auto_verified_attributes = ["email"]
