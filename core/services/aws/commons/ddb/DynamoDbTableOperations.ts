@@ -47,39 +47,7 @@ export default class DynamoDbTableOperations<
         ExpressionAttributeNames: expressionAttributeNames
       }
 
-      if (queryInput.options != null) {
-        const {
-          indexName,
-          limit,
-          scanIndexForward,
-          exclusiveStartKey,
-          filterExpression,
-          filterExpressionValues
-        } = queryInput.options
-
-        if (indexName != null && indexName.trim() !== '') {
-          queryCommandInput.IndexName = indexName
-        }
-        if (limit != null && limit > 0) {
-          queryCommandInput.Limit = limit
-        }
-        if (scanIndexForward != null) {
-          queryCommandInput.ScanIndexForward = scanIndexForward
-        }
-        if (exclusiveStartKey != null && Object.keys(exclusiveStartKey).length > 0) {
-          queryCommandInput.ExclusiveStartKey = exclusiveStartKey
-        }
-        if (filterExpression != null && filterExpression.trim() !== '') {
-          queryCommandInput.FilterExpression = filterExpression
-
-          if (filterExpressionValues != null && Object.keys(filterExpressionValues).length > 0) {
-            queryCommandInput.ExpressionAttributeValues = {
-              ...queryCommandInput.ExpressionAttributeValues,
-              ...filterExpressionValues
-            }
-          }
-        }
-      }
+      this.applyQueryOptions(queryCommandInput, queryInput.options)
 
       const result = await this.client.send(new QueryCommand(queryCommandInput))
 
@@ -92,6 +60,34 @@ export default class DynamoDbTableOperations<
         `Failed to query items from DynamoDB: ${error instanceof Error ? error.message : 'Unknown error'}`,
         GENERIC_CODES.ERROR
       )
+    }
+  }
+
+  private applyQueryOptions(queryCommandInput: QueryCommandInput, options?: QueryInput<DbFields>['options']): void {
+    if (options == null) return
+
+    const { indexName, limit, scanIndexForward, exclusiveStartKey, filterExpression, filterExpressionValues } = options
+
+    if ((indexName?.trim()) != null) {
+      queryCommandInput.IndexName = indexName
+    }
+    if ((limit != null) && limit > 0) {
+      queryCommandInput.Limit = limit
+    }
+    if (scanIndexForward !== undefined) {
+      queryCommandInput.ScanIndexForward = scanIndexForward
+    }
+    if ((exclusiveStartKey != null) && Object.keys(exclusiveStartKey).length > 0) {
+      queryCommandInput.ExclusiveStartKey = exclusiveStartKey
+    }
+    if ((filterExpression?.trim()) != null) {
+      queryCommandInput.FilterExpression = filterExpression
+      if ((filterExpressionValues != null) && Object.keys(filterExpressionValues).length > 0) {
+        queryCommandInput.ExpressionAttributeValues = {
+          ...queryCommandInput.ExpressionAttributeValues,
+          ...filterExpressionValues
+        }
+      }
     }
   }
 
