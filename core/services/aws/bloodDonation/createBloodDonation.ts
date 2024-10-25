@@ -27,7 +27,7 @@ async function createBloodDonationLambda(event: BloodDonationAttributes): Promis
     }
     const response = await bloodDonationService.createBloodDonation(
       bloodDonationAttributes,
-      new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel())
+      new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel()), new BloodDonationModel()
     )
     return generateApiGatewayResponse(response, HTTP_CODES.OK)
   } catch (error) {

@@ -36,7 +36,7 @@ export class BloodDonationModel implements NosqlModel<DonationFields>, DbModelDt
   }
 
   toDto(dbFields: DonationFields): DonationDTO {
-    const { PK, SK, createdAt, ...remainingDonationFields } = dbFields
+    const { PK, SK, LSI1SK, createdAt, ...remainingDonationFields } = dbFields
     return { ...remainingDonationFields, id: SK.replace(`${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#`, ''), seekerId: PK.replace(`${BLOOD_REQUEST_PK_PREFIX}#`, ''), createdAt }
   }
 }

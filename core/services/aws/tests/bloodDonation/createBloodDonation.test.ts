@@ -28,7 +28,11 @@ describe('createBloodDonationLambda', () => {
 
     const result: APIGatewayProxyResult = await createBloodDonationLambda({ ...mockEvent })
     expect(result).toEqual({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
-    expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith({ ...mockEvent }, expect.anything())
+    expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith(
+      { ...mockEvent },
+      expect.anything(),
+      expect.any(Object)
+    )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(mockResponse, HTTP_CODES.OK)
   })
 
@@ -39,7 +43,11 @@ describe('createBloodDonationLambda', () => {
 
     const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent)
     expect(result).toEqual({ statusCode: HTTP_CODES.ERROR, body: `Error: ${errorMessage}` })
-    expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith({ ...mockEvent }, expect.anything())
+    expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith(
+      { ...mockEvent },
+      expect.anything(),
+      expect.any(Object)
+    )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   })
 })

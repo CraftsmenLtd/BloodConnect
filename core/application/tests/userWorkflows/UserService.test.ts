@@ -2,14 +2,16 @@ import { UserService } from '../../userWorkflows/UserService'
 import { generateUniqueID } from '../../utils/idGenerator'
 import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '../../userWorkflows/userMessages'
 import { mockUserWithStringId } from '../mocks/mockUserData'
-import { mockRepository as importedMockRepository } from '../mocks/mockRepositories'
+import { mockRepository } from '../mocks/mockRepositories'
+import Repository from '../../technicalImpl/policies/repositories/Repository'
+import { UserDTO } from '../../../../commons/dto/UserDTO'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflows/userMessages')
 
 describe('UserService Tests', () => {
   const userService = new UserService()
-  const mockRepository = importedMockRepository
+  const userRepository = mockRepository as jest.Mocked<Repository<UserDTO>>
 
   const mockUserAttributes = {
     email: 'ebrahim@example.com',
@@ -18,20 +20,18 @@ describe('UserService Tests', () => {
   }
 
   beforeEach(() => {
+    jest.clearAllMocks();
     (generateUniqueID as jest.Mock).mockReturnValue('12345')
-  })
-
-  afterEach(() => {
-    jest.clearAllMocks()
+    userRepository.query.mockResolvedValue({ items: [], lastEvaluatedKey: undefined })
   })
 
   test('should create a new user successfully', async() => {
-    mockRepository.create.mockResolvedValue(mockUserWithStringId)
-    const result = await userService.createNewUser(mockUserAttributes, mockRepository)
+    userRepository.create.mockResolvedValue(mockUserWithStringId)
+    const result = await userService.createNewUser(mockUserAttributes, userRepository)
 
     expect(result).toBe(mockUserWithStringId)
     expect(generateUniqueID).toHaveBeenCalledTimes(1)
-    expect(mockRepository.create).toHaveBeenCalledWith({
+    expect(userRepository.create).toHaveBeenCalledWith({
       ...mockUserWithStringId,
       registrationDate: expect.any(Date)
     })
