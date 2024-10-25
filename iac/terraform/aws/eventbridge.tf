@@ -42,7 +42,7 @@ resource "aws_iam_role_policy" "eventbridge_pipe_policy" {
         Action = [
           "sqs:SendMessage"
         ]
-        Resource = aws_sqs_queue.donor_search_queue.arn
+        Resource = module.donor_search_router.donor_search_retry_queue_arn
       },
       {
         Effect = "Allow"
@@ -61,7 +61,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   name     = "${var.environment}-donation-request-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
   source   = module.database.dynamodb_table_stream_arn
-  target   = aws_sqs_queue.donor_search_queue.arn
+  target   = module.donor_search_router.donor_search_retry_queue_arn
 
   source_parameters {
     dynamodb_stream_parameters {
