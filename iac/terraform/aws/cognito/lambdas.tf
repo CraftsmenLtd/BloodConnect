@@ -11,7 +11,7 @@ locals {
       name      = "post-confirmation-trigger"
       handler   = "postConfirmationTrigger.default"
       zip_path  = "postConfirmationTrigger.zip"
-      statement = concat(local.policies.common_policies, local.policies.dynamodb_policy)
+      statement = concat(local.policies.common_policies, local.policies.dynamodb_policy, local.policies.cognito_policy)
       env_variables = {
         DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
       }

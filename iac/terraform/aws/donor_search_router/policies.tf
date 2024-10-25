@@ -20,19 +20,33 @@ locals {
         actions = [
           "dynamodb:PutItem",
           "dynamodb:GetItem",
-          "dynamodb:UpdateItem"
+          "dynamodb:UpdateItem",
+          "dynamodb:Query"
         ]
         resources = [var.dynamodb_table_arn]
       }
     ],
-    cognito_policy = [
+    sfn_policy = [
       {
-        sid = "CognitoPolicy"
+        sid = "StepFunctionPolicy"
         actions = [
-          "cognito-idp:AdminUpdateUserAttributes"
+          "states:StartExecution"
+        ]
+        resources = [var.donor_search_sf_arn]
+      }
+    ],
+    sqs_policy = [
+      {
+        sid = "SqsPolicy"
+        actions = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
         ]
         resources = [
-        "arn:aws:cognito-idp:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:userpool/*"]
+          aws_sqs_queue.donor_search_queue.arn,
+          aws_sqs_queue.donor_search_retry_queue.arn
+        ]
       }
     ]
   }

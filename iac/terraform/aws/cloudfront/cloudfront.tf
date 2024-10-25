@@ -10,6 +10,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   comment             = "CloudFront distribution for front-end site"
   default_root_object = "index.html"
   price_class         = "PriceClass_100"
+  wait_for_deployment = var.environment == module.environments.PRODUCTION ? true : false
 
   # S3 Primary Origin (Static Site)
   origin {
