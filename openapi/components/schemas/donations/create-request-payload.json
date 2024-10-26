@@ -2,7 +2,6 @@
   "CreateDonationRequestModel": {
     "type": "object",
     "required": [
-      "seekerId",
       "neededBloodGroup",
       "bloodQuantity",
       "urgencyLevel",
@@ -13,9 +12,6 @@
       "contactNumber"
     ],
     "properties": {
-      "seekerId": {
-        "type": "string"
-      },
       "neededBloodGroup": {
         "type": "string",
         "enum": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
@@ -63,7 +59,6 @@
       }
     },
     "example": {
-      "seekerId": "lkjhasdfka-qrwerie-sfsdl6usdf",
       "patientName": "John Doe",
       "neededBloodGroup": "O-",
       "bloodQuantity": 2,
