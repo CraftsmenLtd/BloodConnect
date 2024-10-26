@@ -35,11 +35,11 @@ describe('createBloodDonationLambda', () => {
   it('should return an error response when an error is thrown', async() => {
     const errorMessage = 'Database connection failed'
     mockBloodDonationService.prototype.createBloodDonation.mockRejectedValue(new Error(errorMessage))
-    mockGenerateApiGatewayResponse.mockReturnValue({ statusCode: HTTP_CODES.ERROR, body: `Error: ${errorMessage}` })
+    mockGenerateApiGatewayResponse.mockReturnValue({ statusCode: HTTP_CODES.ERROR, body: `${errorMessage}` })
 
     const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent)
-    expect(result).toEqual({ statusCode: HTTP_CODES.ERROR, body: `Error: ${errorMessage}` })
+    expect(result).toEqual({ statusCode: HTTP_CODES.ERROR, body: `${errorMessage}` })
     expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith({ ...mockEvent }, expect.anything())
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
+    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(`${errorMessage}`, HTTP_CODES.ERROR)
   })
 })
