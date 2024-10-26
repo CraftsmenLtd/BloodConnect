@@ -1,8 +1,8 @@
-import { BloodDonationAttributes } from '../../bloodDonationWorkflow/Types'
+import { BloodDonationAttributes, DonorRoutingAttributes } from '../../bloodDonationWorkflow/Types'
 import { DonationFields, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
 import { DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 
-export const donationAttributes: BloodDonationAttributes = {
+export const donationAttributesMock: BloodDonationAttributes = {
   seekerId: 'lkjhasdfka-qrwerie-sfsdl6usdf',
   patientName: 'John Doe',
   neededBloodGroup: 'O-',
@@ -20,7 +20,7 @@ export const donationAttributes: BloodDonationAttributes = {
   shortDescription: 'Need blood urgently for surgery.'
 }
 
-export const donationDto: DonationDTO = {
+export const donationDtoMock: DonationDTO = {
   id: 'req123',
   seekerId: 'user456',
   neededBloodGroup: 'A+',
@@ -38,7 +38,7 @@ export const donationDto: DonationDTO = {
   }
 }
 
-export const donationFields: DonationFields = {
+export const donationFieldsMock: DonationFields = {
   PK: `${BLOOD_REQUEST_PK_PREFIX}#user456`,
   SK: `${BLOOD_REQUEST_PK_PREFIX}#req123`,
   LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#req123`,
@@ -56,4 +56,9 @@ export const donationFields: DonationFields = {
     phone: '123456789'
   },
   createdAt: '2024-10-10T00:00:00Z'
+}
+
+export const donorRoutingAttributesMock: DonorRoutingAttributes = {
+  seekerId: 'seeker123',
+  requestPostId: 'req123'
 }

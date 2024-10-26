@@ -18,7 +18,7 @@ export default class StepFunctionOperations implements StepFunctionModel {
 
     try {
       const response = await this.client.send(command)
-      if (response.executionArn !== '') {
+      if (response.executionArn == null) {
         throw new Error('Failed to start Step Function execution. Execution ARN is undefined.')
       }
 

@@ -9,8 +9,6 @@ import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes
 import { StepFunctionModel } from '../technicalImpl/stepFunctions/StepFunctionModel'
 import { BLOOD_REQUEST_PK_PREFIX } from '../technicalImpl/dbModels/BloodDonationModel'
 
-const MAX_RETRY_COUNT = Number(process.env.MAX_RETRY_COUNT)
-
 export class BloodDonationService {
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
     try {
@@ -83,10 +81,10 @@ export class BloodDonationService {
         retryCount: retryCount + 1
       }
 
-      if (retryCount >= MAX_RETRY_COUNT) {
+      if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
         updateData.status = DonationStatus.EXPIRED
         await bloodDonationRepository.update(updateData)
-        return 'Donor search expired after max retries.'
+        return 'The donor search process expired after the maximum retry limit is reached.'
       }
 
       await bloodDonationRepository.update(updateData)
