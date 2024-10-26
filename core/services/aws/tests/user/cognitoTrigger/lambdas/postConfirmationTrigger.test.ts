@@ -4,9 +4,11 @@ import DynamoDbTableOperations from '../../../../commons/ddb/DynamoDbTableOperat
 import { postConfirmationLambdaMockEvent } from '../../../cannedData/lambdaEventMocks'
 import { mockDynamoDbOperations } from '../../../mock/dynamoDbMocks'
 import { mockUserWithStringId } from '../../../../../../application/tests/mocks/mockUserData'
+import { updateCognitoUserInfo } from '../../../../commons/cognito/CognitoOperations'
 
 jest.mock('../../../../../../application/userWorkflows/UserService')
 jest.mock('../../../../commons/ddb/DynamoDbTableOperations')
+jest.mock('../../../../commons/cognito/CognitoOperations')
 
 describe('postConfirmationLambda Tests', () => {
   const mockDynamoDbTableOperations = mockDynamoDbOperations
@@ -42,6 +44,13 @@ describe('postConfirmationLambda Tests', () => {
       },
       mockDynamoDbTableOperations
     )
+    expect(updateCognitoUserInfo).toHaveBeenCalledWith({
+      userPoolId: postConfirmationLambdaMockEvent.userPoolId,
+      username: postConfirmationLambdaMockEvent.userName,
+      attributes: {
+        'custom:userId': mockUserWithStringId.id.toString()
+      }
+    })
     expect(result).toEqual(mockEvent)
   })
 })

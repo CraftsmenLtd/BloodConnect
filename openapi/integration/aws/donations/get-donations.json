@@ -1,0 +1,23 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "arn:aws:apigateway:${AWS_REGION}:dynamodb:action/Query",
+  "credentials": "${API_GATEWAY_DYNAMODB_ROLE}",
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'GET'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#set($inputRoot = $input.path('$'))\n#if($inputRoot.Items.size() == 0)\n{\n \"success\": false,\n \"message\": \"No donations found\"\n}\n#set($context.responseOverride.status = 404)\n#else\n{\n \"success\": true,\n \"data\": [\n #foreach($item in $inputRoot.Items)\n #if($item.SK.S.startsWith('BLOOD_REQ#'))\n {\n \"seekerId\": \"$item.PK.S.split('#')[1]\",\n \"reqPostId\": \"$item.SK.S.split('#')[1]\",\n \"location\": \"$item.location.S\",\n \"urgencyLevel\": \"$item.urgencyLevel.S\",\n \"status\": \"$item.status.S\",\n \"createdAt\": \"$item.createdAt.S\",\n \"contactInfo\": {\n \"name\": \"$item.contactInfo.M.name.S\",\n \"phone\": \"$item.contactInfo.M.phone.S\"\n },\n \"neededBloodGroup\": \"$item.neededBloodGroup.S\",\n \"bloodQuantity\": \"$item.bloodQuantity.N\",\n \"transportationInfo\": \"$item.transportationInfo.S\",\n \"donationDateTime\": \"$item.donationDateTime.S\",\n \"geohash\": \"$item.geohash.S\",\n \"longitude\": \"$item.longitude.N\",\n \"latitude\": \"$item.latitude.N\",\n \"acceptedDonors\": [\n #foreach($acceptedItem in $inputRoot.Items)\n #if($acceptedItem.SK.S.startsWith('ACCEPTED#') && $acceptedItem.PK.S == $item.PK.S)\n #set($acceptedReqPostID = $acceptedItem.SK.S.split('#')[1])\n #if($acceptedReqPostID == $item.SK.S.split('#')[1])\n {\n \"reqPostID\": \"$acceptedReqPostID\",\n \"donorULID\": \"$acceptedItem.SK.S.split('#')[2]\"\n }#if($foreach.hasNext),#end\n #end\n #end\n #end\n ]\n }#if($foreach.hasNext),#end\n #end\n #end\n  ],\n \"message\": \"Donations retrieved successfully\"\n}\n#end"
+      }
+    }
+  },
+  "requestTemplates": {
+    "application/json": "{\n \"TableName\": \"${DYNAMODB_TABLE_NAME}\",\n \"KeyConditionExpression\": \"PK = :PK\",\n \"ExpressionAttributeValues\": {\n \":PK\": {\"S\": \"BLOOD_REQ#$context.authorizer.claims['custom:userId']\"}\n },\n \"ScanIndexForward\": false\n}"
+  },
+  "passthroughBehavior": "never"
+}

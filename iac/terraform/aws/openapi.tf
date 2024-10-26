@@ -4,7 +4,7 @@ resource "null_resource" "update_and_import_open_api_script" {
   }
 
   triggers = {
-    directory_md5 = sha1(join("", [for f in fileset(var.openapi_directory, "**"): filesha1("${var.openapi_directory}/${f}")])) 
+    directory_md5 = sha1(join("", [for f in fileset(var.openapi_directory, "**") : filesha1("${var.openapi_directory}/${f}")]))
   }
 }
 
@@ -12,9 +12,12 @@ data "template_file" "openapi_definition" {
   template = file(var.combined_openapi_file)
 
   vars = merge({
-    ENVIRONMENT   = var.environment
-    API_VERSION   = var.api_version
-    USER_POOL_ARN = module.cognito.user_pool_arn
+    ENVIRONMENT               = var.environment
+    API_VERSION               = var.api_version
+    AWS_REGION                = data.aws_region.current.name
+    DYNAMODB_TABLE_NAME       = split("/", module.database.dynamodb_table_arn)[1]
+    USER_POOL_ARN             = module.cognito.user_pool_arn
+    API_GATEWAY_DYNAMODB_ROLE = aws_iam_role.api_gw_role.arn
     },
     local.all_lambda_invoke_arns
   )
