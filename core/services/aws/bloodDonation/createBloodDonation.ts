@@ -11,7 +11,6 @@ const bloodDonationService = new BloodDonationService()
 
 async function createBloodDonationLambda(event: BloodDonationAttributes): Promise<APIGatewayProxyResult> {
   try {
-    console.log('EVENT CREATE DONATION', event)
     const bloodDonationAttributes = {
       seekerId: event.seekerId,
       patientName: event.patientName,
@@ -22,19 +21,18 @@ async function createBloodDonationLambda(event: BloodDonationAttributes): Promis
       latitude: event.latitude,
       longitude: event.longitude,
       donationDateTime: event.donationDateTime,
+      shortDescription: event.shortDescription,
       contactNumber: event.contactNumber,
       transportationInfo: event.transportationInfo
     }
-    console.log('bloodDonationAttributes', bloodDonationAttributes)
     const response = await bloodDonationService.createBloodDonation(
       bloodDonationAttributes,
       new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel())
     )
-    console.log('response', response)
     return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-    return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
+    return generateApiGatewayResponse(`${errorMessage}`, HTTP_CODES.ERROR)
   }
 }
 
