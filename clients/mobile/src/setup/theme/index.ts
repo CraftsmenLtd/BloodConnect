@@ -13,6 +13,7 @@ interface Theme {
     lightGrey: string;
     darkGrey: string;
     charcoalGray: string;
+    black: string;
   };
   typography: {
     fontSize: number;
