@@ -21,14 +21,7 @@ export class FetchClient implements HttpClient {
   }
 
   private async setupRequestHeaders(headers: Record<string, string>): Promise<Record<string, string>> {
-    // if (this.idToken === null) {
-    //   await this.loadIdToken()
-    // }
     const requestHeaders: Record<string, string> = { 'Content-Type': 'application/json', ...headers }
-    // if (this.idToken !== null) {
-    //   requestHeaders.Authorization = `Bearer ${this.idToken}`
-    // }
-    // console.log('HEADER')
     try {
       const { idToken } = await authService.fetchSession()
       requestHeaders.Authorization = `Bearer ${idToken}`
@@ -38,23 +31,6 @@ export class FetchClient implements HttpClient {
       }
       throw new Error('Failed to refresh session')
     }
-
-    // const payload = authService.decodeAccessToken(this.idToken)
-    // if (this.idToken !== null && payload.exp !== undefined && payload.exp < Math.floor(Date.now() / 1000)) {
-    //   try {
-    //     const { idToken } = await authService.fetchSession()
-    //     if (idToken !== '' && this.logoutUser !== undefined) {
-    //       await this.logoutUser()
-    //       throw new Error('Session refresh failed: ID token is missing')
-    //     }
-    //     this.idToken = idToken
-    //   } catch (error) {
-    //     if (this.logoutUser !== undefined) {
-    //       await this.logoutUser()
-    //     }
-    //     throw new Error('Failed to refresh session')
-    //   }
-    // }
     return requestHeaders
   }
 
