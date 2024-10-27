@@ -16,11 +16,11 @@ export class FetchClient implements HttpClient {
     void this.loadIdToken()
   }
 
-  private async loadIdToken(): Promise<void> {
+  public async loadIdToken(): Promise<void> {
     this.idToken = await StorageService.getItem('idToken')
   }
 
-  private async setupRequestHeaders(headers: Record<string, string>): Promise<Record<string, string>> {
+  public async setupRequestHeaders(headers: Record<string, string>): Promise<Record<string, string>> {
     const requestHeaders: Record<string, string> = { 'Content-Type': 'application/json', ...headers }
     try {
       const { idToken } = await authService.fetchSession()
@@ -47,7 +47,7 @@ export class FetchClient implements HttpClient {
     return await this.fetchWithAuth<T>(url, 'PATCH', JSON.stringify(body), headers)
   }
 
-  private async fetchWithAuth<T>(url: string, method: string, body: string | null, headers: Record<string, string>): Promise<FetchResponse<T>> {
+  public async fetchWithAuth<T>(url: string, method: string, body: string | null, headers: Record<string, string>): Promise<FetchResponse<T>> {
     try {
       const requestHeaders = await this.setupRequestHeaders(headers)
       const fullUrl = `${this.baseURL}${url}`

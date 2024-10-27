@@ -49,7 +49,6 @@ export const useOtp = (): any => {
       } else {
         setError('Verification incomplete. Please follow further steps.')
       }
-      console.log('isSucessRegister', isSucessRegister)
     } catch (error) {
       const errorMessage = `${error instanceof Error ? error.message : 'Unknown issue.'}`
       setError(errorMessage)
