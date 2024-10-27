@@ -16,7 +16,7 @@ export interface BloodRequestData {
   urgencyLevel: string;
   neededBloodGroup: string;
   bloodQuantity: string;
-  donationDateTime: Date;
+  donationDateTime: Date | string;
   location: string;
   contactNumber: string;
   patientName?: string;
@@ -44,7 +44,7 @@ export const useBloodRequest = (): any => {
     urgencyLevel: 'regular',
     neededBloodGroup: '',
     bloodQuantity: '',
-    donationDateTime: data !== null && typeof data.donationDateTime === 'string' ? new Date(data.donationDateTime) : new Date(),
+    donationDateTime: data !== null ? new Date(data.donationDateTime) : new Date(),
     location: '',
     contactNumber: '',
     patientName: '',
@@ -61,7 +61,9 @@ export const useBloodRequest = (): any => {
   )
 
   const onDateChange = (selectedDate: string | Date): void => {
+    console.log('selectedDate', selectedDate)
     const currentDate = typeof selectedDate === 'string' ? new Date(selectedDate) : selectedDate
+    console.log('currentDate', currentDate)
     setBloodRequestData(prevState => ({
       ...prevState,
       donationDateTime: currentDate
@@ -118,7 +120,9 @@ export const useBloodRequest = (): any => {
       ...removeEmptyAndNullProperty(rest),
       contactNumber: formatPhoneNumber(rest.contactNumber),
       bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1'),
-      donationDateTime: rest.donationDateTime.toISOString(),
+      donationDateTime: typeof rest.donationDateTime === 'string'
+        ? new Date(rest.donationDateTime).toISOString()
+        : rest.donationDateTime.toISOString(),
       latitude: +coordinates.lat,
       longitude: +coordinates.lon
     }
