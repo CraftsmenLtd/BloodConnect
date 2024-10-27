@@ -7,7 +7,7 @@ import LinkWithText from '../../../components/button/LinkWithText'
 
 const OTP = () => {
   const styles = createStyles(useTheme())
-  const { otp, error, inputRefs, handleOtpChange, handleSubmit, email } = useOtp()
+  const { otp, error, inputRefs, handleOtpChange, handleSubmit, email, loading, isButtonDisabled } = useOtp()
 
   return (
     <View style={styles.container}>
@@ -33,13 +33,13 @@ const OTP = () => {
           />
         ))}
       </View>
-      {error === true && <Text style={styles.error}>Invalid Otp.</Text>}
+      {error !== '' && <Text style={styles.error}>{error}</Text>}
       <LinkWithText
         staticText="Didn’t get the code?"
         linkText=" Resend OTP"
         onPress={() => { console.log('Resend OTP pressed') }}
       />
-      <Button text='Submit' onPress={handleSubmit} />
+      <Button text='Submit' onPress={handleSubmit} disabled={isButtonDisabled} loading={loading} />
     </View>
   )
 }
@@ -85,6 +85,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     height: 50
   },
   error: {
+    textAlign: 'center',
     color: theme.colors.primary,
     fontSize: theme.typography.errorFontSize
   }
