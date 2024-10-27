@@ -28,7 +28,7 @@ const Welcome = ({ navigation }: WelcomeScreenProps) => {
       <LinkWithText
         staticText="Want to explore first? "
         linkText=" Continue as a guest"
-        onPress={() => { navigation.navigate(SCREENS.REGISTER) }}
+        onPress={() => { navigation.navigate(SCREENS.BOTTOM_TABS) }}
       />
     </View>
   )
