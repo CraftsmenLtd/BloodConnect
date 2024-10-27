@@ -1,19 +1,5 @@
 import { HttpClient } from '../setup/clients/HttpClient'
-
-export type BloodDonationRecord = {
-  reqPostId: string;
-  patientName: string;
-  neededBloodGroup: string;
-  bloodQuantity: string;
-  urgencyLevel: string;
-  location: string;
-  latitude: number;
-  longitude: number;
-  donationDateTime: string;
-  contactNumber: string;
-  transportationInfo: string;
-  shortDescription: string;
-}
+import { BloodDonationRecord } from './types'
 
 export interface DonationResponse {
   success?: boolean;

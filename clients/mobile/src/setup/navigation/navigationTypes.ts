@@ -2,19 +2,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { RouteProp } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { UserRegistrationCredentials } from '../../authentication/services/authService'
-
-export type DonationScreenParams = {
-  requestPostId: string;
-  patientName: string;
-  neededBloodGroup: string;
-  bloodQuantity: string;
-  urgencyLevel: string;
-  location: string;
-  donationDateTime: string;
-  contactNumber: string;
-  transportationInfo: string;
-  shortDescription: string;
-}
+import { DonationScreenParams } from '../../donationWorkflow/types'
 
 export type RootStackParamList = {
   [SCREENS.WELCOME]: undefined;

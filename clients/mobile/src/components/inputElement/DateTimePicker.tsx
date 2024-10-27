@@ -19,6 +19,7 @@ interface DateTimePickerComponentProps {
 const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({ label, value, onChange, showDatePicker, setShowDatePicker, error, isRequired = false }) => {
   const styles = createStyles(useTheme())
   const [isPickingTime, setIsPickingTime] = useState<boolean>(false)
+  console.log('value', value)
   const handleDateChange = (event: any, selectedDate: Date | undefined) => {
     if (event.type === 'dismissed') {
       setShowDatePicker(false)
@@ -30,8 +31,8 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({ label
       if (!isPickingTime) {
         setShowDatePicker(false)
         setIsPickingTime(prevState => !prevState)
-        setTimeout(() => { setShowDatePicker(true) }, 500)
-        onChange(selectedDate)
+        setTimeout(() => { setShowDatePicker(true) }, 20)
+        onChange(new Date(selectedDate.toISOString()))
       } else {
         const currentDate = value ?? new Date()
         const selectedTime = selectedDate
@@ -46,7 +47,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({ label
 
         setShowDatePicker(false)
         setIsPickingTime(false)
-        onChange(combinedDateTime)
+        onChange(new Date(combinedDateTime.toISOString()))
       }
     } else {
       setShowDatePicker(false)
@@ -69,6 +70,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({ label
           mode={isPickingTime ? 'time' : 'date'}
           display="default"
           onChange={handleDateChange}
+          timeZoneName=''
         />
       )}
       {error !== null && <Text style={styles.error}>{error}</Text>}
