@@ -7,20 +7,25 @@ import { InputProps } from './types'
 
 interface InputElementProps extends InputProps {
   keyboardType: KeyboardTypeOptions;
+  readOnly?: boolean;
 }
 
-export const Input = ({ name, label, value, onChangeText, placeholder, error, keyboardType = 'default' }: InputElementProps) => {
+export const Input = ({ name, label, value, onChangeText, placeholder, error, keyboardType = 'default', isRequired = false, readOnly = false }: InputElementProps) => {
   const styles = createStyles(useTheme())
 
   return (
     <View style={styles.inputContainer}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>
+        {label}
+        {isRequired && <Text style={styles.asterisk}> *</Text>}
+      </Text>
       <TextInput
         style={styles.input}
         placeholder={placeholder}
         value={value}
         onChangeText={(text) => { onChangeText(name, text) }}
         keyboardType={keyboardType}
+        editable={!readOnly}
       />
       {error !== null && <Text style={styles.error}>{error}</Text>}
     </View>
