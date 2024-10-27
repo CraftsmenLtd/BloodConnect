@@ -87,8 +87,7 @@ export class BloodDonationService {
         `${BLOOD_REQUEST_PK_PREFIX}#${donationAttributes.seekerId}`,
         `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
       )
-      // eslint-disable-next-line no-console
-      console.log('seekerId, createdAt, requestPostID:', donationAttributes.seekerId, createdAt, requestPostId)
+
       if (item === null) {
         return 'Item not found.'
       }
