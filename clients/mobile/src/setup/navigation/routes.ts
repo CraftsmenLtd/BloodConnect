@@ -1,10 +1,12 @@
 import Register from '../../authentication/register/UI/Register'
 import OTP from '../../authentication/otp/UI/OTP'
 import Login from '../../authentication/login/UI/Login'
-import Profile from '../../userWorkflow/Profile'
+// import Profile from '../../userWorkflow/Profile'
 import { SCREENS } from '../constant/screens'
 import Welcome from '../../welcome/WelcomeScreen'
 import SetPassword from '../../authentication/setPassword/UI/SetPassword'
+import CreateBloodRequest from '../../donationWorkflow/createUpdateDonation/Donation'
+import BottomNavigation from './BottomNavigation'
 
 export const routes = [
   {
@@ -37,10 +39,22 @@ export const routes = [
     options: { headerShown: true, headerTitle: 'Log In' },
     protected: false
   },
+  // {
+  //   name: SCREENS.PROFILE,
+  //   component: Profile,
+  //   options: { headerShown: false },
+  //   protected: true
+  // },
   {
-    name: SCREENS.PROFILE,
-    component: Profile,
+    name: SCREENS.DONATION,
+    component: CreateBloodRequest,
+    options: { headerShown: true, headerTitle: 'Create Blood Request' },
+    protected: true
+  },
+  {
+    name: SCREENS.BOTTOM_TABS,
+    component: BottomNavigation,
     options: { headerShown: false },
-    protected: false
+    protected: true
   }
 ]
