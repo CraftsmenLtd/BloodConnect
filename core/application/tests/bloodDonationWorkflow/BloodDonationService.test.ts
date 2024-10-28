@@ -151,12 +151,8 @@ describe('BloodDonationService', () => {
       bloodQuantity: 2,
       urgencyLevel: 'urgent',
       location: 'Baridhara, Dhaka',
-      latitude: 23.7936,
-      longitude: 90.4043,
       geohash: 'geohash123',
       donationDateTime: '2024-10-20T15:00:00Z',
-      contactNumber: '+8801712345678',
-      transportationInfo: 'Car available',
       retryCount: 0
     }
 
@@ -173,8 +169,7 @@ describe('BloodDonationService', () => {
         neededBloodGroup: mockDonationDTO.neededBloodGroup,
         bloodQuantity: mockDonationDTO.bloodQuantity,
         urgencyLevel: mockDonationDTO.urgencyLevel,
-        latitude: mockDonationDTO.latitude,
-        longitude: mockDonationDTO.longitude
+        geohash: mockDonationDTO.geohash
       }))
       expect(result).toBe('We have updated your request and initiated the donor search process.')
     })

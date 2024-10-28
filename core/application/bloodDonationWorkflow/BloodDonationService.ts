@@ -92,11 +92,11 @@ export class BloodDonationService {
       const stepFunctionInput: StepFunctionInput = {
         seekerId: donorRoutingAttributes.seekerId,
         requestPostId: donorRoutingAttributes.requestPostId,
+        donationDateTime: existingItem.donationDateTime,
         neededBloodGroup: existingItem.neededBloodGroup,
         bloodQuantity: existingItem.bloodQuantity,
         urgencyLevel: existingItem.urgencyLevel,
-        latitude: existingItem.latitude,
-        longitude: existingItem.longitude
+        geohash: existingItem.geohash
       }
 
       await stepFunctionModel.startExecution(stepFunctionInput)

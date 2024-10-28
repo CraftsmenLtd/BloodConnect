@@ -1,45 +1,63 @@
 {
-  "Comment": "State machine for donor search process with arithmetic in Lambda",
-  "StartAt": "QueryDonorsFound",
+  "Comment": "State machine for donor search process",
+  "StartAt": "PrepareDonorSearch",
   "States": {
-    "QueryDonorsFound": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
-      "Parameters": {
-        "TableName": "stage-bloodConnect-table",
-        "KeyConditionExpression": "PK = :seekerId AND begins_with(SK, :requestPostId)",
-        "ExpressionAttributeValues": {
-          ":seekerId": {
-            "S.$": "States.Format('BLOOD_REQ#{}', $.seekerId)"
-          },
-          ":requestPostId": {
-            "S.$": "States.Format('ACCEPTED#{}', $.requestPostId)"
+    "PrepareDonorSearch": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "QueryDonorsFound",
+          "States": {
+            "QueryDonorsFound": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
+              "Parameters": {
+                "TableName": "${DYNAMODB_TABLE_NAME_PLACEHOLDER}",
+                "KeyConditionExpression": "PK = :seekerId AND begins_with(SK, :requestPostId)",
+                "ExpressionAttributeValues": {
+                  ":seekerId": {
+                    "S.$": "States.Format('BLOOD_REQ#{}', $.seekerId)"
+                  },
+                  ":requestPostId": {
+                    "S.$": "States.Format('ACCEPTED#{}', $.requestPostId)"
+                  }
+                }
+              },
+              "ResultPath": "$.donorsFoundCount",
+              "Next": "PerformCalculations"
+            },
+            "PerformCalculations": {
+              "Type": "Task",
+              "Resource": "${DONOR_CALCULATE_LAMBDA_ARN_PLACEHOLDER}",
+              "Parameters": {
+                "bloodQuantity.$": "$.bloodQuantity",
+                "donorsFoundCount.$": "$.donorsFoundCount.Count",
+                "urgencyLevel.$": "$.urgencyLevel",
+                "donationDateTime.$": "$.donationDateTime"
+              },
+              "ResultPath": "$.calculationResults",
+              "End": true
+            }
           }
         }
+      ],
+      "ResultSelector": {
+        "totalDonorsToNotify.$": "$.[0].calculationResults.totalDonorsToNotify",
+        "geohash.$": "$.[0].geohash",
+        "neededBloodGroup.$": "$.[0].neededBloodGroup",
+        "delayPeriod.$": "$.[0].delayPeriod"
       },
-      "ResultPath": "$.donorsFoundCount",
-      "Next": "PerformCalculations"
+      "ResultPath": "$",
+      "Next": "DonorSearchProcess"
     },
-    "PerformCalculations": {
-      "Type": "Task",
-      "Resource": "${LAMBDA_ARN_PLACEHOLDER}",
-      "Parameters": {
-        "bloodQuantity.$": "$.bloodQuantity",
-        "donorsFoundCount.$": "$.donorsFoundCount.Count",
-        "urgencyLevel.$": "$.urgencyLevel",
-        "donationDateTime.$": "$.donationDateTime",
-        "currentTime.$": "$.currentTime"
-      },
-      "ResultPath": "$.calculationResults",
-      "Next": "PrepareOutput"
-    },
-    "PrepareOutput": {
+    "DonorSearchProcess": {
       "Type": "Pass",
-      "Parameters": {
-        "totalDonorsToNotify.$": "$.calculationResults.totalDonorsToNotify",
-        "geohash.$": "$.geohash",
-        "neededBloodGroup.$": "$.neededBloodGroup"
-      },
+      "Result": "Pass output to next step",
+      "Next": "NotifyDonors"
+    },
+    "NotifyDonors": {
+      "Type": "Pass",
+      "Result": "Notification logic placeholder",
       "End": true
     }
   }

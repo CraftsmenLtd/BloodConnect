@@ -72,7 +72,8 @@ resource "aws_sfn_state_machine" "donor_search_state_machine" {
   role_arn = aws_iam_role.step_function_role.arn
 
   definition = templatefile("${path.module}/doner_search_sf.json", {
-    LAMBDA_ARN_PLACEHOLDER = module.lambda["calculate-donors-to-notify"].lambda_arn
+    DONOR_CALCULATE_LAMBDA_ARN_PLACEHOLDER = module.lambda["calculate-donors-to-notify"].lambda_arn
+    DYNAMODB_TABLE_NAME_PLACEHOLDER = split("/", var.dynamodb_table_arn)[1]
   })
 
   logging_configuration {
