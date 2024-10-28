@@ -163,11 +163,8 @@ run-dev: run-command-build-node-all run-command-package-all run-command-tf-init 
 
 # Swagger UI
 swagger-ui:
+	./openapi/swagger-ui/setup-swagger.sh $(branch) $(email) $(password)
 	docker compose -f openapi/docker-compose.yml up -d --build
-
-swagger-ui-restart:
-	docker compose -f openapi/docker-compose.yml down
-	make swagger-ui
 
 # Mobile
 start-mobile:

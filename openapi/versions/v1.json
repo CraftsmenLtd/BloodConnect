@@ -29,7 +29,7 @@
   },
   "servers": [
     {
-      "url": "http://API_GATEWAY_ID.execute-api.localhost.localstack.cloud:4566/api",
+      "url": "https://API_GATEWAY_ID.execute-api.ap-south-1.amazonaws.com/api",
       "description": "localstack"
     },
     {
