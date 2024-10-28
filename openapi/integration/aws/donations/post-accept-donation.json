@@ -3,20 +3,20 @@
   "httpMethod": "POST",
   "uri": "${ACCEPT_DONATION_REQUEST_INVOCATION_ARN}",
   "responses": {
-      "default": {
-          "statusCode": "200",
-          "responseParameters": {
-              "method.response.header.Access-Control-Allow-Methods": "'POST'",
-              "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-              "method.response.header.Access-Control-Allow-Origin": "'*'"
-          },
-          "responseTemplates": {
-              "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
-          }
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'POST'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
       }
+    }
   },
   "requestTemplates": {
-      "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"requestPostId\": \"$inputRoot.requestPostId\",\n  \"donorId\": \"$inputRoot.donorId\",\n  \"seekerId\": \"$inputRoot.seekerId\",\n  \"createdAt\": \"$inputRoot.createdAt\",\n  \"acceptanceTime\": \"$inputRoot.acceptanceTime\"\n}"
+    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"requestPostId\": \"$inputRoot.requestPostId\",\n  \"donorId\": \"$inputRoot.donorId\",\n  \"seekerId\": \"$inputRoot.seekerId\",\n  \"createdAt\": \"$inputRoot.createdAt\",\n  \"acceptanceTime\": \"$inputRoot.acceptanceTime\"\n}"
   },
   "passthroughBehavior": "never"
 }

@@ -1,50 +1,50 @@
 {
-    "post": {
-        "operationId": "AcceptDonation",
-        "description": "Accept Donation Request",
-        "tags": [
-            "bloodconnect-donation"
-        ],
-        "requestBody": {
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "ref": "./../../components/schemas/donations/accept-donation-request.json#AcceptDonationRequestModel"
-                    }
-                }
+  "post": {
+    "operationId": "AcceptDonation",
+    "description": "Accept Donation Request",
+    "tags": [
+      "bloodconnect-donation"
+    ],
+    "requestBody": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./../../components/schemas/donations/accept-donation-request.json#/AcceptDonationRequestModel"
+          }
+        }
+      }
+    },
+    "response": {
+      "200": {
+        "description": "200 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
             }
-        },
-        "response": {
-            "200": {
-                "description": "200 response",
-                "headers": {
-                    "Access-Control-Allow-Origin": {
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "Access-Control-Allow-Methods": {
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "Access-Control-Allow-Headers": {
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "content": {}
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
             }
-        },
-        "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
-        "x-amazon-apigateway-integration": {
-            "$ref": "./../../integration/aws/donations/post-accept-donation.json"
-        },
-        "security": [
-            {
-                "CognitoAuthorizer": []
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
             }
-        ]
-    }
+          }
+        },
+        "content": {}
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/donations/post-accept-donation.json"
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
+  }
 }

@@ -1,41 +1,41 @@
 {
-    "AcceptDonationRequestModel": {
-        "type": "object",
-        "required": [
-            "requestPostId",
-            "donorId",
-            "seekerId",
-            "createdAt",
-            "acceptanceTime"
-        ],
-        "properties": {
-            "requestPostId": {
-                "type": "string",
-                "minLength": 1
-            },
-            "donorId": {
-                "type": "string",
-                "minLength": 1
-            },
-            "seekerId": {
-                "type": "string",
-                "minLength": 1
-            },
-            "createdAt": {
-                "type": "string",
-                "format": "date-time"
-            },
-            "acceptanceTime": {
-                "type": "string",
-                "format": "date-time"
-            }
-        },
-        "example": {
-            "requestPostId": "example01110",
-            "donorId": "user234",
-            "seekerId": "123abc",
-            "createdAt": "2024-10-20T15:00:00Z",
-            "acceptanceTime": "2024-10-20T15:00:00Z"
-        }
+  "AcceptDonationRequestModel": {
+    "type": "object",
+    "required": [
+      "requestPostId",
+      "donorId",
+      "seekerId",
+      "createdAt",
+      "acceptanceTime"
+    ],
+    "properties": {
+      "requestPostId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "donorId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "seekerId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "createdAt": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "acceptanceTime": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "example": {
+      "requestPostId": "example01110",
+      "donorId": "user234",
+      "seekerId": "123abc",
+      "createdAt": "2024-10-20T15:00:00Z",
+      "acceptanceTime": "2024-10-20T15:00:00Z"
     }
+  }
 }
