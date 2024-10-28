@@ -56,7 +56,7 @@ module "donor_search_router" {
 }
 
 module "donor_search_sf" {
-  source                       = "./donor_search_sf"
-  environment                  = var.environment
-  dynamodb_table_arn           = module.database.dynamodb_table_arn
+  source             = "./donor_search_sf"
+  environment        = var.environment
+  dynamodb_table_arn = module.database.dynamodb_table_arn
 }

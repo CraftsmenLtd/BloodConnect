@@ -1,10 +1,45 @@
 {
-  "Comment": "State machine for donor search process",
-  "StartAt": "HelloWorld",
+  "Comment": "State machine for donor search process with arithmetic in Lambda",
+  "StartAt": "QueryDonorsFound",
   "States": {
-    "HelloWorld": {
+    "QueryDonorsFound": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
+      "Parameters": {
+        "TableName": "stage-bloodConnect-table",
+        "KeyConditionExpression": "PK = :seekerId AND begins_with(SK, :requestPostId)",
+        "ExpressionAttributeValues": {
+          ":seekerId": {
+            "S.$": "States.Format('BLOOD_REQ#{}', $.seekerId)"
+          },
+          ":requestPostId": {
+            "S.$": "States.Format('ACCEPTED#{}', $.requestPostId)"
+          }
+        }
+      },
+      "ResultPath": "$.donorsFoundCount",
+      "Next": "PerformCalculations"
+    },
+    "PerformCalculations": {
+      "Type": "Task",
+      "Resource": "${LAMBDA_ARN_PLACEHOLDER}",
+      "Parameters": {
+        "bloodQuantity.$": "$.bloodQuantity",
+        "donorsFoundCount.$": "$.donorsFoundCount.Count",
+        "urgencyLevel.$": "$.urgencyLevel",
+        "donationDateTime.$": "$.donationDateTime",
+        "currentTime.$": "$.currentTime"
+      },
+      "ResultPath": "$.calculationResults",
+      "Next": "PrepareOutput"
+    },
+    "PrepareOutput": {
       "Type": "Pass",
-      "Result": "Hello World",
+      "Parameters": {
+        "totalDonorsToNotify.$": "$.calculationResults.totalDonorsToNotify",
+        "geohash.$": "$.geohash",
+        "neededBloodGroup.$": "$.neededBloodGroup"
+      },
       "End": true
     }
   }
