@@ -4,8 +4,7 @@ import { initializeState } from '../../../utility/stateUtils'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SetPasswordRouteProp, SetPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import { registerUser } from '../../services/authService'
-// import { formatErrorMessage } from '../../../utility/formatte'
+import { confirmResetPasswordHandler, registerUser, UserRegistrationCredentials } from '../../services/authService'
 
 export const PASSWORD_INPUT_NAME = 'password'
 
@@ -27,7 +26,8 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 export const useSetPassword = (): any => {
   const navigation = useNavigation<SetPasswordScreenNavigationProp>()
   const [loading, setLoading] = useState(false)
-  const { params: routeParams } = useRoute<SetPasswordRouteProp>()
+  const route = useRoute<SetPasswordRouteProp>()
+  const { routeParams, fromScreen } = route.params
   const [newPassword, setNewPassword] = useState<Password>(
     initializeState<Password>(Object.keys(validationRules) as Array<keyof Password>, '')
   )
@@ -67,13 +67,27 @@ export const useSetPassword = (): any => {
     )
   }, [newPassword, errors])
 
+  const handleRegister = async(): Promise<void> => {
+    const isSuccess = await registerUser({ ...(routeParams as UserRegistrationCredentials), password: newPassword.password })
+    if (isSuccess) {
+      navigation.navigate(SCREENS.OTP, { email: routeParams.email, password: newPassword.password, fromScreen: SCREENS.SET_PASSWORD })
+    }
+  }
+
   const handleSetPassword = async(): Promise<void> => {
     setLoading(true)
-    const { params } = routeParams
     try {
-      const isSuccess = await registerUser({ ...params, password: newPassword.password })
-      if (isSuccess) {
-        navigation.navigate(SCREENS.OTP, { email: params.email, password: newPassword.password })
+      if (fromScreen === SCREENS.REGISTER) {
+        await handleRegister()
+      } else {
+        const isPasswordResetDone = await confirmResetPasswordHandler(
+          routeParams.email,
+          'otp' in routeParams ? routeParams.otp : '',
+          newPassword.password
+        )
+        if (isPasswordResetDone) {
+          navigation.navigate(SCREENS.LOGIN)
+        }
       }
     } catch (error) {
       const errorMessage = `${error instanceof Error ? error.message : 'Unknown issue.'}`

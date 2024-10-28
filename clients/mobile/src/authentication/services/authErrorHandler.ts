@@ -4,7 +4,7 @@ export const handleAuthError = (error: unknown): string => {
   if (error instanceof Error) {
     switch (error.name) {
       case 'NotAuthorizedException':
-        errorMessage = 'Unauthorized to sign out.'
+        errorMessage = 'Your account is not confirmed. Please confirm your account first.'
         break
       case 'NetworkError':
         errorMessage = 'Network error. Check your connection.'

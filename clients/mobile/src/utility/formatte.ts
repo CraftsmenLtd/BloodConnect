@@ -1,6 +1,7 @@
 export const formatteDate = (date: string | Date): string => {
   const dte = new Date(date)
   const formattedDate = dte.toLocaleString(undefined, {
+    timeZone: 'UTC',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
