@@ -42,7 +42,7 @@ data "aws_iam_policy_document" "step_function_policy_document" {
       "dynamodb:GetItem"
     ]
     effect    = "Allow"
-    resources = [var.dynamodb_table_arn]
+    resources = ["*"]
   }
 
   statement {
@@ -63,7 +63,7 @@ data "aws_iam_policy_document" "step_function_policy_document" {
   statement {
     actions   = ["lambda:InvokeFunction"]
     effect    = "Allow"
-    resources = [module.lambda["calculate-donors-to-notify"].lambda_arn]
+    resources = [module.step_function_lambda["calculate-donors-to-notify"].lambda_arn]
   }
 }
 
@@ -71,8 +71,8 @@ resource "aws_sfn_state_machine" "donor_search_state_machine" {
   name     = "${var.environment}-donor-search-sf"
   role_arn = aws_iam_role.step_function_role.arn
 
-  definition = templatefile("${path.module}/doner_search_sf.json", {
-    DONOR_CALCULATE_LAMBDA_ARN_PLACEHOLDER = module.lambda["calculate-donors-to-notify"].lambda_arn
+  definition = templatefile("${path.module}/donor_search.json", {
+    DONOR_CALCULATE_LAMBDA_ARN_PLACEHOLDER = module.step_function_lambda["calculate-donors-to-notify"].lambda_arn
     DYNAMODB_TABLE_NAME_PLACEHOLDER = split("/", var.dynamodb_table_arn)[1]
   })
 
