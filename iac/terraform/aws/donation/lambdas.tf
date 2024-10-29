@@ -32,9 +32,3 @@ locals {
     }
   }
 }
-
-
-# Error reading file "file:///home/sadekur/craftsmen/projects/BloodConnect/openapi/integration/aws/donations/: 
-# cannot open file:///home/sadekur/craftsmen/projects/BloodConnect/openapi/integration/aws/donations/. Detail: Unable to read file 
-# '/home/sadekur/craftsmen/projects/BloodConnect/openapi/integration/aws/donations/' 
-# (Error: Unable to read file '/home/sadekur/craftsmen/projects/BloodConnect/openapi/integration/aws/donations/' that is actually a directory)"
