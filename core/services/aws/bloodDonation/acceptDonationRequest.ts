@@ -1,11 +1,11 @@
 import { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import { AcceptDonationService } from '@application/bloodDonationWorkflow/AcceptDonationRequestService'
+import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import { AcceptDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
-import { AcceptDonationRequestModel, AcceptedDonationFields } from '@application/technicalImpl/dbModels/AcceptDonationModel'
+import { AcceptDonationRequestModel, AcceptedDonationFields } from '../../../application/technicalImpl/dbModels/AcceptDonationModel'
 const acceptDonationRequest = new AcceptDonationService()
 
 async function acceptDonationRequestLambda(event: AcceptDonationRequestAttributes): Promise<APIGatewayProxyResult> {
