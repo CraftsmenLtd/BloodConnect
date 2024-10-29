@@ -18,6 +18,15 @@ export class AcceptDonationService {
         return 'Cannot find the donation request'
       }
 
+      const acceptedQueryResult = await acceptDonationRequestRepository.getItem(
+        `BLOOD_REQ#${seekerId}`,
+        `ACCEPTED#${requestPostId}#${acceptDonationRequestAttributes.donorId}`
+      )
+
+      if (acceptedQueryResult !== null) {
+        return 'The request is complete'
+      }
+
       if (queryResult.status === DonationStatus.PENDING) {
         await acceptDonationRequestRepository.create({
           donorId: acceptDonationRequestAttributes.donorId,
