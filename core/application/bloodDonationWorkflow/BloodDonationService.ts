@@ -6,9 +6,10 @@ import { generateUniqueID } from '../utils/idGenerator'
 import Repository from '../technicalImpl/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
-import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes } from './Types'
 import { BLOOD_REQUEST_PK_PREFIX, BloodDonationModel, DonationFields } from '../technicalImpl/dbModels/BloodDonationModel'
 import { QueryConditionOperator, QueryInput } from '../technicalImpl/policies/repositories/QueryTypes'
+import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes, DonorRoutingAttributes, StepFunctionInput } from './Types'
+import { StepFunctionModel } from '../technicalImpl/stepFunctions/StepFunctionModel'
 
 export class BloodDonationService {
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO, DonationFields>, model: BloodDonationModel): Promise<string> {
@@ -120,6 +121,54 @@ export class BloodDonationService {
         `Failed to update blood donation post. Error: ${error}`,
         GENERIC_CODES.ERROR
       )
+    }
+  }
+
+  async routeDonorRequest(
+    donorRoutingAttributes: DonorRoutingAttributes,
+    bloodDonationRepository: Repository<DonationDTO>,
+    stepFunctionModel: StepFunctionModel
+  ): Promise<string> {
+    try {
+      const { seekerId, requestPostId } = donorRoutingAttributes
+
+      const existingItem = await bloodDonationRepository.getItem(`${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`, `${BLOOD_REQUEST_PK_PREFIX}#${requestPostId}`)
+      if (existingItem === null) {
+        return 'Item not found.'
+      }
+      if (existingItem.status === DonationStatus.COMPLETED || existingItem.status === DonationStatus.EXPIRED) {
+        return 'You can\'t update the donation request'
+      }
+
+      const retryCount = existingItem?.retryCount ?? 0
+      const updateData: Partial<DonationDTO> = {
+        ...existingItem,
+        id: requestPostId,
+        retryCount: retryCount + 1
+      }
+
+      if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
+        updateData.status = DonationStatus.EXPIRED
+        await bloodDonationRepository.update(updateData)
+        return 'The donor search process expired after the maximum retry limit is reached.'
+      }
+
+      await bloodDonationRepository.update(updateData)
+
+      const stepFunctionInput: StepFunctionInput = {
+        seekerId: donorRoutingAttributes.seekerId,
+        requestPostId: donorRoutingAttributes.requestPostId,
+        neededBloodGroup: existingItem.neededBloodGroup,
+        bloodQuantity: existingItem.bloodQuantity,
+        urgencyLevel: existingItem.urgencyLevel,
+        latitude: existingItem.latitude,
+        longitude: existingItem.longitude
+      }
+
+      await stepFunctionModel.startExecution(stepFunctionInput)
+      return 'We have updated your request and initiated the donor search process.'
+    } catch (error) {
+      throw new BloodDonationOperationError(`Failed to update blood donation post. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
 }

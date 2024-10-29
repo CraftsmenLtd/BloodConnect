@@ -4,8 +4,10 @@ export type BloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 export type UrgencyLevel = 'regular' | 'urgent'
 
 export enum DonationStatus {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED',
 }
 
 export type DonationDTO = DTO & HasIdentifier & {
@@ -24,4 +26,11 @@ export type DonationDTO = DTO & HasIdentifier & {
   transportationInfo?: string;
   shortDescription?: string;
   createdAt?: string;
+  retryCount?: number;
+}
+
+export interface StepFunctionInput extends DTO {
+  seekerId: string;
+  requestPostId: string;
+  additionalParams?: Record<string, any>;
 }

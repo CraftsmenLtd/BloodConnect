@@ -4,7 +4,7 @@ import { BloodDonationService } from '../../../../application/bloodDonationWorkf
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import { BloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
-import { donationAttributes } from '../../../../application/tests/mocks/mockDonationRequestData'
+import { donationAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 import BloodDonationOperationError from '../../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
@@ -14,7 +14,7 @@ const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('createBloodDonationLambda', () => {
-  const { shortDescription, ...rest } = donationAttributes
+  const { shortDescription, ...rest } = donationAttributesMock
   const mockEvent: BloodDonationAttributes = { ...rest }
 
   afterEach(() => {

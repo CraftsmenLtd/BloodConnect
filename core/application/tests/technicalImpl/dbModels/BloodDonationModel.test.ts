@@ -1,6 +1,6 @@
 import { BloodDonationModel, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX, DonationFields } from '../../../technicalImpl/dbModels/BloodDonationModel'
 import { DonationDTO, DonationStatus } from '../../../../../commons/dto/DonationDTO'
-import { donationDto, donationFields } from '../../mocks/mockDonationRequestData'
+import { donationDtoMock, donationFieldsMock } from '../../mocks/mockDonationRequestData'
 
 jest.useFakeTimers()
 
@@ -23,15 +23,15 @@ describe('BloodDonationModel', () => {
   describe('fromDto', () => {
     it('should correctly convert DonationDTO to DonationFields', () => {
       const result = bloodDonationModel.fromDto({
-        ...donationDto,
+        ...donationDtoMock,
         createdAt: mockCreatedAt
       })
 
       expect(result).toEqual({
-        ...donationFields,
-        PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDto.seekerId}`,
-        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDto.id}`,
-        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDto.id}`,
+        ...donationFieldsMock,
+        PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
+        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}`,
+        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
         createdAt: mockCreatedAt
       })
     })
@@ -41,63 +41,63 @@ describe('BloodDonationModel', () => {
       jest.setSystemTime(mockDate)
 
       const dtoWithoutCreatedAt: DonationDTO = {
-        ...donationDto,
+        ...donationDtoMock,
         createdAt: undefined
       }
 
       const result = bloodDonationModel.fromDto(dtoWithoutCreatedAt)
 
       expect(result.createdAt).toBe(mockDate.toISOString())
-      expect(result.SK).toBe(`${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${donationDto.id}`)
+      expect(result.SK).toBe(`${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${donationDtoMock.id}`)
     })
 
     it('should use current date when createdAt is omitted', () => {
       const mockDate = new Date('2024-01-01T00:00:00Z')
       jest.setSystemTime(mockDate)
 
-      const { createdAt, ...dtoWithoutCreatedAt } = donationDto
+      const { createdAt, ...dtoWithoutCreatedAt } = donationDtoMock
 
       const result = bloodDonationModel.fromDto(dtoWithoutCreatedAt)
 
       expect(result.createdAt).toBe(mockDate.toISOString())
-      expect(result.SK).toBe(`${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${donationDto.id}`)
+      expect(result.SK).toBe(`${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${donationDtoMock.id}`)
     })
 
     it('should properly format SK and LSI1SK with provided createdAt', () => {
       const customCreatedAt = '2024-02-15T12:00:00Z'
       const result = bloodDonationModel.fromDto({
-        ...donationDto,
+        ...donationDtoMock,
         createdAt: customCreatedAt
       })
 
-      expect(result.SK).toBe(`${BLOOD_REQUEST_PK_PREFIX}#${customCreatedAt}#${donationDto.id}`)
-      expect(result.LSI1SK).toBe(`${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDto.id}`)
+      expect(result.SK).toBe(`${BLOOD_REQUEST_PK_PREFIX}#${customCreatedAt}#${donationDtoMock.id}`)
+      expect(result.LSI1SK).toBe(`${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`)
     })
   })
 
   describe('toDto', () => {
     it('should correctly convert DonationFields to DonationDTO', () => {
       const fields: DonationFields = {
-        ...donationFields,
+        ...donationFieldsMock,
         createdAt: mockCreatedAt,
-        PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDto.seekerId}`,
-        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDto.id}` as const,
-        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDto.id}`
+        PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
+        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}` as const,
+        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`
       }
 
       const result = bloodDonationModel.toDto(fields)
 
       expect(result).toEqual({
-        ...donationDto,
-        id: donationDto.id,
-        seekerId: donationDto.seekerId,
+        ...donationDtoMock,
+        id: donationDtoMock.id,
+        seekerId: donationDtoMock.seekerId,
         createdAt: mockCreatedAt
       })
     })
 
     it('should correctly extract id and seekerId from SK and PK', () => {
       const customFields: DonationFields = {
-        ...donationFields,
+        ...donationFieldsMock,
         createdAt: mockCreatedAt,
         PK: `${BLOOD_REQUEST_PK_PREFIX}#custom-seeker-id`,
         SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#custom-request-id`,
@@ -112,11 +112,11 @@ describe('BloodDonationModel', () => {
 
     it('should preserve all other fields during conversion', () => {
       const customFields: DonationFields = {
-        ...donationFields,
+        ...donationFieldsMock,
         createdAt: mockCreatedAt,
-        PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDto.seekerId}`,
-        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDto.id}`,
-        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDto.id}`,
+        PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
+        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}`,
+        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
         contactInfo: {
           name: 'Custom Name',
           phone: 'Custom Phone'
