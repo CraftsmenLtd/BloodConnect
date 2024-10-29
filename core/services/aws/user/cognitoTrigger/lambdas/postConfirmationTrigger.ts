@@ -18,7 +18,10 @@ async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Prom
     phone_number: event.request.userAttributes.phone_number ?? ''
   }
 
-  const dbResponse = await userService.createNewUser(userAttributes, new DynamoDbTableOperations<UserDTO, UserFields, UserModel>(new UserModel()))
+  const dbResponse = await userService.createNewUser(
+    userAttributes,
+    new DynamoDbTableOperations<UserDTO, UserFields, UserModel>(new UserModel())
+  )
 
   const cognitoAttributes = {
     'custom:userId': dbResponse.id.toString()
@@ -30,7 +33,10 @@ async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Prom
   })
 
   const emailContent = userService.getAppUserWellcomeMail(userAttributes.name)
-  await sendAppUserWellcomeMail({ email: userAttributes.email, emailContent })
+  await sendAppUserWellcomeMail({
+    email: userAttributes.email,
+    emailContent
+  })
 
   return event
 }
