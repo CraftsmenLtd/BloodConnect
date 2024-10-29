@@ -42,7 +42,7 @@ data "aws_iam_policy_document" "step_function_policy_document" {
       "dynamodb:GetItem"
     ]
     effect    = "Allow"
-    resources = ["*"]
+    resources = [var.dynamodb_table_arn]
   }
 
   statement {
