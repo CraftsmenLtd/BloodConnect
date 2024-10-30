@@ -1,0 +1,53 @@
+{
+  "patch": {
+    "operationId": "UpdateUser",
+    "description": "Update user",
+    "tags": [
+      "bloodconnect-user"
+    ],
+    "requestBody": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./../../components/schemas/users/update-user-payload.json#/UpdateUserRequestModel"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "200 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {}
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/users/patch-user.json"
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
+  },
+  "options": {
+    "$ref": "./../cors-options.json"
+  }
+}

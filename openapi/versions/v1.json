@@ -10,6 +10,10 @@
       "description": "Auth module of BloodConnect"
     },
     {
+      "name": "bloodconnect-user",
+      "description": "User module of BloodConnect"
+    },
+    {
       "name": "bloodconnect-donation",
       "description": "Donation module of BloodConnect"
     }
@@ -46,6 +50,9 @@
     },
     "/donations": {
       "$ref": "./../paths/donations.json"
+    },
+    "/users": {
+      "$ref": "./../paths/users/users.json"
     }
   },
   "components": {
