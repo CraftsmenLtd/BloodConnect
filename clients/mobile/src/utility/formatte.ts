@@ -12,12 +12,11 @@ export const formatteDate = (date: string | Date): string => {
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
-  phoneNumber = phoneNumber.trim()
-  if (phoneNumber.startsWith('01')) {
-    return phoneNumber.replace('01', '+8801')
-  }
+  const trimmedPhoneNumber = phoneNumber.trim()
 
-  return phoneNumber
+  return trimmedPhoneNumber.startsWith('01')
+    ? trimmedPhoneNumber.replace('01', '+8801')
+    : trimmedPhoneNumber
 }
 
 export function formatErrorMessage(error: unknown): string {
