@@ -1,0 +1,23 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "arn:aws:apigateway:${AWS_REGION}:dynamodb:action/GetItem",
+  "credentials": "${API_GATEWAY_DYNAMODB_ROLE}",
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'GET'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#set($inputRoot = $input.path('$'))\n#if(!$inputRoot.Item)\n{\n  \"success\": false,\n  \"message\": \"No user data found\"\n}\n#set($context.responseOverride.status = 404)\n#else\n{\n  \"success\": true,\n  \"message\": \"User data retrieved successfully\",\n  \"data\": {\n    \"phoneNumbers\": [\n      #foreach($phone in $inputRoot.Item.phoneNumbers.L)\n        \"$phone.S\"#if($foreach.hasNext),#end\n      #end\n    ],\n    \"loginType\": \"email\",\n    \"name\": \"$inputRoot.Item.name.S\",\n    \"bloodGroup\": \"$inputRoot.Item.bloodGroup.S\",\n    \"lastDonationDate\": \"$inputRoot.Item.lastDonationDate.S\",\n    \"height\": $inputRoot.Item.height.N,\n    \"weight\": $inputRoot.Item.weight.N,\n    \"gender\": \"$inputRoot.Item.gender.S\",\n    \"dateOfBirth\": \"$inputRoot.Item.dateOfBirth.S\",\n    \"age\": $inputRoot.Item.age.N,\n    \"area\": \"$inputRoot.Item.area.S\",\n    \"city\": \"$inputRoot.Item.city.S\",\n    \"latitude\": $inputRoot.Item.latitude.N,\n    \"longitude\": $inputRoot.Item.longitude.N,\n    \"geohash\": \"$inputRoot.Item.geohash.S\",\n    \"donationStatus\": \"$inputRoot.Item.donationStatus.S\",\n    \"NIDFront\": \"$inputRoot.Item.NIDFront.S\",\n    \"NIDBack\": \"$inputRoot.Item.NIDBack.S\",\n    \"lastVaccinatedDate\": \"$inputRoot.Item.lastVaccinatedDate.S\"\n  }\n}\n#end\n"
+      }
+    }
+  },
+  "requestTemplates": {
+    "application/json": "{\n \"TableName\": \"${DYNAMODB_TABLE_NAME}\",\n \"Key\": {\n \"PK\": {\n \"S\": \"USER#$context.authorizer.claims['custom:userId']\"\n },\n \"SK\": {\n \"S\": \"PROFILE\"\n }\n }\n}"
+  },
+  "passthroughBehavior": "never"
+}
