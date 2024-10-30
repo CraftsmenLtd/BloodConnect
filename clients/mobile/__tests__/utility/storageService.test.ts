@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import storageUtil from '../../src/utility/storageService'
 
-// Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
   setItem: jest.fn(),
   getItem: jest.fn(),
@@ -11,14 +10,14 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 
 describe('storageUtil', () => {
   beforeEach(() => {
-    jest.clearAllMocks() // Clears mocks before each test
+    jest.clearAllMocks()
   })
 
   describe('storeItem', () => {
     const key = 'testKey'
 
     beforeEach(() => {
-      jest.clearAllMocks() // Clear mock history before each test
+      jest.clearAllMocks()
     })
 
     it('should store a valid item', async() => {

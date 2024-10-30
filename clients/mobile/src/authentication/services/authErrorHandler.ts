@@ -1,42 +1,28 @@
 export const handleAuthError = (error: unknown): string => {
-  let errorMessage = 'Unknown error occurred.'
-
   if (error instanceof Error) {
     switch (error.name) {
       case 'NotAuthorizedException':
-        errorMessage = 'Unauthorized to sign out.'
-        break
+        return 'Unauthorized to sign out.'
       case 'NetworkError':
-        errorMessage = 'Network error. Check your connection.'
-        break
+        return 'Network error. Check your connection.'
       case 'UsernameExistsException':
-        errorMessage = 'Account already exists.'
-        break
+        return 'Account already exists.'
       case 'InvalidPasswordException':
-        errorMessage = 'Weak password. Use a stronger one.'
-        break
+        return 'Weak password. Use a stronger one.'
       case 'InvalidParameterException':
-        errorMessage = 'Invalid input. Check your details.'
-        break
+        return 'Invalid input. Check your details.'
       case 'LimitExceededException':
-        errorMessage = 'Too many requests. Try again later.'
-        break
+        return 'Too many requests. Try again later.'
       case 'CodeMismatchException':
-        errorMessage = 'Invalid OTP code. Please try again.'
-        break
+        return 'Invalid OTP code. Please try again.'
       case 'ExpiredCodeException':
-        errorMessage = 'OTP code has expired. Request a new one.'
-        break
+        return 'OTP code has expired. Request a new one.'
       case 'UserNotFoundException':
-        errorMessage = 'No account found with this email.'
-        break
+        return 'No account found with this email.'
       default:
-        errorMessage = `${error instanceof Error ? error.message : 'Unknown issue.'}`
-        break
+        return `${error instanceof Error ? error.message : 'Unknown issue.'}`
     }
   } else {
-    errorMessage = 'Something went wrong.'
+    return 'Something went wrong.'
   }
-
-  return errorMessage
 }

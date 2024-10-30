@@ -1,7 +1,6 @@
 import Register from '../../authentication/register/UI/Register'
 import OTP from '../../authentication/otp/UI/OTP'
 import Login from '../../authentication/login/UI/Login'
-// import Profile from '../../userWorkflow/Profile'
 import { SCREENS } from '../constant/screens'
 import Welcome from '../../welcome/WelcomeScreen'
 import SetPassword from '../../authentication/setPassword/UI/SetPassword'
@@ -39,12 +38,6 @@ export const routes = [
     options: { headerShown: true, headerTitle: 'Log In' },
     protected: false
   },
-  // {
-  //   name: SCREENS.PROFILE,
-  //   component: Profile,
-  //   options: { headerShown: false },
-  //   protected: true
-  // },
   {
     name: SCREENS.DONATION,
     component: CreateBloodRequest,
