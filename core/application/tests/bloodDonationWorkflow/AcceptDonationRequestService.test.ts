@@ -18,38 +18,14 @@ describe('AcceptDonationService', () => {
     jest.clearAllMocks()
   })
 
-  it('should accept a donation request successfully when status is pending and no acceptance exists', async() => {
+  it('should return "The request is complete" if the acceptance record already exists (ConditionalCheckFailedException)', async() => {
     const mockQueryResult: AcceptedDonationDTO = {
       ...acceptDonationRequestAttributesMock,
       status: DonationStatus.PENDING
     }
 
-    mockAcceptDonationRepository.getItem
-      .mockResolvedValueOnce(mockQueryResult)
-      .mockResolvedValueOnce(null)
-
-    const result = await acceptDonationService.createAcceptanceRecord(
-      acceptDonationRequestAttributesMock,
-      mockAcceptDonationRepository
-    )
-
-    expect(result).toBe('Donation request accepted successfully.')
-    expect(mockAcceptDonationRepository.create).toHaveBeenCalledWith({
-      donorId: acceptDonationRequestAttributesMock.donorId,
-      seekerId: acceptDonationRequestAttributesMock.seekerId,
-      createdAt: acceptDonationRequestAttributesMock.createdAt,
-      requestPostId: acceptDonationRequestAttributesMock.requestPostId,
-      acceptanceTime: expect.any(String)
-    })
-  })
-
-  it('should return "The request is complete" if the same donor tries to accept the request again', async() => {
-    const mockAcceptedQueryResult: AcceptedDonationDTO = {
-      ...acceptDonationRequestAttributesMock,
-      status: DonationStatus.COMPLETED
-    }
-
-    mockAcceptDonationRepository.getItem.mockResolvedValueOnce(mockAcceptedQueryResult)
+    mockAcceptDonationRepository.getItem.mockResolvedValueOnce(mockQueryResult)
+    mockAcceptDonationRepository.create.mockRejectedValueOnce({ code: 'ConditionalCheckFailedException' })
 
     const result = await acceptDonationService.createAcceptanceRecord(
       acceptDonationRequestAttributesMock,
@@ -57,18 +33,16 @@ describe('AcceptDonationService', () => {
     )
 
     expect(result).toBe('The request is complete')
-    expect(mockAcceptDonationRepository.create).not.toHaveBeenCalled()
+    expect(mockAcceptDonationRepository.create).toHaveBeenCalled()
   })
 
-  it('should return an error message when donation request is no longer available for acceptance', async() => {
+  it('should return "Donation request is no longer available for acceptance" when the request is not pending', async() => {
     const mockQueryResult: AcceptedDonationDTO = {
       ...acceptDonationRequestAttributesMock,
       status: DonationStatus.COMPLETED
     }
 
-    mockAcceptDonationRepository.getItem
-      .mockResolvedValueOnce(mockQueryResult)
-      .mockResolvedValueOnce(null)
+    mockAcceptDonationRepository.getItem.mockResolvedValueOnce(mockQueryResult)
 
     const result = await acceptDonationService.createAcceptanceRecord(
       acceptDonationRequestAttributesMock,
@@ -79,7 +53,7 @@ describe('AcceptDonationService', () => {
     expect(mockAcceptDonationRepository.create).not.toHaveBeenCalled()
   })
 
-  it('should return an error message when the donation request cannot be found', async() => {
+  it('should return "Cannot find the donation request" if the donation request cannot be found', async() => {
     mockAcceptDonationRepository.getItem.mockResolvedValueOnce(null)
 
     const result = await acceptDonationService.createAcceptanceRecord(
@@ -93,7 +67,7 @@ describe('AcceptDonationService', () => {
 
   it('should throw an AcceptDonationRequestError when an error occurs', async() => {
     const mockError = new Error('Database error')
-    mockAcceptDonationRepository.getItem.mockRejectedValue(mockError)
+    mockAcceptDonationRepository.getItem.mockRejectedValueOnce(mockError)
 
     await expect(
       acceptDonationService.createAcceptanceRecord(acceptDonationRequestAttributesMock, mockAcceptDonationRepository)

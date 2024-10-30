@@ -18,29 +18,29 @@ export class AcceptDonationService {
         return 'Cannot find the donation request'
       }
 
-      const acceptedQueryResult = await acceptDonationRequestRepository.getItem(
-        `BLOOD_REQ#${seekerId}`,
-        `ACCEPTED#${requestPostId}#${acceptDonationRequestAttributes.donorId}`
-      )
+      if (queryResult.status !== DonationStatus.PENDING) {
+        return 'Donation request is no longer available for acceptance.'
+      }
 
-      if (acceptedQueryResult !== null) {
+      const acceptanceRecord: AcceptedDonationDTO = {
+        donorId: acceptDonationRequestAttributes.donorId,
+        seekerId,
+        createdAt,
+        requestPostId,
+        acceptanceTime: new Date().toISOString()
+      }
+
+      await acceptDonationRequestRepository.create(acceptanceRecord)
+      return 'Donation request accepted successfully.'
+    } catch (error: any) {
+      if (error.code === 'ConditionalCheckFailedException') {
         return 'The request is complete'
       }
 
-      if (queryResult.status === DonationStatus.PENDING) {
-        await acceptDonationRequestRepository.create({
-          donorId: acceptDonationRequestAttributes.donorId,
-          seekerId,
-          createdAt,
-          requestPostId,
-          acceptanceTime: new Date().toISOString()
-        })
-        return 'Donation request accepted successfully.'
-      } else {
-        return 'Donation request is no longer available for acceptance.'
-      }
-    } catch (error) {
-      throw new AcceptDonationRequestError(`Failed to accept donation request. Error: ${error}`, GENERIC_CODES.ERROR)
+      throw new AcceptDonationRequestError(
+        `Failed to accept donation request. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
   }
 }
