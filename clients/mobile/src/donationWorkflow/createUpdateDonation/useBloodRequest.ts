@@ -146,12 +146,9 @@ export const useBloodRequest = (): any => {
         setErrorMessage(validateDonationDate)
         return
       }
-      let response: DonationResponse
-      if (isUpdating) {
-        response = await updateBloodDonationRequest()
-      } else {
-        response = await createBloodDonationRequest()
-      }
+      const response: DonationResponse = isUpdating
+        ? await updateBloodDonationRequest()
+        : await createBloodDonationRequest()
 
       if (response.status === 200) {
         navigation.navigate(SCREENS.PROFILE)
