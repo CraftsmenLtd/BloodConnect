@@ -10,6 +10,7 @@ import { BLOOD_REQUEST_PK_PREFIX, BloodDonationModel, DonationFields } from '../
 import { QueryConditionOperator, QueryInput } from '../technicalImpl/policies/repositories/QueryTypes'
 import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes, DonorRoutingAttributes, StepFunctionInput } from './Types'
 import { StepFunctionModel } from '../technicalImpl/stepFunctions/StepFunctionModel'
+import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
 
 export class BloodDonationService {
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO, DonationFields>, model: BloodDonationModel): Promise<string> {
@@ -44,7 +45,6 @@ export class BloodDonationService {
   }
 
   private async checkDailyRequestThrottling(seekerId: string, repository: Repository<DonationDTO, DonationFields>, model: BloodDonationModel): Promise<void> {
-    const maxPostRequestPerDay = 10
     const datePrefix = new Date().toISOString().split('T')[0]
     const primaryIndex = model.getPrimaryIndex()
 
@@ -66,9 +66,9 @@ export class BloodDonationService {
 
     try {
       const queryResult = await repository.query(query)
-      if (queryResult.items.length >= maxPostRequestPerDay) {
+      if (queryResult.items.length >= THROTTLING_LIMITS.BLOOD_REQUEST.MAX_REQUESTS_PER_DAY) {
         throw new ThrottlingError(
-          `You've reached today's limit of ${maxPostRequestPerDay} requests. Please try tomorrow.`,
+          THROTTLING_LIMITS.BLOOD_REQUEST.ERROR_MESSAGE,
           GENERIC_CODES.TOO_MANY_REQUESTS
         )
       }
