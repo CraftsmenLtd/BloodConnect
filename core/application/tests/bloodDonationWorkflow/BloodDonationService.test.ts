@@ -7,6 +7,7 @@ import { validateInputWithRules } from '../../utils/validator'
 import BloodDonationOperationError from '../../bloodDonationWorkflow/BloodDonationOperationError'
 import { donationAttributesMock, donorRoutingAttributesMock } from '../mocks/mockDonationRequestData'
 import { mockRepository as importedMockRepository } from '../mocks/mockRepositories'
+import { BLOOD_REQUEST_PK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
 import { StepFunctionModel } from '../../technicalImpl/stepFunctions/StepFunctionModel'
 
 jest.mock('../../utils/idGenerator', () => ({
@@ -57,12 +58,13 @@ describe('BloodDonationService', () => {
       expect(result).toBe('We have accepted your request, and we will let you know when we find a donor.')
     })
 
-    test('should return validation error if input is invalid', async() => {
+    test('should throw BloodDonationOperationError if input is invalid', async() => {
       (validateInputWithRules as jest.Mock).mockReturnValue('Validation error')
-      const result = await bloodDonationService.createBloodDonation(donationAttributesMock, bloodDonationRepository)
+
+      await expect(bloodDonationService.createBloodDonation(donationAttributesMock, bloodDonationRepository))
+        .rejects.toThrow(BloodDonationOperationError)
 
       expect(validateInputWithRules).toHaveBeenCalled()
-      expect(result).toBe('Validation error')
       expect(bloodDonationRepository.create).not.toHaveBeenCalled()
     })
 
@@ -72,7 +74,9 @@ describe('BloodDonationService', () => {
       (validateInputWithRules as jest.Mock).mockReturnValue(null)
       bloodDonationRepository.create.mockRejectedValue(new Error('Repository error'))
 
-      await expect(bloodDonationService.createBloodDonation(donationAttributesMock, bloodDonationRepository)).rejects.toThrow(BloodDonationOperationError)
+      await expect(bloodDonationService.createBloodDonation(donationAttributesMock, bloodDonationRepository))
+        .rejects.toThrow(BloodDonationOperationError)
+
       expect(bloodDonationRepository.create).toHaveBeenCalled()
     })
   })
@@ -91,8 +95,11 @@ describe('BloodDonationService', () => {
 
       const result = await bloodDonationService.updateBloodDonation(donationAttributes, bloodDonationRepository)
 
-      expect(bloodDonationRepository.getItem).toHaveBeenCalledWith('BLOOD_REQUEST_PK_PREFIX#user123', 'BLOOD_REQUEST_PK_PREFIX#req123')
-      expect(bloodDonationRepository.update).toHaveBeenCalledWith(expect.objectContaining({ id: 'req123', donationDateTime: expect.any(String) }))
+      expect(bloodDonationRepository.getItem).toHaveBeenCalledWith(`${BLOOD_REQUEST_PK_PREFIX}#user123`, `${BLOOD_REQUEST_PK_PREFIX}#req123`)
+      expect(bloodDonationRepository.update).toHaveBeenCalledWith(expect.objectContaining({
+        id: 'req123',
+        donationDateTime: expect.any(String)
+      }))
       expect(result).toBe('We have updated your request and will let you know once there is an update.')
     })
 
@@ -104,9 +111,8 @@ describe('BloodDonationService', () => {
         requestPostId: 'req123'
       }
 
-      const result = await bloodDonationService.updateBloodDonation(donationAttributes, bloodDonationRepository)
-
-      expect(result).toBe('Item not found.')
+      await expect(bloodDonationService.updateBloodDonation(donationAttributes, bloodDonationRepository))
+        .rejects.toThrow(BloodDonationOperationError)
       expect(bloodDonationRepository.update).not.toHaveBeenCalled()
     })
 
@@ -118,9 +124,9 @@ describe('BloodDonationService', () => {
         requestPostId: 'req123'
       }
 
-      const result = await bloodDonationService.updateBloodDonation(donationAttributes, bloodDonationRepository)
+      await expect(bloodDonationService.updateBloodDonation(donationAttributes, bloodDonationRepository))
+        .rejects.toThrow(BloodDonationOperationError)
 
-      expect(result).toBe('You can\'t update a completed request')
       expect(bloodDonationRepository.update).not.toHaveBeenCalled()
     })
 
@@ -135,7 +141,8 @@ describe('BloodDonationService', () => {
         bloodQuantity: 2
       }
 
-      await expect(bloodDonationService.updateBloodDonation(donationAttributes, bloodDonationRepository)).rejects.toThrow(BloodDonationOperationError)
+      await expect(bloodDonationService.updateBloodDonation(donationAttributes, bloodDonationRepository))
+        .rejects.toThrow(BloodDonationOperationError)
 
       expect(bloodDonationRepository.update).toHaveBeenCalled()
     })
