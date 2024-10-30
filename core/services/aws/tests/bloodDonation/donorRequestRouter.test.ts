@@ -81,7 +81,7 @@ describe('donorRequestRouter', () => {
       ]
     }
 
-    await expect(donorRequestRouter(invalidEvent)).rejects.toThrow("Expected property name or '}' in JSON at position 2")
+    await expect(donorRequestRouter(invalidEvent)).rejects.toThrow('Unexpected token i in JSON at position 2')
     expect(mockBloodDonationService.prototype.routeDonorRequest).not.toHaveBeenCalled()
   })
 
