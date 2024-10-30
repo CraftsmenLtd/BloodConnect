@@ -19,8 +19,7 @@ const DonationPosts = ({ navigation }: DonationPostsProps) => {
   const [donaitonPosts, setDonationsPost] = useState<DonationData[]>([])
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/space-before-function-paren
-    const fetchData = async () => {
+    const fetchData = async() => {
       try {
         const response = await getDonationList({}, fetchClient)
         if (response.data !== undefined && response.data.length > 0) {

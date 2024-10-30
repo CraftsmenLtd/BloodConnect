@@ -61,9 +61,7 @@ export const useBloodRequest = (): any => {
   )
 
   const onDateChange = (selectedDate: string | Date): void => {
-    console.log('selectedDate', selectedDate)
     const currentDate = typeof selectedDate === 'string' ? new Date(selectedDate) : selectedDate
-    console.log('currentDate', currentDate)
     setBloodRequestData(prevState => ({
       ...prevState,
       donationDateTime: currentDate
