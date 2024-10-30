@@ -1,15 +1,13 @@
-export const formatteDate = (date: string | Date): string => {
+export const formatteDate = (date: string | Date, showOnlyDate = false): string => {
   const dte = new Date(date)
-  const formattedDate = dte.toLocaleString(undefined, {
+
+  return dte.toLocaleString(undefined, {
     timeZone: 'UTC',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
+    ...(showOnlyDate ? {} : { hour: 'numeric', minute: '2-digit', hour12: true })
   })
-  return formattedDate
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
@@ -41,4 +39,9 @@ export function formatErrorMessage(error: unknown): string {
   }
 
   return 'An unknown error occurred.'
+}
+
+export const formatToTwoDecimalPlaces = (value: string): number => {
+  const numValue = parseFloat(value)
+  return isNaN(numValue) ? 0 : parseFloat(numValue.toFixed(2))
 }

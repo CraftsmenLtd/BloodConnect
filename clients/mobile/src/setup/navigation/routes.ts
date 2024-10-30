@@ -7,6 +7,7 @@ import SetPassword from '../../authentication/setPassword/UI/SetPassword'
 import CreateBloodRequest from '../../donationWorkflow/createUpdateDonation/Donation'
 import BottomNavigation from './BottomNavigation'
 import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPassword'
+import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 
 export const routes = [
   {
@@ -56,5 +57,11 @@ export const routes = [
     component: BottomNavigation,
     options: { headerShown: false },
     protected: true
+  },
+  {
+    name: SCREENS.ADD_PERSONAL_INFO,
+    component: AddPersonalInfo,
+    options: { headerShown: true, headerTitle: 'Add Personal Info' },
+    protected: false
   }
 ]

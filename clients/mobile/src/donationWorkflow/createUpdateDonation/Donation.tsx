@@ -17,8 +17,6 @@ const CreateBloodRequest = () => {
   const {
     isUpdating,
     errors,
-    showDatePicker,
-    setShowDatePicker,
     isButtonDisabled,
     bloodRequestData,
     handleInputChange,
@@ -67,13 +65,13 @@ const CreateBloodRequest = () => {
             isRequired={true}
           />
           <DateTimePickerComponent
+            name={DONATION_DATE_TIME_INPUT_NAME}
             label="Time and Date"
             value={new Date(bloodRequestData.donationDateTime)}
             onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}
-            showDatePicker={showDatePicker}
-            setShowDatePicker={setShowDatePicker}
             error={errors.donationDateTime}
             isRequired={true}
+            isOnlyDate={false}
           />
           <Input
             name="location"

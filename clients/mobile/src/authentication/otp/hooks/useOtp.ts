@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from 'react'
 import { TextInput } from 'react-native'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { CommonActions, useNavigation, useRoute } from '@react-navigation/native'
 import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
 import { submitOtp, loginUser } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
@@ -40,7 +40,12 @@ export const useOtp = (): any => {
       const isSignedIn = await loginUser(email, password)
       if (isSignedIn) {
         auth?.setIsAuthenticated(true)
-        navigation.navigate(SCREENS.BOTTOM_TABS)
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+          })
+        )
       } else {
         navigation.navigate(SCREENS.LOGIN)
       }
