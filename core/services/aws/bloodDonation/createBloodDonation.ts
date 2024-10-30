@@ -22,14 +22,15 @@ async function createBloodDonationLambda(event: BloodDonationAttributes): Promis
       latitude: event.latitude,
       longitude: event.longitude,
       donationDateTime: event.donationDateTime,
-      contactInfo: event.contactInfo,
+      shortDescription: event.shortDescription,
+      contactNumber: event.contactNumber,
       transportationInfo: event.transportationInfo
     }
     const response = await bloodDonationService.createBloodDonation(
       bloodDonationAttributes,
       new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel()), new BloodDonationModel()
     )
-    return generateApiGatewayResponse(response, HTTP_CODES.OK)
+    return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
     const errorCode = error instanceof BloodDonationOperationError ? error.errorCode : HTTP_CODES.ERROR

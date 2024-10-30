@@ -21,7 +21,7 @@ export type DonationDTO = DTO & HasIdentifier & {
   geohash: string;
   donationDateTime: string;
   status: DonationStatus;
-  contactInfo: { name: string; phone: string };
+  contactNumber: string;
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;

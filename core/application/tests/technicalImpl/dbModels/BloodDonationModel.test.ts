@@ -117,19 +117,15 @@ describe('BloodDonationModel', () => {
         PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
         SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}`,
         LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
-        contactInfo: {
-          name: 'Custom Name',
-          phone: 'Custom Phone'
-        },
+        patientName: 'Custom Name',
+        contactNumber: 'Custom Phone',
         bloodQuantity: 5
       }
 
       const result = bloodDonationModel.toDto(customFields)
 
-      expect(result.contactInfo).toEqual({
-        name: 'Custom Name',
-        phone: 'Custom Phone'
-      })
+      expect(result.patientName).toBe('Custom Name')
+      expect(result.contactNumber).toBe('Custom Phone')
       expect(result.bloodQuantity).toBe(5)
     })
   })

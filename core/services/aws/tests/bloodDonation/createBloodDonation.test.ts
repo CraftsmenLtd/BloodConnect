@@ -27,21 +27,24 @@ describe('createBloodDonationLambda', () => {
     mockBloodDonationService.prototype.createBloodDonation.mockResolvedValue(mockResponse)
     mockGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
-      body: JSON.stringify(mockResponse)
+      body: JSON.stringify({ message: mockResponse })
     })
 
     const result: APIGatewayProxyResult = await createBloodDonationLambda({ ...mockEvent })
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.OK,
-      body: JSON.stringify(mockResponse)
+      body: JSON.stringify({ message: mockResponse })
     })
     expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith(
       { ...mockEvent },
       expect.anything(),
       expect.any(Object)
     )
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(mockResponse, HTTP_CODES.OK)
+    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
+      { message: mockResponse },
+      HTTP_CODES.OK
+    )
   })
 
   it('should return an error response when a standard Error is thrown', async() => {

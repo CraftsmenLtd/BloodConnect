@@ -22,7 +22,7 @@ export class BloodDonationService {
         validationRules
       )
       if (validationResponse !== null) {
-        return validationResponse
+        throw new Error(validationResponse)
       }
 
       await bloodDonationRepository.create({
@@ -90,11 +90,11 @@ export class BloodDonationService {
       )
 
       if (item === null) {
-        return 'Item not found.'
+        throw new Error('Item not found.')
       }
 
       if (item?.status !== undefined && item.status === DonationStatus.COMPLETED) {
-        return 'You can\'t update a completed request'
+        throw new Error('You can\'t update a completed request')
       }
 
       const updateData: Partial<DonationDTO> = {
@@ -106,7 +106,7 @@ export class BloodDonationService {
       if (donationDateTime !== undefined) {
         const validationResponse = validateInputWithRules({ donationDateTime }, validationRules)
         if (validationResponse !== null) {
-          return validationResponse
+          throw new Error(validationResponse)
         }
         updateData.donationDateTime = new Date(donationDateTime).toISOString()
       }

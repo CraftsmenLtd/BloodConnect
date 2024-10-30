@@ -11,8 +11,7 @@ const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [
   'bloodQuantity',
   'urgencyLevel',
   'donationDateTime',
-  'contactInfo',
-  'patientCondition',
+  'contactNumber',
   'patientName',
   'transportationInfo',
   'shortDescription',
@@ -36,7 +35,7 @@ async function updateBloodDonationLambda(event: UpdateBloodDonationAttributes): 
       )
     }
     const response = await bloodDonationService.updateBloodDonation(bloodDonationAttributes, new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel()))
-    return generateApiGatewayResponse(response, HTTP_CODES.OK)
+    return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)

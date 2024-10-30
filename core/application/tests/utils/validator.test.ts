@@ -9,7 +9,7 @@ describe('Validation Functions', () => {
 
     it('should throw an error if donationDateTime is in the past', () => {
       const pastDate = new Date(Date.now() - 10000).toISOString()
-      expect(() => validateDonationDateTime(pastDate)).toThrow('donationDateTime cannot be in the past.')
+      expect(() => validateDonationDateTime(pastDate)).toThrow('Donation date & time cannot be in the past.')
     })
   })
 
@@ -19,11 +19,11 @@ describe('Validation Functions', () => {
     })
 
     it('should throw an error when bloodQuantity is less than 1', () => {
-      expect(() => validateBloodQuantity(0)).toThrow('bloodQuantity must be between 1 and 10.')
+      expect(() => validateBloodQuantity(0)).toThrow('Blood quantity must be between 1 and 10.')
     })
 
     it('should throw an error when bloodQuantity is greater than 10', () => {
-      expect(() => validateBloodQuantity(11)).toThrow('bloodQuantity must be between 1 and 10.')
+      expect(() => validateBloodQuantity(11)).toThrow('Blood quantity must be between 1 and 10.')
     })
   })
 
@@ -48,7 +48,7 @@ describe('Validation Functions', () => {
         mockValidationRules
       )
 
-      expect(result).toBe('bloodQuantity: bloodQuantity must be between 1 and 10.')
+      expect(result).toBe('Blood quantity must be between 1 and 10.')
     })
 
     it('should return an error message for invalid donation date time', () => {
@@ -58,7 +58,7 @@ describe('Validation Functions', () => {
         mockValidationRules
       )
 
-      expect(result).toBe('donationDateTime: donationDateTime cannot be in the past.')
+      expect(result).toBe('Donation date & time cannot be in the past.')
     })
   })
 })
