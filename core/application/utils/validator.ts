@@ -3,7 +3,7 @@ export function validateDonationDateTime(donationDateTime: string): null {
   const donationDate = new Date(donationDateTime)
 
   if (donationDate < now) {
-    throw new Error('donationDateTime cannot be in the past.')
+    throw new Error('Donation date & time cannot be in the past.')
   }
 
   return null
@@ -11,7 +11,7 @@ export function validateDonationDateTime(donationDateTime: string): null {
 
 export function validateBloodQuantity(bloodQuantity: number): null | string {
   if (bloodQuantity < 1 || bloodQuantity > 10) {
-    throw new Error('bloodQuantity must be between 1 and 10.')
+    throw new Error('Blood quantity must be between 1 and 10.')
   }
 
   return null
@@ -35,7 +35,7 @@ export function validateInputWithRules<T extends Record<string, unknown>>(
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-        return `${key}: ${errorMessage}`
+        return errorMessage
       }
     }
   }
