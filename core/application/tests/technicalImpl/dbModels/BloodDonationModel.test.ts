@@ -146,42 +146,43 @@ describe('BloodDonationModel', () => {
       jest.restoreAllMocks()
     })
 
-    it('should return undefined for an unknown index', () => {
-      const indexDefinitions = {}
-      jest.spyOn(bloodDonationModel, 'getIndexDefinitions').mockReturnValue(indexDefinitions)
-
-      const result = bloodDonationModel.getIndex('GSI', 'unknownIndex')
-      expect(result).toBeUndefined()
-    })
-
-    it('should return undefined when index type does not exist', () => {
-      const indexDefinitions = { GSI: {} }
-      jest.spyOn(bloodDonationModel, 'getIndexDefinitions').mockReturnValue(indexDefinitions)
-
-      const result = bloodDonationModel.getIndex('LSI', 'anyIndex')
-      expect(result).toBeUndefined()
-    })
-
-    it('should handle empty index definitions', () => {
-      const indexDefinitions = {}
-      jest.spyOn(bloodDonationModel, 'getIndexDefinitions').mockReturnValue(indexDefinitions)
-
-      const result = bloodDonationModel.getIndex('GSI', 'anyIndex')
-      expect(result).toBeUndefined()
-    })
-
-    it('should return undefined for different index types', () => {
-      const indexDefinitions = {
-        LSI: {},
-        GSI: {}
+    test.each([
+      {
+        name: 'unknown index',
+        indexDefinitions: {},
+        indexType: 'GSI' as const,
+        indexName: 'unknownIndex'
+      },
+      {
+        name: 'non-existent index type',
+        indexDefinitions: { GSI: {} },
+        indexType: 'LSI' as const,
+        indexName: 'anyIndex'
+      },
+      {
+        name: 'empty index definitions',
+        indexDefinitions: {},
+        indexType: 'GSI' as const,
+        indexName: 'anyIndex'
+      },
+      {
+        name: 'LSI index type',
+        indexDefinitions: { LSI: {}, GSI: {} },
+        indexType: 'LSI' as const,
+        indexName: 'testIndex'
+      },
+      {
+        name: 'GSI index type',
+        indexDefinitions: { LSI: {}, GSI: {} },
+        indexType: 'GSI' as const,
+        indexName: 'testIndex'
       }
+    ])('should return undefined for $name', ({ indexDefinitions, indexType, indexName }) => {
       jest.spyOn(bloodDonationModel, 'getIndexDefinitions').mockReturnValue(indexDefinitions)
 
-      const result1 = bloodDonationModel.getIndex('LSI', 'testIndex')
-      const result2 = bloodDonationModel.getIndex('GSI', 'testIndex')
+      const result = bloodDonationModel.getIndex(indexType, indexName)
 
-      expect(result1).toBeUndefined()
-      expect(result2).toBeUndefined()
+      expect(result).toBeUndefined()
     })
   })
 
