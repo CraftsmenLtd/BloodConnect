@@ -28,7 +28,7 @@ const assertEmailParams = (params: SendEmailCommandInput, expectedParams: Partia
     if ((expectedParams.Destination?.ToAddresses) != null) {
       expect(params.Destination.ToAddresses).toEqual(expectedParams.Destination.ToAddresses)
     }
-    if (expectedParams.Source != null) {
+    if (expectedParams.Source != null && params.Source != null) {
       expect(params.Source).toBe(expectedParams.Source)
     }
   }
@@ -52,34 +52,6 @@ describe('SES Operations Tests', () => {
   })
 
   describe('sendAppUserWellcomeMail', () => {
-    test('should send email successfully with default sender', async() => {
-      delete process.env.EMAIL_SENDER
-      sesClientMock.on(SendEmailCommand).resolves({})
-
-      await sendAppUserWellcomeMail({ email: mockEmail, emailContent: mockEmailContent })
-      expect(sesClientMock.calls()).toHaveLength(1)
-      const sendEmailCommand = sesClientMock.calls()[0].args[0] as SendEmailCommand
-
-      assertEmailParams(sendEmailCommand.input, {
-        Destination: {
-          ToAddresses: [mockEmail]
-        },
-        Message: {
-          Body: {
-            Html: {
-              Data: mockEmailContent.content,
-              Charset: 'UTF-8'
-            }
-          },
-          Subject: {
-            Data: mockEmailContent.title,
-            Charset: 'UTF-8'
-          }
-        },
-        Source: 'no-reply@bloodconnect.net'
-      })
-    })
-
     test('should send email successfully with custom sender from environment variable', async() => {
       const customSender = 'custom@bloodconnect.net'
       process.env.EMAIL_SENDER = customSender

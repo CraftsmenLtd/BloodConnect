@@ -10,7 +10,7 @@ interface SendWelcomeEmailParams {
 
 export async function sendAppUserWellcomeMail({ email, emailContent }: SendWelcomeEmailParams): Promise<void> {
   const { title, content } = emailContent
-  const senderEmail = process.env.EMAIL_SENDER ?? 'no-reply@bloodconnect.net'
+  const senderEmail = process.env.EMAIL_SENDER
 
   const emailParams: SendEmailCommandInput = {
     Destination: {
