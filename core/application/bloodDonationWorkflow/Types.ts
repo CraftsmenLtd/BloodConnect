@@ -10,7 +10,7 @@ export interface BloodDonationAttributes {
   latitude: number;
   longitude: number;
   donationDateTime: string;
-  contactInfo: { name: string; phone: string };
+  contactNumber: string;
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
@@ -28,7 +28,7 @@ export interface UpdateBloodDonationAttributes {
   bloodQuantity?: number;
   urgencyLevel?: UrgencyLevel;
   donationDateTime?: string;
-  contactInfo?: { name: string; phone: string };
+  contactNumber?: string;
   patientCondition?: string;
   patientName?: string;
   transportationInfo?: string;
