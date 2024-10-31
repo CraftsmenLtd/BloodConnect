@@ -12,6 +12,14 @@
     {
       "name": "bloodconnect-donation",
       "description": "Donation module of BloodConnect"
+    },
+    {
+      "name": "bloodconnect-donation-accept",
+      "description": "Donation module for request accept"
+    },
+    {
+      "name": "cors-options",
+      "description": "API Endpoints for BloodConnect cors options"
     }
   ],
   "info": {
@@ -46,6 +54,9 @@
     },
     "/donations": {
       "$ref": "./../paths/donations/donations.json"
+    },
+    "/donations/accept": {
+      "$ref": "./../paths/donations/accept.json"
     }
   },
   "components": {

@@ -56,3 +56,11 @@ export interface StepFunctionExecutionAttributes {
   startDate: string;
   input: StepFunctionInput;
 }
+
+export interface AcceptDonationRequestAttributes {
+  donorId: string;
+  seekerId: string;
+  createdAt: string;
+  requestPostId: string;
+  acceptanceTime: string;
+}

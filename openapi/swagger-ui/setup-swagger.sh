@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCH_NAME=$1
+BRANCH_NAME=${1,,}
 EMAIL=$2
 PASSWORD=$3
 REGION="ap-south-1"
@@ -9,6 +9,11 @@ API_GATEWAY_ID=$(aws apigateway get-rest-apis --query "items[?starts_with(name, 
 USER_POOL_ID=$(aws cognito-idp list-user-pools --max-results 10 --query "UserPools[?starts_with(Name, '$BRANCH_NAME')].Id" --output text --region $REGION)
 APP_CLIENT_ID=$(aws cognito-idp list-user-pool-clients --user-pool-id $USER_POOL_ID --query "UserPoolClients[0].ClientId" --output text --region $REGION)
 EXISTING_USER=$(aws cognito-idp admin-get-user --user-pool-id $USER_POOL_ID --username $EMAIL --region $REGION 2>&1)
+
+if [[ -z "$API_GATEWAY_ID" || -z "$USER_POOL_ID" || -z "$APP_CLIENT_ID" ]]; then
+  echo "Error: Missing AWS resources for branch. Ensure that branch `$BRANCH_NAME` is deployed in aws."
+  exit 1
+fi
 
 if [[ $EXISTING_USER == *"UserNotFoundException"* ]]; then
     aws cognito-idp sign-up \

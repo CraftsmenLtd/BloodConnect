@@ -1,17 +1,25 @@
 {
   "settings": {
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
+      "@typescript-eslint/parser": [
+        ".ts",
+        ".tsx"
+      ]
     },
     "import/resolver": {
       "typescript": {},
       "node": {
-        "moduleDirectory": ["node_modules", "clients/web/node_modules"]
+        "moduleDirectory": [
+          "node_modules",
+          "clients/web/node_modules"
+        ]
       }
     }
   },
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "env": {
     "browser": true,
     "es2021": true
@@ -25,10 +33,13 @@
         "node": true
       },
       "files": [
-        ".eslintrc.{js,cjs}", "*.ts"
+        ".eslintrc.{js,cjs}",
+        "*.ts"
       ],
       "rules": {
-        "@typescript-eslint/explicit-function-return-type": ["error"]
+        "@typescript-eslint/explicit-function-return-type": [
+          "error"
+        ]
       },
       "parserOptions": {
         "sourceType": "script"
@@ -40,21 +51,43 @@
     "sourceType": "module"
   },
   "rules": {
-    "import/no-unresolved": ["error"],
-    "no-console": ["warn"],
+    "import/no-unresolved": [
+      "error"
+    ],
+    "no-console": [
+      "warn"
+    ],
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/space-before-function-paren": ["error", "never"],
+    "@typescript-eslint/space-before-function-paren": [
+      "error",
+      "never"
+    ],
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/method-signature-style": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/consistent-type-imports": "off",
     "@typescript-eslint/return-await": "off",
-    "@typescript-eslint/member-delimiter-style": ["error", {
-      "multiline": { "delimiter": "semi", "requireLast": true },
-      "singleline": { "delimiter": "semi", "requireLast": false }
-    }]
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "semi",
+          "requireLast": true
+        },
+        "singleline": {
+          "delimiter": "semi",
+          "requireLast": false
+        }
+      }
+    ]
   },
-  "ignorePatterns": ["coverage/", "dist/", "node_modules/", "docs/", "iac/"]
+  "ignorePatterns": [
+    "coverage/",
+    "dist/",
+    "node_modules/",
+    "docs/",
+    "iac/"
+  ]
 }
