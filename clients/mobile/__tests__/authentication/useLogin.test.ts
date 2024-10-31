@@ -1,4 +1,3 @@
-// import '../__mocks__/reactNavigation.mock'
 import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useLogin } from '../../src/authentication/login/hooks/useLogin'

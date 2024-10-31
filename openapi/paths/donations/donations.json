@@ -101,16 +101,6 @@
     "tags": [
       "bloodconnect-donation"
     ],
-    "parameters": [
-      {
-        "name": "status",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
     "responses": {
       "200": {
         "description": "200 response",

@@ -1,15 +1,15 @@
 {
   "post": {
-    "operationId": "RegisterOrganization",
-    "description": "Register organization account",
+    "operationId": "AcceptDonation",
+    "description": "Accept Donation Request",
     "tags": [
-      "bloodconnect-auth"
+      "bloodconnect-donation"
     ],
     "requestBody": {
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "./../../components/schemas/auth/register-organization-payload.json#/RegisterOrganizationRequest"
+            "$ref": "./../../components/schemas/donations/accept-donation-request.json#/AcceptDonationRequestModel"
           }
         }
       }
@@ -39,8 +39,13 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../../integration/aws/auth/post-register-organization.json"
-    }
+      "$ref": "./../../integration/aws/donations/post-accept-donation.json"
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
   },
   "options": {
     "$ref": "./../cors-options.json"
