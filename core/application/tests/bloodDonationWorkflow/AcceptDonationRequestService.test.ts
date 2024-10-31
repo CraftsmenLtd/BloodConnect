@@ -9,7 +9,8 @@ jest.mock('../../technicalImpl/policies/repositories/Repository')
 const mockAcceptDonationRepository = {
   create: jest.fn(),
   update: jest.fn(),
-  getItem: jest.fn()
+  getItem: jest.fn(),
+  query: jest.fn()
 }
 const acceptDonationService = new AcceptDonationService()
 
