@@ -31,16 +31,20 @@ describe('Validation Functions', () => {
     })
   })
 
-  describe('validatePhoneNumber', () => {
+  describe('validatePhoneNumberAndGetErrorMessage', () => {
     it('should return error message if the phone number is invalid', () => {
       expect(validatePhoneNumber('12345')).toBe('Invalid phone number')
       expect(validatePhoneNumber('+')).toBe('Invalid phone number')
       expect(validatePhoneNumber('++123')).toBe('Invalid phone number')
+      expect(validatePhoneNumber('+88012345678')).toBe('Invalid phone number')
+      expect(validatePhoneNumber('0123456789')).toBe('Invalid phone number')
     })
 
     it('should return null if the phone number is valid', () => {
-      expect(validatePhoneNumber('+1234567890')).toBeNull()
-      expect(validatePhoneNumber('+14155552671')).toBeNull()
+      expect(validatePhoneNumber('+8801323456789')).toBeNull()
+      expect(validatePhoneNumber('+8801987654321')).toBeNull()
+      expect(validatePhoneNumber('01323456789')).toBeNull()
+      expect(validatePhoneNumber('01787654321')).toBeNull()
     })
   })
 
