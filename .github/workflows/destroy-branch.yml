@@ -24,11 +24,18 @@ jobs:
     outputs:
       branch_name: ${{ steps.set_branch_name.outputs.branch_name }}
 
+  build-push-docker-image:
+    name: 🐳 Build and Push Docker Image
+    uses: ./.github/workflows/docker-image.yml
+    secrets: inherit
+
   destroy-terraform:
     name: 🔥 Terraform Destruction
-    needs: [setup-environment]
+    needs: [setup-environment, build-push-docker-image]
     runs-on: ${{ vars.RUNNER_OS }}
     environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    container:
+      image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

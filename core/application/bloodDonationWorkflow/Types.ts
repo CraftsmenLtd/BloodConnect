@@ -34,3 +34,33 @@ export interface UpdateBloodDonationAttributes {
   transportationInfo?: string;
   shortDescription?: string;
 }
+
+export interface DonorRoutingAttributes {
+  seekerId: string;
+  requestPostId: string;
+}
+
+export interface StepFunctionInput {
+  seekerId: string;
+  requestPostId: string;
+  neededBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyLevel;
+  latitude: number;
+  longitude: number;
+}
+
+export interface StepFunctionExecutionAttributes {
+  executionArn: string;
+  status: string;
+  startDate: string;
+  input: StepFunctionInput;
+}
+
+export interface AcceptDonationRequestAttributes {
+  donorId: string;
+  seekerId: string;
+  createdAt: string;
+  requestPostId: string;
+  acceptanceTime: string;
+}
