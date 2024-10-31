@@ -6,6 +6,7 @@ export const formatteDate = (date: string | Date): string => {
     day: '2-digit',
     hour: 'numeric',
     minute: '2-digit',
+    timeZone: 'UTC',
     hour12: true
   })
   return formattedDate
