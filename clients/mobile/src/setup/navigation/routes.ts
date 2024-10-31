@@ -49,5 +49,11 @@ export const routes = [
     component: BottomNavigation,
     options: { headerShown: false },
     protected: true
+  },
+  {
+    name: SCREENS.BLOOD_REQUEST_PREVIEW,
+    component: BottomNavigation,
+    options: { headerShown: true, headerTitle: 'Blood Request' },
+    protected: true
   }
 ]
