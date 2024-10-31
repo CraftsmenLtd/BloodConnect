@@ -32,14 +32,10 @@ describe('donorRequestRouter', () => {
     ]
   }
 
-  let mockBloodDonationService: jest.MockedClass<typeof BloodDonationService>
-
-  beforeEach(() => {
-    mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
-  })
+  const mockBloodDonationService: jest.MockedClass<typeof BloodDonationService> = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
 
   afterEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
   it('should process all records in the SQSEvent', async() => {

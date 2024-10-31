@@ -99,49 +99,53 @@ export default class DynamoDbTableOperations<
       expressionAttributeValues: Record<string, unknown>;
       expressionAttributeNames: Record<string, string>;
     } {
-    const expressionAttributeValues: Record<string, unknown> = {}
-    const expressionAttributeNames: Record<string, string> = {}
+    const expressionAttributeValues: Record<string, unknown> = {
+      [`:${String(partitionKeyCondition.attributeName)}`]: partitionKeyCondition.attributeValue
+    }
+    const expressionAttributeNames: Record<string, string> = {
+      [`#${String(partitionKeyCondition.attributeName)}`]: String(partitionKeyCondition.attributeName)
+    }
 
-    const pkName = `#${String(partitionKeyCondition.attributeName)}`
-    const pkValue = `:${String(partitionKeyCondition.attributeName)}`
-    expressionAttributeNames[pkName] = String(partitionKeyCondition.attributeName)
-    expressionAttributeValues[pkValue] = partitionKeyCondition.attributeValue
+    const baseKeyConditionExpression = `#${String(partitionKeyCondition.attributeName)} ${partitionKeyCondition.operator} :${String(partitionKeyCondition.attributeName)}`
 
-    let keyConditionExpression = `${pkName} ${partitionKeyCondition.operator} ${pkValue}`
-
-    if (sortKeyCondition != null) {
-      const skName = `#${String(sortKeyCondition.attributeName)}`
-      const skValue = `:${String(sortKeyCondition.attributeName)}`
-      expressionAttributeNames[skName] = String(sortKeyCondition.attributeName)
-      expressionAttributeValues[skValue] = sortKeyCondition.attributeValue
-
-      switch (sortKeyCondition.operator) {
-        case QueryConditionOperator.BEGINS_WITH:
-          keyConditionExpression += ` AND begins_with(${skName}, ${skValue})`
-          break
-        case QueryConditionOperator.BETWEEN: {
-          const value2 = sortKeyCondition.attributeValue2
-          if (value2 != null && value2 !== '') {
-            const skValue2 = `:${String(sortKeyCondition.attributeName)}2`
-            expressionAttributeValues[skValue2] = value2
-            keyConditionExpression += ` AND ${skName} BETWEEN ${skValue} AND ${skValue2}`
-          } else {
-            throw new DatabaseError(
-              'BETWEEN operator requires a non-empty second value',
-              GENERIC_CODES.ERROR
-            )
-          }
-          break
-        }
-        default:
-          keyConditionExpression += ` AND ${skName} ${sortKeyCondition.operator} ${skValue}`
+    if (sortKeyCondition === undefined || sortKeyCondition === null) {
+      return {
+        keyConditionExpression: baseKeyConditionExpression,
+        expressionAttributeValues,
+        expressionAttributeNames
       }
     }
 
-    return {
-      keyConditionExpression,
-      expressionAttributeValues,
-      expressionAttributeNames
+    expressionAttributeNames[`#${String(sortKeyCondition.attributeName)}`] = String(sortKeyCondition.attributeName)
+    expressionAttributeValues[`:${String(sortKeyCondition.attributeName)}`] = sortKeyCondition.attributeValue
+
+    switch (sortKeyCondition.operator) {
+      case QueryConditionOperator.BEGINS_WITH:
+        return {
+          keyConditionExpression: `${baseKeyConditionExpression} AND begins_with(#${String(sortKeyCondition.attributeName)}, :${String(sortKeyCondition.attributeName)})`,
+          expressionAttributeValues,
+          expressionAttributeNames
+        }
+
+      case QueryConditionOperator.BETWEEN: {
+        const value2 = sortKeyCondition.attributeValue2
+        if (value2 === undefined || value2 === null || value2 === '') {
+          throw new DatabaseError('BETWEEN operator requires a non-empty second value', GENERIC_CODES.ERROR)
+        }
+        expressionAttributeValues[`:${String(sortKeyCondition.attributeName)}2`] = value2
+        return {
+          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(sortKeyCondition.attributeName)} BETWEEN :${String(sortKeyCondition.attributeName)} AND :${String(sortKeyCondition.attributeName)}2`,
+          expressionAttributeValues,
+          expressionAttributeNames
+        }
+      }
+
+      default:
+        return {
+          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(sortKeyCondition.attributeName)} ${sortKeyCondition.operator} :${String(sortKeyCondition.attributeName)}`,
+          expressionAttributeValues,
+          expressionAttributeNames
+        }
     }
   }
 
