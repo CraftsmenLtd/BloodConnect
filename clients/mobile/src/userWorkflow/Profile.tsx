@@ -9,6 +9,7 @@ import { SCREENS } from '../setup/constant/screens'
 import { Cache } from 'aws-amplify/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import { useAuth } from '../authentication/context/useAuth'
 
 interface ProfileScreenProps {
   navigation: ProfileScreenNavigationProp;
@@ -16,6 +17,7 @@ interface ProfileScreenProps {
 
 export default function Profile({ navigation }: ProfileScreenProps) {
   const theme = useTheme()
+  const auth = useAuth()
 
   const clearAllStorage = async () => {
     if (Platform.OS !== 'web') {
@@ -25,13 +27,14 @@ export default function Profile({ navigation }: ProfileScreenProps) {
 
   const handleSignOut = async (): Promise<void> => {
     try {
+      await auth.logoutUser()
       await Promise.all([Cache.clear(), clearAllStorage()])
       await signOut()
-      navigation.navigate(SCREENS.LOGIN)
+      navigation.navigate(SCREENS.WELCOME)
     } catch (error) {
       console.error('Error during sign out:', error instanceof Error ? error.message : 'Unknown error');
       if (error instanceof Error && error.name === 'UserNotAuthenticatedException') {
-        navigation.navigate(SCREENS.LOGIN);
+        navigation.navigate(SCREENS.WELCOME);
       }
     }
   }

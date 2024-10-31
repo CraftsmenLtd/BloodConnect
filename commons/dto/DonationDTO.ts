@@ -33,3 +33,15 @@ export interface StepFunctionInput extends DTO {
   requestPostId: string;
   additionalParams?: Record<string, any>;
 }
+
+type BaseAcceptedDonationDTO = {
+  donorId: string;
+  requestPostId: string;
+  acceptanceTime: string;
+  seekerId: string;
+  createdAt: string;
+}
+
+export type AcceptedDonationDTO = BaseAcceptedDonationDTO & DTO & {
+  status?: string;
+}
