@@ -4,7 +4,8 @@ import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, v
 import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import { googleLogin, facebookLogin } from '../../authService'
+import { googleLogin, facebookLogin } from '../../services/authService'
+import { formatPhoneNumber } from '../../../utility/formatte'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -57,7 +58,11 @@ export const useRegister = (): any => {
 
   const handleRegister = async(): Promise<void> => {
     navigation.navigate(SCREENS.SET_PASSWORD, {
-      params: { ...registerCredential, password: '' },
+      params: {
+        ...registerCredential,
+        phoneNumber: formatPhoneNumber(registerCredential.phoneNumber),
+        password: ''
+      },
       fromScreen: SCREENS.REGISTER
     })
   }
