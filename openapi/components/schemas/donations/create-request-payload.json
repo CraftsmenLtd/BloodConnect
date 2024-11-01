@@ -9,13 +9,9 @@
       "latitude",
       "longitude",
       "donationDateTime",
-      "contactInfo"
+      "contactNumber"
     ],
     "properties": {
-      "patientName": {
-        "type": "string",
-        "minLength": 1
-      },
       "neededBloodGroup": {
         "type": "string",
         "enum": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
@@ -47,19 +43,13 @@
         "type": "string",
         "format": "date-time"
       },
-      "contactInfo": {
-        "type": "object",
-        "required": ["name", "phone"],
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 2
-          },
-          "phone": {
-            "type": "string",
-            "pattern": "^[+]?[0-9]{1,3}?[0-9]{10}$"
-          }
-        }
+      "contactNumber": {
+        "type": "string",
+        "pattern": "^\\+8801[3-9]\\d{8}$"
+      },
+      "patientName": {
+        "type": "string",
+        "minLength": 1
       },
       "transportationInfo": {
         "type": "string"
@@ -76,12 +66,8 @@
       "location": "Baridhara, Dhaka",
       "latitude": 23.7936,
       "longitude": 90.4043,
-      "donationDateTime": "2024-10-20T15:00:00Z",
-      "contactInfo": {
-        "name": "Jane Doe",
-        "phone": "+880123456789"
-      },
-      "patientCondition": "Stable",
+      "donationDateTime": "2024-12-20T15:00:00Z",
+      "contactNumber": "+8801712345678",
       "transportationInfo": "Car available",
       "shortDescription": "Need blood urgently for surgery."
     }

@@ -1,7 +1,8 @@
 import { DbModelDtoAdapter, NosqlModel } from '../../../../application/technicalImpl/dbModels/DbModelDefinitions'
 import Repository from '../../../../application/technicalImpl/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand, QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb'
+import { QueryInput, QueryCondition, QueryConditionOperator } from '../../../../application/technicalImpl/policies/repositories/QueryTypes'
 import { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
@@ -15,7 +16,7 @@ export default class DynamoDbTableOperations<
   Dto extends DTO,
   DbFields extends Record<string, unknown>,
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
-> implements Repository<Dto> {
+> implements Repository<Dto, DbFields> {
   constructor(
     private readonly modelAdapter: ModelAdapter,
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION }))
@@ -32,6 +33,120 @@ export default class DynamoDbTableOperations<
       return this.modelAdapter.toDto(items)
     }
     throw new Error('Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined')
+  }
+
+  async query(queryInput: QueryInput<DbFields>): Promise<{ items: Dto[]; lastEvaluatedKey?: Record<string, unknown> }> {
+    try {
+      const { keyConditionExpression, expressionAttributeValues, expressionAttributeNames } =
+        this.buildKeyConditionExpression(queryInput.partitionKeyCondition, queryInput.sortKeyCondition)
+
+      const queryCommandInput: QueryCommandInput = {
+        TableName: this.getTableName(),
+        KeyConditionExpression: keyConditionExpression,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ExpressionAttributeNames: expressionAttributeNames
+      }
+
+      this.applyQueryOptions(queryCommandInput, queryInput.options)
+
+      const result = await this.client.send(new QueryCommand(queryCommandInput))
+
+      return {
+        items: (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields)),
+        lastEvaluatedKey: result.LastEvaluatedKey
+      }
+    } catch (error) {
+      throw new DatabaseError(
+        `Failed to query items from DynamoDB: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        GENERIC_CODES.ERROR
+      )
+    }
+  }
+
+  private applyQueryOptions(queryCommandInput: QueryCommandInput, options?: QueryInput<DbFields>['options']): void {
+    if (options == null) return
+
+    const { indexName, limit, scanIndexForward, exclusiveStartKey, filterExpression, filterExpressionValues } = options
+
+    if ((indexName?.trim()) != null) {
+      queryCommandInput.IndexName = indexName
+    }
+    if ((limit != null) && limit > 0) {
+      queryCommandInput.Limit = limit
+    }
+    if (scanIndexForward !== undefined) {
+      queryCommandInput.ScanIndexForward = scanIndexForward
+    }
+    if ((exclusiveStartKey != null) && Object.keys(exclusiveStartKey).length > 0) {
+      queryCommandInput.ExclusiveStartKey = exclusiveStartKey
+    }
+    if ((filterExpression?.trim()) != null) {
+      queryCommandInput.FilterExpression = filterExpression
+      if ((filterExpressionValues != null) && Object.keys(filterExpressionValues).length > 0) {
+        queryCommandInput.ExpressionAttributeValues = {
+          ...queryCommandInput.ExpressionAttributeValues,
+          ...filterExpressionValues
+        }
+      }
+    }
+  }
+
+  private buildKeyConditionExpression(
+    partitionKeyCondition: QueryCondition<DbFields>,
+    sortKeyCondition?: QueryCondition<DbFields>
+  ): {
+      keyConditionExpression: string;
+      expressionAttributeValues: Record<string, unknown>;
+      expressionAttributeNames: Record<string, string>;
+    } {
+    const expressionAttributeValues: Record<string, unknown> = {
+      [`:${String(partitionKeyCondition.attributeName)}`]: partitionKeyCondition.attributeValue
+    }
+    const expressionAttributeNames: Record<string, string> = {
+      [`#${String(partitionKeyCondition.attributeName)}`]: String(partitionKeyCondition.attributeName)
+    }
+
+    const baseKeyConditionExpression = `#${String(partitionKeyCondition.attributeName)} ${partitionKeyCondition.operator} :${String(partitionKeyCondition.attributeName)}`
+
+    if (sortKeyCondition === undefined || sortKeyCondition === null) {
+      return {
+        keyConditionExpression: baseKeyConditionExpression,
+        expressionAttributeValues,
+        expressionAttributeNames
+      }
+    }
+
+    expressionAttributeNames[`#${String(sortKeyCondition.attributeName)}`] = String(sortKeyCondition.attributeName)
+    expressionAttributeValues[`:${String(sortKeyCondition.attributeName)}`] = sortKeyCondition.attributeValue
+
+    switch (sortKeyCondition.operator) {
+      case QueryConditionOperator.BEGINS_WITH:
+        return {
+          keyConditionExpression: `${baseKeyConditionExpression} AND begins_with(#${String(sortKeyCondition.attributeName)}, :${String(sortKeyCondition.attributeName)})`,
+          expressionAttributeValues,
+          expressionAttributeNames
+        }
+
+      case QueryConditionOperator.BETWEEN: {
+        const value2 = sortKeyCondition.attributeValue2
+        if (value2 === undefined || value2 === null || value2 === '') {
+          throw new DatabaseError('BETWEEN operator requires a non-empty second value', GENERIC_CODES.ERROR)
+        }
+        expressionAttributeValues[`:${String(sortKeyCondition.attributeName)}2`] = value2
+        return {
+          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(sortKeyCondition.attributeName)} BETWEEN :${String(sortKeyCondition.attributeName)} AND :${String(sortKeyCondition.attributeName)}2`,
+          expressionAttributeValues,
+          expressionAttributeNames
+        }
+      }
+
+      default:
+        return {
+          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(sortKeyCondition.attributeName)} ${sortKeyCondition.operator} :${String(sortKeyCondition.attributeName)}`,
+          expressionAttributeValues,
+          expressionAttributeNames
+        }
+    }
   }
 
   async update(item: Dto): Promise<Dto> {
@@ -86,7 +201,6 @@ export default class DynamoDbTableOperations<
       if (result.Item === null || result.Item === undefined) {
         return null
       }
-
       return this.modelAdapter.toDto(result.Item as DbFields)
     } catch (error) {
       throw new DatabaseError('Failed to fetch item from DynamoDB', GENERIC_CODES.ERROR)

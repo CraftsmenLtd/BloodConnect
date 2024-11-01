@@ -1,45 +1,91 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
-import createBloodDonationLambda from '../../bloodDonation/createBloodDonation'
+import { SQSEvent } from 'aws-lambda'
+import donorRequestRouter from '../../bloodDonation/donorRequestRouter'
 import { BloodDonationService } from '../../../../application/bloodDonationWorkflow/BloodDonationService'
-import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
-import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
-import { BloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
-import { donationAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
+import StepFunctionOperations from '../../commons/stepFunction/StepFunctionOperations'
+import { donorRoutingAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
-jest.mock('../../commons/lambda/ApiGateway')
+jest.mock('../../commons/stepFunction/StepFunctionOperations')
 
-const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
-const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
+describe('donorRequestRouter', () => {
+  const mockEvent: SQSEvent = {
+    Records: [
+      {
+        messageId: '1',
+        receiptHandle: '1',
+        body: JSON.stringify({
+          seekerId: donorRoutingAttributesMock.seekerId,
+          requestPostId: donorRoutingAttributesMock.requestPostId
+        }),
+        attributes: {
+          ApproximateReceiveCount: '',
+          SentTimestamp: '',
+          SenderId: '',
+          ApproximateFirstReceiveTimestamp: ''
+        },
+        messageAttributes: {},
+        md5OfBody: 'md5',
+        eventSource: 'aws:sqs',
+        eventSourceARN: 'arn:aws:sqs:region:123456789012:queue',
+        awsRegion: 'region'
+      }
+    ]
+  }
 
-describe('createBloodDonationLambda', () => {
-  const { shortDescription, ...rest } = donationAttributesMock
-  const mockEvent: BloodDonationAttributes = { ...rest }
+  const mockBloodDonationService: jest.MockedClass<typeof BloodDonationService> = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
 
   afterEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
-  it('should return a successful response when blood donation is created', async() => {
+  it('should process all records in the SQSEvent', async() => {
     const mockResponse = 'Blood donation created successfully'
+    mockBloodDonationService.prototype.routeDonorRequest.mockResolvedValue(mockResponse)
 
-    mockBloodDonationService.prototype.createBloodDonation.mockResolvedValue(mockResponse)
-    mockGenerateApiGatewayResponse.mockReturnValue({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
+    await donorRequestRouter(mockEvent)
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda({ ...mockEvent })
-    expect(result).toEqual({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
-    expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith({ ...mockEvent }, expect.anything())
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(mockResponse, HTTP_CODES.OK)
+    expect(mockBloodDonationService.prototype.routeDonorRequest).toHaveBeenCalledTimes(mockEvent.Records.length)
+    expect(mockBloodDonationService.prototype.routeDonorRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        seekerId: donorRoutingAttributesMock.seekerId,
+        requestPostId: donorRoutingAttributesMock.requestPostId
+      }),
+      expect.anything(),
+      expect.any(StepFunctionOperations)
+    )
   })
 
-  it('should return an error response when an error is thrown', async() => {
-    const errorMessage = 'Database connection failed'
-    mockBloodDonationService.prototype.createBloodDonation.mockRejectedValue(new Error(errorMessage))
-    mockGenerateApiGatewayResponse.mockReturnValue({ statusCode: HTTP_CODES.ERROR, body: `Error: ${errorMessage}` })
+  it('should handle invalid JSON in the SQS message body', async() => {
+    const invalidEvent: SQSEvent = {
+      Records: [
+        {
+          messageId: '1',
+          receiptHandle: '1',
+          body: '{ invalid json }',
+          attributes: {
+            ApproximateReceiveCount: '',
+            SentTimestamp: '',
+            SenderId: '',
+            ApproximateFirstReceiveTimestamp: ''
+          },
+          messageAttributes: {},
+          md5OfBody: 'md5',
+          eventSource: 'aws:sqs',
+          eventSourceARN: 'arn:aws:sqs:region:123456789012:queue',
+          awsRegion: 'region'
+        }
+      ]
+    }
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent)
-    expect(result).toEqual({ statusCode: HTTP_CODES.ERROR, body: `Error: ${errorMessage}` })
-    expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith({ ...mockEvent }, expect.anything())
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
+    await expect(donorRequestRouter(invalidEvent)).rejects.toThrow()
+    expect(mockBloodDonationService.prototype.routeDonorRequest).not.toHaveBeenCalled()
+  })
+
+  it('should throw an error if routeDonorRequest fails', async() => {
+    const errorMessage = 'Failed to route donor request'
+    mockBloodDonationService.prototype.routeDonorRequest.mockRejectedValue(new Error(errorMessage))
+
+    await expect(donorRequestRouter(mockEvent)).rejects.toThrow(errorMessage)
+    expect(mockBloodDonationService.prototype.routeDonorRequest).toHaveBeenCalled()
   })
 })

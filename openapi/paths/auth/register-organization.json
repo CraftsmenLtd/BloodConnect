@@ -40,12 +40,7 @@
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
       "$ref": "./../../integration/aws/auth/post-register-organization.json"
-    },
-    "security": [
-      {
-        "CognitoAuthorizer": []
-      }
-    ]
+    }
   },
   "options": {
     "$ref": "./../cors-options.json"

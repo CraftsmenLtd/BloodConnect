@@ -1,10 +1,10 @@
 import '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useSetPassword } from '../../src/authentication/setPassword/hooks/useSetPassword'
-import { registerUser } from '../../src/authentication/authService'
+import { registerUser } from '../../src/authentication/services/authService'
 import { SCREENS } from '../../src/setup/constant/screens'
 
-jest.mock('../../src/authentication/authService', () => ({
+jest.mock('../../src/authentication/services/authService', () => ({
   registerUser: jest.fn()
 }))
 
@@ -76,6 +76,6 @@ describe('useSetPassword Hook', () => {
     await act(async() => {
       await result.current.handleSetPassword()
     })
-    expect(result.current.error).toBe('Failed to sign up. Please try again later.')
+    expect(result.current.error).toBe('Registration failed')
   })
 })

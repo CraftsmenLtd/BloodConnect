@@ -53,3 +53,10 @@ module "donor_search" {
   environment        = var.environment
   dynamodb_table_arn = module.database.dynamodb_table_arn
 }
+
+module "eventbridge" {
+  source                    = "./eventbridge"
+  environment               = var.environment
+  dynamodb_table_stream_arn = module.database.dynamodb_table_stream_arn
+  donor_search_queue_arn    = module.donor_search_router.donor_search_queue_arn
+}

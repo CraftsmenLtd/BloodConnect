@@ -3,7 +3,7 @@ import UserOperationError from './UserOperationError'
 import { UserDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { GenericMessage } from '../../../commons/dto/MessageDTO'
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from './userMessages'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from './userMessages'
 import Repository from '../technicalImpl/policies/repositories/Repository'
 
 type UserAttributes = {
@@ -33,5 +33,9 @@ export class UserService {
 
   getForgotPasswordMessage(userName: string, securityCode: string): GenericMessage {
     return getPasswordResetVerificationMessage(userName, securityCode)
+  }
+
+  getAppUserWellcomeMail(userName: string): GenericMessage {
+    return getAppUserWellcomeMailMessage(userName)
   }
 }

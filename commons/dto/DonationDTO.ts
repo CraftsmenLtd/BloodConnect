@@ -21,9 +21,28 @@ export type DonationDTO = DTO & HasIdentifier & {
   geohash: string;
   donationDateTime: string;
   status: DonationStatus;
-  contactInfo: { name: string; phone: string };
+  contactNumber: string;
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
+  createdAt?: string;
   retryCount?: number;
+}
+
+export interface StepFunctionInput extends DTO {
+  seekerId: string;
+  requestPostId: string;
+  additionalParams?: Record<string, any>;
+}
+
+type BaseAcceptedDonationDTO = {
+  donorId: string;
+  requestPostId: string;
+  acceptanceTime: string;
+  seekerId: string;
+  createdAt: string;
+}
+
+export type AcceptedDonationDTO = BaseAcceptedDonationDTO & DTO & {
+  status?: string;
 }

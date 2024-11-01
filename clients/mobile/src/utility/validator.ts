@@ -24,7 +24,7 @@ export const validateEmailAndGetErrorMessage = (value: string): string | null =>
 }
 
 export const validatePhoneNumberAndGetErrorMessage = (value: string): string | null => {
-  const phoneRegex = /^[+]{1}(?:[0-9\-()/.]\s?){6,15}[0-9]{1}$/
+  const phoneRegex = /^(?:\+8801[3-9]\d{8}|01[3-9]\d{8})$/
   return !phoneRegex.test(value) ? 'Invalid phone number' : null
 }
 
@@ -59,6 +59,18 @@ export const checkErrorsInPassword = (value: string): string | null => {
   return (errors !== '') ? `Password must contain: ${errors}` : null
 }
 
+export const validateDonationDateTime = (donationDateTime: string): string | null => {
+  const now = new Date()
+  const donationDate = new Date(donationDateTime)
+
+  const minAllowedDate = new Date(now.getTime() + 5 * 60 * 1000)
+  if (donationDate < minAllowedDate) {
+    return 'Donation date & time must be at least 5 minutes ahead.'
+  }
+
+  return null
+}
+
 export type ValidationRule = (value: string) => string | null
 
 export const validateInput = (value: string, rules: ValidationRule[]): string | null => {
@@ -75,5 +87,6 @@ export {
   validateAndReturnRequiredFieldError as validateRequired,
   validateEmailAndGetErrorMessage as validateEmail,
   validatePhoneNumberAndGetErrorMessage as validatePhoneNumber,
-  checkErrorsInPassword as validatePassword
+  checkErrorsInPassword as validatePassword,
+  validateDonationDateTime as validateDateTime
 }

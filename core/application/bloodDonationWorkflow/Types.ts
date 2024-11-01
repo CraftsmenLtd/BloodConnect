@@ -10,7 +10,7 @@ export interface BloodDonationAttributes {
   latitude: number;
   longitude: number;
   donationDateTime: string;
-  contactInfo: { name: string; phone: string };
+  contactNumber: string;
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
@@ -28,11 +28,12 @@ export interface UpdateBloodDonationAttributes {
   bloodQuantity?: number;
   urgencyLevel?: UrgencyLevel;
   donationDateTime?: string;
-  contactInfo?: { name: string; phone: string };
+  contactNumber?: string;
   patientCondition?: string;
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
+  createdAt?: string;
 }
 
 export interface DonorRoutingAttributes {
@@ -55,4 +56,12 @@ export interface StepFunctionExecutionAttributes {
   status: string;
   startDate: string;
   input: StepFunctionInput;
+}
+
+export interface AcceptDonationRequestAttributes {
+  donorId: string;
+  seekerId: string;
+  createdAt: string;
+  requestPostId: string;
+  acceptanceTime: string;
 }
