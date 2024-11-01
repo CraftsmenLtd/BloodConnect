@@ -7,8 +7,8 @@ import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from
 import Repository from '../technicalImpl/policies/repositories/Repository'
 import { UserAttributes, UpdateUserAttributes } from './Types'
 import { generateGeohash } from '../../application/utils/geohash'
-import { QueryConditionOperator, QueryInput } from '@application/technicalImpl/policies/repositories/QueryTypes'
-import LocationModel, { LocationFields } from '@application/technicalImpl/dbModels/LocationModel'
+import { QueryConditionOperator, QueryInput } from '../../application/technicalImpl/policies/repositories/QueryTypes'
+import LocationModel, { LocationFields } from '../../application/technicalImpl/dbModels/LocationModel'
 
 export class UserService {
   async createNewUser(userAttributes: UserAttributes, userRepository: Repository<UserDTO>): Promise<UserDTO> {

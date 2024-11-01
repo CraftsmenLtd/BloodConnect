@@ -16,7 +16,8 @@ describe('UserService Tests', () => {
   const mockUserAttributes = {
     email: 'ebrahim@example.com',
     name: 'Ebrahim',
-    phone_number: '1234567890'
+    phone_number: '1234567890',
+    createdAt: '2023-09-16T12:00:00.000Z'
   }
 
   beforeEach(() => {
@@ -32,8 +33,7 @@ describe('UserService Tests', () => {
     expect(result).toBe(mockUserWithStringId)
     expect(generateUniqueID).toHaveBeenCalledTimes(1)
     expect(userRepository.create).toHaveBeenCalledWith({
-      ...mockUserWithStringId,
-      registrationDate: expect.any(Date)
+      ...mockUserWithStringId
     })
   })
 
