@@ -18,7 +18,7 @@ async function updateUserLambda(event: UpdateUserAttributes): Promise<APIGateway
       )
     }
 
-    const response = await userService.UpdateUser(
+    const response = await userService.updateUser(
       userAttributes as UpdateUserAttributes,
       new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel()),
       new DynamoDbTableOperations<LocationDTO, LocationFields, LocationModel>(new LocationModel()),

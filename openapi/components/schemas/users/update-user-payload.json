@@ -27,17 +27,14 @@
       "gender": {
         "type": "string",
         "enum": [
-          "Male",
-          "Female",
-          "Other"
+          "male",
+          "female",
+          "other"
         ]
       },
       "dateOfBirth": {
         "type": "string",
         "format": "date"
-      },
-      "age": {
-        "type": "number"
       },
       "preferredDonationLocations": {
         "type": "array",
@@ -91,7 +88,7 @@
       "lastDonationDate": "2023-09-15T14:30:00Z",
       "height": 5.10,
       "weight": 70,
-      "gender": "Male",
+      "gender": "male",
       "dateOfBirth": "1990-05-15",
       "preferredDonationLocations": [
         {

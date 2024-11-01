@@ -9,6 +9,7 @@ import { UserAttributes, UpdateUserAttributes } from './Types'
 import { generateGeohash } from '../../application/utils/geohash'
 import { QueryConditionOperator, QueryInput } from '../../application/technicalImpl/policies/repositories/QueryTypes'
 import LocationModel, { LocationFields } from '../../application/technicalImpl/dbModels/LocationModel'
+import { differenceInYears } from 'date-fns'
 
 export class UserService {
   async createNewUser(userAttributes: UserAttributes, userRepository: Repository<UserDTO>): Promise<UserDTO> {
@@ -32,7 +33,7 @@ export class UserService {
     return getPasswordResetVerificationMessage(userName, securityCode)
   }
 
-  async UpdateUser(userAttributes: UpdateUserAttributes, userRepository: Repository<UserDetailsDTO>, locationRepository: Repository<LocationDTO>, model: LocationModel): Promise<string> {
+  async updateUser(userAttributes: UpdateUserAttributes, userRepository: Repository<UserDetailsDTO>, locationRepository: Repository<LocationDTO>, model: LocationModel): Promise<string> {
     try {
       const { userId, preferredDonationLocations, ...restAttributes } = userAttributes
       const updateData: Partial<UserDetailsDTO> = {
@@ -41,15 +42,29 @@ export class UserService {
         updatedAt: new Date().toISOString()
       }
 
+      updateData.age = this.calculateAge(userAttributes.dateOfBirth)
+
       await userRepository.update(updateData)
-      await this.UpdateUserLocation(model, userId, locationRepository, preferredDonationLocations, userAttributes)
+      await this.updateUserLocation(model, userId, locationRepository, preferredDonationLocations, userAttributes)
       return 'Updated your Profile info'
     } catch (error) {
       throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
 
-  private async UpdateUserLocation(model: LocationModel, userId: string, locationRepository: Repository<LocationDTO, Record<string, unknown>>, preferredDonationLocations: LocationDTO[], userAttributes: UpdateUserAttributes): Promise<void> {
+  private calculateAge(dateOfBirth: string): number | undefined {
+    if (dateOfBirth !== '') {
+      const birthDate = new Date(dateOfBirth)
+      const currentDate = new Date()
+
+      if (!isNaN(birthDate.getTime())) {
+        const age = differenceInYears(currentDate, birthDate)
+        return age
+      }
+    }
+  }
+
+  private async updateUserLocation(model: LocationModel, userId: string, locationRepository: Repository<LocationDTO, Record<string, unknown>>, preferredDonationLocations: LocationDTO[], userAttributes: UpdateUserAttributes): Promise<void> {
     const primaryIndex = model.getPrimaryIndex()
     const query: QueryInput<LocationFields> = {
       partitionKeyCondition: {
