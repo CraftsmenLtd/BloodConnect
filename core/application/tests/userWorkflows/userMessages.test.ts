@@ -1,6 +1,6 @@
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '../../userWorkflows/userMessages'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from '../../userWorkflows/userMessages'
 import { GenericMessage } from '../../../../commons/dto/MessageDTO'
-import { EMAIL_VERIFICATION_TITLE, EMAIL_VERIFICATION_CONTENT, PASSWORD_RESET_CONTENT, PASSWORD_RESET_TITLE } from '../../utils/messageConstants'
+import { EMAIL_VERIFICATION_TITLE, EMAIL_VERIFICATION_CONTENT, PASSWORD_RESET_CONTENT, PASSWORD_RESET_TITLE, APP_USER_WELCOME_MAIL_TITLE, APP_USER_WELCOME_MAIL_CONTENT } from '../../utils/messageConstants'
 import { replaceTemplatePlaceholders } from '../../utils/formatString'
 
 describe('User Message Functions', () => {
@@ -16,6 +16,8 @@ describe('User Message Functions', () => {
     const result = getEmailVerificationMessage(userName, securityCode)
 
     expect(result).toEqual(expectedMessage)
+    expect(result.content).toContain(userName)
+    expect(result.content).toContain(securityCode)
   })
 
   test('should generate password reset verification message', () => {
@@ -27,5 +29,19 @@ describe('User Message Functions', () => {
     const result = getPasswordResetVerificationMessage(userName, securityCode)
 
     expect(result).toEqual(expectedMessage)
+    expect(result.content).toContain(userName)
+    expect(result.content).toContain(securityCode)
+  })
+
+  test('should generate app user welcome mail message', () => {
+    const expectedMessage: GenericMessage = {
+      title: APP_USER_WELCOME_MAIL_TITLE,
+      content: replaceTemplatePlaceholders(APP_USER_WELCOME_MAIL_CONTENT, userName)
+    }
+
+    const result = getAppUserWellcomeMailMessage(userName)
+
+    expect(result).toEqual(expectedMessage)
+    expect(result.content).toContain(userName)
   })
 })
