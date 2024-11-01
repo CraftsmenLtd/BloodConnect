@@ -23,9 +23,9 @@ describe('postConfirmationLambda Tests', () => {
   beforeEach(() => {
     (DynamoDbTableOperations as jest.Mock).mockImplementation(() => mockDynamoDbTableOperations)
     jest.spyOn(UserService.prototype, 'createNewUser').mockResolvedValue(mockUserWithStringId)
-    jest.spyOn(UserService.prototype, 'getAppUserWellcomeMail').mockReturnValue(mockEmailContent)
-    ;(updateCognitoUserInfo as jest.Mock).mockResolvedValue(undefined)
-    ;(sendAppUserWellcomeMail as jest.Mock).mockResolvedValue(undefined)
+    jest.spyOn(UserService.prototype, 'getAppUserWellcomeMail').mockReturnValue(mockEmailContent);
+    (updateCognitoUserInfo as jest.Mock).mockResolvedValue(undefined);
+    (sendAppUserWellcomeMail as jest.Mock).mockResolvedValue(undefined)
   })
 
   afterEach(() => {
