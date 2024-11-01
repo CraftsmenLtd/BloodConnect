@@ -33,6 +33,7 @@ export interface UpdateBloodDonationAttributes {
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
+  createdAt?: string;
 }
 
 export interface DonorRoutingAttributes {
