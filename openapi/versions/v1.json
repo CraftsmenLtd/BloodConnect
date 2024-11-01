@@ -56,11 +56,11 @@
     "/auth/register-organization": {
       "$ref": "./../paths/auth/register-organization.json"
     },
-    "/donations": {
-      "$ref": "./../paths/donations/donations.json"
-    },
     "/users": {
       "$ref": "./../paths/users/users.json"
+    },
+    "/donations": {
+      "$ref": "./../paths/donations/donations.json"
     },
     "/donations/accept": {
       "$ref": "./../paths/donations/accept.json"
