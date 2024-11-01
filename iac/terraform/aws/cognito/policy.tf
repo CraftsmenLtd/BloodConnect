@@ -34,6 +34,19 @@ locals {
         resources = [
         "arn:aws:cognito-idp:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:userpool/*"]
       }
+    ],
+    ses_policy = [
+      {
+        sid = "SESPolicy"
+        actions = [
+          "ses:SendEmail",
+          "ses:SendRawEmail"
+        ]
+        resources = [
+          var.verified_domain_arn,
+          "arn:aws:ses:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:identity/*"
+        ]
+      }
     ]
   }
 }
