@@ -22,8 +22,7 @@
         "format": "date-time"
       },
       "contactNumber": {
-        "type": "string",
-        "pattern": "^\\+8801[3-9]\\d{8}$"
+        "$ref": "./../common-schemas.json#/PhoneNumberEnum"
       },
       "patientName": {
         "type": "string",

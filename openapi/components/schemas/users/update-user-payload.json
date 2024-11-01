@@ -5,25 +5,14 @@
       "phoneNumbers": {
         "type": "array",
         "items": {
-          "type": "string",
-          "pattern": "^[+]?[0-9]{1,3}?[0-9]{10}$"
+          "$ref": "./../common-schemas.json#/PhoneNumberEnum"
         }
       },
       "name": {
         "type": "string"
       },
       "bloodGroup": {
-        "type": "string",
-        "enum": [
-          "A+",
-          "A-",
-          "B+",
-          "B-",
-          "AB+",
-          "AB-",
-          "O+",
-          "O-"
-        ]
+        "$ref": "./../common-schemas.json#/BloodGroupEnum"
       },
       "lastDonationDate": {
         "type": "string",
@@ -50,26 +39,31 @@
       "age": {
         "type": "number"
       },
-      "area": {
-        "type": "string"
+      "preferredDonationLocations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "area": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "latitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "longitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            }
+          }
+        }
       },
-      "city": {
-        "type": "string"
-      },
-      "latitude": {
-        "type": "number",
-        "minimum": -90,
-        "maximum": 90
-      },
-      "longitude": {
-        "type": "number",
-        "minimum": -180,
-        "maximum": 180
-      },
-      "geohash": {
-        "type": "string"
-      },
-      "donationStatus": {
+      "availableForDonation": {
         "type": "string",
         "enum": [
           "yes",
@@ -92,7 +86,6 @@
         "+8801834567890",
         "+8801755567822"
       ],
-      "loginType": "email",
       "name": "John Doe",
       "bloodGroup": "O-",
       "lastDonationDate": "2023-09-15T14:30:00Z",
@@ -100,13 +93,21 @@
       "weight": 70,
       "gender": "Male",
       "dateOfBirth": "1990-05-15",
-      "age": 34,
-      "area": "Banani",
-      "city": "Dhaka",
-      "latitude": 23.7936,
-      "longitude": 90.4043,
-      "geohash": "u4pruydqqvj",
-      "donationStatus": "yes",
+      "preferredDonationLocations": [
+        {
+          "area": "Banani",
+          "city": "Dhaka",
+          "latitude": 23.7936,
+          "longitude": 90.4043
+        },
+        {
+          "area": "mohakhali",
+          "city": "Dhaka",
+          "latitude": 22.7936,
+          "longitude": 90.4043
+        }
+      ],
+      "availableForDonation": "yes",
       "NIDFront": "s3://bucket/nid/1a2b3c4d5e-front.jpg",
       "NIDBack": "s3://bucket/nid/1a2b3c4d5e-back.jpg",
       "lastVaccinatedDate": "2023-03-01T10:00:00Z"
