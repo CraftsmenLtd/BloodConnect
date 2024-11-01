@@ -2,6 +2,8 @@ import { BloodDonationAttributes, DonorRoutingAttributes } from '../../bloodDona
 import { DonationFields, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
 import { DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 
+const currentDate = new Date().toISOString()
+
 export const donationAttributesMock: BloodDonationAttributes = {
   seekerId: 'lkjhasdfka-qrwerie-sfsdl6usdf',
   patientName: 'John Doe',
@@ -11,7 +13,7 @@ export const donationAttributesMock: BloodDonationAttributes = {
   location: 'Baridhara, Dhaka',
   latitude: 23.7936,
   longitude: 90.4043,
-  donationDateTime: '2023-09-20T15:00:00Z',
+  donationDateTime: '2024-12-20T15:00:00Z',
   contactNumber: '123456789',
   transportationInfo: 'Car available',
   shortDescription: 'Need blood urgently for surgery.'
@@ -29,12 +31,13 @@ export const donationDtoMock: DonationDTO = {
   geohash: 'dr5regw3',
   donationDateTime: '2024-10-10T00:00:00Z',
   status: DonationStatus.PENDING,
-  contactNumber: '123456789'
+  contactNumber: '123456789',
+  createdAt: currentDate
 }
 
 export const donationFieldsMock: DonationFields = {
   PK: `${BLOOD_REQUEST_PK_PREFIX}#user456`,
-  SK: `${BLOOD_REQUEST_PK_PREFIX}#req123`,
+  SK: `${BLOOD_REQUEST_PK_PREFIX}#${currentDate}#req123`,
   LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#req123`,
   neededBloodGroup: 'A+',
   bloodQuantity: 2,
@@ -46,7 +49,12 @@ export const donationFieldsMock: DonationFields = {
   donationDateTime: '2024-10-10T00:00:00Z',
   status: DonationStatus.PENDING,
   contactNumber: '123456789',
-  createdAt: '2024-10-10T00:00:00Z'
+  createdAt: currentDate
+}
+
+export const mockQueryResult = {
+  items: [donationDtoMock],
+  lastEvaluatedKey: undefined
 }
 
 export const donorRoutingAttributesMock: DonorRoutingAttributes = {

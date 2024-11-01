@@ -1,9 +1,9 @@
 import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useRegister } from '../../src/authentication/register/hooks/useRegister'
-import { googleLogin, facebookLogin } from '../../src/authentication/authService'
+import { googleLogin, facebookLogin } from '../../src/authentication/services/authService'
 
-jest.mock('../../src/authentication/authService', () => ({
+jest.mock('../../src/authentication/services/authService', () => ({
   registerUser: jest.fn(),
   googleLogin: jest.fn(),
   facebookLogin: jest.fn()

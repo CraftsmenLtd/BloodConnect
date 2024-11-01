@@ -33,6 +33,7 @@ export interface UpdateBloodDonationAttributes {
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
+  createdAt?: string;
 }
 
 export interface DonorRoutingAttributes {
@@ -55,4 +56,12 @@ export interface StepFunctionExecutionAttributes {
   status: string;
   startDate: string;
   input: StepFunctionInput;
+}
+
+export interface AcceptDonationRequestAttributes {
+  donorId: string;
+  seekerId: string;
+  createdAt: string;
+  requestPostId: string;
+  acceptanceTime: string;
 }

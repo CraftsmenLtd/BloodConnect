@@ -3,6 +3,7 @@ export interface InputProps {
   value: string;
   placeholder: string;
   error?: string | null;
-  name?: string;
+  name: string;
+  isRequired?: boolean;
   onChangeText: (name: string | undefined, text: string) => void;
 }

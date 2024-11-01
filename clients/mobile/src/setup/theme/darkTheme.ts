@@ -10,7 +10,8 @@ const darkTheme: Theme = {
     extraLightGray: '#E6E6E6',
     lightGrey: '#CCCCCC',
     darkGrey: '#616161',
-    charcoalGray: '#202325'
+    charcoalGray: '#202325',
+    black: 'black'
   },
   typography: {
     fontSize: 16,

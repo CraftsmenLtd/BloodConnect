@@ -1,11 +1,12 @@
 import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperations'
-import { DynamoDBDocumentClient, PutCommand, UpdateCommand, GetCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, PutCommand, UpdateCommand, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { mockClient } from 'aws-sdk-client-mock'
 import { UserDTO } from '../../../../../../commons/dto/UserDTO'
 import UserModel from '../../../../../application/technicalImpl/dbModels/UserModel'
 import DatabaseError from '../../../../../../commons/libs/errors/DatabaseError'
 import { GENERIC_CODES } from '../../../../../../commons/libs/constants/GenericCodes'
 import { mockUserWithStringId, expectedUser } from '../../../../../application/tests/mocks/mockUserData'
+import { QueryConditionOperator } from '../../../../../application/technicalImpl/policies/repositories/QueryTypes'
 
 describe('DynamoDbTableOperations Tests', () => {
   const ddbMock = mockClient(DynamoDBDocumentClient)
@@ -117,5 +118,209 @@ describe('DynamoDbTableOperations Tests', () => {
   test('should return the correct table name from the environment', () => {
     const tableName = dynamoDbOperations.getTableName()
     expect(tableName).toBe('TestTable')
+  })
+
+  describe('query method tests', () => {
+    test('should execute a basic query successfully', async() => {
+      const mockQueryResponse = {
+        Items: [expectedUser],
+        LastEvaluatedKey: undefined,
+        $metadata: { httpStatusCode: 200 }
+      }
+      ddbMock.on(QueryCommand).resolves(mockQueryResponse)
+
+      const result = await dynamoDbOperations.query({
+        partitionKeyCondition: {
+          attributeName: 'PK',
+          operator: QueryConditionOperator.EQUALS,
+          attributeValue: 'USER#12345'
+        }
+      })
+
+      expect(result.items).toHaveLength(1)
+      expect(result.items[0]).toEqual(mockUserWithStringId)
+      expect(result.lastEvaluatedKey).toBeUndefined()
+    })
+
+    test('should execute query with sort key condition', async() => {
+      const mockQueryResponse = {
+        Items: [expectedUser],
+        $metadata: { httpStatusCode: 200 }
+      }
+      ddbMock.on(QueryCommand).resolves(mockQueryResponse)
+
+      const result = await dynamoDbOperations.query({
+        partitionKeyCondition: {
+          attributeName: 'PK',
+          operator: QueryConditionOperator.EQUALS,
+          attributeValue: 'USER#12345'
+        },
+        sortKeyCondition: {
+          attributeName: 'SK',
+          operator: QueryConditionOperator.BEGINS_WITH,
+          attributeValue: 'PROFILE'
+        }
+      })
+
+      expect(result.items).toHaveLength(1)
+      const queryCall = ddbMock.calls()[0]
+      expect(queryCall.args[0].input).toMatchObject({
+        KeyConditionExpression: '#PK = :PK AND begins_with(#SK, :SK)',
+        ExpressionAttributeNames: {
+          '#PK': 'PK',
+          '#SK': 'SK'
+        }
+      })
+    })
+
+    test('should execute query with BETWEEN operator', async() => {
+      const mockQueryResponse = {
+        Items: [expectedUser],
+        $metadata: { httpStatusCode: 200 }
+      }
+      ddbMock.on(QueryCommand).resolves(mockQueryResponse)
+
+      const result = await dynamoDbOperations.query({
+        partitionKeyCondition: {
+          attributeName: 'PK',
+          operator: QueryConditionOperator.EQUALS,
+          attributeValue: 'USER#12345'
+        },
+        sortKeyCondition: {
+          attributeName: 'SK',
+          operator: QueryConditionOperator.BETWEEN,
+          attributeValue: 'START',
+          attributeValue2: 'END'
+        }
+      })
+
+      expect(result.items).toHaveLength(1)
+      const queryCall = ddbMock.calls()[0]
+      expect(queryCall.args[0].input).toMatchObject({
+        KeyConditionExpression: '#PK = :PK AND #SK BETWEEN :SK AND :SK2'
+      })
+    })
+
+    test('should throw error when BETWEEN operator missing second value', async() => {
+      await expect(dynamoDbOperations.query({
+        partitionKeyCondition: {
+          attributeName: 'PK',
+          operator: QueryConditionOperator.EQUALS,
+          attributeValue: 'USER#12345'
+        },
+        sortKeyCondition: {
+          attributeName: 'SK',
+          operator: QueryConditionOperator.BETWEEN,
+          attributeValue: 'START',
+          attributeValue2: ''
+        }
+      })).rejects.toThrow('Failed to query items from DynamoDB: BETWEEN operator requires a non-empty second value')
+    })
+
+    test('should handle query with all options', async() => {
+      const mockQueryResponse = {
+        Items: [expectedUser],
+        LastEvaluatedKey: { PK: 'lastKey' },
+        $metadata: { httpStatusCode: 200 }
+      }
+      ddbMock.on(QueryCommand).resolves(mockQueryResponse)
+
+      const result = await dynamoDbOperations.query({
+        partitionKeyCondition: {
+          attributeName: 'PK',
+          operator: QueryConditionOperator.EQUALS,
+          attributeValue: 'USER#12345'
+        },
+        options: {
+          indexName: 'GSI1',
+          limit: 10,
+          scanIndexForward: false,
+          exclusiveStartKey: { PK: 'startKey' },
+          filterExpression: '#status = :status',
+          filterExpressionValues: { ':status': 'ACTIVE' }
+        }
+      })
+
+      expect(result.items).toHaveLength(1)
+      expect(result.lastEvaluatedKey).toEqual({ PK: 'lastKey' })
+
+      const queryCall = ddbMock.calls()[0]
+      expect(queryCall.args[0].input).toMatchObject({
+        IndexName: 'GSI1',
+        Limit: 10,
+        ScanIndexForward: false,
+        ExclusiveStartKey: { PK: 'startKey' },
+        FilterExpression: '#status = :status'
+      })
+    })
+
+    test('should handle query error', async() => {
+      ddbMock.on(QueryCommand).rejects(new Error('Query failed'))
+
+      await expect(dynamoDbOperations.query({
+        partitionKeyCondition: {
+          attributeName: 'PK',
+          operator: QueryConditionOperator.EQUALS,
+          attributeValue: 'USER#12345'
+        }
+      })).rejects.toThrow('Failed to query items from DynamoDB: Query failed')
+    })
+  })
+
+  describe('utility method tests', () => {
+    test('should handle empty options in applyQueryOptions', async() => {
+      const mockQueryResponse = {
+        Items: [expectedUser],
+        $metadata: { httpStatusCode: 200 }
+      }
+      ddbMock.on(QueryCommand).resolves(mockQueryResponse)
+
+      await dynamoDbOperations.query({
+        partitionKeyCondition: {
+          attributeName: 'PK',
+          operator: QueryConditionOperator.EQUALS,
+          attributeValue: 'USER#12345'
+        },
+        options: {}
+      })
+
+      const queryCall = ddbMock.calls()[0]
+      const input = queryCall.args[0].input as QueryCommand
+
+      const expectedKeys = ['TableName', 'KeyConditionExpression', 'ExpressionAttributeValues', 'ExpressionAttributeNames']
+      const actualKeys = Object.keys(input)
+
+      expect(actualKeys.sort()).toEqual(expectedKeys.sort())
+    })
+
+    test('should handle partial options', async() => {
+      const mockQueryResponse = {
+        Items: [expectedUser],
+        $metadata: { httpStatusCode: 200 }
+      }
+      ddbMock.on(QueryCommand).resolves(mockQueryResponse)
+
+      await dynamoDbOperations.query({
+        partitionKeyCondition: {
+          attributeName: 'PK',
+          operator: QueryConditionOperator.EQUALS,
+          attributeValue: 'USER#12345'
+        },
+        options: {
+          limit: 10,
+          scanIndexForward: true
+        }
+      })
+
+      const queryCall = ddbMock.calls()[0]
+      const input = queryCall.args[0].input as QueryCommand
+
+      expect(input).toMatchObject({
+        TableName: 'TestTable',
+        KeyConditionExpression: '#PK = :PK',
+        Limit: 10,
+        ScanIndexForward: true
+      })
+    })
   })
 })

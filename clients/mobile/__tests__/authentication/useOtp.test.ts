@@ -1,10 +1,12 @@
 import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useOtp } from '../../src/authentication/otp/hooks/useOtp'
-import { submitOtp } from '../../src/authentication/authService'
+import { loginUser, submitOtp } from '../../src/authentication/services/authService'
+import { SCREENS } from '../../src/setup/constant/screens'
 
-jest.mock('../../src/authentication/authService', () => ({
-  submitOtp: jest.fn()
+jest.mock('../../src/authentication/services/authService', () => ({
+  submitOtp: jest.fn(),
+  loginUser: jest.fn()
 }))
 
 describe('useOtp Hook', () => {
@@ -16,7 +18,7 @@ describe('useOtp Hook', () => {
     const { result } = renderHook(() => useOtp())
 
     expect(result.current.otp).toEqual(['', '', '', '', '', ''])
-    expect(result.current.error).toBe(false)
+    expect(result.current.error).toBe('')
     expect(result.current.email).toBe('test@example.com')
   })
 
@@ -59,16 +61,20 @@ describe('useOtp Hook', () => {
   })
 
   test('should submit OTP and navigate on success', async() => {
-    const { result } = renderHook(() => useOtp());
+    const mockEmail = 'test@example.com'
+    const { result } = renderHook(() => useOtp())
 
-    (submitOtp as jest.Mock).mockResolvedValue(true)
+    result.current.email = mockEmail;
+    (submitOtp as jest.Mock).mockResolvedValue(true);
+    (loginUser as jest.Mock).mockResolvedValue(true)
 
     await act(async() => {
       await result.current.handleSubmit()
     })
 
     expect(submitOtp).toHaveBeenCalledTimes(1)
-    expect(mockedNavigate).toHaveBeenCalledWith('Profile')
+    expect(submitOtp).toHaveBeenCalledWith(mockEmail, result.current.otp.join(''))
+    expect(mockedNavigate).toHaveBeenCalledWith(SCREENS.BOTTOM_TABS)
   })
 
   test('should set error state on submission failure', async() => {
@@ -81,6 +87,6 @@ describe('useOtp Hook', () => {
       await result.current.handleSubmit()
     })
 
-    expect(result.current.error).toBe(true)
+    expect(result.current.error).toBe('Submission failed')
   })
 })
