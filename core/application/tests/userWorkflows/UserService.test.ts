@@ -4,7 +4,9 @@ import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAp
 import { mockUserWithStringId } from '../mocks/mockUserData'
 import { mockRepository } from '../mocks/mockRepositories'
 import Repository from '../../technicalImpl/policies/repositories/Repository'
-import { UserDTO } from '../../../../commons/dto/UserDTO'
+import { UserDTO, UserDetailsDTO, LocationDTO } from '../../../../commons/dto/UserDTO'
+import { UpdateUserAttributes } from '../../userWorkflows/Types'
+import LocationModel from '../../technicalImpl/dbModels/LocationModel'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflows/userMessages')
@@ -12,11 +14,15 @@ jest.mock('../../userWorkflows/userMessages')
 describe('UserService Tests', () => {
   const userService = new UserService()
   const userRepository = mockRepository as jest.Mocked<Repository<UserDTO>>
+  const userDetailsRepository = mockRepository as jest.Mocked<Repository<UserDetailsDTO>>
+  const locationRepository = mockRepository as jest.Mocked<Repository<LocationDTO>>
+  const locationModel = new LocationModel()
 
   const mockUserAttributes = {
     email: 'ebrahim@example.com',
     name: 'Ebrahim',
-    phone_number: '1234567890'
+    phone_number: '1234567890',
+    createdAt: '2023-09-16T12:00:00.000Z'
   }
 
   beforeEach(() => {
@@ -25,19 +31,18 @@ describe('UserService Tests', () => {
     userRepository.query.mockResolvedValue({ items: [], lastEvaluatedKey: undefined })
   })
 
-  test('should create a new user successfully', async() => {
+  test('should create a new user successfully', async () => {
     userRepository.create.mockResolvedValue(mockUserWithStringId)
     const result = await userService.createNewUser(mockUserAttributes, userRepository)
 
     expect(result).toBe(mockUserWithStringId)
     expect(generateUniqueID).toHaveBeenCalledTimes(1)
     expect(userRepository.create).toHaveBeenCalledWith({
-      ...mockUserWithStringId,
-      registrationDate: expect.any(Date)
+      ...mockUserWithStringId
     })
   })
 
-  test('should throw an error on failure', async() => {
+  test('should throw an error on failure', async () => {
     const errorMessage = 'Database error'
     const originalError = new Error(errorMessage)
 
@@ -63,6 +68,37 @@ describe('UserService Tests', () => {
     const result = userService.getForgotPasswordMessage('Ebrahim', '1234')
     expect(getPasswordResetVerificationMessage).toHaveBeenCalledWith('Ebrahim', '1234')
     expect(result).toEqual(mockMessage)
+  })
+  test('should update user successfully', async () => {
+    const mockUpdateAttributes = {
+      userId: '12345',
+      name: 'Updated Ebrahim',
+      dateOfBirth: '1990-01-01',
+      phoneNumbers: ['1234567890'],
+      bloodGroup: 'A+',
+      lastDonationDate: '2023-08-01',
+      height: 170,
+      weight: 65,
+      availableForDonation: 'yes',
+      gender: 'male',
+      NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
+      NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
+      lastVaccinatedDate: '2023-05-01'
+    }
+
+    const { userId, ...mockResponse } = mockUpdateAttributes
+
+    userRepository.update.mockResolvedValue(mockUserWithStringId)
+
+    const result = await userService.updateUser(mockUpdateAttributes as unknown as UpdateUserAttributes, userDetailsRepository, locationRepository, locationModel)
+
+    expect(result).toBe('Updated your Profile info')
+    expect(userRepository.update).toHaveBeenCalledWith(expect.objectContaining({
+      ...mockResponse,
+      age: expect.any(Number),
+      id: mockUpdateAttributes.userId,
+      updatedAt: expect.any(String)
+    }))
   })
 
   describe('getAppUserWellcomeMail', () => {

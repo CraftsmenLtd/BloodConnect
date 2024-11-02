@@ -1,12 +1,12 @@
-import { UserDTO } from '../../../../commons/dto/UserDTO'
+import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
-export type UserFields = Omit<UserDTO, 'id' | 'registrationDate'> & HasTimeLog & {
+export type UserFields = Omit<UserDetailsDTO, 'id' | 'registrationDate'> & HasTimeLog & {
   PK: `USER#${string}`;
   SK: 'PROFILE';
 }
 
-export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdapter<UserDTO, UserFields> {
+export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdapter<UserDetailsDTO, UserFields> {
   getIndexDefinitions(): IndexDefinitions<UserFields> {
     return {}
   }
@@ -19,18 +19,18 @@ export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdap
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(userDto: UserDTO): UserFields {
-    const { id, registrationDate, ...remainingUser } = userDto
+  fromDto(userDto: UserDetailsDTO): UserFields {
+    const { id, ...remainingUser } = userDto
     return {
       PK: `USER#${typeof id === 'string' ? id : id.toString()}`,
       SK: 'PROFILE',
       ...remainingUser,
-      createdAt: registrationDate.toISOString()
+      createdAt: new Date().toISOString()
     }
   }
 
-  toDto(dbFields: UserFields): UserDTO {
-    const { PK, SK, createdAt, ...remainingUserFields } = dbFields
-    return { ...remainingUserFields, id: PK.replace('USER#', ''), registrationDate: new Date(createdAt) }
+  toDto(dbFields: UserFields): UserDetailsDTO {
+    const { PK, SK, ...remainingUserFields } = dbFields
+    return { ...remainingUserFields, id: PK.replace('USER#', '') }
   }
 }
