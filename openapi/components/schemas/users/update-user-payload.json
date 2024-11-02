@@ -16,7 +16,7 @@
       },
       "lastDonationDate": {
         "type": "string",
-        "format": "date-time"
+        "format": "date"
       },
       "height": {
         "type": "number"
@@ -75,7 +75,7 @@
       },
       "lastVaccinatedDate": {
         "type": "string",
-        "format": "date-time"
+        "format": "date"
       }
     },
     "example": {
@@ -85,7 +85,7 @@
       ],
       "name": "John Doe",
       "bloodGroup": "O-",
-      "lastDonationDate": "2023-09-15T14:30:00Z",
+      "lastDonationDate": "2023-09-15",
       "height": 5.10,
       "weight": 70,
       "gender": "male",
@@ -107,7 +107,7 @@
       "availableForDonation": "yes",
       "NIDFront": "s3://bucket/nid/1a2b3c4d5e-front.jpg",
       "NIDBack": "s3://bucket/nid/1a2b3c4d5e-back.jpg",
-      "lastVaccinatedDate": "2023-03-01T10:00:00Z"
+      "lastVaccinatedDate": "2023-03-01"
     }
   }
 }
