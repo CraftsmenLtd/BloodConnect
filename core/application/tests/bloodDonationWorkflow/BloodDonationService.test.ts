@@ -407,13 +407,16 @@ describe('BloodDonationService', () => {
       seekerId: 'seeker123',
       status: DonationStatus.PENDING,
       patientName: 'John Doe',
-      neededBloodGroup: 'O-' as BloodGroup, // Cast to BloodGroup type
+      neededBloodGroup: 'O-' as BloodGroup,
       bloodQuantity: 2,
-      urgencyLevel: 'urgent' as const, // Use const assertion for literal type
+      urgencyLevel: 'urgent' as const,
       location: 'Baridhara, Dhaka',
       geohash: 'geohash123',
       donationDateTime: '2024-10-20T15:00:00Z',
-      retryCount: 0
+      retryCount: 0,
+      latitude: 23.7808875,
+      longitude: 90.2792371,
+      contactNumber: '01712345678'
     }
 
     test('should initiate donor search process if retry count is below max and request is not completed or expired', async() => {
