@@ -1,4 +1,4 @@
-import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
+import { mockedNavigate, setRouteParams } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useRegister } from '../../src/authentication/register/hooks/useRegister'
 import { googleLogin, facebookLogin } from '../../src/authentication/services/authService'
@@ -10,6 +10,9 @@ jest.mock('../../src/authentication/services/authService', () => ({
 }))
 
 describe('useRegister Hook', () => {
+  beforeEach(() => {
+    setRouteParams({ email: 'test@example.com' })
+  })
   afterEach(() => {
     jest.clearAllMocks()
   })
@@ -43,7 +46,7 @@ describe('useRegister Hook', () => {
     })
 
     expect(mockedNavigate).toHaveBeenCalledWith('SetPassword', {
-      params: { email: '', name: '', phoneNumber: '', password: '' },
+      routeParams: { email: '', name: '', phoneNumber: '', password: '' },
       fromScreen: 'Register'
     })
   })

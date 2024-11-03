@@ -2,22 +2,29 @@ import { formatteDate, formatPhoneNumber, formatErrorMessage } from '../../src/u
 
 describe('Utility Functions', () => {
   describe('formatteDate', () => {
-    test('should format date string correctly', () => {
-      const dateString = '2024-10-23T14:30:00Z'
-      const expected = '10/23/2024, 2:30 PM'
-      expect(formatteDate(dateString)).toBe(expected)
-    })
+    describe('formatteDate', () => {
+      test('should format date string correctly', () => {
+        const dateString = '2024-10-23T14:30:00Z' // This is in UTC
+        const expected = '10/23/2024, 2:30 PM' // Expected output in UTC
+        expect(formatteDate(dateString)).toBe(expected)
+      })
 
-    test('should format Date object correctly', () => {
-      const dateObject = new Date('2024-10-23T14:30:00Z')
-      const expected = '10/23/2024, 2:30 PM'
-      expect(formatteDate(dateObject)).toBe(expected)
-    })
+      test('should format Date object correctly', () => {
+        const dateObject = new Date('2024-10-23T14:30:00Z') // This is in UTC
+        const expected = '10/23/2024, 2:30 PM' // Expected output in UTC
+        expect(formatteDate(dateObject)).toBe(expected)
+      })
 
-    test('should handle invalid date input', () => {
-      const invalidDate = 'invalid-date-string'
-      const expected = 'Invalid Date'
-      expect(formatteDate(invalidDate)).toBe(expected)
+      test('should handle invalid date input', () => {
+        const invalidDate = 'invalid-date-string'
+        const expected = 'Invalid Date'
+        expect(formatteDate(invalidDate)).toBe(expected)
+      })
+
+      test('should handle empty string as input', () => {
+        const expected = 'Invalid Date'
+        expect(formatteDate('')).toBe(expected)
+      })
     })
 
     test('should handle empty string as input', () => {

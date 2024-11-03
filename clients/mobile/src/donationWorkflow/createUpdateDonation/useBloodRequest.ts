@@ -135,6 +135,7 @@ export const useBloodRequest = (): any => {
       bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1'),
       donationDateTime: new Date(rest.donationDateTime).toISOString()
     }
+
     return await updateDonation(finalData, fetchClient)
   }
 
@@ -151,7 +152,7 @@ export const useBloodRequest = (): any => {
         : await createBloodDonationRequest()
 
       if (response.status === 200) {
-        navigation.navigate(SCREENS.PROFILE)
+        navigation.navigate(SCREENS.POSTS)
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'

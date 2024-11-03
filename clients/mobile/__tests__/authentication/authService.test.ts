@@ -1,6 +1,6 @@
 import StorageService from '../../src/utility/storageService'
-import { signUp, confirmSignUp, signIn, signInWithRedirect, decodeJWT, fetchAuthSession, signOut } from 'aws-amplify/auth'
-import { registerUser, submitOtp, loginUser, googleLogin, facebookLogin, UserRegistrationCredentials, decodeAccessToken, logoutUser, fetchSession } from '../../src/authentication/services/authService'
+import { signUp, confirmSignUp, signIn, signInWithRedirect, decodeJWT, fetchAuthSession, signOut, confirmResetPassword, resetPassword } from 'aws-amplify/auth'
+import { registerUser, submitOtp, loginUser, googleLogin, facebookLogin, UserRegistrationCredentials, decodeAccessToken, logoutUser, fetchSession, confirmResetPasswordHandler, resetPasswordHandler } from '../../src/authentication/services/authService'
 
 jest.mock('../../src/utility/storageService', () => ({
   getItem: jest.fn(),
@@ -15,6 +15,10 @@ describe('AuthService', () => {
     phoneNumber: '+1234567890',
     password: 'Password123!'
   }
+
+  const mockEmail = 'test@example.com'
+  const mockOtp = '123456'
+  const mockPassword = 'Password123!'
 
   afterEach(() => {
     jest.resetAllMocks()
@@ -230,6 +234,90 @@ describe('AuthService', () => {
       await expect(loginUser(email, password)).rejects.toThrow(
         'Error logging in user: Unexpected Error'
       )
+    })
+  })
+
+  describe('resetPasswordHandler', () => {
+    it('should return nextStep on success', async() => {
+      const mockNextStep = { step: 'CONFIRM_RESET' }
+      ;(resetPassword as jest.Mock).mockResolvedValueOnce({ nextStep: mockNextStep })
+
+      const result = await resetPasswordHandler(mockEmail)
+      expect(result).toEqual(mockNextStep)
+      expect(resetPassword).toHaveBeenCalledWith({ username: mockEmail })
+    })
+
+    it('should throw an error with a custom message on failure', async() => {
+      const errorMessage = 'Network error'
+      ;(resetPassword as jest.Mock).mockRejectedValueOnce(new Error(errorMessage))
+
+      await expect(resetPasswordHandler(mockEmail)).rejects.toThrow(errorMessage)
+      expect(resetPassword).toHaveBeenCalledWith({ username: mockEmail })
+    })
+  })
+
+  describe('handleConfirmPasswordError', () => {
+    const handleConfirmPasswordError = (error: unknown): string => {
+      if (error instanceof Error) {
+        switch (true) {
+          case error.message.includes('Invalid verification code'):
+            return 'Invalid confirmation code. Please try again.'
+          case error.message.includes('Password does not satisfy policy'):
+            return 'Password does not meet requirements. Please choose a different password.'
+          default:
+            return 'Reset failed. Please try again.'
+        }
+      } else {
+        return 'An unexpected error occurred. Please try again.'
+      }
+    }
+
+    it('should return specific error message for "Invalid verification code"', () => {
+      const error = new Error('Invalid verification code')
+      expect(handleConfirmPasswordError(error)).toBe('Invalid confirmation code. Please try again.')
+    })
+
+    it('should return specific error message for "Password does not satisfy policy"', () => {
+      const error = new Error('Password does not satisfy policy')
+      expect(handleConfirmPasswordError(error)).toBe('Password does not meet requirements. Please choose a different password.')
+    })
+
+    it('should return default error message for other errors', () => {
+      const error = new Error('Some other error')
+      expect(handleConfirmPasswordError(error)).toBe('Reset failed. Please try again.')
+    })
+
+    it('should return generic error message for non-Error objects', () => {
+      const error = 'Unexpected error'
+      expect(handleConfirmPasswordError(error)).toBe('An unexpected error occurred. Please try again.')
+    })
+  })
+
+  describe('confirmResetPasswordHandler', () => {
+    it('should return true on successful password confirmation', async() => {
+      ;(confirmResetPassword as jest.Mock).mockResolvedValueOnce(true)
+
+      const result = await confirmResetPasswordHandler(mockEmail, mockOtp, mockPassword)
+      expect(result).toBe(true)
+      expect(confirmResetPassword).toHaveBeenCalledWith({
+        username: mockEmail,
+        confirmationCode: mockOtp,
+        newPassword: mockPassword
+      })
+    })
+
+    it('should throw a custom error message on failure', async() => {
+      const errorMessage = 'Invalid verification code'
+      ;(confirmResetPassword as jest.Mock).mockRejectedValueOnce(new Error(errorMessage))
+
+      await expect(confirmResetPasswordHandler(mockEmail, mockOtp, mockPassword)).rejects.toThrow(
+        'Invalid confirmation code. Please try again.'
+      )
+      expect(confirmResetPassword).toHaveBeenCalledWith({
+        username: mockEmail,
+        confirmationCode: mockOtp,
+        newPassword: mockPassword
+      })
     })
   })
 

@@ -18,4 +18,5 @@ DonationDTO,
 export type BloodDonationRecord = Omit<DonationScreenParams, 'requestPostId'> &
 Pick<DonationDTO, 'latitude' | 'longitude'> & {
   reqPostId: string;
+  createdAt?: string;
 }
