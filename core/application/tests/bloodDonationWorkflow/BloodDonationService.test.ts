@@ -1,12 +1,12 @@
 import { BloodDonationService } from '../../bloodDonationWorkflow/BloodDonationService'
-import { BloodGroup, DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
+import { DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 import Repository from '../../technicalImpl/policies/repositories/Repository'
 import { generateUniqueID } from '../../utils/idGenerator'
 import { generateGeohash } from '../../utils/geohash'
 import { validateInputWithRules } from '../../utils/validator'
 import BloodDonationOperationError from '../../bloodDonationWorkflow/BloodDonationOperationError'
 import ThrottlingError from '../../bloodDonationWorkflow/ThrottlingError'
-import { donationAttributesMock, donationDtoMock, donorRoutingAttributesMock } from '../mocks/mockDonationRequestData'
+import { currentDate, donationAttributesMock, donationDtoMock, donorRoutingAttributesMock, mockDonationDTO } from '../mocks/mockDonationRequestData'
 import { mockRepository } from '../mocks/mockRepositories'
 import { BloodDonationModel, BLOOD_REQUEST_PK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
 import { QueryConditionOperator } from '../../technicalImpl/policies/repositories/QueryTypes'
@@ -402,23 +402,6 @@ describe('BloodDonationService', () => {
   })
 
   describe('routeDonorRequest', () => {
-    const mockDonationDTO: DonationDTO = {
-      id: 'req123',
-      seekerId: 'seeker123',
-      status: DonationStatus.PENDING,
-      patientName: 'John Doe',
-      neededBloodGroup: 'O-' as BloodGroup,
-      bloodQuantity: 2,
-      urgencyLevel: 'urgent' as const,
-      location: 'Baridhara, Dhaka',
-      geohash: 'geohash123',
-      donationDateTime: '2024-10-20T15:00:00Z',
-      retryCount: 0,
-      latitude: 23.7808875,
-      longitude: 90.2792371,
-      contactNumber: '01712345678'
-    }
-
     test('should initiate donor search process if retry count is below max and request is not completed or expired', async() => {
       bloodDonationRepository.getItem.mockResolvedValue(mockDonationDTO)
 
@@ -430,7 +413,7 @@ describe('BloodDonationService', () => {
 
       expect(bloodDonationRepository.getItem).toHaveBeenCalledWith(
         'BLOOD_REQ#seeker123',
-        'BLOOD_REQ#req123'
+        `BLOOD_REQ#${currentDate}#req123`
       )
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -518,7 +501,7 @@ describe('BloodDonationService', () => {
 
       expect(bloodDonationRepository.getItem).toHaveBeenCalledWith(
         'BLOOD_REQ#seeker123',
-        'BLOOD_REQ#req123'
+        `BLOOD_REQ#${currentDate}#req123`
       )
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({

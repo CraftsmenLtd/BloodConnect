@@ -164,7 +164,8 @@ export class BloodDonationService {
         neededBloodGroup: existingItem.neededBloodGroup,
         bloodQuantity: existingItem.bloodQuantity,
         urgencyLevel: existingItem.urgencyLevel,
-        geohash: existingItem.geohash
+        geohash: existingItem.geohash,
+        city: `${existingItem.location.split(',').pop()?.trim()}`
       }
 
       await stepFunctionModel.startExecution(stepFunctionInput)

@@ -50,6 +50,7 @@ export interface StepFunctionInput {
   bloodQuantity: number;
   urgencyLevel: UrgencyLevel;
   geohash: string;
+  city: string;
 }
 
 export interface StepFunctionExecutionAttributes {

@@ -45,6 +45,7 @@
         "totalDonorsToNotify.$": "$.[0].calculationResults.totalDonorsToNotify",
         "geohash.$": "$.[0].geohash",
         "neededBloodGroup.$": "$.[0].neededBloodGroup",
+        "city.$": "$.[0].city",
         "delayPeriod.$": "$.[0].calculationResults.delayPeriod"
       },
       "ResultPath": "$",

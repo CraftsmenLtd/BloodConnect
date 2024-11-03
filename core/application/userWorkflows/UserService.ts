@@ -32,6 +32,7 @@ export class UserService {
   getForgotPasswordMessage(userName: string, securityCode: string): GenericMessage {
     return getPasswordResetVerificationMessage(userName, securityCode)
   }
+
   getAppUserWellcomeMail(userName: string): GenericMessage {
     return getAppUserWellcomeMailMessage(userName)
   }

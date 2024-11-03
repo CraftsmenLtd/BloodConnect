@@ -13,7 +13,7 @@ async function donorRequestRouter(event: SQSEvent): Promise<{ status: string }> 
     for (const record of event.Records) {
       await processSQSRecord(record)
     }
-    return { status: "Success" }
+    return { status: 'Success' }
   } catch (error) {
     throw error instanceof Error ? error : new Error('An unknown error occurred')
   }
@@ -27,8 +27,8 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
   const primaryIndex: string = body.dynamodb?.Keys?.PK?.S
   const secondaryIndex: string = body.dynamodb?.Keys?.SK?.S
 
-  if (!primaryIndex || !secondaryIndex) {
-    console.error("Missing PK or SK in the DynamoDB record")
+  if (primaryIndex === '' || secondaryIndex === '') {
+    console.error('Missing PK or SK in the DynamoDB record')
     return
   }
 

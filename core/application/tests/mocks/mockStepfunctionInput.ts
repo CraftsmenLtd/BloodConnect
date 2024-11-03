@@ -7,7 +7,8 @@ export const startExecutionInputMock: StepFunctionInput = {
   bloodQuantity: 2,
   urgencyLevel: 'urgent' as const,
   donationDateTime: '2024-10-20T15:00:00Z',
-  geohash: 'wvjytdh'
+  geohash: 'wvjytdh',
+  city: 'Dhaka'
 }
 
 export const startExecutionOutputMock: StepFunctionExecutionAttributes = {

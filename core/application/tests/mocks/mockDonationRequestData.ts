@@ -1,8 +1,8 @@
 import { BloodDonationAttributes, DonorRoutingAttributes } from '../../bloodDonationWorkflow/Types'
 import { DonationFields, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
-import { DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
+import { BloodGroup, DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 
-const currentDate = new Date().toISOString()
+export const currentDate = new Date().toISOString()
 
 export const donationAttributesMock: BloodDonationAttributes = {
   seekerId: 'lkjhasdfka-qrwerie-sfsdl6usdf',
@@ -59,5 +59,24 @@ export const mockQueryResult = {
 
 export const donorRoutingAttributesMock: DonorRoutingAttributes = {
   seekerId: 'seeker123',
-  requestPostId: 'req123'
+  requestPostId: 'req123',
+  createdAt: currentDate
+}
+
+export const mockDonationDTO: DonationDTO = {
+  id: 'req123',
+  seekerId: 'seeker123',
+  status: DonationStatus.PENDING,
+  patientName: 'John Doe',
+  neededBloodGroup: 'O-' as BloodGroup,
+  bloodQuantity: 2,
+  urgencyLevel: 'urgent' as const,
+  location: 'Baridhara, Dhaka',
+  geohash: 'geohash123',
+  donationDateTime: '2024-10-20T15:00:00Z',
+  retryCount: 0,
+  latitude: 23.7808875,
+  longitude: 90.2792371,
+  contactNumber: '01712345678',
+  createdAt: currentDate
 }

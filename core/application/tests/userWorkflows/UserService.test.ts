@@ -31,7 +31,7 @@ describe('UserService Tests', () => {
     userRepository.query.mockResolvedValue({ items: [], lastEvaluatedKey: undefined })
   })
 
-  test('should create a new user successfully', async () => {
+  test('should create a new user successfully', async() => {
     userRepository.create.mockResolvedValue(mockUserWithStringId)
     const result = await userService.createNewUser(mockUserAttributes, userRepository)
 
@@ -42,7 +42,7 @@ describe('UserService Tests', () => {
     })
   })
 
-  test('should throw an error on failure', async () => {
+  test('should throw an error on failure', async() => {
     const errorMessage = 'Database error'
     const originalError = new Error(errorMessage)
 
@@ -69,7 +69,7 @@ describe('UserService Tests', () => {
     expect(getPasswordResetVerificationMessage).toHaveBeenCalledWith('Ebrahim', '1234')
     expect(result).toEqual(mockMessage)
   })
-  test('should update user successfully', async () => {
+  test('should update user successfully', async() => {
     const mockUpdateAttributes = {
       userId: '12345',
       name: 'Updated Ebrahim',
