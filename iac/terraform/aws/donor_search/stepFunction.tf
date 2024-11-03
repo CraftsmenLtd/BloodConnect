@@ -73,7 +73,7 @@ resource "aws_sfn_state_machine" "donor_search_state_machine" {
 
   definition = templatefile("${path.module}/donor_search.json", {
     DONOR_CALCULATE_LAMBDA_ARN_PLACEHOLDER = module.step_function_lambda["calculate-donors-to-notify"].lambda_arn
-    DYNAMODB_TABLE_NAME_PLACEHOLDER = split("/", var.dynamodb_table_arn)[1]
+    DYNAMODB_TABLE_NAME_PLACEHOLDER        = split("/", var.dynamodb_table_arn)[1]
   })
 
   logging_configuration {

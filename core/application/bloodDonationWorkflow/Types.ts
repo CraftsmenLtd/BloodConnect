@@ -39,6 +39,7 @@ export interface UpdateBloodDonationAttributes {
 export interface DonorRoutingAttributes {
   seekerId: string;
   requestPostId: string;
+  createdAt: string;
 }
 
 export interface StepFunctionInput {

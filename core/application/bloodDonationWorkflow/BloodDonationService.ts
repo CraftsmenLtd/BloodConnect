@@ -130,9 +130,11 @@ export class BloodDonationService {
     stepFunctionModel: StepFunctionModel
   ): Promise<string> {
     try {
-      const { seekerId, requestPostId } = donorRoutingAttributes
-
-      const existingItem = await bloodDonationRepository.getItem(`${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`, `${BLOOD_REQUEST_PK_PREFIX}#${requestPostId}`)
+      const { seekerId, requestPostId, createdAt } = donorRoutingAttributes
+      const existingItem = await bloodDonationRepository.getItem(
+        `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
+        `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
+      )
       if (existingItem === null) {
         return 'Item not found.'
       }

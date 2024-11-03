@@ -1,7 +1,7 @@
 resource "aws_sqs_queue" "donor_search_queue" {
   #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
   name                       = "${var.environment}-donor-search"
-  visibility_timeout_seconds = 60
+  visibility_timeout_seconds = 120
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.donor_search_dlq.arn
     maxReceiveCount     = 3
@@ -11,7 +11,7 @@ resource "aws_sqs_queue" "donor_search_queue" {
 resource "aws_sqs_queue" "donor_search_retry_queue" {
   #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
   name                       = "${var.environment}-donor-search-retry"
-  visibility_timeout_seconds = 60
+  visibility_timeout_seconds = 120
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.donor_search_dlq.arn
     maxReceiveCount     = 3
@@ -21,7 +21,7 @@ resource "aws_sqs_queue" "donor_search_retry_queue" {
 resource "aws_sqs_queue" "donor_search_dlq" {
   #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
   name                       = "${var.environment}-donor-search-dlq"
-  visibility_timeout_seconds = 60
+  visibility_timeout_seconds = 120
 }
 
 resource "aws_lambda_event_source_mapping" "donor_search_event_source" {
