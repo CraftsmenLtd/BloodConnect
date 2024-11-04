@@ -151,13 +151,12 @@ export const resetPasswordHandler = async(email: string): Promise<ResetPasswordO
 
 const handleConfirmPasswordError = (error: unknown): string => {
   if (error instanceof Error) {
-    switch (true) {
-      case error.message.includes('Invalid verification code'):
-        return 'Invalid confirmation code. Please try again.'
-      case error.message.includes('Password does not satisfy policy'):
-        return 'Password does not meet requirements. Please choose a different password.'
-      default:
-        return 'Reset failed. Please try again.'
+    if (error.message.includes('Invalid verification code')) {
+      return 'Invalid confirmation code. Please try again.'
+    } else if (error.message.includes('Password does not satisfy policy')) {
+      return 'Password does not meet requirements. Please choose a different password.'
+    } else {
+      return 'Reset failed. Please try again.'
     }
   } else {
     return 'An unexpected error occurred. Please try again.'

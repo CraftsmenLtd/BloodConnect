@@ -3,10 +3,9 @@ const mockDispatch = jest.fn()
 const mockReset = jest.fn()
 
 jest.mock('@react-navigation/native', () => {
-  let routeParams = {}
-
+  const routeParamsContainer = { value: {} }
   const setRouteParams = (params: Record<string, unknown>): void => {
-    routeParams = { ...params }
+    routeParamsContainer.value = { ...params }
   }
 
   return {
@@ -19,7 +18,7 @@ jest.mock('@react-navigation/native', () => {
     },
     useRoute: () => ({
       get params() {
-        return routeParams
+        return routeParamsContainer.value
       }
     }),
     setRouteParams

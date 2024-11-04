@@ -36,17 +36,19 @@ export const useOtp = (): any => {
 
   const handleRegister = async(): Promise<void> => {
     const isSucessRegister = await submitOtp(email, otp.join(''))
-    if (isSucessRegister) {
-      const isSignedIn = await loginUser(email, password)
-      if (isSignedIn) {
-        auth?.setIsAuthenticated(true)
-        navigation.navigate(SCREENS.BOTTOM_TABS)
-      } else {
-        navigation.navigate(SCREENS.LOGIN)
-      }
-    } else {
+    if (!isSucessRegister) {
       setError('Verification incomplete. Please follow further steps.')
+      return
     }
+
+    const isSignedIn = await loginUser(email, password)
+    if (!isSignedIn) {
+      navigation.navigate(SCREENS.LOGIN)
+      return
+    }
+
+    auth?.setIsAuthenticated(true)
+    navigation.navigate(SCREENS.BOTTOM_TABS)
   }
 
   const handleSubmit = async(): Promise<void> => {

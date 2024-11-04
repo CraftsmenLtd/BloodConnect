@@ -239,8 +239,8 @@ describe('AuthService', () => {
 
   describe('resetPasswordHandler', () => {
     it('should return nextStep on success', async() => {
-      const mockNextStep = { step: 'CONFIRM_RESET' }
-      ;(resetPassword as jest.Mock).mockResolvedValueOnce({ nextStep: mockNextStep })
+      const mockNextStep = { step: 'CONFIRM_RESET' };
+      (resetPassword as jest.Mock).mockResolvedValueOnce({ nextStep: mockNextStep })
 
       const result = await resetPasswordHandler(mockEmail)
       expect(result).toEqual(mockNextStep)
@@ -248,8 +248,8 @@ describe('AuthService', () => {
     })
 
     it('should throw an error with a custom message on failure', async() => {
-      const errorMessage = 'Network error'
-      ;(resetPassword as jest.Mock).mockRejectedValueOnce(new Error(errorMessage))
+      const errorMessage = 'Network error';
+      (resetPassword as jest.Mock).mockRejectedValueOnce(new Error(errorMessage))
 
       await expect(resetPasswordHandler(mockEmail)).rejects.toThrow(errorMessage)
       expect(resetPassword).toHaveBeenCalledWith({ username: mockEmail })
@@ -259,13 +259,12 @@ describe('AuthService', () => {
   describe('handleConfirmPasswordError', () => {
     const handleConfirmPasswordError = (error: unknown): string => {
       if (error instanceof Error) {
-        switch (true) {
-          case error.message.includes('Invalid verification code'):
-            return 'Invalid confirmation code. Please try again.'
-          case error.message.includes('Password does not satisfy policy'):
-            return 'Password does not meet requirements. Please choose a different password.'
-          default:
-            return 'Reset failed. Please try again.'
+        if (error.message.includes('Invalid verification code')) {
+          return 'Invalid confirmation code. Please try again.'
+        } else if (error.message.includes('Password does not satisfy policy')) {
+          return 'Password does not meet requirements. Please choose a different password.'
+        } else {
+          return 'Reset failed. Please try again.'
         }
       } else {
         return 'An unexpected error occurred. Please try again.'
@@ -295,7 +294,7 @@ describe('AuthService', () => {
 
   describe('confirmResetPasswordHandler', () => {
     it('should return true on successful password confirmation', async() => {
-      ;(confirmResetPassword as jest.Mock).mockResolvedValueOnce(true)
+      (confirmResetPassword as jest.Mock).mockResolvedValueOnce(true)
 
       const result = await confirmResetPasswordHandler(mockEmail, mockOtp, mockPassword)
       expect(result).toBe(true)
@@ -307,8 +306,8 @@ describe('AuthService', () => {
     })
 
     it('should throw a custom error message on failure', async() => {
-      const errorMessage = 'Invalid verification code'
-      ;(confirmResetPassword as jest.Mock).mockRejectedValueOnce(new Error(errorMessage))
+      const errorMessage = 'Invalid verification code';
+      (confirmResetPassword as jest.Mock).mockRejectedValueOnce(new Error(errorMessage))
 
       await expect(confirmResetPasswordHandler(mockEmail, mockOtp, mockPassword)).rejects.toThrow(
         'Invalid confirmation code. Please try again.'
