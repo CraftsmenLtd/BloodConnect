@@ -7,6 +7,12 @@ module "auth" {
   environment = var.environment
 }
 
+module "user" {
+  source      = "./user"
+  environment = var.environment
+  dynamodb_table_arn = module.database.dynamodb_table_arn
+}
+
 module "blood_donation" {
   source             = "./donation"
   environment        = var.environment

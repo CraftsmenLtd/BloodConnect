@@ -3,7 +3,7 @@ import { DTO } from '../../../../commons/dto/DTOCommon'
 interface DbModel {}
 
 export type HasTimeLog = {
-  createdAt: string;
+  createdAt?: string;
   updatedAt?: string;
 }
 
