@@ -1,0 +1,32 @@
+{
+  "PushNotificationRequestModel": {
+    "type": "object",
+    "required": [
+      "title",
+      "body"
+    ],
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "body": {
+        "type": "string",
+        "minLength": 1
+      },
+      "data": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "example": {
+      "title": "Blood Request",
+      "body": "Urgent: Type A+ blood needed at City Hospital",
+      "data": {
+        "requestId": "REQ123",
+        "bloodType": "A+",
+        "urgencyLevel": "Urgent"
+      }
+    }
+  }
+}

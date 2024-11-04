@@ -1,0 +1,53 @@
+{
+  "post": {
+    "operationId": "SendPushNotification",
+    "description": "Send push notification to a user",
+    "tags": [
+      "bloodconnect-push-notification"
+    ],
+    "requestBody": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./../../components/schemas/push/push-notification-payload.json#/PushNotificationRequestModel"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "200 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {}
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/push/post-push-notification.json"
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
+  },
+  "options": {
+    "$ref": "./../cors-options.json"
+  }
+}
