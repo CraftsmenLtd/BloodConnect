@@ -52,8 +52,83 @@
       "Next": "DonorSearchProcess"
     },
     "DonorSearchProcess": {
-      "Type": "Pass",
-      "Result": "Pass output to next step",
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "QueryEligibleDonors",
+          "States": {
+            "QueryEligibleDonors": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
+              "Parameters": {
+                "TableName": "${DYNAMODB_TABLE_NAME_PLACEHOLDER}",
+                "IndexName": "GSI1",
+                "KeyConditionExpression": "GSI1PK = :cityAndBloodGroupAndStatus AND begins_with(GSI1SK, :geohash)",
+                "ExpressionAttributeValues": {
+                  ":cityAndBloodGroupAndStatus": {
+                    "S.$": "States.Format('CITY#{}#BG#{}#DONATIONSTATUS#yes', $.city, $.neededBloodGroup)"
+                  },
+                  ":geohash": {
+                    "S.$": "$.geohash"
+                  }
+                }
+              },
+              "ResultPath": "$.eligibleDonors",
+              "Next": "CheckDonorStatus"
+            },
+            "CheckDonorStatus": {
+              "Type": "Task",
+              "Resource": "${GEOHASH_CALCULATE_LAMBDA_ARN_PLACEHOLDER}",
+              "Parameters": {
+                "geohash.$": "$.geohash",
+                "eligibleDonorsCount.$": "$.eligibleDonors.Count",
+                "totalDonorsToNotify.$": "$.totalDonorsToNotify"
+              },
+              "ResultPath": "$.donorSearchResult",
+              "Next": "DecideNextStep"
+            },
+            "DecideNextStep": {
+              "Type": "Choice",
+              "Choices": [
+                {
+                  "Variable": "$.donorSearchResult.action",
+                  "StringEquals": "EnoughDonorsFound",
+                  "Next": "EnoughDonorsFound"
+                },
+                {
+                  "Variable": "$.donorSearchResult.action",
+                  "StringEquals": "UpdateSearchFields",
+                  "Next": "UpdateSearchFields"
+                }
+              ],
+              "Default": "EnoughDonorsFound"
+            },
+            "UpdateSearchFields": {
+              "Type": "Pass",
+              "Parameters": {
+                "totalDonorsToNotify.$": "$.totalDonorsToNotify",
+                "city.$": "$.city",
+                "geohash.$": "$.donorSearchResult.shortenedGeohash",
+                "neededBloodGroup.$": "$.neededBloodGroup",
+                "delayPeriod.$": "$.delayPeriod"
+              },
+              "ResultPath": "$",
+              "Next": "QueryEligibleDonors"
+            },
+            "EnoughDonorsFound": {
+              "Type": "Succeed"
+            }
+          }
+        }
+      ],
+      "ResultSelector": {
+        "geohash.$": "$.[0].geohash",
+        "neededBloodGroup.$": "$.[0].neededBloodGroup",
+        "city.$": "$.[0].city",
+        "delayPeriod.$": "$.[0].delayPeriod",
+        "eligibleDonors.$": "$[0].eligibleDonors.Items"
+      },
+      "ResultPath": "$",
       "Next": "NotifyDonors"
     },
     "NotifyDonors": {

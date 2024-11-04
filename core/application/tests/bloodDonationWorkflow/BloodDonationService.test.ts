@@ -428,7 +428,7 @@ describe('BloodDonationService', () => {
         bloodQuantity: mockDonationDTO.bloodQuantity,
         urgencyLevel: mockDonationDTO.urgencyLevel,
         geohash: mockDonationDTO.geohash
-      }))
+      }), 'req123-Dhaka-(O-)')
       expect(result).toBe('We have updated your request and initiated the donor search process.')
     })
 

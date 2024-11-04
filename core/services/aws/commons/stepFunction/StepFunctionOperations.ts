@@ -10,10 +10,11 @@ export default class StepFunctionOperations implements StepFunctionModel {
     this.client = new SFNClient({ region: process.env.AWS_REGION })
   }
 
-  async startExecution(input: StepFunctionInput): Promise<StepFunctionExecutionAttributes> {
+  async startExecution(input: StepFunctionInput, executionName?: string): Promise<StepFunctionExecutionAttributes> {
     const command = new StartExecutionCommand({
       stateMachineArn: process.env.STEP_FUNCTION_ARN,
-      input: JSON.stringify(input)
+      input: JSON.stringify(input),
+      ...(executionName != null && executionName !== '' ? { name: executionName } : {})
     })
 
     try {

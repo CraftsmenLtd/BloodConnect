@@ -157,18 +157,19 @@ export class BloodDonationService {
 
       await bloodDonationRepository.update(updateData)
 
+      const city = `${existingItem.location.split(',').pop()?.trim()}`
       const stepFunctionInput: StepFunctionInput = {
-        seekerId: donorRoutingAttributes.seekerId,
-        requestPostId: donorRoutingAttributes.requestPostId,
+        seekerId,
+        requestPostId,
         donationDateTime: existingItem.donationDateTime,
         neededBloodGroup: existingItem.neededBloodGroup,
         bloodQuantity: existingItem.bloodQuantity,
         urgencyLevel: existingItem.urgencyLevel,
         geohash: existingItem.geohash,
-        city: `${existingItem.location.split(',').pop()?.trim()}`
+        city
       }
 
-      await stepFunctionModel.startExecution(stepFunctionInput)
+      await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${city}-(${existingItem.neededBloodGroup})`)
       return 'We have updated your request and initiated the donor search process.'
     } catch (error) {
       throw new BloodDonationOperationError(`Failed to update blood donation post. Error: ${error}`, GENERIC_CODES.ERROR)
