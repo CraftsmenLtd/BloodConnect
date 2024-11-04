@@ -1,6 +1,6 @@
 import { UserService } from '../../userWorkflows/UserService'
 import { generateUniqueID } from '../../utils/idGenerator'
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from '../../userWorkflows/userMessages'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from '../../userWorkflows/userMessages'
 import { mockUserWithStringId } from '../mocks/mockUserData'
 import { mockRepository } from '../mocks/mockRepositories'
 import Repository from '../../technicalImpl/policies/repositories/Repository'
@@ -69,7 +69,6 @@ describe('UserService Tests', () => {
     expect(getPasswordResetVerificationMessage).toHaveBeenCalledWith('Ebrahim', '1234')
     expect(result).toEqual(mockMessage)
   })
-
   test('should update user successfully', async() => {
     const mockUpdateAttributes = {
       userId: '12345',
@@ -100,5 +99,62 @@ describe('UserService Tests', () => {
       id: mockUpdateAttributes.userId,
       updatedAt: expect.any(String)
     }))
+  })
+
+  describe('getAppUserWellcomeMail', () => {
+    test('should get welcome mail message correctly', () => {
+      const userName = 'Suzan'
+      const mockMessage = {
+        title: 'Welcome to BloodConnect: Thank You for Signing Up!',
+        content: 'Welcome to BloodConnect! We are excited to have you.'
+      };
+      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+
+      const result = userService.getAppUserWellcomeMail(userName)
+
+      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith(userName)
+      expect(result).toEqual(mockMessage)
+    })
+
+    test('should handle empty username', () => {
+      const mockMessage = {
+        title: 'Welcome to BloodConnect: Thank You for Signing Up!',
+        content: 'Welcome to BloodConnect! We are excited to have you.'
+      };
+      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+
+      const result = userService.getAppUserWellcomeMail('')
+
+      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith('')
+      expect(result).toEqual(mockMessage)
+    })
+
+    test('should handle special characters in username', () => {
+      const userName = 'John@123#$%'
+      const mockMessage = {
+        title: 'Welcome to BloodConnect: Thank You for Signing Up!',
+        content: 'Welcome to BloodConnect! We are excited to have you.'
+      };
+      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+
+      const result = userService.getAppUserWellcomeMail(userName)
+
+      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith(userName)
+      expect(result).toEqual(mockMessage)
+    })
+
+    test('should handle very long usernames', () => {
+      const longUserName = 'VeryLongUserNameThatMightCauseIssuesIfNotHandledProperly'
+      const mockMessage = {
+        title: 'Welcome to BloodConnect: Thank You for Signing Up!',
+        content: 'Welcome to BloodConnect! We are excited to have you.'
+      };
+      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+
+      const result = userService.getAppUserWellcomeMail(longUserName)
+
+      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith(longUserName)
+      expect(result).toEqual(mockMessage)
+    })
   })
 })

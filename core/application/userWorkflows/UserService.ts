@@ -3,7 +3,7 @@ import UserOperationError from './UserOperationError'
 import { LocationDTO, UserDetailsDTO, UserDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { GenericMessage } from '../../../commons/dto/MessageDTO'
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage } from './userMessages'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from './userMessages'
 import Repository from '../technicalImpl/policies/repositories/Repository'
 import { UserAttributes, UpdateUserAttributes } from './Types'
 import { generateGeohash } from '../../application/utils/geohash'
@@ -31,6 +31,10 @@ export class UserService {
 
   getForgotPasswordMessage(userName: string, securityCode: string): GenericMessage {
     return getPasswordResetVerificationMessage(userName, securityCode)
+  }
+
+  getAppUserWellcomeMail(userName: string): GenericMessage {
+    return getAppUserWellcomeMailMessage(userName)
   }
 
   async updateUser(userAttributes: UpdateUserAttributes, userRepository: Repository<UserDetailsDTO>, locationRepository: Repository<LocationDTO>, model: LocationModel): Promise<string> {
