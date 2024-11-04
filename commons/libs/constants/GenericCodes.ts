@@ -2,7 +2,8 @@
 export const GENERIC_CODES = {
   UNAUTHORIZED: 401,
   NOT_FOUND: 404,
-  ERROR: 500
+  ERROR: 500,
+  TOO_MANY_REQUESTS: 429
 }
 
 export const HTTP_CODES = {

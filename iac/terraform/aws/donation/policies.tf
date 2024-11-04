@@ -19,6 +19,8 @@ locals {
         sid = "DynamodbCreatePolicy"
         actions = [
           "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:Query"
         ]
         resources = [var.dynamodb_table_arn]
       }
@@ -29,6 +31,7 @@ locals {
         actions = [
           "dynamodb:UpdateItem",
           "dynamodb:GetItem",
+          "dynamodb:Query"
         ]
         resources = [var.dynamodb_table_arn]
       }

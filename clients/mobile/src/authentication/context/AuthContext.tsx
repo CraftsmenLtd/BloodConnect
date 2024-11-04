@@ -17,8 +17,7 @@ const initialAuthContext = {
   idToken: null,
   isAuthenticated: false,
   loading: true,
-  // eslint-disable-next-line @typescript-eslint/space-before-function-paren
-  logoutUser: async () => Promise.resolve(),
+  logoutUser: async() => Promise.resolve(),
   setAccessToken: () => { },
   setIdToken: () => { },
   setIsAuthenticated: () => { }
@@ -32,8 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
 
-  // eslint-disable-next-line @typescript-eslint/space-before-function-paren
-  const loadTokens = async () => {
+  const loadTokens = async() => {
     const tokens = await authService.loadTokens()
     if (tokens.storedAccessToken !== null && tokens.storedIdToken !== null) {
       const { storedAccessToken, storedIdToken } = tokens
@@ -49,8 +47,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(false)
   }
 
-  // eslint-disable-next-line @typescript-eslint/space-before-function-paren
-  const logoutUser = async () => {
+  const logoutUser = async() => {
     try {
       await authService.logoutUser()
       setAccessToken(null)
@@ -62,8 +59,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/space-before-function-paren
-    const loadTokensIIFE = async () => {
+    const loadTokensIIFE = async() => {
       try {
         await loadTokens()
       } catch (error) {

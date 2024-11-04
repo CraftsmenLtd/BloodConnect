@@ -48,7 +48,6 @@ describe('AuthService', () => {
       expect(signOut).toHaveBeenCalled()
       expect(StorageService.removeItem).toHaveBeenCalledWith('accessToken')
       expect(StorageService.removeItem).toHaveBeenCalledWith('idToken')
-      // expect(StorageService.removeItem).toHaveBeenCalledWith('refreshToken')
     })
 
     test('should throw an error if logout fails', async() => {

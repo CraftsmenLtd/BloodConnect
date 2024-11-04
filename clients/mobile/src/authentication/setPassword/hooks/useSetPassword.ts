@@ -47,12 +47,9 @@ export const useSetPassword = (): any => {
   }
 
   const handleInputValidation = (name: CredentialKeys, value: string): void => {
-    let errorMsg: errorMessageType = null
-    if (name === PASSWORD_INPUT_NAME) {
-      errorMsg = validateInput(value, validationRules[name])
-    } else {
-      errorMsg = (newPassword.password !== value) ? 'Passwords do not match.' : null
-    }
+    const errorMsg: errorMessageType = name === PASSWORD_INPUT_NAME
+      ? validateInput(value, validationRules[name])
+      : (newPassword.password !== value ? 'Passwords do not match.' : null)
 
     setErrors(prevErrors => ({
       ...prevErrors,

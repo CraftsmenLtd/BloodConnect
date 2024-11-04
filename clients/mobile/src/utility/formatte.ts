@@ -7,18 +7,18 @@ export const formatteDate = (date: string | Date): string => {
     day: '2-digit',
     hour: 'numeric',
     minute: '2-digit',
+    timeZone: 'UTC',
     hour12: true
   })
   return formattedDate
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
-  phoneNumber = phoneNumber.trim()
-  if (phoneNumber.startsWith('01')) {
-    return phoneNumber.replace('01', '+8801')
-  }
+  const trimmedPhoneNumber = phoneNumber.trim()
 
-  return phoneNumber
+  return trimmedPhoneNumber.startsWith('01')
+    ? trimmedPhoneNumber.replace('01', '+8801')
+    : trimmedPhoneNumber
 }
 
 export function formatErrorMessage(error: unknown): string {
