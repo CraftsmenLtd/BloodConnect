@@ -8,6 +8,7 @@
     "test": "cd ../ && npm run test -- core/application/tests/*"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "ngeohash": "^0.6.3",
     "ulid": "^2.3.0"

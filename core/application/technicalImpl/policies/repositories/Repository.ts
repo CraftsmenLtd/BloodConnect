@@ -11,4 +11,5 @@ export default interface Repository<T extends DTO, DbFields extends Record<strin
     items: T[];
     lastEvaluatedKey?: Record<string, unknown>;
   }>;
+  delete(partitionKey: string, sortKey?: string): Promise<void>;
 }

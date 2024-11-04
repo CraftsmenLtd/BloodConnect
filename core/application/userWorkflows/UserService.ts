@@ -1,21 +1,15 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import UserOperationError from './UserOperationError'
-import { UserDTO } from '../../../commons/dto/UserDTO'
+import { LocationDTO, StoreNotificationEndPoint, UserDetailsDTO, UserDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { GenericMessage } from '../../../commons/dto/MessageDTO'
 import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from './userMessages'
 import Repository from '../technicalImpl/policies/repositories/Repository'
-
-interface UserAttributes {
-  email: string;
-  name: string;
-  phone_number: string;
-}
-
-interface NotificationAttributes {
-  userId: string;
-  endpointArn: string;
-}
+import { UserAttributes, UpdateUserAttributes } from './Types'
+import { generateGeohash } from '../../application/utils/geohash'
+import { QueryConditionOperator, QueryInput } from '../../application/technicalImpl/policies/repositories/QueryTypes'
+import LocationModel, { LocationFields } from '../../application/technicalImpl/dbModels/LocationModel'
+import { differenceInYears } from 'date-fns'
 
 export class UserService {
   async createNewUser(userAttributes: UserAttributes, userRepository: Repository<UserDTO>): Promise<UserDTO> {
@@ -24,28 +18,11 @@ export class UserService {
         id: generateUniqueID(),
         email: userAttributes.email,
         name: userAttributes.name,
-        phone: userAttributes.phone_number,
-        registrationDate: new Date()
+        phone: userAttributes.phone_number
       })
     } catch (error) {
       throw new UserOperationError(`Failed to create new user. Error: ${error}`, GENERIC_CODES.ERROR)
     }
-  }
-
-  async storeEndpointArn(notificationAttributes: NotificationAttributes, userRepository: Repository<UserDTO>): Promise<void> {
-    const { userId, endpointArn } = notificationAttributes
-
-    const item = await userRepository.getItem(`USER#${userId}`, 'PROFILE')
-
-    if (item === null) {
-      throw new Error('Item not found.')
-    }
-
-    const updateData: Partial<UserDTO> = {
-      id: userId,
-      endpointArn
-    }
-    await userRepository.update(updateData)
   }
 
   getPostSignUpMessage(userName: string, securityCode: string): GenericMessage {
@@ -58,5 +35,79 @@ export class UserService {
 
   getAppUserWellcomeMail(userName: string): GenericMessage {
     return getAppUserWellcomeMailMessage(userName)
+  }
+
+  async updateUser(userAttributes: UpdateUserAttributes, userRepository: Repository<UserDetailsDTO>, locationRepository: Repository<LocationDTO>, model: LocationModel): Promise<string> {
+    try {
+      const { userId, preferredDonationLocations, ...restAttributes } = userAttributes
+      const updateData: Partial<UserDetailsDTO> = {
+        ...restAttributes,
+        id: userId,
+        updatedAt: new Date().toISOString()
+      }
+
+      updateData.age = this.calculateAge(userAttributes.dateOfBirth)
+
+      await userRepository.update(updateData)
+      await this.updateUserLocation(model, userId, locationRepository, preferredDonationLocations, userAttributes)
+      return 'Updated your Profile info'
+    } catch (error) {
+      throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
+    }
+  }
+
+  private calculateAge(dateOfBirth: string): number | undefined {
+    if (dateOfBirth !== '') {
+      const birthDate = new Date(dateOfBirth)
+      const currentDate = new Date()
+
+      if (!isNaN(birthDate.getTime())) {
+        const age = differenceInYears(currentDate, birthDate)
+        return age
+      }
+    }
+  }
+
+  private async updateUserLocation(model: LocationModel, userId: string, locationRepository: Repository<LocationDTO, Record<string, unknown>>, preferredDonationLocations: LocationDTO[], userAttributes: UpdateUserAttributes): Promise<void> {
+    const primaryIndex = model.getPrimaryIndex()
+    const query: QueryInput<LocationFields> = {
+      partitionKeyCondition: {
+        attributeName: primaryIndex.partitionKey,
+        operator: QueryConditionOperator.EQUALS,
+        attributeValue: `USER#${userId}`
+      }
+    }
+
+    if (primaryIndex.sortKey != null) {
+      query.sortKeyCondition = {
+        attributeName: primaryIndex.sortKey,
+        operator: QueryConditionOperator.BEGINS_WITH,
+        attributeValue: 'LOCATION#'
+      }
+    }
+
+    const existingLocations = await locationRepository.query(query as QueryInput<Record<string, unknown>>)
+    for (const location of existingLocations.items) {
+      await locationRepository.delete(`USER#${userId}`, `LOCATION#${location.locationId}`)
+    }
+
+    if (preferredDonationLocations != null) {
+      for (const location of preferredDonationLocations) {
+        const locationData: LocationDTO = {
+          userId: `${userId}`,
+          locationId: generateUniqueID(),
+          area: location.area,
+          city: location.city,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          geohash: generateGeohash(location.latitude, location.longitude),
+          bloodGroup: userAttributes.bloodGroup,
+          availableForDonation: userAttributes.availableForDonation,
+          lastVaccinatedDate: userAttributes.lastVaccinatedDate,
+          createdAt: new Date().toISOString()
+        }
+        await locationRepository.create(locationData)
+      }
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { DbModelDtoAdapter, NosqlModel } from '../../../../application/technicalImpl/dbModels/DbModelDefinitions'
 import Repository from '../../../../application/technicalImpl/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand, QueryCommand, QueryCommandInput } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand, QueryCommand, QueryCommandInput, DeleteCommandInput, DeleteCommand } from '@aws-sdk/lib-dynamodb'
 import { QueryInput, QueryCondition, QueryConditionOperator } from '../../../../application/technicalImpl/policies/repositories/QueryTypes'
 import { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
@@ -204,6 +204,29 @@ export default class DynamoDbTableOperations<
       return this.modelAdapter.toDto(result.Item as DbFields)
     } catch (error) {
       throw new DatabaseError('Failed to fetch item from DynamoDB', GENERIC_CODES.ERROR)
+    }
+  }
+
+  async delete(partitionKey: string, sortKey?: string): Promise<void> {
+    try {
+      const primaryKeyName = this.modelAdapter.getPrimaryIndex()
+      const key: Record<string, DbFields[keyof DbFields]> = {
+        [primaryKeyName.partitionKey]: partitionKey as DbFields[keyof DbFields]
+      }
+
+      if (sortKey !== undefined && typeof primaryKeyName.sortKey === 'string') {
+        key[primaryKeyName.sortKey] = sortKey as DbFields[keyof DbFields]
+      }
+
+      const input: DeleteCommandInput = {
+        TableName: this.getTableName(),
+        Key: key
+      }
+
+      await this.client.send(new DeleteCommand(input))
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+      throw new Error(`Failed to delete item in ${this.getTableName()}. Error: ${errorMessage}`)
     }
   }
 
