@@ -5,6 +5,16 @@
     "tags": [
       "bloodconnect-push-notification"
     ],
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "requestBody": {
       "content": {
         "application/json": {
@@ -48,6 +58,16 @@
     ]
   },
   "options": {
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "$ref": "./../cors-options.json"
   }
 }
