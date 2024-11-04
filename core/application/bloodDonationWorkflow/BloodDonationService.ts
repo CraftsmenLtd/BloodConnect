@@ -161,12 +161,14 @@ export class BloodDonationService {
       const stepFunctionInput: StepFunctionInput = {
         seekerId,
         requestPostId,
+        createdAt,
         donationDateTime: existingItem.donationDateTime,
         neededBloodGroup: existingItem.neededBloodGroup,
         bloodQuantity: existingItem.bloodQuantity,
         urgencyLevel: existingItem.urgencyLevel,
         geohash: existingItem.geohash,
-        city
+        city,
+        retryCount: retryCount + 1
       }
 
       await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${city}-(${existingItem.neededBloodGroup})`)

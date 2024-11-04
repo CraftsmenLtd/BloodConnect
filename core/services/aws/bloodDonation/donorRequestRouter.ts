@@ -24,9 +24,8 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     ? JSON.parse(record.body)
     : {}
 
-  const primaryIndex: string = body.dynamodb?.Keys?.PK?.S
-  const secondaryIndex: string = body.dynamodb?.Keys?.SK?.S
-
+  const primaryIndex: string = body?.PK
+  const secondaryIndex: string = body?.SK
   if (primaryIndex === '' || secondaryIndex === '') {
     console.error('Missing PK or SK in the DynamoDB record')
     return
