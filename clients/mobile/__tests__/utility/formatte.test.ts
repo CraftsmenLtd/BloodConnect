@@ -1,17 +1,17 @@
-import { formatteDate, formatPhoneNumber, formatErrorMessage } from '../../src/utility/formatte'
+import { formatteDate, formatPhoneNumber, formatErrorMessage, formatToTwoDecimalPlaces } from '../../src/utility/formatte'
 
 describe('Utility Functions', () => {
   describe('formatteDate', () => {
     describe('formatteDate', () => {
       test('should format date string correctly', () => {
-        const dateString = '2024-10-23T14:30:00Z' // This is in UTC
-        const expected = '10/23/2024, 2:30 PM' // Expected output in UTC
+        const dateString = '2024-10-23T14:30:00Z'
+        const expected = '10/23/2024, 2:30 PM'
         expect(formatteDate(dateString)).toBe(expected)
       })
 
       test('should format Date object correctly', () => {
-        const dateObject = new Date('2024-10-23T14:30:00Z') // This is in UTC
-        const expected = '10/23/2024, 2:30 PM' // Expected output in UTC
+        const dateObject = new Date('2024-10-23T14:30:00Z')
+        const expected = '10/23/2024, 2:30 PM'
         expect(formatteDate(dateObject)).toBe(expected)
       })
 
@@ -93,6 +93,36 @@ describe('Utility Functions', () => {
       const error = {}
       const expected = 'An unknown error occurred.'
       expect(formatErrorMessage(error)).toBe(expected)
+    })
+  })
+
+  describe('formatToTwoDecimalPlaces', () => {
+    it('should format a valid numeric string to two decimal places', () => {
+      expect(formatToTwoDecimalPlaces('123.456')).toBe(123.46)
+    })
+
+    it('should return 0 for a non-numeric string', () => {
+      expect(formatToTwoDecimalPlaces('abc')).toBe(0)
+    })
+
+    it('should return 0 for an empty string', () => {
+      expect(formatToTwoDecimalPlaces('')).toBe(0)
+    })
+
+    it('should handle whole numbers by adding .00', () => {
+      expect(formatToTwoDecimalPlaces('100')).toBe(100.00)
+    })
+
+    it('should handle a number already at two decimal places without rounding', () => {
+      expect(formatToTwoDecimalPlaces('123.45')).toBe(123.45)
+    })
+
+    it('should round down if third decimal place is less than 5', () => {
+      expect(formatToTwoDecimalPlaces('123.454')).toBe(123.45)
+    })
+
+    it('should return 0 for NaN input like " " (whitespace)', () => {
+      expect(formatToTwoDecimalPlaces(' ')).toBe(0)
     })
   })
 })

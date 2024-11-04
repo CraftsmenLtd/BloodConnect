@@ -85,7 +85,7 @@ export const validatePastOrTodayDate = (date: string): string | null => {
   today.setHours(0, 0, 0, 0)
   inputDate.setHours(0, 0, 0, 0)
 
-  if (inputDate > today) {
+  if (inputDate.getTime() >= today.getTime()) {
     return 'The date must be today or in the past.'
   }
 

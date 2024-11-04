@@ -81,8 +81,8 @@ export const useAddPersonalInfo = (): any => {
     handleInputValidation(name, value)
   }
 
-  const handleInputValidation = (name: PersonalInfoKeys, value: string): void => {
-    const errorMsg = validateInput(value, validationRules[name])
+  const handleInputValidation = (name: PersonalInfoKeys, value: string | boolean): void => {
+    const errorMsg = validateInput(value as string, validationRules[name])
     setErrors(prevErrors => ({
       ...prevErrors,
       [name]: errorMsg

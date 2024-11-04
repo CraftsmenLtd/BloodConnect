@@ -91,6 +91,7 @@ const AddPersonalInfo = () => {
           value={new Date(personalInfo.lastDonationDate)}
           onChange={(date) => handleInputChange('lastDonationDate', date)}
           isRequired={true}
+          error={errors.lastDonationDate}
         />
         <DateTimePickerComponent
           name='dateOfBirth'
@@ -99,6 +100,7 @@ const AddPersonalInfo = () => {
           value={new Date(personalInfo.dateOfBirth)}
           onChange={(date) => handleInputChange('dateOfBirth', date)}
           isRequired={true}
+          error={errors.dateOfBirth}
         />
         <DateTimePickerComponent
           name='lastVaccinatedDate'
@@ -107,6 +109,7 @@ const AddPersonalInfo = () => {
           value={new Date(personalInfo.lastVaccinatedDate)}
           onChange={(date) => handleInputChange('lastVaccinatedDate', date)}
           isRequired={true}
+          error={errors.lastVaccinatedDate}
         />
         <RadioButton
           name='availableForDonation'
