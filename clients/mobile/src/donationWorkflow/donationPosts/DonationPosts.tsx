@@ -16,7 +16,7 @@ interface DonationPostsProps {
 }
 const DonationPosts = ({ navigation }: DonationPostsProps) => {
   const fetchClient = useFetchClient()
-  const [donaitonPosts, setDonationsPost] = useState<DonationData[]>([])
+  const [donationPosts, setDonationsPost] = useState<DonationData[]>([])
 
   useEffect(() => {
     const fetchData = async() => {
@@ -78,7 +78,7 @@ const DonationPosts = ({ navigation }: DonationPostsProps) => {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={donaitonPosts}
+        data={donationPosts}
         renderItem={({ item }) => <PostCard post={item} updateHandler={updatePost} />}
         keyExtractor={item => item.requestPostId}
         contentContainerStyle={styles.postList}
