@@ -7,17 +7,12 @@ resource "aws_sqs_queue_policy" "push_notification_queue" {
       {
         Effect = "Allow"
         Principal = {
-          Service = "sns.amazonaws.com"
+          AWS = module.lambda["send-notification"].lambda_role_arn
         }
         Action = [
           "sqs:SendMessage"
         ]
         Resource = aws_sqs_queue.push_notification_queue.arn
-        Condition = {
-          ArnEquals = {
-            "aws:SourceArn": aws_sns_topic.push_notification.arn
-          }
-        }
       }
     ]
   })
