@@ -11,9 +11,11 @@ export const handler: SQSHandler = async(event: SQSEvent) => {
   for (const record of event.Records) {
     // try {
     const message = JSON.parse(record.body) as NotificationQueueMessage
+    console.log('Processing message:', message)
+    console.log('Processing message:', JSON.stringify(message, null, 2))
 
     // Send to SNS topic
-    await sns.publish({
+    const snsParams = {
       TopicArn: process.env.NOTIFICATION_TOPIC_ARN,
       Message: JSON.stringify({
         default: JSON.stringify(message.payload),
@@ -25,7 +27,12 @@ export const handler: SQSHandler = async(event: SQSEvent) => {
         })
       }),
       MessageStructure: 'json'
-    })
+    }
+
+    console.log('Publishing to SNS with params:', JSON.stringify(snsParams, null, 2))
+
+    const result = await sns.publish(snsParams)
+    console.log('SNS publish result:', JSON.stringify(result, null, 2))
 
     console.log('l2-sns')
     // } catch (error) {
