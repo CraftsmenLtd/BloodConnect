@@ -6,7 +6,7 @@ export class SQSNotificationService {
   constructor(private readonly sqs: SQS) {}
 
   async queueNotification(message: NotificationQueueMessage, queueUrl: string): Promise<void> {
-    console.log('sqs mesg param', message)
+    console.log('sqs messg param', message)
     await this.sqs.sendMessage({
       QueueUrl: queueUrl,
       MessageBody: JSON.stringify(message)
