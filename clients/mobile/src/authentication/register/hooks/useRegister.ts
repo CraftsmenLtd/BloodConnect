@@ -58,7 +58,7 @@ export const useRegister = (): any => {
 
   const handleRegister = async(): Promise<void> => {
     navigation.navigate(SCREENS.SET_PASSWORD, {
-      params: {
+      routeParams: {
         ...registerCredential,
         phoneNumber: formatPhoneNumber(registerCredential.phoneNumber),
         password: ''

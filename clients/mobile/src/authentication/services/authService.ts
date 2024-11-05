@@ -1,4 +1,4 @@
-import { confirmSignUp, signUp, signIn, signInWithRedirect, signOut, decodeJWT, AuthSession, fetchAuthSession } from 'aws-amplify/auth'
+import { confirmSignUp, signUp, signIn, signInWithRedirect, signOut, decodeJWT, AuthSession, fetchAuthSession, resetPassword, confirmResetPassword, ResetPasswordOutput } from 'aws-amplify/auth'
 import { JwtPayload } from '@aws-amplify/core/internals/utils'
 import StorageService from '../../utility/storageService'
 import { handleAuthError } from './authErrorHandler'
@@ -136,6 +136,40 @@ export const facebookLogin = async(): Promise<void> => {
     await signInWithRedirect({ provider: 'Facebook' })
   } catch (error) {
     throw new Error(`Error logging with facebook: ${error instanceof Error ? error.message : error}`)
+  }
+}
+
+export const resetPasswordHandler = async(email: string): Promise<ResetPasswordOutput['nextStep']> => {
+  try {
+    const { nextStep } = await resetPassword({ username: email })
+    return nextStep
+  } catch (error) {
+    const errorMessage = handleAuthError(error)
+    throw new Error(errorMessage)
+  }
+}
+
+const handleConfirmPasswordError = (error: unknown): string => {
+  if (error instanceof Error) {
+    if (error.message.includes('Invalid verification code')) {
+      return 'Invalid confirmation code. Please try again.'
+    } else if (error.message.includes('Password does not satisfy policy')) {
+      return 'Password does not meet requirements. Please choose a different password.'
+    } else {
+      return 'Reset failed. Please try again.'
+    }
+  } else {
+    return 'An unexpected error occurred. Please try again.'
+  }
+}
+
+export const confirmResetPasswordHandler = async(email: string, otp: string, password: string): Promise<boolean> => {
+  try {
+    await confirmResetPassword({ username: email, confirmationCode: otp, newPassword: password })
+    return true
+  } catch (error) {
+    const errorMessage = handleConfirmPasswordError(error)
+    throw new Error(errorMessage)
   }
 }
 

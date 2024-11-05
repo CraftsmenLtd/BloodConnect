@@ -3,6 +3,7 @@ export enum SCREENS {
   LOGIN = 'Login',
   SET_PASSWORD = 'SetPassword',
   OTP = 'OTP',
+  FORGOT_PASSWORD = 'ForgotPassword',
   PROFILE = 'Profile',
   WELCOME = 'Welcome',
   DONATION = 'Donation',

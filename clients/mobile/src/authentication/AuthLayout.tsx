@@ -28,7 +28,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'flex-start',
     backgroundColor: theme.colors.white,
-    paddingTop: '5%',
+    paddingTop: '10%',
     paddingHorizontal: 20
 
   }

@@ -1,4 +1,4 @@
-import { mockedNavigate, mockDispatch } from '../__mocks__/reactNavigation.mock'
+import { mockedNavigate, mockDispatch, setRouteParams } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useLogin } from '../../src/authentication/login/hooks/useLogin'
 import { loginUser, googleLogin, facebookLogin } from '../../src/authentication/services/authService'
@@ -11,6 +11,9 @@ jest.mock('../../src/authentication/services/authService', () => ({
 }))
 
 describe('useLogin Hook', () => {
+  beforeEach(() => {
+    setRouteParams({ email: 'test@example.com' })
+  })
   afterEach(() => {
     jest.clearAllMocks()
   })
