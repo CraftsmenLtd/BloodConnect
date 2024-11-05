@@ -12,7 +12,7 @@
               "Type": "Task",
               "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
               "Parameters": {
-                "TableName": "${DYNAMODB_TABLE_NAME_PLACEHOLDER}",
+                "TableName": "${DYNAMODB_TABLE_NAME}",
                 "KeyConditionExpression": "PK = :seekerId AND begins_with(SK, :requestPostId)",
                 "ExpressionAttributeValues": {
                   ":seekerId": {
@@ -28,7 +28,7 @@
             },
             "PerformCalculations": {
               "Type": "Task",
-              "Resource": "${DONOR_CALCULATE_LAMBDA_ARN_PLACEHOLDER}",
+              "Resource": "${DONOR_CALCULATE_LAMBDA_ARN}",
               "Parameters": {
                 "bloodQuantity.$": "$.bloodQuantity",
                 "donorsFoundCount.$": "$.donorsFoundCount.Count",
@@ -62,7 +62,7 @@
               "Type": "Task",
               "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
               "Parameters": {
-                "TableName": "${DYNAMODB_TABLE_NAME_PLACEHOLDER}",
+                "TableName": "${DYNAMODB_TABLE_NAME}",
                 "IndexName": "GSI1",
                 "KeyConditionExpression": "GSI1PK = :cityAndBloodGroupAndStatus AND begins_with(GSI1SK, :geohash)",
                 "ExpressionAttributeValues": {
@@ -79,7 +79,7 @@
             },
             "CheckDonorStatus": {
               "Type": "Task",
-              "Resource": "${GEOHASH_CALCULATE_LAMBDA_ARN_PLACEHOLDER}",
+              "Resource": "${DONOR_SEARCH_EVALUATOR_LAMBDA_ARN}",
               "Parameters": {
                 "geohash.$": "$.geohash",
                 "eligibleDonorsCount.$": "$.eligibleDonors.Count",
