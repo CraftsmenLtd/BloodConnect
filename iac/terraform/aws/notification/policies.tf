@@ -28,6 +28,18 @@ locals {
         resources = [aws_sqs_queue.push_notification_queue.arn]
       }
     ],
+    sqs_receive_policy = [
+      {
+        sid = "SQSReceivePolicy"
+        actions = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes",
+          "sqs:ChangeMessageVisibility"
+        ]
+        resources = [aws_sqs_queue.push_notification_queue.arn]
+      }
+    ],
     sns_publish_policy = [
       {
         sid = "SNSPublishPolicy"
