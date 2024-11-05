@@ -1,10 +1,10 @@
 locals {
   lambda_options = {
     send-notification = {
-      name                       = "push-notification-mapper"
+      name                       = "send-push-notification"
       handler                    = "sendPushNotification.default"
       zip_path                   = "sendPushNotification.zip"
-      statement                  = concat(local.policies.common_policies, local.policies.dynamodb_get_policy, local.policies.sqs_send_policy)
+      statement                  = concat(local.policies.common_policies, local.policies.dynamodb_query_policy, local.policies.sqs_send_policy)
       invocation_arn_placeholder = "SEND_PUSH_NOTIFICATION_INVOCATION_ARN"
       env_variables = {
         NOTIFICATION_QUEUE_URL = aws_sqs_queue.push_notification_queue.url

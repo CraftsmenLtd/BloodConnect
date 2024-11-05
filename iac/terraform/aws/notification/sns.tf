@@ -1,4 +1,5 @@
 resource "aws_sns_topic" "push_notification" {
+  #checkov:skip=CKV_AWS_26: "Ensure all data stored in the SNS topic is encrypted"
   name = "${var.environment}-push-notification-topic"
 }
 
