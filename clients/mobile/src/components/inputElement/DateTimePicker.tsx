@@ -19,7 +19,6 @@ interface DateTimePickerComponentProps {
 const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({ label, value, onChange, showDatePicker, setShowDatePicker, error, isRequired = false }) => {
   const styles = createStyles(useTheme())
   const [isPickingTime, setIsPickingTime] = useState<boolean>(false)
-  console.log('value', value)
   const handleDateChange = (event: any, selectedDate: Date | undefined) => {
     if (event.type === 'dismissed') {
       setShowDatePicker(false)
