@@ -1,19 +1,17 @@
+data "aws_iam_policy_document" "sqs_queue_policy" {
+  statement {
+    sid     = "AllowLambdaSendMessage"
+    effect  = "Allow"
+    actions = ["sqs:SendMessage"]
+    principals {
+      type        = "AWS"
+      identifiers = [module.lambda["send-notification"].role_arn]
+    }
+    resources = [aws_sqs_queue.push_notification_queue.arn]
+  }
+}
+
 resource "aws_sqs_queue_policy" "push_notification_queue" {
   queue_url = aws_sqs_queue.push_notification_queue.url
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          AWS = module.lambda["send-notification"].role_arn
-        }
-        Action = [
-          "sqs:SendMessage"
-        ]
-        Resource = aws_sqs_queue.push_notification_queue.arn
-      }
-    ]
-  })
+  policy    = data.aws_iam_policy_document.sqs_queue_policy.json
 }

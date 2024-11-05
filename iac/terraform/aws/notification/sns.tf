@@ -3,21 +3,20 @@ resource "aws_sns_topic" "push_notification" {
   name              = "${var.environment}-push-notification-topic"
 }
 
-resource "aws_sns_topic_policy" "push_notification" {
-  arn = aws_sns_topic.push_notification.arn
+data "aws_iam_policy_document" "sns_topic_policy" {
+  statement {
+    sid     = "AllowLambdaPublish"
+    effect  = "Allow"
+    actions = ["sns:Publish"]
+    principals {
+      type        = "AWS"
+      identifiers = [module.lambda["process-notification"].role_arn]
+    }
+    resources = [aws_sns_topic.push_notification.arn]
+  }
+}
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid       = "AllowLambdaPublish"
-        Effect    = "Allow"
-        Principal = {
-          AWS = module.lambda["process-notification"].role_arn
-        }
-        Action    = "sns:Publish"
-        Resource  = aws_sns_topic.push_notification.arn
-      }
-    ]
-  })
+resource "aws_sns_topic_policy" "push_notification" {
+  arn    = aws_sns_topic.push_notification.arn
+  policy = data.aws_iam_policy_document.sns_topic_policy.json
 }
