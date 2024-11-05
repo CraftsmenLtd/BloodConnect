@@ -8,7 +8,9 @@ export const startExecutionInputMock: StepFunctionInput = {
   urgencyLevel: 'urgent' as const,
   donationDateTime: '2024-10-20T15:00:00Z',
   geohash: 'wvjytdh',
-  city: 'Dhaka'
+  city: 'Dhaka',
+  createdAt: '2024-10-20T15:00:00.324Z',
+  retryCount: 1
 }
 
 export const startExecutionOutputMock: StepFunctionExecutionAttributes = {
