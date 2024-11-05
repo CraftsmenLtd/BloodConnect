@@ -7,7 +7,7 @@ resource "aws_sqs_queue_policy" "push_notification_queue" {
       {
         Effect = "Allow"
         Principal = {
-          AWS = module.lambda["send-notification"].lambda_role_arn
+          AWS = module.lambda["send-notification"].role_arn
         }
         Action = [
           "sqs:SendMessage"
