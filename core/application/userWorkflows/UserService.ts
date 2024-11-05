@@ -11,6 +11,11 @@ import { QueryConditionOperator, QueryInput } from '../../application/technicalI
 import LocationModel, { LocationFields } from '../../application/technicalImpl/dbModels/LocationModel'
 import { differenceInYears } from 'date-fns'
 
+export interface NotificationAttributes {
+  userId: string;
+  endpointArn: string;
+}
+
 export class UserService {
   async createNewUser(userAttributes: UserAttributes, userRepository: Repository<UserDTO>): Promise<UserDTO> {
     try {
@@ -22,6 +27,26 @@ export class UserService {
       })
     } catch (error) {
       throw new UserOperationError(`Failed to create new user. Error: ${error}`, GENERIC_CODES.ERROR)
+    }
+  }
+
+  async storeEndpointArn(notificationAttributes: NotificationAttributes, userRepository: Repository<UserDTO>): Promise<void> {
+    try {
+      const { userId, endpointArn } = notificationAttributes
+      const item = await userRepository.getItem(`USER#${userId}`, 'PROFILE')
+
+      if (item === null) {
+        throw new Error('Item not found.')
+      }
+
+      const updateData: Partial<StoreNotificationEndPoint> = {
+        id: userId,
+        endpointArn,
+        updatedAt: new Date().toISOString()
+      }
+      await userRepository.update(updateData)
+    } catch (error) {
+      throw new Error('Failed to store Endpoint ARN')
     }
   }
 

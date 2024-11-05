@@ -39,3 +39,8 @@ export interface UserDetailsDTO extends UserDTO {
   createdAt: string;
   updatedAt?: string;
 }
+
+export interface StoreNotificationEndPoint extends UserDTO {
+  endpointArn: string;
+  updatedAt?: string;
+}

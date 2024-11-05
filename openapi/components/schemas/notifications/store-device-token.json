@@ -1,0 +1,22 @@
+{
+  "StoreDeviceTokenRequest": {
+    "type": "object",
+    "required": [
+      "deviceToken",
+      "platform"
+    ],
+    "properties": {
+      "deviceToken": {
+        "type": "string"
+      },
+      "platform": {
+        "type": "string",
+        "enum": ["APNS", "FCM"]
+      }
+    },
+    "example": {
+      "deviceToken": "iWnqGdI2Zdfx",
+      "platform": "FCM"
+    }
+  }
+}

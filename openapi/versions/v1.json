@@ -64,6 +64,9 @@
     },
     "/donations/accept": {
       "$ref": "./../paths/donations/accept.json"
+    },
+    "/users/notifications": {
+      "$ref": "./../paths/notifications/notifications.json"
     }
   },
   "components": {
