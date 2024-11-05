@@ -12,10 +12,10 @@ locals {
       }
     },
     process-notification = {
-      name                       = "process-push-notification"
-      handler                    = "processPushNotification.handler"
-      zip_path                   = "processPushNotification.zip"
-      statement                  = concat(local.policies.common_policies, local.policies.sns_publish_policy)
+      name      = "process-push-notification"
+      handler   = "processPushNotification.handler"
+      zip_path  = "processPushNotification.zip"
+      statement = concat(local.policies.common_policies, local.policies.sns_publish_policy)
       env_variables = {
         NOTIFICATION_TOPIC_ARN = aws_sns_topic.push_notification.arn
       }
