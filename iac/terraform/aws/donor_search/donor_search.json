@@ -49,7 +49,7 @@
         "city.$": "$.[0].city",
         "delayPeriod.$": "$.[0].calculationResults.delayPeriod"
       },
-      "ResultPath": "$",
+      "ResultPath": "$.PrepareDonorSearch",
       "Next": "DonorSearchProcess"
     },
     "DonorSearchProcess": {
@@ -70,7 +70,7 @@
                     "S.$": "States.Format('CITY#{}#BG#{}#DONATIONSTATUS#yes', $.city, $.neededBloodGroup)"
                   },
                   ":geohash": {
-                    "S.$": "$.geohash"
+                    "S.$": "$.PrepareDonorSearch.geohash"
                   }
                 }
               },
@@ -81,9 +81,9 @@
               "Type": "Task",
               "Resource": "${DONOR_SEARCH_EVALUATOR_LAMBDA_ARN}",
               "Parameters": {
-                "geohash.$": "$.geohash",
+                "geohash.$": "$.PrepareDonorSearch.geohash",
                 "eligibleDonorsCount.$": "$.eligibleDonors.Count",
-                "totalDonorsToNotify.$": "$.totalDonorsToNotify"
+                "totalDonorsToNotify.$": "$.PrepareDonorSearch.totalDonorsToNotify"
               },
               "ResultPath": "$.donorSearchResult",
               "Next": "DecideNextStep"
@@ -107,13 +107,13 @@
             "UpdateSearchFields": {
               "Type": "Pass",
               "Parameters": {
-                "totalDonorsToNotify.$": "$.totalDonorsToNotify",
-                "city.$": "$.city",
+                "totalDonorsToNotify.$": "$.PrepareDonorSearch.totalDonorsToNotify",
+                "city.$": "$.PrepareDonorSearch.city",
                 "geohash.$": "$.donorSearchResult.shortenedGeohash",
-                "neededBloodGroup.$": "$.neededBloodGroup",
-                "delayPeriod.$": "$.delayPeriod"
+                "neededBloodGroup.$": "$.PrepareDonorSearch.neededBloodGroup",
+                "delayPeriod.$": "$.PrepareDonorSearch.delayPeriod"
               },
-              "ResultPath": "$",
+              "ResultPath": "$.PrepareDonorSearch",
               "Next": "QueryEligibleDonors"
             },
             "EnoughDonorsFound": {
@@ -123,18 +123,22 @@
         }
       ],
       "ResultSelector": {
-        "geohash.$": "$.[0].geohash",
-        "neededBloodGroup.$": "$.[0].neededBloodGroup",
-        "city.$": "$.[0].city",
-        "delayPeriod.$": "$.[0].delayPeriod",
-        "eligibleDonors.$": "$[0].eligibleDonors.Items"
+        "Items.$": "$[0].eligibleDonors.Items"
       },
-      "ResultPath": "$",
-      "Next": "NotifyDonors"
+      "ResultPath": "$.eligibleDonors",
+      "Next": "SendSqsMessage"
     },
-    "NotifyDonors": {
-      "Type": "Pass",
-      "Result": "Notification logic placeholder",
+    "SendSqsMessage": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:sqs:sendMessage",
+      "Parameters": {
+        "QueueUrl": "${SQS_RETRY_QUEUE_URL}",
+        "MessageBody": {
+          "PK.$": "States.Format('BLOOD_REQ#{}', $.seekerId)",
+          "SK.$": "States.Format('BLOOD_REQ#{}#{}', $.createdAt, $.requestPostId)"
+        },
+        "DelaySeconds.$": "$.PrepareDonorSearch.delayPeriod"
+      },
       "End": true
     }
   }

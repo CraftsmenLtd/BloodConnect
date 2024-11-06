@@ -55,7 +55,8 @@ describe('donorRequestRouter', () => {
         createdAt: donorRoutingAttributesMock.createdAt
       }),
       expect.any(DynamoDbTableOperations),
-      expect.any(StepFunctionOperations)
+      expect.any(StepFunctionOperations),
+      expect.any(DynamoDbTableOperations)
     )
   })
 

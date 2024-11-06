@@ -1,10 +1,11 @@
 import { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import { DonorRoutingAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import { DonationDTO, DonorSearchDTO } from '../../../../commons/dto/DonationDTO'
 import { BloodDonationModel, DonationFields } from '../../../application/technicalImpl/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import StepFunctionOperations from '../commons/stepFunction/StepFunctionOperations'
+import { DonorSearchFields, DonorSearchModel } from '../../../application/technicalImpl/dbModels/DonorSearchModel'
 
 const bloodDonationService = new BloodDonationService()
 
@@ -40,7 +41,8 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
   await bloodDonationService.routeDonorRequest(
     donorRoutingAttributes,
     new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(new BloodDonationModel()),
-    new StepFunctionOperations()
+    new StepFunctionOperations(),
+    new DynamoDbTableOperations<DonorSearchDTO, DonorSearchFields, DonorSearchModel>(new DonorSearchModel())
   )
 }
 
