@@ -39,16 +39,18 @@ export interface UpdateBloodDonationAttributes {
 export interface DonorRoutingAttributes {
   seekerId: string;
   requestPostId: string;
+  createdAt: string;
 }
 
 export interface StepFunctionInput {
   seekerId: string;
   requestPostId: string;
+  donationDateTime: string;
   neededBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyLevel;
-  latitude: number;
-  longitude: number;
+  geohash: string;
+  city: string;
 }
 
 export interface StepFunctionExecutionAttributes {

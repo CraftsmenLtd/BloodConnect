@@ -54,6 +54,7 @@ data "aws_iam_policy_document" "api_gw_dynamodb_policy" {
     actions = [
       "dynamodb:Query",
       "dynamodb:GetItem",
+      "dynamodb:UpdateItem",
     ]
     effect = "Allow"
     resources = [

@@ -8,11 +8,12 @@ import StepFunctionOperations from '../commons/stepFunction/StepFunctionOperatio
 
 const bloodDonationService = new BloodDonationService()
 
-async function donorRequestRouter(event: SQSEvent): Promise<void> {
+async function donorRequestRouter(event: SQSEvent): Promise<{ status: string }> {
   try {
     for (const record of event.Records) {
       await processSQSRecord(record)
     }
+    return { status: 'Success' }
   } catch (error) {
     throw error instanceof Error ? error : new Error('An unknown error occurred')
   }
@@ -23,9 +24,18 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     ? JSON.parse(record.body)
     : {}
 
+  const primaryIndex: string = body.dynamodb?.Keys?.PK?.S
+  const secondaryIndex: string = body.dynamodb?.Keys?.SK?.S
+
+  if (primaryIndex === '' || secondaryIndex === '') {
+    console.error('Missing PK or SK in the DynamoDB record')
+    return
+  }
+
   const donorRoutingAttributes: DonorRoutingAttributes = {
-    seekerId: body.seekerId,
-    requestPostId: body.requestPostId
+    seekerId: primaryIndex.split('#')[1],
+    requestPostId: secondaryIndex.split('#')[2],
+    createdAt: secondaryIndex.split('#')[1]
   }
 
   await bloodDonationService.routeDonorRequest(
