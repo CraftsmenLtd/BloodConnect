@@ -64,7 +64,7 @@ export const useLogin = (): any => {
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
       await googleLogin()
-      navigation.navigate(SCREENS.PROFILE)
+      navigation.navigate(SCREENS.BOTTOM_TABS)
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
     }
@@ -73,7 +73,7 @@ export const useLogin = (): any => {
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
       await facebookLogin()
-      navigation.navigate(SCREENS.PROFILE)
+      navigation.navigate(SCREENS.BOTTOM_TABS)
     } catch (error) {
       setSocialLoginError('Failed to sign in with Facebook.')
     }
