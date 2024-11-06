@@ -125,7 +125,7 @@ const CreateBloodRequest = () => {
             isVisible={isVisible}
             setIsVisible={setIsVisible}
           />
-          {errorMessage !== '' && <Text style={{ color: 'red' }}>{errorMessage}</Text>}
+          {errorMessage !== '' && <Text style={{ color: 'red', textAlign: 'center', marginBottom: 12 }}>{errorMessage}</Text>}
           <Button text={isUpdating === true ? 'Update Post' : 'Post Now'} onPress={handlePostNow} disabled={isButtonDisabled} loading={loading} />
         </ScrollView>
       </View>

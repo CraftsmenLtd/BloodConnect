@@ -2,11 +2,18 @@ export const formatteDate = (date: string | Date, showOnlyDate = false): string 
   const dte = new Date(date)
 
   return dte.toLocaleString(undefined, {
-    timeZone: 'UTC',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     ...(showOnlyDate ? {} : { hour: 'numeric', minute: '2-digit', hour12: true })
+  })
+}
+
+export const formatteTime = (time: string): string => {
+  return new Date(time).toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true
   })
 }
 
@@ -19,22 +26,32 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
 }
 
 export function formatErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
+  if (error instanceof Error && typeof error.message === 'string') {
     const errorMessage = error.message.toLowerCase()
-
-    if (errorMessage.includes('user already exists')) {
-      return 'User already exists, Please Login.'
+    switch (errorMessage) {
+      case 'user already exists':
+        return 'User already exists, Please Login.'
+      case 'invalid request body':
+        return 'Please check your input and try again.'
+      case 'network error':
+        return 'Please check your internet connection.'
+      case 'timeout':
+        return 'Request timed out, please try again later.'
+      default:
+        return 'Something went wrong.'
     }
+  }
 
-    if (errorMessage.includes('network error')) {
-      return 'Please check your connection.'
+  if (typeof error === 'string') {
+    return error
+  }
+
+  if (typeof error === 'object' && error !== null) {
+    try {
+      return 'Error: ' + JSON.stringify(error)
+    } catch {
+      return 'An error occurred but could not be displayed.'
     }
-
-    if (errorMessage.includes('timeout')) {
-      return 'Request timed out, Please try again later.'
-    }
-
-    return 'An unexpected error occurred: ' + error.message
   }
 
   return 'An unknown error occurred.'

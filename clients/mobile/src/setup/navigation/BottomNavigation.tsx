@@ -6,7 +6,6 @@ import HomeScreen from '../../userWorkflow/HomeScreen'
 import DonationPosts from '../../donationWorkflow/donationPosts/DonationPosts'
 import MyActivityTab from '../../userWorkflow/MyActivityTab'
 import { SCREENS } from '../constant/screens'
-// import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 
 const Tab = createBottomTabNavigator()
 

@@ -6,7 +6,7 @@ import { createDonation, DonationResponse, updateDonation } from '../donationSer
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
 import { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
-import { formatPhoneNumber } from '../../utility/formatte'
+import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatte'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 
 export const DONATION_DATE_TIME_INPUT_NAME = 'donationDateTime'
@@ -155,7 +155,7 @@ export const useBloodRequest = (): any => {
         navigation.navigate(SCREENS.POSTS)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+      const errorMessage = formatErrorMessage(error)
       setErrorMessage(errorMessage)
     } finally {
       setLoading(false)

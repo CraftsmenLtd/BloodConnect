@@ -81,8 +81,8 @@ describe('useAddPersonalInfo Hook', () => {
   })
 
   test('should submit data and navigate on successful submission', async() => {
-    const { result } = renderHook(() => useAddPersonalInfo())
-    ;(addPersonalInfoHandler as jest.Mock).mockResolvedValue({ status: 200 })
+    const { result } = renderHook(() => useAddPersonalInfo());
+    (addPersonalInfoHandler as jest.Mock).mockResolvedValue({ status: 200 })
 
     act(() => {
       result.current.handleInputChange('bloodGroup', 'O+')
@@ -101,8 +101,8 @@ describe('useAddPersonalInfo Hook', () => {
 
   test('should set errorMessage on failed submission', async() => {
     const errorMessage = 'Submission failed'
-    const { result } = renderHook(() => useAddPersonalInfo())
-    ;(addPersonalInfoHandler as jest.Mock).mockRejectedValue(new Error(errorMessage))
+    const { result } = renderHook(() => useAddPersonalInfo());
+    (addPersonalInfoHandler as jest.Mock).mockRejectedValue(new Error(errorMessage))
 
     await act(async() => {
       await result.current.handleSubmit()

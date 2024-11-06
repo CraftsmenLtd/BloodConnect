@@ -14,7 +14,10 @@ const DonationPosts = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={{ uri: 'https://via.placeholder.com/40' }} style={styles.profileImage} />
+        <View style={styles.headerLeftContent}>
+          <Image source={{ uri: 'https://via.placeholder.com/40' }} style={styles.profileImage} />
+          <Text style={styles.bloodNeeed}>Blood needed?</Text>
+        </View>
         <TouchableOpacity style={styles.createPostButton} onPress={createPost}>
           <Text style={styles.createPostText}>Create Post</Text>
         </TouchableOpacity>
@@ -23,7 +26,7 @@ const DonationPosts = () => {
       {errorMessage === '' && donationPosts.length === 0
         ? (
           <Text style={styles.noDataText}>No donation posts found.</Text>
-        )
+          )
         : (
           <FlatList
             data={donationPosts}
@@ -31,7 +34,7 @@ const DonationPosts = () => {
             keyExtractor={item => item.requestPostId}
             contentContainerStyle={styles.postList}
           />
-        )}
+          )}
     </View>
   )
 }
@@ -45,7 +48,23 @@ const createStyles = (theme: Theme) => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingVertical: 15
+      marginBottom: 8,
+      paddingVertical: 15,
+      paddingHorizontal: 15,
+      backgroundColor: theme.colors.white,
+      borderBottomColor: theme.colors.extraLightGray,
+      borderBottomWidth: 1,
+      borderTopColor: theme.colors.extraLightGray,
+      borderTopWidth: 1
+    },
+    headerLeftContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8
+    },
+    bloodNeeed: {
+      fontSize: 17,
+      color: theme.colors.lightGrey
     },
     profileImage: {
       width: 40,
@@ -58,7 +77,7 @@ const createStyles = (theme: Theme) => {
       borderRadius: 25
     },
     createPostText: {
-      color: theme.colors.textSecondary,
+      color: theme.colors.white,
       fontWeight: 'bold'
     },
     postList: {

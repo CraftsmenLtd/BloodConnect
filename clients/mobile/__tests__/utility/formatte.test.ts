@@ -73,7 +73,7 @@ describe('Utility Functions', () => {
 
     test('should return specific message for network error', () => {
       const error = new Error('Network error')
-      const expected = 'Please check your connection.'
+      const expected = 'Please check your internet connection.'
       expect(formatErrorMessage(error)).toBe(expected)
     })
 

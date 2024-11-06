@@ -27,6 +27,10 @@ export const loadTokens = async(): Promise<{ storedAccessToken: string | null; s
   try {
     const storedAccessToken = await StorageService.getItem<string>(TOKEN.ACCESS_TOKEN)
     const storedIdToken = await StorageService.getItem<string>(TOKEN.ID_TOKEN)
+    if (storedIdToken === null) {
+      const session = await fetchSession()
+      return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
+    }
 
     const payload = decodeAccessToken(storedIdToken)
 

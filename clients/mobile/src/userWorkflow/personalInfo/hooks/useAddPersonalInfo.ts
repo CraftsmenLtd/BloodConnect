@@ -7,7 +7,7 @@ import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { addPersonalInfoHandler } from '../../services/userServices'
 import { LocationService } from '../../../LocationService/LocationService'
-import { formatToTwoDecimalPlaces } from '../../../utility/formatte'
+import { formatErrorMessage, formatToTwoDecimalPlaces } from '../../../utility/formatte'
 
 type PersonalInfoKeys = keyof PersonalInfo
 
@@ -56,9 +56,9 @@ export const useAddPersonalInfo = (): any => {
     height: '',
     weight: '',
     gender: '',
-    lastDonationDate: new Date(),
-    dateOfBirth: new Date(),
-    lastVaccinatedDate: new Date(),
+    lastDonationDate: new Date(new Date().setMonth(new Date().getMonth() - 3)),
+    dateOfBirth: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
+    lastVaccinatedDate: new Date(new Date().setMonth(new Date().getMonth() - 3)),
     city: '',
     locations: [],
     availableForDonation: 'yes',
@@ -133,7 +133,7 @@ export const useAddPersonalInfo = (): any => {
         navigation.navigate(SCREENS.BOTTOM_TABS)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+      const errorMessage = formatErrorMessage(error)
       setErrorMessage(errorMessage)
     } finally {
       setLoading(false)

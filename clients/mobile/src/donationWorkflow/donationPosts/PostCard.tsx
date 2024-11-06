@@ -4,7 +4,8 @@ import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
-import { DonationData } from './DonationPosts'
+import { DonationData } from './useDonationPosts'
+import { formatteDate, formatteTime } from '../../utility/formatte'
 
 interface PostCardProps {
   post: DonationData;
@@ -20,7 +21,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
       <View style={styles.cardHeader}>
         <View>
           <Text style={styles.userName}>{post.patientName}</Text>
-          <Text style={styles.postTime}>Posted on {new Date(post.donationDateTime).toLocaleString()}</Text>
+          <Text style={styles.postTime}>Posted on {formatteDate(post.donationDateTime)}</Text>
         </View>
 
         <TouchableOpacity onPress={() => { setShowDropdown(!showDropdown) }}>
@@ -66,15 +67,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
                 <Ionicons name="calendar-outline" size={16} color="gray" />
                 <Text style={styles.donationInfoPlaceholder}>Time & Date</Text>
               </View>
-              <Text>{new Date(post.donationDateTime).toLocaleTimeString()}</Text>
+              <Text>{formatteTime(post.donationDateTime)}</Text>
             </View>
           </View>
         </View>
 
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.donationInfoPlaceholder}>Short Description of the Problem</Text>
-          <Text style={styles.description}>{post.shortDescription}</Text>
-        </View>
+        {post.shortDescription !== '' &&
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.donationInfoPlaceholder}>Short Description of the Problem</Text>
+            <Text style={styles.description}>{post.shortDescription}</Text>
+          </View>
+        }
       </View>
       <View style={styles.buttonContainer}>
         <Button text='View details' buttonStyle={styles.buttonStyle} textStyle={styles.textStyle} onPress={() => { console.log('Not Implemented') }} />
