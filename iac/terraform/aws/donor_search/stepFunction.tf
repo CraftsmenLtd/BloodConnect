@@ -41,8 +41,12 @@ data "aws_iam_policy_document" "step_function_policy_document" {
       "dynamodb:Query",
       "dynamodb:GetItem"
     ]
-    effect    = "Allow"
-    resources = [var.dynamodb_table_arn]
+    effect = "Allow"
+    resources = [
+      var.dynamodb_table_arn,
+      "${var.dynamodb_table_arn}/index/LSI1",
+      "${var.dynamodb_table_arn}/index/GSI1"
+    ]
   }
 
   statement {
@@ -61,9 +65,20 @@ data "aws_iam_policy_document" "step_function_policy_document" {
   }
 
   statement {
-    actions   = ["lambda:InvokeFunction"]
+    actions = [
+      "sqs:sendmessage"
+    ]
     effect    = "Allow"
-    resources = [module.step_function_lambda["calculate-donors-to-notify"].lambda_arn]
+    resources = [aws_sqs_queue.donor_search_retry_queue.arn]
+  }
+
+  statement {
+    actions = ["lambda:InvokeFunction"]
+    effect  = "Allow"
+    resources = [
+      module.step_function_lambda["calculate-donors-to-notify"].lambda_arn,
+      module.step_function_lambda["donor-search-evaluator"].lambda_arn
+    ]
   }
 }
 
@@ -72,8 +87,10 @@ resource "aws_sfn_state_machine" "donor_search_state_machine" {
   role_arn = aws_iam_role.step_function_role.arn
 
   definition = templatefile("${path.module}/donor_search.json", {
-    DONOR_CALCULATE_LAMBDA_ARN_PLACEHOLDER = module.step_function_lambda["calculate-donors-to-notify"].lambda_arn
-    DYNAMODB_TABLE_NAME_PLACEHOLDER        = split("/", var.dynamodb_table_arn)[1]
+    DONOR_CALCULATE_LAMBDA_ARN        = module.step_function_lambda["calculate-donors-to-notify"].lambda_arn
+    DONOR_SEARCH_EVALUATOR_LAMBDA_ARN = module.step_function_lambda["donor-search-evaluator"].lambda_arn
+    DYNAMODB_TABLE_NAME               = split("/", var.dynamodb_table_arn)[1]
+    SQS_RETRY_QUEUE_URL               = aws_sqs_queue.donor_search_retry_queue.url
   })
 
   logging_configuration {

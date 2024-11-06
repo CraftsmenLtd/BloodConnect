@@ -1,7 +1,7 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import { DonationDTO, DonationStatus } from '../../../commons/dto/DonationDTO'
+import { DonationDTO, DonationStatus, DonorSearchDTO } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import Repository from '../technicalImpl/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
@@ -11,6 +11,7 @@ import { QueryConditionOperator, QueryInput } from '../technicalImpl/policies/re
 import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes, DonorRoutingAttributes, StepFunctionInput } from './Types'
 import { StepFunctionModel } from '../technicalImpl/stepFunctions/StepFunctionModel'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
+import { DONOR_SEARCH_PK_PREFIX } from '../../application/technicalImpl/dbModels/DonorSearchModel'
 
 export class BloodDonationService {
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO, DonationFields>, model: BloodDonationModel): Promise<string> {
@@ -127,7 +128,8 @@ export class BloodDonationService {
   async routeDonorRequest(
     donorRoutingAttributes: DonorRoutingAttributes,
     bloodDonationRepository: Repository<DonationDTO>,
-    stepFunctionModel: StepFunctionModel
+    stepFunctionModel: StepFunctionModel,
+    donorSearchRepository: Repository<DonorSearchDTO>
   ): Promise<string> {
     try {
       const { seekerId, requestPostId, createdAt } = donorRoutingAttributes
@@ -142,7 +144,15 @@ export class BloodDonationService {
         return 'You can\'t update the donation request'
       }
 
-      const retryCount = existingItem?.retryCount ?? 0
+      const donorSearchItem = await donorSearchRepository.getItem(
+        `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
+        `${DONOR_SEARCH_PK_PREFIX}#${createdAt}#${requestPostId}`
+      )
+      if (donorSearchItem === null) {
+        await donorSearchRepository.create(existingItem)
+      }
+
+      const retryCount = donorSearchItem?.retryCount ?? 0
       const updateData: Partial<DonationDTO> = {
         ...existingItem,
         id: requestPostId,
@@ -151,24 +161,28 @@ export class BloodDonationService {
 
       if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
         updateData.status = DonationStatus.EXPIRED
+        await donorSearchRepository.update(updateData)
         await bloodDonationRepository.update(updateData)
         return 'The donor search process expired after the maximum retry limit is reached.'
       }
 
-      await bloodDonationRepository.update(updateData)
+      await donorSearchRepository.update(updateData)
 
+      const city = `${existingItem.location.split(',').pop()?.trim()}`
       const stepFunctionInput: StepFunctionInput = {
-        seekerId: donorRoutingAttributes.seekerId,
-        requestPostId: donorRoutingAttributes.requestPostId,
+        seekerId,
+        requestPostId,
+        createdAt,
         donationDateTime: existingItem.donationDateTime,
         neededBloodGroup: existingItem.neededBloodGroup,
         bloodQuantity: existingItem.bloodQuantity,
         urgencyLevel: existingItem.urgencyLevel,
         geohash: existingItem.geohash,
-        city: `${existingItem.location.split(',').pop()?.trim()}`
+        city,
+        retryCount: retryCount + 1
       }
 
-      await stepFunctionModel.startExecution(stepFunctionInput)
+      await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${city}-(${existingItem.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`)
       return 'We have updated your request and initiated the donor search process.'
     } catch (error) {
       throw new BloodDonationOperationError(`Failed to update blood donation post. Error: ${error}`, GENERIC_CODES.ERROR)

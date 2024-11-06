@@ -5,6 +5,7 @@ interface CalculationInput {
   donorsFoundCount: number;
   urgencyLevel: UrgencyLevel;
   donationDateTime: string;
+  retryCount: number;
 }
 
 interface CalculationResult {
@@ -23,9 +24,9 @@ export function calculateRemainingBagsNeeded(bloodQuantity: number, donorsFoundC
   return Math.max(0, bloodQuantity - donorsFoundCount)
 }
 
-export function calculateTotalDonorsToNotify(remainingBagsNeeded: number, urgencyLevel: UrgencyLevel): number {
+export function calculateTotalDonorsToNotify(remainingBagsNeeded: number, urgencyLevel: UrgencyLevel, retryCount: number): number {
   const urgencyMultiplier = URGENCY_MULTIPLIER[urgencyLevel]
-  return remainingBagsNeeded * urgencyMultiplier * DONORS_PER_BAG_MULTIPLIER
+  return remainingBagsNeeded * urgencyMultiplier * retryCount * DONORS_PER_BAG_MULTIPLIER
 }
 
 export function calculateDelayPeriod(
@@ -37,14 +38,14 @@ export function calculateDelayPeriod(
   const maxDelay = MAX_DELAY_PERIOD[urgencyLevel]
 
   const delayPeriod = (daysUntilDonation * DELAY_PERIOD_WEIGHT / remainingBagsNeeded)
-  return Math.round(Math.min(Math.max(minDelay, delayPeriod), maxDelay))
+  return Math.round(Math.min(Math.max(minDelay, delayPeriod), maxDelay) * 60)
 }
 
 async function calculateDonorsToNotify(event: CalculationInput): Promise<CalculationResult> {
-  const { bloodQuantity, donorsFoundCount, urgencyLevel, donationDateTime } = event
+  const { bloodQuantity, donorsFoundCount, urgencyLevel, donationDateTime, retryCount } = event
 
   const remainingBagsNeeded = calculateRemainingBagsNeeded(bloodQuantity, donorsFoundCount)
-  const totalDonorsToNotify = calculateTotalDonorsToNotify(remainingBagsNeeded, urgencyLevel)
+  const totalDonorsToNotify = calculateTotalDonorsToNotify(remainingBagsNeeded, urgencyLevel, retryCount)
 
   const donationDate = new Date(donationDateTime)
   const currentDate = new Date()

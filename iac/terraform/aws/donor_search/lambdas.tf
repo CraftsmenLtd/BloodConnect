@@ -33,5 +33,13 @@ locals {
       env_variables = {
       }
     }
+    donor-search-evaluator = {
+      name      = "donor-search-evaluator"
+      handler   = "donorSearchEvaluator.default"
+      zip_path  = "donorSearchEvaluator.zip"
+      statement = concat(local.policies.common_policies)
+      env_variables = {
+      }
+    }
   }
 }

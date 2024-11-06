@@ -17,11 +17,11 @@ describe('calculateRemainingBagsNeeded', () => {
 
 describe('calculateTotalDonorsToNotify', () => {
   it('should calculate the correct total donors to notify for urgent urgency level', () => {
-    expect(calculateTotalDonorsToNotify(3, 'urgent')).toBe(12)
+    expect(calculateTotalDonorsToNotify(2, 'urgent', 1)).toBe(8)
   })
 
   it('should calculate the correct total donors to notify for regular urgency level', () => {
-    expect(calculateTotalDonorsToNotify(3, 'regular')).toBe(6)
+    expect(calculateTotalDonorsToNotify(2, 'regular', 1)).toBe(4)
   })
 })
 
@@ -29,13 +29,13 @@ describe('calculateDelayPeriod', () => {
   it('should calculate delay period within the min and max delay range for urgent urgency level', () => {
     const delay = calculateDelayPeriod(3, 2, 'urgent')
     expect(delay).toBeGreaterThanOrEqual(5)
-    expect(delay).toBeLessThanOrEqual(10)
+    expect(delay).toBeLessThanOrEqual(300)
   })
 
   it('should calculate delay period within the min and max delay range for regular urgency level', () => {
     const delay = calculateDelayPeriod(3, 5, 'regular')
     expect(delay).toBeGreaterThanOrEqual(7)
-    expect(delay).toBeLessThanOrEqual(15)
+    expect(delay).toBeLessThanOrEqual(700)
   })
 
   it('should calculate a higher urgencyFactor for higher daysUntilDonation', () => {
@@ -46,7 +46,7 @@ describe('calculateDelayPeriod', () => {
 
   it('should handle remainingBagsNeeded = 0 gracefully', () => {
     const delay = calculateDelayPeriod(0, 5, 'regular')
-    expect(delay).toBe(15)
+    expect(delay).toBe(900)
   })
 })
 
@@ -56,7 +56,8 @@ describe('calculateDonorsToNotify', () => {
       bloodQuantity: 10,
       donorsFoundCount: 4,
       urgencyLevel: 'urgent' as UrgencyLevel,
-      donationDateTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+      donationDateTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      retryCount: 1
     }
 
     const result = await calculateDonorsToNotify(input)
@@ -64,7 +65,7 @@ describe('calculateDonorsToNotify', () => {
     expect(result.remainingBagsNeeded).toBe(6)
     expect(result.totalDonorsToNotify).toBe(24)
     expect(result.delayPeriod).toBeGreaterThanOrEqual(5)
-    expect(result.delayPeriod).toBeLessThanOrEqual(10)
+    expect(result.delayPeriod).toBeLessThanOrEqual(300)
   })
 
   it('should handle cases where remainingBagsNeeded is 0', async() => {
@@ -72,7 +73,8 @@ describe('calculateDonorsToNotify', () => {
       bloodQuantity: 10,
       donorsFoundCount: 10,
       urgencyLevel: 'regular' as UrgencyLevel,
-      donationDateTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
+      donationDateTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+      retryCount: 1
     }
 
     const result = await calculateDonorsToNotify(input)
@@ -80,6 +82,6 @@ describe('calculateDonorsToNotify', () => {
     expect(result.remainingBagsNeeded).toBe(0)
     expect(result.totalDonorsToNotify).toBe(0)
     expect(result.delayPeriod).toBeGreaterThanOrEqual(7)
-    expect(result.delayPeriod).toBeLessThanOrEqual(15)
+    expect(result.delayPeriod).toBeLessThanOrEqual(900)
   })
 })

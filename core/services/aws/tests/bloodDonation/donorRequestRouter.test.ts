@@ -16,12 +16,9 @@ describe('donorRequestRouter', () => {
         messageId: '1',
         receiptHandle: '1',
         body: JSON.stringify({
-          dynamodb: {
-            Keys: {
-              PK: { S: `SEEKER#${donorRoutingAttributesMock.seekerId}` },
-              SK: { S: `POST#${donorRoutingAttributesMock.createdAt}#${donorRoutingAttributesMock.requestPostId}` }
-            }
-          }
+          PK: `SEEKER#${donorRoutingAttributesMock.seekerId}`,
+          SK: `POST#${donorRoutingAttributesMock.createdAt}#${donorRoutingAttributesMock.requestPostId}`
+
         }),
         attributes: {
           ApproximateReceiveCount: '',
@@ -58,7 +55,8 @@ describe('donorRequestRouter', () => {
         createdAt: donorRoutingAttributesMock.createdAt
       }),
       expect.any(DynamoDbTableOperations),
-      expect.any(StepFunctionOperations)
+      expect.any(StepFunctionOperations),
+      expect.any(DynamoDbTableOperations)
     )
   })
 
