@@ -47,7 +47,7 @@ async function sendPushNotificationLambda(event: NotificationAttributes): Promis
     )
 
     return generateApiGatewayResponse(
-      { message: 'Notification queued successfully' },
+      { message: 'Notification Queued Successfully' },
       HTTP_CODES.OK
     )
   } catch (error) {
