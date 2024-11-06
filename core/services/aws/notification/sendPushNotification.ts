@@ -16,13 +16,15 @@ const sqsService = new SQSNotificationService(sqs)
 
 async function sendPushNotificationLambda(event: NotificationAttributes): Promise<APIGatewayProxyResult> {
   try {
+    console.log('Received event:', JSON.stringify(event, null, 2))
+    console.log('Target userId:', event.userId)
+
     if (process.env.NOTIFICATION_QUEUE_URL == null) {
       throw new Error('NOTIFICATION_QUEUE_URL environment variable is not set')
     }
 
     // Check if user has device token
     const userProfile = await userRepository.getUserProfile(event.userId)
-    console.log('l1-event', event)
     console.log('l1-deviceToken', userProfile?.deviceToken)
 
     if ((userProfile?.deviceToken) == null) {
