@@ -26,15 +26,6 @@ locals {
         resources = [var.dynamodb_table_arn]
       }
     ],
-    sfn_policy = [
-      {
-        sid = "StepFunctionPolicy"
-        actions = [
-          "states:StartExecution"
-        ]
-        resources = [var.donor_search_sf_arn]
-      }
-    ],
     sqs_policy = [
       {
         sid = "SqsPolicy"

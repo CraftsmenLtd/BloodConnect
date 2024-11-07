@@ -29,6 +29,10 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
     }
   }
 
+  target_parameters {
+    input_template = "{\n \"PK\": \"<$.dynamodb.NewImage.PK.S>\",\n \"SK\": \"<$.dynamodb.NewImage.SK.S>\"\n}"
+  }
+
   log_configuration {
     include_execution_data = ["ALL"]
     level                  = "INFO"

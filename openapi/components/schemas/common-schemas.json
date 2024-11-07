@@ -1,0 +1,19 @@
+{
+  "BloodGroupEnum": {
+    "type": "string",
+    "enum": [
+      "A+",
+      "A-",
+      "B+",
+      "B-",
+      "AB+",
+      "AB-",
+      "O+",
+      "O-"
+    ]
+  },
+  "PhoneNumberEnum": {
+    "type": "string",
+    "pattern": "^\\+8801[3-9]\\d{8}$"
+  }
+}

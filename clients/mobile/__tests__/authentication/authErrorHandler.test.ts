@@ -8,7 +8,7 @@ describe('handleAuthError', () => {
   it('should return a message for NotAuthorizedException', () => {
     const error = new Error('Unauthorized');
     (error as any).name = 'NotAuthorizedException'
-    expect(handleAuthError(error)).toBe('Unauthorized to sign out.')
+    expect(handleAuthError(error)).toBe('Your account is not confirmed. Please confirm your account first.')
   })
 
   it('should return a message for NetworkError', () => {

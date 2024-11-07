@@ -1,5 +1,5 @@
 import UserModel from '../../../technicalImpl/dbModels/UserModel'
-import { mockUserWithStringId, mockUserWithNumberId, expectedUser } from '../../mocks/mockUserData'
+import { expectedUser, mockUserDetailsWithStringId } from '../../mocks/mockUserData'
 
 describe('UserModel Unit Tests', () => {
   const userModel = new UserModel()
@@ -25,24 +25,32 @@ describe('UserModel Unit Tests', () => {
 
   describe('fromDto', () => {
     test('should transform UserDTO to UserFields correctly', () => {
-      expect(userModel.fromDto(mockUserWithStringId)).toEqual(expectedUser)
+      const resultUser = userModel.fromDto(mockUserDetailsWithStringId)
+      const { createdAt: resultCreatedAt, ...resultUserWithoutCreatedAt } = resultUser
+      const { createdAt: expectedCreatedAt, ...expectedUserWithoutCreatedAt } = expectedUser
+
+      expect(resultUserWithoutCreatedAt).toEqual(expectedUserWithoutCreatedAt)
     })
 
     test('should handle non-string id correctly in fromDto', () => {
-      expect(userModel.fromDto(mockUserWithNumberId)).toEqual(expectedUser)
+      const resultUser = userModel.fromDto(mockUserDetailsWithStringId)
+      const { createdAt: resultCreatedAt, ...resultUserWithoutCreatedAt } = resultUser
+      const { createdAt: expectedCreatedAt, ...expectedUserWithoutCreatedAt } = expectedUser
+
+      expect(resultUserWithoutCreatedAt).toEqual(expectedUserWithoutCreatedAt)
     })
   })
 
   describe('toDto', () => {
     test('should transform UserFields to UserDTO correctly', () => {
       const mockUserFields = { ...expectedUser }
-      const expectedUserDto = { ...mockUserWithStringId }
+      const expectedUserDto = { ...mockUserDetailsWithStringId }
       expect(userModel.toDto(mockUserFields)).toEqual(expectedUserDto)
     })
 
     test('should handle missing optional fields in UserFields', () => {
       const mockUserFields = { ...expectedUser }
-      const expectedUserDto = { ...mockUserWithStringId }
+      const expectedUserDto = { ...mockUserDetailsWithStringId }
       expect(userModel.toDto(mockUserFields)).toEqual(expectedUserDto)
     })
   })

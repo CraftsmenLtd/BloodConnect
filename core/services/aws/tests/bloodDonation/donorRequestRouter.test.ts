@@ -2,10 +2,12 @@ import { SQSEvent } from 'aws-lambda'
 import donorRequestRouter from '../../bloodDonation/donorRequestRouter'
 import { BloodDonationService } from '../../../../application/bloodDonationWorkflow/BloodDonationService'
 import StepFunctionOperations from '../../commons/stepFunction/StepFunctionOperations'
+import DynamoDbTableOperations from '../../commons/ddb/DynamoDbTableOperations'
 import { donorRoutingAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../commons/stepFunction/StepFunctionOperations')
+jest.mock('../../commons/ddb/DynamoDbTableOperations')
 
 describe('donorRequestRouter', () => {
   const mockEvent: SQSEvent = {
@@ -14,8 +16,9 @@ describe('donorRequestRouter', () => {
         messageId: '1',
         receiptHandle: '1',
         body: JSON.stringify({
-          seekerId: donorRoutingAttributesMock.seekerId,
-          requestPostId: donorRoutingAttributesMock.requestPostId
+          PK: `SEEKER#${donorRoutingAttributesMock.seekerId}`,
+          SK: `POST#${donorRoutingAttributesMock.createdAt}#${donorRoutingAttributesMock.requestPostId}`
+
         }),
         attributes: {
           ApproximateReceiveCount: '',
@@ -38,7 +41,7 @@ describe('donorRequestRouter', () => {
     jest.resetAllMocks()
   })
 
-  it('should process all records in the SQSEvent', async() => {
+  it('should process all records in the SQSEvent with correct PK and SK parsing', async() => {
     const mockResponse = 'Blood donation created successfully'
     mockBloodDonationService.prototype.routeDonorRequest.mockResolvedValue(mockResponse)
 
@@ -48,10 +51,12 @@ describe('donorRequestRouter', () => {
     expect(mockBloodDonationService.prototype.routeDonorRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         seekerId: donorRoutingAttributesMock.seekerId,
-        requestPostId: donorRoutingAttributesMock.requestPostId
+        requestPostId: donorRoutingAttributesMock.requestPostId,
+        createdAt: donorRoutingAttributesMock.createdAt
       }),
-      expect.anything(),
-      expect.any(StepFunctionOperations)
+      expect.any(DynamoDbTableOperations),
+      expect.any(StepFunctionOperations),
+      expect.any(DynamoDbTableOperations)
     )
   })
 

@@ -6,6 +6,7 @@ import Welcome from '../../welcome/WelcomeScreen'
 import SetPassword from '../../authentication/setPassword/UI/SetPassword'
 import CreateBloodRequest from '../../donationWorkflow/createUpdateDonation/Donation'
 import BottomNavigation from './BottomNavigation'
+import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPassword'
 
 export const routes = [
   {
@@ -36,6 +37,12 @@ export const routes = [
     name: SCREENS.LOGIN,
     component: Login,
     options: { headerShown: true, headerTitle: 'Log In' },
+    protected: false
+  },
+  {
+    name: SCREENS.FORGOT_PASSWORD,
+    component: ForgotPassword,
+    options: { headerShown: true, headerTitle: 'Forgot Password' },
     protected: false
   },
   {

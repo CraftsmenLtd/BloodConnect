@@ -1,0 +1,145 @@
+{
+  "Comment": "State machine for donor search process",
+  "StartAt": "PrepareDonorSearch",
+  "States": {
+    "PrepareDonorSearch": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "QueryDonorsFound",
+          "States": {
+            "QueryDonorsFound": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
+              "Parameters": {
+                "TableName": "${DYNAMODB_TABLE_NAME}",
+                "KeyConditionExpression": "PK = :seekerId AND begins_with(SK, :requestPostId)",
+                "ExpressionAttributeValues": {
+                  ":seekerId": {
+                    "S.$": "States.Format('BLOOD_REQ#{}', $.seekerId)"
+                  },
+                  ":requestPostId": {
+                    "S.$": "States.Format('ACCEPTED#{}', $.requestPostId)"
+                  }
+                }
+              },
+              "ResultPath": "$.donorsFoundCount",
+              "Next": "PerformCalculations"
+            },
+            "PerformCalculations": {
+              "Type": "Task",
+              "Resource": "${DONOR_CALCULATE_LAMBDA_ARN}",
+              "Parameters": {
+                "bloodQuantity.$": "$.bloodQuantity",
+                "donorsFoundCount.$": "$.donorsFoundCount.Count",
+                "urgencyLevel.$": "$.urgencyLevel",
+                "donationDateTime.$": "$.donationDateTime",
+                "retryCount.$": "$.retryCount"
+              },
+              "ResultPath": "$.calculationResults",
+              "End": true
+            }
+          }
+        }
+      ],
+      "ResultSelector": {
+        "totalDonorsToNotify.$": "$.[0].calculationResults.totalDonorsToNotify",
+        "geohash.$": "$.[0].geohash",
+        "neededBloodGroup.$": "$.[0].neededBloodGroup",
+        "city.$": "$.[0].city",
+        "delayPeriod.$": "$.[0].calculationResults.delayPeriod"
+      },
+      "ResultPath": "$.PrepareDonorSearch",
+      "Next": "DonorSearchProcess"
+    },
+    "DonorSearchProcess": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "QueryEligibleDonors",
+          "States": {
+            "QueryEligibleDonors": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
+              "Parameters": {
+                "TableName": "${DYNAMODB_TABLE_NAME}",
+                "IndexName": "GSI1",
+                "KeyConditionExpression": "GSI1PK = :cityAndBloodGroupAndStatus AND begins_with(GSI1SK, :geohash)",
+                "ExpressionAttributeValues": {
+                  ":cityAndBloodGroupAndStatus": {
+                    "S.$": "States.Format('CITY#{}#BG#{}#DONATIONSTATUS#yes', $.city, $.neededBloodGroup)"
+                  },
+                  ":geohash": {
+                    "S.$": "$.PrepareDonorSearch.geohash"
+                  }
+                }
+              },
+              "ResultPath": "$.eligibleDonors",
+              "Next": "CheckDonorStatus"
+            },
+            "CheckDonorStatus": {
+              "Type": "Task",
+              "Resource": "${DONOR_SEARCH_EVALUATOR_LAMBDA_ARN}",
+              "Parameters": {
+                "geohash.$": "$.PrepareDonorSearch.geohash",
+                "eligibleDonorsCount.$": "$.eligibleDonors.Count",
+                "totalDonorsToNotify.$": "$.PrepareDonorSearch.totalDonorsToNotify"
+              },
+              "ResultPath": "$.donorSearchResult",
+              "Next": "DecideNextStep"
+            },
+            "DecideNextStep": {
+              "Type": "Choice",
+              "Choices": [
+                {
+                  "Variable": "$.donorSearchResult.action",
+                  "StringEquals": "EnoughDonorsFound",
+                  "Next": "EnoughDonorsFound"
+                },
+                {
+                  "Variable": "$.donorSearchResult.action",
+                  "StringEquals": "UpdateSearchFields",
+                  "Next": "UpdateSearchFields"
+                }
+              ],
+              "Default": "EnoughDonorsFound"
+            },
+            "UpdateSearchFields": {
+              "Type": "Pass",
+              "Parameters": {
+                "totalDonorsToNotify.$": "$.PrepareDonorSearch.totalDonorsToNotify",
+                "city.$": "$.PrepareDonorSearch.city",
+                "geohash.$": "$.donorSearchResult.shortenedGeohash",
+                "neededBloodGroup.$": "$.PrepareDonorSearch.neededBloodGroup",
+                "delayPeriod.$": "$.PrepareDonorSearch.delayPeriod"
+              },
+              "ResultPath": "$.PrepareDonorSearch",
+              "Next": "QueryEligibleDonors"
+            },
+            "EnoughDonorsFound": {
+              "Type": "Succeed"
+            }
+          }
+        }
+      ],
+      "ResultSelector": {
+        "Items.$": "$[0].eligibleDonors.Items"
+      },
+      "ResultPath": "$.eligibleDonors",
+      "Next": "SendSqsMessage"
+    },
+    "SendSqsMessage": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:sqs:sendMessage",
+      "Parameters": {
+        "QueueUrl": "${SQS_RETRY_QUEUE_URL}",
+        "MessageBody": {
+          "PK.$": "States.Format('BLOOD_REQ#{}', $.seekerId)",
+          "SK.$": "States.Format('BLOOD_REQ#{}#{}', $.createdAt, $.requestPostId)"
+        },
+        "DelaySeconds.$": "$.PrepareDonorSearch.delayPeriod"
+      },
+      "End": true
+    }
+  }
+}
