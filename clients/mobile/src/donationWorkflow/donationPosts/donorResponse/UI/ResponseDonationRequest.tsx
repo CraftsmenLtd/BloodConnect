@@ -45,7 +45,7 @@ const ResponseDonationRequest: React.FC<DonationDetailsProps> = (request) => {
                 </View>
                 <Text style={styles.value}>Science Lab, Dhaka</Text>
               </View>
-
+              <View style={styles.dividerHorizontal}></View>
               <View style={styles.infoRow}>
                 <View style={styles.labelRow}>
                   <Ionicons name="calendar-outline" size={14} color="gray" style={styles.icons} />
