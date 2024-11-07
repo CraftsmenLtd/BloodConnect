@@ -1,7 +1,7 @@
 {
   "type": "aws",
   "httpMethod": "POST",
-  "uri": "${SEND_PUSH_NOTIFICATION_INVOCATION_ARN}",
+  "uri": "${PUSH_NOTIFICATION_MAPPER_INVOCATION_ARN}",
   "responses": {
     "default": {
       "statusCode": "200",

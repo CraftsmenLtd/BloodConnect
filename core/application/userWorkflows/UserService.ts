@@ -9,7 +9,10 @@ import { UserAttributes, UpdateUserAttributes } from './Types'
 import { generateGeohash } from '../../application/utils/geohash'
 import { QueryConditionOperator, QueryInput } from '../../application/technicalImpl/policies/repositories/QueryTypes'
 import LocationModel, { LocationFields } from '../../application/technicalImpl/dbModels/LocationModel'
+import { SQSModel } from '../../application/technicalImpl/sqs/SQSModel'
 import { differenceInYears } from 'date-fns'
+import { NotificationAttributes } from '../../application/notificationWorkflow/Types'
+
 
 export class UserService {
   async createNewUser(userAttributes: UserAttributes, userRepository: Repository<UserDTO>): Promise<UserDTO> {
@@ -108,6 +111,24 @@ export class UserService {
         }
         await locationRepository.create(locationData)
       }
+    }
+  }
+
+  async pushNotification(notificationAttributes: NotificationAttributes, userRepository: Repository<UserDetailsDTO>, sqsModel: SQSModel): Promise<string> {
+    try {
+      const { userId } = notificationAttributes
+      const userProfile = await userRepository.getItem(
+        `USER#${userId}`,
+        `PROFILE`
+      )
+      if ((userProfile?.deviceToken) == null) {
+        throw new Error('User has no registered device for notifications')
+      }
+      
+      await sqsModel.queue(notificationAttributes, userProfile?.deviceToken)
+      return 'Notification Queued Successfully'
+    } catch (error) {
+      throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
 }

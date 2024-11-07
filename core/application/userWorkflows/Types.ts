@@ -24,3 +24,21 @@ export interface UpdateUserAttributes {
   NIDBack: string;
   lastVaccinatedDate: string;
 }
+
+// export interface UserDeviceAttributes {
+//   userId: string;
+//   phoneNumbers: string[];
+//   name: string;
+//   bloodGroup: BloodGroup;
+//   lastDonationDate: string;
+//   height: number;
+//   weight: number;
+//   gender: Gender;
+//   dateOfBirth: string;
+//   age: number;
+//   preferredDonationLocations: LocationDTO[];
+//   availableForDonation: availableForDonation;
+//   NIDFront: string;
+//   NIDBack: string;
+//   lastVaccinatedDate: string;
+// }

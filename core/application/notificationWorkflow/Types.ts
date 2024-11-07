@@ -4,3 +4,15 @@ export interface NotificationAttributes {
   body: string;
   data?: Record<string, unknown>;
 }
+
+export interface NotificationPayload {
+  title: string;
+  body: string;
+  data?: Record<string, unknown>;
+}
+
+export interface NotificationQueueMessage{
+  userId: string;
+  deviceToken: string;
+  payload: NotificationPayload;
+}

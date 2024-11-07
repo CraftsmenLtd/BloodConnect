@@ -1,5 +1,5 @@
 {
-  "PushNotificationRequestModel": {
+  "pushNotificationRequestModel": {
     "type": "object",
     "required": [
       "title",

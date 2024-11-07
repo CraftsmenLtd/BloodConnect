@@ -1,62 +1,30 @@
-/* eslint-disable no-console */
-import { APIGatewayProxyResult } from 'aws-lambda'
-import { SQS } from '@aws-sdk/client-sqs'
-import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import { NotificationAttributes } from '../../../application/notificationWorkflow/Types'
-import NotificationOperationError from '../../../application/notificationWorkflow/NotificationOperationError'
-import { DynamoDBUserRepository } from './DynamoDBUserRepository'
-import { SQSNotificationService } from './SQSNotificationService'
+import { SQSEvent, SQSRecord } from 'aws-lambda'
+import { NotificationQueueMessage } from '../../../application/notificationWorkflow/Types'
+import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
+import SNSOperations from '../commons/sns/SNSOperations'
 
-const dynamoDB = new DynamoDB({})
-const sqs = new SQS({})
-const userRepository = new DynamoDBUserRepository(dynamoDB)
-const sqsService = new SQSNotificationService(sqs)
+const notificationService = new NotificationService()
 
-async function sendPushNotificationLambda(event: NotificationAttributes): Promise<APIGatewayProxyResult> {
+async function sendPushNotification(event: SQSEvent): Promise<{ status: string }> {
   try {
-    console.log('Received event:', JSON.stringify(event, null, 2))
-    console.log('Target userId:', event.userId)
-
-    if (process.env.NOTIFICATION_QUEUE_URL == null) {
-      throw new Error('NOTIFICATION_QUEUE_URL environment variable is not set')
+    for (const record of event.Records) {
+      await processSQSRecord(record)
     }
-
-    // Check if user has device token
-    const userProfile = await userRepository.getUserProfile(event.userId)
-    console.log('l1-deviceToken', userProfile?.deviceToken)
-
-    if ((userProfile?.deviceToken) == null) {
-      return generateApiGatewayResponse(
-        { message: 'User has no registered device for notifications' },
-        HTTP_CODES.NOT_FOUND
-      )
-    }
-
-    // Queue notification
-    await sqsService.queueNotification(
-      {
-        userId: event.userId,
-        deviceToken: userProfile.deviceToken,
-        payload: {
-          title: event.title,
-          body: event.body,
-          data: event.data
-        }
-      },
-      process.env.NOTIFICATION_QUEUE_URL
-    )
-
-    return generateApiGatewayResponse(
-      { message: 'Notification Queued Successfully' },
-      HTTP_CODES.OK
-    )
+    return { status: 'Success' }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-    const errorCode = error instanceof NotificationOperationError ? error.errorCode : HTTP_CODES.ERROR
-    return generateApiGatewayResponse(`Error: ${errorMessage}`, errorCode)
+    throw error instanceof Error ? error : new Error('An unknown error occurred')
   }
 }
 
-export default sendPushNotificationLambda
+async function processSQSRecord(record: SQSRecord): Promise<void> {
+  const body: NotificationQueueMessage = typeof record.body === 'string' && record.body.trim() !== ''
+    ? JSON.parse(record.body)
+    : {}
+
+  await notificationService.publishNotification(
+    body,
+    new SNSOperations()
+  )
+}
+
+export default sendPushNotification

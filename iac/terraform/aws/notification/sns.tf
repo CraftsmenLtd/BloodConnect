@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "sns_topic_policy" {
     actions = ["sns:Publish"]
     principals {
       type        = "AWS"
-      identifiers = [module.lambda["process-notification"].role_arn]
+      identifiers = [module.lambda["send-push-notification"].role_arn]
     }
     resources = [aws_sns_topic.push_notification.arn]
   }

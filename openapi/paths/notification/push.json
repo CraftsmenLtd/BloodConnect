@@ -1,9 +1,9 @@
 {
   "post": {
-    "operationId": "SendPushNotification",
-    "description": "Send push notification to a user",
+    "operationId": "pushNotification",
+    "description": "Map push notification to a user",
     "tags": [
-      "bloodconnect-push-notification"
+      "bloodconnect-notification"
     ],
     "parameters": [
       {
@@ -19,7 +19,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "./../../components/schemas/push/push-notification-payload.json#/PushNotificationRequestModel"
+            "$ref": "./../../components/schemas/notification/push-payload.json#/pushNotificationRequestModel"
           }
         }
       }
@@ -49,7 +49,7 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../../integration/aws/push/post-push-notification.json"
+      "$ref": "./../../integration/aws/notification/post-push.json"
     },
     "security": [
       {

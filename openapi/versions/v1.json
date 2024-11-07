@@ -18,11 +18,7 @@
       "description": "Donation module of BloodConnect"
     },
     {
-      "name": "bloodconnect-donation-accept",
-      "description": "Donation module for request accept"
-    },
-    {
-      "name": "bloodconnect-push-notification",
+      "name": "bloodconnect-notification",
       "description": "Push notification module of BloodConnect"
     },
     {
@@ -69,8 +65,8 @@
     "/donations/accept": {
       "$ref": "./../paths/donations/accept.json"
     },
-    "/push/{userId}": {
-      "$ref": "./../paths/push/push-notification.json"
+    "/notification/push/{userId}": {
+      "$ref": "./../paths/notification/push.json"
     }
   },
   "components": {

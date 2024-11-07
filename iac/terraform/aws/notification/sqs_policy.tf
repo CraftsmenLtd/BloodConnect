@@ -5,7 +5,7 @@ data "aws_iam_policy_document" "sqs_queue_policy" {
     actions = ["sqs:SendMessage"]
     principals {
       type        = "AWS"
-      identifiers = [module.lambda["send-notification"].role_arn]
+      identifiers = [module.lambda["push-notification-mapper"].role_arn]
     }
     resources = [aws_sqs_queue.push_notification_queue.arn]
   }

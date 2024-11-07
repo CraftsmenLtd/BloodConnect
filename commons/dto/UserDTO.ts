@@ -38,4 +38,5 @@ export interface UserDetailsDTO extends UserDTO {
   lastVaccinatedDate: string;
   createdAt: string;
   updatedAt?: string;
+  deviceToken?: string;
 }
