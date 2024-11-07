@@ -44,7 +44,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       <LinkWithText
         staticText=""
         linkText="Forgot Password?"
-        onPress={() => { console.log('Forgot Password flow') }}
+        onPress={() => { navigation.navigate(SCREENS.FORGOT_PASSWORD) }}
       />
 
       <Button text="Login" onPress={handleLogin} loading={loading} />

@@ -1,14 +1,19 @@
-import '../__mocks__/reactNavigation.mock'
+import { setRouteParams } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useSetPassword } from '../../src/authentication/setPassword/hooks/useSetPassword'
 import { registerUser } from '../../src/authentication/services/authService'
-import { SCREENS } from '../../src/setup/constant/screens'
 
 jest.mock('../../src/authentication/services/authService', () => ({
   registerUser: jest.fn()
 }))
 
 describe('useSetPassword Hook', () => {
+  beforeEach(() => {
+    setRouteParams({
+      routeParams: { email: 'ebrahim@example.com' },
+      fromScreen: 'Register'
+    })
+  })
   afterEach(() => {
     jest.clearAllMocks()
   })
@@ -66,16 +71,15 @@ describe('useSetPassword Hook', () => {
   })
 
   test('should handle errors when password setting fails', async() => {
-    const params = { email: 'ebrahim@example.com' }
-    const fromScreen = SCREENS.REGISTER
+    const { result } = renderHook(() => useSetPassword());
 
-    const { result } = renderHook(() => useSetPassword())
-    result.current.routeParams = { params, fromScreen };
     (registerUser as jest.Mock).mockRejectedValue(new Error('Registration failed'))
 
     await act(async() => {
       await result.current.handleSetPassword()
     })
+
+    // Check if the error message was set correctly
     expect(result.current.error).toBe('Registration failed')
   })
 })

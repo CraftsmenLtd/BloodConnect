@@ -13,8 +13,7 @@
     ],
     "properties": {
       "neededBloodGroup": {
-        "type": "string",
-        "enum": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+        "$ref": "./../common-schemas.json#/BloodGroupEnum"
       },
       "bloodQuantity": {
         "type": "number",
@@ -44,8 +43,7 @@
         "format": "date-time"
       },
       "contactNumber": {
-        "type": "string",
-        "pattern": "^\\+8801[3-9]\\d{8}$"
+        "$ref": "./../common-schemas.json#/PhoneNumberEnum"
       },
       "patientName": {
         "type": "string",

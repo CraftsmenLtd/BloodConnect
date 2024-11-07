@@ -1,0 +1,113 @@
+{
+  "UpdateUserRequestModel": {
+    "type": "object",
+    "properties": {
+      "phoneNumbers": {
+        "type": "array",
+        "items": {
+          "$ref": "./../common-schemas.json#/PhoneNumberEnum"
+        }
+      },
+      "name": {
+        "type": "string"
+      },
+      "bloodGroup": {
+        "$ref": "./../common-schemas.json#/BloodGroupEnum"
+      },
+      "lastDonationDate": {
+        "type": "string",
+        "format": "date"
+      },
+      "height": {
+        "type": "number"
+      },
+      "weight": {
+        "type": "number"
+      },
+      "gender": {
+        "type": "string",
+        "enum": [
+          "male",
+          "female",
+          "other"
+        ]
+      },
+      "dateOfBirth": {
+        "type": "string",
+        "format": "date"
+      },
+      "preferredDonationLocations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "area": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            },
+            "latitude": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "longitude": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            }
+          }
+        }
+      },
+      "availableForDonation": {
+        "type": "string",
+        "enum": [
+          "yes",
+          "no"
+        ]
+      },
+      "NIDFront": {
+        "type": "string"
+      },
+      "NIDBack": {
+        "type": "string"
+      },
+      "lastVaccinatedDate": {
+        "type": "string",
+        "format": "date"
+      }
+    },
+    "example": {
+      "phoneNumbers": [
+        "+8801834567890",
+        "+8801755567822"
+      ],
+      "name": "John Doe",
+      "bloodGroup": "O-",
+      "lastDonationDate": "2023-09-15",
+      "height": 5.10,
+      "weight": 70,
+      "gender": "male",
+      "dateOfBirth": "1990-05-15",
+      "preferredDonationLocations": [
+        {
+          "area": "Banani",
+          "city": "Dhaka",
+          "latitude": 23.7936,
+          "longitude": 90.4043
+        },
+        {
+          "area": "mohakhali",
+          "city": "Dhaka",
+          "latitude": 22.7936,
+          "longitude": 90.4043
+        }
+      ],
+      "availableForDonation": "yes",
+      "NIDFront": "s3://bucket/nid/1a2b3c4d5e-front.jpg",
+      "NIDBack": "s3://bucket/nid/1a2b3c4d5e-back.jpg",
+      "lastVaccinatedDate": "2023-03-01"
+    }
+  }
+}

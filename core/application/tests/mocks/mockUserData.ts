@@ -1,16 +1,43 @@
-import { UserDTO } from '../../../../commons/dto/UserDTO'
+import { UserDetailsDTO, UserDTO } from '../../../../commons/dto/UserDTO'
 import { UserFields } from '../../technicalImpl/dbModels/UserModel'
 
 export const mockUserWithStringId: UserDTO = {
   id: '12345',
   email: 'ebrahim@example.com',
   name: 'Ebrahim',
+  phone: '1234567890'
+}
+
+export const mockUserDetailsWithStringId: UserDetailsDTO = {
+  id: '12345',
+  email: 'ebrahim@example.com',
+  name: 'Ebrahim',
   phone: '1234567890',
-  registrationDate: new Date('2023-09-16T12:00:00Z')
+  phoneNumbers: [
+    '+8801834567890',
+    '+8801755567822'
+  ],
+  createdAt: '2023-09-16T12:00:00.000Z',
+  bloodGroup: 'O-',
+  lastDonationDate: '2023-09-15T14:30:00Z',
+  age: 30,
+  height: 5.1,
+  weight: 70,
+  gender: 'male',
+  dateOfBirth: '1990-05-15',
+  availableForDonation: 'yes',
+  NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
+  NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
+  lastVaccinatedDate: '2023-03-01T10:00:00Z'
 }
 
 export const mockUserWithNumberId: UserDTO = {
   ...mockUserWithStringId,
+  id: 12345
+}
+
+export const mockUserDetailsWithNumberId: UserDetailsDTO = {
+  ...mockUserDetailsWithStringId,
   id: 12345
 }
 
@@ -19,6 +46,21 @@ export const expectedUser: UserFields = {
   SK: 'PROFILE',
   email: 'ebrahim@example.com',
   name: 'Ebrahim',
+  phoneNumbers: [
+    '+8801834567890',
+    '+8801755567822'
+  ],
   phone: '1234567890',
-  createdAt: '2023-09-16T12:00:00.000Z'
+  createdAt: '2023-09-16T12:00:00.000Z',
+  bloodGroup: 'O-',
+  lastDonationDate: '2023-09-15T14:30:00Z',
+  age: 30,
+  height: 5.1,
+  weight: 70,
+  gender: 'male',
+  dateOfBirth: '1990-05-15',
+  availableForDonation: 'yes',
+  NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
+  NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
+  lastVaccinatedDate: '2023-03-01T10:00:00Z'
 }

@@ -10,7 +10,8 @@ const mockAcceptDonationRepository = {
   create: jest.fn(),
   update: jest.fn(),
   getItem: jest.fn(),
-  query: jest.fn()
+  query: jest.fn(),
+  delete: jest.fn()
 }
 const acceptDonationService = new AcceptDonationService()
 

@@ -8,11 +8,6 @@ variable "dynamodb_table_arn" {
   description = "ARN of the DynamoDB table"
 }
 
-variable "donor_search_sf_arn" {
-  type        = string
-  description = "donor search Step Function arn"
-}
-
 variable "donor_search_max_retry_count" {
   type        = string
   description = "donor search maximum retry count"

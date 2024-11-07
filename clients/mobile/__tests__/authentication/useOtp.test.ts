@@ -1,4 +1,4 @@
-import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
+import { mockedNavigate, setRouteParams } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useOtp } from '../../src/authentication/otp/hooks/useOtp'
 import { loginUser, submitOtp } from '../../src/authentication/services/authService'
@@ -10,6 +10,13 @@ jest.mock('../../src/authentication/services/authService', () => ({
 }))
 
 describe('useOtp Hook', () => {
+  beforeEach(() => {
+    setRouteParams({
+      email: 'test@example.com',
+      password: 'Qweqwe12@#',
+      fromScreen: 'SetPassword'
+    })
+  })
   afterEach(() => {
     jest.clearAllMocks()
   })
@@ -64,7 +71,9 @@ describe('useOtp Hook', () => {
     const mockEmail = 'test@example.com'
     const { result } = renderHook(() => useOtp())
 
-    result.current.email = mockEmail;
+    result.current.otp = ['1', '2', '3', '4', '5', '6']
+    result.current.fromScreen = SCREENS.SET_PASSWORD;
+
     (submitOtp as jest.Mock).mockResolvedValue(true);
     (loginUser as jest.Mock).mockResolvedValue(true)
 
@@ -74,6 +83,8 @@ describe('useOtp Hook', () => {
 
     expect(submitOtp).toHaveBeenCalledTimes(1)
     expect(submitOtp).toHaveBeenCalledWith(mockEmail, result.current.otp.join(''))
+
+    // Verify that navigation happened
     expect(mockedNavigate).toHaveBeenCalledWith(SCREENS.BOTTOM_TABS)
   })
 
