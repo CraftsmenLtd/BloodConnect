@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { Theme } from '../../../setup/theme'
+import { Theme } from '../../../../setup/theme'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
@@ -8,12 +8,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     paddingTop: 4
   },
   scrollViewContent: {
-    // paddingHorizontal: 20,
     paddingBottom: 20
   },
   card: {
     backgroundColor: theme.colors.white,
-    // backgroundColor: 'red',
     borderRadius: 10,
     padding: 16,
     paddingTop: 14,
@@ -21,7 +19,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    // elevation: 3,
     position: 'relative'
   },
   header: {
@@ -43,7 +40,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   seekerDetails: {
     borderBlockColor: '#f0f0f0',
-    // backgroundColor: 'red'
     borderWidth: 2,
     borderColor: theme.colors.extraLightGray,
     borderRadius: 8
@@ -52,28 +48,24 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // padding: 8,
-    // borderColor: theme.colors.extraLightGray,
-    // borderWidth: 2,
-    borderRadius: 6,
-    borderTopEndRadius: 4,
-    marginVertical: 8
-    // backgroundColor: 'red'
+    padding: 10
   },
   requestSection: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 15
+    alignItems: 'center'
   },
   requestUrgency: {
     backgroundColor: '#ffd700',
     paddingVertical: 4,
     paddingHorizontal: 8,
-    borderRadius: 20
+    borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   alertImage: {
     height: 10,
-    width: 10
+    width: 10,
+    marginRight: 2
   },
   emoji: {
     fontSize: 22
@@ -82,6 +74,14 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: '#616161',
     fontSize: 12
   },
+  labelRow: {
+    flexDirection: 'row',
+    verticalAlign: 'bottom'
+  },
+  icons: {
+    verticalAlign: 'middle',
+    paddingRight: 4
+  },
   bloodtypeImage: {
     width: 32,
     height: 32,
@@ -89,10 +89,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   requestText: {
     fontSize: 16,
-    // color: theme.colors.textPrimary,
-    // marginLeft: 8,
-    // flex: 1,
-    // flexWrap: 'wrap'
     flexDirection: 'column'
   },
   highlightedText: {
@@ -102,28 +98,20 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   urgentText: {
     color: theme.colors.black,
     fontWeight: 'bold',
-    fontSize: 12
+    fontSize: 12,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   infoSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    // paddingVertical: 10,
-    // paddingHorizontal: 5,
     borderColor: theme.colors.extraLightGray
-    // borderTopWidth: 1,
-    // marginVertical: 8,
-    // backgroundColor: 'red'
   },
   contactNumber: {
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderColor: '#e0e0e0',
-    // borderWidth: 1,
-    // borderTopWidth: 1,
     borderTopWidth: 1
-    // borderRadius: 8,
-    // backgroundColor: '#ffffff',
-    // marginVertical: 8
   },
   contactRow: {
     flexDirection: 'row',
@@ -134,7 +122,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333'
-    // paddingEnd: 12
   },
   infoRow: {
     flex: 1,
@@ -150,18 +137,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   value: {
     color: theme.colors.textPrimary,
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  divider: {
-    // height: 1,
-    // backgroundColor: theme.colors.extraLightGray,
-    // marginVertical: 8
+    fontSize: 16
   },
   dividerHorizontal: {
     width: 1,
     backgroundColor: theme.colors.extraLightGray,
-    // marginHorizontal: 10,
     height: '100%'
   },
   callButton: {
@@ -174,8 +154,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderColor: '#FFA6A6',
     borderWidth: 1,
     backgroundColor: '#FFEDED'
-    // width: 97,
-    // height: 36,
   },
   callIcon: {
     width: 20,
@@ -202,7 +180,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flex: 1,
     marginRight: 10,
     color: 'black'
-
   },
   acceptButton: {
     backgroundColor: theme.colors.primary,

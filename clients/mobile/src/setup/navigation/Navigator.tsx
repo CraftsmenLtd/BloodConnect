@@ -23,7 +23,7 @@ export default function Navigator() {
 
   return (
     <Stack.Navigator
-      initialRouteName={isAuthenticated ? SCREENS.BOTTOM_TABS : SCREENS.WELCOME}
+      initialRouteName={isAuthenticated ? SCREENS.BOTTOM_TABS : SCREENS.BLOOD_REQUEST_PREVIEW}
       screenOptions={{
         headerStyle: {
           height: 75
