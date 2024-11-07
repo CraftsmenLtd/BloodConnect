@@ -10,10 +10,9 @@ export default class SQSOperations implements SQSModel {
   }
 
   async queue(notification: NotificationAttributes, deviceToken: string): Promise<void> {
-    console.log('sqs message param', notification)
     const message: NotificationQueueMessage = {
       userId: notification.userId,
-      deviceToken: deviceToken,
+      deviceToken,
       payload: {
         title: notification.title,
         body: notification.body,

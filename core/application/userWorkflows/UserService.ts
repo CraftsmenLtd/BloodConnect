@@ -13,7 +13,6 @@ import { SQSModel } from '../../application/technicalImpl/sqs/SQSModel'
 import { differenceInYears } from 'date-fns'
 import { NotificationAttributes } from '../../application/notificationWorkflow/Types'
 
-
 export class UserService {
   async createNewUser(userAttributes: UserAttributes, userRepository: Repository<UserDTO>): Promise<UserDTO> {
     try {
@@ -119,12 +118,12 @@ export class UserService {
       const { userId } = notificationAttributes
       const userProfile = await userRepository.getItem(
         `USER#${userId}`,
-        `PROFILE`
+        'PROFILE'
       )
       if ((userProfile?.deviceToken) == null) {
         throw new Error('User has no registered device for notifications')
       }
-      
+
       await sqsModel.queue(notificationAttributes, userProfile?.deviceToken)
       return 'Notification Queued Successfully'
     } catch (error) {

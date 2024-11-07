@@ -11,7 +11,7 @@ export interface NotificationPayload {
   data?: Record<string, unknown>;
 }
 
-export interface NotificationQueueMessage{
+export interface NotificationQueueMessage {
   userId: string;
   deviceToken: string;
   payload: NotificationPayload;

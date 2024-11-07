@@ -1,5 +1,4 @@
-import { DTO } from '../../../../commons/dto/DTOCommon';
-// import { NotificationQueueMessage } from '../../../../commons/dto/NotificationDTO';
+import { DTO } from '../../../../commons/dto/DTOCommon'
 
 export interface SQSModel {
   queue(message: DTO, queueUrl: string): Promise<void>;

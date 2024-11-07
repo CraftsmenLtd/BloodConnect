@@ -19,9 +19,9 @@ async function pushNotificationMapper(event: NotificationAttributes): Promise<AP
       body: event.body,
       data: event.data
     }
-    
+
     await userService.pushNotification(
-      notificationAttributes as NotificationAttributes,
+      notificationAttributes,
       new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel()),
       new SQSOperations()
     )

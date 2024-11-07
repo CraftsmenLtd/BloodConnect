@@ -26,7 +26,7 @@ export default class SNSOperations implements SNSModel {
       }
       await this.client.publish(snsParams)
     } catch (error) {
-      throw new Error(`Failed to process messages`)
+      throw new Error('Failed to process messages')
     }
   }
 }

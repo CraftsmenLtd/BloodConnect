@@ -13,7 +13,7 @@ locals {
     },
     send-push-notification = {
       name      = "send-push-notification"
-      handler   = "sendPushNotification.handler"
+      handler   = "sendPushNotification.default"
       zip_path  = "sendPushNotification.zip"
       statement = concat(local.policies.common_policies, local.policies.sns_publish_policy, local.policies.sqs_receive_policy)
       env_variables = {
