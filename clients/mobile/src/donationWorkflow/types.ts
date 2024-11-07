@@ -15,9 +15,7 @@ DonationDTO,
   urgencyLevel: string;
 }
 
-export type DonationDetails
-
-export export type BloodDonationRecord = Omit<DonationScreenParams, 'requestPostId'> &
+export type BloodDonationRecord = Omit<DonationScreenParams, 'requestPostId'> &
 Pick<DonationDTO, 'latitude' | 'longitude'> & {
   reqPostId: string;
 }
