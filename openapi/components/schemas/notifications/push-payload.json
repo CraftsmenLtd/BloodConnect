@@ -23,9 +23,15 @@
       "title": "Blood Request",
       "body": "Urgent: Type A+ blood needed at City Hospital",
       "data": {
-        "requestId": "REQ123",
-        "bloodType": "A+",
-        "urgencyLevel": "Urgent"
+        "patientName": "John Doe",
+        "neededBloodGroup": "O-",
+        "bloodQuantity": 2,
+        "urgencyLevel": "urgent",
+        "location": "Baridhara, Dhaka",
+        "donationDateTime": "2024-12-20T15:00:00Z",
+        "contactNumber": "+8801712345678",
+        "transportationInfo": "Car available",
+        "shortDescription": "Need blood urgently for surgery."
       }
     }
   }

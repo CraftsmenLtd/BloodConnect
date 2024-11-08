@@ -15,6 +15,7 @@ locals {
       {
         sid = "DynamoDBQueryPolicy"
         actions = [
+          "dynamodb:UpdateItem",
           "dynamodb:GetItem",
           "dynamodb:Query"
         ]
@@ -23,8 +24,8 @@ locals {
     ],
     sqs_send_policy = [
       {
-        sid = "SQSSendPolicy"
-        actions = ["sqs:SendMessage"]
+        sid       = "SQSSendPolicy"
+        actions   = ["sqs:SendMessage"]
         resources = [aws_sqs_queue.push_notification_queue.arn]
       }
     ],
@@ -43,8 +44,11 @@ locals {
     sns_publish_policy = [
       {
         sid = "SNSPublishPolicy"
-        actions = ["sns:Publish"]
-        resources = [aws_sns_topic.push_notification.arn]
+        actions = [
+          "sns:Publish",
+          "sns:CreatePlatformEndpoint"
+        ]
+        resources = [aws_sns_platform_application.android_app.arn]
       }
     ]
   }

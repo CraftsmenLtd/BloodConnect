@@ -9,10 +9,10 @@ export default class SQSOperations implements SQSModel {
     this.client = new SQS({ region: process.env.AWS_REGION })
   }
 
-  async queue(notification: NotificationAttributes, deviceToken: string): Promise<void> {
+  async queue(notification: NotificationAttributes, snsEndpointArn: string): Promise<void> {
     const message: NotificationQueueMessage = {
       userId: notification.userId,
-      deviceToken,
+      snsEndpointArn,
       payload: {
         title: notification.title,
         body: notification.body,

@@ -1,25 +1,15 @@
 {
   "post": {
-    "operationId": "pushNotification",
-    "description": "Map push notification to a user",
+    "operationId": "StoreDeviceToken",
+    "description": "Store Device Token",
     "tags": [
       "bloodconnect-notification"
-    ],
-    "parameters": [
-      {
-        "name": "userId",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
     ],
     "requestBody": {
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "./../../components/schemas/notifications/push-payload.json#/pushNotificationRequestModel"
+            "$ref": "./../../components/schemas/notifications/register-payload.json#/RegisterDeviceRequestModel"
           }
         }
       }
@@ -49,25 +39,12 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../../integration/aws/notifications/post-push.json"
+      "$ref": "./../../integration/aws/notifications/post-register.json"
     },
     "security": [
       {
         "CognitoAuthorizer": []
       }
     ]
-  },
-  "options": {
-    "parameters": [
-      {
-        "name": "userId",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
-    "$ref": "./../cors-options.json"
   }
 }

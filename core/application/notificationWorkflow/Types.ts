@@ -1,3 +1,5 @@
+import { UserDTO } from '../../../commons/dto/UserDTO'
+
 export interface NotificationAttributes {
   userId: string;
   title: string;
@@ -13,6 +15,16 @@ export interface NotificationPayload {
 
 export interface NotificationQueueMessage {
   userId: string;
-  deviceToken: string;
+  snsEndpointArn: string;
   payload: NotificationPayload;
+}
+export interface StoreNotificationEndPoint extends UserDTO {
+  endpointArn: string;
+  updatedAt?: string;
+}
+
+export interface SnsRegistrationAttributes {
+  userId: string;
+  deviceToken: string;
+  platform: 'APNS' | 'FCM';
 }
