@@ -40,7 +40,7 @@ export default class SNSOperations implements SNSModel {
     }
   }
 
-  async createPlatformEndpoint(attributes: SnsRegistrationAttributes): Promise<{ endpointArn: string }> {
+  async createPlatformEndpoint(attributes: SnsRegistrationAttributes): Promise<{ snsEndpointArn: string }> {
     const { userId, deviceToken, platform } = attributes
     let platformApplicationArn
     if (platform === 'APNS') {
@@ -57,6 +57,6 @@ export default class SNSOperations implements SNSModel {
     })
 
     const response = await this.client.send(createEndpointCommand)
-    return { endpointArn: `${response.EndpointArn}` }
+    return { snsEndpointArn: `${response.EndpointArn}` }
   }
 }

@@ -18,8 +18,8 @@ export class NotificationService {
     try {
       const { userId } = registrationAttributes
 
-      const { endpointArn } = await snsModel.createPlatformEndpoint(registrationAttributes)
-      if (endpointArn === '') {
+      const { snsEndpointArn } = await snsModel.createPlatformEndpoint(registrationAttributes)
+      if (snsEndpointArn === '') {
         throw new Error('Device registration failed.')
       }
 
@@ -30,7 +30,7 @@ export class NotificationService {
 
       const updateData: Partial<StoreNotificationEndPoint> = {
         id: userId,
-        endpointArn,
+        snsEndpointArn,
         updatedAt: new Date().toISOString()
       }
       await userRepository.update(updateData)

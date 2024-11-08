@@ -19,7 +19,7 @@ export interface NotificationQueueMessage {
   payload: NotificationPayload;
 }
 export interface StoreNotificationEndPoint extends UserDTO {
-  endpointArn: string;
+  snsEndpointArn: string;
   updatedAt?: string;
 }
 
