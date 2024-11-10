@@ -2,6 +2,9 @@ import { SQSEvent, SQSRecord } from 'aws-lambda'
 import { NotificationQueueMessage } from '../../../application/notificationWorkflow/Types'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import SNSOperations from '../commons/sns/SNSOperations'
+import { NotificationDTO } from '../../../../commons/dto/NotificationDTO'
+import NotificationModel, { NotificationFields } from '../../../application/technicalImpl/dbModels/NotificationModel'
+import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 
 const notificationService = new NotificationService()
 
@@ -23,6 +26,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
 
   await notificationService.publishNotification(
     body,
+    new DynamoDbTableOperations<NotificationDTO, NotificationFields, NotificationModel>(new NotificationModel()),
     new SNSOperations()
   )
 }

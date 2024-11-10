@@ -13,6 +13,8 @@ export default class SQSOperations implements SQSModel {
     const message: NotificationQueueMessage = {
       userId: notification.userId,
       snsEndpointArn,
+      type: notification.type,
+      requestPostId: notification.requestPostId,
       payload: {
         title: notification.title,
         body: notification.body,

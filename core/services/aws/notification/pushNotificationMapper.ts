@@ -16,6 +16,8 @@ async function pushNotificationMapper(event: NotificationAttributes): Promise<AP
     const notificationAttributes: NotificationAttributes = {
       userId: event.userId,
       title: event.title,
+      type: event.type,
+      requestPostId: event.requestPostId,
       body: event.body,
       data: event.data
     }
