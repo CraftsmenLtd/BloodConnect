@@ -53,7 +53,7 @@
     },
     "security": [
       {
-        "CognitoAuthorizer": []
+        "sigv4": []
       }
     ]
   },

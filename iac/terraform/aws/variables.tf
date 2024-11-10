@@ -69,3 +69,8 @@ variable "facebook_client_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "firebase_token_s3_url" {
+  description = "S3 URL for Android Firebase token file"
+  type        = string
+}

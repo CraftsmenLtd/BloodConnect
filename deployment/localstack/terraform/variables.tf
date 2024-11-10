@@ -23,3 +23,8 @@ variable "facebook_client_secret" {
   sensitive   = true
   default     = "dummy_client_secret_for_localstack"
 }
+
+variable "firebase_token_s3_url" {
+  description = "S3 URL for Android Firebase token file"
+  type        = string
+}
