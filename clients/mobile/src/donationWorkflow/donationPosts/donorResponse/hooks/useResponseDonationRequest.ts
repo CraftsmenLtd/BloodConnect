@@ -9,21 +9,7 @@ export const useResponseDonationRequest = () => {
   const navigation = useNavigation()
 
   const handleAccept = async() => {
-    // try {
-    //   const success = await respondToRequest(donorResponse)
-    //   if (success) {
-    //     navigation.dispatch(
-    //       CommonActions.reset({
-    //         index: 0,
-    //         routes: [{ name: SCREENS.HOME }]
-    //       })
-    //     )
-    //   } else {
-    //     setResponseError('Unable to accept the request at this time.')
-    //   }
-    // } catch (error) {
-    //   setResponseError('Error accepting the request.')
-    // }
+    
   }
 
   const handleIgnore = () => {
@@ -38,3 +24,11 @@ export const useResponseDonationRequest = () => {
     responseError
   }
 }
+
+// on accept: put data on BLOOD_REQ partition
+// - request post id
+// - seeker id
+// - created at
+// - acceptance time
+
+// on ignore: change notification status
