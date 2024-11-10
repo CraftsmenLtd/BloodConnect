@@ -1,4 +1,4 @@
-import { CreatePlatformEndpointCommand, PublishCommand, PublishCommandInput, SNS } from '@aws-sdk/client-sns'
+import { CreatePlatformEndpointCommand, PublishCommand, SNS } from '@aws-sdk/client-sns'
 import { SNSModel } from '../../../../application/technicalImpl/sns/SNSModel'
 import { NotificationQueueMessage, SnsRegistrationAttributes } from '../../../../application/notificationWorkflow/Types'
 
@@ -23,17 +23,17 @@ export default class SNSOperations implements SNSModel {
           notificationData: {
             ...message.payload.data
           },
-          screen: "PatientDetailsScreen"
+          screen: 'PatientDetailsScreen'
         }
-      };
+      }
       const command = new PublishCommand({
         Message: JSON.stringify({
-          default: "Blood Connect",
+          default: 'Blood Connect',
           GCM: JSON.stringify(messagePayload)
         }),
-        MessageStructure: "json",
+        MessageStructure: 'json',
         TargetArn: message.snsEndpointArn
-      });
+      })
       await this.client.send(command)
     } catch (error) {
       throw new Error('Failed to process messages')
