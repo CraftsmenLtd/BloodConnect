@@ -80,6 +80,14 @@ data "aws_iam_policy_document" "step_function_policy_document" {
       module.step_function_lambda["donor-search-evaluator"].lambda_arn
     ]
   }
+
+  statement {
+    actions = ["execute-api:Invoke"]
+    effect  = "Allow"
+    resources = [
+      "${var.api_gateway_execution_arn}/*"
+    ]
+  }
 }
 
 resource "aws_sfn_state_machine" "donor_search_state_machine" {
@@ -91,6 +99,7 @@ resource "aws_sfn_state_machine" "donor_search_state_machine" {
     DONOR_SEARCH_EVALUATOR_LAMBDA_ARN = module.step_function_lambda["donor-search-evaluator"].lambda_arn
     DYNAMODB_TABLE_NAME               = split("/", var.dynamodb_table_arn)[1]
     SQS_RETRY_QUEUE_URL               = aws_sqs_queue.donor_search_retry_queue.url
+    API_GATEWAY_ID                    = var.api_gateway_id
   })
 
   logging_configuration {

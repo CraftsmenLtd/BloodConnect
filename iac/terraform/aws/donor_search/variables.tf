@@ -11,5 +11,15 @@ variable "dynamodb_table_arn" {
 variable "donor_search_max_retry_count" {
   type        = string
   description = "donor search maximum retry count"
-  default     = 10
+  default     = 1
+}
+
+variable "api_gateway_id" {
+  description = "ID of the API Gateway"
+  type        = string
+}
+
+variable "api_gateway_execution_arn" {
+  description = "Execution ARN of the API Gateway"
+  type        = string
 }

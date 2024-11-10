@@ -178,8 +178,14 @@ export class BloodDonationService {
         bloodQuantity: existingItem.bloodQuantity,
         urgencyLevel: existingItem.urgencyLevel,
         geohash: existingItem.geohash,
+        patientName: existingItem.patientName,
+        location: existingItem.location,
+        contactNumber: existingItem.contactNumber,
+        transportationInfo: existingItem.transportationInfo,
+        shortDescription: existingItem.shortDescription,
         city,
-        retryCount: retryCount + 1
+        retryCount: retryCount + 1,
+        message: `${existingItem.urgencyLevel === 'urgent' ? 'Urgent ' : ''}${existingItem.neededBloodGroup} needed | ${existingItem.shortDescription}`
       }
 
       await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${city}-(${existingItem.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`)

@@ -7,8 +7,8 @@ locals {
       statement                  = concat(local.policies.common_policies, local.policies.dynamodb_query_policy, local.policies.sns_publish_policy)
       invocation_arn_placeholder = "REGISTER_USER_DEVICE_INVOCATION_ARN"
       env_variables = {
-        PLATFORM_ARN_FCM = aws_sns_platform_application.android_app.arn
-        DYNAMODB_TABLE_NAME    = split("/", var.dynamodb_table_arn)[1]
+        PLATFORM_ARN_FCM    = aws_sns_platform_application.android_app.arn
+        DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
       }
     },
     push-notification-mapper = {
