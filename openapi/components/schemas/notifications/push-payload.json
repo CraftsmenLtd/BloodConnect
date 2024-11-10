@@ -14,6 +14,14 @@
         "type": "string",
         "minLength": 1
       },
+      "type": {
+        "type": "string",
+        "minLength": 1
+      },
+      "requestPostId": {
+        "type": "string",
+        "minLength": 1
+      },
       "data": {
         "type": "object",
         "additionalProperties": true
@@ -22,6 +30,8 @@
     "example": {
       "title": "Blood Request",
       "body": "Urgent: Type A+ blood needed at City Hospital",
+      "type": "blood_request",
+      "requestPostId": "01JC9K212YMH2K7XPYJS57SCAA",
       "data": {
         "patientName": "John Doe",
         "neededBloodGroup": "O-",

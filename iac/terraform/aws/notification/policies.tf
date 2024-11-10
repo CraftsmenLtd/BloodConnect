@@ -17,6 +17,7 @@ locals {
         actions = [
           "dynamodb:UpdateItem",
           "dynamodb:GetItem",
+          "dynamodb:PutItem",
           "dynamodb:Query"
         ]
         resources = [var.dynamodb_table_arn]
