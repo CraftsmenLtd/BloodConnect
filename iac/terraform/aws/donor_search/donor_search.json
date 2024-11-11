@@ -159,7 +159,7 @@
                 "title": "Blood Request",
                 "body.$": "$.message",
                 "requestPostId.$": "$.requestPostId",
-                "type": "blood_request",
+                "type": "bloodRequestPost",
                 "data": {
                   "patientName.$": "$.patientName",
                   "neededBloodGroup.$": "$.neededBloodGroup",
