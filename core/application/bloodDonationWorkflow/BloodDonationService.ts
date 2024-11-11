@@ -178,7 +178,7 @@ export class BloodDonationService {
         bloodQuantity: existingItem.bloodQuantity,
         urgencyLevel: existingItem.urgencyLevel,
         geohash: existingItem.geohash,
-        city,
+        city: existingItem.city,
         retryCount: retryCount + 1
       }
 

@@ -6,6 +6,7 @@ export interface BloodDonationAttributes {
   neededBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyLevel;
+  city: string;
   location: string;
   latitude: number;
   longitude: number;
