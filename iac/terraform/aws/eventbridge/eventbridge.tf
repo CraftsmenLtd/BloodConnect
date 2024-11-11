@@ -41,3 +41,10 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
     }
   }
 }
+
+# resource "aws_pipes_pipe" "handle_donation_status_pipe" {
+#   name = "${var.environment}-donation-status-pipe"
+#   role_arn = aws_iam_role.eventbridge_pipe_role.arn
+#   source = var.dynamodb_table_stream_arn
+#   target = var
+# }

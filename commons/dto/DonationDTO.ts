@@ -52,3 +52,19 @@ type BaseAcceptedDonationDTO = {
 export type AcceptedDonationDTO = BaseAcceptedDonationDTO & DTO & {
   status?: string;
 }
+
+export interface DonationStatusManagerDTO extends DTO {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+}
+
+export interface DonationStatusManagerQueryResultDTO extends DonationStatusManagerDTO {
+  PK: string;
+  SK: string;
+  bloodQuantity: number;
+  status: string;
+  updateExpression: string;
+  expressionAttributeNames: object;
+  expressionAttributeValues: object;
+}
