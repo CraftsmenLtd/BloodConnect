@@ -183,7 +183,7 @@ export class BloodDonationService {
         contactNumber: existingItem.contactNumber,
         transportationInfo: existingItem.transportationInfo,
         shortDescription: existingItem.shortDescription,
-        city,
+        city: existingItem.city,
         retryCount: retryCount + 1,
         message: `${existingItem.urgencyLevel === 'urgent' ? 'Urgent ' : ''}${existingItem.neededBloodGroup} needed | ${existingItem.shortDescription}`
       }
