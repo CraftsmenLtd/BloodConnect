@@ -23,7 +23,7 @@ export default class SNSOperations implements SNSModel {
           notificationData: {
             ...message.payload.data
           },
-          screen: 'PatientDetailsScreen'
+          type: message.type
         }
       }
       const command = new PublishCommand({
