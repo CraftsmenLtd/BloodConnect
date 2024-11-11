@@ -135,6 +135,7 @@
       "Parameters": {
         "donorId.$": "$$.Map.Item.Value",
         "patientName.$": "$.patientName",
+        "requestPostId.$": "$.requestPostId",
         "location.$": "$.location",
         "contactNumber.$": "$.contactNumber",
         "transportationInfo.$": "$.transportationInfo",
@@ -157,6 +158,8 @@
               "RequestBody": {
                 "title": "Blood Request",
                 "body.$": "$.message",
+                "requestPostId.$": "$.requestPostId",
+                "type": "blood_request",
                 "data": {
                   "patientName.$": "$.patientName",
                   "neededBloodGroup.$": "$.neededBloodGroup",
@@ -189,6 +192,21 @@
               "RequestBody.$": "$.apiParams.RequestBody",
               "AuthType": "IAM_ROLE"
             },
+            "ResultPath": "$.notificationResults",
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.notificationError",
+                "Next": "HandleApiError"
+              }
+            ],
+            "End": true
+          },
+          "HandleApiError": {
+            "Type": "Pass",
+            "Result": "Ignored error from API call",
             "ResultPath": "$.notificationResults",
             "End": true
           }
