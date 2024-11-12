@@ -70,3 +70,9 @@ export interface AcceptDonationRequestAttributes {
   requestPostId: string;
   acceptanceTime: string;
 }
+
+export interface DonationStatusManagerAttributes {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+}

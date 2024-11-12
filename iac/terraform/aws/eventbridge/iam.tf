@@ -28,7 +28,7 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
   statement {
     effect    = "Allow"
     actions   = ["sqs:SendMessage"]
-    resources = [var.donor_search_queue_arn]
+    resources = [var.donor_search_queue_arn, var.donation_status_manager_queue_arn]
   }
   statement {
     effect = "Allow"
@@ -37,7 +37,10 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
-    resources = ["${aws_cloudwatch_log_group.eventbridge_pipe_log_group.arn}:*"]
+    resources = [
+      "${aws_cloudwatch_log_group.donation_request_pipe_log_group.arn}:*",
+      "${aws_cloudwatch_log_group.donation_accept_pipe_log_group.arn}:*"
+      ]
   }
 }
 
