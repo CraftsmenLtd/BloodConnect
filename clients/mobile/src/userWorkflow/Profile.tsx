@@ -27,8 +27,8 @@ export default function Profile({ navigation }: ProfileScreenProps) {
 
   const handleSignOut = async (): Promise<void> => {
     try {
-      await auth.logoutUser()
       await Promise.all([Cache.clear(), clearAllStorage()])
+      await auth.logoutUser()
       await signOut()
       navigation.navigate(SCREENS.WELCOME)
     } catch (error) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { confirmSignUp, signUp, signIn, signInWithRedirect, signOut, decodeJWT, AuthSession, fetchAuthSession, resetPassword, confirmResetPassword, ResetPasswordOutput } from 'aws-amplify/auth'
 import { JwtPayload } from '@aws-amplify/core/internals/utils'
 import StorageService from '../../utility/storageService'
@@ -123,17 +124,39 @@ export const loginUser = async(email: string, password: string): Promise<boolean
   }
 }
 
-export const googleLogin = async(): Promise<void> => {
+export const googleLogin = async(): Promise<boolean> => {
   try {
     await signInWithRedirect({ provider: 'Google' })
+    const session = await fetchSession()
+    return session.idToken.length > 0
+    // console.log(session)
+    // console.log('Google login successful:', {
+    //   accessTokenPrefix: `${session.accessToken.substring(0, 20)}...`,
+    //   idTokenPrefix: `${session.idToken.substring(0, 20)}...`
+    // })
+
+    // const decodedIdToken = decodeJWT(session.idToken)
+    // const identities = decodedIdToken.payload.identities as Array<{
+    //   providerName: string;
+    // }>
+    // console.log('Token claims:', {
+    //   sub: decodedIdToken.payload.sub,
+    //   email: decodedIdToken.payload.email,
+    //   name: decodedIdToken.payload.name,
+    //   userId: decodedIdToken.payload['custom:userId'],
+    //   providerName: identities[0]?.providerName
+    // })
   } catch (error) {
+    console.error('Google login failed:', error)
     throw new Error(`Error logging with google: ${error instanceof Error ? error.message : error}`)
   }
 }
 
-export const facebookLogin = async(): Promise<void> => {
+export const facebookLogin = async(): Promise<boolean> => {
   try {
     await signInWithRedirect({ provider: 'Facebook' })
+    const session = await fetchSession()
+    return session.idToken.length > 0
   } catch (error) {
     throw new Error(`Error logging with facebook: ${error instanceof Error ? error.message : error}`)
   }
