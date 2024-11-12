@@ -1,0 +1,73 @@
+{
+  "post": {
+    "operationId": "pushNotification",
+    "description": "Map push notification to a user",
+    "tags": [
+      "bloodconnect-notification"
+    ],
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBody": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./../../components/schemas/notifications/push-payload.json#/pushNotificationRequestModel"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "200 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {}
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/notifications/post-push.json"
+    },
+    "security": [
+      {
+        "sigv4": []
+      }
+    ]
+  },
+  "options": {
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "$ref": "./../cors-options.json"
+  }
+}

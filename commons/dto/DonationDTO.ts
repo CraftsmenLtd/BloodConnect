@@ -36,12 +36,6 @@ export type DonorSearchDTO = DTO & HasIdentifier & {
   retryCount?: number;
 }
 
-export interface StepFunctionInput extends DTO {
-  seekerId: string;
-  requestPostId: string;
-  additionalParams?: Record<string, any>;
-}
-
 type BaseAcceptedDonationDTO = {
   donorId: string;
   requestPostId: string;
