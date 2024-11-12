@@ -1,11 +1,11 @@
 import { ValidationRule, validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
-import { BloodGroup, UrgencyLevel } from '../../../commons/dto/DonationDTO'
+import { BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
 
 export interface BloodDonationAttributes {
   seekerId: string;
   neededBloodGroup: BloodGroup;
   bloodQuantity: number;
-  urgencyLevel: UrgencyLevel;
+  urgencyLevel: UrgencyType;
   city: string;
   location: string;
   latitude: number;
@@ -27,7 +27,7 @@ export interface UpdateBloodDonationAttributes {
   requestPostId: string;
   seekerId: string;
   bloodQuantity?: number;
-  urgencyLevel?: UrgencyLevel;
+  urgencyLevel?: UrgencyType;
   donationDateTime?: string;
   contactNumber?: string;
   patientCondition?: string;
@@ -50,7 +50,7 @@ export interface StepFunctionInput {
   donationDateTime: string;
   neededBloodGroup: BloodGroup;
   bloodQuantity: number;
-  urgencyLevel: UrgencyLevel;
+  urgencyLevel: UrgencyType;
   geohash: string;
   city: string;
   patientName?: string;

@@ -1,7 +1,7 @@
 import { DTO, HasIdentifier } from './DTOCommon'
 
 export type BloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
-export type UrgencyLevel = 'regular' | 'urgent'
+export type UrgencyType = 'regular' | 'urgent'
 
 export enum DonationStatus {
   PENDING = 'PENDING',
@@ -10,7 +10,7 @@ export enum DonationStatus {
   EXPIRED = 'EXPIRED',
 }
 
-export enum UrgencyLevelEnum {
+export enum UrgencyLevel {
   REGULAR = 'regular',
   URGENT = 'urgent',
 }

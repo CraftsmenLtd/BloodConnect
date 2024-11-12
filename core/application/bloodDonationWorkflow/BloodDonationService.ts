@@ -1,7 +1,7 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import { DonationDTO, DonationStatus, DonorSearchDTO, AcceptedDonationDTO, UrgencyLevelEnum } from '../../../commons/dto/DonationDTO'
+import { DonationDTO, DonationStatus, DonorSearchDTO, AcceptedDonationDTO, UrgencyLevel } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import Repository from '../technicalImpl/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
@@ -185,7 +185,7 @@ export class BloodDonationService {
         shortDescription: existingItem.shortDescription,
         city: existingItem.city,
         retryCount: retryCount + 1,
-        message: `${existingItem.urgencyLevel === UrgencyLevelEnum.URGENT ? 'Urgent ' : ''}${existingItem.neededBloodGroup} needed | ${existingItem.shortDescription}`
+        message: `${existingItem.urgencyLevel === UrgencyLevel.URGENT ? 'Urgent ' : ''}${existingItem.neededBloodGroup} needed | ${existingItem.shortDescription}`
       }
 
       await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${city}-(${existingItem.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`)
