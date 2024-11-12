@@ -29,6 +29,7 @@ describe('UserService Tests', () => {
     jest.clearAllMocks();
     (generateUniqueID as jest.Mock).mockReturnValue('12345')
     userRepository.query.mockResolvedValue({ items: [], lastEvaluatedKey: undefined })
+    process.env.AFTER_DONATION_UNAVAILABLE_PERIOD = '4'
   })
 
   test('should create a new user successfully', async() => {
@@ -76,7 +77,7 @@ describe('UserService Tests', () => {
       dateOfBirth: '1990-01-01',
       phoneNumbers: ['1234567890'],
       bloodGroup: 'A+',
-      lastDonationDate: '2023-08-01',
+      lastDonationDate: '2023-06-01',
       height: 170,
       weight: 65,
       availableForDonation: 'yes',
