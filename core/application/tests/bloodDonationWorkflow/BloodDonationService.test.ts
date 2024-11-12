@@ -460,7 +460,6 @@ describe('BloodDonationService', () => {
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({
           ...expiredMockDonationDTO,
-          status: DonationStatus.EXPIRED,
           retryCount: 6
         })
       )

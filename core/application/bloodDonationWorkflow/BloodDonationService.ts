@@ -12,7 +12,7 @@ import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes
 import { StepFunctionModel } from '../technicalImpl/stepFunctions/StepFunctionModel'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
 import { DONOR_SEARCH_PK_PREFIX } from '../../application/technicalImpl/dbModels/DonorSearchModel'
-import { AcceptDonationRequestModel, AcceptedDonationFields } from '@application/technicalImpl/dbModels/AcceptDonationModel'
+import { AcceptDonationRequestModel, AcceptedDonationFields } from '../../application/technicalImpl/dbModels/AcceptDonationModel'
 
 export class BloodDonationService {
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO, DonationFields>, model: BloodDonationModel): Promise<string> {
