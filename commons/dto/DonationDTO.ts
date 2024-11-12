@@ -15,6 +15,7 @@ export type DonationDTO = DTO & HasIdentifier & {
   neededBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: 'regular' | 'urgent';
+  city: string;
   location: string;
   latitude: number;
   longitude: number;
