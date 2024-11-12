@@ -76,8 +76,6 @@ export const useLogin = (): any => {
         setSocialLoginError('Google login failed. Please try again.')
         setLoading(false)
       }
-      // navigation.navigate(SCREENS.BOTTOM_TABS)
-      // navigation.navigate(SCREENS.PROFILE)
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
     } finally {
