@@ -67,7 +67,7 @@ export class UserService {
 
       if (!isNaN(donationDate.getTime())) {
         const donationMonths = differenceInMonths(currentDate, donationDate)
-        return (donationMonths > 4 ? 'yes' : 'no')
+        return (donationMonths > Number(process.env.AFTER_DONATION_UNAVAILABLE_PERIOD) ? 'yes' : 'no')
       }
     }
     return availableForDonation
