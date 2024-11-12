@@ -63,6 +63,7 @@ export const useLogin = (): any => {
 
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
+      setLoading(true)
       const isGoogleSignedIn = await googleLogin()
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
@@ -85,6 +86,7 @@ export const useLogin = (): any => {
 
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
+      setLoading(true)
       const isFacebookSignedIn = await facebookLogin()
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
