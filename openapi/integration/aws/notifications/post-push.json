@@ -1,0 +1,22 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "${PUSH_NOTIFICATION_MAPPER_INVOCATION_ARN}",
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'POST'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
+      }
+    }
+  },
+  "requestTemplates": {
+    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"userId\": \"$util.urlDecode($input.params().path.userId)\",\n  \"title\": \"$inputRoot.title\", \n \"type\": \"$inputRoot.type\", \n \"requestPostId\": \"$inputRoot.requestPostId\",\n  \"body\": \"$inputRoot.body\",\n  \"data\": $input.json('$.data')\n}"
+  },
+  "passthroughBehavior": "never"
+}

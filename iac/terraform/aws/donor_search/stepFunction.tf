@@ -20,7 +20,7 @@ resource "aws_iam_role" "step_function_role" {
 resource "aws_cloudwatch_log_group" "donor_search_state_machine_logs" {
   #checkov:skip=CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
   #checkov:skip=CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
-  name              = "/aws/step-functions/${var.environment}-donor-search-sf-logs"
+  name              = "/aws/vendedlogs/states/${var.environment}-donor-search-sf-logs"
   retention_in_days = 90
 }
 

@@ -20,6 +20,7 @@
     "@aws-sdk/client-dynamodb": "^3.651.1",
     "@aws-sdk/client-ses": "^3.679.0",
     "@aws-sdk/client-sfn": "^3.651.1",
+    "@aws-sdk/client-sns": "^3.682.0",
     "@aws-sdk/client-sqs": "^3.651.1",
     "@aws-sdk/lib-dynamodb": "^3.651.1",
     "aws-lambda": "^1.0.7"
