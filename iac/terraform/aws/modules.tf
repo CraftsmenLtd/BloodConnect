@@ -61,10 +61,11 @@ module "donor_search" {
 }
 
 module "eventbridge" {
-  source                    = "./eventbridge"
-  environment               = var.environment
-  dynamodb_table_stream_arn = module.database.dynamodb_table_stream_arn
-  donor_search_queue_arn    = module.donor_search.donor_search_queue_arn
+  source                            = "./eventbridge"
+  environment                       = var.environment
+  dynamodb_table_stream_arn         = module.database.dynamodb_table_stream_arn
+  donor_search_queue_arn            = module.donor_search.donor_search_queue_arn
+  donation_status_manager_queue_arn = module.donor_search.donation_status_manager_queue_arn
 }
 
 module "notification" {

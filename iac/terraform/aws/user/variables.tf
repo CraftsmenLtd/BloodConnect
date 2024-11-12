@@ -11,5 +11,5 @@ variable "dynamodb_table_arn" {
 variable "after_donation_unavailable_period" {
   type        = string
   description = "After donation unavailable period"
-  default = 4
+  default     = 4
 }

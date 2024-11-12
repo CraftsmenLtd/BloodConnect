@@ -26,8 +26,7 @@ export class AcceptDonationRequestModel implements NosqlModel<AcceptedDonationFi
     return {
       PK: `${ACCEPTED_DONATION_PK_PREFIX}#${acceptedDonationDto.seekerId}`,
       SK: `${ACCEPTED_DONATION_SK_PREFIX}#${acceptedDonationDto.requestPostId}#${acceptedDonationDto.donorId}`,
-      ...acceptedDonationDto,
-      createdAt: new Date().toISOString()
+      ...acceptedDonationDto
     }
   }
 
