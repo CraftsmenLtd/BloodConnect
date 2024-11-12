@@ -36,7 +36,8 @@ locals {
         ]
         resources = [
           aws_sqs_queue.donor_search_queue.arn,
-          aws_sqs_queue.donor_search_retry_queue.arn
+          aws_sqs_queue.donor_search_retry_queue.arn,
+          aws_sqs_queue.donation_status_manager_queue.arn
         ]
       }
     ]
