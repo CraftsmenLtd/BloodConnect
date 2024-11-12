@@ -56,7 +56,6 @@ data "aws_iam_policy_document" "donor_search_queue_policy_doc" {
 }
 
 
-# Queue for donation status manager
 resource "aws_sqs_queue" "donation_status_manager_queue" {
   #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
   name                       = "${var.environment}-donation-status-manager"
