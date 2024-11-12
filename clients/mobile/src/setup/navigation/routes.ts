@@ -62,6 +62,6 @@ export const routes = [
     name: SCREENS.ADD_PERSONAL_INFO,
     component: AddPersonalInfo,
     options: { headerShown: true, headerTitle: 'Add Personal Info' },
-    protected: false
+    protected: true
   }
 ]

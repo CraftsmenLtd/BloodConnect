@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import Constants from 'expo-constants'
 import { useNavigation } from '@react-navigation/native'
 import { validateRequired, ValidationRule, validateInput, validateDateOfBirth, validatePastOrTodayDate, validateHeight, validateWeight } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
@@ -8,6 +9,8 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { addPersonalInfoHandler } from '../../services/userServices'
 import { LocationService } from '../../../LocationService/LocationService'
 import { formatErrorMessage, formatToTwoDecimalPlaces } from '../../../utility/formatte'
+
+const { OPENSTREET_MAP_API } = Constants.expoConfig?.extra ?? {}
 
 type PersonalInfoKeys = keyof PersonalInfo
 
@@ -56,9 +59,9 @@ export const useAddPersonalInfo = (): any => {
     height: '',
     weight: '',
     gender: '',
-    lastDonationDate: new Date(new Date().setMonth(new Date().getMonth() - 3)),
+    lastDonationDate: new Date(new Date().setMonth(new Date().getMonth() - 6)),
     dateOfBirth: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
-    lastVaccinatedDate: new Date(new Date().setMonth(new Date().getMonth() - 3)),
+    lastVaccinatedDate: new Date(new Date().setMonth(new Date().getMonth() - 6)),
     city: '',
     locations: [],
     availableForDonation: 'yes',
@@ -71,6 +74,7 @@ export const useAddPersonalInfo = (): any => {
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [showDatePicker, setShowDatePicker] = useState(false)
+  const [isVisible, setIsVisible] = useState('')
 
   const handleInputChange = (name: PersonalInfoKeys, value: string): void => {
     setPersonalInfo(prevState => ({
@@ -91,33 +95,49 @@ export const useAddPersonalInfo = (): any => {
 
   const isButtonDisabled = useMemo(() => {
     return !(
-      Object.values(personalInfo).every(value => value !== '') &&
+      Object.values(personalInfo).every(value => value !== '' && !(Array.isArray(value) && value.length === 0)) &&
       Object.values(errors).every(error => error === null)
     ) || !personalInfo.acceptPolicy
   }, [personalInfo, errors])
 
   async function formatLocations(locations: string[], city: string): Promise<LocationData[]> {
-    const locationService = new LocationService()
+    const locationService = new LocationService(OPENSTREET_MAP_API)
 
     const formattedLocations = await Promise.all(
       locations.map(async(area) => {
-        const { lat, lon } = await locationService.getCoordinates(area)
-        return {
-          area,
-          city,
-          latitude: +lat,
-          longitude: +lon
+        try {
+          const location = await locationService.getCoordinates(area)
+          if (location !== null) {
+            const { latitude, longitude } = location
+            return {
+              area,
+              city,
+              latitude,
+              longitude
+            }
+          } else {
+            return null
+          }
+        } catch (error) {
+          throw new Error(`Failed to fetch cordinate for ${area}`)
         }
       })
     )
 
-    return formattedLocations
+    return formattedLocations.filter((location): location is LocationData => location !== null)
   }
   const handleSubmit = async(): Promise<void> => {
     try {
       setLoading(true)
       const { locations, city, dateOfBirth, lastDonationDate, lastVaccinatedDate, ...rest } = personalInfo
       const preferredDonationLocations = await formatLocations(locations, city)
+
+      if (preferredDonationLocations.length === 0) {
+        setErrorMessage('No valid locations were found. Please verify your input.')
+        setLoading(false)
+        return
+      }
+
       const finalData = {
         ...rest,
         dateOfBirth: dateOfBirth.toISOString().substring(0, 10),
@@ -144,6 +164,8 @@ export const useAddPersonalInfo = (): any => {
     loading,
     errorMessage,
     errors,
+    isVisible,
+    setIsVisible,
     personalInfo,
     showDatePicker,
     setShowDatePicker,
