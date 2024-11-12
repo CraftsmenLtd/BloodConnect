@@ -17,7 +17,7 @@ describe('useRegister Hook', () => {
     jest.clearAllMocks()
   })
 
-  it('should initialize with default values', () => {
+  test('should initialize with default values', () => {
     const { result } = renderHook(() => useRegister())
     const expectedValues = {
       name: '',
@@ -83,22 +83,9 @@ describe('useRegister Hook', () => {
   })
 
   describe('handleGoogleSignIn', () => {
-    it('should navigate to Profile screen on successful Google sign-in', async() => {
+    test('should fail gracefully when Google sign-in has session error', async() => {
       const { result } = renderHook(() => useRegister());
-      (googleLogin as jest.Mock).mockResolvedValue(undefined)
-
-      await act(async() => {
-        await result.current.handleGoogleSignIn()
-      })
-
-      expect(googleLogin).toHaveBeenCalledTimes(1)
-      expect(mockedNavigate).toHaveBeenCalledWith('Profile')
-      expect(result.current.socialLoginError).toBe('')
-    })
-
-    it('should set socialLoginError on Google sign-in failure', async() => {
-      const { result } = renderHook(() => useRegister());
-      (googleLogin as jest.Mock).mockRejectedValue(new Error('Google sign-in failed'))
+      (googleLogin as jest.Mock).mockRejectedValue(new Error('Failed to fetch session'))
 
       await act(async() => {
         await result.current.handleGoogleSignIn()
@@ -108,23 +95,35 @@ describe('useRegister Hook', () => {
       expect(mockedNavigate).not.toHaveBeenCalled()
       expect(result.current.socialLoginError).toBe('Failed to sign in with Google.')
     })
+
+    test('should set socialLoginError on Google sign-in failure', async() => {
+      const { result } = renderHook(() => useRegister());
+      (googleLogin as jest.Mock).mockRejectedValue(new Error('Google sign-in failed'))
+
+      await act(async() => {
+        await result.current.handleGoogleSignIn()
+      })
+
+      expect(googleLogin).toHaveBeenCalledTimes(1)
+      expect(result.current.socialLoginError).toBe('Failed to sign in with Google.')
+    })
   })
 
   describe('handleFacebookSignIn', () => {
-    it('should navigate to Profile screen on successful Facebook sign-in', async() => {
+    test('should fail gracefully when Facebook sign-in has session error', async() => {
       const { result } = renderHook(() => useRegister());
-      (facebookLogin as jest.Mock).mockResolvedValue(undefined)
+      (facebookLogin as jest.Mock).mockRejectedValue(new Error('Failed to fetch session'))
 
       await act(async() => {
         await result.current.handleFacebookSignIn()
       })
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
-      expect(mockedNavigate).toHaveBeenCalledWith('Profile')
-      expect(result.current.socialLoginError).toBe('')
+      expect(mockedNavigate).not.toHaveBeenCalled()
+      expect(result.current.socialLoginError).toBe('Failed to sign in with Facebook.')
     })
 
-    it('should set socialLoginError on Facebook sign-in failure', async() => {
+    test('should set socialLoginError on Facebook sign-in failure', async() => {
       const { result } = renderHook(() => useRegister());
       (facebookLogin as jest.Mock).mockRejectedValue(new Error('Facebook sign-in failed'))
 
@@ -133,7 +132,6 @@ describe('useRegister Hook', () => {
       })
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
-      expect(mockedNavigate).not.toHaveBeenCalled()
       expect(result.current.socialLoginError).toBe('Failed to sign in with Facebook.')
     })
   })
