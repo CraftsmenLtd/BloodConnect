@@ -1,6 +1,5 @@
 import React from 'react'
 import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native'
-import LinkWithText from '../components/button/LinkWithText'
 import { WelcomeScreenNavigationProp } from '../setup/navigation/navigationTypes'
 import { SCREENS } from '../setup/constant/screens'
 import { Button } from '../components/button/Button'
@@ -24,12 +23,6 @@ const Welcome = ({ navigation }: WelcomeScreenProps) => {
 
       <Button text='Create account' onPress={() => { navigation.navigate(SCREENS.REGISTER) }} />
       <Button text='Log in' onPress={() => { navigation.navigate(SCREENS.LOGIN) }} buttonStyle={styles.loginButton} textStyle={styles.loginText} />
-
-      <LinkWithText
-        staticText="Want to explore first? "
-        linkText=" Continue as a guest"
-        onPress={() => { navigation.navigate(SCREENS.BOTTOM_TABS) }}
-      />
     </View>
   )
 }
