@@ -10,6 +10,11 @@ export enum DonationStatus {
   EXPIRED = 'EXPIRED',
 }
 
+export enum UrgencyLevelEnum {
+  REGULAR = 'regular',
+  URGENT = 'urgent',
+}
+
 export type DonationDTO = DTO & HasIdentifier & {
   seekerId: string;
   neededBloodGroup: BloodGroup;
