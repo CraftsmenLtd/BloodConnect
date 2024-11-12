@@ -26,7 +26,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
         label="Name"
         value={registerCredential.name}
         onChangeText={handleInputChange}
-        placeholder="Jon Doe"
+        placeholder="Enter your name"
         keyboardType="twitter"
         error={errors.name}
       />

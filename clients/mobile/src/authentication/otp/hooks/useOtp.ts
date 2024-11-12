@@ -1,8 +1,8 @@
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useEffect } from 'react'
 import { TextInput } from 'react-native'
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/native'
 import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
-import { submitOtp, loginUser } from '../../services/authService'
+import { submitOtp, loginUser, resetPasswordHandler, resendSignUpOtp } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
 
@@ -15,6 +15,23 @@ export const useOtp = (): any => {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [error, setError] = useState<string>('')
   const inputRefs = useRef<Array<TextInput | null>>([])
+  const [countdown, setCountdown] = useState<number | null>(60)
+  const [isDisabled, setIsDisabled] = useState(false)
+  const [countdownStarted, setCountdownStarted] = useState(false)
+
+  useEffect(() => {
+    if (countdown !== null && countdown > 0 && countdownStarted) {
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null))
+      }, 1000)
+      return () => {
+        clearInterval(timer)
+      }
+    } else if (countdown === 0) {
+      setIsDisabled(false)
+      setCountdown(null)
+    }
+  }, [countdown, countdownStarted])
 
   const handleOtpChange = (text: string, index: number): void => {
     const newOtp = [...otp]
@@ -54,6 +71,44 @@ export const useOtp = (): any => {
     }
   }
 
+  const resendForgotPasswordOtpHandler = async(email: string): Promise<void> => {
+    const nextStep = await resetPasswordHandler(email)
+    switch (nextStep.resetPasswordStep) {
+      case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
+        setCountdown(120)
+        setIsDisabled(true)
+        setCountdownStarted(true)
+        break
+      case 'DONE':
+        setError('Password reset process already completed.')
+        break
+      default:
+        setError('Password reset failed. Check your email or try again.')
+    }
+  }
+
+  const resendSignUpOtpHandler = async(): Promise<void> => {
+    const isResendCodeSucess = await resendSignUpOtp(email)
+    if (isResendCodeSucess) {
+      setCountdown(120)
+      setIsDisabled(true)
+      setCountdownStarted(true)
+    }
+  }
+
+  const resendOtpHandler = async(): Promise<void> => {
+    try {
+      if (fromScreen === SCREENS.SET_PASSWORD) {
+        await resendSignUpOtpHandler()
+      } else {
+        await resendForgotPasswordOtpHandler(email)
+      }
+    } catch (error) {
+      const errorMessage = `${error instanceof Error ? error.message : 'Unknown issue.'}`
+      setError(errorMessage)
+    }
+  }
+
   const handleSubmit = async(): Promise<void> => {
     setLoading(true)
     try {
@@ -72,12 +127,15 @@ export const useOtp = (): any => {
 
   return {
     email,
+    isDisabled,
+    countdown,
     otp,
     error,
     inputRefs,
     handleOtpChange,
     handleSubmit,
     loading,
-    isButtonDisabled
+    isButtonDisabled,
+    resendOtpHandler
   }
 }

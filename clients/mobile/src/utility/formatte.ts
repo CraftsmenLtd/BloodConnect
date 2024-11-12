@@ -28,6 +28,9 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
 export function formatErrorMessage(error: unknown): string {
   if (error instanceof Error && typeof error.message === 'string') {
     const errorMessage = error.message.toLowerCase()
+    if (errorMessage.startsWith('failed to retrieve coordinates for')) {
+      return 'Couldn\'t retrieve coordinates for the location. Please try again.'
+    }
     switch (errorMessage) {
       case 'user already exists':
         return 'User already exists, Please Login.'

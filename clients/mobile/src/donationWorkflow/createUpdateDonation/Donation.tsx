@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Constants from 'expo-constants'
 import { Text, StyleSheet, ScrollView, TouchableWithoutFeedback, View } from 'react-native'
 import RadioButton from '../../components/inputElement/Radio'
 import { TextArea } from '../../components/inputElement/TextArea'
@@ -10,6 +11,13 @@ import { bloodGroupOptions, bloodBagOptions, transportationOptions } from './don
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
+import SearchMultiSelect from '../../components/inputElement/SearchMultiSelect'
+import { LocationService } from '../../LocationService/LocationService'
+import { districts } from '../../userWorkflow/personalInfo/options'
+import Dropdown from '../../components/inputElement/Dropdown'
+const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+
+const locationService = new LocationService(GOOGLE_MAP_API)
 
 const CreateBloodRequest = () => {
   const styles = createStyles(useTheme())
@@ -73,16 +81,28 @@ const CreateBloodRequest = () => {
             isRequired={true}
             isOnlyDate={false}
           />
-          <Input
+          <Dropdown
+            label='Select city'
+            isRequired={true}
+            placeholder='Select city'
+            options={districts}
+            name='city'
+            selectedValue={bloodRequestData.city}
+            onChange={handleInputChange}
+            error={errors.city}
+          />
+          <SearchMultiSelect
             name="location"
             label="Location"
-            value={bloodRequestData.location}
-            onChangeText={handleInputChange}
-            placeholder="Search Location"
-            keyboardType='default'
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            onChange={handleInputChange}
+            initialValue={bloodRequestData.location}
+            editable={isUpdating !== true}
             error={errors.location}
+            multiSelect={false}
             isRequired={true}
-            readOnly={isUpdating}
+            fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
           />
           <Input
             name="contactNumber"

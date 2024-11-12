@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { validateInput, validateRequired, ValidationRule, validatePhoneNumber, validateDateTime, validateDonationDateTime } from '../../utility/validator'
 import { initializeState } from '../../utility/stateUtils'
 import { LocationService } from '../../LocationService/LocationService'
@@ -22,11 +22,13 @@ export interface BloodRequestData {
   patientName?: string;
   shortDescription?: string;
   transportationInfo?: string;
+  city: string;
 }
 
 interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'shortDescription' | 'transportationInfo'> {}
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
+  city: [validateRequired],
   urgencyLevel: [validateRequired],
   neededBloodGroup: [validateRequired],
   bloodQuantity: [validateRequired],
@@ -50,6 +52,7 @@ export const useBloodRequest = (): any => {
     patientName: '',
     shortDescription: '',
     transportationInfo: '',
+    city: '',
     ...data
   })
 
@@ -59,6 +62,12 @@ export const useBloodRequest = (): any => {
   const [errors, setErrors] = useState<BloodRequestDataErrors>(initializeState<BloodRequestDataErrors>(
     Object.keys(validationRules) as Array<keyof BloodRequestDataErrors>, null)
   )
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: isUpdating ? 'Update Blood Request' : 'Create Blood Request'
+    })
+  }, [isUpdating])
 
   const onDateChange = (selectedDate: string | Date): void => {
     const currentDate = typeof selectedDate === 'string' ? new Date(selectedDate) : selectedDate
@@ -109,10 +118,9 @@ export const useBloodRequest = (): any => {
   const removeEmptyAndNullProperty = (object: Record<string, unknown>): Record<string, unknown> => {
     return Object.fromEntries(Object.entries(object).filter(([_, v]) => v != null && v !== ''))
   }
-
   const createBloodDonationRequest = async(): Promise<DonationResponse> => {
     const { bloodQuantity, ...rest } = bloodRequestData
-    const locationService = new LocationService()
+    const locationService = new LocationService('https://nominatim.openstreetmap.org')
     const coordinates = await locationService.getCoordinates(rest.location)
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
@@ -121,8 +129,8 @@ export const useBloodRequest = (): any => {
       donationDateTime: typeof rest.donationDateTime === 'string'
         ? new Date(rest.donationDateTime).toISOString()
         : rest.donationDateTime.toISOString(),
-      latitude: +coordinates.lat,
-      longitude: +coordinates.lon
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude
     }
     return await createDonation(finalData, fetchClient)
   }
