@@ -134,7 +134,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
 const createStyles = (theme: Theme) => StyleSheet.create({
   card: {
     backgroundColor: theme.colors.white,
-    padding: 15,
+    padding: 18,
     marginBottom: 10,
     position: 'relative',
     borderRadius: 8,
@@ -270,6 +270,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginTop: 4
   },
   buttonContainer: {
+    marginTop: 9,
     width: '100%'
   },
   buttonStyle: {

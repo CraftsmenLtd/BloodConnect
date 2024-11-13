@@ -95,7 +95,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 15
+    paddingVertical: 15,
+    paddingHorizontal: 12
   },
   profileImage: {
     width: 40,
