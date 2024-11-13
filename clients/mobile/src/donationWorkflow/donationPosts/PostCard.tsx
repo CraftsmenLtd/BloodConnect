@@ -19,18 +19,22 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
     setShowDropdown(false)
   }
 
-  const formatTime = (date: string) => {
-    return new Date(date).toLocaleTimeString([], {
+  const formatDateTime = (date: string) => {
+    const dateObj = new Date(date)
+
+    // Format time (HH:mm AM/PM)
+    const timeStr = dateObj.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true
     })
-  }
 
-  const formatDay = (date: string) => {
-    return new Date(date).toLocaleDateString([], {
-      weekday: 'long'
-    })
+    // Format date (DD MMM YYYY)
+    const day = dateObj.getDate()
+    const month = dateObj.toLocaleString('en-US', { month: 'short' })
+    const year = dateObj.getFullYear()
+
+    return `${timeStr}, ${day} ${month} ${year}`
   }
 
   return (
@@ -38,7 +42,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
       <View style={styles.cardHeader}>
         <View>
           <Text style={styles.userName}>{post.patientName}</Text>
-          <Text style={styles.postTime}>Posted on {new Date(post.donationDateTime).toLocaleString()}</Text>
+          <Text style={styles.postTime}>Posted on {formatDateTime(post.donationDateTime)}</Text>
         </View>
 
         <View style={styles.menuContainer}>
@@ -108,7 +112,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
                 <Ionicons name="time-outline" size={16} color="gray" />
                 <Text style={styles.donationInfoPlaceholder}>Time & Date</Text>
               </View>
-              <Text>{formatTime(post.donationDateTime)}, {formatDay(post.donationDateTime)}</Text>
+              <Text>{formatDateTime(post.donationDateTime)}</Text>
             </View>
           </View>
         </View>
@@ -164,7 +168,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   modalOverlay: {
     position: 'absolute',
-    top: -15, // Adjust based on card padding
+    top: -15,
     left: -15,
     right: -15,
     bottom: -15,
