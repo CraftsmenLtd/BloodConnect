@@ -92,7 +92,7 @@ export class LocationService {
     }
   }
 
-  async getLatLon(location: string): Promise<{ latitude: number; longitude: number } | null> {
+  async getLatLon(location: string): Promise<{ latitude: number; longitude: number }> {
     try {
       const response = await this.httpClient.get<GeocodeResponse>('/geocode/json',
         {
@@ -104,12 +104,11 @@ export class LocationService {
       if (response.results.length > 0) {
         const { lat, lng } = response.results[0].geometry.location
         return { latitude: lat, longitude: lng }
+      } else {
+        throw new Error(`Failed to retrieve coordinates for "${location}."`)
       }
-
-      return null
     } catch (error) {
-      console.error('Error fetching latitude and longitude:', error)
-      return null
+      throw new Error(`Failed to retrieve coordinates for "${location}."`)
     }
   }
 

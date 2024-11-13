@@ -10,7 +10,7 @@ import { addPersonalInfoHandler } from '../../services/userServices'
 import { LocationService } from '../../../LocationService/LocationService'
 import { formatErrorMessage, formatToTwoDecimalPlaces } from '../../../utility/formatte'
 
-const { OPENSTREET_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
 type PersonalInfoKeys = keyof PersonalInfo
 
@@ -101,12 +101,12 @@ export const useAddPersonalInfo = (): any => {
   }, [personalInfo, errors])
 
   async function formatLocations(locations: string[], city: string): Promise<LocationData[]> {
-    const locationService = new LocationService(OPENSTREET_MAP_API)
+    const locationService = new LocationService(GOOGLE_MAP_API)
 
     const formattedLocations = await Promise.all(
       locations.map(async(area) => {
         try {
-          const location = await locationService.getCoordinates(area)
+          const location = await locationService.getLatLon(area)
           if (location !== null) {
             const { latitude, longitude } = location
             return {

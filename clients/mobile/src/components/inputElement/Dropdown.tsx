@@ -20,9 +20,10 @@ interface DropdownComponentProps {
   isRequired: boolean;
   selectedValue: string;
   error?: string | null;
+  readonly?: boolean;
 }
 
-const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, selectedValue, placeholder, isRequired, onChange, error = '' }) => {
+const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, selectedValue, placeholder, isRequired, onChange, error = '', readonly = false }) => {
   const styles = createStyles(useTheme())
 
   const renderItem = (item: Option) => (
@@ -52,6 +53,7 @@ const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, sele
         value={selectedValue}
         onChange={(item: Option) => { onChange(name, item.value) }}
         renderItem={(item: Option) => renderItem(item)}
+        disable={readonly}
       />
       {error !== null && <Text style={styles.error}>{error}</Text>}
     </View>

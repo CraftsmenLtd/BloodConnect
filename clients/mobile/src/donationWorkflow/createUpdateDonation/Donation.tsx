@@ -86,6 +86,7 @@ const CreateBloodRequest = () => {
             isRequired={true}
             placeholder='Select city'
             options={districts}
+            readonly={isUpdating}
             name='city'
             selectedValue={bloodRequestData.city}
             onChange={handleInputChange}

@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
+import Constants from 'expo-constants'
 import { validateInput, validateRequired, ValidationRule, validatePhoneNumber, validateDateTime, validateDonationDateTime } from '../../utility/validator'
 import { initializeState } from '../../utility/stateUtils'
 import { LocationService } from '../../LocationService/LocationService'
@@ -8,6 +9,8 @@ import { SCREENS } from '../../setup/constant/screens'
 import { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
 import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatte'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
+
+const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
 export const DONATION_DATE_TIME_INPUT_NAME = 'donationDateTime'
 type CredentialKeys = keyof BloodRequestData
@@ -120,8 +123,8 @@ export const useBloodRequest = (): any => {
   }
   const createBloodDonationRequest = async(): Promise<DonationResponse> => {
     const { bloodQuantity, ...rest } = bloodRequestData
-    const locationService = new LocationService('https://nominatim.openstreetmap.org')
-    const coordinates = await locationService.getCoordinates(rest.location)
+    const locationService = new LocationService(GOOGLE_MAP_API)
+    const coordinates = await locationService.getLatLon(rest.location)
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
       contactNumber: formatPhoneNumber(rest.contactNumber),

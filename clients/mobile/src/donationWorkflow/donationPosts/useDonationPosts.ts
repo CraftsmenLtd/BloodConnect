@@ -82,7 +82,8 @@ export const useDonationPosts = (): any => {
       contactNumber: request.contactNumber ?? '',
       transportationInfo: request.transportationInfo ?? '',
       shortDescription: request.shortDescription ?? '',
-      createdAt: request.createdAt ?? ''
+      createdAt: request.createdAt ?? '',
+      city: request.city ?? ''
     }))
   }
 
