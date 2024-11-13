@@ -63,7 +63,6 @@ export const useLogin = (): any => {
 
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
-      setLoading(true)
       const isGoogleSignedIn = await googleLogin()
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
@@ -75,18 +74,14 @@ export const useLogin = (): any => {
         )
       } else {
         setSocialLoginError('Google login failed. Please try again.')
-        setLoading(false)
       }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
-    } finally {
-      setLoading(false)
     }
   }
 
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
-      setLoading(true)
       const isFacebookSignedIn = await facebookLogin()
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
@@ -98,7 +93,6 @@ export const useLogin = (): any => {
         )
       } else {
         setSocialLoginError('Facebook login failed. Please try again.')
-        setLoading(false)
       }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Facebook.')

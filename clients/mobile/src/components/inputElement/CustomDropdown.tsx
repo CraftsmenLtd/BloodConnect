@@ -130,7 +130,7 @@ const createStyles = (theme: Theme, readOnly: boolean): ReturnType<typeof StyleS
     elevation: 5
   },
   option: {
-    padding: 16,
+    padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.extraLightGray
   },

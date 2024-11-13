@@ -1,4 +1,4 @@
-import { confirmSignUp, signUp, signIn, signInWithRedirect, signOut, decodeJWT, AuthSession, fetchAuthSession, resetPassword, confirmResetPassword, ResetPasswordOutput } from 'aws-amplify/auth'
+import { confirmSignUp, signUp, signIn, signInWithRedirect, signOut, decodeJWT, AuthSession, fetchAuthSession, resetPassword, confirmResetPassword, ResetPasswordOutput, resendSignUpCode } from 'aws-amplify/auth'
 import { JwtPayload } from '@aws-amplify/core/internals/utils'
 import StorageService from '../../utility/storageService'
 import { handleAuthError } from './authErrorHandler'
@@ -27,6 +27,10 @@ export const loadTokens = async(): Promise<{ storedAccessToken: string | null; s
   try {
     const storedAccessToken = await StorageService.getItem<string>(TOKEN.ACCESS_TOKEN)
     const storedIdToken = await StorageService.getItem<string>(TOKEN.ID_TOKEN)
+    if (storedIdToken === null) {
+      const session = await fetchSession()
+      return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
+    }
 
     const payload = decodeAccessToken(storedIdToken)
 
@@ -171,6 +175,16 @@ export const confirmResetPasswordHandler = async(email: string, otp: string, pas
   try {
     await confirmResetPassword({ username: email, confirmationCode: otp, newPassword: password })
     return true
+  } catch (error) {
+    const errorMessage = handleConfirmPasswordError(error)
+    throw new Error(errorMessage)
+  }
+}
+
+export const resendSignUpOtp = async(email: string): Promise<boolean> => {
+  try {
+    const response = await resendSignUpCode({ username: email })
+    return response.destination !== ''
   } catch (error) {
     const errorMessage = handleConfirmPasswordError(error)
     throw new Error(errorMessage)

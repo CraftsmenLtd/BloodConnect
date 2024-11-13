@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Constants from 'expo-constants'
 import { Text, StyleSheet, ScrollView, TouchableWithoutFeedback, View } from 'react-native'
 import RadioButton from '../../components/inputElement/Radio'
 import { TextArea } from '../../components/inputElement/TextArea'
@@ -10,6 +11,13 @@ import { bloodGroupOptions, bloodBagOptions, transportationOptions } from './don
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
+import SearchMultiSelect from '../../components/inputElement/SearchMultiSelect'
+import { LocationService } from '../../LocationService/LocationService'
+import { districts } from '../../userWorkflow/personalInfo/options'
+import Dropdown from '../../components/inputElement/Dropdown'
+const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+
+const locationService = new LocationService(GOOGLE_MAP_API)
 
 const CreateBloodRequest = () => {
   const styles = createStyles(useTheme())
@@ -17,8 +25,6 @@ const CreateBloodRequest = () => {
   const {
     isUpdating,
     errors,
-    showDatePicker,
-    setShowDatePicker,
     isButtonDisabled,
     bloodRequestData,
     handleInputChange,
@@ -67,24 +73,37 @@ const CreateBloodRequest = () => {
             isRequired={true}
           />
           <DateTimePickerComponent
+            name={DONATION_DATE_TIME_INPUT_NAME}
             label="Time and Date"
             value={new Date(bloodRequestData.donationDateTime)}
             onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}
-            showDatePicker={showDatePicker}
-            setShowDatePicker={setShowDatePicker}
             error={errors.donationDateTime}
             isRequired={true}
+            isOnlyDate={false}
           />
-          <Input
+          <Dropdown
+            label='Select city'
+            isRequired={true}
+            placeholder='Select city'
+            options={districts}
+            readonly={isUpdating}
+            name='city'
+            selectedValue={bloodRequestData.city}
+            onChange={handleInputChange}
+            error={errors.city}
+          />
+          <SearchMultiSelect
             name="location"
             label="Location"
-            value={bloodRequestData.location}
-            onChangeText={handleInputChange}
-            placeholder="Search Location"
-            keyboardType='default'
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            onChange={handleInputChange}
+            initialValue={bloodRequestData.location}
+            editable={isUpdating !== true}
             error={errors.location}
+            multiSelect={false}
             isRequired={true}
-            readOnly={isUpdating}
+            fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
           />
           <Input
             name="contactNumber"
@@ -127,7 +146,7 @@ const CreateBloodRequest = () => {
             isVisible={isVisible}
             setIsVisible={setIsVisible}
           />
-          {errorMessage !== '' && <Text style={{ color: 'red' }}>{errorMessage}</Text>}
+          {errorMessage !== '' && <Text style={{ color: 'red', textAlign: 'center', marginBottom: 12 }}>{errorMessage}</Text>}
           <Button text={isUpdating === true ? 'Update Post' : 'Post Now'} onPress={handlePostNow} disabled={isButtonDisabled} loading={loading} />
         </ScrollView>
       </View>

@@ -9,6 +9,7 @@ DonationDTO,
 | 'contactNumber'
 | 'transportationInfo'
 | 'shortDescription'
+| 'city'
 > & {
   requestPostId: string;
   bloodQuantity: string;
