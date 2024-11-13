@@ -1,34 +1,50 @@
 import { useState } from 'react'
-import { useNavigation, CommonActions } from '@react-navigation/native'
-import { SCREENS } from '../../../setup/constant/screens'
-// import { respondToRequest } from '../../services/bloodService'
+import { useFetchClient } from '../../../../setup/clients/useFetchClient'
+import { useNavigation, NavigationProp } from '@react-navigation/native'
 
-export const useResponseDonationRequest = () => {
-  const [donorResponse, setDonorResponse] = useState({})
-  const [responseError, setResponseError] = useState('')
-  const navigation = useNavigation()
-
-  const handleAccept = async() => {
-    
-  }
-
-  const handleIgnore = () => {
-    setResponseError('')
-    navigation.goBack()
-  }
-
-  return {
-    donorResponse,
-    handleAccept,
-    handleIgnore,
-    responseError
-  }
+type AcceptRequestParams = {
+  requestPostId: string;
+  seekerId: string;
+  createdAt: string;
+  acceptanceTime: string;
 }
 
-// on accept: put data on BLOOD_REQ partition
-// - request post id
-// - seeker id
-// - created at
-// - acceptance time
+type useResponseDonationRequestReturnType = {
+  isLoading: boolean;
+  error: string | null;
+  acceptRequest: (params: AcceptRequestParams) => Promise<void>;
+}
 
-// on ignore: change notification status
+export const useResponseDonationRequest = (): useResponseDonationRequestReturnType => {
+  const navigation = useNavigation<NavigationProp<any>>()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const fetchClient = useFetchClient()
+
+  const acceptRequest = async(params: AcceptRequestParams) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetchClient.post('/donations/accept', {
+        requestPostId: params.requestPostId,
+        seekerId: params.seekerId,
+        createdAt: params.createdAt,
+        acceptanceTime: params.acceptanceTime
+      })
+
+      if (response.status !== 200) {
+        throw new Error(`Error: ${response}`)
+      } else {
+        navigation.navigate('Home')
+      }
+    } catch (err: any) {
+      console.error('Failed to accept request:', err)
+      setError(err.message || 'An error occurred')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { isLoading, error, acceptRequest }
+}
