@@ -1,4 +1,4 @@
-import { UrgencyLevel } from '@commons/dto/DonationDTO'
+import { UrgencyType } from '@commons/dto/DonationDTO'
 import calculateDonorsToNotify, {
   calculateRemainingBagsNeeded,
   calculateTotalDonorsToNotify,
@@ -55,7 +55,7 @@ describe('calculateDonorsToNotify', () => {
     const input = {
       bloodQuantity: 10,
       donorsFoundCount: 4,
-      urgencyLevel: 'urgent' as UrgencyLevel,
+      urgencyLevel: 'urgent' as UrgencyType,
       donationDateTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       retryCount: 1
     }
@@ -72,7 +72,7 @@ describe('calculateDonorsToNotify', () => {
     const input = {
       bloodQuantity: 10,
       donorsFoundCount: 10,
-      urgencyLevel: 'regular' as UrgencyLevel,
+      urgencyLevel: 'regular' as UrgencyType,
       donationDateTime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
       retryCount: 1
     }

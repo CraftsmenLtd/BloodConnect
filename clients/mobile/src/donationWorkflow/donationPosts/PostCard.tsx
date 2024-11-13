@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Pressable } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
@@ -9,11 +9,29 @@ import { DonationData } from './DonationPosts'
 interface PostCardProps {
   post: DonationData;
   updateHandler: (donationData: DonationData) => void;
-};
+}
 
 export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
   const styles = createStyles(useTheme())
   const [showDropdown, setShowDropdown] = useState(false)
+
+  const handleCloseDropdown = () => {
+    setShowDropdown(false)
+  }
+
+  const formatTime = (date: string) => {
+    return new Date(date).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
+  }
+
+  const formatDay = (date: string) => {
+    return new Date(date).toLocaleDateString([], {
+      weekday: 'long'
+    })
+  }
 
   return (
     <View style={styles.card}>
@@ -23,50 +41,74 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
           <Text style={styles.postTime}>Posted on {new Date(post.donationDateTime).toLocaleString()}</Text>
         </View>
 
-        <TouchableOpacity onPress={() => { setShowDropdown(!showDropdown) }}>
-          <Ionicons name="ellipsis-vertical" size={20} color="gray" />
-        </TouchableOpacity>
+        <View style={styles.menuContainer}>
+          <TouchableOpacity onPress={() => { setShowDropdown(true) }}>
+            <Ionicons name="ellipsis-vertical" size={20} color="gray" />
+          </TouchableOpacity>
 
-        {showDropdown && (
-          <View style={styles.dropdown}>
-            <TouchableOpacity onPress={() => { updateHandler(post) }}>
-              <Text style={styles.dropdownText}>Update</Text>
-            </TouchableOpacity>
-            <TouchableOpacity >
-              <Text style={styles.dropdownText}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+          {showDropdown && (
+            <View style={styles.dropdownContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  updateHandler(post)
+                  handleCloseDropdown()
+                }}
+                style={styles.dropdownItem}
+              >
+                <Text style={styles.dropdownText}>Update</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleCloseDropdown}
+                style={styles.dropdownItem}
+              >
+                <Text style={styles.dropdownText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {showDropdown && (
+            <Pressable
+              style={styles.modalOverlay}
+              onPress={handleCloseDropdown}
+            />
+          )}
+        </View>
       </View>
+
       <View style={styles.bloodInfoWrapper}>
         <View style={styles.bloodInfo}>
           <View style={styles.bloodRow}>
             <Ionicons name="water" size={20} color="red" />
             <View style={styles.bloodText}>
-              <Text>Looking for</Text>
-              <Text>{post.bloodQuantity} {post.neededBloodGroup} blood</Text>
+              <Text style={styles.lookingForText}>Looking for</Text>
+              <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.neededBloodGroup} blood</Text>
             </View>
           </View>
-          {post.urgencyLevel === 'urgent' && <Text style={styles.urgentText}>URGENT</Text>}
+          {post.urgencyLevel === 'urgent' && (
+            <View style={styles.urgentBadge}>
+              <Ionicons name="warning-outline" size={14} color="#212121" />
+              <Text style={styles.urgentText}>URGENT</Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.locationTimeContainer}>
           <View style={styles.locationTimeWrapper}>
-            <View style={{ paddingVertical: 8 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.infoSection}>
+              <View style={styles.infoHeader}>
                 <Ionicons name="location-outline" size={16} color="gray" />
                 <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
               </View>
               <Text>{post.location}</Text>
             </View>
           </View>
-          <View style={styles.locationTimeWrapper}>
-            <View style={{ paddingVertical: 8 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="calendar-outline" size={16} color="gray" />
+          <View style={[styles.locationTimeWrapper, styles.noBorder]}>
+            <View style={styles.infoSection}>
+              <View style={styles.infoHeader}>
+                <Ionicons name="time-outline" size={16} color="gray" />
                 <Text style={styles.donationInfoPlaceholder}>Time & Date</Text>
               </View>
-              <Text>{new Date(post.donationDateTime).toLocaleTimeString()}</Text>
+              <Text>{formatTime(post.donationDateTime)}, {formatDay(post.donationDateTime)}</Text>
             </View>
           </View>
         </View>
@@ -76,18 +118,31 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
           <Text style={styles.description}>{post.shortDescription}</Text>
         </View>
       </View>
+
       <View style={styles.buttonContainer}>
-        <Button text='View details' buttonStyle={styles.buttonStyle} textStyle={styles.textStyle} onPress={() => { console.log('Not Implemented') }} />
+        <Button
+          text='View details'
+          buttonStyle={styles.buttonStyle}
+          textStyle={styles.textStyle}
+          onPress={() => { console.log('Not Implemented') }}
+        />
       </View>
     </View>
   )
 }
-const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
+
+const createStyles = (theme: Theme) => StyleSheet.create({
   card: {
     backgroundColor: theme.colors.white,
     padding: 15,
     marginBottom: 10,
-    position: 'relative'
+    position: 'relative',
+    borderRadius: 8,
+    elevation: 2,
+    shadowColor: theme.colors.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2
   },
   cardHeader: {
     flexDirection: 'row',
@@ -100,38 +155,43 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: 16
   },
   postTime: {
-    color: 'gray'
+    color: 'gray',
+    fontSize: 12
   },
-  dropdown: {
+  menuContainer: {
+    position: 'relative',
+    zIndex: 1
+  },
+  modalOverlay: {
     position: 'absolute',
-    top: 30,
+    top: -15, // Adjust based on card padding
+    left: -15,
+    right: -15,
+    bottom: -15,
+    backgroundColor: 'transparent'
+  },
+  dropdownContainer: {
+    position: 'absolute',
+    top: 25,
     right: 0,
     backgroundColor: 'white',
     borderRadius: 8,
-    padding: 10,
+    padding: 8,
     shadowColor: theme.colors.black,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
     elevation: 5,
-    zIndex: 1
+    minWidth: 120,
+    zIndex: 2
+  },
+  dropdownItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 12
   },
   dropdownText: {
-    paddingVertical: 5,
-    color: 'black'
-  },
-  locationTimeContainer: {
-    borderBottomColor: theme.colors.extraLightGray,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  locationTimeWrapper: {
-    borderRightColor: theme.colors.extraLightGray,
-    borderRightWidth: 1,
-    width: '50%',
-    paddingHorizontal: 8
+    color: 'black',
+    fontSize: 14
   },
   bloodInfoWrapper: {
     borderRadius: 5,
@@ -151,22 +211,63 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     alignItems: 'center'
   },
-  descriptionContainer: {
-    paddingVertical: 8,
-    paddingHorizontal: 8
+  bloodText: {
+    marginLeft: 8
+  },
+  lookingForText: {
+    fontSize: 13,
+    color: theme.colors.textSecondary
+  },
+  bloodAmount: {
+    fontSize: 15,
+    fontWeight: '500'
+  },
+  urgentBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFD64D',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12
+  },
+  urgentText: {
+    color: '#212121',
+    fontWeight: '600',
+    fontSize: 12,
+    marginLeft: 4
+  },
+  locationTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'stretch'
+  },
+  locationTimeWrapper: {
+    width: '50%',
+    borderRightColor: theme.colors.extraLightGray,
+    borderRightWidth: 1
+  },
+  noBorder: {
+    borderRightWidth: 0
+  },
+  infoSection: {
+    padding: 8
+  },
+  infoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4
   },
   donationInfoPlaceholder: {
     fontSize: 12,
-    marginBottom: 4,
-    color: theme.colors.grey
+    color: theme.colors.grey,
+    marginLeft: 4
   },
-  bloodText: {
-    marginLeft: 5,
-    fontSize: 15
+  descriptionContainer: {
+    padding: 8,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.extraLightGray
   },
-  urgentText: {
-    color: 'red',
-    fontWeight: 'bold'
+  description: {
+    marginTop: 4
   },
   buttonContainer: {
     width: '100%'
@@ -178,3 +279,5 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: theme.colors.textPrimary
   }
 })
+
+export default PostCard

@@ -55,16 +55,19 @@ module "cognito" {
 }
 
 module "donor_search" {
-  source             = "./donor_search"
-  environment        = var.environment
-  dynamodb_table_arn = module.database.dynamodb_table_arn
+  source                    = "./donor_search"
+  environment               = var.environment
+  dynamodb_table_arn        = module.database.dynamodb_table_arn
+  api_gateway_id            = aws_api_gateway_rest_api.rest_api.id
+  api_gateway_execution_arn = aws_api_gateway_rest_api.rest_api.execution_arn
 }
 
 module "eventbridge" {
-  source                    = "./eventbridge"
-  environment               = var.environment
-  dynamodb_table_stream_arn = module.database.dynamodb_table_stream_arn
-  donor_search_queue_arn    = module.donor_search.donor_search_queue_arn
+  source                            = "./eventbridge"
+  environment                       = var.environment
+  dynamodb_table_stream_arn         = module.database.dynamodb_table_stream_arn
+  donor_search_queue_arn            = module.donor_search.donor_search_queue_arn
+  donation_status_manager_queue_arn = module.donor_search.donation_status_manager_queue_arn
 }
 
 module "notification" {

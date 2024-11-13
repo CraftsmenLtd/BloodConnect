@@ -4,7 +4,8 @@ locals {
       name     = "donor-request-router"
       handler  = "donorRequestRouter.default"
       zip_path = "donorRequestRouter.zip"
-      statement = concat(local.policies.common_policies,
+      statement = concat(
+        local.policies.common_policies,
         local.policies.dynamodb_policy,
         [
           {
@@ -15,11 +16,25 @@ locals {
             resources = [aws_sfn_state_machine.donor_search_state_machine.arn]
           }
         ],
-      local.policies.sqs_policy)
+        local.policies.sqs_policy
+      )
       env_variables = {
         DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
         STEP_FUNCTION_ARN   = aws_sfn_state_machine.donor_search_state_machine.arn
         MAX_RETRY_COUNT     = var.donor_search_max_retry_count
+      }
+    },
+    donation-status-manager = {
+      name     = "donation-status-manager"
+      handler  = "donationStatusManager.default"
+      zip_path = "donationStatusManager.zip"
+      statement = concat(
+        local.policies.common_policies,
+        local.policies.dynamodb_policy,
+        local.policies.sqs_policy
+      )
+      env_variables = {
+        DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
       }
     }
   }
