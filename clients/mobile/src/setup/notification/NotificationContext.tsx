@@ -12,6 +12,9 @@ type NotificationData = {
   contactNumber: string;
   transportationInfo: string;
   shortDescription: string;
+  requestPostId: string;
+  seekerId: string;
+  createdAt: string;
 }
 
 type NotificationContextType = {
