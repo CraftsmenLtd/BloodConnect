@@ -8,6 +8,7 @@ import Navigator from './src/setup/navigation/Navigator'
 import { Amplify } from 'aws-amplify'
 import { awsCognitoConfiguration } from './src/setup/config/cognito'
 import { AuthProvider } from './src/authentication/context/AuthContext'
+import { NotificationProvider } from './src/setup/notification/NotificationContext'
 
 Amplify.configure(awsCognitoConfiguration)
 
@@ -32,13 +33,15 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
+    <NavigationContainer>
       <AuthProvider>
-        <ThemeProvider>
-          <NavigationContainer>
-            <Navigator />
-          </NavigationContainer>
-        </ThemeProvider>
+        <NotificationProvider>
+          <ThemeProvider>
+              <Navigator />
+          </ThemeProvider>
+        </NotificationProvider>
       </AuthProvider>
+    </NavigationContainer>
     </SafeAreaProvider>
   )
 }

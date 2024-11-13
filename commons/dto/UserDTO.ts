@@ -41,3 +41,8 @@ export interface UserDetailsDTO extends UserDTO {
   deviceToken?: string;
   snsEndpointArn?: string;
 }
+
+export interface StoreNotificationEndPoint extends UserDTO {
+  endpointArn: string;
+  updatedAt?: string;
+}

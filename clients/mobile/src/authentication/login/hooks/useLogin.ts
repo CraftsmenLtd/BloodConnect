@@ -6,6 +6,8 @@ import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationT
 import { loginUser, googleLogin, facebookLogin } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
+import { registerForPushNotificationsAsync, saveDeviceTokenToSNS } from '../../../setup/notification/Notification'
+import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -20,6 +22,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useLogin = (): any => {
+  const fetchClient = useFetchClient()
   const auth = useAuth()
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
@@ -38,12 +41,19 @@ export const useLogin = (): any => {
     }))
   }
 
+  const registerUserDeviceForNotification = (): void => {
+    registerForPushNotificationsAsync().then(token => {
+      void saveDeviceTokenToSNS(token as string, fetchClient)
+    }).catch(error => { console.error(error) })
+  }
+
   const handleLogin = async(): Promise<void> => {
     try {
       setLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
         auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification()
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -64,6 +74,7 @@ export const useLogin = (): any => {
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
       const isGoogleSignedIn = await googleLogin()
+      registerUserDeviceForNotification()
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
         navigation.dispatch(
@@ -83,6 +94,7 @@ export const useLogin = (): any => {
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
       const isFacebookSignedIn = await facebookLogin()
+      registerUserDeviceForNotification()
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
         navigation.dispatch(
