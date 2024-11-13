@@ -6,6 +6,7 @@ import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigati
 import { SCREENS } from '../../../setup/constant/screens'
 import { googleLogin, facebookLogin } from '../../services/authService'
 import { formatPhoneNumber } from '../../../utility/formatte'
+import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -57,6 +58,7 @@ export const useRegister = (): any => {
   }, [registerCredential, errors])
 
   const handleRegister = async(): Promise<void> => {
+    registerUserDeviceForNotification()
     navigation.navigate(SCREENS.SET_PASSWORD, {
       routeParams: {
         ...registerCredential,
@@ -70,6 +72,7 @@ export const useRegister = (): any => {
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
       await googleLogin()
+      registerUserDeviceForNotification()
       navigation.navigate(SCREENS.PROFILE)
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
@@ -79,6 +82,7 @@ export const useRegister = (): any => {
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
       await facebookLogin()
+      registerUserDeviceForNotification()
       navigation.navigate(SCREENS.PROFILE)
     } catch (error) {
       setSocialLoginError('Failed to sign in with Facebook.')

@@ -6,8 +6,7 @@ import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationT
 import { loginUser, googleLogin, facebookLogin } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
-import { registerForPushNotificationsAsync, saveDeviceTokenToSNS } from '../../../setup/notification/Notification'
-import { useFetchClient } from '../../../setup/clients/useFetchClient'
+import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -22,7 +21,6 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useLogin = (): any => {
-  const fetchClient = useFetchClient()
   const auth = useAuth()
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
@@ -39,12 +37,6 @@ export const useLogin = (): any => {
       ...prevState,
       [name]: value
     }))
-  }
-
-  const registerUserDeviceForNotification = (): void => {
-    registerForPushNotificationsAsync().then(token => {
-      void saveDeviceTokenToSNS(token as string, fetchClient)
-    }).catch(error => { console.error(error) })
   }
 
   const handleLogin = async(): Promise<void> => {
