@@ -45,7 +45,8 @@ const DonationPosts = ({ navigation }: DonationPostsProps) => {
       donationDateTime: request.donationDateTime ?? new Date().toISOString(),
       contactNumber: request.contactNumber ?? '',
       transportationInfo: request.transportationInfo ?? '',
-      shortDescription: request.shortDescription ?? ''
+      shortDescription: request.shortDescription ?? '',
+      createdAt: request.createdAt ?? new Date().toISOString()
     }))
   }
 
