@@ -22,14 +22,12 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
   const formatDateTime = (date: string) => {
     const dateObj = new Date(date)
 
-    // Format time (HH:mm AM/PM)
     const timeStr = dateObj.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true
     })
 
-    // Format date (DD MMM YYYY)
     const day = dateObj.getDate()
     const month = dateObj.toLocaleString('en-US', { month: 'short' })
     const year = dateObj.getFullYear()
