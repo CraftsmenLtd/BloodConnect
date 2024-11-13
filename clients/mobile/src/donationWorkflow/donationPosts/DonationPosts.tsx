@@ -72,7 +72,7 @@ const DonationPosts = ({ navigation }: DonationPostsProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={{ uri: 'https://via.placeholder.com/40' }} style={styles.profileImage} />
+        <Image source={{ uri: 'http://via.placeholder.com/40' }} style={styles.profileImage} />
         <TouchableOpacity style={styles.createPostButton} onPress={createPost}>
           <Text style={styles.createPostText}>Create Post</Text>
         </TouchableOpacity>

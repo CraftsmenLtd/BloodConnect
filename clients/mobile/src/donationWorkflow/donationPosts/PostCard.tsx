@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Pressable } from 'react-native'
+import React, { useState, useCallback, useRef } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
@@ -11,13 +11,41 @@ interface PostCardProps {
   updateHandler: (donationData: DonationData) => void;
 }
 
+interface DropdownPosition {
+  top: number;
+  right: number;
+}
+
 export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
   const styles = createStyles(useTheme())
   const [showDropdown, setShowDropdown] = useState(false)
+  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
+  const iconRef = useRef<View>(null)
+  const { height: windowHeight } = Dimensions.get('window')
 
-  const handleCloseDropdown = () => {
+  const handleToggleDropdown = useCallback(() => {
+    if (!showDropdown && (iconRef.current != null)) {
+      iconRef.current.measureInWindow((_, pageY, __, height) => {
+        const top = pageY + height
+        // Ensure dropdown doesn't go below screen
+        const adjustedTop = Math.min(top, windowHeight - 100)
+        setDropdownPosition({
+          top: adjustedTop,
+          right: 20
+        })
+      })
+    }
+    setShowDropdown(prev => !prev)
+  }, [showDropdown, windowHeight])
+
+  const handleCloseDropdown = useCallback(() => {
     setShowDropdown(false)
-  }
+  }, [])
+
+  const handleUpdate = useCallback(() => {
+    updateHandler(post)
+    handleCloseDropdown()
+  }, [post, updateHandler])
 
   const formatDateTime = (date: string) => {
     const dateObj = new Date(date)
@@ -35,6 +63,12 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
     return `${timeStr}, ${day} ${month} ${year}`
   }
 
+  const getDropdownStyle = useCallback((): ViewStyle => ({
+    ...styles.dropdownContainer,
+    top: dropdownPosition.top,
+    right: dropdownPosition.right
+  }), [dropdownPosition])
+
   return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -44,36 +78,42 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
         </View>
 
         <View style={styles.menuContainer}>
-          <TouchableOpacity onPress={() => { setShowDropdown(true) }}>
-            <Ionicons name="ellipsis-vertical" size={20} color="gray" />
-          </TouchableOpacity>
+          <View ref={iconRef} collapsable={false}>
+            <TouchableOpacity
+              onPress={handleToggleDropdown}
+              style={styles.iconContainer}
+            >
+              <Ionicons name="ellipsis-vertical" size={20} color="gray" />
+            </TouchableOpacity>
+          </View>
 
-          {showDropdown && (
-            <View style={styles.dropdownContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  updateHandler(post)
-                  handleCloseDropdown()
-                }}
-                style={styles.dropdownItem}
-              >
-                <Text style={styles.dropdownText}>Update</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleCloseDropdown}
-                style={styles.dropdownItem}
-              >
-                <Text style={styles.dropdownText}>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {showDropdown && (
-            <Pressable
-              style={styles.modalOverlay}
-              onPress={handleCloseDropdown}
-            />
-          )}
+          <Modal
+            visible={showDropdown}
+            transparent={true}
+            animationType="none"
+            onRequestClose={handleCloseDropdown}
+          >
+            <TouchableWithoutFeedback onPress={handleCloseDropdown}>
+              <View style={styles.modalOverlay}>
+                <TouchableWithoutFeedback>
+                  <View style={getDropdownStyle()}>
+                    <TouchableOpacity
+                      onPress={handleUpdate}
+                      style={styles.dropdownItem}
+                    >
+                      <Text style={styles.dropdownText}>Update</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleCloseDropdown}
+                      style={styles.dropdownItem}
+                    >
+                      <Text style={styles.dropdownText}>Delete</Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
         </View>
       </View>
 
@@ -161,21 +201,18 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 12
   },
   menuContainer: {
-    position: 'relative',
-    zIndex: 1
+    position: 'relative'
+  },
+  iconContainer: {
+    padding: 8,
+    marginRight: -8
   },
   modalOverlay: {
-    position: 'absolute',
-    top: -15,
-    left: -15,
-    right: -15,
-    bottom: -15,
+    flex: 1,
     backgroundColor: 'transparent'
   },
   dropdownContainer: {
     position: 'absolute',
-    top: 25,
-    right: 0,
     backgroundColor: 'white',
     borderRadius: 8,
     padding: 8,
@@ -184,8 +221,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    minWidth: 120,
-    zIndex: 2
+    minWidth: 120
   },
   dropdownItem: {
     paddingVertical: 8,
