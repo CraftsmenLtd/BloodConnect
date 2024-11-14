@@ -41,6 +41,3 @@ jobs:
       github_environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
       deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
       app_version: 0.0.1
-      eas_project_id: ${{ secrets.EAS_PROJECT_ID }}
-      expo_token: ${{ secrets.EXPO_TOKEN }}
-      location_service_email: ${{ secrets.LOCATION_SERVICE_EMAIL }}

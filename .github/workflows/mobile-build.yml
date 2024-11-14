@@ -19,18 +19,6 @@ on:
         description: "Mobile app version"
         required: true
         type: string
-      eas_project_id:
-        description: "EAS project ID"
-        required: true
-        type: string
-      expo_token:
-        description: "Expo service token"
-        required: true
-        type: string
-      location_service_email:
-        description: "Geolocation service email"
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -51,9 +39,9 @@ jobs:
       RUNNER_IMAGE_NAME: ${{ inputs.docker_image }}
       DEPLOYMENT_ENVIRONMENT: ${{ inputs.deployment_environment }}
       MOBILE_APP_VERSION: ${{ inputs.app_version }}
-      EAS_PROJECT_ID: ${{ inputs.eas_project_id }}
-      EXPO_TOKEN: ${{ inputs.expo_token }}
-      LOCATION_SERVICE_EMAIL: ${{ inputs.location_service_email }}
+      EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      LOCATION_SERVICE_EMAIL: ${{ secrets.LOCATION_SERVICE_EMAIL }}
     steps:
       - name: 📥 Checkout Branch
         uses: actions/checkout@v4
