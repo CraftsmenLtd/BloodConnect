@@ -71,7 +71,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderColor: theme.colors.extraLightGray,
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     backgroundColor: theme.colors.white
   },
   // dropdownReadonly: {
