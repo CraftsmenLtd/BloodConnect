@@ -32,8 +32,7 @@ jobs:
 
   build-mobile-app:
     name: Build Mobile Application
-    secrets:
-      inherit
+    secrets: inherit
     needs: [ setup-environment, build-push-docker-image ]
     uses: ./.github/workflows/mobile-build.yml
     with:
