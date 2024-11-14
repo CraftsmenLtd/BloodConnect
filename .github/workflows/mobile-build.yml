@@ -27,26 +27,22 @@ jobs:
     needs: [build-push-docker-image]
     runs-on: ${{ vars.RUNNER_OS }}
     env:
-      RUNNER_IMAGE_NAME: ${{ inputs.runner_image_name }}
+      RUNNER_IMAGE_NAME: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       MOBILE_APP_VERSION: 1.0.0
       EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       LOCATION_SERVICE_EMAIL: ${{ secrets.LOCATION_SERVICE_EMAIL }}
-
     steps:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
-
       - name: 🔐 Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: 📦 Install Node Modules
         run: make run-command-install-node-packages
-
       - name: Generate env file
         run: make run-command-generate-env-file
       - name: Build App
