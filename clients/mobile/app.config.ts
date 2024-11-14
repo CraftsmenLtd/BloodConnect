@@ -37,7 +37,7 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     extra: {
       ...ENV_VARS[ENV],
       eas: {
-        projectId: ''
+        projectId: ENV_VARS[ENV].EAS_PROJECT_ID ?? process.env.EAS_PROJECT_ID
       }
     }
   }

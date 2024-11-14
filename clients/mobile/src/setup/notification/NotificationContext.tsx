@@ -40,7 +40,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         setNotificationData(data)
       }
 
-      navigation.navigate('BloodRequestPreview' as never)
+      // navigation.navigate('BloodRequestPreview' as never)
     })
 
     return () => {
