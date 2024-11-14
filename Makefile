@@ -193,5 +193,4 @@ generate-env-file:
 	echo "EAS_PROJECT_ID=${EAS_PROJECT_ID}" >> .env
 
 build-mobile:
-	eas build:configure
-	eas build --profile development --platform android
+	eas build --profile preview --platform android
