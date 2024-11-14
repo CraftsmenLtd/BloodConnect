@@ -6,8 +6,10 @@ import { submitOtp, loginUser, resetPasswordHandler, resendSignUpOtp } from '../
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
+import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
 export const useOtp = (): any => {
+  const fetchClient = useFetchClient()
   const auth = useAuth()
   const navigation = useNavigation<OtpScreenNavigationProp>()
   const route = useRoute<OtpScreenRouteProp>()
@@ -115,7 +117,7 @@ export const useOtp = (): any => {
     try {
       if (fromScreen === SCREENS.SET_PASSWORD) {
         await handleRegister()
-        registerUserDeviceForNotification()
+        registerUserDeviceForNotification(fetchClient)
       } else {
         navigation.navigate(SCREENS.SET_PASSWORD, { routeParams: { email, otp: otp.join('') }, fromScreen: SCREENS.OTP })
       }

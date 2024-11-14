@@ -69,9 +69,9 @@ export const useLogin = (): any => {
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
       const isGoogleSignedIn = await googleLogin()
-      registerUserDeviceForNotification(fetchClient)
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -89,9 +89,9 @@ export const useLogin = (): any => {
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
       const isFacebookSignedIn = await facebookLogin()
-      registerUserDeviceForNotification(fetchClient)
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
