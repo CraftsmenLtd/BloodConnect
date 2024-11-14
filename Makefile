@@ -20,7 +20,11 @@ DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
             -e AWS_REGION \
             -e TF_BACKEND_BUCKET_NAME \
             -e TF_BACKEND_BUCKET_REGION \
-            -e TF_BACKEND_BUCKET_KEY $(TF_VARS)
+            -e TF_BACKEND_BUCKET_KEY $(TF_VARS) \
+            -e MOBILE_APP_VERSION \
+            -e EAS_PROJECT_ID \
+            -e EXPO_TOKEN \
+            -e LOCATION_SERVICE_EMAIL
 
 # Terraform Backend Configuration
 TF_BACKEND_CONFIG=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" \
@@ -172,3 +176,22 @@ start-mobile:
 	docker run --rm -t --name $(DOCKER_MOBILE_CONTAINER_NAME) --network host -p 8081:8081 \
 			$(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) \
 			$(RUNNER_IMAGE_NAME) npm run start --prefix clients/mobile
+
+generate-env-file:
+	USER_POOL_ID=$$(aws cognito-idp list-user-pools --max-results 10 --query "UserPools[?starts_with(Name, '$(DEPLOYMENT_ENVIRONMENT)')].Id" --output text --region $(AWS_REGION)); \
+    COGNITO_DOMAIN=$$(aws cognito-idp describe-user-pool --user-pool-id $$USER_POOL_ID --query "UserPool.Domain" --output text --region $(AWS_REGION)); \
+    APP_CLIENT_ID=$$(aws cognito-idp list-user-pool-clients --user-pool-id $$USER_POOL_ID --query "UserPoolClients[0].ClientId" --output text --region $(AWS_REGION) | head -n 1); \
+	API_GW_DOMAIN=$$(aws apigateway get-domain-names --query "items[0].domainName" --output text --region $(AWS_REGION)); \
+	touch .env; \
+	echo "APP_NAME=net.bloodconnect.app" > .env; \
+	echo "APP_VERSION=${MOBILE_APP_VERSION}" >> .env; \
+	echo "LOCATION_SERVICE_EMAIL=${LOCATION_SERVICE_EMAIL}" >> .env; \
+	echo "API_BASE_URL=$$API_GW_DOMAIN/api" >> .env; \
+	echo "AWS_USER_POOL_ID=$$USER_POOL_ID" >> .env; \
+	echo "AWS_USER_POOL_CLIENT_ID=$$APP_CLIENT_ID" >> .env; \
+	echo "AWS_COGNITO_DOMAIN=$$COGNITO_DOMAIN" >> .env; \
+	echo "EAS_PROJECT_ID=${EAS_PROJECT_ID}" >> .env
+
+build-mobile:
+	eas build:configure
+	eas build --profile development --platform android

@@ -41,5 +41,5 @@ RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /
 # Install Nodejs and Docker
 RUN apt update && apt install -y nodejs --no-install-recommends
 
-# Install API tools
-RUN npm install -g @stoplight/spectral-cli @redocly/cli@latest
+# Install node modules
+RUN npm install -g @stoplight/spectral-cli @redocly/cli@latest expo-cli eas-cli
