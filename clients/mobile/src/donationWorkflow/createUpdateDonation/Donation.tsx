@@ -6,7 +6,7 @@ import { TextArea } from '../../components/inputElement/TextArea'
 import { Input } from '../../components/inputElement/Input'
 import { Button } from '../../components/button/Button'
 import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodRequest'
-import { CustomDropdown } from '../../components/inputElement/CustomDropdown'
+// import { CustomDropdown } from '../../components/inputElement/CustomDropdown'
 import { bloodGroupOptions, bloodBagOptions, transportationOptions } from './donationOption'
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -44,34 +44,32 @@ const CreateBloodRequest = () => {
             onPress={handleInputChange}
             label="Urgency"
             isRequired={true}
-            extraInfo='Select “urgent” if the blood is needed on the same day'
-          />
-          <CustomDropdown
-            placeholder=''
-            label='Blood Group'
-            options={bloodGroupOptions}
-            name='neededBloodGroup'
-            value={bloodRequestData.neededBloodGroup}
-            onChangeText={handleInputChange}
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
-            error={errors.neededBloodGroup}
-            isRequired={true}
-            readOnly={isUpdating}
+            extraInfo='Select "urgent" if the blood is needed on the same day'
           />
 
-          <CustomDropdown
-            placeholder=''
-            name='bloodQuantity'
-            label='Unit'
-            value={bloodRequestData.bloodQuantity}
-            onChangeText={handleInputChange}
-            options={bloodBagOptions}
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
-            error={errors.bloodQuantity}
+          <Dropdown
+            label='Blood Group'
             isRequired={true}
+            placeholder='Select Blood Group'
+            options={bloodGroupOptions}
+            readonly={isUpdating}
+            name='neededBloodGroup'
+            selectedValue={bloodRequestData.neededBloodGroup}
+            onChange={handleInputChange}
+            error={errors.neededBloodGroup}
           />
+
+          <Dropdown
+            label='Unit'
+            isRequired={true}
+            placeholder='Select Unit'
+            options={bloodBagOptions}
+            name='bloodQuantity'
+            selectedValue={bloodRequestData.bloodQuantity}
+            onChange={handleInputChange}
+            error={errors.bloodQuantity}
+          />
+
           <DateTimePickerComponent
             name={DONATION_DATE_TIME_INPUT_NAME}
             label="Time and Date"
@@ -81,10 +79,11 @@ const CreateBloodRequest = () => {
             isRequired={true}
             isOnlyDate={false}
           />
+
           <Dropdown
-            label='Select city'
+            label='Select City'
             isRequired={true}
-            placeholder='Select city'
+            placeholder='Select City'
             options={districts}
             readonly={isUpdating}
             name='city'
@@ -92,9 +91,10 @@ const CreateBloodRequest = () => {
             onChange={handleInputChange}
             error={errors.city}
           />
+
           <SearchMultiSelect
             name="location"
-            label="Location"
+            label="Donation Point"
             isVisible={isVisible}
             setIsVisible={setIsVisible}
             onChange={handleInputChange}
@@ -105,6 +105,7 @@ const CreateBloodRequest = () => {
             isRequired={true}
             fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
           />
+
           <Input
             name="contactNumber"
             label="Contact Number"
@@ -136,16 +137,17 @@ const CreateBloodRequest = () => {
             maxLength={200}
           />
 
-          <CustomDropdown
-            placeholder=''
-            name='transportationInfo'
+          <Dropdown
             label='Transportation Facility for the Donor'
-            value={bloodRequestData.transportationInfo}
-            onChangeText={handleInputChange}
+            isRequired={false}
+            placeholder='Select Transportation Option'
             options={transportationOptions}
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
+            name='transportationInfo'
+            selectedValue={bloodRequestData.transportationInfo}
+            onChange={handleInputChange}
+            error={null}
           />
+
           {errorMessage !== '' && <Text style={{ color: 'red', textAlign: 'center', marginBottom: 12 }}>{errorMessage}</Text>}
           <Button text={isUpdating === true ? 'Update Post' : 'Post Now'} onPress={handlePostNow} disabled={isButtonDisabled} loading={loading} />
         </ScrollView>
