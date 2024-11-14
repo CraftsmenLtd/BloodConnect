@@ -1,5 +1,4 @@
 import { HttpClient } from '../setup/clients/HttpClient'
-// import { useFetchClient } from '../setup/clients/useFetchClient'
 import { registerForPushNotificationsAsync, saveDeviceTokenToSNS } from '../setup/notification/Notification'
 
 const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {

@@ -39,7 +39,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     const checkInitialNotification = async() => {
       try {
         const response = await Notifications.getLastNotificationResponseAsync()
-        if (response !== null && isMounted) {
+        console.log('####cp-1: ', JSON.stringify(response))
+        if (response.notification.request.identifier !== null && isMounted) {
           await waitForNavigationReady()
           setNotificationData(response.notification.request.content.data.notificationData)
           navigation.navigate('BloodRequestPreview', {
