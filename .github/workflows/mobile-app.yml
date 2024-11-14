@@ -32,9 +32,9 @@ jobs:
 
   build-mobile-app:
     name: Build Mobile Application
-    secrets: inherit
-    needs: [ setup-environment, build-push-docker-image ]
+    needs: [setup-environment, build-push-docker-image]
     uses: ./.github/workflows/mobile-build.yml
+    secrets: inherit
     with:
       docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       github_environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
