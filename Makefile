@@ -194,3 +194,4 @@ generate-env-file:
 
 build-mobile:
 	eas build --profile preview --platform android
+
