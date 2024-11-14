@@ -7,6 +7,7 @@ import { loginUser, googleLogin, facebookLogin } from '../../services/authServic
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
+import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -21,6 +22,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useLogin = (): any => {
+  const fetchClient = useFetchClient()
   const auth = useAuth()
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
@@ -45,7 +47,7 @@ export const useLogin = (): any => {
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
         auth?.setIsAuthenticated(true)
-        registerUserDeviceForNotification()
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -57,6 +59,7 @@ export const useLogin = (): any => {
         setLoading(false)
       }
     } catch (error) {
+      console.log('error', error)
       setLoginError('Invalid Email or Password.')
     } finally {
       setLoading(false)
@@ -66,7 +69,7 @@ export const useLogin = (): any => {
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
       const isGoogleSignedIn = await googleLogin()
-      registerUserDeviceForNotification()
+      registerUserDeviceForNotification(fetchClient)
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
         navigation.dispatch(
@@ -86,7 +89,7 @@ export const useLogin = (): any => {
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
       const isFacebookSignedIn = await facebookLogin()
-      registerUserDeviceForNotification()
+      registerUserDeviceForNotification(fetchClient)
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
         navigation.dispatch(
