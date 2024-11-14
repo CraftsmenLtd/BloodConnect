@@ -31,10 +31,6 @@ on:
         description: "Terraform backend bucket region. If empty, will default to value of 'aws_region' input."
         required: false
         type: string
-      aws_region:
-        description: "AWS region"
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -59,8 +55,8 @@ jobs:
       TF_BACKEND_BUCKET_NAME: ${{ inputs.tf_backend_bucket_name || vars.TERRAFORM_BACKEND_BUCKET_NAME }}
       TF_BACKEND_BUCKET_KEY: ${{ inputs.tf_backend_bucket_key || format('{0}/{1}.tfstate', inputs.github_environment, inputs.deployment_environment) }}
       TF_BACKEND_BUCKET_REGION: ${{ inputs.tf_backend_bucket_region || inputs.aws_region }}
-      AWS_REGION: ${{ inputs.aws_region }}
-      AWS_DEFAULT_REGION: ${{ inputs.aws_region }}
+      AWS_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       TF_VAR_aws_environment: ${{ inputs.deployment_environment }}
       TF_VAR_bloodconnect_domain: ${{ vars.BLOODCONNECT_DOMAIN }}
       TF_VAR_google_client_id: ${{ secrets.GOOGLE_CLIENT_ID }}
@@ -90,7 +86,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHubActions
-          aws-region: ${{ inputs.aws_region }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: 🛠️ Terraform Initialization
         run: make run-command-tf-init

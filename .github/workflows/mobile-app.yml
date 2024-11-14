@@ -32,14 +32,14 @@ jobs:
 
   build-mobile-app:
     name: Build Mobile Application
-    secrets: inherit
+    secrets:
+      inherit
     needs: [ setup-environment, build-push-docker-image ]
     uses: ./.github/workflows/mobile-build.yml
     with:
       docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       github_environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
       deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
-      aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
       app_version: 0.0.1
       eas_project_id: ${{ secrets.EAS_PROJECT_ID }}
       expo_token: ${{ secrets.EXPO_TOKEN }}

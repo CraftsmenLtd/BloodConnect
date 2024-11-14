@@ -15,10 +15,6 @@ on:
         description: "Defines the deployment environment for Makefile"
         required: true
         type: string
-      aws_region:
-        description: "AWS region"
-        required: true
-        type: string
       app_version:
         description: "Mobile app version"
         required: true
@@ -39,6 +35,7 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 defaults:
   run:
@@ -76,7 +73,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHubActions
-          aws-region: ${{ inputs.aws_region }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Generate env file
         run: make run-command-generate-env-file
