@@ -35,6 +35,7 @@ jobs:
     name: Build App
     runs-on: ${{ vars.RUNNER_OS }}
     environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    needs: [setup-environment, build-push-docker-image]
     env:
       RUNNER_IMAGE_NAME: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       DEPLOYMENT_ENVIRONMENT: ${{ needs.setup-environment.outputs.deployment_environment }}
