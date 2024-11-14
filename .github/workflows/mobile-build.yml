@@ -12,9 +12,6 @@ permissions:
 defaults:
   run:
     shell: bash
-      
-concurrency:
-  group: ${{ github.ref }}
 
 jobs:
   build-push-docker-image:
