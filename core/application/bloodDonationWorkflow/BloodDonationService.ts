@@ -13,6 +13,7 @@ import { StepFunctionModel } from '../technicalImpl/stepFunctions/StepFunctionMo
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
 import { DONOR_SEARCH_PK_PREFIX } from '../../application/technicalImpl/dbModels/DonorSearchModel'
 import { AcceptDonationRequestModel, AcceptedDonationFields } from '../../application/technicalImpl/dbModels/AcceptDonationModel'
+import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
 
 export class BloodDonationService {
   async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO, DonationFields>, model: BloodDonationModel): Promise<string> {
@@ -130,7 +131,8 @@ export class BloodDonationService {
     donorRoutingAttributes: DonorRoutingAttributes,
     bloodDonationRepository: Repository<DonationDTO>,
     stepFunctionModel: StepFunctionModel,
-    donorSearchRepository: Repository<DonorSearchDTO>
+    donorSearchRepository: Repository<DonorSearchDTO>,
+    userRepository: Repository<UserDetailsDTO>
   ): Promise<string> {
     try {
       const { seekerId, requestPostId, createdAt } = donorRoutingAttributes
@@ -161,6 +163,7 @@ export class BloodDonationService {
       }
 
       if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
+        updateData.status = DonationStatus.EXPIRED
         await donorSearchRepository.update(updateData)
         await bloodDonationRepository.update(updateData)
         return 'The donor search process expired after the maximum retry limit is reached.'
@@ -168,7 +171,7 @@ export class BloodDonationService {
 
       await donorSearchRepository.update(updateData)
 
-      const city = `${existingItem.location.split(',').pop()?.trim()}`
+      const seekerName = await this.getSeekerName(userRepository, seekerId)
       const stepFunctionInput: StepFunctionInput = {
         seekerId,
         requestPostId,
@@ -178,6 +181,7 @@ export class BloodDonationService {
         bloodQuantity: existingItem.bloodQuantity,
         urgencyLevel: existingItem.urgencyLevel,
         geohash: existingItem.geohash,
+        seekerName,
         patientName: existingItem.patientName,
         location: existingItem.location,
         contactNumber: existingItem.contactNumber,
@@ -188,11 +192,22 @@ export class BloodDonationService {
         message: `${existingItem.urgencyLevel === UrgencyLevel.URGENT ? 'Urgent ' : ''}${existingItem.neededBloodGroup} needed | ${existingItem.shortDescription}`
       }
 
-      await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${city}-(${existingItem.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`)
+      await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${existingItem.city}-(${existingItem.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`)
       return 'We have updated your request and initiated the donor search process.'
     } catch (error) {
       throw new BloodDonationOperationError(`Failed to update blood donation post. Error: ${error}`, GENERIC_CODES.ERROR)
     }
+  }
+
+  private async getSeekerName(userRepository: Repository<UserDetailsDTO, Record<string, unknown>>, seekerId: string): Promise<string> {
+    const userProfile = await userRepository.getItem(
+      `USER#${seekerId}`,
+      'PROFILE'
+    )
+    if (userProfile === null) {
+      throw new Error('Seeker not found.')
+    }
+    return userProfile.name
   }
 
   async updateDonationStatus(

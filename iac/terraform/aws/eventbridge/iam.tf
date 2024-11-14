@@ -40,7 +40,7 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
     resources = [
       "${aws_cloudwatch_log_group.donation_request_pipe_log_group.arn}:*",
       "${aws_cloudwatch_log_group.donation_accept_pipe_log_group.arn}:*"
-      ]
+    ]
   }
 }
 

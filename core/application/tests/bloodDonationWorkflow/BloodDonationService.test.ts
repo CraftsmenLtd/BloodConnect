@@ -12,6 +12,7 @@ import { BloodDonationModel, BLOOD_REQUEST_PK_PREFIX } from '../../technicalImpl
 import { QueryConditionOperator } from '../../technicalImpl/policies/repositories/QueryTypes'
 import { GENERIC_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import { StepFunctionModel } from '../../technicalImpl/stepFunctions/StepFunctionModel'
+import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 
 jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
@@ -29,6 +30,7 @@ describe('BloodDonationService', () => {
   let bloodDonationService: BloodDonationService
   let bloodDonationRepository: jest.Mocked<Repository<DonationDTO>>
   let donorSearchRepository: jest.Mocked<Repository<DonorSearchDTO>>
+  let userRepository: jest.Mocked<Repository<UserDetailsDTO>>
   let stepFunctionModel: jest.Mocked<StepFunctionModel>
   const mockModel = new BloodDonationModel()
   const mockCreatedAt = '2024-01-01T00:00:00Z'
@@ -41,6 +43,7 @@ describe('BloodDonationService', () => {
     bloodDonationService = new BloodDonationService()
     bloodDonationRepository = mockRepository as jest.Mocked<Repository<DonationDTO>>
     donorSearchRepository = mockRepository as jest.Mocked<Repository<DonorSearchDTO>>
+    userRepository = mockRepository as jest.Mocked<Repository<UserDetailsDTO>>
     stepFunctionModel = { startExecution: jest.fn() }
 
     bloodDonationRepository.query.mockResolvedValue({ items: [], lastEvaluatedKey: undefined })
@@ -413,7 +416,8 @@ describe('BloodDonationService', () => {
         donorRoutingAttributesMock,
         bloodDonationRepository,
         stepFunctionModel,
-        donorSearchRepository
+        donorSearchRepository,
+        userRepository
       )
 
       expect(bloodDonationRepository.getItem).toHaveBeenCalledWith(
@@ -453,13 +457,15 @@ describe('BloodDonationService', () => {
         donorRoutingAttributesMock,
         bloodDonationRepository,
         stepFunctionModel,
-        donorSearchRepository
+        donorSearchRepository,
+        userRepository
       )
 
       expect(result).toBe('The donor search process expired after the maximum retry limit is reached.')
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({
           ...expiredMockDonationDTO,
+          status: DonationStatus.EXPIRED,
           retryCount: 6
         })
       )
@@ -472,7 +478,8 @@ describe('BloodDonationService', () => {
         donorRoutingAttributesMock,
         bloodDonationRepository,
         stepFunctionModel,
-        donorSearchRepository
+        donorSearchRepository,
+        userRepository
       )
 
       expect(result).toBe('Item not found.')
@@ -490,7 +497,8 @@ describe('BloodDonationService', () => {
         donorRoutingAttributesMock,
         bloodDonationRepository,
         stepFunctionModel,
-        donorSearchRepository
+        donorSearchRepository,
+        userRepository
       )
 
       expect(result).toBe('You can\'t update the donation request')
@@ -510,7 +518,8 @@ describe('BloodDonationService', () => {
           donorRoutingAttributesMock,
           bloodDonationRepository,
           stepFunctionModel,
-          donorSearchRepository
+          donorSearchRepository,
+          userRepository
         )
       ).rejects.toThrow(BloodDonationOperationError)
 

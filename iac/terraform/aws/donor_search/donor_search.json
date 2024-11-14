@@ -56,9 +56,20 @@
       "Type": "Parallel",
       "Branches": [
         {
-          "StartAt": "QueryEligibleDonors",
+          "StartAt": "CheckGeohash",
           "States": {
-            "QueryEligibleDonors": {
+            "CheckGeohash": {
+              "Type": "Choice",
+              "Choices": [
+                {
+                  "Variable": "$.prepareDonorSearchResult.geohash",
+                  "StringEquals": "",
+                  "Next": "QueryEligibleDonorsWithoutGeohash"
+                }
+              ],
+              "Default": "QueryEligibleDonorsWithGeohash"
+            },
+            "QueryEligibleDonorsWithGeohash": {
               "Type": "Task",
               "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
               "Parameters": {
@@ -71,6 +82,22 @@
                   },
                   ":geohash": {
                     "S.$": "$.prepareDonorSearchResult.geohash"
+                  }
+                }
+              },
+              "ResultPath": "$.eligibleDonors",
+              "Next": "CheckDonorStatus"
+            },
+            "QueryEligibleDonorsWithoutGeohash": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
+              "Parameters": {
+                "TableName": "${DYNAMODB_TABLE_NAME}",
+                "IndexName": "GSI1",
+                "KeyConditionExpression": "GSI1PK = :cityAndBloodGroupAndStatus",
+                "ExpressionAttributeValues": {
+                  ":cityAndBloodGroupAndStatus": {
+                    "S.$": "States.Format('CITY#{}#BG#{}#DONATIONSTATUS#yes', $.city, $.neededBloodGroup)"
                   }
                 }
               },
@@ -115,7 +142,7 @@
                 "delayPeriod.$": "$.prepareDonorSearchResult.delayPeriod"
               },
               "ResultPath": "$.prepareDonorSearchResult",
-              "Next": "QueryEligibleDonors"
+              "Next": "CheckGeohash"
             },
             "EnoughDonorsFound": {
               "Type": "Succeed"
@@ -134,8 +161,11 @@
       "ItemsPath": "$.donorSearchResult.donorIds",
       "Parameters": {
         "donorId.$": "$$.Map.Item.Value",
-        "patientName.$": "$.patientName",
+        "seekerId.$": "$.seekerId",
         "requestPostId.$": "$.requestPostId",
+        "createdAt.$": "$.createdAt",
+        "seekerName.$": "$.seekerName",
+        "patientName.$": "$.patientName",
         "location.$": "$.location",
         "contactNumber.$": "$.contactNumber",
         "transportationInfo.$": "$.transportationInfo",
@@ -158,9 +188,12 @@
               "RequestBody": {
                 "title": "Blood Request",
                 "body.$": "$.message",
-                "requestPostId.$": "$.requestPostId",
                 "type": "bloodRequestPost",
                 "data": {
+                  "seekerId.$": "$.seekerId",
+                  "requestPostId.$": "$.requestPostId",
+                  "createdAt.$": "$.createdAt",
+                  "seekerName.$": "$.seekerName",
                   "patientName.$": "$.patientName",
                   "neededBloodGroup.$": "$.neededBloodGroup",
                   "bloodQuantity.$": "$.bloodQuantity",

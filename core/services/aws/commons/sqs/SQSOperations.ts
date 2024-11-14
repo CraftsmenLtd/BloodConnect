@@ -14,7 +14,6 @@ export default class SQSOperations implements SQSModel {
       userId: notification.userId,
       snsEndpointArn,
       type: notification.type,
-      requestPostId: notification.requestPostId,
       payload: {
         title: notification.title,
         body: notification.body,

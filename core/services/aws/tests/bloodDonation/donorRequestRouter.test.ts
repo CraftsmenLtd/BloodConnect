@@ -1,5 +1,5 @@
 import { SQSEvent } from 'aws-lambda'
-import donorRequestRouter from '../../bloodDonation/donorRequestRouter'
+import donorRequestRouter from '../../donorSearch/donorRequestRouter'
 import { BloodDonationService } from '../../../../application/bloodDonationWorkflow/BloodDonationService'
 import StepFunctionOperations from '../../commons/stepFunction/StepFunctionOperations'
 import DynamoDbTableOperations from '../../commons/ddb/DynamoDbTableOperations'
@@ -56,6 +56,7 @@ describe('donorRequestRouter', () => {
       }),
       expect.any(DynamoDbTableOperations),
       expect.any(StepFunctionOperations),
+      expect.any(DynamoDbTableOperations),
       expect.any(DynamoDbTableOperations)
     )
   })

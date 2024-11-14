@@ -14,20 +14,22 @@ export class NotificationService {
     snsModel: SNSModel
   ): Promise<string> {
     try {
-      const { userId, type, requestPostId } = notificationMessage
-      const existingItem = await notificationRepository.getItem(
-        `NOTIFICATION#${userId}`,
-        `BLOODREQPOST#${requestPostId}`
-      )
+      const { userId, type, payload } = notificationMessage
 
-      if (type === 'bloodRequestPost' && existingItem !== null) {
-        return 'Donor already notified'
+      if (payload.data !== undefined && type === 'bloodRequestPost') {
+        const existingItem = await notificationRepository.getItem(
+          `NOTIFICATION#${userId}`,
+          `BLOODREQPOST#${payload.data.requestPostId}`
+        )
+
+        if (type === 'bloodRequestPost' && existingItem !== null) {
+          return 'Donor already notified'
+        }
       }
 
       await notificationRepository.create({
         id: generateUniqueID(),
         userId: notificationMessage.userId,
-        requestPostId: notificationMessage.requestPostId,
         type: notificationMessage.type,
         title: notificationMessage.payload.title,
         body: notificationMessage.payload.body,

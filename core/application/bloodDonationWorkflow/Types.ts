@@ -53,6 +53,7 @@ export interface StepFunctionInput {
   urgencyLevel: UrgencyType;
   geohash: string;
   city: string;
+  seekerName?: string;
   patientName?: string;
   location?: string;
   contactNumber?: string;
