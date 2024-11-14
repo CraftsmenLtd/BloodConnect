@@ -31,7 +31,6 @@ defaults:
 jobs:
   build-app:
     name: Build App
-    needs: [setup-environment, build-push-docker-image]
     runs-on: ${{ vars.RUNNER_OS }}
     environment: ${{ inputs.github_environment }}
     env:
