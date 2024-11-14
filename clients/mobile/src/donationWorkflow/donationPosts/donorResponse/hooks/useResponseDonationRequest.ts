@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useFetchClient } from '../../../../setup/clients/useFetchClient'
 import { useNavigation, NavigationProp } from '@react-navigation/native'
+import { SCREENS } from '../../../../setup/constant/screens'
 
 type AcceptRequestParams = {
   requestPostId: string;
@@ -36,7 +37,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
       if (response.status !== 200) {
         throw new Error(`Error: ${response}`)
       } else {
-        navigation.navigate('Home')
+        navigation.navigate(SCREENS.POSTS)
       }
     } catch (err: any) {
       console.error('Failed to accept request:', err)

@@ -5,6 +5,7 @@ import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navi
 import { submitOtp, loginUser, resetPasswordHandler, resendSignUpOtp } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
+import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 
 export const useOtp = (): any => {
   const auth = useAuth()
@@ -114,6 +115,7 @@ export const useOtp = (): any => {
     try {
       if (fromScreen === SCREENS.SET_PASSWORD) {
         await handleRegister()
+        registerUserDeviceForNotification()
       } else {
         navigation.navigate(SCREENS.SET_PASSWORD, { routeParams: { email, otp: otp.join('') }, fromScreen: SCREENS.OTP })
       }

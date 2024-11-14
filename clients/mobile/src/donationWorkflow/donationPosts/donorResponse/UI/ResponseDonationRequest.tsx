@@ -13,6 +13,7 @@ import { useFetchClient } from '../../../../setup/clients/useFetchClient'
 import { useNotificationContext } from '../../../../setup/notification/NotificationContext'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
+import { SCREENS } from '../../../../setup/constant/screens'
 
 interface DonationDetailsProps {
   request: DonationScreenParams;
@@ -47,7 +48,12 @@ const ResponseDonationRequest: React.FC<DonationDetailsProps> = () => {
   }
 
   const handleIgnore = () => {
-    navigation.navigate('Home')
+    navigation.navigate(SCREENS.POSTS)
+  }
+
+  if (notificationData === null || notificationData === undefined) {
+    console.log('returning to posts page as notificatio data is null')
+    navigation.navigate(SCREENS.POSTS)
   }
 
   return (
