@@ -8,6 +8,7 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 defaults:
   run:
@@ -30,13 +31,40 @@ jobs:
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
 
-  build-mobile-app:
-    name: Build Mobile Application
-    needs: [setup-environment, build-push-docker-image]
-    uses: ./.github/workflows/mobile-build.yml
-    secrets: inherit
-    with:
-      docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
-      github_environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
-      deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
-      app_version: 0.0.1
+  build-app:
+    name: Build App
+    runs-on: ${{ vars.RUNNER_OS }}
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    env:
+      RUNNER_IMAGE_NAME: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      DEPLOYMENT_ENVIRONMENT: ${{ needs.setup-environment.outputs.deployment_environment }}
+      MOBILE_APP_VERSION: 0.0.1
+      EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      LOCATION_SERVICE_EMAIL: ${{ secrets.LOCATION_SERVICE_EMAIL }}
+    steps:
+      - name: 📥 Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: 🔐 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📦 Install Node Modules
+        run: make run-command-install-node-packages
+
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Generate env file
+        run: make run-command-generate-env-file
+
+      - name: Build App
+        run: make run-command-build-mobile
