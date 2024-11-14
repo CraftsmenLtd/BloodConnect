@@ -14,6 +14,17 @@ defaults:
     shell: bash
 
 jobs:
+  setup-environment:
+    name: 🌱 Set Deployment Environment
+    runs-on: ${{ vars.RUNNER_OS }}
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    steps:
+      - name: Set Deployment Environment
+        id: set_deployment_env
+        run: echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
+    outputs:
+      deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
+
   build-push-docker-image:
     name: 🐳 Build and Push Docker Image
     uses: ./.github/workflows/docker-image.yml
@@ -21,10 +32,13 @@ jobs:
 
   build-app:
     name: Build App
-    needs: [build-push-docker-image]
+    needs: [setup-environment, build-push-docker-image]
     runs-on: ${{ vars.RUNNER_OS }}
     env:
       RUNNER_IMAGE_NAME: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      DEPLOYMENT_ENVIRONMENT: ${{ needs.setup-environment.outputs.deployment_environment }}
+      AWS_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       MOBILE_APP_VERSION: 1.0.0
       EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -40,6 +54,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: 📦 Install Node Modules
         run: make run-command-install-node-packages
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
       - name: Generate env file
         run: make run-command-generate-env-file
       - name: Build App

@@ -178,10 +178,10 @@ start-mobile:
 			$(RUNNER_IMAGE_NAME) npm run start --prefix clients/mobile
 
 generate-env-file:
-	USER_POOL_ID=$$(aws cognito-idp list-user-pools --max-results 10 --query "UserPools[?starts_with(Name, '$(DEPLOYMENT_ENVIRONMENT)')].Id" --output text --region $(AWS_REGION)); \
-    COGNITO_DOMAIN=$$(aws cognito-idp describe-user-pool --user-pool-id $$USER_POOL_ID --query "UserPool.Domain" --output text --region $(AWS_REGION)); \
-    APP_CLIENT_ID=$$(aws cognito-idp list-user-pool-clients --user-pool-id $$USER_POOL_ID --query "UserPoolClients[0].ClientId" --output text --region $(AWS_REGION) | head -n 1); \
-	API_GW_DOMAIN=$$(aws apigateway get-domain-names --query "items[0].domainName" --output text --region $(AWS_REGION)); \
+	USER_POOL_ID=$$(aws cognito-idp list-user-pools --max-results 10 --query "UserPools[?starts_with(Name, '$(DEPLOYMENT_ENVIRONMENT)')].Id" --output text); \
+    COGNITO_DOMAIN=$$(aws cognito-idp describe-user-pool --user-pool-id $$USER_POOL_ID --query "UserPool.Domain" --output text); \
+    APP_CLIENT_ID=$$(aws cognito-idp list-user-pool-clients --user-pool-id $$USER_POOL_ID --query "UserPoolClients[0].ClientId" --output text | head -n 1); \
+	API_GW_DOMAIN=$$(aws apigateway get-domain-names --query "items[0].domainName" --output text); \
 	touch .env; \
 	echo "APP_NAME=net.bloodconnect.app" > .env; \
 	echo "APP_VERSION=${MOBILE_APP_VERSION}" >> .env; \

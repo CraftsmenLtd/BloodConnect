@@ -37,5 +37,5 @@ jobs:
       docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       github_environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
       deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
-      aws_region: ap-south-1
+      aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
       tf_action: apply
