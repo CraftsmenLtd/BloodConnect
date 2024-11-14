@@ -1,7 +1,7 @@
 resource "aws_sqs_queue" "donor_search_queue" {
   #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
   name                       = "${var.environment}-donor-search"
-  visibility_timeout_seconds = 60
+  visibility_timeout_seconds = 120
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.donor_search_dlq.arn
     maxReceiveCount     = 3
@@ -11,7 +11,7 @@ resource "aws_sqs_queue" "donor_search_queue" {
 resource "aws_sqs_queue" "donor_search_retry_queue" {
   #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
   name                       = "${var.environment}-donor-search-retry"
-  visibility_timeout_seconds = 60
+  visibility_timeout_seconds = 120
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.donor_search_dlq.arn
     maxReceiveCount     = 3
@@ -21,19 +21,19 @@ resource "aws_sqs_queue" "donor_search_retry_queue" {
 resource "aws_sqs_queue" "donor_search_dlq" {
   #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
   name                       = "${var.environment}-donor-search-dlq"
-  visibility_timeout_seconds = 60
+  visibility_timeout_seconds = 120
 }
 
 resource "aws_lambda_event_source_mapping" "donor_search_event_source" {
   event_source_arn = aws_sqs_queue.donor_search_queue.arn
-  function_name    = module.lambda["donor-request-router"].lambda_arn
+  function_name    = module.donor_router_lambda["donor-request-router"].lambda_arn
   batch_size       = 10
   enabled          = true
 }
 
 resource "aws_lambda_event_source_mapping" "donor_search_retry_event_source" {
   event_source_arn = aws_sqs_queue.donor_search_retry_queue.arn
-  function_name    = module.lambda["donor-request-router"].lambda_arn
+  function_name    = module.donor_router_lambda["donor-request-router"].lambda_arn
   batch_size       = 10
   enabled          = true
 }
@@ -53,4 +53,33 @@ data "aws_iam_policy_document" "donor_search_queue_policy_doc" {
     }
     resources = [aws_sqs_queue.donor_search_queue.arn]
   }
+}
+
+
+resource "aws_sqs_queue" "donation_status_manager_queue" {
+  #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
+  name                       = "${var.environment}-donation-status-manager"
+  visibility_timeout_seconds = 120
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.donation_status_manager_dlq.arn
+    maxReceiveCount     = 3
+  })
+}
+
+resource "aws_sqs_queue" "donation_status_manager_dlq" {
+  #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
+  name                       = "${var.environment}-donation-status-manager-dlq"
+  visibility_timeout_seconds = 120
+}
+
+resource "aws_sqs_queue_policy" "donation_status_manager_queue_policy" {
+  queue_url = aws_sqs_queue.donation_status_manager_queue.id
+  policy    = data.aws_iam_policy_document.donor_search_queue_policy_doc.json
+}
+
+resource "aws_lambda_event_source_mapping" "donation_status_manager_source" {
+  event_source_arn = aws_sqs_queue.donation_status_manager_queue.arn
+  function_name    = module.donor_router_lambda["donation-status-manager"].lambda_arn
+  batch_size       = 10
+  enabled          = true
 }

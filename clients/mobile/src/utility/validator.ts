@@ -14,8 +14,15 @@ const passwordPolicy: PasswordPolicy = {
   require_symbols: true
 }
 
-export const validateAndReturnRequiredFieldError = (value: string): string | null => {
-  return value.trim().length === 0 ? 'This field is required' : null
+export const validateAndReturnRequiredFieldError = (value: string | string[] | boolean): string | null => {
+  if (typeof value === 'string') {
+    return value.trim().length === 0 ? 'This field is required' : null
+  } else if (Array.isArray(value)) {
+    return value.length === 0 ? 'This field is required' : null
+  } else if (typeof value === 'boolean') {
+    return value ? null : 'This field is required'
+  }
+  return null
 }
 
 export const validateEmailAndGetErrorMessage = (value: string): string | null => {
@@ -66,6 +73,66 @@ export const validateDonationDateTime = (donationDateTime: string): string | nul
   const minAllowedDate = new Date(now.getTime() + 5 * 60 * 1000)
   if (donationDate < minAllowedDate) {
     return 'Donation date & time must be at least 5 minutes ahead.'
+  }
+
+  return null
+}
+
+export const validatePastOrTodayDate = (date: string): string | null => {
+  const today = new Date()
+  const inputDate = new Date(date)
+
+  today.setHours(0, 0, 0, 0)
+  inputDate.setHours(0, 0, 0, 0)
+
+  if (inputDate.getTime() >= today.getTime()) {
+    return 'The date must be today or in the past.'
+  }
+
+  return null
+}
+
+export const validateDateOfBirth = (dateOfBirth: string): string | null => {
+  const today = new Date()
+  const dob = new Date(dateOfBirth)
+
+  const age = today.getFullYear() - dob.getFullYear()
+  const hasBirthdayPassedThisYear =
+    today.getMonth() > dob.getMonth() ||
+    (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate())
+
+  const actualAge = hasBirthdayPassedThisYear ? age : age - 1
+
+  if (actualAge < 15) {
+    return 'User must be at least 15 years old.'
+  }
+
+  return null
+}
+
+export const validateHeight = (height: string): string | null => {
+  const heightValue = parseFloat(height)
+
+  if (isNaN(heightValue)) {
+    return 'Height must be a valid number'
+  }
+
+  if (heightValue < 3.0 || heightValue > 8.0) {
+    return 'Height must be between 3.0 and 8.0 feet'
+  }
+
+  return null
+}
+
+export const validateWeight = (weight: string): string | null => {
+  const weightValue = parseFloat(weight)
+
+  if (isNaN(weightValue)) {
+    return 'Weight must be a valid number'
+  }
+
+  if (weightValue < 30 || weightValue > 300) {
+    return 'Weight must be between 30 and 300 kg'
   }
 
   return null

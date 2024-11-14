@@ -1,11 +1,12 @@
 import { ValidationRule, validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
-import { BloodGroup, UrgencyLevel } from '../../../commons/dto/DonationDTO'
+import { BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
 
 export interface BloodDonationAttributes {
   seekerId: string;
   neededBloodGroup: BloodGroup;
   bloodQuantity: number;
-  urgencyLevel: UrgencyLevel;
+  urgencyLevel: UrgencyType;
+  city: string;
   location: string;
   latitude: number;
   longitude: number;
@@ -26,7 +27,7 @@ export interface UpdateBloodDonationAttributes {
   requestPostId: string;
   seekerId: string;
   bloodQuantity?: number;
-  urgencyLevel?: UrgencyLevel;
+  urgencyLevel?: UrgencyType;
   donationDateTime?: string;
   contactNumber?: string;
   patientCondition?: string;
@@ -39,16 +40,26 @@ export interface UpdateBloodDonationAttributes {
 export interface DonorRoutingAttributes {
   seekerId: string;
   requestPostId: string;
+  createdAt: string;
 }
 
 export interface StepFunctionInput {
   seekerId: string;
   requestPostId: string;
+  createdAt: string;
+  donationDateTime: string;
   neededBloodGroup: BloodGroup;
   bloodQuantity: number;
-  urgencyLevel: UrgencyLevel;
-  latitude: number;
-  longitude: number;
+  urgencyLevel: UrgencyType;
+  geohash: string;
+  city: string;
+  patientName?: string;
+  location?: string;
+  contactNumber?: string;
+  transportationInfo?: string;
+  shortDescription?: string;
+  message?: string;
+  retryCount: number;
 }
 
 export interface StepFunctionExecutionAttributes {
@@ -64,4 +75,10 @@ export interface AcceptDonationRequestAttributes {
   createdAt: string;
   requestPostId: string;
   acceptanceTime: string;
+}
+
+export interface DonationStatusManagerAttributes {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
 }

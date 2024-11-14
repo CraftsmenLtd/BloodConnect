@@ -1,4 +1,4 @@
-import { confirmSignUp, signUp, signIn, signInWithRedirect, signOut, decodeJWT, AuthSession, fetchAuthSession, resetPassword, confirmResetPassword, ResetPasswordOutput } from 'aws-amplify/auth'
+import { confirmSignUp, signUp, signIn, signInWithRedirect, signOut, decodeJWT, AuthSession, fetchAuthSession, resetPassword, confirmResetPassword, ResetPasswordOutput, resendSignUpCode } from 'aws-amplify/auth'
 import { JwtPayload } from '@aws-amplify/core/internals/utils'
 import StorageService from '../../utility/storageService'
 import { handleAuthError } from './authErrorHandler'
@@ -127,17 +127,21 @@ export const loginUser = async(email: string, password: string): Promise<boolean
   }
 }
 
-export const googleLogin = async(): Promise<void> => {
+export const googleLogin = async(): Promise<boolean> => {
   try {
     await signInWithRedirect({ provider: 'Google' })
+    const session = await fetchSession()
+    return session.idToken.length > 0
   } catch (error) {
     throw new Error(`Error logging with google: ${error instanceof Error ? error.message : error}`)
   }
 }
 
-export const facebookLogin = async(): Promise<void> => {
+export const facebookLogin = async(): Promise<boolean> => {
   try {
     await signInWithRedirect({ provider: 'Facebook' })
+    const session = await fetchSession()
+    return session.idToken.length > 0
   } catch (error) {
     throw new Error(`Error logging with facebook: ${error instanceof Error ? error.message : error}`)
   }
@@ -171,6 +175,16 @@ export const confirmResetPasswordHandler = async(email: string, otp: string, pas
   try {
     await confirmResetPassword({ username: email, confirmationCode: otp, newPassword: password })
     return true
+  } catch (error) {
+    const errorMessage = handleConfirmPasswordError(error)
+    throw new Error(errorMessage)
+  }
+}
+
+export const resendSignUpOtp = async(email: string): Promise<boolean> => {
+  try {
+    const response = await resendSignUpCode({ username: email })
+    return response.destination !== ''
   } catch (error) {
     const errorMessage = handleConfirmPasswordError(error)
     throw new Error(errorMessage)

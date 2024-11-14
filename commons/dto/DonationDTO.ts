@@ -1,7 +1,7 @@
 import { DTO, HasIdentifier } from './DTOCommon'
 
 export type BloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
-export type UrgencyLevel = 'regular' | 'urgent'
+export type UrgencyType = 'regular' | 'urgent'
 
 export enum DonationStatus {
   PENDING = 'PENDING',
@@ -10,11 +10,17 @@ export enum DonationStatus {
   EXPIRED = 'EXPIRED',
 }
 
+export enum UrgencyLevel {
+  REGULAR = 'regular',
+  URGENT = 'urgent',
+}
+
 export type DonationDTO = DTO & HasIdentifier & {
   seekerId: string;
   neededBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: 'regular' | 'urgent';
+  city: string;
   location: string;
   latitude: number;
   longitude: number;
@@ -22,6 +28,7 @@ export type DonationDTO = DTO & HasIdentifier & {
   donationDateTime: string;
   status: DonationStatus;
   contactNumber: string;
+  city: string;
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
@@ -29,10 +36,10 @@ export type DonationDTO = DTO & HasIdentifier & {
   retryCount?: number;
 }
 
-export interface StepFunctionInput extends DTO {
+export type DonorSearchDTO = DTO & HasIdentifier & {
   seekerId: string;
-  requestPostId: string;
-  additionalParams?: Record<string, any>;
+  createdAt?: string;
+  retryCount?: number;
 }
 
 type BaseAcceptedDonationDTO = {

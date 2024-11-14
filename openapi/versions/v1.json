@@ -18,8 +18,8 @@
       "description": "Donation module of BloodConnect"
     },
     {
-      "name": "bloodconnect-donation-accept",
-      "description": "Donation module for request accept"
+      "name": "bloodconnect-notification",
+      "description": "Push notification module of BloodConnect"
     },
     {
       "name": "cors-options",
@@ -50,9 +50,6 @@
     }
   ],
   "paths": {
-    "/auth/refresh-token": {
-      "$ref": "./../paths/auth/refresh-token.json"
-    },
     "/auth/register-organization": {
       "$ref": "./../paths/auth/register-organization.json"
     },
@@ -65,8 +62,11 @@
     "/donations/accept": {
       "$ref": "./../paths/donations/accept.json"
     },
-    "/users/notifications": {
-      "$ref": "./../paths/notifications/notifications.json"
+    "/notification/push/{userId}": {
+      "$ref": "./../paths/notification/push.json"
+    },
+    "/notification/register": {
+      "$ref": "./../paths/notification/register.json"
     }
   },
   "components": {

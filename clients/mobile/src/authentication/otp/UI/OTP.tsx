@@ -7,7 +7,7 @@ import LinkWithText from '../../../components/button/LinkWithText'
 
 const OTP = () => {
   const styles = createStyles(useTheme())
-  const { otp, error, inputRefs, handleOtpChange, handleSubmit, email, loading, isButtonDisabled } = useOtp()
+  const { otp, error, inputRefs, handleOtpChange, handleSubmit, email, loading, isButtonDisabled, resendOtpHandler, isDisabled, countdown } = useOtp()
 
   return (
     <View style={styles.container}>
@@ -36,8 +36,10 @@ const OTP = () => {
       {error !== '' && <Text style={styles.error}>{error}</Text>}
       <LinkWithText
         staticText="Didn’t get the code?"
-        linkText=" Resend OTP"
-        onPress={() => { console.log('Resend OTP pressed') }}
+        linkText={isDisabled === true ? ` Resend OTP in ${countdown}s` : ' Resend OTP'}
+        onPress={resendOtpHandler}
+        isDisabled={isDisabled}
+        countdown={countdown}
       />
       <Button text='Submit' onPress={handleSubmit} disabled={isButtonDisabled} loading={loading} />
     </View>

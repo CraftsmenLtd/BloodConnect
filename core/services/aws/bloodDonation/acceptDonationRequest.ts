@@ -6,6 +6,7 @@ import { AcceptDonationRequestAttributes } from '../../../application/bloodDonat
 import { AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import { AcceptDonationRequestModel, AcceptedDonationFields } from '../../../application/technicalImpl/dbModels/AcceptDonationModel'
+
 const acceptDonationRequest = new AcceptDonationService()
 
 async function acceptDonationRequestLambda(event: AcceptDonationRequestAttributes): Promise<APIGatewayProxyResult> {

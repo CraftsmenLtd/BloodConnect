@@ -12,3 +12,8 @@ variable "donor_search_queue_arn" {
   type        = string
   description = "ARN of the donor search SQS queue"
 }
+
+variable "donation_status_manager_queue_arn" {
+  type        = string
+  description = "ARN of the donation status manager SQS queue"
+}

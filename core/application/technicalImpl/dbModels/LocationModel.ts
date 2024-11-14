@@ -1,5 +1,5 @@
 import { BloodGroup } from '../../../../commons/dto/DonationDTO'
-import { LocationDTO, availableForDonation } from '../../../../commons/dto/UserDTO'
+import { LocationDTO, AvailableForDonation } from '../../../../commons/dto/UserDTO'
 import { DbIndex, DbModelDtoAdapter, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
 export type LocationFields = Omit<LocationDTO, 'userId' | 'locationId' | 'city' | 'bloodGroup' | 'availableForDonation' | 'geohash'> & {
@@ -44,7 +44,7 @@ export default class LocationModel implements NosqlModel<LocationFields>, DbMode
     if (gsiMatch !== null) {
       const [, city, bloodGroupStr, donationStatus] = gsiMatch
       const bloodGroup: BloodGroup = bloodGroupStr as BloodGroup
-      const availableForDonation: availableForDonation = donationStatus === 'yes' ? 'yes' : 'no'
+      const availableForDonation: AvailableForDonation = donationStatus === 'yes' ? 'yes' : 'no'
 
       return {
         userId,

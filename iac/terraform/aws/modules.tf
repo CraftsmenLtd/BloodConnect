@@ -8,8 +8,8 @@ module "auth" {
 }
 
 module "user" {
-  source      = "./user"
-  environment = var.environment
+  source             = "./user"
+  environment        = var.environment
   dynamodb_table_arn = module.database.dynamodb_table_arn
 }
 
@@ -54,22 +54,25 @@ module "cognito" {
   hosted_zone_id         = data.aws_route53_zone.main.zone_id
 }
 
-module "donor_search_router" {
-  source              = "./donor_search_router"
-  environment         = var.environment
-  dynamodb_table_arn  = module.database.dynamodb_table_arn
-  donor_search_sf_arn = module.donor_search_sf.donor_search_sf_arn
-}
-
-module "donor_search_sf" {
-  source             = "./donor_search_sf"
-  environment        = var.environment
-  dynamodb_table_arn = module.database.dynamodb_table_arn
+module "donor_search" {
+  source                    = "./donor_search"
+  environment               = var.environment
+  dynamodb_table_arn        = module.database.dynamodb_table_arn
+  api_gateway_id            = aws_api_gateway_rest_api.rest_api.id
+  api_gateway_execution_arn = aws_api_gateway_rest_api.rest_api.execution_arn
 }
 
 module "eventbridge" {
-  source                    = "./eventbridge"
-  environment               = var.environment
-  dynamodb_table_stream_arn = module.database.dynamodb_table_stream_arn
-  donor_search_queue_arn    = module.donor_search_router.donor_search_queue_arn
+  source                            = "./eventbridge"
+  environment                       = var.environment
+  dynamodb_table_stream_arn         = module.database.dynamodb_table_stream_arn
+  donor_search_queue_arn            = module.donor_search.donor_search_queue_arn
+  donation_status_manager_queue_arn = module.donor_search.donation_status_manager_queue_arn
+}
+
+module "notification" {
+  source                = "./notification"
+  environment           = var.environment
+  dynamodb_table_arn    = module.database.dynamodb_table_arn
+  firebase_token_s3_url = var.firebase_token_s3_url
 }

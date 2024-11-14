@@ -8,6 +8,10 @@ export enum SCREENS {
   WELCOME = 'Welcome',
   DONATION = 'Donation',
   DONATION_POSTS = 'DonationPosts',
+  ADD_PERSONAL_INFO = 'AddPersonalInfo',
   BOTTOM_TABS = 'BottomTabs',
-  BLOOD_REQUEST_PREVIEW = 'BloodRequestPreview',
+  HOME = 'Home',
+  POSTS = 'Posts',
+  MY_ACTIVITY = 'MyActivity',
+  BLOOD_REQUEST_PREVIEW = 'BloodRequestPreview'
 }

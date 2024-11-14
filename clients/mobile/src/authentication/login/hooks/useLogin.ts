@@ -65,9 +65,19 @@ export const useLogin = (): any => {
 
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
-      await googleLogin()
+      const isGoogleSignedIn = await googleLogin()
       registerUserDeviceForNotification()
-      navigation.navigate(SCREENS.PROFILE)
+      if (isGoogleSignedIn) {
+        auth?.setIsAuthenticated(true)
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: SCREENS.BOTTOM_TABS }]
+          })
+        )
+      } else {
+        setSocialLoginError('Google login failed. Please try again.')
+      }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
     }
@@ -75,9 +85,19 @@ export const useLogin = (): any => {
 
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
-      await facebookLogin()
+      const isFacebookSignedIn = await facebookLogin()
       registerUserDeviceForNotification()
-      navigation.navigate(SCREENS.PROFILE)
+      if (isFacebookSignedIn) {
+        auth?.setIsAuthenticated(true)
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: SCREENS.BOTTOM_TABS }]
+          })
+        )
+      } else {
+        setSocialLoginError('Facebook login failed. Please try again.')
+      }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Facebook.')
     }

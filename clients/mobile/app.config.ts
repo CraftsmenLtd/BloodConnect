@@ -13,6 +13,9 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     APP_NAME?: string;
     APP_VERSION?: string;
     LOCATION_SERVICE_EMAIL?: string;
+    GOOGLE_MAP_API_KEY?: string;
+    GOOGLE_MAP_API?: string;
+    OPENSTREET_MAP_API?: string;
   }> = {
     development: {
       AWS_USER_POOL_ID: process.env.AWS_USER_POOL_ID,
@@ -22,17 +25,10 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
       API_BASE_URL: process.env.API_BASE_URL,
       APP_NAME: process.env.APP_NAME,
       APP_VERSION: process.env.APP_VERSION,
-      LOCATION_SERVICE_EMAIL: process.env.LOCATION_SERVICE_EMAIL
-    },
-    preview: {
-      AWS_USER_POOL_ID: process.env.AWS_USER_POOL_ID,
-      AWS_USER_POOL_CLIENT_ID: process.env.AWS_USER_POOL_CLIENT_ID,
-      AWS_COGNITO_DOMAIN: process.env.AWS_COGNITO_DOMAIN,
-      EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,
-      API_BASE_URL: process.env.API_BASE_URL,
-      APP_NAME: process.env.APP_NAME,
-      APP_VERSION: process.env.APP_VERSION,
-      LOCATION_SERVICE_EMAIL: process.env.LOCATION_SERVICE_EMAIL
+      LOCATION_SERVICE_EMAIL: process.env.LOCATION_SERVICE_EMAIL,
+      GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
+      GOOGLE_MAP_API: process.env.GOOGLE_MAP_API,
+      OPENSTREET_MAP_API: process.env.OPENSTREET_MAP_API
     }
   }
 
@@ -41,7 +37,7 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     extra: {
       ...ENV_VARS[ENV],
       eas: {
-        projectId: 'PROJECT ID'
+        projectId: '10cca803-ff3c-4c54-b64c-c8b5d5a036bf'
       }
     }
   }

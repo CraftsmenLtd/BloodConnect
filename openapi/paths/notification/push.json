@@ -1,20 +1,29 @@
 {
   "post": {
-    "description": "Refresh Token POST method",
-    "operationId": "RefreshToken",
+    "operationId": "pushNotification",
+    "description": "Map push notification to a user",
     "tags": [
-      "bloodconnect-auth"
+      "bloodconnect-notification"
     ],
     "parameters": [
       {
-        "in": "header",
-        "name": "refreshToken",
+        "name": "userId",
+        "in": "path",
         "required": true,
         "schema": {
           "type": "string"
         }
       }
     ],
+    "requestBody": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./../../components/schemas/notifications/push-payload.json#/pushNotificationRequestModel"
+          }
+        }
+      }
+    },
     "responses": {
       "200": {
         "description": "200 response",
@@ -40,10 +49,25 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../../integration/aws/auth/post-refresh-token.json"
-    }
+      "$ref": "./../../integration/aws/notifications/post-push.json"
+    },
+    "security": [
+      {
+        "sigv4": []
+      }
+    ]
   },
   "options": {
+    "parameters": [
+      {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
     "$ref": "./../cors-options.json"
   }
 }

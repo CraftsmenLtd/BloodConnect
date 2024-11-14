@@ -3,7 +3,11 @@ import {
   validateEmail,
   validatePhoneNumber,
   validatePassword,
-  validateInput
+  validateInput,
+  validateDateOfBirth,
+  validateHeight,
+  validatePastOrTodayDate,
+  validateWeight
 } from '../../src/utility/validator'
 
 describe('Validation Functions', () => {
@@ -81,6 +85,57 @@ describe('Validation Functions', () => {
     it('should return null if no validation rules fail', () => {
       const rules = [validateRequired, validateEmail]
       expect(validateInput('ebrahim@example.com', rules)).toBeNull()
+    })
+  })
+
+  describe('validatePastOrTodayDate', () => {
+    it('should return null for today\'s date', () => {
+      const today = new Date().toISOString().split('T')[0]
+      expect(validatePastOrTodayDate(today)).toBeNull()
+    })
+
+    it('should return null for past dates', () => {
+      const pastDate = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+      expect(validatePastOrTodayDate(pastDate)).toBeNull()
+    })
+
+    it('should return error message for future dates', () => {
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 2)
+      const futureDateString = futureDate.toISOString().split('T')[0]
+
+      expect(validatePastOrTodayDate(futureDateString)).toBe('The date must be today or in the past.')
+    })
+  })
+
+  describe('validateDateOfBirth', () => {
+    it('should return error message for ages under 15', () => {
+      const fourteenYearsAgo = new Date(Date.now() - 14 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      expect(validateDateOfBirth(fourteenYearsAgo)).toBe('User must be at least 15 years old.')
+    })
+  })
+
+  describe('validateHeight', () => {
+    it('should return null for valid height', () => {
+      expect(validateHeight('5.5')).toBeNull()
+    })
+
+    it('should return error message for invalid height values', () => {
+      expect(validateHeight('2.5')).toBe('Height must be between 3.0 and 8.0 feet')
+      expect(validateHeight('9.0')).toBe('Height must be between 3.0 and 8.0 feet')
+      expect(validateHeight('abc')).toBe('Height must be a valid number')
+    })
+  })
+
+  describe('validateWeight', () => {
+    it('should return null for valid weight', () => {
+      expect(validateWeight('70')).toBeNull()
+    })
+
+    it('should return error message for invalid weight values', () => {
+      expect(validateWeight('25')).toBe('Weight must be between 30 and 300 kg')
+      expect(validateWeight('350')).toBe('Weight must be between 30 and 300 kg')
+      expect(validateWeight('xyz')).toBe('Weight must be a valid number')
     })
   })
 })

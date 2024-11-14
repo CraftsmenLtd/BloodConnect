@@ -1,12 +1,12 @@
 import { BloodDonationService } from '../../bloodDonationWorkflow/BloodDonationService'
-import { BloodGroup, DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
+import { DonationDTO, DonationStatus, DonorSearchDTO } from '../../../../commons/dto/DonationDTO'
 import Repository from '../../technicalImpl/policies/repositories/Repository'
 import { generateUniqueID } from '../../utils/idGenerator'
 import { generateGeohash } from '../../utils/geohash'
 import { validateInputWithRules } from '../../utils/validator'
 import BloodDonationOperationError from '../../bloodDonationWorkflow/BloodDonationOperationError'
 import ThrottlingError from '../../bloodDonationWorkflow/ThrottlingError'
-import { donationAttributesMock, donationDtoMock, donorRoutingAttributesMock } from '../mocks/mockDonationRequestData'
+import { currentDate, donationAttributesMock, donationDtoMock, donorRoutingAttributesMock, mockDonationDTO } from '../mocks/mockDonationRequestData'
 import { mockRepository } from '../mocks/mockRepositories'
 import { BloodDonationModel, BLOOD_REQUEST_PK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
 import { QueryConditionOperator } from '../../technicalImpl/policies/repositories/QueryTypes'
@@ -28,6 +28,7 @@ jest.mock('../../utils/validator', () => ({
 describe('BloodDonationService', () => {
   let bloodDonationService: BloodDonationService
   let bloodDonationRepository: jest.Mocked<Repository<DonationDTO>>
+  let donorSearchRepository: jest.Mocked<Repository<DonorSearchDTO>>
   let stepFunctionModel: jest.Mocked<StepFunctionModel>
   const mockModel = new BloodDonationModel()
   const mockCreatedAt = '2024-01-01T00:00:00Z'
@@ -39,10 +40,13 @@ describe('BloodDonationService', () => {
     (validateInputWithRules as jest.Mock).mockReturnValue(null)
     bloodDonationService = new BloodDonationService()
     bloodDonationRepository = mockRepository as jest.Mocked<Repository<DonationDTO>>
+    donorSearchRepository = mockRepository as jest.Mocked<Repository<DonorSearchDTO>>
     stepFunctionModel = { startExecution: jest.fn() }
 
     bloodDonationRepository.query.mockResolvedValue({ items: [], lastEvaluatedKey: undefined })
     bloodDonationRepository.create.mockResolvedValue(donationDtoMock)
+    donorSearchRepository.query.mockResolvedValue({ items: [], lastEvaluatedKey: undefined })
+    donorSearchRepository.create.mockResolvedValue(donationDtoMock)
     jest.spyOn(mockModel, 'getPrimaryIndex').mockReturnValue({ partitionKey: 'PK', sortKey: 'SK' })
     process.env.MAX_RETRY_COUNT = '5'
   })
@@ -402,36 +406,19 @@ describe('BloodDonationService', () => {
   })
 
   describe('routeDonorRequest', () => {
-    const mockDonationDTO: DonationDTO = {
-      id: 'req123',
-      seekerId: 'seeker123',
-      status: DonationStatus.PENDING,
-      patientName: 'John Doe',
-      neededBloodGroup: 'O-' as BloodGroup, // Cast to BloodGroup type
-      bloodQuantity: 2,
-      urgencyLevel: 'urgent' as const, // Use const assertion for literal type
-      location: 'Baridhara, Dhaka',
-      latitude: 23.7936,
-      longitude: 90.4043,
-      geohash: 'geohash123',
-      donationDateTime: '2024-10-20T15:00:00Z',
-      contactNumber: '+8801712345678',
-      transportationInfo: 'Car available',
-      retryCount: 0
-    }
-
     test('should initiate donor search process if retry count is below max and request is not completed or expired', async() => {
       bloodDonationRepository.getItem.mockResolvedValue(mockDonationDTO)
 
       const result = await bloodDonationService.routeDonorRequest(
         donorRoutingAttributesMock,
         bloodDonationRepository,
-        stepFunctionModel
+        stepFunctionModel,
+        donorSearchRepository
       )
 
       expect(bloodDonationRepository.getItem).toHaveBeenCalledWith(
         'BLOOD_REQ#seeker123',
-        'BLOOD_REQ#req123'
+        `BLOOD_REQ#${currentDate}#req123`
       )
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -442,12 +429,15 @@ describe('BloodDonationService', () => {
       expect(stepFunctionModel.startExecution).toHaveBeenCalledWith(expect.objectContaining({
         seekerId: mockDonationDTO.seekerId,
         requestPostId: mockDonationDTO.id,
+        createdAt: mockDonationDTO.createdAt,
+        donationDateTime: mockDonationDTO.donationDateTime,
         neededBloodGroup: mockDonationDTO.neededBloodGroup,
         bloodQuantity: mockDonationDTO.bloodQuantity,
         urgencyLevel: mockDonationDTO.urgencyLevel,
-        latitude: mockDonationDTO.latitude,
-        longitude: mockDonationDTO.longitude
-      }))
+        geohash: mockDonationDTO.geohash,
+        retryCount: 1,
+        city: 'Dhaka'
+      }), expect.any(String))
       expect(result).toBe('We have updated your request and initiated the donor search process.')
     })
 
@@ -457,18 +447,19 @@ describe('BloodDonationService', () => {
         retryCount: 5
       }
       bloodDonationRepository.getItem.mockResolvedValue(expiredMockDonationDTO)
+      donorSearchRepository.getItem.mockResolvedValue(expiredMockDonationDTO)
 
       const result = await bloodDonationService.routeDonorRequest(
         donorRoutingAttributesMock,
         bloodDonationRepository,
-        stepFunctionModel
+        stepFunctionModel,
+        donorSearchRepository
       )
 
       expect(result).toBe('The donor search process expired after the maximum retry limit is reached.')
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({
           ...expiredMockDonationDTO,
-          status: DonationStatus.EXPIRED,
           retryCount: 6
         })
       )
@@ -480,7 +471,8 @@ describe('BloodDonationService', () => {
       const result = await bloodDonationService.routeDonorRequest(
         donorRoutingAttributesMock,
         bloodDonationRepository,
-        stepFunctionModel
+        stepFunctionModel,
+        donorSearchRepository
       )
 
       expect(result).toBe('Item not found.')
@@ -497,7 +489,8 @@ describe('BloodDonationService', () => {
       const result = await bloodDonationService.routeDonorRequest(
         donorRoutingAttributesMock,
         bloodDonationRepository,
-        stepFunctionModel
+        stepFunctionModel,
+        donorSearchRepository
       )
 
       expect(result).toBe('You can\'t update the donation request')
@@ -508,19 +501,22 @@ describe('BloodDonationService', () => {
     test('should throw BloodDonationOperationError when an error occurs in routeDonorRequest', async() => {
       bloodDonationRepository.getItem.mockResolvedValue(mockDonationDTO)
       bloodDonationRepository.update.mockResolvedValue(mockDonationDTO)
+      donorSearchRepository.getItem.mockResolvedValue(mockDonationDTO)
+      donorSearchRepository.update.mockResolvedValue(mockDonationDTO)
       stepFunctionModel.startExecution.mockRejectedValue(new Error('Step Function error'))
 
       await expect(
         bloodDonationService.routeDonorRequest(
           donorRoutingAttributesMock,
           bloodDonationRepository,
-          stepFunctionModel
+          stepFunctionModel,
+          donorSearchRepository
         )
       ).rejects.toThrow(BloodDonationOperationError)
 
       expect(bloodDonationRepository.getItem).toHaveBeenCalledWith(
         'BLOOD_REQ#seeker123',
-        'BLOOD_REQ#req123'
+        `BLOOD_REQ#${currentDate}#req123`
       )
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({

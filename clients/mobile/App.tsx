@@ -21,7 +21,6 @@ Notifications.setNotificationHandler({
   })
 })
 
-
 export default function App() {
   const [backPressedOnce, setBackPressedOnce] = useState(false)
 
@@ -47,7 +46,7 @@ export default function App() {
         <AuthProvider>
           <NotificationProvider>
             <ThemeProvider>
-                <Navigator />
+              <Navigator />
             </ThemeProvider>
           </NotificationProvider>
         </AuthProvider>

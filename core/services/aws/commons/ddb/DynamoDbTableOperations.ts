@@ -12,6 +12,7 @@ interface CreateUpdateExpressionsReturnType {
   expressionAttribute: Record<string, any>;
   expressionAttributeNames: Record<string, any>;
 }
+
 export default class DynamoDbTableOperations<
   Dto extends DTO,
   DbFields extends Record<string, unknown>,

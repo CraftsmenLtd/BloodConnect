@@ -7,22 +7,26 @@ interface LinkWithTextProps {
   staticText?: string;
   linkText: string;
   onPress: () => void;
+  isDisabled?: boolean;
+  countdown?: number | null;
 }
 
-const LinkWithText: React.FC<LinkWithTextProps> = ({ staticText, linkText, onPress }) => {
+const LinkWithText: React.FC<LinkWithTextProps> = ({ staticText, linkText, onPress, isDisabled = false, countdown }) => {
   const styles = createStyles(useTheme())
 
   return (
     <View style={styles.container}>
       <Text>{staticText}</Text>
-      <TouchableOpacity onPress={onPress}>
-        <Text style={styles.linkText}>{linkText}</Text>
+      <TouchableOpacity onPress={onPress} disabled={isDisabled}>
+        <Text style={[styles.linkText, isDisabled && styles.disabledLinkText]}>
+          {isDisabled && countdown !== null && countdown !== undefined ? `Resend OTP in ${Math.floor(countdown / 60)}:${('0' + (countdown % 60)).slice(-2)}` : linkText}
+        </Text>
       </TouchableOpacity>
     </View>
   )
 }
 
-const createStyles = (theme: Theme) => StyleSheet.create({
+const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -31,6 +35,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   linkText: {
     color: theme.colors.primary,
     fontWeight: 'bold'
+  },
+  disabledLinkText: {
+    color: theme.colors.textPrimary
   }
 })
 

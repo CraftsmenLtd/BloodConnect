@@ -8,13 +8,18 @@ variable "dynamodb_table_arn" {
   description = "ARN of the DynamoDB table"
 }
 
-variable "donor_search_sf_arn" {
-  type        = string
-  description = "donor search Step Function arn"
-}
-
 variable "donor_search_max_retry_count" {
   type        = string
   description = "donor search maximum retry count"
   default     = 10
+}
+
+variable "api_gateway_id" {
+  description = "ID of the API Gateway"
+  type        = string
+}
+
+variable "api_gateway_execution_arn" {
+  description = "Execution ARN of the API Gateway"
+  type        = string
 }

@@ -8,7 +8,7 @@ export type UserDTO = DTO & HasIdentifier & {
 }
 
 export type Gender = 'male' | 'female' | 'other'
-export type availableForDonation = 'yes' | 'no'
+export type AvailableForDonation = 'yes' | 'no'
 export interface LocationDTO {
   userId: string;
   locationId: string;
@@ -19,7 +19,7 @@ export interface LocationDTO {
   geohash: string;
   createdAt: string;
   bloodGroup: BloodGroup;
-  availableForDonation: availableForDonation;
+  availableForDonation: AvailableForDonation;
   lastVaccinatedDate: string;
 }
 
@@ -32,12 +32,14 @@ export interface UserDetailsDTO extends UserDTO {
   gender: Gender;
   dateOfBirth: string;
   age: number;
-  availableForDonation: availableForDonation;
+  availableForDonation: AvailableForDonation;
   NIDFront: string;
   NIDBack: string;
   lastVaccinatedDate: string;
   createdAt: string;
   updatedAt?: string;
+  deviceToken?: string;
+  snsEndpointArn?: string;
 }
 
 export interface StoreNotificationEndPoint extends UserDTO {
