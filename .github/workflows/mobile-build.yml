@@ -24,6 +24,7 @@ jobs:
 
   build-app:
     name: Build App
+    needs: [build-push-docker-image]
     runs-on: ${{ vars.RUNNER_OS }}
     env:
       RUNNER_IMAGE_NAME: ${{ inputs.runner_image_name }}
