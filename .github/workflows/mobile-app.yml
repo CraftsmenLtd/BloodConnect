@@ -1,15 +1,17 @@
-name: 🌿 Branch Deployment
+name: 📱 Mobile App Build & Release
 
 on:
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.ref }}
+  push:
+    branches:
+      - I-221-mobile-app-pipeline
 
 permissions:
   contents: read
   packages: write
-  id-token: write
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   setup-environment:
@@ -28,15 +30,18 @@ jobs:
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
 
-  deploy-branch:
-    name: 🚀 Deploy Branch Infrastructure
+  build-mobile-app:
+    name: Build Mobile Application
     secrets: inherit
-    needs: [setup-environment, build-push-docker-image]
+    needs: [ setup-environment, build-push-docker-image ]
     environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
-    uses: ./.github/workflows/aws-terraform.yml
+    uses: ./.github/workflows/mobile-build.yml
     with:
       docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       github_environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
       deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
       aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
-      tf_action: apply
+      app_version: 0.0.1
+      eas_project_id: ${{ secrets.EAS_PROJECT_ID }}
+      expo_token: ${{ secrets.EXPO_TOKEN }}
+      location_service_email: ${{ secrets.LOCATION_SERVICE_EMAIL }}
