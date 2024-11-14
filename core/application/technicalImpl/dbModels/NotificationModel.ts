@@ -37,12 +37,10 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
   toDto(dbFields: NotificationFields): NotificationDTO {
     const { PK, SK, ...remainingNotificationFields } = dbFields
     const userId = PK.replace('NOTIFICATION#', '')
-    let requestPostId: string | undefined
     let type = 'common'
     let id = ''
     if (SK.startsWith('BLOODREQPOST#')) {
       const parts = SK.split('#')
-      requestPostId = parts[1]
       id = parts[2]
       type = 'bloodRequestPost'
     } else if (SK.startsWith('COMMON#')) {
