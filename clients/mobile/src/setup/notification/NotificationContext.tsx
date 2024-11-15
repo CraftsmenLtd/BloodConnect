@@ -39,12 +39,12 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     const checkInitialNotification = async() => {
       try {
         const response = await Notifications.getLastNotificationResponseAsync()
-        console.log('####cp-1: ', JSON.stringify(response))
-        if (response.notification.request.identifier !== null && isMounted) {
+
+        if (Object.keys(response?.notification.request.content.data ?? {}).length !== 0 && isMounted) {
           await waitForNavigationReady()
-          setNotificationData(response.notification.request.content.data.notificationData)
+          setNotificationData(response?.notification.request.content.data.notificationData)
           navigation.navigate('BloodRequestPreview', {
-            notificationData: response.notification.request.content.data.notificationData,
+            notificationData: response?.notification.request.content.data.notificationData
           })
         }
       } catch (error) {
@@ -52,7 +52,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       }
     }
 
-    // Function to wait until navigation is ready
     const waitForNavigationReady = async() => {
       return new Promise<void>((resolve, reject) => {
         let attempts = 0
@@ -101,7 +100,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
 export const useNotificationContext = () => {
   const context = useContext(NotificationContext)
-  if (!context) {
+  if (context === null) {
     throw new Error('useNotificationContext must be used within a NotificationProvider')
   }
   return context
