@@ -4,9 +4,11 @@ import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, v
 import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import { googleLogin, facebookLogin } from '../../services/authService'
+import { googleLogin, facebookLogin, registerUser } from '../../services/authService'
 import { formatPhoneNumber } from '../../../utility/formatte'
 import { useAuth } from '../../context/useAuth'
+import { useFetchClient } from '../../../setup/clients/useFetchClient'
+import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -25,6 +27,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useRegister = (): any => {
+  const fetchClient = useFetchClient()
   const auth = useAuth()
   const navigation = useNavigation<RegisterScreenNavigationProp>()
   const [registerCredential, setRegisterCredential] = useState<RegisterCredential>(
@@ -74,6 +77,7 @@ export const useRegister = (): any => {
       const isGoogleSignedIn = await googleLogin()
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -93,6 +97,7 @@ export const useRegister = (): any => {
       const isFacebookSignedIn = await facebookLogin()
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,

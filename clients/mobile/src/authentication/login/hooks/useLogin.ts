@@ -6,7 +6,7 @@ import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationT
 import { loginUser, googleLogin, facebookLogin } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
-import { registerForPushNotificationsAsync, saveDeviceTokenToSNS } from '../../../setup/notification/Notification'
+import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
 type CredentialKeys = keyof LoginCredential
@@ -41,19 +41,13 @@ export const useLogin = (): any => {
     }))
   }
 
-  const registerUserDeviceForNotification = (): void => {
-    registerForPushNotificationsAsync().then(token => {
-      void saveDeviceTokenToSNS(token as string, fetchClient)
-    }).catch(error => { console.error(error) })
-  }
-
   const handleLogin = async(): Promise<void> => {
     try {
       setLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
         auth?.setIsAuthenticated(true)
-        registerUserDeviceForNotification()
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -65,6 +59,7 @@ export const useLogin = (): any => {
         setLoading(false)
       }
     } catch (error) {
+      console.log('error', error)
       setLoginError('Invalid Email or Password.')
     } finally {
       setLoading(false)
@@ -74,9 +69,9 @@ export const useLogin = (): any => {
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
       const isGoogleSignedIn = await googleLogin()
-      registerUserDeviceForNotification()
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -94,9 +89,9 @@ export const useLogin = (): any => {
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
       const isFacebookSignedIn = await facebookLogin()
-      registerUserDeviceForNotification()
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,

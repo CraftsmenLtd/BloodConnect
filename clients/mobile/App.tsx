@@ -9,8 +9,17 @@ import { Amplify } from 'aws-amplify'
 import { awsCognitoConfiguration } from './src/setup/config/cognito'
 import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationContext'
+import * as Notifications from 'expo-notifications'
 
 Amplify.configure(awsCognitoConfiguration)
+
+Notifications.setNotificationHandler({
+  handleNotification: async() => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false
+  })
+})
 
 export default function App() {
   const [backPressedOnce, setBackPressedOnce] = useState(false)
@@ -33,15 +42,15 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-    <NavigationContainer>
-      <AuthProvider>
-        <NotificationProvider>
-          <ThemeProvider>
+      <NavigationContainer>
+        <AuthProvider>
+          <NotificationProvider>
+            <ThemeProvider>
               <Navigator />
-          </ThemeProvider>
-        </NotificationProvider>
-      </AuthProvider>
-    </NavigationContainer>
+            </ThemeProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </NavigationContainer>
     </SafeAreaProvider>
   )
 }
