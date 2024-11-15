@@ -30,6 +30,7 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
       PK: `NOTIFICATION#${userId}`,
       SK: sk,
       ...remainingNotificationFields,
+      data,
       createdAt: new Date().toISOString()
     }
   }

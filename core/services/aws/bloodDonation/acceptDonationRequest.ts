@@ -22,7 +22,7 @@ async function acceptDonationRequestLambda(event: AcceptDonationRequestAttribute
       acceptDonationRequestAttributes,
       new DynamoDbTableOperations<AcceptedDonationDTO, AcceptedDonationFields, AcceptDonationRequestModel>(new AcceptDonationRequestModel())
     )
-    return generateApiGatewayResponse(response, HTTP_CODES.OK)
+    return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
