@@ -23,7 +23,7 @@ export class NotificationService {
           `BLOODREQPOST#${payload.data.requestPostId}`
         )
 
-        if (type === 'bloodRequestPost' && existingItem !== null) {
+        if (existingItem !== null) {
           return 'Donor already notified'
         }
       }
