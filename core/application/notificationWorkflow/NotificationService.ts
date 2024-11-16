@@ -64,7 +64,37 @@ export class NotificationService {
       }
       await userRepository.update(updateData)
       return 'Device registration successful.'
-    } catch (error) {
+    } catch (error: unknown) {
+      const typedError = error as Error
+      if (
+        typedError.name === 'InvalidParameterException' &&
+        typedError.message.includes('already exists with the same Token')
+      ) {
+        const arnMatch = typedError.message.match(/arn:aws:sns:[\w-]+:\d+:endpoint\/\S+/)
+        const existingArn = arnMatch !== null ? arnMatch[0] : null
+
+        if (existingArn !== null) {
+          const existingAttributes = await snsModel.getEndpointAttributes(existingArn)
+          const oldUpdateData: Partial<StoreNotificationEndPoint> = {
+            id: existingAttributes.CustomUserData,
+            snsEndpointArn: '',
+            updatedAt: new Date().toISOString()
+          }
+
+          await userRepository.update(oldUpdateData)
+
+          await snsModel.setEndpointAttributes(existingArn, registrationAttributes)
+          const { userId } = registrationAttributes
+
+          const updateData: Partial<StoreNotificationEndPoint> = {
+            id: userId,
+            snsEndpointArn: existingArn,
+            updatedAt: new Date().toISOString()
+          }
+          await userRepository.update(updateData)
+          return 'Device registration successful with existing endpoint.'
+        }
+      }
       throw new Error('Failed to store Endpoint ARN')
     }
   }

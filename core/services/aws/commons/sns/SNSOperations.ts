@@ -1,4 +1,4 @@
-import { CreatePlatformEndpointCommand, PublishCommand, SNS } from '@aws-sdk/client-sns'
+import { CreatePlatformEndpointCommand, GetEndpointAttributesCommand, PublishCommand, SetEndpointAttributesCommand, SNS } from '@aws-sdk/client-sns'
 import { SNSModel } from '../../../../application/technicalImpl/sns/SNSModel'
 import { NotificationQueueMessage, SnsRegistrationAttributes } from '../../../../application/notificationWorkflow/Types'
 
@@ -58,5 +58,32 @@ export default class SNSOperations implements SNSModel {
 
     const response = await this.client.send(createEndpointCommand)
     return { snsEndpointArn: `${response.EndpointArn}` }
+  }
+
+  async getEndpointAttributes(existingArn: string): Promise<Record<string, string>> {
+    try {
+      const command = new GetEndpointAttributesCommand({
+        EndpointArn: existingArn
+      })
+      const response = await this.client.send(command)
+      return response.Attributes ?? {}
+    } catch (error) {
+      throw new Error(`Failed to get endpoint attributes: ${error}`)
+    }
+  }
+
+  async setEndpointAttributes(existingArn: string, attributes: SnsRegistrationAttributes): Promise<void> {
+    try {
+      const { userId } = attributes
+      const command = new SetEndpointAttributesCommand({
+        EndpointArn: existingArn,
+        Attributes: {
+          CustomUserData: userId
+        }
+      })
+      await this.client.send(command)
+    } catch (error) {
+      throw new Error(`Failed to set endpoint attributes: ${error}`)
+    }
   }
 }
