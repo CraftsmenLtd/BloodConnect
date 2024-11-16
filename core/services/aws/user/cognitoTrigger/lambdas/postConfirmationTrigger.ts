@@ -2,9 +2,9 @@ import { PostConfirmationTriggerEvent } from 'aws-lambda'
 import { UserService } from '../../../../../application/userWorkflows/UserService'
 import { UserDTO } from '../../../../../../commons/dto/UserDTO'
 import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperations'
-import UserModel, { UserFields } from '../../../../../application/technicalImpl/dbModels/UserModel'
+import UserModel, { UserFields } from '../../../../../application/Models/dbModels/UserModel'
 import { updateCognitoUserInfo } from '../../../commons/cognito/CognitoOperations'
-import { sendAppUserWellcomeMail } from '../../../commons/ses/sesOperations'
+import { sendAppUserWelcomeMail } from '../../../commons/ses/sesOperations'
 
 async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Promise<PostConfirmationTriggerEvent> {
   if (event.triggerSource !== 'PostConfirmation_ConfirmSignUp') {
@@ -32,8 +32,8 @@ async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Prom
     attributes: cognitoAttributes
   })
 
-  const emailContent = userService.getAppUserWellcomeMail(userAttributes.name)
-  await sendAppUserWellcomeMail({
+  const emailContent = userService.getAppUserWelcomeMail(userAttributes.name)
+  await sendAppUserWelcomeMail({
     email: userAttributes.email,
     emailContent
   })

@@ -1,7 +1,7 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import AcceptDonationRequestError from './AcceptDonationRequestError'
 import { AcceptedDonationDTO, DonationStatus } from '../../../commons/dto/DonationDTO'
-import Repository from '../technicalImpl/policies/repositories/Repository'
+import Repository from '../Models/policies/repositories/Repository'
 import { AcceptDonationRequestAttributes } from './Types'
 
 export class AcceptDonationService {

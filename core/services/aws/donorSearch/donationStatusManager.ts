@@ -2,9 +2,9 @@ import { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import { DonorRoutingAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { AcceptedDonationDTO, DonationDTO } from '../../../../commons/dto/DonationDTO'
-import { BloodDonationModel, DonationFields } from '../../../application/technicalImpl/dbModels/BloodDonationModel'
+import { BloodDonationModel, DonationFields } from '../../../application/Models/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
-import { AcceptedDonationFields, AcceptDonationRequestModel } from '@application/technicalImpl/dbModels/AcceptDonationModel'
+import { AcceptedDonationFields, AcceptDonationRequestModel } from '@application/Models/dbModels/AcceptDonationModel'
 
 const bloodDonationService = new BloodDonationService()
 

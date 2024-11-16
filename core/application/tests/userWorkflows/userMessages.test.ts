@@ -1,4 +1,4 @@
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from '../../userWorkflows/userMessages'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWelcomeMailMessage } from '../../userWorkflows/userMessages'
 import { GenericMessage } from '../../../../commons/dto/MessageDTO'
 import { EMAIL_VERIFICATION_TITLE, EMAIL_VERIFICATION_CONTENT, PASSWORD_RESET_CONTENT, PASSWORD_RESET_TITLE, APP_USER_WELCOME_MAIL_TITLE, APP_USER_WELCOME_MAIL_CONTENT } from '../../utils/messageConstants'
 import { replaceTemplatePlaceholders } from '../../utils/formatString'
@@ -39,7 +39,7 @@ describe('User Message Functions', () => {
       content: replaceTemplatePlaceholders(APP_USER_WELCOME_MAIL_CONTENT, userName)
     }
 
-    const result = getAppUserWellcomeMailMessage(userName)
+    const result = getAppUserWelcomeMailMessage(userName)
 
     expect(result).toEqual(expectedMessage)
     expect(result.content).toContain(userName)

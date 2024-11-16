@@ -1,5 +1,5 @@
 import { BloodDonationAttributes, DonorRoutingAttributes } from '../../bloodDonationWorkflow/Types'
-import { DonationFields, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
+import { DonationFields, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX } from '../../Models/dbModels/BloodDonationModel'
 import { BloodGroup, DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 
 export const currentDate = new Date().toISOString()

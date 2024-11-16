@@ -1,4 +1,4 @@
-import { BloodDonationModel, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX, DonationFields } from '../../../technicalImpl/dbModels/BloodDonationModel'
+import { BloodDonationModel, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX, DonationFields } from '../../../Models/dbModels/BloodDonationModel'
 import { DonationDTO, DonationStatus } from '../../../../../commons/dto/DonationDTO'
 import { donationDtoMock, donationFieldsMock } from '../../mocks/mockDonationRequestData'
 

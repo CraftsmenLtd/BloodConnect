@@ -1,0 +1,1 @@
+export const MAX_LOCAL_CACHE_SIZE_COUNT = 1000

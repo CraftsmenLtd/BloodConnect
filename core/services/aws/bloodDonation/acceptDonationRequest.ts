@@ -5,7 +5,7 @@ import { AcceptDonationService } from '../../../application/bloodDonationWorkflo
 import { AcceptDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
-import { AcceptDonationRequestModel, AcceptedDonationFields } from '../../../application/technicalImpl/dbModels/AcceptDonationModel'
+import { AcceptDonationRequestModel, AcceptedDonationFields } from '../../../application/Models/dbModels/AcceptDonationModel'
 
 const acceptDonationRequest = new AcceptDonationService()
 

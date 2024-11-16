@@ -1,4 +1,4 @@
-import UserModel from '../../../technicalImpl/dbModels/UserModel'
+import UserModel from '../../../Models/dbModels/UserModel'
 import { expectedUser, mockUserDetailsWithStringId } from '../../mocks/mockUserData'
 
 describe('UserModel Unit Tests', () => {

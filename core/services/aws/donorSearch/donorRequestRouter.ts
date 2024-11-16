@@ -3,11 +3,11 @@ import { BloodDonationService } from '../../../application/bloodDonationWorkflow
 import { DonorRoutingAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { DonationDTO, DonorSearchDTO } from '../../../../commons/dto/DonationDTO'
 import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import { BloodDonationModel, DonationFields } from '../../../application/technicalImpl/dbModels/BloodDonationModel'
+import { BloodDonationModel, DonationFields } from '../../../application/Models/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import StepFunctionOperations from '../commons/stepFunction/StepFunctionOperations'
-import { DonorSearchFields, DonorSearchModel } from '../../../application/technicalImpl/dbModels/DonorSearchModel'
-import UserModel, { UserFields } from '../../../application/technicalImpl/dbModels/UserModel'
+import { DonorSearchFields, DonorSearchModel } from '../../../application/Models/dbModels/DonorSearchModel'
+import UserModel, { UserFields } from '../../../application/Models/dbModels/UserModel'
 
 const bloodDonationService = new BloodDonationService()
 

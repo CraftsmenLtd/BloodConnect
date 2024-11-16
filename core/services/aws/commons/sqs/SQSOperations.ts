@@ -1,5 +1,5 @@
 import { SQS } from '@aws-sdk/client-sqs'
-import { SQSModel } from '../../../../application/technicalImpl/sqs/SQSModel'
+import { SQSModel } from '../../../../application/Models/sqs/SQSModel'
 import { NotificationAttributes, NotificationQueueMessage } from '../../../../application/notificationWorkflow/Types'
 
 export default class SQSOperations implements SQSModel {

@@ -1,5 +1,5 @@
 import { CreatePlatformEndpointCommand, GetEndpointAttributesCommand, PublishCommand, SetEndpointAttributesCommand, SNS } from '@aws-sdk/client-sns'
-import { SNSModel } from '../../../../application/technicalImpl/sns/SNSModel'
+import { SNSModel } from '../../../../application/Models/sns/SNSModel'
 import { NotificationQueueMessage, SnsRegistrationAttributes } from '../../../../application/notificationWorkflow/Types'
 
 const PLATFORM_ARN_APNS = process.env.PLATFORM_ARN_APNS
