@@ -29,14 +29,14 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
         data,
         createdAt: new Date().toISOString()
       }
-    } else {
-      return {
-        PK: `NOTIFICATION#${userId}`,
-        SK: `COMMON#${id}`,
-        ...remainingNotificationFields,
-        data,
-        createdAt: new Date().toISOString()
-      }
+    }
+
+    return {
+      PK: `NOTIFICATION#${userId}`,
+      SK: `COMMON#${id}`,
+      ...remainingNotificationFields,
+      data,
+      createdAt: new Date().toISOString()
     }
   }
 
@@ -51,13 +51,13 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
         type: 'bloodRequestPost',
         id: parts[2]
       }
-    } else {
-      return {
-        ...remainingNotificationFields,
-        userId,
-        type: 'common',
-        id: SK.replace('COMMON#', '')
-      }
+    }
+
+    return {
+      ...remainingNotificationFields,
+      userId,
+      type: 'common',
+      id: SK.replace('COMMON#', '')
     }
   }
 }
