@@ -28,8 +28,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
   const secondaryIndex: string = body?.SK
   const createdAt: string = body?.createdAt
   if (primaryIndex === '' || secondaryIndex === '') {
-    console.error('Missing PK or SK in the DynamoDB record')
-    return
+    throw new Error('Missing PK or SK in the DynamoDB record')
   }
 
   const donorRoutingAttributes: DonorRoutingAttributes = {
