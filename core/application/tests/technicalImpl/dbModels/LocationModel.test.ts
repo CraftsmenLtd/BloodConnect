@@ -1,4 +1,4 @@
-import LocationModel, { LocationFields } from '../../../technicalImpl/dbModels/LocationModel'
+import LocationModel, { LocationFields } from '../../../Models/dbModels/LocationModel'
 import { LocationDTO } from '../../../../../commons/dto/UserDTO'
 import { BloodGroup } from '@commons/dto/DonationDTO'
 

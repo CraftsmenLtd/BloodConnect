@@ -3,15 +3,13 @@ import UserOperationError from './UserOperationError'
 import { AvailableForDonation, LocationDTO, UserDetailsDTO, UserDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { GenericMessage } from '../../../commons/dto/MessageDTO'
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from './userMessages'
-import Repository from '../technicalImpl/policies/repositories/Repository'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWelcomeMailMessage } from './userMessages'
+import Repository from '../Models/policies/repositories/Repository'
 import { UserAttributes, UpdateUserAttributes } from './Types'
 import { generateGeohash } from '../../application/utils/geohash'
-import { QueryConditionOperator, QueryInput } from '../../application/technicalImpl/policies/repositories/QueryTypes'
-import LocationModel, { LocationFields } from '../../application/technicalImpl/dbModels/LocationModel'
-import { SQSModel } from '../../application/technicalImpl/sqs/SQSModel'
+import { QueryConditionOperator, QueryInput } from '../../application/Models/policies/repositories/QueryTypes'
+import LocationModel, { LocationFields } from '../../application/Models/dbModels/LocationModel'
 import { differenceInYears, differenceInMonths } from 'date-fns'
-import { NotificationAttributes } from '../../application/notificationWorkflow/Types'
 import { BloodGroup } from '@commons/dto/DonationDTO'
 
 export class UserService {
@@ -36,8 +34,8 @@ export class UserService {
     return getPasswordResetVerificationMessage(userName, securityCode)
   }
 
-  getAppUserWellcomeMail(userName: string): GenericMessage {
-    return getAppUserWellcomeMailMessage(userName)
+  getAppUserWelcomeMail(userName: string): GenericMessage {
+    return getAppUserWelcomeMailMessage(userName)
   }
 
   async updateUser(userAttributes: UpdateUserAttributes, userRepository: Repository<UserDetailsDTO>, locationRepository: Repository<LocationDTO>, model: LocationModel): Promise<string> {
@@ -128,9 +126,8 @@ export class UserService {
     }
   }
 
-  async pushNotification(notificationAttributes: NotificationAttributes, userRepository: Repository<UserDetailsDTO>, sqsModel: SQSModel): Promise<string> {
+  async getDeviceSnsEndpointArn(userId: string, userRepository: Repository<UserDetailsDTO>): Promise<string> {
     try {
-      const { userId } = notificationAttributes
       const userProfile = await userRepository.getItem(
         `USER#${userId}`,
         'PROFILE'
@@ -139,8 +136,7 @@ export class UserService {
         throw new Error('User has no registered device for notifications')
       }
 
-      await sqsModel.queue(notificationAttributes, userProfile?.snsEndpointArn)
-      return 'Notification Queued Successfully'
+      return userProfile.snsEndpointArn
     } catch (error) {
       throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     }

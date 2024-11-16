@@ -3,7 +3,7 @@ import { NotificationQueueMessage } from '../../../application/notificationWorkf
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import SNSOperations from '../commons/sns/SNSOperations'
 import { NotificationDTO } from '../../../../commons/dto/NotificationDTO'
-import NotificationModel, { NotificationFields } from '../../../application/technicalImpl/dbModels/NotificationModel'
+import NotificationModel, { NotificationFields } from '../../../application/Models/dbModels/NotificationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 
 const notificationService = new NotificationService()

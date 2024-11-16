@@ -1,12 +1,12 @@
 import { UserService } from '../../userWorkflows/UserService'
 import { generateUniqueID } from '../../utils/idGenerator'
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from '../../userWorkflows/userMessages'
+import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWelcomeMailMessage } from '../../userWorkflows/userMessages'
 import { mockUserWithStringId } from '../mocks/mockUserData'
 import { mockRepository } from '../mocks/mockRepositories'
-import Repository from '../../technicalImpl/policies/repositories/Repository'
+import Repository from '../../Models/policies/repositories/Repository'
 import { UserDTO, UserDetailsDTO, LocationDTO } from '../../../../commons/dto/UserDTO'
 import { UpdateUserAttributes } from '../../userWorkflows/Types'
-import LocationModel from '../../technicalImpl/dbModels/LocationModel'
+import LocationModel from '../../Models/dbModels/LocationModel'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflows/userMessages')
@@ -102,18 +102,18 @@ describe('UserService Tests', () => {
     }))
   })
 
-  describe('getAppUserWellcomeMail', () => {
+  describe('getAppUserWelcomeMail', () => {
     test('should get welcome mail message correctly', () => {
       const userName = 'Suzan'
       const mockMessage = {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'
       };
-      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+      (getAppUserWelcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
 
-      const result = userService.getAppUserWellcomeMail(userName)
+      const result = userService.getAppUserWelcomeMail(userName)
 
-      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith(userName)
+      expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(userName)
       expect(result).toEqual(mockMessage)
     })
 
@@ -122,11 +122,11 @@ describe('UserService Tests', () => {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'
       };
-      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+      (getAppUserWelcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
 
-      const result = userService.getAppUserWellcomeMail('')
+      const result = userService.getAppUserWelcomeMail('')
 
-      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith('')
+      expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith('')
       expect(result).toEqual(mockMessage)
     })
 
@@ -136,11 +136,11 @@ describe('UserService Tests', () => {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'
       };
-      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+      (getAppUserWelcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
 
-      const result = userService.getAppUserWellcomeMail(userName)
+      const result = userService.getAppUserWelcomeMail(userName)
 
-      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith(userName)
+      expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(userName)
       expect(result).toEqual(mockMessage)
     })
 
@@ -150,11 +150,11 @@ describe('UserService Tests', () => {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'
       };
-      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+      (getAppUserWelcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
 
-      const result = userService.getAppUserWellcomeMail(longUserName)
+      const result = userService.getAppUserWelcomeMail(longUserName)
 
-      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith(longUserName)
+      expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(longUserName)
       expect(result).toEqual(mockMessage)
     })
   })

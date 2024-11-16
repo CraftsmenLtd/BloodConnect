@@ -1,5 +1,5 @@
 import { CognitoIdentityProviderClient, AdminUpdateUserAttributesCommand } from '@aws-sdk/client-cognito-identity-provider'
-import { UpdateCognitoAttributes } from '../../../../application/technicalImpl/cognito/CognitoModel'
+import { UpdateCognitoAttributes } from '../../../../application/Models/cognito/CognitoModel'
 
 const cognitoClient = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION })
 

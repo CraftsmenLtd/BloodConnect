@@ -13,7 +13,7 @@ services:
     build: .
     container_name: swagger-nginx
     ports:
-      - "8081:80"
+      - "8083:80"
     entrypoint: ["/bin/sh", "-c", "bin/sh /process-openapi.sh && nginx -g 'daemon off;'"]
     env_file: "swagger-ui/.env"
     restart: always

@@ -21,15 +21,21 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
 
   fromDto(notificationDto: NotificationDTO): NotificationFields {
     const { id, userId, type, data, ...remainingNotificationFields } = notificationDto
-    let sk = `COMMON#${id}`
     if (type === 'bloodRequestPost' && data !== undefined && data.requestPostId !== undefined) {
-      sk = `BLOODREQPOST#${data.requestPostId}`
+      return {
+        PK: `NOTIFICATION#${userId}`,
+        SK: `BLOODREQPOST#${data.requestPostId}`,
+        ...remainingNotificationFields,
+        data,
+        createdAt: new Date().toISOString()
+      }
     }
 
     return {
       PK: `NOTIFICATION#${userId}`,
-      SK: sk,
+      SK: `COMMON#${id}`,
       ...remainingNotificationFields,
+      data,
       createdAt: new Date().toISOString()
     }
   }
@@ -37,21 +43,21 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
   toDto(dbFields: NotificationFields): NotificationDTO {
     const { PK, SK, ...remainingNotificationFields } = dbFields
     const userId = PK.replace('NOTIFICATION#', '')
-    let type = 'common'
-    let id = ''
     if (SK.startsWith('BLOODREQPOST#')) {
       const parts = SK.split('#')
-      id = parts[2]
-      type = 'bloodRequestPost'
-    } else if (SK.startsWith('COMMON#')) {
-      id = SK.replace('COMMON#', '')
+      return {
+        ...remainingNotificationFields,
+        userId,
+        type: 'bloodRequestPost',
+        id: parts[2]
+      }
     }
 
     return {
       ...remainingNotificationFields,
       userId,
-      type,
-      id
+      type: 'common',
+      id: SK.replace('COMMON#', '')
     }
   }
 }

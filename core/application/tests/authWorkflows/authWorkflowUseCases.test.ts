@@ -1,5 +1,11 @@
-import validateToken from '../../../application/authWorkflows/authToken/tokenValidator'
-import { getRefreshToken, getBearerAuthToken, getAuthToken, getAuthTokenFromRefreshToken, getPayloadFromBearerToken } from '../../authWorkflows/authWorkflowUseCases'
+import validateToken from '../../../application/authWorkflow/authToken/tokenValidator'
+import {
+  getRefreshToken,
+  getBearerAuthToken,
+  getAuthToken,
+  getAuthTokenFromRefreshToken,
+  getPayloadFromBearerToken
+} from '../../authWorkflow/authWorkflowUseCases'
 import { getDaysInSecs } from '../../../../commons/libs/dateTimeUtils'
 import { JwtPayload } from 'jsonwebtoken'
 import { ApplicationLogger } from '../../../../commons/libs/logger/ApplicationLogger'
@@ -11,22 +17,28 @@ describe('authWorkflowUseCases', () => {
     describe('getRefreshToken', () => {
       it('should return token with validity of 30 days for mobile client', () => {
         const refreshToken = getRefreshToken(tokenPayload, 'mobile')
-        const sevenDaysValidToken = Math.floor(Date.now() / 1000) + getDaysInSecs(30)
+        const sevenDaysValidToken =
+          Math.floor(Date.now() / 1000) + getDaysInSecs(30)
         const decodedPayload = validateToken<{ exp: number }>(refreshToken)
         expect(decodedPayload.exp).toBe(sevenDaysValidToken)
       })
 
       it('should return token with validity of 7 days for web client', () => {
         const refreshToken = getRefreshToken(tokenPayload, 'web')
-        const sevenDaysValidToken = Math.floor(Date.now() / 1000) + getDaysInSecs(7)
+        const sevenDaysValidToken =
+          Math.floor(Date.now() / 1000) + getDaysInSecs(7)
         const decodedPayload = validateToken<{ exp: number }>(refreshToken)
         expect(decodedPayload.exp).toBe(sevenDaysValidToken)
       })
     })
 
     describe('getAuthToken', () => {
-      const getExpiryOfJsonToken = (decodedPayload: string | JwtPayload): number =>
-        typeof decodedPayload === 'string' ? JSON.parse(decodedPayload).exp : decodedPayload.exp
+      const getExpiryOfJsonToken = (
+        decodedPayload: string | JwtPayload
+      ): number =>
+        typeof decodedPayload === 'string'
+          ? JSON.parse(decodedPayload).exp
+          : decodedPayload.exp
 
       it('should generate a valid jwt token valid till day end', () => {
         const token = getAuthToken(tokenPayload)
@@ -81,14 +93,16 @@ describe('authWorkflowUseCases', () => {
 
     describe('getAuthTokenFromRefreshToken', () => {
       it('should log error and return undefined for invalid token', () => {
-        const newTokenFromRefreshToken = getAuthTokenFromRefreshToken('ascascsac')
+        const newTokenFromRefreshToken =
+          getAuthTokenFromRefreshToken('ascascsac')
 
         expect(newTokenFromRefreshToken).toBe(undefined)
         expect(loggerSpy).toHaveBeenCalled()
       })
 
       it('should log error and return undefined for undefined token', () => {
-        const newTokenFromRefreshToken = getAuthTokenFromRefreshToken(undefined)
+        const newTokenFromRefreshToken =
+          getAuthTokenFromRefreshToken(undefined)
 
         expect(newTokenFromRefreshToken).toBe(undefined)
         expect(loggerSpy).toHaveBeenCalled()
@@ -96,14 +110,16 @@ describe('authWorkflowUseCases', () => {
 
       it('should return a valid auth token for valid refresh token from mobile client', () => {
         const validRefreshToken = getRefreshToken(tokenPayload, 'mobile')
-        const newTokenFromRefreshToken = getAuthTokenFromRefreshToken(validRefreshToken)
+        const newTokenFromRefreshToken =
+          getAuthTokenFromRefreshToken(validRefreshToken)
 
         expect(newTokenFromRefreshToken).toBeDefined()
       })
 
       it('should return a valid auth token for valid refresh token from web client', () => {
         const validRefreshToken = getRefreshToken(tokenPayload, 'web')
-        const newTokenFromRefreshToken = getAuthTokenFromRefreshToken(validRefreshToken)
+        const newTokenFromRefreshToken =
+          getAuthTokenFromRefreshToken(validRefreshToken)
 
         expect(newTokenFromRefreshToken).toBeDefined()
       })
@@ -126,7 +142,9 @@ describe('authWorkflowUseCases', () => {
 
       it('should log error and return undefined for invalid bearer token', () => {
         const validAuthToken = getAuthToken(tokenPayload)
-        const payloadFromBearerToken = getPayloadFromBearerToken(`Bearer${validAuthToken}`)
+        const payloadFromBearerToken = getPayloadFromBearerToken(
+          `Bearer${validAuthToken}`
+        )
 
         expect(payloadFromBearerToken).toBe(undefined)
         expect(loggerSpy).toHaveBeenCalled()
@@ -134,7 +152,9 @@ describe('authWorkflowUseCases', () => {
 
       it('should return payload for valid bearer token', () => {
         const validAuthToken = getAuthToken(tokenPayload)
-        const { email, username, role } = getPayloadFromBearerToken(`Bearer ${validAuthToken}`) as typeof tokenPayload
+        const { email, username, role } = getPayloadFromBearerToken(
+          `Bearer ${validAuthToken}`
+        ) as typeof tokenPayload
 
         expect(email).toBe(tokenPayload.email)
         expect(username).toBe(tokenPayload.username)
@@ -142,6 +162,8 @@ describe('authWorkflowUseCases', () => {
       })
     })
 
-    afterEach(() => { loggerSpy.mockRestore() })
+    afterEach(() => {
+      loggerSpy.mockRestore()
+    })
   })
 })

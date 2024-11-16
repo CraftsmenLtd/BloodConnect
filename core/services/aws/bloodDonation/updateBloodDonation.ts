@@ -4,7 +4,7 @@ import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import { UpdateBloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { DonationDTO } from '../../../../commons/dto/DonationDTO'
-import { BloodDonationModel, DonationFields } from '../../../application/technicalImpl/dbModels/BloodDonationModel'
+import { BloodDonationModel, DonationFields } from '../../../application/Models/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 
 const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [

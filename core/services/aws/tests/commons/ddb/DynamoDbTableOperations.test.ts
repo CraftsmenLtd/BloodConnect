@@ -2,11 +2,11 @@ import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperation
 import { DynamoDBDocumentClient, PutCommand, UpdateCommand, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { mockClient } from 'aws-sdk-client-mock'
 import { UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
-import UserModel from '../../../../../application/technicalImpl/dbModels/UserModel'
+import UserModel from '../../../../../application/Models/dbModels/UserModel'
 import DatabaseError from '../../../../../../commons/libs/errors/DatabaseError'
 import { GENERIC_CODES } from '../../../../../../commons/libs/constants/GenericCodes'
 import { mockUserDetailsWithStringId, expectedUser } from '../../../../../application/tests/mocks/mockUserData'
-import { QueryConditionOperator } from '../../../../../application/technicalImpl/policies/repositories/QueryTypes'
+import { QueryConditionOperator } from '../../../../../application/Models/policies/repositories/QueryTypes'
 
 describe('DynamoDbTableOperations Tests', () => {
   const ddbMock = mockClient(DynamoDBDocumentClient)

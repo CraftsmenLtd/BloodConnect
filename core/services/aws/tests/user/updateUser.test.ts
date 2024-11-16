@@ -1,4 +1,4 @@
-import LocationModel from '../../../../application/technicalImpl/dbModels/LocationModel'
+import LocationModel from '../../../../application/Models/dbModels/LocationModel'
 import { UpdateUserAttributes } from '../../../../application/userWorkflows/Types'
 import { UserService } from '../../../../application/userWorkflows/UserService'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'

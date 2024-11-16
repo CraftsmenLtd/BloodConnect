@@ -4,7 +4,7 @@ import DynamoDbTableOperations from '../../../../commons/ddb/DynamoDbTableOperat
 import { mockDynamoDbOperations } from '../../../mock/dynamoDbMocks'
 import { mockUserWithStringId } from '../../../../../../application/tests/mocks/mockUserData'
 import { updateCognitoUserInfo } from '../../../../commons/cognito/CognitoOperations'
-import { sendAppUserWellcomeMail } from '../../../../commons/ses/sesOperations'
+import { sendAppUserWelcomeMail } from '../../../../commons/ses/sesOperations'
 import { GenericMessage } from '../../../../../../../commons/dto/MessageDTO'
 import { createPostConfirmationEvent } from '../../../mock/cognitoEventMocks'
 
@@ -23,9 +23,9 @@ describe('postConfirmationLambda Tests', () => {
   beforeEach(() => {
     (DynamoDbTableOperations as jest.Mock).mockImplementation(() => mockDynamoDbTableOperations)
     jest.spyOn(UserService.prototype, 'createNewUser').mockResolvedValue(mockUserWithStringId)
-    jest.spyOn(UserService.prototype, 'getAppUserWellcomeMail').mockReturnValue(mockEmailContent);
+    jest.spyOn(UserService.prototype, 'getAppUserWelcomeMail').mockReturnValue(mockEmailContent);
     (updateCognitoUserInfo as jest.Mock).mockResolvedValue(undefined);
-    (sendAppUserWellcomeMail as jest.Mock).mockResolvedValue(undefined)
+    (sendAppUserWelcomeMail as jest.Mock).mockResolvedValue(undefined)
   })
 
   afterEach(() => {
@@ -39,7 +39,7 @@ describe('postConfirmationLambda Tests', () => {
 
     expect(UserService.prototype.createNewUser).not.toHaveBeenCalled()
     expect(updateCognitoUserInfo).not.toHaveBeenCalled()
-    expect(sendAppUserWellcomeMail).not.toHaveBeenCalled()
+    expect(sendAppUserWelcomeMail).not.toHaveBeenCalled()
     expect(result).toEqual(mockEvent)
   })
 
@@ -65,8 +65,8 @@ describe('postConfirmationLambda Tests', () => {
       }
     })
 
-    expect(UserService.prototype.getAppUserWellcomeMail).toHaveBeenCalledWith(mockEvent.request.userAttributes.name)
-    expect(sendAppUserWellcomeMail).toHaveBeenCalledWith({
+    expect(UserService.prototype.getAppUserWelcomeMail).toHaveBeenCalledWith(mockEvent.request.userAttributes.name)
+    expect(sendAppUserWelcomeMail).toHaveBeenCalledWith({
       email: mockEvent.request.userAttributes.email,
       emailContent: mockEmailContent
     })
@@ -104,7 +104,7 @@ describe('postConfirmationLambda Tests', () => {
 
     await expect(postConfirmationLambda(mockEvent)).rejects.toThrow('Database error')
     expect(updateCognitoUserInfo).not.toHaveBeenCalled()
-    expect(sendAppUserWellcomeMail).not.toHaveBeenCalled()
+    expect(sendAppUserWelcomeMail).not.toHaveBeenCalled()
   })
 
   test('should handle errors in Cognito update', async() => {
@@ -114,12 +114,12 @@ describe('postConfirmationLambda Tests', () => {
     const mockEvent = createPostConfirmationEvent('PostConfirmation_ConfirmSignUp')
 
     await expect(postConfirmationLambda(mockEvent)).rejects.toThrow('Cognito error')
-    expect(sendAppUserWellcomeMail).not.toHaveBeenCalled()
+    expect(sendAppUserWelcomeMail).not.toHaveBeenCalled()
   })
 
   test('should handle errors in sending welcome email', async() => {
     const mockError = new Error('Email error')
-    ;(sendAppUserWellcomeMail as jest.Mock).mockRejectedValue(mockError)
+    ;(sendAppUserWelcomeMail as jest.Mock).mockRejectedValue(mockError)
 
     const mockEvent = createPostConfirmationEvent('PostConfirmation_ConfirmSignUp')
 

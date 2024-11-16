@@ -2,10 +2,11 @@ import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import { UserDTO } from '../../../commons/dto/UserDTO'
 import { NotificationDTO } from '../../../commons/dto/NotificationDTO'
 import NotificationOperationError from './NotificationOperationError'
-import { NotificationQueueMessage, SnsRegistrationAttributes, StoreNotificationEndPoint } from './Types'
-import Repository from '../technicalImpl/policies/repositories/Repository'
-import { SNSModel } from '../../application/technicalImpl/sns/SNSModel'
+import { NotificationAttributes, NotificationQueueMessage, SnsRegistrationAttributes, StoreNotificationEndPoint } from './Types'
+import Repository from '../Models/policies/repositories/Repository'
+import { SNSModel } from '../../application/Models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
+import { SQSModel } from '../../application/Models/sqs/SQSModel'
 
 export class NotificationService {
   async publishNotification(
@@ -22,7 +23,7 @@ export class NotificationService {
           `BLOODREQPOST#${payload.data.requestPostId}`
         )
 
-        if (type === 'bloodRequestPost' && existingItem !== null) {
+        if (existingItem !== null) {
           return 'Donor already notified'
         }
       }
@@ -68,7 +69,7 @@ export class NotificationService {
       const typedError = error as Error
       if (
         typedError.name === 'InvalidParameterException' &&
-        typedError.message.includes('already exists with the same Token')
+        typedError.message.includes('Device already registered with this Token')
       ) {
         const arnMatch = typedError.message.match(/arn:aws:sns:[\w-]+:\d+:endpoint\/\S+/)
         const existingArn = arnMatch !== null ? arnMatch[0] : null
@@ -96,6 +97,15 @@ export class NotificationService {
         }
       }
       throw new Error('Failed to store Endpoint ARN')
+    }
+  }
+
+  async pushNotification(notificationAttributes: NotificationAttributes, userSnsEndpointArn: string, sqsModel: SQSModel): Promise<string> {
+    try {
+      await sqsModel.queue(notificationAttributes, userSnsEndpointArn)
+      return 'Notification Queued Successfully'
+    } catch (error) {
+      throw new NotificationOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
 }
