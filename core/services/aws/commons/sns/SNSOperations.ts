@@ -42,22 +42,28 @@ export default class SNSOperations implements SNSModel {
 
   async createPlatformEndpoint(attributes: SnsRegistrationAttributes): Promise<{ snsEndpointArn: string }> {
     const { userId, deviceToken, platform } = attributes
-    let platformApplicationArn
+
     if (platform === 'APNS') {
-      platformApplicationArn = PLATFORM_ARN_APNS
+      const createEndpointCommand = new CreatePlatformEndpointCommand({
+        PlatformApplicationArn: PLATFORM_ARN_APNS,
+        Token: deviceToken,
+        CustomUserData: userId
+      })
+
+      const response = await this.client.send(createEndpointCommand)
+      return { snsEndpointArn: `${response.EndpointArn}` }
     } else if (platform === 'FCM') {
-      platformApplicationArn = PLATFORM_ARN_FCM
+      const createEndpointCommand = new CreatePlatformEndpointCommand({
+        PlatformApplicationArn: PLATFORM_ARN_FCM,
+        Token: deviceToken,
+        CustomUserData: userId
+      })
+
+      const response = await this.client.send(createEndpointCommand)
+      return { snsEndpointArn: `${response.EndpointArn}` }
     } else {
       throw new Error("Unsupported platform. Use 'APNS' for iOS or 'FCM' for Android.")
     }
-    const createEndpointCommand = new CreatePlatformEndpointCommand({
-      PlatformApplicationArn: platformApplicationArn,
-      Token: deviceToken,
-      CustomUserData: userId
-    })
-
-    const response = await this.client.send(createEndpointCommand)
-    return { snsEndpointArn: `${response.EndpointArn}` }
   }
 
   async getEndpointAttributes(existingArn: string): Promise<Record<string, string>> {
