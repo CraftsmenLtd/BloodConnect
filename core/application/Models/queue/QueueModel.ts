@@ -1,5 +1,5 @@
 import { DTO } from '../../../../commons/dto/DTOCommon'
 
-export interface SQSModel {
+export interface QueueModel {
   queue(notification: DTO, snsEndpointArn: string): Promise<void>;
 }

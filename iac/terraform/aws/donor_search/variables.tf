@@ -23,3 +23,7 @@ variable "api_gateway_execution_arn" {
   description = "Execution ARN of the API Gateway"
   type        = string
 }
+
+variable "push_notification_queue" {
+  description = "ARN of the notification SQS queue"
+}

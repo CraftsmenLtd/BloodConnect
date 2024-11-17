@@ -32,11 +32,11 @@ export type DonationDTO = DTO & HasIdentifier & {
   transportationInfo?: string;
   shortDescription?: string;
   createdAt?: string;
-  retryCount?: number;
 }
 
 export type DonorSearchDTO = DTO & HasIdentifier & {
   seekerId: string;
+  status: DonationStatus;
   createdAt?: string;
   retryCount?: number;
 }

@@ -8,3 +8,7 @@ output "lambda_metadata" {
     } if try(option.invocation_arn_placeholder, null) != null
   ]
 }
+
+output "push_notification_queue" {
+  value = aws_sqs_queue.push_notification_queue
+}

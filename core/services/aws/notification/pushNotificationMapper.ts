@@ -24,7 +24,7 @@ async function pushNotificationMapper(event: NotificationAttributes): Promise<AP
       title: event.title,
       type: event.type,
       body: event.body,
-      data: event.data
+      payload: event.payload
     }
 
     const cachedUserSnsEndpointArn = userDeviceToSnsEndpointMap.get(event.userId)

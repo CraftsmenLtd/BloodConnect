@@ -136,14 +136,14 @@ export class BloodDonationService {
   ): Promise<string> {
     try {
       const { seekerId, requestPostId, createdAt } = donorRoutingAttributes
-      const existingItem = await bloodDonationRepository.getItem(
+      const bloodDonationItem = await bloodDonationRepository.getItem(
         `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
         `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
       )
-      if (existingItem === null) {
+      if (bloodDonationItem === null) {
         return 'Item not found.'
       }
-      if (existingItem.status === DonationStatus.COMPLETED || existingItem.status === DonationStatus.EXPIRED) {
+      if (bloodDonationItem.status === DonationStatus.COMPLETED || bloodDonationItem.status === DonationStatus.EXPIRED) {
         return 'You can\'t update the donation request'
       }
 
@@ -152,20 +152,21 @@ export class BloodDonationService {
         `${DONOR_SEARCH_PK_PREFIX}#${createdAt}#${requestPostId}`
       )
       if (donorSearchItem === null) {
-        await donorSearchRepository.create(existingItem)
+        await donorSearchRepository.create(bloodDonationItem)
+      } else if (donorSearchItem.status === DonationStatus.COMPLETED) {
+        return 'Donor search is completed'
       }
 
       const retryCount = donorSearchItem?.retryCount ?? 0
-      const updateData: Partial<DonationDTO> = {
-        ...existingItem,
+      const updateData: Partial<DonorSearchDTO> = {
+        ...bloodDonationItem,
         id: requestPostId,
         retryCount: retryCount + 1
       }
 
       if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
-        updateData.status = DonationStatus.EXPIRED
+        updateData.status = DonationStatus.COMPLETED
         await donorSearchRepository.update(updateData)
-        await bloodDonationRepository.update(updateData)
         return 'The donor search process expired after the maximum retry limit is reached.'
       }
 
@@ -176,23 +177,23 @@ export class BloodDonationService {
         seekerId,
         requestPostId,
         createdAt,
-        donationDateTime: existingItem.donationDateTime,
-        neededBloodGroup: existingItem.neededBloodGroup,
-        bloodQuantity: existingItem.bloodQuantity,
-        urgencyLevel: existingItem.urgencyLevel,
-        geohash: existingItem.geohash,
+        donationDateTime: bloodDonationItem.donationDateTime,
+        neededBloodGroup: bloodDonationItem.neededBloodGroup,
+        bloodQuantity: bloodDonationItem.bloodQuantity,
+        urgencyLevel: bloodDonationItem.urgencyLevel,
+        geohash: bloodDonationItem.geohash,
         seekerName,
-        patientName: existingItem.patientName,
-        location: existingItem.location,
-        contactNumber: existingItem.contactNumber,
-        transportationInfo: existingItem.transportationInfo,
-        shortDescription: existingItem.shortDescription,
-        city: existingItem.city,
+        patientName: bloodDonationItem.patientName,
+        location: bloodDonationItem.location,
+        contactNumber: bloodDonationItem.contactNumber,
+        transportationInfo: bloodDonationItem.transportationInfo,
+        shortDescription: bloodDonationItem.shortDescription,
+        city: bloodDonationItem.city,
         retryCount: retryCount + 1,
-        message: `${existingItem.urgencyLevel === UrgencyLevel.URGENT ? 'Urgent ' : ''}${existingItem.neededBloodGroup} needed | ${existingItem.shortDescription}`
+        message: `${bloodDonationItem.urgencyLevel === UrgencyLevel.URGENT ? 'Urgent ' : ''}${bloodDonationItem.neededBloodGroup} needed | ${bloodDonationItem.shortDescription}`
       }
 
-      await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${existingItem.city}-(${existingItem.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`)
+      await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${bloodDonationItem.city}-(${bloodDonationItem.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`)
       return 'We have updated your request and initiated the donor search process.'
     } catch (error) {
       throw new BloodDonationOperationError(`Failed to update blood donation post. Error: ${error}`, GENERIC_CODES.ERROR)

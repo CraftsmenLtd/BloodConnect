@@ -12,7 +12,7 @@ export default class SNSOperations implements SNSModel {
     this.client = new SNS({ region: process.env.AWS_REGION })
   }
 
-  async publish(message: NotificationQueueMessage): Promise<void> {
+  async publish(message: NotificationQueueMessage, snsEndpointArn: string): Promise<void> {
     try {
       const messagePayload = {
         notification: {
@@ -32,7 +32,7 @@ export default class SNSOperations implements SNSModel {
           GCM: JSON.stringify(messagePayload)
         }),
         MessageStructure: 'json',
-        TargetArn: message.snsEndpointArn
+        TargetArn: snsEndpointArn
       })
       await this.client.send(command)
     } catch (error) {

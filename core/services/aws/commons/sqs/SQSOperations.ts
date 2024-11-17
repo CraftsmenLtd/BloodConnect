@@ -1,8 +1,8 @@
 import { SQS } from '@aws-sdk/client-sqs'
-import { SQSModel } from '../../../../application/Models/sqs/SQSModel'
+import { QueueModel } from '../../../../application/Models/queue/QueueModel'
 import { NotificationAttributes, NotificationQueueMessage } from '../../../../application/notificationWorkflow/Types'
 
-export default class SQSOperations implements SQSModel {
+export default class SQSOperations implements QueueModel {
   private readonly client: SQS
 
   constructor() {

@@ -20,13 +20,13 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
   }
 
   fromDto(notificationDto: NotificationDTO): NotificationFields {
-    const { id, userId, type, data, ...remainingNotificationFields } = notificationDto
-    if (type === 'bloodRequestPost' && data !== undefined && data.requestPostId !== undefined) {
+    const { id, userId, type, payload, ...remainingNotificationFields } = notificationDto
+    if (type === 'bloodRequestPost' && payload !== undefined && payload.requestPostId !== undefined) {
       return {
         PK: `NOTIFICATION#${userId}`,
-        SK: `BLOODREQPOST#${data.requestPostId}`,
+        SK: `BLOODREQPOST#${payload.requestPostId}`,
         ...remainingNotificationFields,
-        data,
+        payload,
         createdAt: new Date().toISOString()
       }
     }
@@ -35,7 +35,7 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
       PK: `NOTIFICATION#${userId}`,
       SK: `COMMON#${id}`,
       ...remainingNotificationFields,
-      data,
+      payload,
       createdAt: new Date().toISOString()
     }
   }
