@@ -1,5 +1,5 @@
 import { SQS } from '@aws-sdk/client-sqs'
-import { QueueModel } from '../../../../application/Models/queue/QueueModel'
+import { QueueModel } from '../../../../application/models/queue/QueueModel'
 import { NotificationAttributes, NotificationQueueMessage } from '../../../../application/notificationWorkflow/Types'
 
 export default class SQSOperations implements QueueModel {
@@ -9,7 +9,10 @@ export default class SQSOperations implements QueueModel {
     this.client = new SQS({ region: process.env.AWS_REGION })
   }
 
-  async queue(notification: NotificationAttributes, snsEndpointArn: string): Promise<void> {
+  async queue(
+    notification: NotificationAttributes,
+    snsEndpointArn: string
+  ): Promise<void> {
     const message: NotificationQueueMessage = {
       userId: notification.userId,
       snsEndpointArn,

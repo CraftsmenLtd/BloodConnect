@@ -1,5 +1,5 @@
 import { UserDetailsDTO, UserDTO } from '../../../../commons/dto/UserDTO'
-import { UserFields } from '../../Models/dbModels/UserModel'
+import { UserFields } from '../../models/dbModels/UserModel'
 
 export const mockUserWithStringId: UserDTO = {
   id: '12345',
@@ -13,10 +13,7 @@ export const mockUserDetailsWithStringId: UserDetailsDTO = {
   email: 'ebrahim@example.com',
   name: 'Ebrahim',
   phone: '1234567890',
-  phoneNumbers: [
-    '+8801834567890',
-    '+8801755567822'
-  ],
+  phoneNumbers: ['+8801834567890', '+8801755567822'],
   createdAt: '2023-09-16T12:00:00.000Z',
   bloodGroup: 'O-',
   lastDonationDate: '2023-09-15T14:30:00Z',
@@ -46,10 +43,7 @@ export const expectedUser: UserFields = {
   SK: 'PROFILE',
   email: 'ebrahim@example.com',
   name: 'Ebrahim',
-  phoneNumbers: [
-    '+8801834567890',
-    '+8801755567822'
-  ],
+  phoneNumbers: ['+8801834567890', '+8801755567822'],
   phone: '1234567890',
   createdAt: '2023-09-16T12:00:00.000Z',
   bloodGroup: 'O-',

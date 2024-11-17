@@ -27,4 +27,5 @@ variable "facebook_client_secret" {
 variable "firebase_token_s3_url" {
   description = "S3 URL for Android Firebase token file"
   type        = string
+  default     = "s3://dummy_bucket/dummy_file"
 }

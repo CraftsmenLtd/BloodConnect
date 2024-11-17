@@ -3,7 +3,9 @@ import { NotificationAttributes } from '../../../application/notificationWorkflo
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import SNSOperations from '../commons/sns/SNSOperations'
 import { NotificationDTO } from '../../../../commons/dto/NotificationDTO'
-import NotificationModel, { NotificationFields } from '../../../application/Models/dbModels/NotificationModel'
+import NotificationModel, {
+  NotificationFields
+} from '../../../application/models/dbModels/NotificationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import { LocalCacheMapManager } from '../../../application/utils/localCacheMapManager'
 import { UserService } from '../../../application/userWorkflows/UserService'
@@ -16,14 +18,18 @@ const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(MAX_
 const notificationService = new NotificationService()
 const userService = new UserService()
 
-async function sendPushNotification(event: SQSEvent): Promise<{ status: string }> {
+async function sendPushNotification(
+  event: SQSEvent
+): Promise<{ status: string }> {
   try {
     for (const record of event.Records) {
       await processSQSRecord(record)
     }
     return { status: 'Success' }
   } catch (error) {
-    throw error instanceof Error ? error : new Error('An unknown error occurred')
+    throw error instanceof Error
+      ? error
+      : new Error('An unknown error occurred')
   }
 }
 

@@ -3,10 +3,10 @@ import { UserDTO } from '../../../commons/dto/UserDTO'
 import { NotificationDTO } from '../../../commons/dto/NotificationDTO'
 import NotificationOperationError from './NotificationOperationError'
 import { NotificationAttributes, SnsRegistrationAttributes, StoreNotificationEndPoint } from './Types'
-import Repository from '../Models/policies/repositories/Repository'
-import { SNSModel } from '../../application/Models/sns/SNSModel'
+import Repository from '../models/policies/repositories/Repository'
+import { SNSModel } from '../../application/models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
-import { QueueModel } from '../Models/queue/QueueModel'
+import { QueueModel } from '../models/queue/QueueModel'
 
 export class NotificationService {
   async publishNotification(
@@ -41,15 +41,24 @@ export class NotificationService {
       await snsModel.publish(notificationAttributes, userSnsEndpointArn)
       return 'Notified user successfully.'
     } catch (error) {
-      throw new NotificationOperationError(`Failed to create new user. Error: ${error}`, GENERIC_CODES.ERROR)
+      throw new NotificationOperationError(
+        `Failed to create new user. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
   }
 
-  async storeDevice(registrationAttributes: SnsRegistrationAttributes, userRepository: Repository<UserDTO>, snsModel: SNSModel): Promise<string> {
+  async storeDevice(
+    registrationAttributes: SnsRegistrationAttributes,
+    userRepository: Repository<UserDTO>,
+    snsModel: SNSModel
+  ): Promise<string> {
     try {
       const { userId } = registrationAttributes
 
-      const { snsEndpointArn } = await snsModel.createPlatformEndpoint(registrationAttributes)
+      const { snsEndpointArn } = await snsModel.createPlatformEndpoint(
+        registrationAttributes
+      )
       if (snsEndpointArn === '') {
         throw new Error('Device registration failed.')
       }
@@ -72,11 +81,15 @@ export class NotificationService {
         typedError.name === 'InvalidParameterException' &&
         typedError.message.includes('Device already registered with this Token')
       ) {
-        const arnMatch = typedError.message.match(/arn:aws:sns:[\w-]+:\d+:endpoint\/\S+/)
+        const arnMatch = typedError.message.match(
+          /arn:aws:sns:[\w-]+:\d+:endpoint\/\S+/
+        )
         const existingArn = arnMatch !== null ? arnMatch[0] : null
 
         if (existingArn !== null) {
-          const existingAttributes = await snsModel.getEndpointAttributes(existingArn)
+          const existingAttributes = await snsModel.getEndpointAttributes(
+            existingArn
+          )
           const oldUpdateData: Partial<StoreNotificationEndPoint> = {
             id: existingAttributes.CustomUserData,
             snsEndpointArn: '',
@@ -85,7 +98,10 @@ export class NotificationService {
 
           await userRepository.update(oldUpdateData)
 
-          await snsModel.setEndpointAttributes(existingArn, registrationAttributes)
+          await snsModel.setEndpointAttributes(
+            existingArn,
+            registrationAttributes
+          )
           const { userId } = registrationAttributes
 
           const updateData: Partial<StoreNotificationEndPoint> = {
@@ -106,7 +122,10 @@ export class NotificationService {
       await queueModel.queue(notificationAttributes, userSnsEndpointArn)
       return 'Notification Queued Successfully'
     } catch (error) {
-      throw new NotificationOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
+      throw new NotificationOperationError(
+        `Failed to update user. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
   }
 }

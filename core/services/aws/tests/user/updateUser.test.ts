@@ -1,18 +1,30 @@
-import LocationModel from '../../../../application/Models/dbModels/LocationModel'
-import { UpdateUserAttributes } from '../../../../application/userWorkflows/Types'
-import { UserService } from '../../../../application/userWorkflows/UserService'
+import LocationModel from '../../../../application/models/dbModels/LocationModel'
+import { UpdateUserAttributes } from '../../../../application/userWorkflow/Types'
+import { UserService } from '../../../../application/userWorkflow/UserService'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import { APIGatewayProxyResult } from 'aws-lambda'
 import DynamoDbTableOperations from '../../commons/ddb/DynamoDbTableOperations'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import updateUserLambda from '../../user/updateUser'
+import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
 
-jest.mock('../../../../application/userWorkflows/UserService')
+jest.mock('../../../../application/userWorkflow/UserService')
 jest.mock('../../commons/ddb/DynamoDbTableOperations')
 jest.mock('../../commons/lambda/ApiGateway')
+jest.mock('../../commons/httpLogger/HttpLogger', () => ({
+  createHTTPLogger: jest.fn(() => ({
+    error: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn()
+  }))
+}))
 
 describe('updateUserLambda', () => {
-  const mockedGenerateApiGatewayResponse = generateApiGatewayResponse as jest.MockedFunction<typeof generateApiGatewayResponse>
+  const mockedGenerateApiGatewayResponse =
+    generateApiGatewayResponse as jest.MockedFunction<
+      typeof generateApiGatewayResponse
+    >
   const mockedUserService = UserService as jest.MockedClass<typeof UserService>
 
   beforeEach(() => {
@@ -44,7 +56,9 @@ describe('updateUserLambda', () => {
       body: JSON.stringify({ message: mockResponse })
     })
 
-    const result: APIGatewayProxyResult = await updateUserLambda(mockEvent as UpdateUserAttributes)
+    const result: APIGatewayProxyResult = await updateUserLambda(
+      mockEvent as UpdateUserAttributes & HttpLoggerAttributes
+    )
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining(mockEvent),
@@ -52,7 +66,10 @@ describe('updateUserLambda', () => {
       expect.any(DynamoDbTableOperations),
       expect.any(LocationModel)
     )
-    expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith({ message: mockResponse }, HTTP_CODES.OK)
+    expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
+      { message: mockResponse },
+      HTTP_CODES.OK
+    )
     expect(result.statusCode).toBe(HTTP_CODES.OK)
     expect(result.body).toBe(JSON.stringify({ message: mockResponse }))
   })
@@ -81,7 +98,9 @@ describe('updateUserLambda', () => {
       body: `Error: ${mockError.message}`
     })
 
-    const result: APIGatewayProxyResult = await updateUserLambda(mockEvent as UpdateUserAttributes)
+    const result: APIGatewayProxyResult = await updateUserLambda(
+      mockEvent as UpdateUserAttributes & HttpLoggerAttributes
+    )
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining(mockEvent),
@@ -89,7 +108,10 @@ describe('updateUserLambda', () => {
       expect.any(DynamoDbTableOperations),
       expect.any(LocationModel)
     )
-    expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(`Error: ${mockError.message}`, HTTP_CODES.ERROR)
+    expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
+      `Error: ${mockError.message}`,
+      HTTP_CODES.ERROR
+    )
     expect(result.statusCode).toBe(HTTP_CODES.ERROR)
     expect(result.body).toBe(`Error: ${mockError.message}`)
   })
@@ -109,7 +131,9 @@ describe('updateUserLambda', () => {
       body: JSON.stringify({ message: mockResponse })
     })
 
-    const result: APIGatewayProxyResult = await updateUserLambda(mockEvent as unknown as UpdateUserAttributes)
+    const result: APIGatewayProxyResult = await updateUserLambda(
+      mockEvent as unknown as UpdateUserAttributes & HttpLoggerAttributes
+    )
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining({ userId: 'user123', email: 'test@example.com' }),
@@ -117,7 +141,10 @@ describe('updateUserLambda', () => {
       expect.any(DynamoDbTableOperations),
       expect.any(LocationModel)
     )
-    expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith({ message: mockResponse }, HTTP_CODES.OK)
+    expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
+      { message: mockResponse },
+      HTTP_CODES.OK
+    )
     expect(result.statusCode).toBe(HTTP_CODES.OK)
     expect(result.body).toBe(JSON.stringify({ message: mockResponse }))
   })
