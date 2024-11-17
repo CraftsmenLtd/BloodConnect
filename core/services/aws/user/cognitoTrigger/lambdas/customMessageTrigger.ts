@@ -1,11 +1,17 @@
-import { UserService } from '../../../../../application/userWorkflows/UserService'
+import { UserService } from '../../../../../application/userWorkflow/UserService'
 import { GenericMessage } from '../../../../../../commons/dto/MessageDTO'
 import { Callback, Context, CustomMessageTriggerEvent } from 'aws-lambda'
 
-function customEmailTemplateLambda(event: CustomMessageTriggerEvent, _: Context,
-  callback: Callback<CustomMessageTriggerEvent>): void {
+function customEmailTemplateLambda(
+  event: CustomMessageTriggerEvent,
+  _: Context,
+  callback: Callback<CustomMessageTriggerEvent>
+): void {
   const userService = new UserService()
-  const { userAttributes: { name }, codeParameter } = event.request
+  const {
+    userAttributes: { name },
+    codeParameter
+  } = event.request
   let emailContent: GenericMessage
   switch (event.triggerSource) {
     case 'CustomMessage_SignUp':

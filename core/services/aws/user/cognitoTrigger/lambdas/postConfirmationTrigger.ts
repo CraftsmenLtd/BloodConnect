@@ -1,12 +1,16 @@
 import { PostConfirmationTriggerEvent } from 'aws-lambda'
-import { UserService } from '../../../../../application/userWorkflows/UserService'
+import { UserService } from '../../../../../application/userWorkflow/UserService'
 import { UserDTO } from '../../../../../../commons/dto/UserDTO'
 import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperations'
-import UserModel, { UserFields } from '../../../../../application/Models/dbModels/UserModel'
+import UserModel, {
+  UserFields
+} from '../../../../../application/Models/dbModels/UserModel'
 import { updateCognitoUserInfo } from '../../../commons/cognito/CognitoOperations'
 import { sendAppUserWelcomeMail } from '../../../commons/ses/sesOperations'
 
-async function postConfirmationLambda(event: PostConfirmationTriggerEvent): Promise<PostConfirmationTriggerEvent> {
+async function postConfirmationLambda(
+  event: PostConfirmationTriggerEvent
+): Promise<PostConfirmationTriggerEvent> {
   if (event.triggerSource !== 'PostConfirmation_ConfirmSignUp') {
     return event
   }
