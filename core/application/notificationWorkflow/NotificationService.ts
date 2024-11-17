@@ -6,7 +6,6 @@ import { NotificationAttributes, SnsRegistrationAttributes, StoreNotificationEnd
 import Repository from '../models/policies/repositories/Repository'
 import { SNSModel } from '../../application/models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
-import { QueueModel } from '../models/queue/QueueModel'
 
 export class NotificationService {
   async publishNotification(
@@ -114,18 +113,6 @@ export class NotificationService {
         }
       }
       throw new Error('Failed to store Endpoint ARN')
-    }
-  }
-
-  async pushNotification(notificationAttributes: NotificationAttributes, userSnsEndpointArn: string, queueModel: QueueModel): Promise<string> {
-    try {
-      await queueModel.queue(notificationAttributes, userSnsEndpointArn)
-      return 'Notification Queued Successfully'
-    } catch (error) {
-      throw new NotificationOperationError(
-        `Failed to update user. Error: ${error}`,
-        GENERIC_CODES.ERROR
-      )
     }
   }
 }

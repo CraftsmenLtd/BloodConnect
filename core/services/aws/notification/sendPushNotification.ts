@@ -8,9 +8,9 @@ import NotificationModel, {
 } from '../../../application/models/dbModels/NotificationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import { LocalCacheMapManager } from '../../../application/utils/localCacheMapManager'
-import { UserService } from '../../../application/userWorkflows/UserService'
+import { UserService } from '../../../application/userWorkflow/UserService'
 import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import UserModel, { UserFields } from '../../../application/Models/dbModels/UserModel'
+import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
 import { MAX_LOCAL_CACHE_SIZE_COUNT } from '../../../../commons/libs/constants/NoMagicNumbers'
 
 const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(MAX_LOCAL_CACHE_SIZE_COUNT)
