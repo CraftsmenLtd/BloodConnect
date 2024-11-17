@@ -4,7 +4,7 @@ import {
   DonationStatus,
   DonorSearchDTO,
 } from "../../../../commons/dto/DonationDTO";
-import Repository from "../../models2/policies/repositories/Repository";
+import Repository from "../../models/policies/repositories/Repository";
 import { generateUniqueID } from "../../utils/idGenerator";
 import { generateGeohash } from "../../utils/geohash";
 import { validateInputWithRules } from "../../utils/validator";
@@ -21,10 +21,10 @@ import { mockRepository } from "../mocks/mockRepositories";
 import {
   BloodDonationModel,
   BLOOD_REQUEST_PK_PREFIX,
-} from "../../models2/dbModels/BloodDonationModel";
-import { QueryConditionOperator } from "../../models2/policies/repositories/QueryTypes";
+} from "../../models/dbModels/BloodDonationModel";
+import { QueryConditionOperator } from "../../models/policies/repositories/QueryTypes";
 import { GENERIC_CODES } from "../../../../commons/libs/constants/GenericCodes";
-import { StepFunctionModel } from "../../models2/stepFunctions/StepFunctionModel";
+import { StepFunctionModel } from "../../models/stepFunctions/StepFunctionModel";
 import { UserDetailsDTO } from "../../../../commons/dto/UserDTO";
 
 jest.mock("../../utils/idGenerator", () => ({

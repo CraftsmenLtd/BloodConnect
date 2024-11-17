@@ -4,11 +4,11 @@ import { LocationDTO, UserDetailsDTO } from "../../../../commons/dto/UserDTO";
 import DynamoDbTableOperations from "../commons/ddb/DynamoDbTableOperations";
 import UserModel, {
   UserFields,
-} from "../../../application/models2/dbModels/UserModel";
+} from "../../../application/models/dbModels/UserModel";
 import { UpdateUserAttributes } from "../../../application/userWorkflow/Types";
 import LocationModel, {
   LocationFields,
-} from "../../../application/models2/dbModels/LocationModel";
+} from "../../../application/models/dbModels/LocationModel";
 import generateApiGatewayResponse from "../commons/lambda/ApiGateway";
 import { HTTP_CODES } from "../../../../commons/libs/constants/GenericCodes";
 import {

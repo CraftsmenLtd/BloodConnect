@@ -5,7 +5,7 @@ import {
   SetEndpointAttributesCommand,
   SNS,
 } from "@aws-sdk/client-sns";
-import { SNSModel } from "../../../../application/models2/sns/SNSModel";
+import { SNSModel } from "../../../../application/models/sns/SNSModel";
 import {
   NotificationQueueMessage,
   SnsRegistrationAttributes,

@@ -9,16 +9,16 @@ import { UserDetailsDTO } from "../../../../commons/dto/UserDTO";
 import {
   BloodDonationModel,
   DonationFields,
-} from "../../../application/models2/dbModels/BloodDonationModel";
+} from "../../../application/models/dbModels/BloodDonationModel";
 import DynamoDbTableOperations from "../commons/ddb/DynamoDbTableOperations";
 import StepFunctionOperations from "../commons/stepFunction/StepFunctionOperations";
 import {
   DonorSearchFields,
   DonorSearchModel,
-} from "../../../application/models2/dbModels/DonorSearchModel";
+} from "../../../application/models/dbModels/DonorSearchModel";
 import UserModel, {
   UserFields,
-} from "../../../application/models2/dbModels/UserModel";
+} from "../../../application/models/dbModels/UserModel";
 
 const bloodDonationService = new BloodDonationService();
 

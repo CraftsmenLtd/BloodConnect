@@ -3,7 +3,7 @@ import {
   BLOOD_REQUEST_PK_PREFIX,
   BLOOD_REQUEST_LSISK_PREFIX,
   DonationFields,
-} from "../../../models2/dbModels/BloodDonationModel";
+} from "../../../models/dbModels/BloodDonationModel";
 import {
   DonationDTO,
   DonationStatus,

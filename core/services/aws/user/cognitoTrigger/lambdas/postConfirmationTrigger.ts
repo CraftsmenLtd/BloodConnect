@@ -4,7 +4,7 @@ import { UserDTO } from "../../../../../../commons/dto/UserDTO";
 import DynamoDbTableOperations from "../../../commons/ddb/DynamoDbTableOperations";
 import UserModel, {
   UserFields,
-} from "../../../../../application/models2/dbModels/UserModel";
+} from "../../../../../application/models/dbModels/UserModel";
 import { updateCognitoUserInfo } from "../../../commons/cognito/CognitoOperations";
 import { sendAppUserWelcomeMail } from "../../../commons/ses/sesOperations";
 

@@ -6,7 +6,7 @@ import {
   DonationFields,
   BLOOD_REQUEST_PK_PREFIX,
   BLOOD_REQUEST_LSISK_PREFIX,
-} from "../../models2/dbModels/BloodDonationModel";
+} from "../../models/dbModels/BloodDonationModel";
 import {
   BloodGroup,
   DonationDTO,

@@ -7,7 +7,7 @@ import { DonationDTO } from "../../../../commons/dto/DonationDTO";
 import {
   BloodDonationModel,
   DonationFields,
-} from "../../../application/models2/dbModels/BloodDonationModel";
+} from "../../../application/models/dbModels/BloodDonationModel";
 import DynamoDbTableOperations from "../commons/ddb/DynamoDbTableOperations";
 import BloodDonationOperationError from "../../../application/bloodDonationWorkflow/BloodDonationOperationError";
 

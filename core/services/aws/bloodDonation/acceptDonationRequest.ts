@@ -8,7 +8,7 @@ import DynamoDbTableOperations from "../commons/ddb/DynamoDbTableOperations";
 import {
   AcceptDonationRequestModel,
   AcceptedDonationFields,
-} from "../../../application/models2/dbModels/AcceptDonationModel";
+} from "../../../application/models/dbModels/AcceptDonationModel";
 
 const acceptDonationRequest = new AcceptDonationService();
 

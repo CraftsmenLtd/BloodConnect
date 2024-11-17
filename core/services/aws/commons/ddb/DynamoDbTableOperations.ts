@@ -1,8 +1,8 @@
 import {
   DbModelDtoAdapter,
   NosqlModel,
-} from "../../../../application/models2/dbModels/DbModelDefinitions";
-import Repository from "../../../../application/models2/policies/repositories/Repository";
+} from "../../../../application/models/dbModels/DbModelDefinitions";
+import Repository from "../../../../application/models/policies/repositories/Repository";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
@@ -20,7 +20,7 @@ import {
   QueryInput,
   QueryCondition,
   QueryConditionOperator,
-} from "../../../../application/models2/policies/repositories/QueryTypes";
+} from "../../../../application/models/policies/repositories/QueryTypes";
 import { DTO } from "../../../../../commons/dto/DTOCommon";
 import { GENERIC_CODES } from "../../../../../commons/libs/constants/GenericCodes";
 import DatabaseError from "../../../../../commons/libs/errors/DatabaseError";

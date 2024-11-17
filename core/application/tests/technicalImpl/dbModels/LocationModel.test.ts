@@ -1,6 +1,6 @@
 import LocationModel, {
   LocationFields,
-} from "../../../models2/dbModels/LocationModel";
+} from "../../../models/dbModels/LocationModel";
 import { LocationDTO } from "../../../../../commons/dto/UserDTO";
 import { BloodGroup } from "../../../../../commons/dto/DonationDTO";
 

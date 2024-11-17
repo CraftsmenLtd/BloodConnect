@@ -4,7 +4,7 @@ import {
   AcceptedDonationDTO,
   DonationStatus,
 } from "../../../commons/dto/DonationDTO";
-import Repository from "../models2/policies/repositories/Repository";
+import Repository from "../models/policies/repositories/Repository";
 import { AcceptDonationRequestAttributes } from "./Types";
 
 export class AcceptDonationService {

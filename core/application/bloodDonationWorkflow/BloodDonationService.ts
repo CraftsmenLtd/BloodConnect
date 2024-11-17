@@ -9,18 +9,18 @@ import {
   UrgencyLevel,
 } from "../../../commons/dto/DonationDTO";
 import { generateUniqueID } from "../utils/idGenerator";
-import Repository from "../models2/policies/repositories/Repository";
+import Repository from "../models/policies/repositories/Repository";
 import { generateGeohash } from "../utils/geohash";
 import { validateInputWithRules } from "../utils/validator";
 import {
   BLOOD_REQUEST_PK_PREFIX,
   BloodDonationModel,
   DonationFields,
-} from "../models2/dbModels/BloodDonationModel";
+} from "../models/dbModels/BloodDonationModel";
 import {
   QueryConditionOperator,
   QueryInput,
-} from "../models2/policies/repositories/QueryTypes";
+} from "../models/policies/repositories/QueryTypes";
 import {
   BloodDonationAttributes,
   validationRules,
@@ -29,13 +29,13 @@ import {
   StepFunctionInput,
   DonationStatusManagerAttributes,
 } from "./Types";
-import { StepFunctionModel } from "../models2/stepFunctions/StepFunctionModel";
+import { StepFunctionModel } from "../models/stepFunctions/StepFunctionModel";
 import { THROTTLING_LIMITS } from "../../../commons/libs/constants/ThrottlingLimits";
-import { DONOR_SEARCH_PK_PREFIX } from "../models2/dbModels/DonorSearchModel";
+import { DONOR_SEARCH_PK_PREFIX } from "../models/dbModels/DonorSearchModel";
 import {
   AcceptDonationRequestModel,
   AcceptedDonationFields,
-} from "../models2/dbModels/AcceptDonationModel";
+} from "../models/dbModels/AcceptDonationModel";
 import { UserDetailsDTO } from "../../../commons/dto/UserDTO";
 
 export class BloodDonationService {

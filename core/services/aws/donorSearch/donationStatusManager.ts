@@ -8,12 +8,12 @@ import {
 import {
   BloodDonationModel,
   DonationFields,
-} from "../../../application/models2/dbModels/BloodDonationModel";
+} from "../../../application/models/dbModels/BloodDonationModel";
 import DynamoDbTableOperations from "../commons/ddb/DynamoDbTableOperations";
 import {
   AcceptedDonationFields,
   AcceptDonationRequestModel,
-} from "../../../application/models2/dbModels/AcceptDonationModel";
+} from "../../../application/models/dbModels/AcceptDonationModel";
 
 const bloodDonationService = new BloodDonationService();
 
