@@ -11,6 +11,14 @@ import { HttpLoggerAttributes } from "../../commons/httpLogger/HttpLogger";
 jest.mock("../../../../application/userWorkflow/UserService");
 jest.mock("../../commons/ddb/DynamoDbTableOperations");
 jest.mock("../../commons/lambda/ApiGateway");
+jest.mock("../../commons/httpLogger/HttpLogger", () => ({
+  createHTTPLogger: jest.fn(() => ({
+    error: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  })),
+}));
 
 describe("updateUserLambda", () => {
   const mockedGenerateApiGatewayResponse =
