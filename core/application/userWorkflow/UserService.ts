@@ -1,30 +1,30 @@
-import { GENERIC_CODES } from "../../../commons/libs/constants/GenericCodes";
-import UserOperationError from "./UserOperationError";
+import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
+import UserOperationError from './UserOperationError'
 import {
   AvailableForDonation,
   LocationDTO,
   UserDetailsDTO,
-  UserDTO,
-} from "../../../commons/dto/UserDTO";
-import { generateUniqueID } from "../utils/idGenerator";
-import { GenericMessage } from "../../../commons/dto/MessageDTO";
+  UserDTO
+} from '../../../commons/dto/UserDTO'
+import { generateUniqueID } from '../utils/idGenerator'
+import { GenericMessage } from '../../../commons/dto/MessageDTO'
 import {
   getEmailVerificationMessage,
   getPasswordResetVerificationMessage,
-  getAppUserWelcomeMailMessage,
-} from "./userMessages";
-import Repository from "../models/policies/repositories/Repository";
-import { UserAttributes, UpdateUserAttributes } from "./Types";
-import { generateGeohash } from "../utils/geohash";
+  getAppUserWelcomeMailMessage
+} from './userMessages'
+import Repository from '../models/policies/repositories/Repository'
+import { UserAttributes, UpdateUserAttributes } from './Types'
+import { generateGeohash } from '../utils/geohash'
 import {
   QueryConditionOperator,
-  QueryInput,
-} from "../models/policies/repositories/QueryTypes";
+  QueryInput
+} from '../models/policies/repositories/QueryTypes'
 import LocationModel, {
-  LocationFields,
-} from "../models/dbModels/LocationModel";
-import { differenceInYears, differenceInMonths } from "date-fns";
-import { BloodGroup } from "../../../commons/dto/DonationDTO";
+  LocationFields
+} from '../models/dbModels/LocationModel'
+import { differenceInYears, differenceInMonths } from 'date-fns'
+import { BloodGroup } from '../../../commons/dto/DonationDTO'
 
 export class UserService {
   async createNewUser(
@@ -36,29 +36,29 @@ export class UserService {
         id: generateUniqueID(),
         email: userAttributes.email,
         name: userAttributes.name,
-        phone: userAttributes.phone_number,
-      });
+        phone: userAttributes.phone_number
+      })
     } catch (error) {
       throw new UserOperationError(
         `Failed to create new user. Error: ${error}`,
         GENERIC_CODES.ERROR
-      );
+      )
     }
   }
 
   getPostSignUpMessage(userName: string, securityCode: string): GenericMessage {
-    return getEmailVerificationMessage(userName, securityCode);
+    return getEmailVerificationMessage(userName, securityCode)
   }
 
   getForgotPasswordMessage(
     userName: string,
     securityCode: string
   ): GenericMessage {
-    return getPasswordResetVerificationMessage(userName, securityCode);
+    return getPasswordResetVerificationMessage(userName, securityCode)
   }
 
   getAppUserWelcomeMail(userName: string): GenericMessage {
-    return getAppUserWelcomeMailMessage(userName);
+    return getAppUserWelcomeMailMessage(userName)
   }
 
   async updateUser(
@@ -69,33 +69,33 @@ export class UserService {
   ): Promise<string> {
     try {
       const { userId, preferredDonationLocations, ...restAttributes } =
-        userAttributes;
+        userAttributes
       const updateData: Partial<UserDetailsDTO> = {
         ...restAttributes,
         id: userId,
-        updatedAt: new Date().toISOString(),
-      };
+        updatedAt: new Date().toISOString()
+      }
 
-      updateData.age = this.calculateAge(userAttributes.dateOfBirth);
+      updateData.age = this.calculateAge(userAttributes.dateOfBirth)
       updateData.availableForDonation = this.calculateAvailableForDonation(
         userAttributes.lastDonationDate,
         userAttributes.availableForDonation
-      );
+      )
 
-      await userRepository.update(updateData);
+      await userRepository.update(updateData)
       await this.updateUserLocation(
         model,
         userId,
         locationRepository,
         preferredDonationLocations,
         updateData
-      );
-      return "Updated your Profile info";
+      )
+      return 'Updated your Profile info'
     } catch (error) {
       throw new UserOperationError(
         `Failed to update user. Error: ${error}`,
         GENERIC_CODES.ERROR
-      );
+      )
     }
   }
 
@@ -103,29 +103,29 @@ export class UserService {
     lastDonationDate: string,
     availableForDonation: AvailableForDonation
   ): AvailableForDonation {
-    if (lastDonationDate !== "") {
-      const donationDate = new Date(lastDonationDate);
-      const currentDate = new Date();
+    if (lastDonationDate !== '') {
+      const donationDate = new Date(lastDonationDate)
+      const currentDate = new Date()
 
       if (!isNaN(donationDate.getTime())) {
-        const donationMonths = differenceInMonths(currentDate, donationDate);
+        const donationMonths = differenceInMonths(currentDate, donationDate)
         return donationMonths >
           Number(process.env.AFTER_DONATION_UNAVAILABLE_PERIOD)
-          ? "yes"
-          : "no";
+          ? 'yes'
+          : 'no'
       }
     }
-    return availableForDonation;
+    return availableForDonation
   }
 
   private calculateAge(dateOfBirth: string): number | undefined {
-    if (dateOfBirth !== "") {
-      const birthDate = new Date(dateOfBirth);
-      const currentDate = new Date();
+    if (dateOfBirth !== '') {
+      const birthDate = new Date(dateOfBirth)
+      const currentDate = new Date()
 
       if (!isNaN(birthDate.getTime())) {
-        const age = differenceInYears(currentDate, birthDate);
-        return age;
+        const age = differenceInYears(currentDate, birthDate)
+        return age
       }
     }
   }
@@ -137,31 +137,31 @@ export class UserService {
     preferredDonationLocations: LocationDTO[],
     userAttributes: Partial<UserDetailsDTO>
   ): Promise<void> {
-    const primaryIndex = model.getPrimaryIndex();
+    const primaryIndex = model.getPrimaryIndex()
     const query: QueryInput<LocationFields> = {
       partitionKeyCondition: {
         attributeName: primaryIndex.partitionKey,
         operator: QueryConditionOperator.EQUALS,
-        attributeValue: `USER#${userId}`,
-      },
-    };
+        attributeValue: `USER#${userId}`
+      }
+    }
 
     if (primaryIndex.sortKey != null) {
       query.sortKeyCondition = {
         attributeName: primaryIndex.sortKey,
         operator: QueryConditionOperator.BEGINS_WITH,
-        attributeValue: "LOCATION#",
-      };
+        attributeValue: 'LOCATION#'
+      }
     }
 
     const existingLocations = await locationRepository.query(
       query as QueryInput<Record<string, unknown>>
-    );
+    )
     for (const location of existingLocations.items) {
       await locationRepository.delete(
         `USER#${userId}`,
         `LOCATION#${location.locationId}`
-      );
+      )
     }
 
     if (preferredDonationLocations != null) {
@@ -178,9 +178,9 @@ export class UserService {
           availableForDonation:
             userAttributes.availableForDonation as AvailableForDonation,
           lastVaccinatedDate: `${userAttributes.lastVaccinatedDate}`,
-          createdAt: new Date().toISOString(),
-        };
-        await locationRepository.create(locationData);
+          createdAt: new Date().toISOString()
+        }
+        await locationRepository.create(locationData)
       }
     }
   }
@@ -192,18 +192,18 @@ export class UserService {
     try {
       const userProfile = await userRepository.getItem(
         `USER#${userId}`,
-        "PROFILE"
-      );
+        'PROFILE'
+      )
       if (userProfile?.snsEndpointArn == null) {
-        throw new Error("User has no registered device for notifications");
+        throw new Error('User has no registered device for notifications')
       }
 
-      return userProfile.snsEndpointArn;
+      return userProfile.snsEndpointArn
     } catch (error) {
       throw new UserOperationError(
         `Failed to update user. Error: ${error}`,
         GENERIC_CODES.ERROR
-      );
+      )
     }
   }
 }
