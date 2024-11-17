@@ -6,6 +6,7 @@ import { APIGatewayProxyResult } from "aws-lambda";
 import DynamoDbTableOperations from "../../commons/ddb/DynamoDbTableOperations";
 import generateApiGatewayResponse from "../../commons/lambda/ApiGateway";
 import updateUserLambda from "../../user/updateUser";
+import { HttpLoggerAttributes } from "../../commons/httpLogger/HttpLogger";
 
 jest.mock("../../../../application/userWorkflow/UserService");
 jest.mock("../../commons/ddb/DynamoDbTableOperations");
@@ -48,7 +49,7 @@ describe("updateUserLambda", () => {
     });
 
     const result: APIGatewayProxyResult = await updateUserLambda(
-      mockEvent as UpdateUserAttributes
+      mockEvent as UpdateUserAttributes & HttpLoggerAttributes
     );
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
@@ -90,7 +91,7 @@ describe("updateUserLambda", () => {
     });
 
     const result: APIGatewayProxyResult = await updateUserLambda(
-      mockEvent as UpdateUserAttributes
+      mockEvent as UpdateUserAttributes & HttpLoggerAttributes
     );
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
@@ -123,7 +124,7 @@ describe("updateUserLambda", () => {
     });
 
     const result: APIGatewayProxyResult = await updateUserLambda(
-      mockEvent as unknown as UpdateUserAttributes
+      mockEvent as unknown as UpdateUserAttributes & HttpLoggerAttributes
     );
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
