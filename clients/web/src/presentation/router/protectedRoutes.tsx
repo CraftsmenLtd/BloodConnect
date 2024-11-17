@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import useFetchData from '@client-commons/hooks/useFetchData';
-import { getUser } from '@client-commons/platform/aws/auth/awsAuth';
+import useFetchData from '../../../../commons/hooks/useFetchData';
+import { getUser } from '../../../../commons/platform/aws/auth/awsAuth';
 import FullPageLoader from '../components/loader/FullPageLoader';
 import * as RouteConsts from '../../constants/routeConsts';
 import DefaultLayout from '../layout/DefaultLayout/DefaultLayout';

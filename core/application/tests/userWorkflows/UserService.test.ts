@@ -7,14 +7,14 @@ import {
 } from '../../userWorkflow/userMessages'
 import { mockUserWithStringId } from '../mocks/mockUserData'
 import { mockRepository } from '../mocks/mockRepositories'
-import Repository from '../../Models/policies/repositories/Repository'
+import Repository from '../../models/policies/repositories/Repository'
 import {
   UserDTO,
   UserDetailsDTO,
   LocationDTO
 } from '../../../../commons/dto/UserDTO'
 import { UpdateUserAttributes } from '../../userWorkflow/Types'
-import LocationModel from '../../Models/dbModels/LocationModel'
+import LocationModel from '../../models/dbModels/LocationModel'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflow/userMessages')

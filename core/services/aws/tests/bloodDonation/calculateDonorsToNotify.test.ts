@@ -1,4 +1,4 @@
-import { UrgencyType } from '@commons/dto/DonationDTO'
+import { UrgencyType } from '../../../../../commons/dto/DonationDTO'
 import calculateDonorsToNotify, {
   calculateRemainingBagsNeeded,
   calculateTotalDonorsToNotify,

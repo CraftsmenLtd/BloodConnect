@@ -4,17 +4,19 @@ import { LocationDTO, UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import UserModel, {
   UserFields
-} from '../../../application/Models/dbModels/UserModel'
+} from '../../../application/models/dbModels/UserModel'
 import { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
 import LocationModel, {
   LocationFields
-} from '../../../application/Models/dbModels/LocationModel'
+} from '../../../application/models/dbModels/LocationModel'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 
 async function updateUserLambda(
-  event: UpdateUserAttributes
+  event: UpdateUserAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
+  const httpLogger = createHTTPLogger(event.userId, event.apiGwRequestId, event.cloudFrontRequestId)
   try {
     const userService = new UserService()
     const userAttributes = {
@@ -38,6 +40,7 @@ async function updateUserLambda(
     )
     return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
+    httpLogger.error(error)
     const errorMessage =
       error instanceof Error ? error.message : 'An unknown error occurred'
     return generateApiGatewayResponse(

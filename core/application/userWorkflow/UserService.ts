@@ -13,18 +13,18 @@ import {
   getPasswordResetVerificationMessage,
   getAppUserWelcomeMailMessage
 } from './userMessages'
-import Repository from '../Models/policies/repositories/Repository'
+import Repository from '../models/policies/repositories/Repository'
 import { UserAttributes, UpdateUserAttributes } from './Types'
 import { generateGeohash } from '../utils/geohash'
 import {
   QueryConditionOperator,
   QueryInput
-} from '../Models/policies/repositories/QueryTypes'
+} from '../models/policies/repositories/QueryTypes'
 import LocationModel, {
   LocationFields
-} from '../Models/dbModels/LocationModel'
+} from '../models/dbModels/LocationModel'
 import { differenceInYears, differenceInMonths } from 'date-fns'
-import { BloodGroup } from '@commons/dto/DonationDTO'
+import { BloodGroup } from '../../../commons/dto/DonationDTO'
 
 export class UserService {
   async createNewUser(

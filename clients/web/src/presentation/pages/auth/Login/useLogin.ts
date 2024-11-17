@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getUser, userSignIn } from '@client-commons/platform/aws/auth/awsAuth'
-import useFetchData from '@client-commons/hooks/useFetchData'
+import { getUser, userSignIn } from '../../../../../../commons/platform/aws/auth/awsAuth'
+import useFetchData from '../../../../../../commons/hooks/useFetchData'
 import { DashboardPath } from '../../../../constants/routeConsts'
 
 type UseLoginReturn = {

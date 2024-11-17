@@ -2,7 +2,7 @@ import './presentation/assets/styles/index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import '@client-commons/platform/aws/auth/amplify';
+import '../../commons/platform/aws/auth/amplify';
 
 const rootElement = document.getElementById('root');
 
