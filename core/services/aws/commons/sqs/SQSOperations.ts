@@ -1,15 +1,15 @@
-import { SQS } from '@aws-sdk/client-sqs'
-import { SQSModel } from '../../../../application/models/sqs/SQSModel'
+import { SQS } from "@aws-sdk/client-sqs";
+import { SQSModel } from "../../../../application/models/sqs/SQSModel";
 import {
   NotificationAttributes,
-  NotificationQueueMessage
-} from '../../../../application/notificationWorkflow/Types'
+  NotificationQueueMessage,
+} from "../../../../application/notificationWorkflow/Types";
 
 export default class SQSOperations implements SQSModel {
-  private readonly client: SQS
+  private readonly client: SQS;
 
   constructor() {
-    this.client = new SQS({ region: process.env.AWS_REGION })
+    this.client = new SQS({ region: process.env.AWS_REGION });
   }
 
   async queue(
@@ -23,12 +23,12 @@ export default class SQSOperations implements SQSModel {
       payload: {
         title: notification.title,
         body: notification.body,
-        data: notification.data
-      }
-    }
+        data: notification.data,
+      },
+    };
     await this.client.sendMessage({
       QueueUrl: `${process.env.NOTIFICATION_QUEUE_URL}`,
-      MessageBody: JSON.stringify(message)
-    })
+      MessageBody: JSON.stringify(message),
+    });
   }
 }
