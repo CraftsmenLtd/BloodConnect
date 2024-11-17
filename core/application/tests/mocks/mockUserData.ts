@@ -1,5 +1,5 @@
 import { UserDetailsDTO, UserDTO } from "../../../../commons/dto/UserDTO";
-import { UserFields } from "../../models/dbModels/UserModel";
+import { UserFields } from "../../models2/dbModels/UserModel";
 
 export const mockUserWithStringId: UserDTO = {
   id: "12345",

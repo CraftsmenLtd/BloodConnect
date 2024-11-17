@@ -6,7 +6,7 @@ import DynamoDbTableOperations from "../commons/ddb/DynamoDbTableOperations";
 import BloodDonationOperationError from "../../../application/bloodDonationWorkflow/BloodDonationOperationError";
 import UserModel, {
   UserFields,
-} from "../../../application/models/dbModels/UserModel";
+} from "../../../application/models2/dbModels/UserModel";
 import { NotificationService } from "../../../application/notificationWorkflow/NotificationService";
 import SNSOperations from "../commons/sns/SNSOperations";
 import { SnsRegistrationAttributes } from "../../../application/notificationWorkflow/Types";

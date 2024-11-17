@@ -4,7 +4,7 @@ import {
   StepFunctionExecutionAttributes,
 } from "../../../../application/bloodDonationWorkflow/Types";
 import { GENERIC_CODES } from "../../../../../commons/libs/constants/GenericCodes";
-import { StepFunctionModel } from "../../../../application/models/stepFunctions/StepFunctionModel";
+import { StepFunctionModel } from "../../../../application/models2/stepFunctions/StepFunctionModel";
 
 export default class StepFunctionOperations implements StepFunctionModel {
   private readonly client: SFNClient;

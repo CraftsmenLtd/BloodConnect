@@ -7,7 +7,7 @@ import { UserService } from "../../../application/userWorkflow/UserService";
 import DynamoDbTableOperations from "../commons/ddb/DynamoDbTableOperations";
 import UserModel, {
   UserFields,
-} from "../../../application/models/dbModels/UserModel";
+} from "../../../application/models2/dbModels/UserModel";
 import { UserDetailsDTO } from "../../../../commons/dto/UserDTO";
 import SQSOperations from "../commons/sqs/SQSOperations";
 import { NotificationService } from "../../../application/notificationWorkflow/NotificationService";

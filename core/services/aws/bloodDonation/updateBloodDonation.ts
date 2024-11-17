@@ -7,7 +7,7 @@ import { DonationDTO } from "../../../../commons/dto/DonationDTO";
 import {
   BloodDonationModel,
   DonationFields,
-} from "../../../application/models/dbModels/BloodDonationModel";
+} from "../../../application/models2/dbModels/BloodDonationModel";
 import DynamoDbTableOperations from "../commons/ddb/DynamoDbTableOperations";
 
 const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [

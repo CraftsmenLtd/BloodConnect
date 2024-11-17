@@ -1,5 +1,5 @@
 import { SQS } from "@aws-sdk/client-sqs";
-import { SQSModel } from "../../../../application/models/sqs/SQSModel";
+import { SQSModel } from "../../../../application/models2/sqs/SQSModel";
 import {
   NotificationAttributes,
   NotificationQueueMessage,

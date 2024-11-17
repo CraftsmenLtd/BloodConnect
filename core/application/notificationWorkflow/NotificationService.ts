@@ -8,10 +8,10 @@ import {
   SnsRegistrationAttributes,
   StoreNotificationEndPoint,
 } from "./Types";
-import Repository from "../models/policies/repositories/Repository";
-import { SNSModel } from "../models/sns/SNSModel";
+import Repository from "../models2/policies/repositories/Repository";
+import { SNSModel } from "../models2/sns/SNSModel";
 import { generateUniqueID } from "../utils/idGenerator";
-import { SQSModel } from "../models/sqs/SQSModel";
+import { SQSModel } from "../models2/sqs/SQSModel";
 
 export class NotificationService {
   async publishNotification(

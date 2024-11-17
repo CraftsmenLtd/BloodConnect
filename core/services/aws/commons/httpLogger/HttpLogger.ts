@@ -1,4 +1,4 @@
-import { Logger } from "../../../../application/models/logger/Logger";
+import { Logger } from "../../../../application/models2/logger/Logger";
 import { JsonLogger } from "../../../../../commons/libs/logger/JsonLogger";
 
 export const createHTTPLogger = (

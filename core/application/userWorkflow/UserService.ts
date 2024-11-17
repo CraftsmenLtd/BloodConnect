@@ -13,16 +13,16 @@ import {
   getPasswordResetVerificationMessage,
   getAppUserWelcomeMailMessage,
 } from "./userMessages";
-import Repository from "../models/policies/repositories/Repository";
+import Repository from "../models2/policies/repositories/Repository";
 import { UserAttributes, UpdateUserAttributes } from "./Types";
 import { generateGeohash } from "../utils/geohash";
 import {
   QueryConditionOperator,
   QueryInput,
-} from "../models/policies/repositories/QueryTypes";
+} from "../models2/policies/repositories/QueryTypes";
 import LocationModel, {
   LocationFields,
-} from "../models/dbModels/LocationModel";
+} from "../models2/dbModels/LocationModel";
 import { differenceInYears, differenceInMonths } from "date-fns";
 import { BloodGroup } from "../../../commons/dto/DonationDTO";
 

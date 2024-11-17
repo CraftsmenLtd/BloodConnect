@@ -1,4 +1,4 @@
-import UserModel from "../../../models/dbModels/UserModel";
+import UserModel from "../../../models2/dbModels/UserModel";
 import {
   expectedUser,
   mockUserDetailsWithStringId,

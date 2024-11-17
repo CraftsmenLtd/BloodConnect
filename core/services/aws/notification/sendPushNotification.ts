@@ -5,7 +5,7 @@ import SNSOperations from "../commons/sns/SNSOperations";
 import { NotificationDTO } from "../../../../commons/dto/NotificationDTO";
 import NotificationModel, {
   NotificationFields,
-} from "../../../application/models/dbModels/NotificationModel";
+} from "../../../application/models2/dbModels/NotificationModel";
 import DynamoDbTableOperations from "../commons/ddb/DynamoDbTableOperations";
 
 const notificationService = new NotificationService();
