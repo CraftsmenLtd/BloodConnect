@@ -1,8 +1,26 @@
-import { DbModelDtoAdapter, NosqlModel } from '../../../../application/Models/dbModels/DbModelDefinitions'
-import Repository from '../../../../application/Models/policies/repositories/Repository'
+import {
+  DbModelDtoAdapter,
+  NosqlModel
+} from '../../../../application/models/dbModels/DbModelDefinitions'
+import Repository from '../../../../application/models/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, PutCommand, UpdateCommandInput, UpdateCommand, GetCommandInput, GetCommand, QueryCommand, QueryCommandInput, DeleteCommandInput, DeleteCommand } from '@aws-sdk/lib-dynamodb'
-import { QueryInput, QueryCondition, QueryConditionOperator } from '../../../../application/Models/policies/repositories/QueryTypes'
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  UpdateCommandInput,
+  UpdateCommand,
+  GetCommandInput,
+  GetCommand,
+  QueryCommand,
+  QueryCommandInput,
+  DeleteCommandInput,
+  DeleteCommand
+} from '@aws-sdk/lib-dynamodb'
+import {
+  QueryInput,
+  QueryCondition,
+  QueryConditionOperator
+} from '../../../../application/models/policies/repositories/QueryTypes'
 import { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
@@ -20,7 +38,9 @@ export default class DynamoDbTableOperations<
 > implements Repository<Dto, DbFields> {
   constructor(
     private readonly modelAdapter: ModelAdapter,
-    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION }))
+    private readonly client = DynamoDBDocumentClient.from(
+      new DynamoDBClient({ region: process.env.AWS_REGION })
+    )
   ) {}
 
   async create(item: Dto): Promise<Dto> {
@@ -33,13 +53,23 @@ export default class DynamoDbTableOperations<
     if (putCommandOutput?.$metadata?.httpStatusCode === 200) {
       return this.modelAdapter.toDto(items)
     }
-    throw new Error('Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined')
+    throw new Error(
+      'Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined'
+    )
   }
 
-  async query(queryInput: QueryInput<DbFields>): Promise<{ items: Dto[]; lastEvaluatedKey?: Record<string, unknown> }> {
+  async query(
+    queryInput: QueryInput<DbFields>
+  ): Promise<{ items: Dto[]; lastEvaluatedKey?: Record<string, unknown> }> {
     try {
-      const { keyConditionExpression, expressionAttributeValues, expressionAttributeNames } =
-        this.buildKeyConditionExpression(queryInput.partitionKeyCondition, queryInput.sortKeyCondition)
+      const {
+        keyConditionExpression,
+        expressionAttributeValues,
+        expressionAttributeNames
+      } = this.buildKeyConditionExpression(
+        queryInput.partitionKeyCondition,
+        queryInput.sortKeyCondition
+      )
 
       const queryCommandInput: QueryCommandInput = {
         TableName: this.getTableName(),
@@ -50,40 +80,62 @@ export default class DynamoDbTableOperations<
 
       this.applyQueryOptions(queryCommandInput, queryInput.options)
 
-      const result = await this.client.send(new QueryCommand(queryCommandInput))
+      const result = await this.client.send(
+        new QueryCommand(queryCommandInput)
+      )
 
       return {
-        items: (result.Items ?? []).map(item => this.modelAdapter.toDto(item as DbFields)),
+        items: (result.Items ?? []).map((item) =>
+          this.modelAdapter.toDto(item as DbFields)
+        ),
         lastEvaluatedKey: result.LastEvaluatedKey
       }
     } catch (error) {
       throw new DatabaseError(
-        `Failed to query items from DynamoDB: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to query items from DynamoDB: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
         GENERIC_CODES.ERROR
       )
     }
   }
 
-  private applyQueryOptions(queryCommandInput: QueryCommandInput, options?: QueryInput<DbFields>['options']): void {
+  private applyQueryOptions(
+    queryCommandInput: QueryCommandInput,
+    options?: QueryInput<DbFields>['options']
+  ): void {
     if (options == null) return
 
-    const { indexName, limit, scanIndexForward, exclusiveStartKey, filterExpression, filterExpressionValues } = options
+    const {
+      indexName,
+      limit,
+      scanIndexForward,
+      exclusiveStartKey,
+      filterExpression,
+      filterExpressionValues
+    } = options
 
-    if ((indexName?.trim()) != null) {
+    if (indexName?.trim() != null) {
       queryCommandInput.IndexName = indexName
     }
-    if ((limit != null) && limit > 0) {
+    if (limit != null && limit > 0) {
       queryCommandInput.Limit = limit
     }
     if (scanIndexForward !== undefined) {
       queryCommandInput.ScanIndexForward = scanIndexForward
     }
-    if ((exclusiveStartKey != null) && Object.keys(exclusiveStartKey).length > 0) {
+    if (
+      exclusiveStartKey != null &&
+      Object.keys(exclusiveStartKey).length > 0
+    ) {
       queryCommandInput.ExclusiveStartKey = exclusiveStartKey
     }
-    if ((filterExpression?.trim()) != null) {
+    if (filterExpression?.trim() != null) {
       queryCommandInput.FilterExpression = filterExpression
-      if ((filterExpressionValues != null) && Object.keys(filterExpressionValues).length > 0) {
+      if (
+        filterExpressionValues != null &&
+        Object.keys(filterExpressionValues).length > 0
+      ) {
         queryCommandInput.ExpressionAttributeValues = {
           ...queryCommandInput.ExpressionAttributeValues,
           ...filterExpressionValues
@@ -101,13 +153,20 @@ export default class DynamoDbTableOperations<
       expressionAttributeNames: Record<string, string>;
     } {
     const expressionAttributeValues: Record<string, unknown> = {
-      [`:${String(partitionKeyCondition.attributeName)}`]: partitionKeyCondition.attributeValue
+      [`:${String(partitionKeyCondition.attributeName)}`]:
+        partitionKeyCondition.attributeValue
     }
     const expressionAttributeNames: Record<string, string> = {
-      [`#${String(partitionKeyCondition.attributeName)}`]: String(partitionKeyCondition.attributeName)
+      [`#${String(partitionKeyCondition.attributeName)}`]: String(
+        partitionKeyCondition.attributeName
+      )
     }
 
-    const baseKeyConditionExpression = `#${String(partitionKeyCondition.attributeName)} ${partitionKeyCondition.operator} :${String(partitionKeyCondition.attributeName)}`
+    const baseKeyConditionExpression = `#${String(
+      partitionKeyCondition.attributeName
+    )} ${partitionKeyCondition.operator} :${String(
+      partitionKeyCondition.attributeName
+    )}`
 
     if (sortKeyCondition === undefined || sortKeyCondition === null) {
       return {
@@ -117,13 +176,17 @@ export default class DynamoDbTableOperations<
       }
     }
 
-    expressionAttributeNames[`#${String(sortKeyCondition.attributeName)}`] = String(sortKeyCondition.attributeName)
-    expressionAttributeValues[`:${String(sortKeyCondition.attributeName)}`] = sortKeyCondition.attributeValue
+    expressionAttributeNames[`#${String(sortKeyCondition.attributeName)}`] =
+      String(sortKeyCondition.attributeName)
+    expressionAttributeValues[`:${String(sortKeyCondition.attributeName)}`] =
+      sortKeyCondition.attributeValue
 
     switch (sortKeyCondition.operator) {
       case QueryConditionOperator.BEGINS_WITH:
         return {
-          keyConditionExpression: `${baseKeyConditionExpression} AND begins_with(#${String(sortKeyCondition.attributeName)}, :${String(sortKeyCondition.attributeName)})`,
+          keyConditionExpression: `${baseKeyConditionExpression} AND begins_with(#${String(
+            sortKeyCondition.attributeName
+          )}, :${String(sortKeyCondition.attributeName)})`,
           expressionAttributeValues,
           expressionAttributeNames
         }
@@ -131,11 +194,20 @@ export default class DynamoDbTableOperations<
       case QueryConditionOperator.BETWEEN: {
         const value2 = sortKeyCondition.attributeValue2
         if (value2 === undefined || value2 === null || value2 === '') {
-          throw new DatabaseError('BETWEEN operator requires a non-empty second value', GENERIC_CODES.ERROR)
+          throw new DatabaseError(
+            'BETWEEN operator requires a non-empty second value',
+            GENERIC_CODES.ERROR
+          )
         }
-        expressionAttributeValues[`:${String(sortKeyCondition.attributeName)}2`] = value2
+        expressionAttributeValues[
+          `:${String(sortKeyCondition.attributeName)}2`
+        ] = value2
         return {
-          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(sortKeyCondition.attributeName)} BETWEEN :${String(sortKeyCondition.attributeName)} AND :${String(sortKeyCondition.attributeName)}2`,
+          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
+            sortKeyCondition.attributeName
+          )} BETWEEN :${String(sortKeyCondition.attributeName)} AND :${String(
+            sortKeyCondition.attributeName
+          )}2`,
           expressionAttributeValues,
           expressionAttributeNames
         }
@@ -143,7 +215,11 @@ export default class DynamoDbTableOperations<
 
       default:
         return {
-          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(sortKeyCondition.attributeName)} ${sortKeyCondition.operator} :${String(sortKeyCondition.attributeName)}`,
+          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
+            sortKeyCondition.attributeName
+          )} ${sortKeyCondition.operator} :${String(
+            sortKeyCondition.attributeName
+          )}`,
           expressionAttributeValues,
           expressionAttributeNames
         }
@@ -154,13 +230,23 @@ export default class DynamoDbTableOperations<
     try {
       const items = this.modelAdapter.fromDto(item)
       const primaryKeyName = this.modelAdapter.getPrimaryIndex()
-      const updatedItem = this.removePrimaryKey(primaryKeyName.partitionKey as string, items, primaryKeyName.sortKey as string)
-      const { updateExpression, expressionAttribute, expressionAttributeNames } = this.createUpdateExpressions(updatedItem)
+      const updatedItem = this.removePrimaryKey(
+        primaryKeyName.partitionKey as string,
+        items,
+        primaryKeyName.sortKey as string
+      )
+      const {
+        updateExpression,
+        expressionAttribute,
+        expressionAttributeNames
+      } = this.createUpdateExpressions(updatedItem)
       const keyObject: Record<string, DbFields[keyof DbFields]> = {
         [primaryKeyName.partitionKey]: items[primaryKeyName.partitionKey]
       }
       if (typeof primaryKeyName.sortKey === 'string') {
-        keyObject[primaryKeyName.sortKey] = items[primaryKeyName.sortKey] as DbFields[keyof DbFields]
+        keyObject[primaryKeyName.sortKey] = items[
+          primaryKeyName.sortKey
+        ] as DbFields[keyof DbFields]
       }
 
       const input: UpdateCommandInput = {
@@ -171,15 +257,23 @@ export default class DynamoDbTableOperations<
         ExpressionAttributeNames: expressionAttributeNames
       }
 
-      const updateCommandOutput = await this.client.send(new UpdateCommand(input))
+      const updateCommandOutput = await this.client.send(
+        new UpdateCommand(input)
+      )
 
       if (updateCommandOutput?.$metadata?.httpStatusCode === 200) {
         return this.modelAdapter.toDto(items)
       }
-      throw new Error('Failed to update item in DynamoDB. HTTP Status Code: ' + updateCommandOutput.$metadata?.httpStatusCode)
+      throw new Error(
+        'Failed to update item in DynamoDB. HTTP Status Code: ' +
+          updateCommandOutput.$metadata?.httpStatusCode
+      )
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-      throw new Error(`Failed to update item in ${this.getTableName()}. Error: ${errorMessage}`)
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unknown error occurred'
+      throw new Error(
+        `Failed to update item in ${this.getTableName()}. Error: ${errorMessage}`
+      )
     }
   }
 
@@ -204,7 +298,10 @@ export default class DynamoDbTableOperations<
       }
       return this.modelAdapter.toDto(result.Item as DbFields)
     } catch (error) {
-      throw new DatabaseError('Failed to fetch item from DynamoDB', GENERIC_CODES.ERROR)
+      throw new DatabaseError(
+        'Failed to fetch item from DynamoDB',
+        GENERIC_CODES.ERROR
+      )
     }
   }
 
@@ -226,19 +323,27 @@ export default class DynamoDbTableOperations<
 
       await this.client.send(new DeleteCommand(input))
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-      throw new Error(`Failed to delete item in ${this.getTableName()}. Error: ${errorMessage}`)
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unknown error occurred'
+      throw new Error(
+        `Failed to delete item in ${this.getTableName()}. Error: ${errorMessage}`
+      )
     }
   }
 
   getTableName(): string {
     if (process.env.DYNAMODB_TABLE_NAME == null) {
-      throw new DatabaseError('DDB Table name not defined', GENERIC_CODES.ERROR)
+      throw new DatabaseError(
+        'DDB Table name not defined',
+        GENERIC_CODES.ERROR
+      )
     }
     return process.env.DYNAMODB_TABLE_NAME
   }
 
-  private createUpdateExpressions(item: Record<string, unknown>): CreateUpdateExpressionsReturnType {
+  private createUpdateExpressions(
+    item: Record<string, unknown>
+  ): CreateUpdateExpressionsReturnType {
     const updateExpression: string[] = []
     const expressionAttribute: Record<string, unknown> = {}
     const expressionAttributeNames: Record<string, unknown> = {}
@@ -252,9 +357,17 @@ export default class DynamoDbTableOperations<
     return { updateExpression, expressionAttribute, expressionAttributeNames }
   }
 
-  private removePrimaryKey(partitionKeyName: string, item: Record<string, unknown>, sortKeyName?: string): Record<string, unknown> {
+  private removePrimaryKey(
+    partitionKeyName: string,
+    item: Record<string, unknown>,
+    sortKeyName?: string
+  ): Record<string, unknown> {
     const { [partitionKeyName]: _, ...rest } = { ...item }
-    if (sortKeyName != null && sortKeyName !== '' && sortKeyName !== undefined) {
+    if (
+      sortKeyName != null &&
+      sortKeyName !== '' &&
+      sortKeyName !== undefined
+    ) {
       const { [sortKeyName]: __, ...itemWithoutPrimaryKey } = rest
       return itemWithoutPrimaryKey
     }

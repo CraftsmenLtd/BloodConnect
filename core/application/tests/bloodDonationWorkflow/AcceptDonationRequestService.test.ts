@@ -4,7 +4,7 @@ import AcceptDonationRequestError from '../../../application/bloodDonationWorkfl
 import { AcceptedDonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 import { acceptDonationRequestAttributesMock } from '../../tests/mocks/mockDonationAcceptanceData'
 
-jest.mock('../../Models/policies/repositories/Repository')
+jest.mock('../../models/policies/repositories/Repository')
 
 const mockAcceptDonationRepository = {
   create: jest.fn(),

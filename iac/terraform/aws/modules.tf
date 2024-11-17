@@ -2,11 +2,6 @@ module "environments" {
   source = "./environments"
 }
 
-module "auth" {
-  source      = "./auth"
-  environment = var.environment
-}
-
 module "user" {
   source             = "./user"
   environment        = var.environment

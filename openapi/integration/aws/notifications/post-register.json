@@ -16,7 +16,7 @@
     }
   },
   "requestTemplates": {
-    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"userId\": \"$context.authorizer.claims['custom:userId']\",\n  \"deviceToken\": \"$inputRoot.deviceToken\",\n  \"platform\": \"$inputRoot.platform\"\n}"
+    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"userId\": \"$context.authorizer.claims['custom:userId']\",\n   \"cloudFrontRequestId\": \"$input.params('X-Amz-Cf-Id')\",\n   \"apiGwRequestId\": \"$context.requestId\",\n  \"deviceToken\": \"$inputRoot.deviceToken\",\n  \"platform\": \"$inputRoot.platform\"\n}"
   },
   "passthroughBehavior": "never"
 }

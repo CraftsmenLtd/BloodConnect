@@ -1,22 +1,37 @@
 import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperations'
-import { DynamoDBDocumentClient, PutCommand, UpdateCommand, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  UpdateCommand,
+  GetCommand,
+  QueryCommand
+} from '@aws-sdk/lib-dynamodb'
 import { mockClient } from 'aws-sdk-client-mock'
 import { UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
-import UserModel from '../../../../../application/Models/dbModels/UserModel'
+import UserModel from '../../../../../application/models/dbModels/UserModel'
 import DatabaseError from '../../../../../../commons/libs/errors/DatabaseError'
 import { GENERIC_CODES } from '../../../../../../commons/libs/constants/GenericCodes'
-import { mockUserDetailsWithStringId, expectedUser } from '../../../../../application/tests/mocks/mockUserData'
-import { QueryConditionOperator } from '../../../../../application/Models/policies/repositories/QueryTypes'
+import {
+  mockUserDetailsWithStringId,
+  expectedUser
+} from '../../../../../application/tests/mocks/mockUserData'
+import { QueryConditionOperator } from '../../../../../application/models/policies/repositories/QueryTypes'
 
 describe('DynamoDbTableOperations Tests', () => {
   const ddbMock = mockClient(DynamoDBDocumentClient)
-  const dynamoDbOperations = new DynamoDbTableOperations<UserDetailsDTO, any, UserModel>(new UserModel())
+  const dynamoDbOperations = new DynamoDbTableOperations<
+  UserDetailsDTO,
+  any,
+  UserModel
+  >(new UserModel())
 
   beforeEach(() => {
     ddbMock.reset()
     process.env.DYNAMODB_TABLE_NAME = 'TestTable'
     jest.spyOn(UserModel.prototype, 'fromDto').mockReturnValue(expectedUser)
-    jest.spyOn(UserModel.prototype, 'toDto').mockReturnValue(mockUserDetailsWithStringId)
+    jest
+      .spyOn(UserModel.prototype, 'toDto')
+      .mockReturnValue(mockUserDetailsWithStringId)
   })
 
   afterEach(() => {
@@ -27,18 +42,24 @@ describe('DynamoDbTableOperations Tests', () => {
     const mockPutResponse = { $metadata: { httpStatusCode: 200 } }
     ddbMock.on(PutCommand).resolves(mockPutResponse)
 
-    const createdItem = await dynamoDbOperations.create(mockUserDetailsWithStringId)
+    const createdItem = await dynamoDbOperations.create(
+      mockUserDetailsWithStringId
+    )
 
     expect(createdItem).toEqual(mockUserDetailsWithStringId)
     expect(ddbMock.calls()).toHaveLength(1)
-    expect(UserModel.prototype.fromDto).toHaveBeenCalledWith(mockUserDetailsWithStringId)
+    expect(UserModel.prototype.fromDto).toHaveBeenCalledWith(
+      mockUserDetailsWithStringId
+    )
   })
 
   test('should throw an error when DynamoDB fails to create an item', async() => {
     const mockPutResponse = { $metadata: { httpStatusCode: 500 } }
     ddbMock.on(PutCommand).resolves(mockPutResponse)
 
-    await expect(dynamoDbOperations.create(mockUserDetailsWithStringId)).rejects.toThrow(
+    await expect(
+      dynamoDbOperations.create(mockUserDetailsWithStringId)
+    ).rejects.toThrow(
       'Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined'
     )
 
@@ -49,18 +70,24 @@ describe('DynamoDbTableOperations Tests', () => {
     const mockUpdateResponse = { $metadata: { httpStatusCode: 200 } }
     ddbMock.on(UpdateCommand).resolves(mockUpdateResponse)
 
-    const updatedItem = await dynamoDbOperations.update(mockUserDetailsWithStringId)
+    const updatedItem = await dynamoDbOperations.update(
+      mockUserDetailsWithStringId
+    )
 
     expect(updatedItem).toEqual(mockUserDetailsWithStringId)
     expect(ddbMock.calls()).toHaveLength(1)
-    expect(UserModel.prototype.fromDto).toHaveBeenCalledWith(mockUserDetailsWithStringId)
+    expect(UserModel.prototype.fromDto).toHaveBeenCalledWith(
+      mockUserDetailsWithStringId
+    )
   })
 
   test('should throw an error when DynamoDB fails to update an item', async() => {
     const mockUpdateResponse = { $metadata: { httpStatusCode: 500 } }
     ddbMock.on(UpdateCommand).resolves(mockUpdateResponse)
 
-    await expect(dynamoDbOperations.update(mockUserDetailsWithStringId)).rejects.toThrow(
+    await expect(
+      dynamoDbOperations.update(mockUserDetailsWithStringId)
+    ).rejects.toThrow(
       'Failed to update item in TestTable. Error: Failed to update item in DynamoDB. HTTP Status Code: 500'
     )
 
@@ -70,7 +97,9 @@ describe('DynamoDbTableOperations Tests', () => {
   test('should throw an error when update operation encounters an error', async() => {
     ddbMock.on(UpdateCommand).rejects(new Error('DynamoDB update error'))
 
-    await expect(dynamoDbOperations.update(mockUserDetailsWithStringId)).rejects.toThrow(
+    await expect(
+      dynamoDbOperations.update(mockUserDetailsWithStringId)
+    ).rejects.toThrow(
       'Failed to update item in TestTable. Error: DynamoDB update error'
     )
 
@@ -78,7 +107,10 @@ describe('DynamoDbTableOperations Tests', () => {
   })
 
   test('should fetch an item from DynamoDB successfully', async() => {
-    const mockGetResponse = { Item: expectedUser, $metadata: { httpStatusCode: 200 } }
+    const mockGetResponse = {
+      Item: expectedUser,
+      $metadata: { httpStatusCode: 200 }
+    }
     ddbMock.on(GetCommand).resolves(mockGetResponse)
 
     const fetchedItem = await dynamoDbOperations.getItem('partitionKey')
@@ -89,7 +121,10 @@ describe('DynamoDbTableOperations Tests', () => {
   })
 
   test('should return null when item is not found in DynamoDB', async() => {
-    const mockGetResponse = { Item: undefined, $metadata: { httpStatusCode: 200 } }
+    const mockGetResponse = {
+      Item: undefined,
+      $metadata: { httpStatusCode: 200 }
+    }
     ddbMock.on(GetCommand).resolves(mockGetResponse)
 
     const fetchedItem = await dynamoDbOperations.getItem('partitionKey')
@@ -102,7 +137,10 @@ describe('DynamoDbTableOperations Tests', () => {
     ddbMock.on(GetCommand).rejects(new Error('DynamoDB getItem error'))
 
     await expect(dynamoDbOperations.getItem('partitionKey')).rejects.toThrow(
-      new DatabaseError('Failed to fetch item from DynamoDB', GENERIC_CODES.ERROR)
+      new DatabaseError(
+        'Failed to fetch item from DynamoDB',
+        GENERIC_CODES.ERROR
+      )
     )
 
     expect(ddbMock.calls()).toHaveLength(1)
@@ -202,19 +240,23 @@ describe('DynamoDbTableOperations Tests', () => {
     })
 
     test('should throw error when BETWEEN operator missing second value', async() => {
-      await expect(dynamoDbOperations.query({
-        partitionKeyCondition: {
-          attributeName: 'PK',
-          operator: QueryConditionOperator.EQUALS,
-          attributeValue: 'USER#12345'
-        },
-        sortKeyCondition: {
-          attributeName: 'SK',
-          operator: QueryConditionOperator.BETWEEN,
-          attributeValue: 'START',
-          attributeValue2: ''
-        }
-      })).rejects.toThrow('Failed to query items from DynamoDB: BETWEEN operator requires a non-empty second value')
+      await expect(
+        dynamoDbOperations.query({
+          partitionKeyCondition: {
+            attributeName: 'PK',
+            operator: QueryConditionOperator.EQUALS,
+            attributeValue: 'USER#12345'
+          },
+          sortKeyCondition: {
+            attributeName: 'SK',
+            operator: QueryConditionOperator.BETWEEN,
+            attributeValue: 'START',
+            attributeValue2: ''
+          }
+        })
+      ).rejects.toThrow(
+        'Failed to query items from DynamoDB: BETWEEN operator requires a non-empty second value'
+      )
     })
 
     test('should handle query with all options', async() => {
@@ -257,13 +299,15 @@ describe('DynamoDbTableOperations Tests', () => {
     test('should handle query error', async() => {
       ddbMock.on(QueryCommand).rejects(new Error('Query failed'))
 
-      await expect(dynamoDbOperations.query({
-        partitionKeyCondition: {
-          attributeName: 'PK',
-          operator: QueryConditionOperator.EQUALS,
-          attributeValue: 'USER#12345'
-        }
-      })).rejects.toThrow('Failed to query items from DynamoDB: Query failed')
+      await expect(
+        dynamoDbOperations.query({
+          partitionKeyCondition: {
+            attributeName: 'PK',
+            operator: QueryConditionOperator.EQUALS,
+            attributeValue: 'USER#12345'
+          }
+        })
+      ).rejects.toThrow('Failed to query items from DynamoDB: Query failed')
     })
   })
 
@@ -287,7 +331,12 @@ describe('DynamoDbTableOperations Tests', () => {
       const queryCall = ddbMock.calls()[0]
       const input = queryCall.args[0].input as QueryCommand
 
-      const expectedKeys = ['TableName', 'KeyConditionExpression', 'ExpressionAttributeValues', 'ExpressionAttributeNames']
+      const expectedKeys = [
+        'TableName',
+        'KeyConditionExpression',
+        'ExpressionAttributeValues',
+        'ExpressionAttributeNames'
+      ]
       const actualKeys = Object.keys(input)
 
       expect(actualKeys.sort()).toEqual(expectedKeys.sort())

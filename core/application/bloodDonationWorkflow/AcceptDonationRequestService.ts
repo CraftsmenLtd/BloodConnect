@@ -1,13 +1,20 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import AcceptDonationRequestError from './AcceptDonationRequestError'
-import { AcceptedDonationDTO, DonationStatus } from '../../../commons/dto/DonationDTO'
-import Repository from '../Models/policies/repositories/Repository'
+import {
+  AcceptedDonationDTO,
+  DonationStatus
+} from '../../../commons/dto/DonationDTO'
+import Repository from '../models/policies/repositories/Repository'
 import { AcceptDonationRequestAttributes } from './Types'
 
 export class AcceptDonationService {
-  async createAcceptanceRecord(acceptDonationRequestAttributes: AcceptDonationRequestAttributes, acceptDonationRequestRepository: Repository<AcceptedDonationDTO>): Promise<string> {
+  async createAcceptanceRecord(
+    acceptDonationRequestAttributes: AcceptDonationRequestAttributes,
+    acceptDonationRequestRepository: Repository<AcceptedDonationDTO>
+  ): Promise<string> {
     try {
-      const { seekerId, createdAt, requestPostId } = acceptDonationRequestAttributes
+      const { seekerId, createdAt, requestPostId } =
+        acceptDonationRequestAttributes
 
       const queryResult = await acceptDonationRequestRepository.getItem(
         `BLOOD_REQ#${seekerId}`,

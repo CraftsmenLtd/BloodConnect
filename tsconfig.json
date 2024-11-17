@@ -22,13 +22,6 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*", "clients/web/node_modules/*", "clients/commons/node_modules/*"],
-      "@commons/*": ["commons/*"],
-      "@application/*": ["core/application/*"],
-      "@web/*": ["clients/web/src/*"],
-      "@client-commons/*": ["clients/commons/*"],
-    },
   },
   "include": ["commons", "core", "clients", "babel.config.js", "jest.config.ts", "jest.env.ts"],
   "exclude": ["node_modules/**/*", "dist/", ".idea", ".vscode", ".github", "coverage", ".build", "clients/web/tailwind.config.js"]
