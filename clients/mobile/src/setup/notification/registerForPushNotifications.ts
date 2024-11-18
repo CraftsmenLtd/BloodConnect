@@ -32,7 +32,7 @@ export const registerForPushNotificationsAsync = async(): Promise<string | undef
     }
 
     try {
-      if (!projectId) throw new Error('Project ID not found')
+      if (projectId === null) throw new Error('Project ID not found')
 
       token = (await Notifications.getDevicePushTokenAsync()).data
     } catch (error) {

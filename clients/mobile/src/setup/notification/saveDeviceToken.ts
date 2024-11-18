@@ -9,11 +9,9 @@
  *
  * @returns {Promise<void>} Resolves if the device token is successfully registered.
  * Logs an error message if the registration fails or an exception occurs.
- *
  * @example
  * const fetchClient = axios.create({ baseURL: 'https://api.example.com' });
  * const deviceToken = 'example_device_token';
- * 
  * await saveDeviceTokenToSNS(deviceToken, fetchClient);
  * console.log('Device token saved successfully.');
  */

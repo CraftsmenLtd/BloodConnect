@@ -7,7 +7,7 @@ export const useNavigationReady = (navigation: NavigationProp<any>) => {
       if (navigation.isReady()) {
         return
       }
-      await new Promise(resolve => setTimeout(resolve, 500)) // Wait for 500ms
+      await new Promise(resolve => setTimeout(resolve, 500))
       attempts++
     }
     throw new Error('Navigation not ready')

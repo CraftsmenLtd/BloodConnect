@@ -1,10 +1,10 @@
 import { useContext } from 'react'
-import { NotificationContext } from './NotificationContext'
+import { NotificationContext, NotificationContextType } from './NotificationContext'
 
-export const useNotificationContext = () => {
+export const useNotificationContext = (): NotificationContextType => {
   const context = useContext(NotificationContext)
-  if (!context) {
+  if (context === null) {
     throw new Error('useNotificationContext must be used within a NotificationProvider')
   }
-  return context
+  return context as NotificationContextType
 }
