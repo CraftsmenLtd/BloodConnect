@@ -5,11 +5,16 @@ import { AcceptDonationService } from '../../../application/bloodDonationWorkflo
 import { AcceptDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
-import { AcceptDonationRequestModel, AcceptedDonationFields } from '../../../application/technicalImpl/dbModels/AcceptDonationModel'
+import {
+  AcceptDonationRequestModel,
+  AcceptedDonationFields
+} from '../../../application/models/dbModels/AcceptDonationModel'
 
 const acceptDonationRequest = new AcceptDonationService()
 
-async function acceptDonationRequestLambda(event: AcceptDonationRequestAttributes): Promise<APIGatewayProxyResult> {
+async function acceptDonationRequestLambda(
+  event: AcceptDonationRequestAttributes
+): Promise<APIGatewayProxyResult> {
   try {
     const acceptDonationRequestAttributes = {
       donorId: event.donorId,
@@ -20,12 +25,20 @@ async function acceptDonationRequestLambda(event: AcceptDonationRequestAttribute
     }
     const response = await acceptDonationRequest.createAcceptanceRecord(
       acceptDonationRequestAttributes,
-      new DynamoDbTableOperations<AcceptedDonationDTO, AcceptedDonationFields, AcceptDonationRequestModel>(new AcceptDonationRequestModel())
+      new DynamoDbTableOperations<
+      AcceptedDonationDTO,
+      AcceptedDonationFields,
+      AcceptDonationRequestModel
+      >(new AcceptDonationRequestModel())
     )
-    return generateApiGatewayResponse(response, HTTP_CODES.OK)
+    return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-    return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
+    const errorMessage =
+      error instanceof Error ? error.message : 'An unknown error occurred'
+    return generateApiGatewayResponse(
+      `Error: ${errorMessage}`,
+      HTTP_CODES.ERROR
+    )
   }
 }
 

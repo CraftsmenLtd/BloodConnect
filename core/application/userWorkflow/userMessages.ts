@@ -16,7 +16,7 @@ export function getPasswordResetVerificationMessage(userName: string, securityCo
   }
 }
 
-export function getAppUserWellcomeMailMessage(userName: string): GenericMessage {
+export function getAppUserWelcomeMailMessage(userName: string): GenericMessage {
   return {
     title: APP_USER_WELCOME_MAIL_TITLE,
     content: replaceTemplatePlaceholders(APP_USER_WELCOME_MAIL_CONTENT, userName)

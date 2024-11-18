@@ -18,12 +18,6 @@ export default defineConfig({
       process: true
     })
   ],
-  resolve: {
-    alias: {
-      '@client-commons': resolve(__dirname, '../commons'),
-      '@commons': resolve(__dirname, '../../commons')
-    }
-  },
   define: {
     'process.env': {
       AWS_REGION: process.env.AWS_REGION,

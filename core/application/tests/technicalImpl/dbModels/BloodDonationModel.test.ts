@@ -1,6 +1,17 @@
-import { BloodDonationModel, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX, DonationFields } from '../../../technicalImpl/dbModels/BloodDonationModel'
-import { DonationDTO, DonationStatus } from '../../../../../commons/dto/DonationDTO'
-import { donationDtoMock, donationFieldsMock } from '../../mocks/mockDonationRequestData'
+import {
+  BloodDonationModel,
+  BLOOD_REQUEST_PK_PREFIX,
+  BLOOD_REQUEST_LSISK_PREFIX,
+  DonationFields
+} from '../../../models/dbModels/BloodDonationModel'
+import {
+  DonationDTO,
+  DonationStatus
+} from '../../../../../commons/dto/DonationDTO'
+import {
+  donationDtoMock,
+  donationFieldsMock
+} from '../../mocks/mockDonationRequestData'
 
 jest.useFakeTimers()
 
@@ -48,7 +59,11 @@ describe('BloodDonationModel', () => {
       const result = bloodDonationModel.fromDto(dtoWithoutCreatedAt)
 
       expect(result.createdAt).toBe(mockDate.toISOString())
-      expect(result.SK).toBe(`${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${donationDtoMock.id}`)
+      expect(result.SK).toBe(
+        `${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${
+          donationDtoMock.id
+        }`
+      )
     })
 
     it('should use current date when createdAt is omitted', () => {
@@ -60,7 +75,11 @@ describe('BloodDonationModel', () => {
       const result = bloodDonationModel.fromDto(dtoWithoutCreatedAt)
 
       expect(result.createdAt).toBe(mockDate.toISOString())
-      expect(result.SK).toBe(`${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${donationDtoMock.id}`)
+      expect(result.SK).toBe(
+        `${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${
+          donationDtoMock.id
+        }`
+      )
     })
 
     it('should properly format SK and LSI1SK with provided createdAt', () => {
@@ -70,8 +89,12 @@ describe('BloodDonationModel', () => {
         createdAt: customCreatedAt
       })
 
-      expect(result.SK).toBe(`${BLOOD_REQUEST_PK_PREFIX}#${customCreatedAt}#${donationDtoMock.id}`)
-      expect(result.LSI1SK).toBe(`${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`)
+      expect(result.SK).toBe(
+        `${BLOOD_REQUEST_PK_PREFIX}#${customCreatedAt}#${donationDtoMock.id}`
+      )
+      expect(result.LSI1SK).toBe(
+        `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`
+      )
     })
   })
 
@@ -173,13 +196,18 @@ describe('BloodDonationModel', () => {
         indexType: 'GSI' as const,
         indexName: 'testIndex'
       }
-    ])('should return undefined for $name', ({ indexDefinitions, indexType, indexName }) => {
-      jest.spyOn(bloodDonationModel, 'getIndexDefinitions').mockReturnValue(indexDefinitions)
+    ])(
+      'should return undefined for $name',
+      ({ indexDefinitions, indexType, indexName }) => {
+        jest
+          .spyOn(bloodDonationModel, 'getIndexDefinitions')
+          .mockReturnValue(indexDefinitions)
 
-      const result = bloodDonationModel.getIndex(indexType, indexName)
+        const result = bloodDonationModel.getIndex(indexType, indexName)
 
-      expect(result).toBeUndefined()
-    })
+        expect(result).toBeUndefined()
+      }
+    )
   })
 
   describe('getIndexDefinitions', () => {

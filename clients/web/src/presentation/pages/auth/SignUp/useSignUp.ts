@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import authService from '@client-commons/services/authService'
-import useFetchData from '@client-commons/hooks/useFetchData'
-import { getUser } from '@client-commons/platform/aws/auth/awsAuth'
-import { validatePassword } from '@client-commons/utils/validationUtils'
+import authService from '../../../../../../commons/services/authService'
+import useFetchData from '../../../../../../commons/hooks/useFetchData'
+import { getUser } from '../../../../../../commons/platform/aws/auth/awsAuth'
+import { validatePassword } from '../../../../../../commons/utils/validationUtils'
 import { toastHideDisappearTime } from '../../../../constants/common'
 import { DashboardPath, LoginPath } from '../../../../constants/routeConsts'
 

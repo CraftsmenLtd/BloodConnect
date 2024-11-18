@@ -28,7 +28,7 @@ describe('acceptDonationRequestLambda', () => {
     const result: APIGatewayProxyResult = await acceptDonationRequestLambda(mockEvent)
     expect(result).toEqual({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
     expect(mockAcceptDonationService.prototype.createAcceptanceRecord).toHaveBeenCalledWith(mockEvent, expect.anything())
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(mockResponse, HTTP_CODES.OK)
+    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith({ message: mockResponse }, HTTP_CODES.OK)
   })
 
   it('should return an error response when an error is thrown', async() => {

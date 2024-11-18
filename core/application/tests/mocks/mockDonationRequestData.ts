@@ -1,6 +1,17 @@
-import { BloodDonationAttributes, DonorRoutingAttributes } from '../../bloodDonationWorkflow/Types'
-import { DonationFields, BLOOD_REQUEST_PK_PREFIX, BLOOD_REQUEST_LSISK_PREFIX } from '../../technicalImpl/dbModels/BloodDonationModel'
-import { BloodGroup, DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
+import {
+  BloodDonationAttributes,
+  DonorRoutingAttributes
+} from '../../bloodDonationWorkflow/Types'
+import {
+  DonationFields,
+  BLOOD_REQUEST_PK_PREFIX,
+  BLOOD_REQUEST_LSISK_PREFIX
+} from '../../models/dbModels/BloodDonationModel'
+import {
+  BloodGroup,
+  DonationDTO,
+  DonationStatus
+} from '../../../../commons/dto/DonationDTO'
 
 export const currentDate = new Date().toISOString()
 
@@ -29,7 +40,7 @@ export const donationDtoMock: DonationDTO = {
   city: 'Dhaka',
   location: 'New York',
   latitude: 40.7128,
-  longitude: -74.0060,
+  longitude: -74.006,
   geohash: 'dr5regw3',
   donationDateTime: '2024-10-10T00:00:00Z',
   status: DonationStatus.PENDING,
@@ -47,7 +58,7 @@ export const donationFieldsMock: DonationFields = {
   city: 'Dhaka',
   location: 'New York',
   latitude: 40.7128,
-  longitude: -74.0060,
+  longitude: -74.006,
   geohash: 'dr5regw3',
   donationDateTime: '2024-10-10T00:00:00Z',
   status: DonationStatus.PENDING,

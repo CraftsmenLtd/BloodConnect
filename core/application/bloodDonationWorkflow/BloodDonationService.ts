@@ -1,26 +1,61 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import { DonationDTO, DonationStatus, DonorSearchDTO, AcceptedDonationDTO, UrgencyLevel } from '../../../commons/dto/DonationDTO'
+import {
+  DonationDTO,
+  DonationStatus,
+  DonorSearchDTO,
+  AcceptedDonationDTO,
+  UrgencyLevel
+} from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import Repository from '../technicalImpl/policies/repositories/Repository'
+import Repository from '../models/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
-import { BLOOD_REQUEST_PK_PREFIX, BloodDonationModel, DonationFields } from '../technicalImpl/dbModels/BloodDonationModel'
-import { QueryConditionOperator, QueryInput } from '../technicalImpl/policies/repositories/QueryTypes'
-import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes, DonorRoutingAttributes, StepFunctionInput, DonationStatusManagerAttributes } from './Types'
-import { StepFunctionModel } from '../technicalImpl/stepFunctions/StepFunctionModel'
+import {
+  BLOOD_REQUEST_PK_PREFIX,
+  BloodDonationModel,
+  DonationFields
+} from '../models/dbModels/BloodDonationModel'
+import {
+  QueryConditionOperator,
+  QueryInput
+} from '../models/policies/repositories/QueryTypes'
+import {
+  BloodDonationAttributes,
+  validationRules,
+  UpdateBloodDonationAttributes,
+  DonorRoutingAttributes,
+  StepFunctionInput,
+  DonationStatusManagerAttributes
+} from './Types'
+import { StepFunctionModel } from '../models/stepFunctions/StepFunctionModel'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
-import { DONOR_SEARCH_PK_PREFIX } from '../../application/technicalImpl/dbModels/DonorSearchModel'
-import { AcceptDonationRequestModel, AcceptedDonationFields } from '../../application/technicalImpl/dbModels/AcceptDonationModel'
+import { DONOR_SEARCH_PK_PREFIX } from '../models/dbModels/DonorSearchModel'
+import {
+  AcceptDonationRequestModel,
+  AcceptedDonationFields
+} from '../models/dbModels/AcceptDonationModel'
+import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
 
 export class BloodDonationService {
-  async createBloodDonation(donationAttributes: BloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO, DonationFields>, model: BloodDonationModel): Promise<string> {
+  async createBloodDonation(
+    donationAttributes: BloodDonationAttributes,
+    bloodDonationRepository: Repository<DonationDTO, DonationFields>,
+    model: BloodDonationModel
+  ): Promise<string> {
     try {
-      await this.checkDailyRequestThrottling(donationAttributes.seekerId, bloodDonationRepository, model)
+      await this.checkDailyRequestThrottling(
+        donationAttributes.seekerId,
+        bloodDonationRepository,
+        model
+      )
 
       const validationResponse = validateInputWithRules(
-        { bloodQuantity: donationAttributes.bloodQuantity, donationDateTime: donationAttributes.donationDateTime },
+        {
+          bloodQuantity: donationAttributes.bloodQuantity,
+          donationDateTime: donationAttributes.donationDateTime
+        },
         validationRules
       )
       if (validationResponse !== null) {
@@ -31,8 +66,13 @@ export class BloodDonationService {
         id: generateUniqueID(),
         ...donationAttributes,
         status: DonationStatus.PENDING,
-        geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
-        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString()
+        geohash: generateGeohash(
+          donationAttributes.latitude,
+          donationAttributes.longitude
+        ),
+        donationDateTime: new Date(
+          donationAttributes.donationDateTime
+        ).toISOString()
       })
       return 'We have accepted your request, and we will let you know when we find a donor.'
     } catch (error) {
@@ -46,7 +86,11 @@ export class BloodDonationService {
     }
   }
 
-  private async checkDailyRequestThrottling(seekerId: string, repository: Repository<DonationDTO, DonationFields>, model: BloodDonationModel): Promise<void> {
+  private async checkDailyRequestThrottling(
+    seekerId: string,
+    repository: Repository<DonationDTO, DonationFields>,
+    model: BloodDonationModel
+  ): Promise<void> {
     const datePrefix = new Date().toISOString().split('T')[0]
     const primaryIndex = model.getPrimaryIndex()
 
@@ -68,7 +112,10 @@ export class BloodDonationService {
 
     try {
       const queryResult = await repository.query(query)
-      if (queryResult.items.length >= THROTTLING_LIMITS.BLOOD_REQUEST.MAX_REQUESTS_PER_DAY) {
+      if (
+        queryResult.items.length >=
+        THROTTLING_LIMITS.BLOOD_REQUEST.MAX_REQUESTS_PER_DAY
+      ) {
         throw new ThrottlingError(
           THROTTLING_LIMITS.BLOOD_REQUEST.ERROR_MESSAGE,
           GENERIC_CODES.TOO_MANY_REQUESTS
@@ -78,13 +125,20 @@ export class BloodDonationService {
       if (error instanceof ThrottlingError) {
         throw error
       }
-      throw new BloodDonationOperationError(`Failed to check request limits: ${error}`, GENERIC_CODES.ERROR)
+      throw new BloodDonationOperationError(
+        `Failed to check request limits: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
   }
 
-  async updateBloodDonation(donationAttributes: UpdateBloodDonationAttributes, bloodDonationRepository: Repository<DonationDTO>): Promise<string> {
+  async updateBloodDonation(
+    donationAttributes: UpdateBloodDonationAttributes,
+    bloodDonationRepository: Repository<DonationDTO>
+  ): Promise<string> {
     try {
-      const { requestPostId, donationDateTime, createdAt, ...restAttributes } = donationAttributes
+      const { requestPostId, donationDateTime, createdAt, ...restAttributes } =
+        donationAttributes
 
       const item = await bloodDonationRepository.getItem(
         `${BLOOD_REQUEST_PK_PREFIX}#${donationAttributes.seekerId}`,
@@ -95,8 +149,11 @@ export class BloodDonationService {
         throw new Error('Item not found.')
       }
 
-      if (item?.status !== undefined && item.status === DonationStatus.COMPLETED) {
-        throw new Error('You can\'t update a completed request')
+      if (
+        item?.status !== undefined &&
+        item.status === DonationStatus.COMPLETED
+      ) {
+        throw new Error("You can't update a completed request")
       }
 
       const updateData: Partial<DonationDTO> = {
@@ -106,7 +163,10 @@ export class BloodDonationService {
       }
 
       if (donationDateTime !== undefined) {
-        const validationResponse = validateInputWithRules({ donationDateTime }, validationRules)
+        const validationResponse = validateInputWithRules(
+          { donationDateTime },
+          validationRules
+        )
         if (validationResponse !== null) {
           throw new Error(validationResponse)
         }
@@ -130,7 +190,8 @@ export class BloodDonationService {
     donorRoutingAttributes: DonorRoutingAttributes,
     bloodDonationRepository: Repository<DonationDTO>,
     stepFunctionModel: StepFunctionModel,
-    donorSearchRepository: Repository<DonorSearchDTO>
+    donorSearchRepository: Repository<DonorSearchDTO>,
+    userRepository: Repository<UserDetailsDTO>
   ): Promise<string> {
     try {
       const { seekerId, requestPostId, createdAt } = donorRoutingAttributes
@@ -141,8 +202,11 @@ export class BloodDonationService {
       if (existingItem === null) {
         return 'Item not found.'
       }
-      if (existingItem.status === DonationStatus.COMPLETED || existingItem.status === DonationStatus.EXPIRED) {
-        return 'You can\'t update the donation request'
+      if (
+        existingItem.status === DonationStatus.COMPLETED ||
+        existingItem.status === DonationStatus.EXPIRED
+      ) {
+        return "You can't update the donation request"
       }
 
       const donorSearchItem = await donorSearchRepository.getItem(
@@ -161,6 +225,7 @@ export class BloodDonationService {
       }
 
       if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
+        updateData.status = DonationStatus.EXPIRED
         await donorSearchRepository.update(updateData)
         await bloodDonationRepository.update(updateData)
         return 'The donor search process expired after the maximum retry limit is reached.'
@@ -168,7 +233,7 @@ export class BloodDonationService {
 
       await donorSearchRepository.update(updateData)
 
-      const city = `${existingItem.location.split(',').pop()?.trim()}`
+      const seekerName = await this.getSeekerName(userRepository, seekerId)
       const stepFunctionInput: StepFunctionInput = {
         seekerId,
         requestPostId,
@@ -178,6 +243,7 @@ export class BloodDonationService {
         bloodQuantity: existingItem.bloodQuantity,
         urgencyLevel: existingItem.urgencyLevel,
         geohash: existingItem.geohash,
+        seekerName,
         patientName: existingItem.patientName,
         location: existingItem.location,
         contactNumber: existingItem.contactNumber,
@@ -185,14 +251,40 @@ export class BloodDonationService {
         shortDescription: existingItem.shortDescription,
         city: existingItem.city,
         retryCount: retryCount + 1,
-        message: `${existingItem.urgencyLevel === UrgencyLevel.URGENT ? 'Urgent ' : ''}${existingItem.neededBloodGroup} needed | ${existingItem.shortDescription}`
+        message: `${
+          existingItem.urgencyLevel === UrgencyLevel.URGENT ? 'Urgent ' : ''
+        }${existingItem.neededBloodGroup} needed | ${
+          existingItem.shortDescription
+        }`
       }
 
-      await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${city}-(${existingItem.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`)
+      await stepFunctionModel.startExecution(
+        stepFunctionInput,
+        `${requestPostId}-${existingItem.city}-(${
+          existingItem.neededBloodGroup
+        })-${Math.floor(Date.now() / 1000)}`
+      )
       return 'We have updated your request and initiated the donor search process.'
     } catch (error) {
-      throw new BloodDonationOperationError(`Failed to update blood donation post. Error: ${error}`, GENERIC_CODES.ERROR)
+      throw new BloodDonationOperationError(
+        `Failed to update blood donation post. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
+  }
+
+  private async getSeekerName(
+    userRepository: Repository<UserDetailsDTO, Record<string, unknown>>,
+    seekerId: string
+  ): Promise<string> {
+    const userProfile = await userRepository.getItem(
+      `USER#${seekerId}`,
+      'PROFILE'
+    )
+    if (userProfile === null) {
+      throw new Error('Seeker not found.')
+    }
+    return userProfile.name
   }
 
   async updateDonationStatus(
@@ -201,7 +293,8 @@ export class BloodDonationService {
     acceptDonationRepository: Repository<AcceptedDonationDTO>
   ): Promise<string> {
     try {
-      const { seekerId, requestPostId, createdAt } = donationStatusManagerAttributes
+      const { seekerId, requestPostId, createdAt } =
+        donationStatusManagerAttributes
       const bloodReqItem = await bloodDonationRepository.getItem(
         `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
         `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
@@ -209,8 +302,11 @@ export class BloodDonationService {
       if (bloodReqItem === null) {
         return 'Donation request not found.'
       }
-      if (bloodReqItem.status === DonationStatus.COMPLETED || bloodReqItem.status === DonationStatus.EXPIRED) {
-        return 'Can\'t update the donation request'
+      if (
+        bloodReqItem.status === DonationStatus.COMPLETED ||
+        bloodReqItem.status === DonationStatus.EXPIRED
+      ) {
+        return "Can't update the donation request"
       }
 
       const acceptDonationModel = new AcceptDonationRequestModel()
@@ -230,7 +326,9 @@ export class BloodDonationService {
           attributeValue: `ACCEPTED#${requestPostId}`
         }
       }
-      const queryResult = await acceptDonationRepository.query(query as QueryInput<Record<string, unknown>>)
+      const queryResult = await acceptDonationRepository.query(
+        query as QueryInput<Record<string, unknown>>
+      )
       const acceptedItems = queryResult.items ?? []
 
       if (acceptedItems.length >= bloodReqItem.bloodQuantity) {
@@ -242,7 +340,9 @@ export class BloodDonationService {
       return 'More donors are needed to fulfill the blood quantity.'
     } catch (error) {
       throw new BloodDonationOperationError(
-        `Failed to check donor numbers: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to check donor numbers: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
         GENERIC_CODES.ERROR
       )
     }

@@ -135,6 +135,9 @@ test:
 lint-code:
 	npm run lint
 
+lint-code-fix:
+	npm run lint -- --fix
+
 # Type Check
 type-check:
 	npm run type-check
@@ -143,6 +146,8 @@ lint-api: bundle-openapi
 	spectral lint docs/openapi/v1.json --ruleset openapi/.spectral.json
 
 lint: lint-code tf-validate lint-api
+
+lint-fix: lint-code-fix
 
 
 # Docker dev environment

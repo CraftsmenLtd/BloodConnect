@@ -1,18 +1,30 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import UserOperationError from './UserOperationError'
-import { AvailableForDonation, LocationDTO, UserDetailsDTO, UserDTO } from '../../../commons/dto/UserDTO'
+import {
+  AvailableForDonation,
+  LocationDTO,
+  UserDetailsDTO,
+  UserDTO
+} from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { GenericMessage } from '../../../commons/dto/MessageDTO'
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from './userMessages'
-import Repository from '../technicalImpl/policies/repositories/Repository'
+import {
+  getEmailVerificationMessage,
+  getPasswordResetVerificationMessage,
+  getAppUserWelcomeMailMessage
+} from './userMessages'
+import Repository from '../models/policies/repositories/Repository'
 import { UserAttributes, UpdateUserAttributes } from './Types'
-import { generateGeohash } from '../../application/utils/geohash'
-import { QueryConditionOperator, QueryInput } from '../../application/technicalImpl/policies/repositories/QueryTypes'
-import LocationModel, { LocationFields } from '../../application/technicalImpl/dbModels/LocationModel'
-import { SQSModel } from '../../application/technicalImpl/sqs/SQSModel'
+import { generateGeohash } from '../utils/geohash'
+import {
+  QueryConditionOperator,
+  QueryInput
+} from '../models/policies/repositories/QueryTypes'
+import LocationModel, {
+  LocationFields
+} from '../models/dbModels/LocationModel'
 import { differenceInYears, differenceInMonths } from 'date-fns'
-import { NotificationAttributes } from '../../application/notificationWorkflow/Types'
-import { BloodGroup } from '@commons/dto/DonationDTO'
+import { BloodGroup } from '../../../commons/dto/DonationDTO'
 
 // export interface NotificationAttributes {
 //   userId: string;
@@ -20,7 +32,10 @@ import { BloodGroup } from '@commons/dto/DonationDTO'
 // }
 
 export class UserService {
-  async createNewUser(userAttributes: UserAttributes, userRepository: Repository<UserDTO>): Promise<UserDTO> {
+  async createNewUser(
+    userAttributes: UserAttributes,
+    userRepository: Repository<UserDTO>
+  ): Promise<UserDTO> {
     try {
       return userRepository.create({
         id: generateUniqueID(),
@@ -29,7 +44,10 @@ export class UserService {
         phone: userAttributes.phone_number
       })
     } catch (error) {
-      throw new UserOperationError(`Failed to create new user. Error: ${error}`, GENERIC_CODES.ERROR)
+      throw new UserOperationError(
+        `Failed to create new user. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
   }
 
@@ -57,17 +75,26 @@ export class UserService {
     return getEmailVerificationMessage(userName, securityCode)
   }
 
-  getForgotPasswordMessage(userName: string, securityCode: string): GenericMessage {
+  getForgotPasswordMessage(
+    userName: string,
+    securityCode: string
+  ): GenericMessage {
     return getPasswordResetVerificationMessage(userName, securityCode)
   }
 
-  getAppUserWellcomeMail(userName: string): GenericMessage {
-    return getAppUserWellcomeMailMessage(userName)
+  getAppUserWelcomeMail(userName: string): GenericMessage {
+    return getAppUserWelcomeMailMessage(userName)
   }
 
-  async updateUser(userAttributes: UpdateUserAttributes, userRepository: Repository<UserDetailsDTO>, locationRepository: Repository<LocationDTO>, model: LocationModel): Promise<string> {
+  async updateUser(
+    userAttributes: UpdateUserAttributes,
+    userRepository: Repository<UserDetailsDTO>,
+    locationRepository: Repository<LocationDTO>,
+    model: LocationModel
+  ): Promise<string> {
     try {
-      const { userId, preferredDonationLocations, ...restAttributes } = userAttributes
+      const { userId, preferredDonationLocations, ...restAttributes } =
+        userAttributes
       const updateData: Partial<UserDetailsDTO> = {
         ...restAttributes,
         id: userId,
@@ -75,24 +102,42 @@ export class UserService {
       }
 
       updateData.age = this.calculateAge(userAttributes.dateOfBirth)
-      updateData.availableForDonation = this.calculateAvailableForDonation(userAttributes.lastDonationDate, userAttributes.availableForDonation)
+      updateData.availableForDonation = this.calculateAvailableForDonation(
+        userAttributes.lastDonationDate,
+        userAttributes.availableForDonation
+      )
 
       await userRepository.update(updateData)
-      await this.updateUserLocation(model, userId, locationRepository, preferredDonationLocations, updateData)
+      await this.updateUserLocation(
+        model,
+        userId,
+        locationRepository,
+        preferredDonationLocations,
+        updateData
+      )
       return 'Updated your Profile info'
     } catch (error) {
-      throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
+      throw new UserOperationError(
+        `Failed to update user. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
   }
 
-  private calculateAvailableForDonation(lastDonationDate: string, availableForDonation: AvailableForDonation): AvailableForDonation {
+  private calculateAvailableForDonation(
+    lastDonationDate: string,
+    availableForDonation: AvailableForDonation
+  ): AvailableForDonation {
     if (lastDonationDate !== '') {
       const donationDate = new Date(lastDonationDate)
       const currentDate = new Date()
 
       if (!isNaN(donationDate.getTime())) {
         const donationMonths = differenceInMonths(currentDate, donationDate)
-        return (donationMonths > Number(process.env.AFTER_DONATION_UNAVAILABLE_PERIOD) ? 'yes' : 'no')
+        return donationMonths >
+          Number(process.env.AFTER_DONATION_UNAVAILABLE_PERIOD)
+          ? 'yes'
+          : 'no'
       }
     }
     return availableForDonation
@@ -110,7 +155,13 @@ export class UserService {
     }
   }
 
-  private async updateUserLocation(model: LocationModel, userId: string, locationRepository: Repository<LocationDTO, Record<string, unknown>>, preferredDonationLocations: LocationDTO[], userAttributes: Partial<UserDetailsDTO>): Promise<void> {
+  private async updateUserLocation(
+    model: LocationModel,
+    userId: string,
+    locationRepository: Repository<LocationDTO, Record<string, unknown>>,
+    preferredDonationLocations: LocationDTO[],
+    userAttributes: Partial<UserDetailsDTO>
+  ): Promise<void> {
     const primaryIndex = model.getPrimaryIndex()
     const query: QueryInput<LocationFields> = {
       partitionKeyCondition: {
@@ -128,9 +179,14 @@ export class UserService {
       }
     }
 
-    const existingLocations = await locationRepository.query(query as QueryInput<Record<string, unknown>>)
+    const existingLocations = await locationRepository.query(
+      query as QueryInput<Record<string, unknown>>
+    )
     for (const location of existingLocations.items) {
-      await locationRepository.delete(`USER#${userId}`, `LOCATION#${location.locationId}`)
+      await locationRepository.delete(
+        `USER#${userId}`,
+        `LOCATION#${location.locationId}`
+      )
     }
 
     if (preferredDonationLocations != null) {
@@ -144,7 +200,8 @@ export class UserService {
           longitude: location.longitude,
           geohash: generateGeohash(location.latitude, location.longitude),
           bloodGroup: userAttributes.bloodGroup as BloodGroup,
-          availableForDonation: userAttributes.availableForDonation as AvailableForDonation,
+          availableForDonation:
+            userAttributes.availableForDonation as AvailableForDonation,
           lastVaccinatedDate: `${userAttributes.lastVaccinatedDate}`,
           createdAt: new Date().toISOString()
         }
@@ -153,21 +210,25 @@ export class UserService {
     }
   }
 
-  async pushNotification(notificationAttributes: NotificationAttributes, userRepository: Repository<UserDetailsDTO>, sqsModel: SQSModel): Promise<string> {
+  async getDeviceSnsEndpointArn(
+    userId: string,
+    userRepository: Repository<UserDetailsDTO>
+  ): Promise<string> {
     try {
-      const { userId } = notificationAttributes
       const userProfile = await userRepository.getItem(
         `USER#${userId}`,
         'PROFILE'
       )
-      if ((userProfile?.snsEndpointArn) == null) {
+      if (userProfile?.snsEndpointArn == null) {
         throw new Error('User has no registered device for notifications')
       }
 
-      await sqsModel.queue(notificationAttributes, userProfile?.snsEndpointArn)
-      return 'Notification Queued Successfully'
+      return userProfile.snsEndpointArn
     } catch (error) {
-      throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
+      throw new UserOperationError(
+        `Failed to update user. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
     }
   }
 }
