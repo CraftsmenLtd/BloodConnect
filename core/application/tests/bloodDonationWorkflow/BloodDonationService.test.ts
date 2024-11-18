@@ -556,8 +556,7 @@ describe('BloodDonationService', () => {
       )
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          ...mockDonationDTO,
-          retryCount: 1
+          ...mockDonationDTO
         })
       )
       expect(stepFunctionModel.startExecution).toHaveBeenCalledWith(
@@ -570,7 +569,6 @@ describe('BloodDonationService', () => {
           bloodQuantity: mockDonationDTO.bloodQuantity,
           urgencyLevel: mockDonationDTO.urgencyLevel,
           geohash: mockDonationDTO.geohash,
-          retryCount: 1,
           city: 'Dhaka'
         }),
         expect.any(String)
@@ -583,11 +581,15 @@ describe('BloodDonationService', () => {
     test('should return expiration message if retry count reaches maximum', async() => {
       const bloodDonationService = new BloodDonationService()
       const expiredMockDonationDTO: DonationDTO = {
-        ...mockDonationDTO,
-        retryCount: 5
+        ...mockDonationDTO
       }
+      const expiredMockdonorSearchDTO: DonorSearchDTO = {
+        ...mockDonationDTO,
+        retryCount: 6
+      }
+
       bloodDonationRepository.getItem.mockResolvedValue(expiredMockDonationDTO)
-      donorSearchRepository.getItem.mockResolvedValue(expiredMockDonationDTO)
+      donorSearchRepository.getItem.mockResolvedValue(expiredMockdonorSearchDTO)
 
       const result = await bloodDonationService.routeDonorRequest(
         donorRoutingAttributesMock,
@@ -599,13 +601,6 @@ describe('BloodDonationService', () => {
 
       expect(result).toBe(
         'The donor search process expired after the maximum retry limit is reached.'
-      )
-      expect(bloodDonationRepository.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          ...expiredMockDonationDTO,
-          status: DonationStatus.EXPIRED,
-          retryCount: 6
-        })
       )
     })
 
@@ -672,8 +667,7 @@ describe('BloodDonationService', () => {
       )
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          id: 'req123',
-          retryCount: 1
+          id: 'req123'
         })
       )
       expect(stepFunctionModel.startExecution).toHaveBeenCalled()

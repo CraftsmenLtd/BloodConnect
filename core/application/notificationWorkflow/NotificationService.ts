@@ -2,30 +2,25 @@ import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import { UserDTO } from '../../../commons/dto/UserDTO'
 import { NotificationDTO } from '../../../commons/dto/NotificationDTO'
 import NotificationOperationError from './NotificationOperationError'
-import {
-  NotificationAttributes,
-  NotificationQueueMessage,
-  SnsRegistrationAttributes,
-  StoreNotificationEndPoint
-} from './Types'
+import { NotificationAttributes, SnsRegistrationAttributes, StoreNotificationEndPoint } from './Types'
 import Repository from '../models/policies/repositories/Repository'
-import { SNSModel } from '../models/sns/SNSModel'
+import { SNSModel } from '../../application/models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
-import { SQSModel } from '../models/sqs/SQSModel'
 
 export class NotificationService {
   async publishNotification(
-    notificationMessage: NotificationQueueMessage,
+    notificationAttributes: NotificationAttributes,
+    userSnsEndpointArn: string,
     notificationRepository: Repository<NotificationDTO>,
     snsModel: SNSModel
   ): Promise<string> {
     try {
-      const { userId, type, payload } = notificationMessage
+      const { userId, type, payload } = notificationAttributes
 
-      if (payload.data !== undefined && type === 'bloodRequestPost') {
+      if (payload !== undefined && type === 'bloodRequestPost') {
         const existingItem = await notificationRepository.getItem(
           `NOTIFICATION#${userId}`,
-          `BLOODREQPOST#${payload.data.requestPostId}`
+          `BLOODREQPOST#${payload.requestPostId}`
         )
 
         if (existingItem !== null) {
@@ -35,14 +30,14 @@ export class NotificationService {
 
       await notificationRepository.create({
         id: generateUniqueID(),
-        userId: notificationMessage.userId,
-        type: notificationMessage.type,
-        title: notificationMessage.payload.title,
-        body: notificationMessage.payload.body,
-        data: notificationMessage.payload.data
+        userId: notificationAttributes.userId,
+        type: notificationAttributes.type,
+        title: notificationAttributes.title,
+        body: notificationAttributes.body,
+        payload: notificationAttributes.payload
       })
 
-      await snsModel.publish(notificationMessage)
+      await snsModel.publish(notificationAttributes, userSnsEndpointArn)
       return 'Notified user successfully.'
     } catch (error) {
       throw new NotificationOperationError(
@@ -118,22 +113,6 @@ export class NotificationService {
         }
       }
       throw new Error('Failed to store Endpoint ARN')
-    }
-  }
-
-  async pushNotification(
-    notificationAttributes: NotificationAttributes,
-    userSnsEndpointArn: string,
-    sqsModel: SQSModel
-  ): Promise<string> {
-    try {
-      await sqsModel.queue(notificationAttributes, userSnsEndpointArn)
-      return 'Notification Queued Successfully'
-    } catch (error) {
-      throw new NotificationOperationError(
-        `Failed to update user. Error: ${error}`,
-        GENERIC_CODES.ERROR
-      )
     }
   }
 }

@@ -177,19 +177,19 @@
         "message.$": "$.message"
       },
       "Iterator": {
-        "StartAt": "ConstructApiPath",
+        "StartAt": "SendDonorNotificationToSQS",
         "States": {
-          "ConstructApiPath": {
-            "Type": "Pass",
+          "SendDonorNotificationToSQS": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::aws-sdk:sqs:sendMessage",
             "Parameters": {
-              "ApiEndpoint": "${API_GATEWAY_ID}.execute-api.ap-south-1.amazonaws.com",
-              "Stage": "api",
-              "Path.$": "States.Format('/notification/push/{}', $.donorId)",
-              "RequestBody": {
+              "QueueUrl": "${NOTIFICATION_QUEUE_URL}",
+              "MessageBody": {
+                "userId.$": "$.donorId",
                 "title": "Blood Request",
                 "body.$": "$.message",
                 "type": "bloodRequestPost",
-                "data": {
+                "payload": {
                   "seekerId.$": "$.seekerId",
                   "requestPostId.$": "$.requestPostId",
                   "createdAt.$": "$.createdAt",
@@ -204,43 +204,9 @@
                   "shortDescription.$": "$.shortDescription",
                   "donationDateTime.$": "$.donationDateTime"
                 }
-              }
-            },
-            "ResultPath": "$.apiParams",
-            "Next": "SendNotification"
-          },
-          "SendNotification": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::apigateway:invoke",
-            "Parameters": {
-              "ApiEndpoint.$": "$.apiParams.ApiEndpoint",
-              "Method": "POST",
-              "Headers": {
-                "Content-Type": [
-                  "application/json"
-                ]
               },
-              "Stage.$": "$.apiParams.Stage",
-              "Path.$": "$.apiParams.Path",
-              "RequestBody.$": "$.apiParams.RequestBody",
-              "AuthType": "IAM_ROLE"
+              "DelaySeconds": 0
             },
-            "ResultPath": "$.notificationResults",
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.ALL"
-                ],
-                "ResultPath": "$.notificationError",
-                "Next": "HandleApiError"
-              }
-            ],
-            "End": true
-          },
-          "HandleApiError": {
-            "Type": "Pass",
-            "Result": "Ignored error from API call",
-            "ResultPath": "$.notificationResults",
             "End": true
           }
         }
@@ -252,7 +218,7 @@
       "Type": "Task",
       "Resource": "arn:aws:states:::aws-sdk:sqs:sendMessage",
       "Parameters": {
-        "QueueUrl": "${SQS_RETRY_QUEUE_URL}",
+        "QueueUrl": "${DONOR_SEARCH_RETRY_QUEUE_URL}",
         "MessageBody": {
           "PK.$": "States.Format('BLOOD_REQ#{}', $.seekerId)",
           "SK.$": "States.Format('BLOOD_REQ#{}#{}', $.createdAt, $.requestPostId)"

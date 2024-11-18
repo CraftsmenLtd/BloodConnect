@@ -6,6 +6,6 @@ export type NotificationDTO = DTO & HasIdentifier & {
   title: string;
   body: string;
   type: string;
-  data?: Record<string, any>;
+  payload?: Record<string, any>;
   createdAt?: string;
 }
