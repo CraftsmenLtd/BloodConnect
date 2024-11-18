@@ -26,11 +26,6 @@ import LocationModel, {
 import { differenceInYears, differenceInMonths } from 'date-fns'
 import { BloodGroup } from '../../../commons/dto/DonationDTO'
 
-// export interface NotificationAttributes {
-//   userId: string;
-//   endpointArn: string;
-// }
-
 export class UserService {
   async createNewUser(
     userAttributes: UserAttributes,
@@ -50,26 +45,6 @@ export class UserService {
       )
     }
   }
-
-  // async storeEndpointArn(notificationAttributes: NotificationAttributes, userRepository: Repository<UserDTO>): Promise<void> {
-  //   try {
-  //     const { userId, endpointArn } = notificationAttributes
-  //     const item = await userRepository.getItem(`USER#${userId}`, 'PROFILE')
-
-  //     if (item === null) {
-  //       throw new Error('Item not found.')
-  //     }
-
-  //     const updateData: Partial<StoreNotificationEndPoint> = {
-  //       id: userId,
-  //       endpointArn,
-  //       updatedAt: new Date().toISOString()
-  //     }
-  //     await userRepository.update(updateData)
-  //   } catch (error) {
-  //     throw new Error('Failed to store Endpoint ARN')
-  //   }
-  // }
 
   getPostSignUpMessage(userName: string, securityCode: string): GenericMessage {
     return getEmailVerificationMessage(userName, securityCode)

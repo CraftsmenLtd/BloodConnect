@@ -28,7 +28,6 @@ export type DonationDTO = DTO & HasIdentifier & {
   donationDateTime: string;
   status: DonationStatus;
   contactNumber: string;
-  city: string;
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
