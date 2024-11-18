@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react'
 import { Text, View, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
 import { Ionicons } from '@expo/vector-icons'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import createStyles from './createStyles'
 import { DonationScreenParams } from '../../../types'
-import * as Notifications from 'expo-notifications'
-import { setupNotificationListeners } from '../../../../setup/notification/NotificationHandler'
-import { registerForPushNotificationsAsync, saveDeviceTokenToSNS } from '../../../../setup/notification/Notification'
-import { useFetchClient } from '../../../../setup/clients/useFetchClient'
-import { useNotificationContext } from '../../../../setup/notification/NotificationContext'
-import { formatDateTime } from '../../../../utility/formatTimeAndDate'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
-import { SCREENS } from '../../../../setup/constant/screens'
 
 interface DonationDetailsProps {
   request: DonationScreenParams;
@@ -22,39 +13,14 @@ interface DonationDetailsProps {
 const ResponseDonationRequest: React.FC<DonationDetailsProps> = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
-  const { notificationData } = useNotificationContext()
-  const { isLoading, error, acceptRequest } = useResponseDonationRequest()
-  const navigation = useNavigation<NavigationProp<any>>()
+  const {
+    bloodRequest,
+    handleAcceptRequest,
+    handleIgnore,
+    formatDateTime
+  } = useResponseDonationRequest()
 
-  const bloodRequest = typeof notificationData === 'string' ? JSON.parse(notificationData) : notificationData
-
-  useEffect(() => {
-    if (notificationData !== null) {
-      console.log('Notification Data:', notificationData)
-    }
-  }, [notificationData])
-
-  const handleAcceptRequest = async() => {
-    try {
-      await acceptRequest({
-        requestPostId: bloodRequest.requestPostId,
-        seekerId: bloodRequest.seekerId,
-        createdAt: bloodRequest.createdAt,
-        acceptanceTime: new Date().toISOString()
-      })
-    } catch (err) {
-      console.error('Failed to accept request:', err)
-    }
-  }
-
-  const handleIgnore = () => {
-    navigation.navigate(SCREENS.POSTS)
-  }
-
-  if (notificationData === null || notificationData === undefined) {
-    console.log('returning to posts page as notificatio data is null')
-    navigation.navigate(SCREENS.POSTS)
-  }
+  if (bloodRequest === null) return null
 
   return (
     <SafeAreaView style={styles.container}>
@@ -142,9 +108,9 @@ const ResponseDonationRequest: React.FC<DonationDetailsProps> = () => {
         <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />
         <Button text="Accept Request" buttonStyle={styles.acceptButton} onPress={handleAcceptRequest} />
       </View>
+      <Button text='Request Accepted'>Request Accepted</Button>
     </SafeAreaView>
   )
 }
 
 export default ResponseDonationRequest
-// add another name (request poster)
