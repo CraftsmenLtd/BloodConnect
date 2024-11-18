@@ -224,7 +224,7 @@ export class BloodDonationService {
       }
 
       if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
-        updateData.status = DonationStatus.COMPLETED
+        updateData.status = DonationStatus.EXPIRED
         await donorSearchRepository.update(updateData)
         return 'The donor search process expired after the maximum retry limit is reached.'
       }
