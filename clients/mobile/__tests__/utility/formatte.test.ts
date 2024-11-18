@@ -2,34 +2,40 @@ import { formatteDate, formatPhoneNumber, formatErrorMessage, formatToTwoDecimal
 
 describe('Utility Functions', () => {
   describe('formatteDate', () => {
-    describe('formatteDate', () => {
-      test('should format date string correctly', () => {
-        const dateString = '2024-10-23T14:30:00Z'
-        const expected = '10/23/2024, 2:30 PM'
-        expect(formatteDate(dateString)).toBe(expected)
-      })
+    beforeAll(() => {
+      jest.useFakeTimers()
+      jest.setSystemTime(new Date('2024-10-23T14:30:00Z'))
+    })
 
-      test('should format Date object correctly', () => {
-        const dateObject = new Date('2024-10-23T14:30:00Z')
-        const expected = '10/23/2024, 2:30 PM'
-        expect(formatteDate(dateObject)).toBe(expected)
-      })
+    afterAll(() => {
+      jest.useRealTimers()
+    })
 
-      test('should handle invalid date input', () => {
-        const invalidDate = 'invalid-date-string'
-        const expected = 'Invalid Date'
-        expect(formatteDate(invalidDate)).toBe(expected)
-      })
+    test('should format date string correctly', () => {
+      const dateString = '2024-10-23T14:30:00Z'
+      const expected = '10/23/2024, 8:30 PM'
+      expect(formatteDate(dateString)).toBe(expected)
+    })
 
-      test('should handle empty string as input', () => {
-        const expected = 'Invalid Date'
-        expect(formatteDate('')).toBe(expected)
-      })
+    test('should format Date object correctly', () => {
+      const dateObject = new Date('2024-10-23T14:30:00Z')
+      const expected = '10/23/2024, 8:30 PM'
+      expect(formatteDate(dateObject)).toBe(expected)
+    })
+
+    test('should format date with showOnlyDate=true', () => {
+      const dateString = '2024-10-23T14:30:00Z'
+      const expected = '10/23/2024'
+      expect(formatteDate(dateString, true)).toBe(expected)
+    })
+
+    test('should handle invalid date input', () => {
+      const invalidDate = 'invalid-date-string'
+      expect(formatteDate(invalidDate)).toBe('Invalid Date')
     })
 
     test('should handle empty string as input', () => {
-      const expected = 'Invalid Date'
-      expect(formatteDate('')).toBe(expected)
+      expect(formatteDate('')).toBe('Invalid Date')
     })
   })
 
@@ -66,33 +72,42 @@ describe('Utility Functions', () => {
 
   describe('formatErrorMessage', () => {
     test('should return specific message for user already exists', () => {
-      const error = new Error('User already exists')
-      const expected = 'User already exists, Please Login.'
-      expect(formatErrorMessage(error)).toBe(expected)
+      const error = new Error('user already exists')
+      expect(formatErrorMessage(error)).toBe('User already exists, Please Login.')
     })
 
     test('should return specific message for network error', () => {
-      const error = new Error('Network error')
-      const expected = 'Please check your internet connection.'
-      expect(formatErrorMessage(error)).toBe(expected)
+      const error = new Error('network error')
+      expect(formatErrorMessage(error)).toBe('Please check your internet connection.')
     })
 
-    test('should return specific message for timeout error', () => {
-      const error = new Error('Request timeout')
-      const expected = 'Request timed out, Please try again later.'
-      expect(formatErrorMessage(error)).toBe(expected)
+    test('should return specific message for timeout', () => {
+      const error = new Error('timeout')
+      expect(formatErrorMessage(error)).toBe('Request timed out, please try again later.')
     })
 
-    test('should return a generic message for unexpected errors', () => {
+    test('should return specific message for invalid request body', () => {
+      const error = new Error('invalid request body')
+      expect(formatErrorMessage(error)).toBe('Please check your input and try again.')
+    })
+
+    test('should return generic message for unhandled error types', () => {
       const error = new Error('Some unexpected error')
-      const expected = 'An unexpected error occurred: Some unexpected error'
-      expect(formatErrorMessage(error)).toBe(expected)
+      expect(formatErrorMessage(error)).toBe('Something went wrong.')
     })
 
-    test('should return a message for unknown error types', () => {
-      const error = {}
-      const expected = 'An unknown error occurred.'
-      expect(formatErrorMessage(error)).toBe(expected)
+    test('should handle plain string errors', () => {
+      expect(formatErrorMessage('Plain string error')).toBe('Plain string error')
+    })
+
+    test('should handle object errors', () => {
+      const error = { message: 'Object error' }
+      expect(formatErrorMessage(error)).toBe('Error: {"message":"Object error"}')
+    })
+
+    test('should handle null/undefined errors', () => {
+      expect(formatErrorMessage(null)).toBe('An unknown error occurred.')
+      expect(formatErrorMessage(undefined)).toBe('An unknown error occurred.')
     })
   })
 
