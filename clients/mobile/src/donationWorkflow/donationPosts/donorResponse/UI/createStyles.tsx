@@ -104,7 +104,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   infoSection: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'stretch',
     borderColor: theme.colors.extraLightGray
   },
   contactNumber: {
@@ -137,12 +137,15 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   value: {
     color: theme.colors.textPrimary,
-    fontSize: 16
+    fontSize: 16,
+    flexWrap: 'wrap',
+    flexShrink: 1
   },
   dividerHorizontal: {
     width: 1,
     backgroundColor: theme.colors.extraLightGray,
-    height: '100%'
+    height: '100%',
+    marginVertical: 10
   },
   callButton: {
     flexDirection: 'row',
