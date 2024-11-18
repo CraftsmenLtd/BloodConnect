@@ -11,8 +11,14 @@ import {
 } from '../../../application/models/dbModels/AcceptDonationModel'
 import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
+import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
+import SQSOperations from '../commons/sqs/SQSOperations'
+import { NotificationAttributes } from '../../../application/notificationWorkflow/Types'
+import { UserService } from '../../../application/userWorkflow/UserService'
 
 const acceptDonationRequest = new AcceptDonationService()
+const userService = new UserService()
+const notificationService = new NotificationService()
 
 async function acceptDonationRequestLambda(
   event: AcceptDonationRequestAttributes
@@ -25,6 +31,14 @@ async function acceptDonationRequestLambda(
       requestPostId: event.requestPostId,
       acceptanceTime: event.acceptanceTime
     }
+
+    const userProfile = await userService.getUser(
+      event.donorId,
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(
+        new UserModel()
+      )
+    )
+
     const response = await acceptDonationRequest.createAcceptanceRecord(
       acceptDonationRequestAttributes,
       new DynamoDbTableOperations<
@@ -35,6 +49,24 @@ async function acceptDonationRequestLambda(
       new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(
         new UserModel()
       )
+    )
+
+    const notificationAttributes: NotificationAttributes = {
+      userId: event.seekerId,
+      title: 'Donor Found',
+      body: `${userProfile.bloodGroup} blood found`,
+      type: 'donorAcceptRequest',
+      payload: {
+        seekerId: event.seekerId,
+        createdAt: event.createdAt,
+        requestPostId: event.requestPostId,
+        donorId: event.donorId
+      }
+    }
+
+    await notificationService.sendNotification(
+      notificationAttributes,
+      new SQSOperations()
     )
     return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
