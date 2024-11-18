@@ -4,13 +4,15 @@ import { useAddPersonalInfo } from '../../src/userWorkflow/personalInfo/hooks/us
 import { addPersonalInfoHandler } from '../../src/userWorkflow/services/userServices'
 import { SCREENS } from '../../src/setup/constant/screens'
 
+const mockGetLatLon = jest.fn()
+
 jest.mock('../../src/userWorkflow/services/userServices', () => ({
   addPersonalInfoHandler: jest.fn()
 }))
 
 jest.mock('../../src/LocationService/LocationService', () => ({
   LocationService: jest.fn().mockImplementation(() => ({
-    getCoordinates: jest.fn().mockResolvedValue({ lat: 23.7936, lon: 90.4043 })
+    getLatLon: mockGetLatLon
   }))
 }))
 
@@ -19,8 +21,24 @@ jest.mock('@react-navigation/native', () => ({
 }))
 
 describe('useAddPersonalInfo Hook', () => {
-  afterEach(() => {
+  const validPersonalInfo = {
+    bloodGroup: 'O+',
+    height: '5.8',
+    weight: '60',
+    gender: 'male',
+    lastDonationDate: new Date('2023-01-01'),
+    dateOfBirth: new Date('2000-01-01'),
+    lastVaccinatedDate: new Date('2023-06-01'),
+    city: 'Dhaka',
+    locations: ['Mirpur'],
+    availableForDonation: 'yes',
+    acceptPolicy: true
+  }
+
+  beforeEach(() => {
     jest.clearAllMocks()
+    mockGetLatLon.mockReset()
+    mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 })
   })
 
   test('should initialize with default values', () => {
@@ -60,15 +78,11 @@ describe('useAddPersonalInfo Hook', () => {
     const { result } = renderHook(() => useAddPersonalInfo())
 
     act(() => {
-      result.current.handleInputChange('locations', ['Dhaka'])
-      result.current.handleInputChange('gender', 'male')
-      result.current.handleInputChange('city', 'Dhaka')
-      result.current.handleInputChange('bloodGroup', 'O+')
-      result.current.handleInputChange('height', '5.8')
-      result.current.handleInputChange('weight', '60')
-      result.current.handleInputChange('lastDonationDate', '2024-11-02T21:15:58.670Z')
-      result.current.handleInputChange('dateOfBirth', '2002-11-03T21:15:58.670Z')
-      result.current.handleInputChange('lastVaccinatedDate', '2024-11-02T21:15:58.670Z')
+      Object.entries(validPersonalInfo).forEach(([key, value]) => {
+        if (key !== 'acceptPolicy') {
+          result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
+        }
+      })
     })
 
     expect(result.current.isButtonDisabled).toBe(true)
@@ -81,14 +95,15 @@ describe('useAddPersonalInfo Hook', () => {
   })
 
   test('should submit data and navigate on successful submission', async() => {
-    const { result } = renderHook(() => useAddPersonalInfo());
+    mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 });
     (addPersonalInfoHandler as jest.Mock).mockResolvedValue({ status: 200 })
 
-    act(() => {
-      result.current.handleInputChange('bloodGroup', 'O+')
-      result.current.handleInputChange('height', '170')
-      result.current.handleInputChange('weight', '60')
-      result.current.handleInputChange('acceptPolicy', true)
+    const { result } = renderHook(() => useAddPersonalInfo())
+
+    await act(async() => {
+      Object.entries(validPersonalInfo).forEach(([key, value]) => {
+        result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
+      })
     })
 
     await act(async() => {
@@ -100,15 +115,40 @@ describe('useAddPersonalInfo Hook', () => {
   })
 
   test('should set errorMessage on failed submission', async() => {
-    const errorMessage = 'Submission failed'
-    const { result } = renderHook(() => useAddPersonalInfo());
-    (addPersonalInfoHandler as jest.Mock).mockRejectedValue(new Error(errorMessage))
+    mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 })
+    const errorMessage = 'network error'
+    const { result } = renderHook(() => useAddPersonalInfo())
+
+    await act(async() => {
+      Object.entries(validPersonalInfo).forEach(([key, value]) => {
+        result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
+      });
+      (addPersonalInfoHandler as jest.Mock).mockRejectedValue(new Error(errorMessage))
+    })
 
     await act(async() => {
       await result.current.handleSubmit()
     })
 
-    expect(result.current.errorMessage).toBe(errorMessage)
+    expect(result.current.errorMessage).toBe('Please check your internet connection.')
+    expect(result.current.loading).toBe(false)
+  })
+
+  test('should handle location validation failure', async() => {
+    mockGetLatLon.mockResolvedValue(null)
+    const { result } = renderHook(() => useAddPersonalInfo())
+
+    await act(async() => {
+      Object.entries(validPersonalInfo).forEach(([key, value]) => {
+        result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
+      })
+    })
+
+    await act(async() => {
+      await result.current.handleSubmit()
+    })
+
+    expect(result.current.errorMessage).toBe('No valid locations were found. Please verify your input.')
     expect(result.current.loading).toBe(false)
   })
 })
