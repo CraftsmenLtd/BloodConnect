@@ -1,10 +1,10 @@
 import { HttpClient } from '../setup/clients/HttpClient'
-import { registerForPushNotificationsAsync, saveDeviceTokenToSNS } from '../setup/notification/Notification'
+import { saveDeviceTokenToSNS } from '../setup/notification/saveDeviceToken'
+import { registerForPushNotificationsAsync } from '../setup/notification/registerForPushNotifications'
 
 const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
-  console.log('registerUserDeviceForNotification')
-
   registerForPushNotificationsAsync().then(token => {
+    console.log('device token: ', token)
     void saveDeviceTokenToSNS(token as string, fetchClient)
   }).catch(error => { console.error(error) })
 }
