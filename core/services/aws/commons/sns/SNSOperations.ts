@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/client-sns'
 import { SNSModel } from '../../../../application/models/sns/SNSModel'
 import {
-  NotificationQueueMessage,
+  NotificationAttributes,
   SnsRegistrationAttributes
 } from '../../../../application/notificationWorkflow/Types'
 
@@ -21,18 +21,14 @@ export default class SNSOperations implements SNSModel {
     this.client = new SNS({ region: process.env.AWS_REGION })
   }
 
-  async publish(message: NotificationQueueMessage): Promise<void> {
+  async publish(message: NotificationAttributes, snsEndpointArn: string): Promise<void> {
     try {
       const messagePayload = {
-        notification: {
-          title: message.payload.title,
-          body: message.payload.body
-        },
         data: {
-          notificationData: {
-            ...message.payload.data
-          },
-          type: message.type
+          title: message.title,
+          body: message.body,
+          type: message.type,
+          payload: message.payload
         }
       }
       const command = new PublishCommand({
@@ -41,7 +37,7 @@ export default class SNSOperations implements SNSModel {
           GCM: JSON.stringify(messagePayload)
         }),
         MessageStructure: 'json',
-        TargetArn: message.snsEndpointArn
+        TargetArn: snsEndpointArn
       })
       await this.client.send(command)
     } catch (error) {

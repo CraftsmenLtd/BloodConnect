@@ -68,8 +68,11 @@ data "aws_iam_policy_document" "step_function_policy_document" {
     actions = [
       "sqs:sendmessage"
     ]
-    effect    = "Allow"
-    resources = [aws_sqs_queue.donor_search_retry_queue.arn]
+    effect = "Allow"
+    resources = [
+      aws_sqs_queue.donor_search_retry_queue.arn,
+      var.push_notification_queue.arn
+    ]
   }
 
   statement {
@@ -98,8 +101,8 @@ resource "aws_sfn_state_machine" "donor_search_state_machine" {
     DONOR_CALCULATE_LAMBDA_ARN        = module.step_function_lambda["calculate-donors-to-notify"].lambda_arn
     DONOR_SEARCH_EVALUATOR_LAMBDA_ARN = module.step_function_lambda["donor-search-evaluator"].lambda_arn
     DYNAMODB_TABLE_NAME               = split("/", var.dynamodb_table_arn)[1]
-    SQS_RETRY_QUEUE_URL               = aws_sqs_queue.donor_search_retry_queue.url
-    API_GATEWAY_ID                    = var.api_gateway_id
+    DONOR_SEARCH_RETRY_QUEUE_URL      = aws_sqs_queue.donor_search_retry_queue.url
+    NOTIFICATION_QUEUE_URL            = var.push_notification_queue.url
   })
 
   logging_configuration {

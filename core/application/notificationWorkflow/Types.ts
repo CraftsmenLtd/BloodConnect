@@ -5,7 +5,7 @@ export interface NotificationAttributes {
   title: string;
   body: string;
   type: string;
-  data?: Record<string, unknown>;
+  payload: Record<string, unknown>;
 }
 
 export interface NotificationPayload {
