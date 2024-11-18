@@ -94,7 +94,6 @@ const posts: Post[] = [
   return (
     <ScrollView style={styles.container}>
     <View style={styles.container}>
-      <Text style={styles.title}>Profile Page</Text>
       <Button
         title="Sign Out"
         onPress={handleSignOut}
@@ -189,11 +188,11 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     padding: 20
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20
-  },
+  // title: {
+  //   fontSize: 24,
+  //   fontWeight: 'bold',
+  //   marginBottom: 20
+  // },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
