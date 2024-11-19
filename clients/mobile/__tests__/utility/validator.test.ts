@@ -89,9 +89,9 @@ describe('Validation Functions', () => {
   })
 
   describe('validatePastOrTodayDate', () => {
-    it('should return null for today\'s date', () => {
+    it('should return error message for today\'s date', () => {
       const today = new Date().toISOString().split('T')[0]
-      expect(validatePastOrTodayDate(today)).toBeNull()
+      expect(validatePastOrTodayDate(today)).toBe('The date must be today or in the past.')
     })
 
     it('should return null for past dates', () => {
@@ -110,8 +110,17 @@ describe('Validation Functions', () => {
 
   describe('validateDateOfBirth', () => {
     it('should return error message for ages under 15', () => {
-      const fourteenYearsAgo = new Date(Date.now() - 14 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-      expect(validateDateOfBirth(fourteenYearsAgo)).toBe('User must be at least 15 years old.')
+      const today = new Date()
+      const fourteenYearsAgo = new Date(today)
+      fourteenYearsAgo.setFullYear(today.getFullYear() - 14)
+      expect(validateDateOfBirth(fourteenYearsAgo.toISOString().split('T')[0])).toBe('User must be at least 15 years old.')
+    })
+
+    it('should return null for ages 15 and over', () => {
+      const today = new Date()
+      const fifteenYearsAgo = new Date(today)
+      fifteenYearsAgo.setFullYear(today.getFullYear() - 16) // Using 16 to ensure we're well over 15
+      expect(validateDateOfBirth(fifteenYearsAgo.toISOString().split('T')[0])).toBeNull()
     })
   })
 

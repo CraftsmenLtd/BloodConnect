@@ -75,7 +75,7 @@ export const useLogin = (): any => {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: SCREENS.BOTTOM_TABS }]
+            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
           })
         )
       } else {
@@ -95,7 +95,7 @@ export const useLogin = (): any => {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: SCREENS.BOTTOM_TABS }]
+            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
           })
         )
       } else {

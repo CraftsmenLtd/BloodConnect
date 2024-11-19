@@ -6,7 +6,6 @@ import { TextArea } from '../../components/inputElement/TextArea'
 import { Input } from '../../components/inputElement/Input'
 import { Button } from '../../components/button/Button'
 import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodRequest'
-import { CustomDropdown } from '../../components/inputElement/CustomDropdown'
 import { bloodGroupOptions, bloodBagOptions, transportationOptions } from './donationOption'
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -36,7 +35,10 @@ const CreateBloodRequest = () => {
   return (
     <TouchableWithoutFeedback onPress={() => { setIsVisible('') }}>
       <View style={styles.container}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           <RadioButton
             name='urgencyLevel'
             options={['regular', 'urgent']}
@@ -44,110 +46,140 @@ const CreateBloodRequest = () => {
             onPress={handleInputChange}
             label="Urgency"
             isRequired={true}
-            extraInfo='Select “urgent” if the blood is needed on the same day'
-          />
-          <CustomDropdown
-            placeholder=''
-            label='Blood Group'
-            options={bloodGroupOptions}
-            name='neededBloodGroup'
-            value={bloodRequestData.neededBloodGroup}
-            onChangeText={handleInputChange}
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
-            error={errors.neededBloodGroup}
-            isRequired={true}
-            readOnly={isUpdating}
+            extraInfo='Select "urgent" if the blood is needed on the same day'
           />
 
-          <CustomDropdown
-            placeholder=''
-            name='bloodQuantity'
-            label='Unit'
-            value={bloodRequestData.bloodQuantity}
-            onChangeText={handleInputChange}
-            options={bloodBagOptions}
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
-            error={errors.bloodQuantity}
-            isRequired={true}
-          />
-          <DateTimePickerComponent
-            name={DONATION_DATE_TIME_INPUT_NAME}
-            label="Time and Date"
-            value={new Date(bloodRequestData.donationDateTime)}
-            onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}
-            error={errors.donationDateTime}
-            isRequired={true}
-            isOnlyDate={false}
-          />
-          <Dropdown
-            label='Select city'
-            isRequired={true}
-            placeholder='Select city'
-            options={districts}
-            readonly={isUpdating}
-            name='city'
-            selectedValue={bloodRequestData.city}
-            onChange={handleInputChange}
-            error={errors.city}
-          />
-          <SearchMultiSelect
-            name="location"
-            label="Location"
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
-            onChange={handleInputChange}
-            initialValue={bloodRequestData.location}
-            editable={isUpdating !== true}
-            error={errors.location}
-            multiSelect={false}
-            isRequired={true}
-            fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
-          />
-          <Input
-            name="contactNumber"
-            label="Contact Number"
-            value={bloodRequestData.contactNumber}
-            onChangeText={handleInputChange}
-            placeholder="Enter contact number"
-            keyboardType="phone-pad"
-            error={errors.contactNumber}
-            isRequired={true}
-          />
+          <View style={styles.fieldSpacing}>
+            <Dropdown
+              label='Blood Group'
+              isRequired={true}
+              placeholder='Select Blood Group'
+              options={bloodGroupOptions}
+              readonly={isUpdating}
+              name='neededBloodGroup'
+              selectedValue={bloodRequestData.neededBloodGroup}
+              onChange={handleInputChange}
+              error={errors.neededBloodGroup}
+            />
+          </View>
 
-          <Input
-            name="patientName"
-            label="Name of the Patient"
-            value={bloodRequestData.patientName}
-            onChangeText={handleInputChange}
-            placeholder="Enter patient's name"
-            keyboardType="twitter"
-            error=''
-          />
+          <View style={styles.fieldSpacing}>
+            <Dropdown
+              label='Unit'
+              isRequired={true}
+              placeholder='Select Unit'
+              options={bloodBagOptions}
+              name='bloodQuantity'
+              selectedValue={bloodRequestData.bloodQuantity}
+              onChange={handleInputChange}
+              error={errors.bloodQuantity}
+            />
+          </View>
 
-          <TextArea
-            name='shortDescription'
-            placeholder="Write a short description"
-            label='Short Description of the Problem'
-            value={bloodRequestData.shortDescription}
-            error={null}
-            onChangeText={handleInputChange}
-            maxLength={200}
-          />
+          <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
+            <DateTimePickerComponent
+              name={DONATION_DATE_TIME_INPUT_NAME}
+              label="Time and Date"
+              value={new Date(bloodRequestData.donationDateTime)}
+              onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}
+              error={errors.donationDateTime}
+              isRequired={true}
+              isOnlyDate={false}
+            />
+          </View>
 
-          <CustomDropdown
-            placeholder=''
-            name='transportationInfo'
-            label='Transportation Facility for the Donor'
-            value={bloodRequestData.transportationInfo}
-            onChangeText={handleInputChange}
-            options={transportationOptions}
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
-          />
-          {errorMessage !== '' && <Text style={{ color: 'red', textAlign: 'center', marginBottom: 12 }}>{errorMessage}</Text>}
-          <Button text={isUpdating === true ? 'Update Post' : 'Post Now'} onPress={handlePostNow} disabled={isButtonDisabled} loading={loading} />
+          <View style={styles.fieldSpacing}>
+            <Dropdown
+              label='Select City'
+              isRequired={true}
+              placeholder='Select City'
+              options={districts}
+              readonly={isUpdating}
+              name='city'
+              selectedValue={bloodRequestData.city}
+              onChange={handleInputChange}
+              error={errors.city}
+            />
+          </View>
+
+          <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
+            <SearchMultiSelect
+              name="location"
+              label="Donation Point"
+              isVisible={isVisible}
+              setIsVisible={setIsVisible}
+              onChange={handleInputChange}
+              initialValue={bloodRequestData.location}
+              editable={isUpdating !== true}
+              error={errors.location}
+              multiSelect={false}
+              isRequired={true}
+              fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
+            />
+          </View>
+
+          <View style={styles.fieldSpacing}>
+            <Input
+              name="contactNumber"
+              label="Contact Number"
+              value={bloodRequestData.contactNumber}
+              onChangeText={handleInputChange}
+              placeholder="Enter contact number"
+              keyboardType="phone-pad"
+              error={errors.contactNumber}
+              isRequired={true}
+            />
+          </View>
+
+          <View style={[styles.fieldSpacing, styles.reducedSpacing]}>
+            <Input
+              name="patientName"
+              label="Name of the Patient"
+              value={bloodRequestData.patientName}
+              onChangeText={handleInputChange}
+              placeholder="Enter patient's name"
+              keyboardType="twitter"
+              error=''
+            />
+          </View>
+
+          <View style={styles.fieldSpacing}>
+            <TextArea
+              name='shortDescription'
+              placeholder="Write a short description"
+              label='Short Description of the Problem'
+              value={bloodRequestData.shortDescription}
+              error={null}
+              onChangeText={handleInputChange}
+              maxLength={200}
+            />
+          </View>
+
+          <View style={styles.fieldSpacing}>
+            <Dropdown
+              label='Transportation Facility for the Donor'
+              isRequired={false}
+              placeholder='Select Transportation Option'
+              options={transportationOptions}
+              name='transportationInfo'
+              selectedValue={bloodRequestData.transportationInfo}
+              onChange={handleInputChange}
+              error={null}
+            />
+          </View>
+
+          {errorMessage !== '' &&
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+          }
+
+          <View style={styles.buttonContainer}>
+            <Button
+              text={isUpdating === true ? 'Update Post' : 'Post Now'}
+              onPress={handlePostNow}
+              disabled={isButtonDisabled}
+              loading={loading}
+            />
+          </View>
         </ScrollView>
       </View>
     </TouchableWithoutFeedback>
@@ -156,9 +188,32 @@ const CreateBloodRequest = () => {
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 16,
+    flex: 1,
     backgroundColor: theme.colors.white
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 18
+  },
+  fieldSpacing: {
+    marginTop: 5
+  },
+  reducedSpacing: {
+    marginTop: 12,
+    marginBottom: -6
+  },
+  extraBottomMargin: {
+    marginBottom: 12
+  },
+  buttonContainer: {
+    marginTop: 28,
+    marginBottom: 16
+  },
+  errorMessage: {
+    color: theme.colors.primary,
+    textAlign: 'center',
+    marginTop: 16,
+    fontSize: theme.typography.fontSize
   }
 })
 

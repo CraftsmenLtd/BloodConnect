@@ -42,9 +42,12 @@ const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, sele
         {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
       <CustomDropdown
-        style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
+        style={[
+          styles.dropdown
+          // readonly && styles.dropdownReadonly
+        ]}
+        placeholderStyle={[styles.placeholderStyle, readonly && styles.textReadonly]}
+        selectedTextStyle={[styles.selectedTextStyle, readonly && styles.textReadonly]}
         data={options}
         maxHeight={300}
         labelField="label"
@@ -54,6 +57,7 @@ const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, sele
         onChange={(item: Option) => { onChange(name, item.value) }}
         renderItem={(item: Option) => renderItem(item)}
         disable={readonly}
+        activeColor={readonly ? 'transparent' : '#F8F8F8'}
       />
       {error !== null && <Text style={styles.error}>{error}</Text>}
     </View>
@@ -67,8 +71,14 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderColor: theme.colors.extraLightGray,
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 8
+    paddingHorizontal: 10,
+    backgroundColor: theme.colors.white
   },
+  // dropdownReadonly: {
+  //   backgroundColor: theme.colors.greyBG,
+  //   borderColor: theme.colors.lightGrey,
+  //   opacity: 0.8
+  // },
   placeholderStyle: {
     fontSize: 16,
     color: theme.colors.grey
@@ -76,6 +86,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   selectedTextStyle: {
     fontSize: 16,
     color: theme.colors.textPrimary
+  },
+  textReadonly: {
+    color: theme.colors.textSecondary,
+    opacity: 0.7
   },
   itemContainer: {
     flexDirection: 'row',
