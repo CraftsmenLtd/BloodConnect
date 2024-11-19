@@ -31,6 +31,8 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 export const useRegister = (): any => {
   const fetchClient = useFetchClient()
   const auth = useAuth()
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [facebookLoading, setFacebookLoading] = useState(false)
   const navigation = useNavigation<RegisterScreenNavigationProp>()
   const [registerCredential, setRegisterCredential] = useState<RegisterCredential>(
     initializeState<RegisterCredential>(Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
@@ -105,7 +107,7 @@ export const useRegister = (): any => {
 
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
-      // setLoading(true)
+      setGoogleLoading(true)
       const isGoogleSignedIn = await googleLogin()
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
@@ -116,14 +118,14 @@ export const useRegister = (): any => {
       }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
+    } finally {
+      setGoogleLoading(false)
     }
-    // } finally {
-    //   setLoading(false)
-    // }
   }
 
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
+      setFacebookLoading(true)
       const isFacebookSignedIn = await facebookLogin()
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
@@ -134,11 +136,15 @@ export const useRegister = (): any => {
       }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Facebook.')
+    } finally {
+      setFacebookLoading(false)
     }
   }
 
   return {
     errors,
+    googleLoading,
+    facebookLoading,
     registerCredential,
     handleInputChange,
     isButtonDisabled,

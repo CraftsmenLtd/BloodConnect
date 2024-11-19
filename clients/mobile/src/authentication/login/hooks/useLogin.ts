@@ -25,7 +25,9 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 export const useLogin = (): any => {
   const fetchClient = useFetchClient()
   const auth = useAuth()
-  const [loading, setLoading] = useState(false)
+  const [loginLoading, setLoginLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [facebookLoading, setFacebookLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
   const [loginCredential, setLoginCredential] = useState<LoginCredential>(
     initializeState<LoginCredential>(Object.keys(validationRules) as Array<keyof LoginCredential>, '')
@@ -44,7 +46,7 @@ export const useLogin = (): any => {
 
   const handleLogin = async(): Promise<void> => {
     try {
-      setLoading(true)
+      setLoginLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
         auth?.setIsAuthenticated(true)
@@ -57,13 +59,13 @@ export const useLogin = (): any => {
         )
       } else {
         setLoginError('User is not confirmed. Please verify your email.')
-        setLoading(false)
+        setLoginLoading(false)
       }
     } catch (error) {
       console.log('error', error)
       setLoginError('Invalid Email or Password.')
     } finally {
-      setLoading(false)
+      setLoginLoading(false)
     }
   }
 
@@ -98,7 +100,7 @@ export const useLogin = (): any => {
 
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
-      setLoading(true)
+      setGoogleLoading(true)
       const isGoogleSignedIn = await googleLogin()
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
@@ -110,12 +112,13 @@ export const useLogin = (): any => {
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
     } finally {
-      setLoading(false)
+      setGoogleLoading(false)
     }
   }
 
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
+      setFacebookLoading(true)
       const isFacebookSignedIn = await facebookLogin()
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
@@ -126,12 +129,16 @@ export const useLogin = (): any => {
       }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Facebook.')
+    } finally {
+      setFacebookLoading(false)
     }
   }
 
   return {
     loginError,
-    loading,
+    loginLoading,
+    googleLoading,
+    facebookLoading,
     loginCredential,
     handleInputChange,
     isPasswordVisible,

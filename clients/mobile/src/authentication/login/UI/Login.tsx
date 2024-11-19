@@ -18,7 +18,7 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const styles = createStyles(useTheme())
-  const { loading, loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
+  const { loginLoading, googleLoading, facebookLoading, loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
 
   return (
     <AuthLayout>
@@ -47,7 +47,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         onPress={() => { navigation.navigate(SCREENS.FORGOT_PASSWORD) }}
       />
 
-      <Button text="Login" onPress={handleLogin} loading={loading} />
+      <Button text="Login" onPress={handleLogin} loading={loginLoading} />
 
       <Divider text="Or" />
 
@@ -56,12 +56,14 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
       <SocialButton
         text="Continue with Google"
         onPress={handleGoogleSignIn}
+        loading={googleLoading}
         icon={require('../../../../assets/google-icon.png')}
       />
 
       <SocialButton
-        text="Continue via Facebook"
+        text="Continue with Facebook"
         onPress={handleFacebookSignIn}
+        loading={facebookLoading}
         icon={require('../../../../assets/facebook-icon.png')}
       />
 
