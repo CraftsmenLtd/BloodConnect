@@ -47,6 +47,8 @@ type BaseAcceptedDonationDTO = {
   acceptanceTime: string;
   seekerId: string;
   createdAt: string;
+  name: string;
+  phoneNumbers: string[];
 }
 
 export type AcceptedDonationDTO = BaseAcceptedDonationDTO & DTO & {
