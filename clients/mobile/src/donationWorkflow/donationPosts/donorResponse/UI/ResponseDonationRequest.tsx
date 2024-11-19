@@ -3,14 +3,9 @@ import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
 import { Ionicons } from '@expo/vector-icons'
 import createStyles from './createStyles'
-import { DonationScreenParams } from '../../../types'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
 
-interface DonationDetailsProps {
-  request: DonationScreenParams;
-};
-
-const ResponseDonationRequest: React.FC<DonationDetailsProps> = () => {
+const ResponseDonationRequest = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
   const {
@@ -102,7 +97,6 @@ const ResponseDonationRequest: React.FC<DonationDetailsProps> = () => {
               <Text style={styles.value}>{bloodRequest.transportationInfo ?? 'No transportation info'}</Text>
             </View>
           </View>
-          {/* <Text>Notification Data: {notificationData}</Text> */}
         </View>
       </ScrollView>
 

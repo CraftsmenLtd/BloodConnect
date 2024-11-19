@@ -13,5 +13,6 @@ export enum SCREENS {
   HOME = 'Home',
   POSTS = 'Posts',
   MY_ACTIVITY = 'MyActivity',
-  BLOOD_REQUEST_PREVIEW = 'ResponseDonationRequest'
+  BLOOD_REQUEST_PREVIEW = 'ResponseDonationRequest',
+  DONAR_RESPONSE = 'DonorResponse'
 }

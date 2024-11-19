@@ -103,12 +103,14 @@ export const useDonationPosts = (): any => {
   const updatePost = (donationData: DonationData): void => {
     navigation.navigate(SCREENS.DONATION, { data: { ...donationData }, isUpdating: true })
   }
+  const viewDetailsHandler = (): void => {}
 
   return {
     errorMessage,
     createPost,
     updatePost,
     donationPosts,
-    loading
+    loading,
+    viewDetailsHandler
   }
 }

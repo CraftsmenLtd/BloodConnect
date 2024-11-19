@@ -4,7 +4,6 @@ import { routes } from './routes'
 import { SCREENS } from '../constant/screens'
 import { useAuth } from '../../authentication/context/useAuth'
 import { View, ActivityIndicator } from 'react-native'
-import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
 
 const Stack = createStackNavigator()
 
@@ -38,11 +37,6 @@ export default function Navigator() {
       {filteredRoutes.map(({ name, component, options }) => (
         <Stack.Screen key={name} name={name} component={component} options={options} />
       ))}
-      {/* <Stack.Screen
-        name={SCREENS.BLOOD_REQUEST_PREVIEW}
-        component={ResponseDonationRequest}
-        options={{ headerTitle: 'Blood Request' }}
-      /> */}
     </Stack.Navigator>
   )
 }

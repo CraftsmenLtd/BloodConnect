@@ -44,11 +44,11 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
 
     setIsLoading(true)
     setError(null)
-
+    const isString = (value: unknown): value is string => typeof value === 'string'
     const requestPayload: AcceptRequestParams = {
-      requestPostId: bloodRequest.requestPostId,
-      seekerId: bloodRequest.seekerId,
-      createdAt: bloodRequest.createdAt,
+      requestPostId: isString(bloodRequest.requestPostId) ? bloodRequest.requestPostId : '',
+      seekerId: isString(bloodRequest.seekerId) ? bloodRequest.seekerId : '',
+      createdAt: isString(bloodRequest.createdAt) ? bloodRequest.createdAt : '',
       acceptanceTime: new Date().toISOString()
     }
     try {

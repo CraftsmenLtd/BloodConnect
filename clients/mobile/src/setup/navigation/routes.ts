@@ -9,6 +9,8 @@ import BottomNavigation from './BottomNavigation'
 import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPassword'
 import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
+import DonorResponse from '../../donationWorkflow/donorResponse/DonorResponse'
+
 export const routes = [
   {
     name: SCREENS.WELCOME,
@@ -68,6 +70,12 @@ export const routes = [
     name: SCREENS.BLOOD_REQUEST_PREVIEW,
     component: ResponseDonationRequest,
     options: { headerShown: true, headerTitle: 'Blood Request' },
+    protected: true
+  },
+  {
+    name: SCREENS.DONAR_RESPONSE,
+    component: DonorResponse,
+    options: { headerShown: true, headerTitle: '' },
     protected: true
   }
 ]

@@ -3,11 +3,10 @@
  *
  * @returns The a json type data.
  */
-export const parseJsonData = <T>(data: any): T | null => {
+export const parseJsonData = <T>(data: string): T => {
   try {
     return typeof data === 'string' ? JSON.parse(data) : data
   } catch (error) {
-    console.error('Failed to parse JSON data:', error)
-    return null
+    throw new Error('Failed to parse JSON data.')
   }
 }
