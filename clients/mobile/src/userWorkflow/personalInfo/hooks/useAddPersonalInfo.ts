@@ -147,12 +147,14 @@ export const useAddPersonalInfo = (): any => {
         weight: formatToTwoDecimalPlaces(personalInfo.weight),
         preferredDonationLocations
       }
+      console.log('FINAL DATA', finalData)
 
       const response = await addPersonalInfoHandler(finalData, fetchClient)
       if (response.status === 200) {
         navigation.navigate(SCREENS.BOTTOM_TABS)
       }
     } catch (error) {
+      console.log('ERROR', error)
       const errorMessage = formatErrorMessage(error)
       setErrorMessage(errorMessage)
     } finally {

@@ -1,16 +1,18 @@
+// src/hooks/useMyActivity.ts
+
 import { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { SCREENS } from '../../setup/constant/screens'
-import { DonationPostsScreenNavigationProp } from '../../setup/navigation/navigationTypes'
-import { fetchData } from '../donationHelpers'
-import { BloodDonationRecord } from '../types'
-import { useFetchClient } from '../../setup/clients/useFetchClient'
+import { fetchData } from '../donationWorkflow/donationHelpers'
+import { BloodDonationRecord } from '../donationWorkflow/types'
+import { useFetchClient } from '../setup/clients/useFetchClient'
+import { SCREENS } from '../setup/constant/screens'
+import { DonationPostsScreenNavigationProp } from '../setup/navigation/navigationTypes'
 
 export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> & {
   requestPostId: string;
 }
 
-export const useDonationPosts = (): any => {
+export const useMyActivity = (): any => {
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const fetchClient = useFetchClient()
   const [donationPosts, setDonationPosts] = useState<DonationData[]>([])
@@ -36,11 +38,16 @@ export const useDonationPosts = (): any => {
     navigation.navigate(SCREENS.DONATION, { data: { ...donationData }, isUpdating: true })
   }
 
+  const detailHandler = (donationData: DonationData): void => {
+    navigation.navigate(SCREENS.DETAILPOST, { data: donationData })
+  }
+
   return {
     errorMessage,
     createPost,
     updatePost,
     donationPosts,
-    loading
+    loading,
+    detailHandler
   }
 }

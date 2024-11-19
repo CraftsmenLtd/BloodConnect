@@ -14,6 +14,7 @@ DonationDTO,
   requestPostId: string;
   bloodQuantity: string;
   urgencyLevel: string;
+  acceptedDonors: Array<{ donorId: string; name: string; requestPostId: string }>;
 }
 
 export type BloodDonationRecord = Omit<DonationScreenParams, 'requestPostId'> &

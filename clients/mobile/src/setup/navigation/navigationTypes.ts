@@ -3,6 +3,7 @@ import { RouteProp } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { UserRegistrationCredentials } from '../../authentication/services/authService'
 import { DonationScreenParams } from '../../donationWorkflow/types'
+import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 
 type FromScreen = SCREENS.SET_PASSWORD | SCREENS.FORGOT_PASSWORD
 
@@ -20,6 +21,8 @@ export type RootStackParamList = {
   [SCREENS.ADD_PERSONAL_INFO]: undefined;
   [SCREENS.POSTS]: undefined;
   [SCREENS.BLOOD_REQUEST_PREVIEW]: undefined;
+  [SCREENS.DETAILPOST]: { data: DonationData };
+  [SCREENS.DONAR_PROFILE]: undefined;
 }
 
 export type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.WELCOME>
@@ -32,6 +35,8 @@ export type DonationScreenNavigationProp = StackNavigationProp<RootStackParamLis
 export type DonationPostsScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONATION_POSTS>
 export type BottomTabsNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BOTTOM_TABS>
 export type RequestPreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
+export type DetailPostScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DETAILPOST>
+export type DonarProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONAR_PROFILE>
 
 export type OtpScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.OTP>
 export type AddPersonalInfoNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.ADD_PERSONAL_INFO>
@@ -40,3 +45,4 @@ export type OtpScreenRouteProp = RouteProp<RootStackParamList, SCREENS.OTP>
 export type SetPasswordRouteProp = RouteProp<RootStackParamList, SCREENS.SET_PASSWORD>
 export type DonationScreenRouteProp = RouteProp<RootStackParamList, SCREENS.DONATION>
 export type RequestPreviewRouteProp = RouteProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
+export type DetailPostRouteProp = RouteProp<RootStackParamList, SCREENS.DETAILPOST>

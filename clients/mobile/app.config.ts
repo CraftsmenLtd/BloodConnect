@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { ExpoConfig } from '@expo/config-types'
 
 export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
-  const ENV = process.env.APP_ENV ?? 'development'
+  const ENV = process.env.APP_ENV ?? 'preview'
 
   const ENV_VARS: Record<string, {
     AWS_USER_POOL_ID?: string;
@@ -56,7 +56,7 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     extra: {
       ...ENV_VARS[ENV],
       eas: {
-        projectId: ENV_VARS[ENV].EAS_PROJECT_ID
+        projectId: 'a0b97362-72f9-428f-a2da-d16445c6193b'
       }
     }
   }
