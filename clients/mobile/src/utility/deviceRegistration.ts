@@ -4,7 +4,6 @@ import { registerForPushNotificationsAsync } from '../setup/notification/registe
 
 const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
   registerForPushNotificationsAsync().then(token => {
-    console.log('device token: ', token)
     void saveDeviceTokenToSNS(token as string, fetchClient)
   }).catch(error => { console.error(error) })
 }
