@@ -4,11 +4,14 @@ import { useOtp } from '../../src/authentication/otp/hooks/useOtp'
 import { loginUser, submitOtp } from '../../src/authentication/services/authService'
 import { SCREENS } from '../../src/setup/constant/screens'
 import { CommonActions } from '@react-navigation/native'
+import registerUserDeviceForNotification from '../../src/utility/deviceRegistration'
 
 jest.mock('../../src/authentication/services/authService', () => ({
   submitOtp: jest.fn(),
   loginUser: jest.fn()
 }))
+
+jest.mock('../../src/utility/deviceRegistration')
 
 describe('useOtp Hook', () => {
   beforeEach(() => {
@@ -68,7 +71,7 @@ describe('useOtp Hook', () => {
     expect(result.current.inputRefs.current[1].focus).toHaveBeenCalled()
   })
 
-  test('should submit OTP and navigate on success', async() => {
+  test('should submit OTP and navigate on success', async () => {
     const mockEmail = 'test@example.com'
     const { result } = renderHook(() => useOtp())
 
@@ -78,7 +81,7 @@ describe('useOtp Hook', () => {
     (submitOtp as jest.Mock).mockResolvedValue(true);
     (loginUser as jest.Mock).mockResolvedValue(true)
 
-    await act(async() => {
+    await act(async () => {
       await result.current.handleSubmit()
     })
 
@@ -93,13 +96,13 @@ describe('useOtp Hook', () => {
     )
   })
 
-  test('should set error state on submission failure', async() => {
+  test('should set error state on submission failure', async () => {
     const { result } = renderHook(() => useOtp())
     result.current.otp = ['1', '2', '3', '4', '5', '6'];
 
     (submitOtp as jest.Mock).mockRejectedValue(new Error('Submission failed'))
 
-    await act(async() => {
+    await act(async () => {
       await result.current.handleSubmit()
     })
 
