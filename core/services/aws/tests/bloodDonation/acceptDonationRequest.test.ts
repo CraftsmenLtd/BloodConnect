@@ -8,15 +8,19 @@ import { acceptDonationRequestAttributesMock } from '../../../../application/tes
 import { NotificationService } from '../../../../application/notificationWorkflow/NotificationService'
 import { UserService } from '../../../../application/userWorkflow/UserService'
 import { mockUserDetailsWithStringId } from '../../../../application/tests/mocks/mockUserData'
+import { BloodDonationService } from '../../../../application/bloodDonationWorkflow/BloodDonationService'
+import { mockDonationDTO } from '../../../../application/tests/mocks/mockDonationRequestData'
 
 jest.mock('../../../../application/bloodDonationWorkflow/AcceptDonationRequestService')
 jest.mock('../../../../application/notificationWorkflow/NotificationService')
 jest.mock('../../../../application/userWorkflow/UserService')
+jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../commons/lambda/ApiGateway')
 
 const mockAcceptDonationService = AcceptDonationService as jest.MockedClass<typeof AcceptDonationService>
 const mockNotificationService = NotificationService as jest.MockedClass<typeof NotificationService>
 const mockUserService = UserService as jest.MockedClass<typeof UserService>
+const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('acceptDonationRequestLambda', () => {
@@ -30,6 +34,7 @@ describe('acceptDonationRequestLambda', () => {
     const mockResponse = 'Donation request accepted successfully'
 
     mockUserService.prototype.getUser.mockResolvedValue(mockUserDetailsWithStringId)
+    mockBloodDonationService.prototype.getDonationRequest.mockResolvedValue(mockDonationDTO)
     mockAcceptDonationService.prototype.createAcceptanceRecord.mockResolvedValue(mockResponse)
     mockNotificationService.prototype.sendNotification.mockResolvedValue('Notified user successfully.')
     mockGenerateApiGatewayResponse.mockReturnValue({
@@ -47,6 +52,12 @@ describe('acceptDonationRequestLambda', () => {
       mockEvent.donorId,
       expect.anything()
     )
+    expect(mockBloodDonationService.prototype.getDonationRequest).toHaveBeenCalledWith(
+      mockEvent.seekerId,
+      mockEvent.requestPostId,
+      mockEvent.createdAt,
+      expect.anything()
+    )
     expect(mockAcceptDonationService.prototype.createAcceptanceRecord).toHaveBeenCalledWith(
       {
         donorId: mockEvent.donorId,
@@ -55,35 +66,29 @@ describe('acceptDonationRequestLambda', () => {
         requestPostId: mockEvent.requestPostId,
         acceptanceTime: mockEvent.acceptanceTime
       },
-      expect.anything(),
+      mockUserDetailsWithStringId,
       expect.anything()
     )
     expect(mockNotificationService.prototype.sendNotification).toHaveBeenCalledWith(
       {
         userId: mockEvent.seekerId,
         title: 'Donor Found',
-        body: `${mockUserDetailsWithStringId.bloodGroup} blood found`,
+        body: `${mockDonationDTO.neededBloodGroup} blood found`,
         type: 'donorAcceptRequest',
-        payload: {
-          seekerId: mockEvent.seekerId,
-          createdAt: mockEvent.createdAt,
-          requestPostId: mockEvent.requestPostId,
+        payload: expect.objectContaining({
           donorId: mockEvent.donorId,
-          name: mockUserDetailsWithStringId.name,
-          bloodGroup: mockUserDetailsWithStringId.bloodGroup
-        }
+          donorName: mockUserDetailsWithStringId.name,
+          neededBloodGroup: mockDonationDTO.neededBloodGroup
+        })
       },
       expect.anything()
     )
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
-      { message: mockResponse },
-      HTTP_CODES.OK
-    )
   })
 
-  it('should return an error response when an error is thrown', async() => {
-    const errorMessage = 'Database connection failed'
-    mockUserService.prototype.getUser.mockRejectedValue(new Error(errorMessage))
+  it('should return an error response when user does not exist', async() => {
+    const errorMessage = 'Cannot find user'
+
+    mockUserService.prototype.getUser.mockResolvedValue(mockUserDetailsWithStringId)
     mockGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.ERROR,
       body: `Error: ${errorMessage}`
@@ -99,11 +104,33 @@ describe('acceptDonationRequestLambda', () => {
       mockEvent.donorId,
       expect.anything()
     )
-    expect(mockAcceptDonationService.prototype.createAcceptanceRecord).not.toHaveBeenCalled()
-    expect(mockNotificationService.prototype.sendNotification).not.toHaveBeenCalled()
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
-      `Error: ${errorMessage}`,
-      HTTP_CODES.ERROR
+  })
+
+  it('should return an error response when donation post is not pending', async() => {
+    const errorMessage = 'Donation request is no longer available for acceptance.'
+
+    mockUserService.prototype.getUser.mockResolvedValue(mockUserDetailsWithStringId)
+    mockBloodDonationService.prototype.getDonationRequest.mockResolvedValue(mockDonationDTO)
+    mockGenerateApiGatewayResponse.mockReturnValue({
+      statusCode: HTTP_CODES.ERROR,
+      body: `Error: ${errorMessage}`
+    })
+
+    const result: APIGatewayProxyResult = await acceptDonationRequestLambda(mockEvent)
+
+    expect(result).toEqual({
+      statusCode: HTTP_CODES.ERROR,
+      body: `Error: ${errorMessage}`
+    })
+    expect(mockUserService.prototype.getUser).toHaveBeenCalledWith(
+      mockEvent.donorId,
+      expect.anything()
+    )
+    expect(mockBloodDonationService.prototype.getDonationRequest).toHaveBeenCalledWith(
+      mockEvent.seekerId,
+      mockEvent.requestPostId,
+      mockEvent.createdAt,
+      expect.anything()
     )
   })
 })

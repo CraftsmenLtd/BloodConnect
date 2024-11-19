@@ -3,7 +3,7 @@ import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import { AcceptDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import { AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
+import { AcceptedDonationDTO, DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import {
   AcceptDonationRequestModel,
@@ -15,7 +15,10 @@ import { NotificationService } from '../../../application/notificationWorkflow/N
 import SQSOperations from '../commons/sqs/SQSOperations'
 import { NotificationAttributes } from '../../../application/notificationWorkflow/Types'
 import { UserService } from '../../../application/userWorkflow/UserService'
+import { BloodDonationService } from './../../../application/bloodDonationWorkflow/BloodDonationService'
+import { DonationFields, BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
 
+const bloodDonationService = new BloodDonationService()
 const acceptDonationRequest = new AcceptDonationService()
 const userService = new UserService()
 const notificationService = new NotificationService()
@@ -38,31 +41,48 @@ async function acceptDonationRequestLambda(
         new UserModel()
       )
     )
+    if (userProfile === null) {
+      throw new Error('Cannot find user')
+    }
+    const donationPost = await bloodDonationService.getDonationRequest(
+      event.seekerId,
+      event.requestPostId,
+      event.createdAt,
+      new DynamoDbTableOperations<
+      DonationDTO,
+      DonationFields,
+      BloodDonationModel
+      >(new BloodDonationModel())
+    )
+    if (donationPost.status !== DonationStatus.PENDING) {
+      throw new Error('Donation request is no longer available for acceptance.')
+    }
 
     const response = await acceptDonationRequest.createAcceptanceRecord(
       acceptDonationRequestAttributes,
+      userProfile,
       new DynamoDbTableOperations<
       AcceptedDonationDTO,
       AcceptedDonationFields,
       AcceptDonationRequestModel
-      >(new AcceptDonationRequestModel()),
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(
-        new UserModel()
-      )
+      >(new AcceptDonationRequestModel())
     )
 
     const notificationAttributes: NotificationAttributes = {
       userId: event.seekerId,
       title: 'Donor Found',
-      body: `${userProfile.bloodGroup} blood found`,
+      body: `${donationPost.neededBloodGroup} blood found`,
       type: 'donorAcceptRequest',
       payload: {
         seekerId: event.seekerId,
         createdAt: event.createdAt,
         requestPostId: event.requestPostId,
         donorId: event.donorId,
-        name: userProfile.name,
-        bloodGroup: userProfile.bloodGroup
+        donorName: userProfile.name,
+        neededBloodGroup: donationPost.neededBloodGroup,
+        donationDateTime: donationPost.donationDateTime,
+        location: donationPost.location,
+        shortDescription: donationPost.shortDescription
       }
     }
 
