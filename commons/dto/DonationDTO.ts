@@ -48,8 +48,8 @@ export type DonorSearchDTO = DTO & HasIdentifier & {
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
-  createdAt?: string;
-  retryCount?: number;
+  createdAt: string;
+  retryCount: number;
 }
 
 type BaseAcceptedDonationDTO = {

@@ -213,7 +213,8 @@ export class BloodDonationService {
         await donorSearchRepository.create({
           id: generateUniqueID(),
           ...donorRoutingAttributes,
-          status: DonationStatus.PENDING
+          status: DonationStatus.PENDING,
+          retryCount: 0
         })
       } else if (donorSearchItem.status === DonationStatus.COMPLETED) {
         if (
@@ -257,17 +258,17 @@ export class BloodDonationService {
         urgencyLevel: donorRoutingAttributes.urgencyLevel,
         geohash: donorRoutingAttributes.geohash,
         seekerName: userProfile.name,
-        patientName: donorRoutingAttributes.patientName,
+        patientName: donorRoutingAttributes.patientName ?? '',
         location: donorRoutingAttributes.location,
         contactNumber: donorRoutingAttributes.contactNumber,
-        transportationInfo: donorRoutingAttributes.transportationInfo,
-        shortDescription: donorRoutingAttributes.shortDescription,
+        transportationInfo: donorRoutingAttributes.transportationInfo ?? '',
+        shortDescription: donorRoutingAttributes.shortDescription ?? '',
         city: donorRoutingAttributes.city,
         retryCount: retryCount + 1,
         message: getBloodRequestMessage(
           donorRoutingAttributes.urgencyLevel,
           donorRoutingAttributes.neededBloodGroup,
-          donorRoutingAttributes.shortDescription
+          donorRoutingAttributes.shortDescription ?? ''
         )
       }
 
