@@ -68,7 +68,9 @@ describe('acceptDonationRequestLambda', () => {
           seekerId: mockEvent.seekerId,
           createdAt: mockEvent.createdAt,
           requestPostId: mockEvent.requestPostId,
-          donorId: mockEvent.donorId
+          donorId: mockEvent.donorId,
+          name: mockUserDetailsWithStringId.name,
+          bloodGroup: mockUserDetailsWithStringId.bloodGroup
         }
       },
       expect.anything()

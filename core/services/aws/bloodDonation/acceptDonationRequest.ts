@@ -60,7 +60,9 @@ async function acceptDonationRequestLambda(
         seekerId: event.seekerId,
         createdAt: event.createdAt,
         requestPostId: event.requestPostId,
-        donorId: event.donorId
+        donorId: event.donorId,
+        name: userProfile.name,
+        bloodGroup: userProfile.bloodGroup
       }
     }
 
