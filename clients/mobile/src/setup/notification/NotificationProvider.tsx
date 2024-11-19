@@ -34,16 +34,26 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     const checkInitialNotification = async() => {
       try {
         const response = await Notifications.getLastNotificationResponseAsync()
+
         if (isNotificationValid(response, isMounted)) {
           await waitForNavigationReady()
           const data = parseJsonData<NotificationData>(response?.notification.request.content.data.payload)
+
           if (data !== null) {
             setNotificationData(data)
             navigation.navigate(SCREENS.BLOOD_REQUEST_PREVIEW, { notificationData: data })
+          } else {
+            throw new Error('Parsed notification data is null or invalid.')
           }
+        } else {
+          throw new Error('Invalid or incomplete notification response.')
         }
       } catch (error) {
-        console.error('Error processing notification:', error)
+        throw new Error(
+          `Error processing notification: ${
+            error instanceof Error ? error.message : 'An unexpected error occurred'
+          }`
+        )
       }
     }
 

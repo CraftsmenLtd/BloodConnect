@@ -59,7 +59,6 @@ export const useLogin = (): any => {
         setLoading(false)
       }
     } catch (error) {
-      console.log('error', error)
       setLoginError('Invalid Email or Password.')
     } finally {
       setLoading(false)
