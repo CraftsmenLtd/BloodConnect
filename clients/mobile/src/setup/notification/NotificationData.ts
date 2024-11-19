@@ -1,4 +1,4 @@
-export type NotificationData = {
+export interface NotificationData {
   patientName: string;
   neededBloodGroup: string;
   bloodQuantity: number;

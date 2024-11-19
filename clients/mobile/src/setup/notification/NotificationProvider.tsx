@@ -1,26 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { useState, useEffect, ReactNode } from 'react'
 import * as Notifications from 'expo-notifications'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { parseJsonData } from '../../utility/jsonParser'
 import { NotificationContext } from './NotificationContext'
 import { useNavigationReady } from './useNavigationReady'
-// import { useNotificationContext } from './useNotificationContext'
-
-type NotificationData = {
-  patientName: string;
-  neededBloodGroup: string;
-  bloodQuantity: number;
-  urgencyLevel: string;
-  location: string;
-  donationDateTime: string;
-  contactNumber: string;
-  transportationInfo: string;
-  shortDescription: string;
-  requestPostId: string;
-  seekerId: string;
-  createdAt: string;
-}
+import { NotificationData } from './NotificationData'
 
 type RootStackParamList = {
   Home: undefined;
@@ -51,11 +36,11 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         const response = await Notifications.getLastNotificationResponseAsync()
         if (isNotificationValid(response, isMounted)) {
           await waitForNavigationReady()
-          const data = parseJsonData(response?.notification.request.content.data.payload)
-          setNotificationData(data)
-          navigation.navigate(SCREENS.BLOOD_REQUEST_PREVIEW, {
-            notificationData: data
-          })
+          const data = parseJsonData<NotificationData>(response?.notification.request.content.data.payload)
+          if (data !== null) {
+            setNotificationData(data)
+            navigation.navigate(SCREENS.BLOOD_REQUEST_PREVIEW, { notificationData: data })
+          }
         }
       } catch (error) {
         console.error('Error processing notification:', error)
@@ -65,13 +50,13 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     void checkInitialNotification()
 
     const foregroundListener = Notifications.addNotificationReceivedListener(notification => {
-      const data = parseJsonData(notification.request.content.data.payload)
+      const data = parseJsonData<NotificationData>(notification.request.content.data.payload)
       if (data !== null) setNotificationData(data)
     })
 
     const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
-      const data = parseJsonData(response.notification.request.content.data.payload)
-      if (isNotificationValid(response, isMounted)) {
+      const data = parseJsonData<NotificationData>(response.notification.request.content.data.payload)
+      if (isNotificationValid(response, isMounted) && data !== null) {
         setNotificationData(data)
         navigation.navigate(SCREENS.BLOOD_REQUEST_PREVIEW, { notificationData: data })
       }
