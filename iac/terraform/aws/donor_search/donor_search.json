@@ -111,7 +111,8 @@
                 "geohash.$": "$.prepareDonorSearchResult.geohash",
                 "eligibleDonorsCount.$": "$.eligibleDonors.Count",
                 "totalDonorsToNotify.$": "$.prepareDonorSearchResult.totalDonorsToNotify",
-                "eligibleDonors.$": "$.eligibleDonors.Items"
+                "eligibleDonors.$": "$.eligibleDonors.Items",
+                "seekerId.$": "$.seekerId"
               },
               "ResultPath": "$.checkDonorSearchResult",
               "Next": "DecideNextStep"
