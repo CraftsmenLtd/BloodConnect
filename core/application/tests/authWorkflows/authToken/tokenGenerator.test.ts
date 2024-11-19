@@ -1,5 +1,5 @@
-import getJwtToken from '../../../authWorkflows/authToken/tokenGenerator'
-import validateToken from '../../../../application/authWorkflows/authToken/tokenValidator'
+import getJwtToken from '../../../authWorkflow/authToken/tokenGenerator'
+import validateToken from '../../../../application/authWorkflow/authToken/tokenValidator'
 
 describe('tokenGenerator', () => {
   const tokenPayload = { email: 'a@b.com', username: 'test', role: 'admin' }

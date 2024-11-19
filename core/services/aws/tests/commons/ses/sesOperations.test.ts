@@ -1,6 +1,6 @@
 import { SESClient, SendEmailCommand, SendEmailCommandInput } from '@aws-sdk/client-ses'
 import { mockClient } from 'aws-sdk-client-mock'
-import { sendAppUserWellcomeMail } from '../../../commons/ses/sesOperations'
+import { sendAppUserWelcomeMail } from '../../../commons/ses/sesOperations'
 import { GenericMessage } from '../../../../../../commons/dto/MessageDTO'
 
 const sesClientMock = mockClient(SESClient)
@@ -51,13 +51,13 @@ describe('SES Operations Tests', () => {
     process.env = originalEnv
   })
 
-  describe('sendAppUserWellcomeMail', () => {
+  describe('sendAppUserWelcomeMail', () => {
     test('should send email successfully with custom sender from environment variable', async() => {
       const customSender = 'custom@bloodconnect.net'
       process.env.EMAIL_SENDER = customSender
       sesClientMock.on(SendEmailCommand).resolves({})
 
-      await sendAppUserWellcomeMail({ email: mockEmail, emailContent: mockEmailContent })
+      await sendAppUserWelcomeMail({ email: mockEmail, emailContent: mockEmailContent })
       const sendEmailCommand = sesClientMock.calls()[0].args[0] as SendEmailCommand
       assertEmailParams(sendEmailCommand.input, {
         Source: customSender,
@@ -87,7 +87,7 @@ describe('SES Operations Tests', () => {
       }
       sesClientMock.on(SendEmailCommand).resolves({})
 
-      await sendAppUserWellcomeMail({ email: mockEmail, emailContent: fullEmailContent })
+      await sendAppUserWelcomeMail({ email: mockEmail, emailContent: fullEmailContent })
       const sendEmailCommand = sesClientMock.calls()[0].args[0] as SendEmailCommand
       assertEmailParams(sendEmailCommand.input, {
         Message: {
@@ -110,7 +110,7 @@ describe('SES Operations Tests', () => {
       sesClientMock.on(SendEmailCommand).rejects(mockError)
 
       await expect(
-        sendAppUserWellcomeMail({ email: mockEmail, emailContent: mockEmailContent })
+        sendAppUserWelcomeMail({ email: mockEmail, emailContent: mockEmailContent })
       ).rejects.toThrow('Failed to send welcome email: SES service error')
     })
 
@@ -119,7 +119,7 @@ describe('SES Operations Tests', () => {
       sesClientMock.on(SendEmailCommand).rejects(unknownError)
 
       await expect(
-        sendAppUserWellcomeMail({ email: mockEmail, emailContent: mockEmailContent })
+        sendAppUserWelcomeMail({ email: mockEmail, emailContent: mockEmailContent })
       ).rejects.toThrow(`Failed to send welcome email: ${unknownError}`)
     })
   })

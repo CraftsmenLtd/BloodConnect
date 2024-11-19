@@ -56,9 +56,20 @@
       "Type": "Parallel",
       "Branches": [
         {
-          "StartAt": "QueryEligibleDonors",
+          "StartAt": "CheckGeohash",
           "States": {
-            "QueryEligibleDonors": {
+            "CheckGeohash": {
+              "Type": "Choice",
+              "Choices": [
+                {
+                  "Variable": "$.prepareDonorSearchResult.geohash",
+                  "StringEquals": "",
+                  "Next": "QueryEligibleDonorsWithoutGeohash"
+                }
+              ],
+              "Default": "QueryEligibleDonorsWithGeohash"
+            },
+            "QueryEligibleDonorsWithGeohash": {
               "Type": "Task",
               "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
               "Parameters": {
@@ -71,6 +82,22 @@
                   },
                   ":geohash": {
                     "S.$": "$.prepareDonorSearchResult.geohash"
+                  }
+                }
+              },
+              "ResultPath": "$.eligibleDonors",
+              "Next": "CheckDonorStatus"
+            },
+            "QueryEligibleDonorsWithoutGeohash": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
+              "Parameters": {
+                "TableName": "${DYNAMODB_TABLE_NAME}",
+                "IndexName": "GSI1",
+                "KeyConditionExpression": "GSI1PK = :cityAndBloodGroupAndStatus",
+                "ExpressionAttributeValues": {
+                  ":cityAndBloodGroupAndStatus": {
+                    "S.$": "States.Format('CITY#{}#BG#{}#DONATIONSTATUS#yes', $.city, $.neededBloodGroup)"
                   }
                 }
               },
@@ -115,7 +142,7 @@
                 "delayPeriod.$": "$.prepareDonorSearchResult.delayPeriod"
               },
               "ResultPath": "$.prepareDonorSearchResult",
-              "Next": "QueryEligibleDonors"
+              "Next": "CheckGeohash"
             },
             "EnoughDonorsFound": {
               "Type": "Succeed"
@@ -134,8 +161,11 @@
       "ItemsPath": "$.donorSearchResult.donorIds",
       "Parameters": {
         "donorId.$": "$$.Map.Item.Value",
-        "patientName.$": "$.patientName",
+        "seekerId.$": "$.seekerId",
         "requestPostId.$": "$.requestPostId",
+        "createdAt.$": "$.createdAt",
+        "seekerName.$": "$.seekerName",
+        "patientName.$": "$.patientName",
         "location.$": "$.location",
         "contactNumber.$": "$.contactNumber",
         "transportationInfo.$": "$.transportationInfo",
@@ -147,20 +177,23 @@
         "message.$": "$.message"
       },
       "Iterator": {
-        "StartAt": "ConstructApiPath",
+        "StartAt": "SendDonorNotificationToSQS",
         "States": {
-          "ConstructApiPath": {
-            "Type": "Pass",
+          "SendDonorNotificationToSQS": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::aws-sdk:sqs:sendMessage",
             "Parameters": {
-              "ApiEndpoint": "${API_GATEWAY_ID}.execute-api.ap-south-1.amazonaws.com",
-              "Stage": "api",
-              "Path.$": "States.Format('/notification/push/{}', $.donorId)",
-              "RequestBody": {
+              "QueueUrl": "${NOTIFICATION_QUEUE_URL}",
+              "MessageBody": {
+                "userId.$": "$.donorId",
                 "title": "Blood Request",
                 "body.$": "$.message",
-                "requestPostId.$": "$.requestPostId",
                 "type": "bloodRequestPost",
-                "data": {
+                "payload": {
+                  "seekerId.$": "$.seekerId",
+                  "requestPostId.$": "$.requestPostId",
+                  "createdAt.$": "$.createdAt",
+                  "seekerName.$": "$.seekerName",
                   "patientName.$": "$.patientName",
                   "neededBloodGroup.$": "$.neededBloodGroup",
                   "bloodQuantity.$": "$.bloodQuantity",
@@ -171,43 +204,9 @@
                   "shortDescription.$": "$.shortDescription",
                   "donationDateTime.$": "$.donationDateTime"
                 }
-              }
-            },
-            "ResultPath": "$.apiParams",
-            "Next": "SendNotification"
-          },
-          "SendNotification": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::apigateway:invoke",
-            "Parameters": {
-              "ApiEndpoint.$": "$.apiParams.ApiEndpoint",
-              "Method": "POST",
-              "Headers": {
-                "Content-Type": [
-                  "application/json"
-                ]
               },
-              "Stage.$": "$.apiParams.Stage",
-              "Path.$": "$.apiParams.Path",
-              "RequestBody.$": "$.apiParams.RequestBody",
-              "AuthType": "IAM_ROLE"
+              "DelaySeconds": 0
             },
-            "ResultPath": "$.notificationResults",
-            "Catch": [
-              {
-                "ErrorEquals": [
-                  "States.ALL"
-                ],
-                "ResultPath": "$.notificationError",
-                "Next": "HandleApiError"
-              }
-            ],
-            "End": true
-          },
-          "HandleApiError": {
-            "Type": "Pass",
-            "Result": "Ignored error from API call",
-            "ResultPath": "$.notificationResults",
             "End": true
           }
         }
@@ -219,7 +218,7 @@
       "Type": "Task",
       "Resource": "arn:aws:states:::aws-sdk:sqs:sendMessage",
       "Parameters": {
-        "QueueUrl": "${SQS_RETRY_QUEUE_URL}",
+        "QueueUrl": "${DONOR_SEARCH_RETRY_QUEUE_URL}",
         "MessageBody": {
           "PK.$": "States.Format('BLOOD_REQ#{}', $.seekerId)",
           "SK.$": "States.Format('BLOOD_REQ#{}#{}', $.createdAt, $.requestPostId)"

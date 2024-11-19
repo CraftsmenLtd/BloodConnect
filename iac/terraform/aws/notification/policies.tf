@@ -47,7 +47,9 @@ locals {
         sid = "SNSPublishPolicy"
         actions = [
           "sns:Publish",
-          "sns:CreatePlatformEndpoint"
+          "sns:CreatePlatformEndpoint",
+          "sns:SetEndpointAttributes",
+          "sns:GetEndpointAttributes"
         ]
         resources = [aws_sns_platform_application.android_app.arn]
       }

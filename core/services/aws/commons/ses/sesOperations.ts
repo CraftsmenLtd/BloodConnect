@@ -8,7 +8,7 @@ interface SendWelcomeEmailParams {
   emailContent: GenericMessage;
 }
 
-export async function sendAppUserWellcomeMail({ email, emailContent }: SendWelcomeEmailParams): Promise<void> {
+export async function sendAppUserWelcomeMail({ email, emailContent }: SendWelcomeEmailParams): Promise<void> {
   const { title, content } = emailContent
   const senderEmail = process.env.EMAIL_SENDER
 

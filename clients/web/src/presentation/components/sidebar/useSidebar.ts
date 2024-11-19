@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { userSignOut } from '@client-commons/platform/aws/auth/awsAuth'
+import { userSignOut } from '../../../../../commons/platform/aws/auth/awsAuth'
 import { LoginPath } from '../../../constants/routeConsts'
 
 type SidebarLogicReturn = {

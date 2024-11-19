@@ -50,9 +50,6 @@
     }
   ],
   "paths": {
-    "/auth/register-organization": {
-      "$ref": "./../paths/auth/register-organization.json"
-    },
     "/users": {
       "$ref": "./../paths/users/users.json"
     },
@@ -61,9 +58,6 @@
     },
     "/donations/accept": {
       "$ref": "./../paths/donations/accept.json"
-    },
-    "/notification/push/{userId}": {
-      "$ref": "./../paths/notification/push.json"
     },
     "/notification/register": {
       "$ref": "./../paths/notification/register.json"

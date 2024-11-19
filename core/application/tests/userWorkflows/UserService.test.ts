@@ -1,21 +1,33 @@
-import { UserService } from '../../userWorkflows/UserService'
+import { UserService } from '../../userWorkflow/UserService'
 import { generateUniqueID } from '../../utils/idGenerator'
-import { getEmailVerificationMessage, getPasswordResetVerificationMessage, getAppUserWellcomeMailMessage } from '../../userWorkflows/userMessages'
+import {
+  getEmailVerificationMessage,
+  getPasswordResetVerificationMessage,
+  getAppUserWelcomeMailMessage
+} from '../../userWorkflow/userMessages'
 import { mockUserWithStringId } from '../mocks/mockUserData'
 import { mockRepository } from '../mocks/mockRepositories'
-import Repository from '../../technicalImpl/policies/repositories/Repository'
-import { UserDTO, UserDetailsDTO, LocationDTO } from '../../../../commons/dto/UserDTO'
-import { UpdateUserAttributes } from '../../userWorkflows/Types'
-import LocationModel from '../../technicalImpl/dbModels/LocationModel'
+import Repository from '../../models/policies/repositories/Repository'
+import {
+  UserDTO,
+  UserDetailsDTO,
+  LocationDTO
+} from '../../../../commons/dto/UserDTO'
+import { UpdateUserAttributes } from '../../userWorkflow/Types'
+import LocationModel from '../../models/dbModels/LocationModel'
 
 jest.mock('../../utils/idGenerator')
-jest.mock('../../userWorkflows/userMessages')
+jest.mock('../../userWorkflow/userMessages')
 
 describe('UserService Tests', () => {
   const userService = new UserService()
   const userRepository = mockRepository as jest.Mocked<Repository<UserDTO>>
-  const userDetailsRepository = mockRepository as jest.Mocked<Repository<UserDetailsDTO>>
-  const locationRepository = mockRepository as jest.Mocked<Repository<LocationDTO>>
+  const userDetailsRepository = mockRepository as jest.Mocked<
+  Repository<UserDetailsDTO>
+  >
+  const locationRepository = mockRepository as jest.Mocked<
+  Repository<LocationDTO>
+  >
   const locationModel = new LocationModel()
 
   const mockUserAttributes = {
@@ -28,13 +40,19 @@ describe('UserService Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (generateUniqueID as jest.Mock).mockReturnValue('12345')
-    userRepository.query.mockResolvedValue({ items: [], lastEvaluatedKey: undefined })
+    userRepository.query.mockResolvedValue({
+      items: [],
+      lastEvaluatedKey: undefined
+    })
     process.env.AFTER_DONATION_UNAVAILABLE_PERIOD = '4'
   })
 
   test('should create a new user successfully', async() => {
     userRepository.create.mockResolvedValue(mockUserWithStringId)
-    const result = await userService.createNewUser(mockUserAttributes, userRepository)
+    const result = await userService.createNewUser(
+      mockUserAttributes,
+      userRepository
+    )
 
     expect(result).toBe(mockUserWithStringId)
     expect(generateUniqueID).toHaveBeenCalledTimes(1)
@@ -48,13 +66,17 @@ describe('UserService Tests', () => {
     const originalError = new Error(errorMessage)
 
     mockRepository.create.mockRejectedValue(originalError)
-    await expect(userService.createNewUser(mockUserAttributes, mockRepository))
-      .rejects.toThrow(new Error(errorMessage))
+    await expect(
+      userService.createNewUser(mockUserAttributes, mockRepository)
+    ).rejects.toThrow(new Error(errorMessage))
     expect(mockRepository.create).toHaveBeenCalledTimes(1)
   })
 
   test('should get post-signup message correctly', () => {
-    const mockMessage = { title: 'Welcome to Blood Connect!', content: 'Verify your email' };
+    const mockMessage = {
+      title: 'Welcome to Blood Connect!',
+      content: 'Verify your email'
+    };
     (getEmailVerificationMessage as jest.Mock).mockReturnValue(mockMessage)
 
     const result = userService.getPostSignUpMessage('Ebrahim', '1234')
@@ -63,11 +85,19 @@ describe('UserService Tests', () => {
   })
 
   test('should get forgot password message correctly', () => {
-    const mockMessage = { body: 'Reset your password for Blood Connect', subject: 'Reset your password' };
-    (getPasswordResetVerificationMessage as jest.Mock).mockReturnValue(mockMessage)
+    const mockMessage = {
+      body: 'Reset your password for Blood Connect',
+      subject: 'Reset your password'
+    };
+    (getPasswordResetVerificationMessage as jest.Mock).mockReturnValue(
+      mockMessage
+    )
 
     const result = userService.getForgotPasswordMessage('Ebrahim', '1234')
-    expect(getPasswordResetVerificationMessage).toHaveBeenCalledWith('Ebrahim', '1234')
+    expect(getPasswordResetVerificationMessage).toHaveBeenCalledWith(
+      'Ebrahim',
+      '1234'
+    )
     expect(result).toEqual(mockMessage)
   })
   test('should update user successfully', async() => {
@@ -91,29 +121,36 @@ describe('UserService Tests', () => {
 
     userRepository.update.mockResolvedValue(mockUserWithStringId)
 
-    const result = await userService.updateUser(mockUpdateAttributes as unknown as UpdateUserAttributes, userDetailsRepository, locationRepository, locationModel)
+    const result = await userService.updateUser(
+      mockUpdateAttributes as unknown as UpdateUserAttributes,
+      userDetailsRepository,
+      locationRepository,
+      locationModel
+    )
 
     expect(result).toBe('Updated your Profile info')
-    expect(userRepository.update).toHaveBeenCalledWith(expect.objectContaining({
-      ...mockResponse,
-      age: expect.any(Number),
-      id: mockUpdateAttributes.userId,
-      updatedAt: expect.any(String)
-    }))
+    expect(userRepository.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ...mockResponse,
+        age: expect.any(Number),
+        id: mockUpdateAttributes.userId,
+        updatedAt: expect.any(String)
+      })
+    )
   })
 
-  describe('getAppUserWellcomeMail', () => {
+  describe('getAppUserWelcomeMail', () => {
     test('should get welcome mail message correctly', () => {
       const userName = 'Suzan'
       const mockMessage = {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'
       };
-      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+      (getAppUserWelcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
 
-      const result = userService.getAppUserWellcomeMail(userName)
+      const result = userService.getAppUserWelcomeMail(userName)
 
-      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith(userName)
+      expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(userName)
       expect(result).toEqual(mockMessage)
     })
 
@@ -122,11 +159,11 @@ describe('UserService Tests', () => {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'
       };
-      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+      (getAppUserWelcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
 
-      const result = userService.getAppUserWellcomeMail('')
+      const result = userService.getAppUserWelcomeMail('')
 
-      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith('')
+      expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith('')
       expect(result).toEqual(mockMessage)
     })
 
@@ -136,25 +173,26 @@ describe('UserService Tests', () => {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'
       };
-      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+      (getAppUserWelcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
 
-      const result = userService.getAppUserWellcomeMail(userName)
+      const result = userService.getAppUserWelcomeMail(userName)
 
-      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith(userName)
+      expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(userName)
       expect(result).toEqual(mockMessage)
     })
 
     test('should handle very long usernames', () => {
-      const longUserName = 'VeryLongUserNameThatMightCauseIssuesIfNotHandledProperly'
+      const longUserName =
+        'VeryLongUserNameThatMightCauseIssuesIfNotHandledProperly'
       const mockMessage = {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'
       };
-      (getAppUserWellcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
+      (getAppUserWelcomeMailMessage as jest.Mock).mockReturnValue(mockMessage)
 
-      const result = userService.getAppUserWellcomeMail(longUserName)
+      const result = userService.getAppUserWelcomeMail(longUserName)
 
-      expect(getAppUserWellcomeMailMessage).toHaveBeenCalledWith(longUserName)
+      expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(longUserName)
       expect(result).toEqual(mockMessage)
     })
   })

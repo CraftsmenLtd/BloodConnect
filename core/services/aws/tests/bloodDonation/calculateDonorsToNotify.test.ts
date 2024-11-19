@@ -1,9 +1,9 @@
-import { UrgencyType } from '@commons/dto/DonationDTO'
+import { UrgencyType } from '../../../../../commons/dto/DonationDTO'
 import calculateDonorsToNotify, {
   calculateRemainingBagsNeeded,
   calculateTotalDonorsToNotify,
   calculateDelayPeriod
-} from './../../bloodDonation/calculateDonorsToNotify'
+} from '../../donorSearch/calculateDonorsToNotify'
 
 describe('calculateRemainingBagsNeeded', () => {
   it('should return the difference between bloodQuantity and donorsFoundCount', () => {

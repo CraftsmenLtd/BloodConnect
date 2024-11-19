@@ -5,8 +5,7 @@ export interface NotificationAttributes {
   title: string;
   body: string;
   type: string;
-  requestPostId?: string;
-  data?: Record<string, unknown>;
+  payload: Record<string, unknown>;
 }
 
 export interface NotificationPayload {
@@ -19,7 +18,6 @@ export interface NotificationQueueMessage {
   userId: string;
   snsEndpointArn: string;
   type: string;
-  requestPostId?: string;
   payload: NotificationPayload;
 }
 export interface StoreNotificationEndPoint extends UserDTO {
