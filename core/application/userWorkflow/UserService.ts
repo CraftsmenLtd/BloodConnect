@@ -61,6 +61,20 @@ export class UserService {
     return getAppUserWelcomeMailMessage(userName)
   }
 
+  async getUser(
+    userId: string,
+    userRepository: Repository<UserDetailsDTO>
+  ): Promise<UserDetailsDTO> {
+    const userProfile = await userRepository.getItem(
+      `USER#${userId}`,
+      'PROFILE'
+    )
+    if (userProfile == null) {
+      throw new Error('User not found')
+    }
+    return userProfile
+  }
+
   async updateUser(
     userAttributes: UpdateUserAttributes,
     userRepository: Repository<UserDetailsDTO>,

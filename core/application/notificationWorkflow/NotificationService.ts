@@ -6,6 +6,7 @@ import { NotificationAttributes, SnsRegistrationAttributes, StoreNotificationEnd
 import Repository from '../models/policies/repositories/Repository'
 import { SNSModel } from '../../application/models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
+import { QueueModel } from '../models/queue/QueueModel'
 
 export class NotificationService {
   async publishNotification(
@@ -113,6 +114,18 @@ export class NotificationService {
         }
       }
       throw new Error('Failed to store Endpoint ARN')
+    }
+  }
+
+  async sendNotification(
+    notificationAttributes: NotificationAttributes,
+    queueModel: QueueModel
+  ): Promise<string> {
+    try {
+      await queueModel.queue(notificationAttributes)
+      return 'Device registration successful.'
+    } catch (error: unknown) {
+      throw new Error('Failed to send notification.')
     }
   }
 }
