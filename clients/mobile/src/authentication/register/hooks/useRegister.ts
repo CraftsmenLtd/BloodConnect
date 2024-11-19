@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useMemo, useState } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
@@ -9,6 +10,7 @@ import { formatPhoneNumber } from '../../../utility/formatte'
 import { useAuth } from '../../context/useAuth'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
+import { checkUserProfile } from '../../../userWorkflow/services/userProfileService'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -72,24 +74,52 @@ export const useRegister = (): any => {
     })
   }
 
+  const checkProfileAndNavigate = async(): Promise<void> => {
+    try {
+      const userProfile = await checkUserProfile(fetchClient)
+      // eslint-disable-next-line no-console
+      console.log('useLogin userProfile', userProfile)
+      const hasProfile = Boolean(userProfile?.bloodGroup)
+      // eslint-disable-next-line no-console
+      console.log('useLogin hasProfile', hasProfile)
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{
+            name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO
+          }]
+        })
+      )
+    } catch (profileError) {
+      // eslint-disable-next-line no-console
+      console.error('Error checking profile:', profileError)
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+        })
+      )
+    }
+  }
+
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
+      // setLoading(true)
       const isGoogleSignedIn = await googleLogin()
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
         registerUserDeviceForNotification(fetchClient)
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
-          })
-        )
+        await checkProfileAndNavigate()
       } else {
         setSocialLoginError('Google login failed. Please try again.')
       }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
     }
+    // } finally {
+    //   setLoading(false)
+    // }
   }
 
   const handleFacebookSignIn = async(): Promise<void> => {
@@ -98,12 +128,7 @@ export const useRegister = (): any => {
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
         registerUserDeviceForNotification(fetchClient)
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
-          })
-        )
+        await checkProfileAndNavigate()
       } else {
         setSocialLoginError('Facebook login failed. Please try again.')
       }

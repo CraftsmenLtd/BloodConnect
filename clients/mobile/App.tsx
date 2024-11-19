@@ -9,12 +9,13 @@ import { Amplify } from 'aws-amplify'
 import { awsCognitoConfiguration } from './src/setup/config/cognito'
 import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
+import { UserProfileProvider } from './src/userWorkflow/context/UserProfileContext'
 import * as Notifications from 'expo-notifications'
 
 Amplify.configure(awsCognitoConfiguration)
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
+  handleNotification: async() => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false
@@ -44,11 +45,13 @@ export default function App() {
     <SafeAreaProvider>
       <NavigationContainer>
         <AuthProvider>
-          <NotificationProvider>
-            <ThemeProvider>
-              <Navigator />
-            </ThemeProvider>
-          </NotificationProvider>
+          <UserProfileProvider>
+            <NotificationProvider>
+              <ThemeProvider>
+                <Navigator />
+              </ThemeProvider>
+            </NotificationProvider>
+          </UserProfileProvider>
         </AuthProvider>
       </NavigationContainer>
     </SafeAreaProvider>

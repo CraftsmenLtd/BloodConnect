@@ -18,3 +18,39 @@ export const addPersonalInfoHandler = async(payload: Record<string, unknown>, ht
     throw new Error(errorMessage)
   }
 }
+
+// import { HttpClient } from '../../setup/clients/HttpClient'
+
+// export interface UserResponse {
+//   success?: boolean;
+//   message?: string;
+//   status?: number;
+//   data?: Record<string, unknown>;
+// }
+
+// export const addPersonalInfoHandler = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<UserResponse> => {
+//   try {
+//     const response = await httpClient.patch<UserResponse>('/users', payload)
+//     return {
+//       message: response.message,
+//       status: response.status
+//     }
+//   } catch (error) {
+//     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
+//     throw new Error(errorMessage)
+//   }
+// }
+
+// export const getUserInfo = async(httpClient: HttpClient): Promise<UserResponse> => {
+//   try {
+//     const response = await httpClient.get<UserResponse>('/users', {})
+//     return {
+//       message: response.message,
+//       data: response.data,
+//       status: response.status
+//     }
+//   } catch (error) {
+//     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
+//     throw new Error(errorMessage)
+//   }
+// }
