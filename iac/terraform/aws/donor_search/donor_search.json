@@ -221,7 +221,17 @@
         "QueueUrl": "${DONOR_SEARCH_RETRY_QUEUE_URL}",
         "MessageBody": {
           "PK.$": "States.Format('BLOOD_REQ#{}', $.seekerId)",
-          "SK.$": "States.Format('BLOOD_REQ#{}#{}', $.createdAt, $.requestPostId)"
+          "SK.$": "States.Format('BLOOD_REQ#{}#{}', $.createdAt, $.requestPostId)",
+          "neededBloodGroup.$": "$.neededBloodGroup",
+          "bloodQuantity.$": "$.bloodQuantity",
+          "urgencyLevel.$": "$.urgencyLevel",
+          "city.$": "$.city",
+          "location.$": "$.location",
+          "geohash.$": "$.geohash",
+          "donationDateTime.$": "$.donationDateTime",
+          "contactNumber.$": "$.contactNumber",
+          "transportationInfo.$": "$.transportationInfo",
+          "shortDescription.$": "$.shortDescription"
         },
         "DelaySeconds.$": "$.prepareDonorSearchResult.delayPeriod"
       },

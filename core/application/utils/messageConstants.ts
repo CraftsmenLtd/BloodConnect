@@ -23,3 +23,7 @@ export const APP_USER_WELCOME_MAIL_CONTENT = `
   Kind regards,<br/>
   The BloodConnect Team
 `
+
+export const BLOOD_REQUEST_MESSAGE_TEMPLATE = `
+  {0} {1} blood needed | {2}
+`
