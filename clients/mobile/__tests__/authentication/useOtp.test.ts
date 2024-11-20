@@ -10,6 +10,8 @@ jest.mock('../../src/authentication/services/authService', () => ({
   loginUser: jest.fn()
 }))
 
+jest.mock('../../src/utility/deviceRegistration')
+
 describe('useOtp Hook', () => {
   beforeEach(() => {
     setRouteParams({

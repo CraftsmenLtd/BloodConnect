@@ -14,7 +14,7 @@ import * as Notifications from 'expo-notifications'
 Amplify.configure(awsCognitoConfiguration)
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
+  handleNotification: async() => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false

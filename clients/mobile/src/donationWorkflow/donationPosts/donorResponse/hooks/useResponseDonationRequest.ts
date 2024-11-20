@@ -55,13 +55,17 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
       const response: FetchResponse = await fetchClient.post('/donations/accept', requestPayload)
 
       if (response.status !== 200) {
-        throw new Error(`Error: ${response.status} ${response.statusText ?? 'Unknown error'}`)
+        const errorMessage = `Error: ${response.status} ${response.statusText ?? 'Unknown error'}`
+        throw new Error(errorMessage)
       }
 
       navigation.navigate(SCREENS.POSTS)
-    } catch (err: any) {
-      console.error('Failed to accept request:', err)
-      setError(err instanceof Error && typeof err.message === 'string' ? err.message : 'An error occurred')
+    } catch (error) {
+      const errorMessage = error instanceof Error && typeof error.message === 'string'
+        ? error.message
+        : 'An unexpected error occurred while accepting the request'
+      setError(errorMessage)
+      throw new Error(`Failed to accept request: ${errorMessage}`)
     } finally {
       setIsLoading(false)
     }
