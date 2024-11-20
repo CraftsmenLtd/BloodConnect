@@ -1,12 +1,18 @@
 import { HttpClient } from '../setup/clients/HttpClient'
-import { registerForPushNotificationsAsync, saveDeviceTokenToSNS } from '../setup/notification/Notification'
+import { saveDeviceTokenToSNS } from '../setup/notification/saveDeviceToken'
+import { registerForPushNotificationsAsync } from '../setup/notification/registerForPushNotifications'
 
 const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
-  console.log('registerUserDeviceForNotification')
-
   registerForPushNotificationsAsync().then(token => {
     void saveDeviceTokenToSNS(token as string, fetchClient)
-  }).catch(error => { console.error(error) })
+  })
+    .catch(error => {
+      throw new Error(
+        `Failed to register user device for notifications: ${
+          error instanceof Error ? error.message : 'An unexpected error occurred'
+        }`
+      )
+    })
 }
 
 export default registerUserDeviceForNotification

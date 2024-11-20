@@ -9,6 +9,8 @@ import {
   AcceptDonationRequestModel,
   AcceptedDonationFields
 } from '../../../application/models/dbModels/AcceptDonationModel'
+import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
 
 const acceptDonationRequest = new AcceptDonationService()
 
@@ -29,7 +31,10 @@ async function acceptDonationRequestLambda(
       AcceptedDonationDTO,
       AcceptedDonationFields,
       AcceptDonationRequestModel
-      >(new AcceptDonationRequestModel())
+      >(new AcceptDonationRequestModel()),
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(
+        new UserModel()
+      )
     )
     return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {

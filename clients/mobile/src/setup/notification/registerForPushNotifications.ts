@@ -17,7 +17,7 @@ export const registerForPushNotificationsAsync = async(): Promise<string | undef
     })
   }
 
-  if (Device.isDevice !== null) {
+  if (Device.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync()
     let finalStatus = existingStatus
 
@@ -27,37 +27,25 @@ export const registerForPushNotificationsAsync = async(): Promise<string | undef
     }
 
     if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!')
-      return
+      throw new Error('Failed to get push notification permissions.')
     }
 
     try {
-      if (projectId === null) throw new Error('Project ID not found')
+      if (projectId === null) throw new Error('Project ID not found.')
 
       token = (await Notifications.getDevicePushTokenAsync()).data
+
+      if (token === null) throw new Error('Failed to retrieve device push token.')
     } catch (error) {
-      console.error('Failed to get push token update:', error)
+      throw new Error(
+        `Failed to get push token: ${
+          error instanceof Error ? error.message : 'An unexpected error occurred'
+        }`
+      )
     }
   } else {
-    alert('Must use physical device for Push Notifications')
+    throw new Error('Push notifications require a physical device.')
   }
 
   return token
-}
-
-export const saveDeviceTokenToSNS = async(deviceToken: string, fetchClient: any): Promise<void> => {
-  try {
-    const response = await fetchClient.post('/notification/register', {
-      deviceToken,
-      platform: Platform.OS === 'android' ? 'FCM' : 'APNS'
-    })
-
-    if (response.status === 200) {
-      console.log('Device registered successfully')
-    } else {
-      console.error('Failed to register device')
-    }
-  } catch (error) {
-    console.error('Failed to register device token:', error)
-  }
 }

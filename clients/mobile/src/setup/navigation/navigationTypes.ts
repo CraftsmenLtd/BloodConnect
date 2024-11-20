@@ -4,7 +4,7 @@ import { SCREENS } from '../constant/screens'
 import { UserRegistrationCredentials } from '../../authentication/services/authService'
 import { DonationScreenParams } from '../../donationWorkflow/types'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
-
+import { DonorResponseNotification } from '../../donationWorkflow/donorResponse/type'
 type FromScreen = SCREENS.SET_PASSWORD | SCREENS.FORGOT_PASSWORD
 
 export type RootStackParamList = {
@@ -23,6 +23,7 @@ export type RootStackParamList = {
   [SCREENS.BLOOD_REQUEST_PREVIEW]: undefined;
   [SCREENS.DETAILPOST]: { data: DonationData };
   [SCREENS.DONAR_PROFILE]: undefined;
+  [SCREENS.DONAR_RESPONSE]: { notificationData: DonorResponseNotification };
 }
 
 export type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.WELCOME>
@@ -38,6 +39,7 @@ export type RequestPreviewScreenNavigationProp = StackNavigationProp<RootStackPa
 export type DetailPostScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DETAILPOST>
 export type DonarProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONAR_PROFILE>
 
+export type DonarResponseScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONAR_RESPONSE>
 export type OtpScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.OTP>
 export type AddPersonalInfoNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.ADD_PERSONAL_INFO>
 
@@ -46,3 +48,4 @@ export type SetPasswordRouteProp = RouteProp<RootStackParamList, SCREENS.SET_PAS
 export type DonationScreenRouteProp = RouteProp<RootStackParamList, SCREENS.DONATION>
 export type RequestPreviewRouteProp = RouteProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
 export type DetailPostRouteProp = RouteProp<RootStackParamList, SCREENS.DETAILPOST>
+export type DonarResponseRouteProp = RouteProp<RootStackParamList, SCREENS.DONAR_RESPONSE>

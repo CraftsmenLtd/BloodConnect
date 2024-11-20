@@ -11,6 +11,8 @@ import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
 import Detail from '../../userWorkflow/Detail'
 import DonarProfile from '../../userWorkflow/DonarProfile'
+import DonorResponse from '../../donationWorkflow/donorResponse/DonorResponse'
+
 export const routes = [
   {
     name: SCREENS.WELCOME,
@@ -82,6 +84,12 @@ export const routes = [
     name: SCREENS.DONAR_PROFILE,
     component: DonarProfile,
     options: { headerShown: true, headerTitle: 'Profile' },
+    protected: true
+  },
+  {
+    name: SCREENS.DONAR_RESPONSE,
+    component: DonorResponse,
+    options: { headerShown: true, headerTitle: '' },
     protected: true
   }
 ]

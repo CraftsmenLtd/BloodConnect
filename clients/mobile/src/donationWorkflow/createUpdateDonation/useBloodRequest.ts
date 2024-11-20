@@ -139,6 +139,9 @@ export const useBloodRequest = (): any => {
   }
 
   const updateBloodDonationRequest = async(): Promise<DonationResponse> => {
+    if ('acceptedDonors' in bloodRequestData) {
+      delete bloodRequestData.acceptedDonors
+    }
     const { bloodQuantity, city, location, neededBloodGroup, ...rest } = bloodRequestData
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
