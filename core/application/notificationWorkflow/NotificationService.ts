@@ -77,10 +77,7 @@ export class NotificationService {
       return 'Device registration successful.'
     } catch (error: unknown) {
       const typedError = error as Error
-      if (
-        typedError.name === 'InvalidParameterException' &&
-        typedError.message.includes('Device already registered with this Token')
-      ) {
+      if (typedError.name === 'InvalidParameterException') {
         const arnMatch = typedError.message.match(
           /arn:aws:sns:[\w-]+:\d+:endpoint\/\S+/
         )

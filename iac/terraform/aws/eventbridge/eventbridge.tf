@@ -13,7 +13,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
     filter_criteria {
       filter {
         pattern = jsonencode({
-          "eventName" : ["INSERT"],
+          "eventName" : ["INSERT", "MODIFY"],
           "dynamodb" : {
             "NewImage" : {
               "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
