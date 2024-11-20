@@ -25,50 +25,11 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   useEffect(() => {
     let isMounted = true
+    try {
+      void checkInitialNotification(isMounted)
+    } catch (error) {
 
-    const isNotificationValid = (
-      response: Notifications.NotificationResponse | null,
-      isMounted: boolean
-    ): boolean => {
-      return (
-        Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0 &&
-        response?.notification.request.identifier !== null &&
-        isMounted
-      )
     }
-
-    const handleNotificationNavigation = (
-      response: Notifications.NotificationResponse | null
-    ) => {
-      if (response === null) return
-
-      const { type } = response.notification.request.content.data
-      const mapping = NOTIFICATION_TO_SCREEN_MAP[type]
-
-      if (mapping !== undefined) {
-        const { screen, getParams } = mapping
-        const params = getParams !== undefined ? getParams(parseJsonData<Record<string, unknown>>(response.notification.request.content.data.payload)) : undefined
-        navigation.navigate(screen, params as any)
-      } else {
-        throw new Error('Unknown notificaiton.')
-      }
-    }
-
-    const checkInitialNotification = async() => {
-      try {
-        const response = await Notifications.getLastNotificationResponseAsync()
-        if (isNotificationValid(response, isMounted)) {
-          await waitForNavigationReady()
-          const data = parseJsonData(response?.notification.request.content.data.payload)
-          setNotificationData(data as NotificationData)
-          handleNotificationNavigation(response)
-        }
-      } catch (error) {
-        console.error('Error processing notification:', error)
-      }
-    }
-
-    void checkInitialNotification()
 
     const foregroundListener = Notifications.addNotificationReceivedListener(notification => {
       const data = parseJsonData<NotificationData>(notification.request.content.data.payload)
@@ -89,6 +50,48 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       responseListener.remove()
     }
   }, [navigation])
+
+  const isNotificationValid = (
+    response: Notifications.NotificationResponse | null,
+    isMounted: boolean
+  ): boolean => {
+    return (
+      Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0 &&
+      response?.notification.request.identifier !== null &&
+      isMounted
+    )
+  }
+
+  const handleNotificationNavigation = (
+    response: Notifications.NotificationResponse | null
+  ) => {
+    if (response === null) return
+
+    const { type } = response.notification.request.content.data
+    const mapping = NOTIFICATION_TO_SCREEN_MAP[type]
+
+    if (mapping !== undefined) {
+      const { screen, getParams } = mapping
+      const params = getParams !== undefined ? getParams(parseJsonData<Record<string, unknown>>(response.notification.request.content.data.payload)) : undefined
+      navigation.navigate(screen, params as any)
+    } else {
+      throw new Error('Unknown notificaiton.')
+    }
+  }
+
+  const checkInitialNotification = async(isMounted: boolean) => {
+    try {
+      const response = await Notifications.getLastNotificationResponseAsync()
+      if (isNotificationValid(response, isMounted)) {
+        await waitForNavigationReady()
+        const data = parseJsonData(response?.notification.request.content.data.payload)
+        setNotificationData(data as NotificationData)
+        handleNotificationNavigation(response)
+      }
+    } catch (error) {
+      throw new Error(`Error processing notification: ${error}`)
+    }
+  }
 
   return (
     <NotificationContext.Provider value={{ notificationData }}>
