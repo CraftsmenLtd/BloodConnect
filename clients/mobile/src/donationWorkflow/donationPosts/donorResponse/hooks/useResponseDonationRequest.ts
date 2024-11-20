@@ -58,7 +58,6 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
 
       if (response.status === 200) {
         setIsRequestAccepted(true)
-        navigation.navigate(SCREENS.POSTS)
       } else {
         const errorMessage = `Error: ${response.status} ${response.statusText ?? 'Unknown error'}`
         throw new Error(errorMessage)
