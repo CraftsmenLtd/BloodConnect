@@ -72,12 +72,7 @@ export const useLogin = (): any => {
   const checkProfileAndNavigate = async(): Promise<void> => {
     try {
       const userProfile = await checkUserProfile(fetchClient)
-      // eslint-disable-next-line no-console
-      console.log('useLogin userProfile', userProfile)
       const hasProfile = Boolean(userProfile?.bloodGroup)
-      // eslint-disable-next-line no-console
-      console.log('useLogin hasProfile', hasProfile)
-
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -87,7 +82,6 @@ export const useLogin = (): any => {
         })
       )
     } catch (profileError) {
-      // eslint-disable-next-line no-console
       console.error('Error checking profile:', profileError)
       navigation.dispatch(
         CommonActions.reset({

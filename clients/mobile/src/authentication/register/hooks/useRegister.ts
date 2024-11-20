@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useMemo, useState } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
@@ -79,12 +78,7 @@ export const useRegister = (): any => {
   const checkProfileAndNavigate = async(): Promise<void> => {
     try {
       const userProfile = await checkUserProfile(fetchClient)
-      // eslint-disable-next-line no-console
-      console.log('useLogin userProfile', userProfile)
       const hasProfile = Boolean(userProfile?.bloodGroup)
-      // eslint-disable-next-line no-console
-      console.log('useLogin hasProfile', hasProfile)
-
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -94,7 +88,6 @@ export const useRegister = (): any => {
         })
       )
     } catch (profileError) {
-      // eslint-disable-next-line no-console
       console.error('Error checking profile:', profileError)
       navigation.dispatch(
         CommonActions.reset({

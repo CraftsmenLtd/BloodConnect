@@ -31,9 +31,6 @@ interface APIResponse {
 export const checkUserProfile = async(httpClient: HttpClient): Promise<UserProfile | null> => {
   try {
     const response = await httpClient.get<APIResponse>('/users')
-    // eslint-disable-next-line no-console
-    console.log('Raw response:', JSON.stringify(response, null, 2))
-
     if (typeof response === 'string') {
       const parsedResponse = JSON.parse(response) as APIResponse
       if (parsedResponse.success && parsedResponse.data !== null && parsedResponse.data !== undefined) {
@@ -47,7 +44,6 @@ export const checkUserProfile = async(httpClient: HttpClient): Promise<UserProfi
 
     return null
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Failed to fetch user profile:', error)
     return null
   }
