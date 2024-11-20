@@ -7,7 +7,6 @@ export const parseJsonData = <T>(data: any): T | null => {
   try {
     return typeof data === 'string' ? JSON.parse(data) : data
   } catch (error) {
-    console.error('Failed to parse JSON data:', error)
-    return null
+    throw new Error('Invalid data: Must be a JSON string or an object')
   }
 }

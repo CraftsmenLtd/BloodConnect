@@ -27,19 +27,24 @@ export const registerForPushNotificationsAsync = async(): Promise<string | undef
     }
 
     if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!')
-      return
+      throw new Error('Failed to get push notification permissions.')
     }
 
     try {
-      if (projectId === null) throw new Error('Project ID not found')
+      if (projectId === null) throw new Error('Project ID not found.')
 
       token = (await Notifications.getDevicePushTokenAsync()).data
+
+      if (token === null) throw new Error('Failed to retrieve device push token.')
     } catch (error) {
-      console.error('Failed to get push token:', error)
+      throw new Error(
+        `Failed to get push token: ${
+          error instanceof Error ? error.message : 'An unexpected error occurred'
+        }`
+      )
     }
   } else {
-    alert('Must use physical device for Push Notifications')
+    throw new Error('Push notifications require a physical device.')
   }
 
   return token

@@ -4,7 +4,7 @@ export const useNavigationReady = (navigation: NavigationProp<any>) => {
   return async(): Promise<void> => {
     let attempts = 0
     while (attempts < 10) {
-      if (navigation.isReady() !== null) {
+      if (navigation.isReady() === true) {
         return
       }
       await new Promise(resolve => setTimeout(resolve, 500))
