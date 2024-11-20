@@ -19,6 +19,7 @@ interface useResponseDonationRequestReturnType {
   handleAcceptRequest: () => Promise<void>;
   handleIgnore: () => void;
   formatDateTime: (dateTime: string) => string;
+  isRequestAccepted: boolean;
 }
 
 interface FetchResponse {
@@ -28,6 +29,7 @@ interface FetchResponse {
 
 export const useResponseDonationRequest = (): useResponseDonationRequestReturnType => {
   const navigation = useNavigation<NavigationProp<any>>()
+  const [isRequestAccepted, setIsRequestAccepted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fetchClient = useFetchClient()
@@ -54,12 +56,13 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     try {
       const response: FetchResponse = await fetchClient.post('/donations/accept', requestPayload)
 
-      if (response.status !== 200) {
+      if (response.status === 200) {
+        setIsRequestAccepted(true)
+        navigation.navigate(SCREENS.POSTS)
+      } else {
         const errorMessage = `Error: ${response.status} ${response.statusText ?? 'Unknown error'}`
         throw new Error(errorMessage)
       }
-
-      navigation.navigate(SCREENS.POSTS)
     } catch (error) {
       const errorMessage = error instanceof Error && typeof error.message === 'string'
         ? error.message
@@ -76,8 +79,9 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
   }
 
   return {
-    bloodRequest,
+    isRequestAccepted,
     isLoading,
+    bloodRequest,
     error,
     handleAcceptRequest,
     handleIgnore,
