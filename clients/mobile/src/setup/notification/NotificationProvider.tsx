@@ -10,10 +10,7 @@ import { RootStackParamList } from '../navigation/navigationTypes'
 
 const NOTIFICATION_TO_SCREEN_MAP: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
   bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW },
-  donorAcceptRequest: {
-    screen: SCREENS.DONAR_RESPONSE,
-    getParams: (data) => ({ notificationData: data })
-  }
+  donorAcceptRequest: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
 }
 
 export const NotificationContext = createContext<NotificationContextType>(initialNotificationState)
@@ -25,11 +22,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   useEffect(() => {
     let isMounted = true
-    try {
-      void checkInitialNotification(isMounted)
-    } catch (error) {
-
-    }
+    try { void checkInitialNotification(isMounted) } catch (error) {}
 
     const foregroundListener = Notifications.addNotificationReceivedListener(notification => {
       const data = parseJsonData<NotificationData>(notification.request.content.data.payload)
@@ -51,10 +44,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   }, [navigation])
 
-  const isNotificationValid = (
-    response: Notifications.NotificationResponse | null,
-    isMounted: boolean
-  ): boolean => {
+  const isNotificationValid = (response: Notifications.NotificationResponse | null, isMounted: boolean): boolean => {
     return (
       Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0 &&
       response?.notification.request.identifier !== null &&
@@ -62,9 +52,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     )
   }
 
-  const handleNotificationNavigation = (
-    response: Notifications.NotificationResponse | null
-  ) => {
+  const handleNotificationNavigation = (response: Notifications.NotificationResponse | null) => {
     if (response === null) return
 
     const { type } = response.notification.request.content.data
