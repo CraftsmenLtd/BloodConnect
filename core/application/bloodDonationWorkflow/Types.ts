@@ -41,6 +41,17 @@ export interface DonorRoutingAttributes {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
+  neededBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyType;
+  city: string;
+  location: string;
+  geohash: string;
+  donationDateTime: string;
+  contactNumber: string;
+  patientName: string;
+  transportationInfo: string;
+  shortDescription: string;
 }
 
 export interface StepFunctionInput {
@@ -53,13 +64,13 @@ export interface StepFunctionInput {
   urgencyLevel: UrgencyType;
   geohash: string;
   city: string;
-  seekerName?: string;
-  patientName?: string;
-  location?: string;
-  contactNumber?: string;
-  transportationInfo?: string;
-  shortDescription?: string;
-  message?: string;
+  seekerName: string;
+  patientName: string;
+  location: string;
+  contactNumber: string;
+  transportationInfo: string;
+  shortDescription: string;
+  message: string;
   retryCount: number;
 }
 

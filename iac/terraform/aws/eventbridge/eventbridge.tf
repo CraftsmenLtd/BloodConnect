@@ -13,7 +13,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
     filter_criteria {
       filter {
         pattern = jsonencode({
-          "eventName" : ["INSERT"],
+          "eventName" : ["INSERT", "MODIFY"],
           "dynamodb" : {
             "NewImage" : {
               "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
@@ -26,7 +26,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   }
 
   target_parameters {
-    input_template = "{\n \"PK\": \"<$.dynamodb.NewImage.PK.S>\",\n \"SK\": \"<$.dynamodb.NewImage.SK.S>\"\n}"
+    input_template = "{ \"PK\": \"<$.dynamodb.NewImage.PK.S>\", \"SK\": \"<$.dynamodb.NewImage.SK.S>\", \"neededBloodGroup\": \"<$.dynamodb.NewImage.neededBloodGroup.S>\", \"bloodQuantity\": \"<$.dynamodb.NewImage.bloodQuantity.N>\", \"city\": \"<$.dynamodb.NewImage.city.S>\", \"urgencyLevel\": \"<$.dynamodb.NewImage.urgencyLevel.S>\", \"createdAt\": \"<$.dynamodb.NewImage.createdAt.S>\", \"geohash\": \"<$.dynamodb.NewImage.geohash.S>\", \"location\": \"<$.dynamodb.NewImage.location.S>\", \"donationDateTime\": \"<$.dynamodb.NewImage.donationDateTime.S>\", \"patientName\": \"<$.dynamodb.NewImage.patientName.S>\", \"contactNumber\": \"<$.dynamodb.NewImage.contactNumber.S>\", \"shortDescription\": \"<$.dynamodb.NewImage.shortDescription.S>\", \"transportationInfo\": \"<$.dynamodb.NewImage.transportationInfo.S>\"}"
   }
 
   log_configuration {

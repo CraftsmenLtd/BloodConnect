@@ -5,8 +5,7 @@ import {
   DonationDTO,
   DonationStatus,
   DonorSearchDTO,
-  AcceptedDonationDTO,
-  UrgencyLevel
+  AcceptedDonationDTO
 } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import Repository from '../models/policies/repositories/Repository'
@@ -37,6 +36,7 @@ import {
   AcceptedDonationFields
 } from '../models/dbModels/AcceptDonationModel'
 import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
+import { getBloodRequestMessage } from './BloodDonationMessages'
 
 export class BloodDonationService {
   async createBloodDonation(
@@ -112,10 +112,7 @@ export class BloodDonationService {
 
     try {
       const queryResult = await repository.query(query)
-      if (
-        queryResult.items.length >=
-        THROTTLING_LIMITS.BLOOD_REQUEST.MAX_REQUESTS_PER_DAY
-      ) {
+      if (queryResult.items.length >= THROTTLING_LIMITS.BLOOD_REQUEST.MAX_REQUESTS_PER_DAY) {
         throw new ThrottlingError(
           THROTTLING_LIMITS.BLOOD_REQUEST.ERROR_MESSAGE,
           GENERIC_CODES.TOO_MANY_REQUESTS
@@ -163,10 +160,7 @@ export class BloodDonationService {
         throw new Error('Item not found.')
       }
 
-      if (
-        item?.status !== undefined &&
-        item.status === DonationStatus.COMPLETED
-      ) {
+      if (item?.status !== undefined && item.status === DonationStatus.COMPLETED) {
         throw new Error("You can't update a completed request")
       }
 
@@ -202,71 +196,87 @@ export class BloodDonationService {
 
   async routeDonorRequest(
     donorRoutingAttributes: DonorRoutingAttributes,
-    bloodDonationRepository: Repository<DonationDTO>,
-    stepFunctionModel: StepFunctionModel,
+    queueSource: string,
+    userProfile: UserDetailsDTO,
     donorSearchRepository: Repository<DonorSearchDTO>,
-    userRepository: Repository<UserDetailsDTO>
+    stepFunctionModel: StepFunctionModel
   ): Promise<string> {
     try {
       const { seekerId, requestPostId, createdAt } = donorRoutingAttributes
-      const bloodDonationItem = await bloodDonationRepository.getItem(
-        `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
-        `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
-      )
-      if (bloodDonationItem === null) {
-        return 'Item not found.'
-      }
-      if (bloodDonationItem.status === DonationStatus.COMPLETED || bloodDonationItem.status === DonationStatus.EXPIRED) {
-        return 'You can\'t update the donation request'
-      }
 
       const donorSearchItem = await donorSearchRepository.getItem(
         `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
         `${DONOR_SEARCH_PK_PREFIX}#${createdAt}#${requestPostId}`
       )
+
       if (donorSearchItem === null) {
-        await donorSearchRepository.create(bloodDonationItem)
+        await donorSearchRepository.create({
+          id: generateUniqueID(),
+          ...donorRoutingAttributes,
+          status: DonationStatus.PENDING,
+          retryCount: 0
+        })
       } else if (donorSearchItem.status === DonationStatus.COMPLETED) {
-        return 'Donor search is completed'
+        if (
+          queueSource === process.env.DONOR_SEARCH_QUEUE_ARN &&
+          donorRoutingAttributes.bloodQuantity > donorSearchItem.bloodQuantity
+        ) {
+          const updateData: Partial<DonorSearchDTO> = {
+            ...donorRoutingAttributes,
+            id: requestPostId,
+            status: DonationStatus.PENDING,
+            retryCount: 0
+          }
+          await donorSearchRepository.update(updateData)
+        } else {
+          return 'Donor search is completed'
+        }
       }
 
       const retryCount = donorSearchItem?.retryCount ?? 0
       const updateData: Partial<DonorSearchDTO> = {
-        ...bloodDonationItem,
+        ...donorRoutingAttributes,
         id: requestPostId,
         retryCount: retryCount + 1
       }
 
       if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
-        updateData.status = DonationStatus.EXPIRED
+        updateData.status = DonationStatus.COMPLETED
         await donorSearchRepository.update(updateData)
-        return 'The donor search process expired after the maximum retry limit is reached.'
+        return 'The donor search process completed after the maximum retry limit is reached.'
       }
 
       await donorSearchRepository.update(updateData)
 
-      const seekerName = await this.getSeekerName(userRepository, seekerId)
       const stepFunctionInput: StepFunctionInput = {
         seekerId,
         requestPostId,
         createdAt,
-        donationDateTime: bloodDonationItem.donationDateTime,
-        neededBloodGroup: bloodDonationItem.neededBloodGroup,
-        bloodQuantity: bloodDonationItem.bloodQuantity,
-        urgencyLevel: bloodDonationItem.urgencyLevel,
-        geohash: bloodDonationItem.geohash,
-        seekerName,
-        patientName: bloodDonationItem.patientName,
-        location: bloodDonationItem.location,
-        contactNumber: bloodDonationItem.contactNumber,
-        transportationInfo: bloodDonationItem.transportationInfo,
-        shortDescription: bloodDonationItem.shortDescription,
-        city: bloodDonationItem.city,
+        donationDateTime: donorRoutingAttributes.donationDateTime,
+        neededBloodGroup: donorRoutingAttributes.neededBloodGroup,
+        bloodQuantity: donorRoutingAttributes.bloodQuantity,
+        urgencyLevel: donorRoutingAttributes.urgencyLevel,
+        geohash: donorRoutingAttributes.geohash,
+        seekerName: userProfile.name,
+        patientName: donorRoutingAttributes.patientName ?? '',
+        location: donorRoutingAttributes.location,
+        contactNumber: donorRoutingAttributes.contactNumber,
+        transportationInfo: donorRoutingAttributes.transportationInfo ?? '',
+        shortDescription: donorRoutingAttributes.shortDescription ?? '',
+        city: donorRoutingAttributes.city,
         retryCount: retryCount + 1,
-        message: `${bloodDonationItem.urgencyLevel === UrgencyLevel.URGENT ? 'Urgent ' : ''}${bloodDonationItem.neededBloodGroup} needed | ${bloodDonationItem.shortDescription}`
+        message: getBloodRequestMessage(
+          donorRoutingAttributes.urgencyLevel,
+          donorRoutingAttributes.neededBloodGroup,
+          donorRoutingAttributes.shortDescription ?? ''
+        )
       }
 
-      await stepFunctionModel.startExecution(stepFunctionInput, `${requestPostId}-${bloodDonationItem.city}-(${bloodDonationItem.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`)
+      await stepFunctionModel.startExecution(
+        stepFunctionInput,
+        `${requestPostId}-${donorRoutingAttributes.city}-(${donorRoutingAttributes.neededBloodGroup
+        })-${Math.floor(Date.now() / 1000)}`
+      )
       return 'We have updated your request and initiated the donor search process.'
     } catch (error) {
       throw new BloodDonationOperationError(
@@ -276,28 +286,13 @@ export class BloodDonationService {
     }
   }
 
-  private async getSeekerName(
-    userRepository: Repository<UserDetailsDTO, Record<string, unknown>>,
-    seekerId: string
-  ): Promise<string> {
-    const userProfile = await userRepository.getItem(
-      `USER#${seekerId}`,
-      'PROFILE'
-    )
-    if (userProfile === null) {
-      throw new Error('Seeker not found.')
-    }
-    return userProfile.name
-  }
-
   async updateDonationStatus(
     donationStatusManagerAttributes: DonationStatusManagerAttributes,
     bloodDonationRepository: Repository<DonationDTO>,
     acceptDonationRepository: Repository<AcceptedDonationDTO>
   ): Promise<string> {
     try {
-      const { seekerId, requestPostId, createdAt } =
-        donationStatusManagerAttributes
+      const { seekerId, requestPostId, createdAt } = donationStatusManagerAttributes
       const bloodReqItem = await bloodDonationRepository.getItem(
         `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
         `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
