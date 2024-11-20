@@ -1,4 +1,5 @@
 import { HttpClient } from '../../setup/clients/HttpClient'
+import { ProfileError } from '../../utility/errors'
 
 export interface UserProfile {
   bloodGroup?: string;
@@ -42,9 +43,11 @@ export const checkUserProfile = async(httpClient: HttpClient): Promise<UserProfi
       }
     }
 
-    return null
+    throw new ProfileError('Failed to get user profile data')
   } catch (error) {
-    console.error('Failed to fetch user profile:', error)
-    return null
+    if (error instanceof ProfileError) {
+      throw error
+    }
+    throw new ProfileError(error instanceof Error ? error.message : 'Unknown error occurred')
   }
 }

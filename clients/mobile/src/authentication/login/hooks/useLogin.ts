@@ -9,6 +9,7 @@ import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { checkUserProfile } from '../../../userWorkflow/services/userProfileService'
+import { ProfileError } from '../../../utility/errors'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -80,8 +81,12 @@ export const useLogin = (): any => {
           }]
         })
       )
-    } catch (profileError) {
-      console.error('Error checking profile:', profileError)
+    } catch (error) {
+      if (error instanceof ProfileError) {
+        setSocialLoginError('Unable to check profile. Please try again.')
+      } else {
+        setSocialLoginError('An unexpected error occurred.')
+      }
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
