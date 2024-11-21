@@ -1,10 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import Profile from '../../userWorkflow/Profile'
 import React from 'react'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import HomeScreen from '../../userWorkflow/HomeScreen'
 import DonationPosts from '../../donationWorkflow/donationPosts/DonationPosts'
 import MyActivityTab from '../../userWorkflow/MyActivityTab'
+import Account from '../../userWorkflow/Accounts'
 
 const Tab = createBottomTabNavigator()
 
@@ -32,11 +32,11 @@ const BottomNavigation = () => {
           <Ionicons name="analytics-outline" color={color} size={size} />
         )
       }} />
-      <Tab.Screen name='Profile' component={Profile} options={{
-        headerTitle: 'Profile',
+      <Tab.Screen name='Account' component={Account} options={{
+        headerTitle: 'Account',
         headerShown: true,
         tabBarIcon: ({ color, size }) => (
-          <Ionicons name="person-outline" color={color} size={size} />
+          <MaterialIcons name='person' color={color} size={size} />
         )
       }} />
 
