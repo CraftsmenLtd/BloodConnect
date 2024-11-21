@@ -6,6 +6,8 @@ import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationT
 import { loginUser, googleLogin, facebookLogin } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
+import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
+import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -20,6 +22,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useLogin = (): any => {
+  const fetchClient = useFetchClient()
   const auth = useAuth()
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
@@ -44,6 +47,7 @@ export const useLogin = (): any => {
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
         auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -63,8 +67,19 @@ export const useLogin = (): any => {
 
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
-      await googleLogin()
-      navigation.navigate(SCREENS.PROFILE)
+      const isGoogleSignedIn = await googleLogin()
+      if (isGoogleSignedIn) {
+        auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+          })
+        )
+      } else {
+        setSocialLoginError('Google login failed. Please try again.')
+      }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
     }
@@ -72,8 +87,19 @@ export const useLogin = (): any => {
 
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
-      await facebookLogin()
-      navigation.navigate(SCREENS.PROFILE)
+      const isFacebookSignedIn = await facebookLogin()
+      if (isFacebookSignedIn) {
+        auth?.setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+          })
+        )
+      } else {
+        setSocialLoginError('Facebook login failed. Please try again.')
+      }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Facebook.')
     }

@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
-import HomeScreen from '../../userWorkflow/HomeScreen'
 import DonationPosts from '../../donationWorkflow/donationPosts/DonationPosts'
 import MyActivityTab from '../../userWorkflow/MyActivityTab'
+import { SCREENS } from '../constant/screens'
 import Account from '../../userWorkflow/Accounts'
 
 const Tab = createBottomTabNavigator()
@@ -11,21 +11,14 @@ const Tab = createBottomTabNavigator()
 const BottomNavigation = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name='Home' component={HomeScreen} options={{
-        headerTitle: 'Home',
-        headerShown: true,
-        tabBarIcon: ({ color, size }) => (
-          <Ionicons name="home-outline" color={color} size={size} />
-        )
-      }} />
-      <Tab.Screen name='Posts' component={DonationPosts} options={{
+      <Tab.Screen name={SCREENS.POSTS} component={DonationPosts} options={{
         headerTitle: 'Posts',
         headerShown: true,
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="document-text-outline" color={color} size={size} />
         )
       }} />
-      <Tab.Screen name='MyActivity' component={MyActivityTab} options={{
+      <Tab.Screen name={SCREENS.MY_ACTIVITY} component={MyActivityTab} options={{
         headerTitle: 'My Activity',
         headerShown: true,
         tabBarIcon: ({ color, size }) => (
