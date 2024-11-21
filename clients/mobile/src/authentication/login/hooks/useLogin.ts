@@ -8,6 +8,8 @@ import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
+import { checkUserProfile } from '../../../userWorkflow/services/userProfileService'
+import { ProfileError } from '../../../utility/errors'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -24,7 +26,9 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 export const useLogin = (): any => {
   const fetchClient = useFetchClient()
   const auth = useAuth()
-  const [loading, setLoading] = useState(false)
+  const [loginLoading, setLoginLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [facebookLoading, setFacebookLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
   const [loginCredential, setLoginCredential] = useState<LoginCredential>(
     initializeState<LoginCredential>(Object.keys(validationRules) as Array<keyof LoginCredential>, '')
@@ -43,7 +47,7 @@ export const useLogin = (): any => {
 
   const handleLogin = async(): Promise<void> => {
     try {
-      setLoading(true)
+      setLoginLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
         auth?.setIsAuthenticated(true)
@@ -56,58 +60,83 @@ export const useLogin = (): any => {
         )
       } else {
         setLoginError('User is not confirmed. Please verify your email.')
-        setLoading(false)
+        setLoginLoading(false)
       }
     } catch (error) {
       setLoginError('Invalid Email or Password.')
     } finally {
-      setLoading(false)
+      setLoginLoading(false)
+    }
+  }
+
+  const checkProfileAndNavigate = async(): Promise<void> => {
+    try {
+      const userProfile = await checkUserProfile(fetchClient)
+      const hasProfile = Boolean(userProfile?.bloodGroup)
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{
+            name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO
+          }]
+        })
+      )
+    } catch (error) {
+      if (error instanceof ProfileError) {
+        setSocialLoginError('Unable to check profile. Please try again.')
+      } else {
+        setSocialLoginError('An unexpected error occurred.')
+      }
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+        })
+      )
     }
   }
 
   const handleGoogleSignIn = async(): Promise<void> => {
     try {
+      setGoogleLoading(true)
       const isGoogleSignedIn = await googleLogin()
       if (isGoogleSignedIn) {
         auth?.setIsAuthenticated(true)
         registerUserDeviceForNotification(fetchClient)
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
-          })
-        )
+        await checkProfileAndNavigate()
       } else {
         setSocialLoginError('Google login failed. Please try again.')
       }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Google.')
+    } finally {
+      setGoogleLoading(false)
     }
   }
 
   const handleFacebookSignIn = async(): Promise<void> => {
     try {
+      setFacebookLoading(true)
       const isFacebookSignedIn = await facebookLogin()
       if (isFacebookSignedIn) {
         auth?.setIsAuthenticated(true)
         registerUserDeviceForNotification(fetchClient)
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
-          })
-        )
+        await checkProfileAndNavigate()
       } else {
         setSocialLoginError('Facebook login failed. Please try again.')
       }
     } catch (error) {
       setSocialLoginError('Failed to sign in with Facebook.')
+    } finally {
+      setFacebookLoading(false)
     }
   }
 
   return {
     loginError,
-    loading,
+    loginLoading,
+    googleLoading,
+    facebookLoading,
     loginCredential,
     handleInputChange,
     isPasswordVisible,
