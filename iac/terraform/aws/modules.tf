@@ -9,9 +9,10 @@ module "user" {
 }
 
 module "blood_donation" {
-  source             = "./donation"
-  environment        = var.environment
-  dynamodb_table_arn = module.database.dynamodb_table_arn
+  source                  = "./donation"
+  environment             = var.environment
+  dynamodb_table_arn      = module.database.dynamodb_table_arn
+  push_notification_queue = module.notification.push_notification_queue
 }
 
 module "web_client" {

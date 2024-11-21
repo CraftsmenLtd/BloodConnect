@@ -25,5 +25,5 @@ variable "api_gateway_execution_arn" {
 }
 
 variable "push_notification_queue" {
-  description = "ARN of the notification SQS queue"
+  description = "Push notification SQS queue"
 }

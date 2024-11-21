@@ -35,6 +35,15 @@ locals {
         ]
         resources = [var.dynamodb_table_arn]
       }
+    ],
+    sqs_policy = [
+      {
+        sid = "SqsPolicy"
+        actions = [
+          "sqs:SendMessage"
+        ]
+        resources = [var.push_notification_queue.arn]
+      }
     ]
   }
 }

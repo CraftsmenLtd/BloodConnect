@@ -132,6 +132,20 @@ export class BloodDonationService {
     }
   }
 
+  async getDonationRequest(
+    seekerId: string, requestPostId: string, createdAt: string,
+    bloodDonationRepository: Repository<DonationDTO>
+  ): Promise<DonationDTO> {
+    const item = await bloodDonationRepository.getItem(
+      `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
+      `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
+    )
+    if (item === null) {
+      throw new Error('Item not found.')
+    }
+    return item
+  }
+
   async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
     bloodDonationRepository: Repository<DonationDTO>
@@ -329,8 +343,7 @@ export class BloodDonationService {
       return 'More donors are needed to fulfill the blood quantity.'
     } catch (error) {
       throw new BloodDonationOperationError(
-        `Failed to check donor numbers: ${
-          error instanceof Error ? error.message : 'Unknown error'
+        `Failed to check donor numbers: ${error instanceof Error ? error.message : 'Unknown error'
         }`,
         GENERIC_CODES.ERROR
       )

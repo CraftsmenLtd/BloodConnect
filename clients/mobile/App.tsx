@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler'
 import React, { useEffect, useState } from 'react'
-import { BackHandler, ToastAndroid } from 'react-native'
+import { BackHandler, ToastAndroid, LogBox } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from './src/setup/theme/context/ThemeContext'
@@ -10,6 +10,8 @@ import { awsCognitoConfiguration } from './src/setup/config/cognito'
 import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
 import * as Notifications from 'expo-notifications'
+
+LogBox.ignoreAllLogs(true)
 
 Amplify.configure(awsCognitoConfiguration)
 

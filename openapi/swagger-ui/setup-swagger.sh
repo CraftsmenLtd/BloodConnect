@@ -44,3 +44,4 @@ fi
 echo "Writing to .env file..."
 echo "API_GATEWAY_ID=$API_GATEWAY_ID" > ./openapi/swagger-ui/.env
 echo "ID_TOKEN=$ID_TOKEN" >> ./openapi/swagger-ui/.env
+echo "BRANCH_NAME=$BRANCH_NAME" >> ./openapi/swagger-ui/.env

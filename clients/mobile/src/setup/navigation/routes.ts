@@ -7,6 +7,7 @@ import SetPassword from '../../authentication/setPassword/UI/SetPassword'
 import CreateBloodRequest from '../../donationWorkflow/createUpdateDonation/Donation'
 import BottomNavigation from './BottomNavigation'
 import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPassword'
+import Account from '../../userWorkflow/Accounts'
 import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
 import Detail from '../../userWorkflow/Detail'
@@ -59,6 +60,12 @@ export const routes = [
   {
     name: SCREENS.BOTTOM_TABS,
     component: BottomNavigation,
+    options: { headerShown: false },
+    protected: true
+  },
+  {
+    name: SCREENS.ACCOUNT,
+    component: Account,
     options: { headerShown: false },
     protected: true
   },
