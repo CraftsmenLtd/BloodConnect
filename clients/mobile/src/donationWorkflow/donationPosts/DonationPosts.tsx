@@ -16,7 +16,7 @@ interface DonationPostsProps {
 }
 const DonationPosts = ({ navigation }: DonationPostsProps) => {
   const styles = createStyles(useTheme())
-  const { errorMessage, createPost, updatePost, donationPosts, loading } = useDonationPosts()
+  const { errorMessage, createPost, updatePost, donationPosts, loading, viewDetailsHandler } = useDonationPosts()
 
   return (
     <View style={styles.container}>
@@ -26,7 +26,7 @@ const DonationPosts = ({ navigation }: DonationPostsProps) => {
         buttonLabel="Create Post"
         onButtonPress={createPost}
       />
-      <Posts errorMessage={errorMessage} loading={loading} donationPosts={donationPosts} updatePost={updatePost} />
+      <Posts errorMessage={errorMessage} loading={loading} donationPosts={donationPosts} updatePost={updatePost} detailHandler={viewDetailsHandler} />
     </View>
   )
 }
@@ -34,7 +34,8 @@ const DonationPosts = ({ navigation }: DonationPostsProps) => {
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
     container: {
-      flex: 1
+      flex: 1,
+      marginBottom: 48
     }
   })
 }

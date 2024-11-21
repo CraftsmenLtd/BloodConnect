@@ -9,8 +9,8 @@ import { initialNotificationState, NotificationData } from './NotificationData'
 import { RootStackParamList } from '../navigation/navigationTypes'
 
 const NOTIFICATION_TO_SCREEN_MAP: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
-  bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW },
-  donorAcceptRequest: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
+  BLOOD_REQ_POST: { screen: SCREENS.BLOOD_REQUEST_PREVIEW },
+  DONOR_REQ_ACCEPT: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
 }
 
 export const NotificationContext = createContext<NotificationContextType>(initialNotificationState)
@@ -54,7 +54,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   const handleNotificationNavigation = (response: Notifications.NotificationResponse | null) => {
     if (response === null) return
-    console.log('response.notification.request.content.data', response.notification.request.content.data)
     const { type } = response.notification.request.content.data
     const mapping = NOTIFICATION_TO_SCREEN_MAP[type]
 
@@ -63,7 +62,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       const params = getParams !== undefined ? getParams(parseJsonData<Record<string, unknown>>(response.notification.request.content.data.payload)) : undefined
       navigation.navigate(screen, params as any)
     } else {
-      throw new Error('Unknown notificaiton.')
+      throw new Error('Unknown notification.')
     }
   }
 

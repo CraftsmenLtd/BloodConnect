@@ -16,17 +16,16 @@ export const useMyActivity = (): any => {
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const fetchClient = useFetchClient()
   const [donationPosts, setDonationPosts] = useState<DonationData[]>([])
+  const [currentPage, setCurrentPage] = useState('My Posts')
   const [errorMessage, setErrorMessage] = useState('')
-  const [loading, setLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => { void fetchData(fetchClient, setDonationPosts, setErrorMessage, setLoading) }, [])
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      setDonationPosts([])
-      setErrorMessage('')
-      setLoading(true)
       void fetchData(fetchClient, setDonationPosts, setErrorMessage, setLoading)
     })
-
     return unsubscribe
   }, [navigation])
 
@@ -42,12 +41,19 @@ export const useMyActivity = (): any => {
     navigation.navigate(SCREENS.DETAILPOST, { data: donationData })
   }
 
+  const handleTabPress = (tab: string): void => {
+    setCurrentPage(tab)
+  }
+
   return {
     errorMessage,
+    currentPage,
+    setCurrentPage,
     createPost,
     updatePost,
     donationPosts,
     loading,
-    detailHandler
+    detailHandler,
+    handleTabPress
   }
 }

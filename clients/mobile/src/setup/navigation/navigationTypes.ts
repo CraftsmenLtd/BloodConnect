@@ -22,8 +22,9 @@ export type RootStackParamList = {
   [SCREENS.POSTS]: undefined;
   [SCREENS.BLOOD_REQUEST_PREVIEW]: undefined;
   [SCREENS.DETAILPOST]: { data: DonationData };
-  [SCREENS.DONAR_PROFILE]: undefined;
+  [SCREENS.DONAR_PROFILE]: { donarId: string };
   [SCREENS.DONAR_RESPONSE]: { notificationData: DonorResponseNotification };
+  [SCREENS.MY_ACTIVITY]: undefined;
 }
 
 export type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.WELCOME>
@@ -38,6 +39,7 @@ export type BottomTabsNavigationProp = StackNavigationProp<RootStackParamList, S
 export type RequestPreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
 export type DetailPostScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DETAILPOST>
 export type DonarProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONAR_PROFILE>
+export type MyActivityScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.MY_ACTIVITY>
 
 export type DonarResponseScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONAR_RESPONSE>
 export type OtpScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.OTP>
@@ -49,3 +51,4 @@ export type DonationScreenRouteProp = RouteProp<RootStackParamList, SCREENS.DONA
 export type RequestPreviewRouteProp = RouteProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
 export type DetailPostRouteProp = RouteProp<RootStackParamList, SCREENS.DETAILPOST>
 export type DonarResponseRouteProp = RouteProp<RootStackParamList, SCREENS.DONAR_RESPONSE>
+export type DonarProfileRouteProp = RouteProp<RootStackParamList, SCREENS.DONAR_PROFILE>

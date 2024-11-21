@@ -35,7 +35,9 @@ export const useDonationPosts = (): any => {
   const updatePost = (donationData: DonationData): void => {
     navigation.navigate(SCREENS.DONATION, { data: { ...donationData }, isUpdating: true })
   }
-  const viewDetailsHandler = (): void => {}
+  const viewDetailsHandler = (donationData): void => {
+    navigation.navigate(SCREENS.DETAILPOST, { data: donationData })
+  }
 
   return {
     errorMessage,

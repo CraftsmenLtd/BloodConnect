@@ -15,6 +15,7 @@ interface PostCardProps {
   showTransportInfo?: boolean;
   showPatientName?: boolean;
   showButton?: boolean;
+  showHeader?: boolean;
 }
 
 interface DropdownPosition {
@@ -22,7 +23,7 @@ interface DropdownPosition {
   right: number;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailHandler, showContactNumber = false, showDescription = false, showTransportInfo = false, showPatientName = false, showButton = true }) => {
+export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailHandler, showContactNumber = false, showDescription = false, showTransportInfo = false, showPatientName = false, showButton = true, showHeader = true }) => {
   const styles = createStyles(useTheme())
   const [showDropdown, setShowDropdown] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
@@ -77,52 +78,53 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
   return (
     <>
       <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View>
-            <Text style={styles.userName}>{post.patientName}</Text>
-            <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
-          </View>
-
-          <View style={styles.menuContainer}>
-            <View ref={iconRef} collapsable={false}>
-              <TouchableOpacity
-                onPress={handleToggleDropdown}
-                style={styles.iconContainer}
-              >
-                <Ionicons name="ellipsis-vertical" size={20} color="gray" />
-              </TouchableOpacity>
+        {showHeader &&
+          <View style={styles.cardHeader}>
+            <View>
+              <Text style={styles.userName}>{post.patientName}</Text>
+              <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
             </View>
 
-            <Modal
-              visible={showDropdown}
-              transparent={true}
-              animationType="none"
-              onRequestClose={handleCloseDropdown}
-            >
-              <TouchableWithoutFeedback onPress={handleCloseDropdown}>
-                <View style={styles.modalOverlay}>
-                  <TouchableWithoutFeedback>
-                    <View style={getDropdownStyle()}>
-                      <TouchableOpacity
-                        onPress={handleUpdate}
-                        style={styles.dropdownItem}
-                      >
-                        <Text style={styles.dropdownText}>Update</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={handleCloseDropdown}
-                        style={styles.dropdownItem}
-                      >
-                        <Text style={styles.dropdownText}>Delete</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </TouchableWithoutFeedback>
-                </View>
-              </TouchableWithoutFeedback>
-            </Modal>
-          </View>
-        </View>
+            <View style={styles.menuContainer}>
+              <View ref={iconRef} collapsable={false}>
+                <TouchableOpacity
+                  onPress={handleToggleDropdown}
+                  style={styles.iconContainer}
+                >
+                  <Ionicons name="ellipsis-vertical" size={20} color="gray" />
+                </TouchableOpacity>
+              </View>
 
+              <Modal
+                visible={showDropdown}
+                transparent={true}
+                animationType="none"
+                onRequestClose={handleCloseDropdown}
+              >
+                <TouchableWithoutFeedback onPress={handleCloseDropdown}>
+                  <View style={styles.modalOverlay}>
+                    <TouchableWithoutFeedback>
+                      <View style={getDropdownStyle()}>
+                        <TouchableOpacity
+                          onPress={handleUpdate}
+                          style={styles.dropdownItem}
+                        >
+                          <Text style={styles.dropdownText}>Update</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={handleCloseDropdown}
+                          style={styles.dropdownItem}
+                        >
+                          <Text style={styles.dropdownText}>Delete</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </View>
+                </TouchableWithoutFeedback>
+              </Modal>
+            </View>
+          </View>
+        }
         <View style={styles.bloodInfoWrapper}>
           <View style={styles.bloodInfo}>
             <View style={styles.bloodRow}>
@@ -187,14 +189,16 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
           }
 
         </View>
-        <Text>Post Update</Text>
-        <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
-          <Ionicons name='time-outline' size={20} color="gray" />
-          <View>
-            <Text>Number of Donars</Text>
-            <Text>3 donars accepted your request</Text>
+        {Array.isArray(post.acceptedDonors) && post.acceptedDonors.length > 0 && <>
+          <Text>Post Update</Text>
+          <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
+            <Ionicons name='time-outline' size={20} color="gray" />
+            <View>
+              <Text>Number of Donors</Text>
+              <Text>{post.acceptedDonors.length} donors accepted your request</Text>
+            </View>
           </View>
-        </View>
+        </>}
         {showButton && <View style={styles.buttonContainer}>
           <Button
             text='View details'
@@ -207,7 +211,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
       </View>
 
     </>
-
   )
 }
 

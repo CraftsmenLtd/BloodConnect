@@ -1,71 +1,67 @@
 import React, { useState } from 'react'
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import ToggleTabs from '../components/tab/ToggleTabs'
-import { MyPosts } from './MyPosts'
 import { DetailPostRouteProp, DetailPostScreenNavigationProp } from '../setup/navigation/navigationTypes'
 import PostCard from '../components/donation/PostCard'
 import { SCREENS } from '../setup/constant/screens'
+import { DonationData } from './useMyActivity'
 
 interface DetailProps {
   navigation: DetailPostScreenNavigationProp;
   route: DetailPostRouteProp;
 }
 
-const donorsData = [
-  { id: 1, name: 'Sufi Ahmed', status: '3 times blood donor', image: 'https://avatar.iran.liara.run/public/boy?username=Ash' },
-  { id: 2, name: 'Diponkar', status: 'New blood donor', image: 'https://avatar.iran.liara.run/public/girl?username=Ash' },
-  { id: 3, name: 'Sultan Khaja', status: 'New blood donor', image: 'https://avatar.iran.liara.run/public/boy?username=uno' }
-]
-
 const Detail = ({ navigation, route }: DetailProps) => {
-  const { data } = route.params
-  const [currentPage, setCurrentPage] = useState('Detail')
+  const { data, tab } = route.params
+  const [currentPage, setCurrentPage] = useState(tab ?? 'Detail')
 
   const handlePressDonor = (donor) => {
-    navigation.navigate(SCREENS.DONAR_PROFILE)
-    console.log('Donor pressed:', donor)
+    navigation.navigate(SCREENS.DONAR_PROFILE, { donarId: donor.donorId })
+  }
+
+  const handleTabPress = (tab: string): void => {
+    setCurrentPage(tab)
+  }
+  const updatePost = (donationData: DonationData): void => {
+    navigation.navigate(SCREENS.DONATION, { data: { ...donationData }, isUpdating: true })
   }
 
   return (
     <View style={{ flex: 1 }}>
       <View style={{ paddingHorizontal: 8, backgroundColor: 'white', paddingVertical: 16, marginBottom: -18.5 }}>
         <ToggleTabs
-          tab1='Detail'
-          tab2='Responses'
-          onMyPostsPress={() => { setCurrentPage('Detail') }}
-          onMyResponsesPress={() => { setCurrentPage('Responses') }}
+          tabs={['Detail', 'Responses']}
+          onTabPress={handleTabPress}
+          initialActiveTab={tab}
         />
       </View>
       {currentPage === 'Detail'
         ? (
           <View style={{ marginTop: 20, backgroundColor: 'white', flex: 1 }}>
-            {/* <Text>HELOO</Text> */}
-            <PostCard post={data} showContactNumber showDescription showPatientName showTransportInfo showButton={false} />
-            {/* <MyPosts /> */}
+            <PostCard post={data} showContactNumber showDescription showPatientName showTransportInfo showButton={false} updateHandler={updatePost} />
           </View>
-          )
+        )
         : (
           <View style={{ marginTop: 20, backgroundColor: 'white' }}>
             <View style={styles.container}>
               <Text style={styles.title}>Donor who responded</Text>
               <FlatList
-                data={donorsData}
-                keyExtractor={(item) => item.id.toString()}
+                data={data.acceptedDonors}
+                keyExtractor={(item) => item.donorId}
                 renderItem={({ item }) => (
                   <TouchableOpacity style={styles.donorItem} onPress={() => { handlePressDonor(item) }}>
-                    <Image source={{ uri: item.image }} style={styles.avatar} />
+                    <Image source={{ uri: 'https://avatar.iran.liara.run/public/boy?username=Ash' }} style={styles.avatar} />
                     <View style={styles.textContainer}>
-                      <Text style={styles.name}>{item.name}</Text>
-                      <Text style={styles.status}>{item.status}</Text>
+                      <Text style={styles.name}>{item.donorName}</Text>
+                      <Text style={styles.status}>New blood donor</Text>
                     </View>
                     <Text style={styles.arrow}>&gt;</Text>
                   </TouchableOpacity>
                 )}
               />
             </View>
-            {/* <Text>Showing Responses content</Text> */}
           </View>
-          )}
+        )}
     </View>
   )
 }

@@ -1,8 +1,27 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import useDonarProfile from './useDonarProfile'
 
 const DonarProfile = () => {
+  const { donarProfile, loading, error, handleCall } = useDonarProfile()
+
+  if (loading === true) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#FF5252" />
+      </View>
+    )
+  }
+
+  if (error !== null) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
@@ -13,40 +32,83 @@ const DonarProfile = () => {
           style={styles.profileImage}
         />
         <View style={styles.bloodGroupBadge}>
-          <Text style={styles.bloodGroupText}>A+(ve)</Text>
+          <Text style={styles.bloodGroupText}>
+            {donarProfile.bloodGroup}(ve)
+          </Text>
         </View>
       </View>
 
-      <Text style={styles.name}>Sufi Ahmed</Text>
-      <Text style={styles.location}>Mohakhali DOHS, Dhaka</Text>
+      <Text style={styles.name}>{donarProfile.name}</Text>
+      <View>
+        {Array.isArray(donarProfile.preferredDonationLocations) &&
+          donarProfile.preferredDonationLocations.length > 0 &&
+          donarProfile.preferredDonationLocations.map((location, index) => (
+            <View style={styles.locationRow} key={index}>
+              <Ionicons name="location-sharp" size={16} color="#FF5252" />
+              <Text style={styles.locationText}>
+                {location.area}, {location.city}
+              </Text>
+            </View>
+          ))}
+      </View>
 
       <View style={styles.detailsRow}>
-        <Text style={styles.detailsText}>Age: 29</Text>
+        <Text style={styles.detailsText}>Age: {donarProfile.age}</Text>
         <Text style={styles.detailsSeparator}>•</Text>
-        <Text style={styles.detailsText}>Weight: 82</Text>
+        <Text style={styles.detailsText}>Weight: {donarProfile.weight}</Text>
         <Text style={styles.detailsSeparator}>•</Text>
-        <Text style={styles.detailsText}>Height: 5'6"</Text>
+        <Text style={styles.detailsText}>Height: {donarProfile.height}"</Text>
       </View>
 
       <View style={{ width: '100%' }}>
-        <TouchableOpacity style={styles.callButton}>
-          <Ionicons name="phone-call" size={20} color="white" />
+        <TouchableOpacity style={styles.callButton} onPress={() => handleCall(donarProfile.phoneNumbers)}>
           <Text style={styles.callButtonText}>Call now</Text>
         </TouchableOpacity>
       </View>
-
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff'
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 4
+  },
+  locationText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#333'
+  },
+  loaderText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#666'
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff'
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#FF5252',
+    textAlign: 'center'
+  },
   container: {
     borderTopColor: 'black',
     borderTopWidth: 1,
     paddingTop: 32,
     paddingBottom: 16,
     paddingHorizontal: 16,
-    // flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center'
   },
