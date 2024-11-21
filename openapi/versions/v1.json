@@ -52,6 +52,9 @@
     "/users": {
       "$ref": "./../paths/users/users.json"
     },
+    "/donors/{donorId}": {
+      "$ref": "./../paths/donors/donors.json"
+    },
     "/donations": {
       "$ref": "./../paths/donations/donations.json"
     },
