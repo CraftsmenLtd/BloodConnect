@@ -186,7 +186,16 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   acceptButton: {
     backgroundColor: theme.colors.primary,
-    flex: 1
+    flex: 1,
+    fontWeight: 'bold',
+    borderRadius: 48
+  },
+  acceptButtonText: {
+    fontSize: theme.typography.fontSize,
+    textAlign: 'center',
+    fontFamily: theme.typography.fontFamily,
+    lineHeight: 24,
+    letterSpacing: 0.15
   }
 })
 
