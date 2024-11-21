@@ -13,19 +13,13 @@ const MyActivityTab = () => {
           onTabPress={handleTabPress}
           initialActiveTab="My Posts"
         />
-        {/* <ToggleTabs
-          tab1='My Posts'
-          tab2='My Responses'
-          onMyPostsPress={() => { setCurrentPage('posts') }}
-          onMyResponsesPress={() => { setCurrentPage('responses') }}
-        /> */}
       </View>
       {currentPage === 'My Posts'
         ? <View style={{ marginTop: 20 }}>
           <MyPosts />
         </View>
-        : <View style={{ marginTop: 20 }}>
-          <Text>Showing My Responses content</Text>
+        : <View style={{ marginTop: 20, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: 'red', fontSize: 16, fontWeight: 'bold' }}>This feature is coming soon.</Text>
         </View>
       }
     </View>

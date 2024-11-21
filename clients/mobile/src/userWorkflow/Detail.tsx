@@ -42,25 +42,34 @@ const Detail = ({ navigation, route }: DetailProps) => {
           </View>
         )
         : (
-          <View style={{ marginTop: 20, backgroundColor: 'white' }}>
-            <View style={styles.container}>
-              <Text style={styles.title}>Donor who responded</Text>
-              <FlatList
-                data={data.acceptedDonors}
-                keyExtractor={(item) => item.donorId}
-                renderItem={({ item }) => (
-                  <TouchableOpacity style={styles.donorItem} onPress={() => { handlePressDonor(item) }}>
-                    <Image source={{ uri: 'https://avatar.iran.liara.run/public/boy?username=Ash' }} style={styles.avatar} />
-                    <View style={styles.textContainer}>
-                      <Text style={styles.name}>{item.donorName}</Text>
-                      <Text style={styles.status}>New blood donor</Text>
-                    </View>
-                    <Text style={styles.arrow}>&gt;</Text>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
-          </View>
+          <>
+            {Array.isArray(data.acceptedDonors) && data.acceptedDonors.length > 0
+              ? <View style={{ marginTop: 20, backgroundColor: 'white', flex: 1 }}>
+                <View style={styles.container}>
+                  <Text style={styles.title}>Donor who responded</Text>
+                  <FlatList
+                    data={data.acceptedDonors}
+                    keyExtractor={(item) => item.donorId}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity style={styles.donorItem} onPress={() => { handlePressDonor(item) }}>
+                        <Image source={{ uri: 'https://avatar.iran.liara.run/public/boy?username=Ash' }} style={styles.avatar} />
+                        <View style={styles.textContainer}>
+                          <Text style={styles.name}>{item.donorName}</Text>
+                          <Text style={styles.status}>New blood donor</Text>
+                        </View>
+                        <Text style={styles.arrow}>&gt;</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View>
+              </View>
+              :
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, textAlign: 'center', color: 'red', fontWeight: 'bold' }}>No donors found for this request.</Text>
+
+              </View>
+            }
+          </>
         )}
     </View>
   )
