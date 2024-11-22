@@ -1,25 +1,25 @@
+import { NotificationType } from '../../../commons/dto/NotificationDTO'
 import { UserDTO } from '../../../commons/dto/UserDTO'
 
 export interface NotificationAttributes {
   userId: string;
   title: string;
   body: string;
-  type: string;
+  type: NotificationType;
   payload: Record<string, unknown>;
 }
 
-export interface NotificationPayload {
+export interface BloodPostNotificationAttributes {
+  userId: string;
   title: string;
   body: string;
-  data?: Record<string, unknown>;
+  type: NotificationType;
+  payload: {
+    requestPostId: string;
+    [key: string]: unknown;
+  };
 }
 
-export interface NotificationQueueMessage {
-  userId: string;
-  snsEndpointArn: string;
-  type: string;
-  payload: NotificationPayload;
-}
 export interface StoreNotificationEndPoint extends UserDTO {
   snsEndpointArn: string;
   updatedAt?: string;

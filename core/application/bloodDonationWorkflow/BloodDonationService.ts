@@ -143,6 +143,35 @@ export class BloodDonationService {
     return item
   }
 
+  async getAcceptedDonorList(
+    seekerId: string,
+    requestPostId: string,
+    acceptDonationRepository: Repository<AcceptedDonationDTO>
+  ): Promise<AcceptedDonationDTO[]> {
+    const acceptDonationModel = new AcceptDonationRequestModel()
+    const primaryIndex = acceptDonationModel.getPrimaryIndex()
+    const query: QueryInput<AcceptedDonationFields> = {
+      partitionKeyCondition: {
+        attributeName: primaryIndex.partitionKey,
+        operator: QueryConditionOperator.EQUALS,
+        attributeValue: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`
+      }
+    }
+
+    if (primaryIndex.sortKey != null) {
+      query.sortKeyCondition = {
+        attributeName: primaryIndex.sortKey,
+        operator: QueryConditionOperator.BEGINS_WITH,
+        attributeValue: `ACCEPTED#${requestPostId}`
+      }
+    }
+    const queryResult = await acceptDonationRepository.query(
+      query as QueryInput<Record<string, unknown>>
+    )
+    const acceptedItems = queryResult.items ?? []
+    return acceptedItems
+  }
+
   async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
     bloodDonationRepository: Repository<DonationDTO>

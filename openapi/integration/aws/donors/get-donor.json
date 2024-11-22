@@ -12,12 +12,12 @@
         "method.response.header.Access-Control-Allow-Origin": "'*'"
       },
       "responseTemplates": {
-        "application/json": "#set($inputRoot = $input.path('$'))\n#if($inputRoot.Items.size() == 0)\n{\n \"success\": false,\n \"message\": \"No user data found\"\n}\n#set($context.responseOverride.status = 404)\n#else\n{\n \"success\": true,\n \"data\": {\n #foreach($item in $inputRoot.Items)\n #if($item.SK.S == 'PROFILE')\n \"phoneNumbers\": [\n #foreach($phone in $item.phoneNumbers.L)\n \"$phone.S\"#if($foreach.hasNext),#end\n #end\n ],\n \"name\": \"$item.name.S\",\n \"bloodGroup\": \"$item.bloodGroup.S\",\n \"age\": $item.age.N,\n #if($item.height && $item.height.S != \"\")\n \"height\": $item.height.S,\n #end\n #if($item.weight && $item.weight.S != \"\")\n \"weight\": $item.weight.S,\n #end\n \"gender\": \"$item.gender.S\"\n #end\n #end\n },\n \"message\": \"Donor data retrieved successfully\"\n}\n#end\n"
+        "application/json": "#set($inputRoot = $input.path('$'))\n#if($inputRoot.Items.size() == 0)\n{\n \"success\": false,\n \"message\": \"No user data found\"\n}\n#set($context.responseOverride.status = 404)\n#else\n{\n \"success\": true,\n \"data\": {\n #foreach($item in $inputRoot.Items)\n #if($item.SK.S == 'PROFILE')\n \"phoneNumbers\": [\n #foreach($phone in $item.phoneNumbers.L)\n \"$phone.S\"#if($foreach.hasNext),#end\n #end\n ],\n \"donorName\": \"$item.name.S\",\n \"bloodGroup\": \"$item.bloodGroup.S\",\n \"age\": $item.age.N,\n #if($item.height && $item.height.S != \"\")\n \"height\": $item.height.S,\n #end\n #if($item.weight && $item.weight.S != \"\")\n \"weight\": $item.weight.S,\n #end\n \"gender\": \"$item.gender.S\",\n #end\n #end\n \"preferredDonationLocations\": [\n #set($isFirstIter = true)\n #foreach($location in $inputRoot.Items)\n #if($location.SK.S.startsWith('LOCATION#'))\n #if(!$isFirstIter),#end\n #set($isFirstIter = false)\n {\n \"area\": \"$location.area.S\",\n \"city\": \"Dhaka\"\n }\n #end\n #end\n ]\n },\n \"message\": \"Donor data retrieved successfully\"\n}\n#end\n"
       }
     }
   },
   "requestTemplates": {
-    "application/json": "{\n \"TableName\": \"${DYNAMODB_TABLE_NAME}\",\n \"KeyConditionExpression\": \"PK = :PK AND SK = :SK\",\n \"ExpressionAttributeValues\": {\n \":PK\": {\"S\": \"USER#$input.params('donorId')\"},\n \":SK\": {\"S\": \"PROFILE\"}\n },\n \"ScanIndexForward\": false\n}"
+    "application/json": "{\n \"TableName\": \"${DYNAMODB_TABLE_NAME}\",\n \"KeyConditionExpression\": \"PK = :pk\",\n \"ExpressionAttributeValues\": {\n \":pk\": {\n \"S\": \"USER#$input.params('donorId')\"\n }\n }\n}"
   },
   "passthroughBehavior": "never"
 }

@@ -74,7 +74,7 @@ describe('acceptDonationRequestLambda', () => {
         userId: mockEvent.seekerId,
         title: 'Donor Found',
         body: `${mockDonationDTO.neededBloodGroup} blood found`,
-        type: 'donorAcceptRequest',
+        type: 'REQ_ACCEPTED',
         payload: expect.objectContaining({
           donorId: mockEvent.donorId,
           donorName: mockUserDetailsWithStringId.name,
