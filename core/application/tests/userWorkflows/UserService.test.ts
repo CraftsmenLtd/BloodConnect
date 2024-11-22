@@ -33,7 +33,7 @@ describe('UserService Tests', () => {
   const mockUserAttributes = {
     email: 'ebrahim@example.com',
     name: 'Ebrahim',
-    phone_number: '1234567890',
+    phoneNumbers: ['+8801834567890', '+8801755567822'],
     createdAt: '2023-09-16T12:00:00.000Z'
   }
 

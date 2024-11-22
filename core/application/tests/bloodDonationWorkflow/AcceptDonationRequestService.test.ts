@@ -3,7 +3,6 @@ import { AcceptedDonationDTO, DonationStatus } from '../../../../commons/dto/Don
 import { acceptDonationRequestAttributesMock } from '../../tests/mocks/mockDonationAcceptanceData'
 import Repository from '../../../application/models/policies/repositories/Repository'
 import { mockRepository } from '../mocks/mockRepositories'
-import { mockUserDetailsWithStringId } from '../mocks/mockUserData'
 
 jest.mock('../../models/policies/repositories/Repository')
 
@@ -20,9 +19,7 @@ describe('AcceptDonationService', () => {
   it('should return "The request is complete" if the acceptance record already exists (ConditionalCheckFailedException)', async() => {
     const mockQueryResult: AcceptedDonationDTO = {
       ...acceptDonationRequestAttributesMock,
-      status: DonationStatus.PENDING,
-      name: 'test name',
-      phoneNumbers: []
+      status: DonationStatus.PENDING
     }
 
     mockAcceptDonationRepository.getItem.mockResolvedValueOnce(mockQueryResult)
@@ -30,7 +27,6 @@ describe('AcceptDonationService', () => {
 
     const result = await acceptDonationService.createAcceptanceRecord(
       acceptDonationRequestAttributesMock,
-      mockUserDetailsWithStringId,
       mockAcceptDonationRepository
     )
     expect(result).toBe('The request is complete')

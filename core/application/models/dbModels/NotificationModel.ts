@@ -36,7 +36,6 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
     const { PK, SK, ...remainingNotificationFields } = dbFields
     const userId = PK.replace('NOTIFICATION#', '')
     const parts = SK.split('#')
-    console.log(' notification todto parts ----- ', parts)
     return {
       ...remainingNotificationFields,
       userId,

@@ -11,5 +11,8 @@ export const acceptDonationRequestAttributesMock: AcceptDonationRequestAttribute
   seekerId: 'testSeekerId456',
   createdAt: getISODate(),
   requestPostId: 'testRequestPostId789',
-  acceptanceTime: getISODate(1)
+  acceptanceTime: getISODate(1),
+  status: 'PENDING',
+  donorName: 'Ebrahim',
+  phoneNumbers: ['+8801834567890', '+8801755567822']
 }
