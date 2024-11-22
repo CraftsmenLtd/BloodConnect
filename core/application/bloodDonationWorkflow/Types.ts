@@ -87,6 +87,9 @@ export interface AcceptDonationRequestAttributes {
   createdAt: string;
   requestPostId: string;
   acceptanceTime: string;
+  status: string;
+  donorName: string;
+  phoneNumbers: string[];
 }
 
 export interface DonationStatusManagerAttributes {

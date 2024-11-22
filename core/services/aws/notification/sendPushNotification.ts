@@ -39,6 +39,9 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     : {}
 
   const { userId } = body
+  if (body.type === undefined) {
+    body.type = 'COMMON'
+  }
 
   const cachedUserSnsEndpointArn = userDeviceToSnsEndpointMap.get(userId)
   if (cachedUserSnsEndpointArn === undefined) {

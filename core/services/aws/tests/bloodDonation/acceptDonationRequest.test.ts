@@ -64,9 +64,16 @@ describe('acceptDonationRequestLambda', () => {
         seekerId: mockEvent.seekerId,
         createdAt: mockEvent.createdAt,
         requestPostId: mockEvent.requestPostId,
+        donationDateTime: mockDonationDTO.donationDateTime,
+        location: mockDonationDTO.location,
+        neededBloodGroup: mockDonationDTO.neededBloodGroup,
+        shortDescription: mockDonationDTO.shortDescription,
+        status: mockDonationDTO.status,
+        urgencyLevel: mockDonationDTO.urgencyLevel,
+        phoneNumbers: mockUserDetailsWithStringId.phoneNumbers,
+        donorName: mockEvent.donorName,
         acceptanceTime: mockEvent.acceptanceTime
       },
-      mockUserDetailsWithStringId,
       expect.anything()
     )
     expect(mockNotificationService.prototype.sendNotification).toHaveBeenCalledWith(
@@ -74,7 +81,7 @@ describe('acceptDonationRequestLambda', () => {
         userId: mockEvent.seekerId,
         title: 'Donor Found',
         body: `${mockDonationDTO.neededBloodGroup} blood found`,
-        type: 'donorAcceptRequest',
+        type: 'REQ_ACCEPTED',
         payload: expect.objectContaining({
           donorId: mockEvent.donorId,
           donorName: mockUserDetailsWithStringId.name,

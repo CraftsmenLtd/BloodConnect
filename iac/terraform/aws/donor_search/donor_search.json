@@ -189,7 +189,7 @@
                 "userId.$": "$.donorId",
                 "title": "Blood Request",
                 "body.$": "$.message",
-                "type": "bloodRequestPost",
+                "type": "BLOOD_REQ_POST",
                 "payload": {
                   "seekerId.$": "$.seekerId",
                   "requestPostId.$": "$.requestPostId",
