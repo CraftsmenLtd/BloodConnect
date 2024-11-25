@@ -7,9 +7,12 @@ import SetPassword from '../../authentication/setPassword/UI/SetPassword'
 import CreateBloodRequest from '../../donationWorkflow/createUpdateDonation/Donation'
 import BottomNavigation from './BottomNavigation'
 import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPassword'
-import Account from '../../userWorkflow/Accounts'
 import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
+import { Account } from '../../userWorkflow/account/UI/Account'
+import { Component } from 'react'
+import Profile from '../../userWorkflow/Profile'
+
 export const routes = [
   {
     name: SCREENS.WELCOME,
@@ -62,7 +65,7 @@ export const routes = [
   {
     name: SCREENS.ACCOUNT,
     component: Account,
-    options: { headerShown: false },
+    options: { headerShown: true, headerTitle: 'Account' },
     protected: true
   },
   {
@@ -75,6 +78,12 @@ export const routes = [
     name: SCREENS.BLOOD_REQUEST_PREVIEW,
     component: ResponseDonationRequest,
     options: { headerShown: true, headerTitle: 'Blood Request' },
+    protected: true
+  },
+  {
+    name: SCREENS.PROFILE,
+    component: Profile,
+    options: { headerShown: true, headerTitle: 'Account' },
     protected: true
   }
 ]
