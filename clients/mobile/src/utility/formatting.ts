@@ -9,14 +9,6 @@ export const formattedDate = (date: string | Date, showOnlyDate = false): string
   })
 }
 
-export const formatteTime = (time: string): string => {
-  return new Date(time).toLocaleTimeString(undefined, {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true
-  })
-}
-
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const trimmedPhoneNumber = phoneNumber.trim()
 
