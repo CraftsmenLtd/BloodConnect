@@ -19,9 +19,10 @@ locals {
         local.policies.sqs_policy
       )
       env_variables = {
-        DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
-        STEP_FUNCTION_ARN   = aws_sfn_state_machine.donor_search_state_machine.arn
-        MAX_RETRY_COUNT     = var.donor_search_max_retry_count
+        DYNAMODB_TABLE_NAME    = split("/", var.dynamodb_table_arn)[1]
+        STEP_FUNCTION_ARN      = aws_sfn_state_machine.donor_search_state_machine.arn
+        MAX_RETRY_COUNT        = var.donor_search_max_retry_count
+        DONOR_SEARCH_QUEUE_ARN = aws_sqs_queue.donor_search_queue.arn
       }
     },
     donation-status-manager = {

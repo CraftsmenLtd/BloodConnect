@@ -1,6 +1,6 @@
 import { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import { DonorRoutingAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import { DonationStatusManagerAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import {
   AcceptedDonationDTO,
   DonationDTO
@@ -45,7 +45,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     throw new Error('Missing PK or SK in the DynamoDB record')
   }
 
-  const donorRoutingAttributes: DonorRoutingAttributes = {
+  const donorRoutingAttributes: DonationStatusManagerAttributes = {
     seekerId: primaryIndex.split('#')[1],
     requestPostId: secondaryIndex.split('#')[1],
     createdAt

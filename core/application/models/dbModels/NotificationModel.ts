@@ -1,8 +1,10 @@
-import { NotificationDTO } from '../../../../commons/dto/NotificationDTO'
+import { NotificationDTO, NotificationType } from '../../../../commons/dto/NotificationDTO'
 import { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
+export const NOTIFICATION_PK_PREFIX = 'NOTIFICATION'
+
 export type NotificationFields = Omit<NotificationDTO, 'id' | 'userId' | 'type'> & HasTimeLog & {
-  PK: `NOTIFICATION#${string}`;
+  PK: `${typeof NOTIFICATION_PK_PREFIX}#${string}`;
   SK: `${string}`;
 }
 
@@ -21,19 +23,9 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
 
   fromDto(notificationDto: NotificationDTO): NotificationFields {
     const { id, userId, type, payload, ...remainingNotificationFields } = notificationDto
-    if (type === 'bloodRequestPost' && payload !== undefined && payload.requestPostId !== undefined) {
-      return {
-        PK: `NOTIFICATION#${userId}`,
-        SK: `BLOODREQPOST#${payload.requestPostId}`,
-        ...remainingNotificationFields,
-        payload,
-        createdAt: new Date().toISOString()
-      }
-    }
-
     return {
-      PK: `NOTIFICATION#${userId}`,
-      SK: `COMMON#${id}`,
+      PK: `${NOTIFICATION_PK_PREFIX}#${userId}`,
+      SK: `${type}#${id}`,
       ...remainingNotificationFields,
       payload,
       createdAt: new Date().toISOString()
@@ -43,21 +35,12 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
   toDto(dbFields: NotificationFields): NotificationDTO {
     const { PK, SK, ...remainingNotificationFields } = dbFields
     const userId = PK.replace('NOTIFICATION#', '')
-    if (SK.startsWith('BLOODREQPOST#')) {
-      const parts = SK.split('#')
-      return {
-        ...remainingNotificationFields,
-        userId,
-        type: 'bloodRequestPost',
-        id: parts[2]
-      }
-    }
-
+    const parts = SK.split('#')
     return {
       ...remainingNotificationFields,
       userId,
-      type: 'common',
-      id: SK.replace('COMMON#', '')
+      type: parts[1] as NotificationType,
+      id: parts[2]
     }
   }
 }
