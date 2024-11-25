@@ -10,7 +10,14 @@ export const startExecutionInputMock: StepFunctionInput = {
   geohash: 'wvjytdh',
   city: 'Dhaka',
   createdAt: '2024-10-20T15:00:00.324Z',
-  retryCount: 1
+  patientName: 'John Doe',
+  location: 'Baridhara, Dhaka',
+  transportationInfo: 'transportation Info',
+  shortDescription: 'short Description',
+  retryCount: 1,
+  seekerName: 'test name',
+  contactNumber: '01712345678',
+  message: 'test message'
 }
 
 export const startExecutionOutputMock: StepFunctionExecutionAttributes = {

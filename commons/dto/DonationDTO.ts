@@ -36,19 +36,29 @@ export type DonationDTO = DTO & HasIdentifier & {
 
 export type DonorSearchDTO = DTO & HasIdentifier & {
   seekerId: string;
+  neededBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyType;
+  city: string;
+  location: string;
+  geohash: string;
+  donationDateTime: string;
   status: DonationStatus;
-  createdAt?: string;
-  retryCount?: number;
+  contactNumber: string;
+  patientName?: string;
+  transportationInfo?: string;
+  shortDescription?: string;
+  createdAt: string;
+  retryCount: number;
 }
 
 type BaseAcceptedDonationDTO = {
   donorId: string;
   requestPostId: string;
   acceptanceTime: string;
+  status: string;
   seekerId: string;
   createdAt: string;
-  name: string;
-  phoneNumbers: string[];
 }
 
 export type AcceptedDonationDTO = BaseAcceptedDonationDTO & DTO & {

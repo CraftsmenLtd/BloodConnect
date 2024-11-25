@@ -41,17 +41,19 @@
   },
   "servers": [
     {
-      "url": "https://API_GATEWAY_ID.execute-api.ap-south-1.amazonaws.com/api",
-      "description": "localstack"
+      "url": "https://BRANCH_NAME.bloodconnect.net/api"
     },
     {
-      "url": "https://${ENVIRONMENT}.bloodconnect.net/${API_VERSION}",
-      "description": "${ENVIRONMENT}"
+      "url": "https://API_GATEWAY_ID.execute-api.ap-south-1.amazonaws.com/api",
+      "description": "localstack"
     }
   ],
   "paths": {
     "/users": {
       "$ref": "./../paths/users/users.json"
+    },
+    "/donors/{donorId}": {
+      "$ref": "./../paths/donors/donors.json"
     },
     "/donations": {
       "$ref": "./../paths/donations/donations.json"

@@ -4,27 +4,13 @@ import { DTO, HasIdentifier } from './DTOCommon'
 export type UserDTO = DTO & HasIdentifier & {
   email: string;
   name: string;
-  phone: string;
+  phoneNumbers: string[];
 }
 
 export type Gender = 'male' | 'female' | 'other'
 export type AvailableForDonation = 'yes' | 'no'
-export interface LocationDTO {
-  userId: string;
-  locationId: string;
-  area: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-  geohash: string;
-  createdAt: string;
-  bloodGroup: BloodGroup;
-  availableForDonation: AvailableForDonation;
-  lastVaccinatedDate: string;
-}
 
 export interface UserDetailsDTO extends UserDTO {
-  phoneNumbers: string[];
   bloodGroup: BloodGroup;
   lastDonationDate: string;
   height: number;
@@ -40,4 +26,18 @@ export interface UserDetailsDTO extends UserDTO {
   updatedAt?: string;
   deviceToken?: string;
   snsEndpointArn?: string;
+}
+
+export interface LocationDTO {
+  userId: string;
+  locationId: string;
+  area: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+  geohash: string;
+  createdAt: string;
+  bloodGroup: BloodGroup;
+  availableForDonation: AvailableForDonation;
+  lastVaccinatedDate: string;
 }

@@ -77,7 +77,7 @@ const AddPersonalInfo = () => {
               error={errors.locations}
               multiSelect={true}
               isRequired={true}
-              fetchOptions={async(searchText) => locationService.preferedLocationAutocomplete(searchText, personalInfo.city)}
+              fetchOptions={async (searchText) => locationService.preferredLocationAutocomplete(searchText, personalInfo.city)}
               extraInfo='Add minimim 1 area.'
             />
           </View>

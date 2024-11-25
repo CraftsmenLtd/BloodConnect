@@ -89,6 +89,7 @@ resource "aws_cloudfront_distribution" "cdn" {
       cookies {
         forward = "all"
       }
+      headers = ["Authorization"]
     }
   }
 

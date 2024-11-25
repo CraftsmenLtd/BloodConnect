@@ -1,9 +1,12 @@
 import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
+export const USER_PK_PREFIX = 'USER'
+export const USER_SK = 'PROFILE'
+
 export type UserFields = Omit<UserDetailsDTO, 'id' | 'registrationDate'> & HasTimeLog & {
-  PK: `USER#${string}`;
-  SK: 'PROFILE';
+  PK: `${typeof USER_PK_PREFIX}#${string}`;
+  SK: typeof USER_SK;
 }
 
 export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdapter<UserDetailsDTO, UserFields> {
@@ -19,11 +22,11 @@ export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdap
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(userDto: UserDetailsDTO): UserFields {
-    const { id, ...remainingUser } = userDto
+  fromDto(UserDetailsDTO: UserDetailsDTO): UserFields {
+    const { id, ...remainingUser } = UserDetailsDTO
     return {
-      PK: `USER#${typeof id === 'string' ? id : id.toString()}`,
-      SK: 'PROFILE',
+      PK: `${USER_PK_PREFIX}#${typeof id === 'string' ? id : id.toString()}`,
+      SK: USER_SK,
       ...remainingUser,
       createdAt: new Date().toISOString()
     }
@@ -31,6 +34,6 @@ export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdap
 
   toDto(dbFields: UserFields): UserDetailsDTO {
     const { PK, SK, ...remainingUserFields } = dbFields
-    return { ...remainingUserFields, id: PK.replace('USER#', '') }
+    return { ...remainingUserFields, id: PK.replace(`${USER_PK_PREFIX}#`, '') }
   }
 }

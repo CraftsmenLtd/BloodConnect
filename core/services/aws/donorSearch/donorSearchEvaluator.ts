@@ -3,6 +3,7 @@ interface DonorSearchInput {
   eligibleDonorsCount: number;
   totalDonorsToNotify: number;
   eligibleDonors: Array<{ PK: { S: string } }>;
+  seekerId: string;
 }
 
 interface DonorSearchOutput {
@@ -12,9 +13,11 @@ interface DonorSearchOutput {
 }
 
 async function donorSearchEvaluator(event: DonorSearchInput): Promise<DonorSearchOutput> {
-  const { geohash, eligibleDonorsCount, totalDonorsToNotify, eligibleDonors } = event
+  const { geohash, eligibleDonorsCount, totalDonorsToNotify, eligibleDonors, seekerId } = event
 
-  const userIds = Array.from(new Set(eligibleDonors.map(donor => donor.PK.S.split('#')[1])))
+  const userIds = Array.from(new Set(
+    eligibleDonors.map(donor => donor.PK.S.split('#')[1])
+  )).filter(userId => userId !== seekerId)
 
   if (eligibleDonorsCount >= totalDonorsToNotify) {
     return { action: 'EnoughDonorsFound', userIds }

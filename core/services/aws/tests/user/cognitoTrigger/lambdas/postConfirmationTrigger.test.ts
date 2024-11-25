@@ -62,7 +62,7 @@ describe('postConfirmationLambda Tests', () => {
       {
         email: mockEvent.request.userAttributes.email,
         name: mockEvent.request.userAttributes.name,
-        phone_number: mockEvent.request.userAttributes.phone_number
+        phoneNumbers: [mockEvent.request.userAttributes.phone_number]
       },
       mockDynamoDbTableOperations
     )
@@ -104,7 +104,7 @@ describe('postConfirmationLambda Tests', () => {
       {
         email: 'test@example.com',
         name: '',
-        phone_number: ''
+        phoneNumbers: ['']
       },
       mockDynamoDbTableOperations
     )
