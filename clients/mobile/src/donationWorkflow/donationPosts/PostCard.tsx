@@ -27,7 +27,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
     if (!showDropdown && (iconRef.current != null)) {
       iconRef.current.measureInWindow((_, pageY, __, height) => {
         const top = pageY + height
-        // Ensure dropdown doesn't go below screen
         const adjustedTop = Math.min(top, windowHeight - 100)
         setDropdownPosition({
           top: adjustedTop,
