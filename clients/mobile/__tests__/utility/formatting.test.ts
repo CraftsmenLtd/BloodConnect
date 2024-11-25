@@ -4,14 +4,14 @@ describe('Utility Functions', () => {
   describe('formattedDate', () => {
     describe('formattedDate', () => {
       test('should format date string correctly', () => {
-        const dateString = '2024-10-23T14:30:00Z' // This is in UTC
-        const expected = '10/23/2024, 2:30 PM' // Expected output in UTC
+        const dateString = '2024-10-23T14:30:00Z'
+        const expected = '10/23/2024, 2:30 PM'
         expect(formattedDate(dateString)).toBe(expected)
       })
 
       test('should format Date object correctly', () => {
-        const dateObject = new Date('2024-10-23T14:30:00Z') // This is in UTC
-        const expected = '10/23/2024, 2:30 PM' // Expected output in UTC
+        const dateObject = new Date('2024-10-23T14:30:00Z')
+        const expected = '10/23/2024, 2:30 PM'
         expect(formattedDate(dateObject)).toBe(expected)
       })
 
