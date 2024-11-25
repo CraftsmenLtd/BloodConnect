@@ -37,15 +37,9 @@ interface Post {
 }
 
 const Profile: React.FC<ProfileScreenProps> = ({ navigation }) => {
-// dummy data
 const badges: Badge[] = [
-  // { id: 1, icon: 'badge', label: 'Gold' },
-  // { id: 2, icon: 'badge', label: 'Star' },
-  // { id: 3, icon: 'badge', label: 'Medal' },
-];
 
 const achievements: Achievement[] = [
-  // { id: 1, icon: 'droplet', label: '3 times', subLabel: 'Blood donor' },
   { id: 2, icon: 'medkit', label: '5 times', subLabel: 'Platelet donor' },
   { id: 3, icon: 'globe', label: '3 cities', subLabel: 'Donated blood' },
   { id: 4, icon: 'star', label: '5 star rated', subLabel: 'Blood donor' },
@@ -67,7 +61,6 @@ const posts: Post[] = [
     urgent: false,
   },
 ];
-// dummy data--------------------------------
   const theme = useTheme()
   const auth = useAuth()
 
@@ -100,7 +93,6 @@ const posts: Post[] = [
         color={theme.colors.primary}
       />
     </View>
-      {/* Profile Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
@@ -111,7 +103,6 @@ const posts: Post[] = [
         </View>
       </View>
 
-      {/* Profile Info */}
       <View style={styles.profileInfo}>
         <Image source={{ uri: 'https://via.placeholder.com/100' }} style={styles.profileImage} />
         <Text style={styles.bloodGroup}>A+ (ve)</Text>
@@ -123,7 +114,6 @@ const posts: Post[] = [
         </TouchableOpacity>
       </View>
 
-      {/* Badges */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Badges</Text>
         <FlatList
@@ -139,7 +129,6 @@ const posts: Post[] = [
         />
       </View>
 
-      {/* Achievements */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Achievements</Text>
         <FlatList
@@ -156,7 +145,6 @@ const posts: Post[] = [
         />
       </View>
 
-      {/* Recent Posts */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Recent Posts</Text>
         {posts.map((post) => (
@@ -184,15 +172,8 @@ const posts: Post[] = [
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     padding: 20
   },
-  // title: {
-  //   fontSize: 24,
-  //   fontWeight: 'bold',
-  //   marginBottom: 20
-  // },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
