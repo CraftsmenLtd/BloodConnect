@@ -8,9 +8,11 @@ import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
+const RESEND_CODE_COUNTDOWN = 120
+
 export const useOtp = (): any => {
   const fetchClient = useFetchClient()
-  const auth = useAuth()
+  const { setIsAuthenticated } = useAuth()
   const navigation = useNavigation<OtpScreenNavigationProp>()
   const route = useRoute<OtpScreenRouteProp>()
   const { email, password, fromScreen } = route.params
@@ -18,18 +20,14 @@ export const useOtp = (): any => {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const [error, setError] = useState<string>('')
   const inputRefs = useRef<Array<TextInput | null>>([])
-  const [countdown, setCountdown] = useState<number | null>(60)
+  const [countdown, setCountdown] = useState<number | null>(RESEND_CODE_COUNTDOWN)
   const [isDisabled, setIsDisabled] = useState(false)
   const [countdownStarted, setCountdownStarted] = useState(false)
 
   useEffect(() => {
     if (countdown !== null && countdown > 0 && countdownStarted) {
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null))
-      }, 1000)
-      return () => {
-        clearInterval(timer)
-      }
+      const timer = setInterval(() => { setCountdown((prev) => (prev !== null ? prev - 1 : null)) }, 1000)
+      return () => { clearInterval(timer) }
     } else if (countdown === 0) {
       setIsDisabled(false)
       setCountdown(null)
@@ -50,16 +48,14 @@ export const useOtp = (): any => {
     }
   }
 
-  const isButtonDisabled = useMemo(() => {
-    return otp.join('').trim().length !== 6
-  }, [otp])
+  const isButtonDisabled = useMemo(() => otp.join('').trim().length !== 6, [otp])
 
   const handleRegister = async(): Promise<void> => {
-    const isSucessRegister = await submitOtp(email, otp.join(''))
-    if (isSucessRegister) {
+    const isRegistrationSuccessful = await submitOtp(email, otp.join(''))
+    if (isRegistrationSuccessful) {
       const isSignedIn = await loginUser(email, password)
       if (isSignedIn) {
-        auth?.setIsAuthenticated(true)
+        setIsAuthenticated(true)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -78,7 +74,7 @@ export const useOtp = (): any => {
     const nextStep = await resetPasswordHandler(email)
     switch (nextStep.resetPasswordStep) {
       case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
-        setCountdown(120)
+        setCountdown(RESEND_CODE_COUNTDOWN)
         setIsDisabled(true)
         setCountdownStarted(true)
         break
@@ -91,9 +87,9 @@ export const useOtp = (): any => {
   }
 
   const resendSignUpOtpHandler = async(): Promise<void> => {
-    const isResendCodeSucess = await resendSignUpOtp(email)
-    if (isResendCodeSucess) {
-      setCountdown(120)
+    const isResendCodeSuccessful = await resendSignUpOtp(email)
+    if (isResendCodeSuccessful) {
+      setCountdown(RESEND_CODE_COUNTDOWN)
       setIsDisabled(true)
       setCountdownStarted(true)
     }

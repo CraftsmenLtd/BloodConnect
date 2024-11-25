@@ -28,7 +28,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 
 export const useRegister = (): any => {
   const fetchClient = useFetchClient()
-  const auth = useAuth()
+  const { setIsAuthenticated } = useAuth()
   const navigation = useNavigation<RegisterScreenNavigationProp>()
   const [registerCredential, setRegisterCredential] = useState<RegisterCredential>(
     initializeState<RegisterCredential>(Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
@@ -72,44 +72,28 @@ export const useRegister = (): any => {
     })
   }
 
-  const handleGoogleSignIn = async(): Promise<void> => {
+  const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
     try {
-      const isGoogleSignedIn = await googleLogin()
-      if (isGoogleSignedIn) {
-        auth?.setIsAuthenticated(true)
-        registerUserDeviceForNotification(fetchClient)
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
-          })
-        )
-      } else {
-        setSocialLoginError('Google login failed. Please try again.')
-      }
+      await loginFunction()
+      setIsAuthenticated(true)
+      registerUserDeviceForNotification(fetchClient)
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+        })
+      )
     } catch (error) {
-      setSocialLoginError('Failed to sign in with Google.')
+      setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     }
   }
 
+  const handleGoogleSignIn = async(): Promise<void> => {
+    await handleSocialSignIn(googleLogin, 'Google')
+  }
+
   const handleFacebookSignIn = async(): Promise<void> => {
-    try {
-      const isFacebookSignedIn = await facebookLogin()
-      if (isFacebookSignedIn) {
-        auth?.setIsAuthenticated(true)
-        registerUserDeviceForNotification(fetchClient)
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
-          })
-        )
-      } else {
-        setSocialLoginError('Facebook login failed. Please try again.')
-      }
-    } catch (error) {
-      setSocialLoginError('Failed to sign in with Facebook.')
-    }
+    await handleSocialSignIn(facebookLogin, 'Facebook')
   }
 
   return {

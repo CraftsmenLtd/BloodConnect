@@ -127,21 +127,19 @@ export const loginUser = async(email: string, password: string): Promise<boolean
   }
 }
 
-export const googleLogin = async(): Promise<boolean> => {
+export const googleLogin = async(): Promise<void> => {
   try {
     await signInWithRedirect({ provider: 'Google' })
-    const session = await fetchSession()
-    return session.idToken.length > 0
+    await fetchSession()
   } catch (error) {
     throw new Error(`Error logging with google: ${error instanceof Error ? error.message : error}`)
   }
 }
 
-export const facebookLogin = async(): Promise<boolean> => {
+export const facebookLogin = async(): Promise<void> => {
   try {
     await signInWithRedirect({ provider: 'Facebook' })
-    const session = await fetchSession()
-    return session.idToken.length > 0
+    await fetchSession()
   } catch (error) {
     throw new Error(`Error logging with facebook: ${error instanceof Error ? error.message : error}`)
   }

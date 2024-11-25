@@ -23,7 +23,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 
 export const useLogin = (): any => {
   const fetchClient = useFetchClient()
-  const auth = useAuth()
+  const { setIsAuthenticated } = useAuth()
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
   const [loginCredential, setLoginCredential] = useState<LoginCredential>(
@@ -46,7 +46,7 @@ export const useLogin = (): any => {
       setLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
-        auth?.setIsAuthenticated(true)
+        setIsAuthenticated(true)
         registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
@@ -69,7 +69,7 @@ export const useLogin = (): any => {
     try {
       const isGoogleSignedIn = await googleLogin()
       if (isGoogleSignedIn) {
-        auth?.setIsAuthenticated(true)
+        setIsAuthenticated(true)
         registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
@@ -89,7 +89,7 @@ export const useLogin = (): any => {
     try {
       const isFacebookSignedIn = await facebookLogin()
       if (isFacebookSignedIn) {
-        auth?.setIsAuthenticated(true)
+        setIsAuthenticated(true)
         registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
