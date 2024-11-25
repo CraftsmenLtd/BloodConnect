@@ -37,7 +37,7 @@ const OTP = () => {
       <LinkWithText
         staticText="Didn’t get the code?"
         linkText=" Resend OTP"
-        onPress={() => { console.log('Resend OTP pressed') }}
+        onPress={() => {}}
       />
       <Button text='Submit' onPress={handleSubmit} disabled={isButtonDisabled} loading={loading} />
     </View>

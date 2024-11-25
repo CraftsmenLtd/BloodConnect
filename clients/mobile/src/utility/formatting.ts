@@ -1,4 +1,4 @@
-export const formatteDate = (date: string | Date): string => {
+export const formattedDate = (date: string | Date): string => {
   const dte = new Date(date)
   const formattedDate = dte.toLocaleString(undefined, {
     timeZone: 'UTC',

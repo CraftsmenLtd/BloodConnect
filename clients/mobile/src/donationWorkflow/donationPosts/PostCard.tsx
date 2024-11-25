@@ -77,7 +77,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
         </View>
       </View>
       <View style={styles.buttonContainer}>
-        <Button text='View details' buttonStyle={styles.buttonStyle} textStyle={styles.textStyle} onPress={() => { console.log('Not Implemented') }} />
+        <Button text='View details' buttonStyle={styles.buttonStyle} textStyle={styles.textStyle} onPress={() => {}} />
       </View>
     </View>
   )
