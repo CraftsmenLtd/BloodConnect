@@ -1,4 +1,4 @@
-export const formatteDate = (date: string | Date, showOnlyDate = false): string => {
+export const formattedDate = (date: string | Date, showOnlyDate = false): string => {
   const dte = new Date(date)
 
   return dte.toLocaleString(undefined, {
@@ -6,14 +6,6 @@ export const formatteDate = (date: string | Date, showOnlyDate = false): string 
     month: '2-digit',
     day: '2-digit',
     ...(showOnlyDate ? {} : { hour: 'numeric', minute: '2-digit', hour12: true })
-  })
-}
-
-export const formatteTime = (time: string): string => {
-  return new Date(time).toLocaleTimeString(undefined, {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true
   })
 }
 

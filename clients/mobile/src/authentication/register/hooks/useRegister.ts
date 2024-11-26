@@ -5,7 +5,7 @@ import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import { googleLogin, facebookLogin } from '../../services/authService'
-import { formatPhoneNumber } from '../../../utility/formatte'
+import { formatPhoneNumber } from '../../../utility/formatting'
 import { useAuth } from '../../context/useAuth'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
@@ -20,7 +20,7 @@ export interface RegisterCredential {
   phoneNumber: string;
 }
 
-interface RegisterErrors extends RegisterCredential {}
+interface RegisterErrors extends RegisterCredential { }
 
 const validationRules: Record<CredentialKeys, ValidationRule[]> = {
   name: [validateRequired],

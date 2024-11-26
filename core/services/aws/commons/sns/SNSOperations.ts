@@ -24,6 +24,10 @@ export default class SNSOperations implements SNSModel {
   async publish(message: NotificationAttributes, snsEndpointArn: string): Promise<void> {
     try {
       const messagePayload = {
+        notification: {
+          title: message.title,
+          body: message.body
+        },
         data: {
           title: message.title,
           body: message.body,
