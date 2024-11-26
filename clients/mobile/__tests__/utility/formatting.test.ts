@@ -1,17 +1,17 @@
-import { formattedDate, formatPhoneNumber, formatErrorMessage } from '../../src/utility/formatting'
+import { formattedDate, formatPhoneNumber, formatErrorMessage, formatToTwoDecimalPlaces } from '../../src/utility/formatting'
 
 describe('Utility Functions', () => {
   describe('formattedDate', () => {
     describe('formattedDate', () => {
       test('should format date string correctly', () => {
-        const dateString = '2024-10-23T14:30:00Z' // This is in UTC
-        const expected = '10/23/2024, 2:30 PM' // Expected output in UTC
+        const dateString = '2024-10-23T14:30:00Z'
+        const expected = '10/23/2024, 2:30 PM'
         expect(formattedDate(dateString)).toBe(expected)
       })
 
       test('should format Date object correctly', () => {
-        const dateObject = new Date('2024-10-23T14:30:00Z') // This is in UTC
-        const expected = '10/23/2024, 2:30 PM' // Expected output in UTC
+        const dateObject = new Date('2024-10-23T14:30:00Z')
+        const expected = '10/23/2024, 2:30 PM'
         expect(formattedDate(dateObject)).toBe(expected)
       })
 
@@ -66,33 +66,72 @@ describe('Utility Functions', () => {
 
   describe('formatErrorMessage', () => {
     test('should return specific message for user already exists', () => {
-      const error = new Error('User already exists')
-      const expected = 'User already exists, Please Login.'
-      expect(formatErrorMessage(error)).toBe(expected)
+      const error = new Error('user already exists')
+      expect(formatErrorMessage(error)).toBe('User already exists, Please Login.')
     })
 
     test('should return specific message for network error', () => {
-      const error = new Error('Network error')
-      const expected = 'Please check your connection.'
-      expect(formatErrorMessage(error)).toBe(expected)
+      const error = new Error('network error')
+      expect(formatErrorMessage(error)).toBe('Please check your internet connection.')
     })
 
-    test('should return specific message for timeout error', () => {
-      const error = new Error('Request timeout')
-      const expected = 'Request timed out, Please try again later.'
-      expect(formatErrorMessage(error)).toBe(expected)
+    test('should return specific message for timeout', () => {
+      const error = new Error('timeout')
+      expect(formatErrorMessage(error)).toBe('Request timed out, please try again later.')
     })
 
-    test('should return a generic message for unexpected errors', () => {
+    test('should return specific message for invalid request body', () => {
+      const error = new Error('invalid request body')
+      expect(formatErrorMessage(error)).toBe('Please check your input and try again.')
+    })
+
+    test('should return generic message for unhandled error types', () => {
       const error = new Error('Some unexpected error')
-      const expected = 'An unexpected error occurred: Some unexpected error'
-      expect(formatErrorMessage(error)).toBe(expected)
+      expect(formatErrorMessage(error)).toBe('Something went wrong.')
     })
 
-    test('should return a message for unknown error types', () => {
-      const error = {}
-      const expected = 'An unknown error occurred.'
-      expect(formatErrorMessage(error)).toBe(expected)
+    test('should handle plain string errors', () => {
+      expect(formatErrorMessage('Plain string error')).toBe('Plain string error')
+    })
+
+    test('should handle object errors', () => {
+      const error = { message: 'Object error' }
+      expect(formatErrorMessage(error)).toBe('Error: {"message":"Object error"}')
+    })
+
+    test('should handle null/undefined errors', () => {
+      expect(formatErrorMessage(null)).toBe('An unknown error occurred.')
+      expect(formatErrorMessage(undefined)).toBe('An unknown error occurred.')
+    })
+  })
+
+  describe('formatToTwoDecimalPlaces', () => {
+    it('should format a valid numeric string to two decimal places', () => {
+      expect(formatToTwoDecimalPlaces('123.456')).toBe(123.46)
+    })
+
+    it('should return 0 for a non-numeric string', () => {
+      expect(formatToTwoDecimalPlaces('abc')).toBe(0)
+    })
+
+    it('should return 0 for an empty string', () => {
+      expect(formatToTwoDecimalPlaces('')).toBe(0)
+    })
+
+    it('should handle whole numbers by adding .00', () => {
+      expect(formatToTwoDecimalPlaces('100')).toBe(100.00)
+    })
+
+    it('should handle a number already at two decimal places without rounding', () => {
+      expect(formatToTwoDecimalPlaces('123.45')).toBe(123.45)
+    })
+
+    it('should round down if third decimal place is less than 5', () => {
+      expect(formatToTwoDecimalPlaces('123.454')).toBe(123.45)
+    })
+
+    it('should return 0 for NaN input like " " (whitespace)', () => {
+      expect(formatToTwoDecimalPlaces(' ')).toBe(0)
     })
   })
 })

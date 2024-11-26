@@ -39,10 +39,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     fontSize: theme.typography.fontSize
   },
   disabledButton: {
-    backgroundColor: theme.colors.grey,
-    opacity: 0.6
+    backgroundColor: theme.colors.primary,
+    opacity: 0.5
   },
   disabledText: {
-    color: theme.colors.lightGrey
+    color: theme.colors.white
   }
 })

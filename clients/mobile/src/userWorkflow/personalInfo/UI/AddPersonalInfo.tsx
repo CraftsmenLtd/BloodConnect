@@ -77,8 +77,8 @@ const AddPersonalInfo = () => {
               error={errors.locations}
               multiSelect={true}
               isRequired={true}
-              fetchOptions={async(searchText) => locationService.preferedLocationAutocomplete(searchText, personalInfo.city)}
-              extraInfo='Add minimim 1 area.'
+              fetchOptions={async(searchText) => locationService.preferredLocationAutocomplete(searchText, personalInfo.city)}
+              extraInfo='Add minimum 1 area.'
             />
           </View>
 
@@ -171,10 +171,7 @@ const AddPersonalInfo = () => {
           </View>
 
           <View
-            style={[
-              styles.fieldSpacing
-              // styles.termsContainer
-            ]}>
+            style={styles.fieldSpacing}>
             <TermsAndPrivacy
               name='acceptPolicy'
               isChecked={personalInfo.acceptPolicy}
@@ -233,11 +230,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   extraTopMargin: {
     marginTop: 10
   },
-  // termsContainer: {
-  //   backgroundColor: '#F8F9FA',
-  //   borderRadius: 8,
-  //   padding: 12
-  // },
   termsText: {
     fontSize: theme.typography.fontSize,
     flexWrap: 'wrap',

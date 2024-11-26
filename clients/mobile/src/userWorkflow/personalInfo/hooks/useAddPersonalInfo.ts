@@ -8,7 +8,7 @@ import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { addPersonalInfoHandler } from '../../services/userServices'
 import { LocationService } from '../../../LocationService/LocationService'
-import { formatErrorMessage, formatToTwoDecimalPlaces } from '../../../utility/formatte'
+import { formatErrorMessage, formatToTwoDecimalPlaces } from '../../../utility/formatting'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -119,7 +119,7 @@ export const useAddPersonalInfo = (): any => {
             return null
           }
         } catch (error) {
-          throw new Error(`Failed to fetch cordinate for ${area}`)
+          throw new Error(`Failed to fetch coordinate for ${area}`)
         }
       })
     )

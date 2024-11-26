@@ -9,7 +9,6 @@ import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { checkUserProfile } from '../../../userWorkflow/services/userProfileService'
-import { ProfileError } from '../../../utility/errors'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -25,7 +24,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 
 export const useLogin = (): any => {
   const fetchClient = useFetchClient()
-  const auth = useAuth()
+  const { setIsAuthenticated } = useAuth()
   const [loginLoading, setLoginLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [facebookLoading, setFacebookLoading] = useState(false)
@@ -50,7 +49,7 @@ export const useLogin = (): any => {
       setLoginLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
-        auth?.setIsAuthenticated(true)
+        setIsAuthenticated(true)
         registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
@@ -69,67 +68,35 @@ export const useLogin = (): any => {
     }
   }
 
-  const checkProfileAndNavigate = async(): Promise<void> => {
+  const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
     try {
+      await loginFunction()
+      setIsAuthenticated(true)
+      registerUserDeviceForNotification(fetchClient)
       const userProfile = await checkUserProfile(fetchClient)
       const hasProfile = Boolean(userProfile?.bloodGroup)
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{
-            name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO
-          }]
+          routes: [{ name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO }]
         })
       )
     } catch (error) {
-      if (error instanceof ProfileError) {
-        setSocialLoginError('Unable to check profile. Please try again.')
-      } else {
-        setSocialLoginError('An unexpected error occurred.')
-      }
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
-        })
-      )
+      setSocialLoginError(`${socialMedia} login failed. Please try again.`)
+    } finally {
+      setGoogleLoading(false)
+      setFacebookLoading(false)
     }
   }
 
   const handleGoogleSignIn = async(): Promise<void> => {
-    try {
-      setGoogleLoading(true)
-      const isGoogleSignedIn = await googleLogin()
-      if (isGoogleSignedIn) {
-        auth?.setIsAuthenticated(true)
-        registerUserDeviceForNotification(fetchClient)
-        await checkProfileAndNavigate()
-      } else {
-        setSocialLoginError('Google login failed. Please try again.')
-      }
-    } catch (error) {
-      setSocialLoginError('Failed to sign in with Google.')
-    } finally {
-      setGoogleLoading(false)
-    }
+    setGoogleLoading(true)
+    await handleSocialSignIn(googleLogin, 'Google')
   }
 
   const handleFacebookSignIn = async(): Promise<void> => {
-    try {
-      setFacebookLoading(true)
-      const isFacebookSignedIn = await facebookLogin()
-      if (isFacebookSignedIn) {
-        auth?.setIsAuthenticated(true)
-        registerUserDeviceForNotification(fetchClient)
-        await checkProfileAndNavigate()
-      } else {
-        setSocialLoginError('Facebook login failed. Please try again.')
-      }
-    } catch (error) {
-      setSocialLoginError('Failed to sign in with Facebook.')
-    } finally {
-      setFacebookLoading(false)
-    }
+    setFacebookLoading(true)
+    await handleSocialSignIn(facebookLogin, 'Facebook')
   }
 
   return {

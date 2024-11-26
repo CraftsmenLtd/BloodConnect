@@ -163,7 +163,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button text='View details' buttonStyle={styles.buttonStyle} textStyle={styles.textStyle} onPress={() => {}} />
+        <Button text='View details' buttonStyle={styles.buttonStyle} textStyle={styles.textStyle} onPress={() => { }} />
       </View>
     </View>
   )
