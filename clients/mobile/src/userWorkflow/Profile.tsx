@@ -37,7 +37,7 @@ interface Post {
 }
 
 const Profile: React.FC<ProfileScreenProps> = ({ navigation }) => {
-const badges: Badge[] = [
+const badges: Badge[] = []
 
 const achievements: Achievement[] = [
   { id: 2, icon: 'medkit', label: '5 times', subLabel: 'Platelet donor' },
