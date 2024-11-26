@@ -96,6 +96,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontWeight: '600',
     marginLeft: 15,
     marginTop: 16
+  },
+  loadingIndicator: {
+    marginTop: 20,
+    color: theme.colors.primary
   }
 
 })
