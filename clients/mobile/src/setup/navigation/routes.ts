@@ -10,7 +10,6 @@ import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPasswor
 import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
 import { Account } from '../../userWorkflow/account/UI/Account'
-import { Component } from 'react'
 import Profile from '../../userWorkflow/Profile'
 
 export const routes = [

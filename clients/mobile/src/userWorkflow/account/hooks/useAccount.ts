@@ -67,12 +67,10 @@ export const useAccount = (): UseAccountReturnType => {
       await signOut()
       navigation.navigate(SCREENS.WELCOME)
     } catch (error) {
-      console.error(
-        'Error during sign out:',
-        error instanceof Error ? error.message : 'Unknown error'
-      )
-      if (error instanceof Error && error.name === 'UserNotAuthenticatedException') {
-        navigation.navigate(SCREENS.WELCOME)
+      if (error instanceof Error) {
+        throw new Error(`Error: ${error.message}`)
+      } else {
+        throw new Error('Unknown error occurred during sign out')
       }
     }
   }
