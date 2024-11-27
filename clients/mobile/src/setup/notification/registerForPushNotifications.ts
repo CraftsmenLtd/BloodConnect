@@ -32,16 +32,10 @@ export const registerForPushNotificationsAsync = async(): Promise<string | undef
 
     try {
       if (projectId === null) throw new Error('Project ID not found.')
-
       token = (await Notifications.getDevicePushTokenAsync()).data
-
       if (token === null) throw new Error('Failed to retrieve device push token.')
     } catch (error) {
-      throw new Error(
-        `Failed to get push token: ${
-          error instanceof Error ? error.message : 'An unexpected error occurred'
-        }`
-      )
+      throw new Error(`Failed to get push token: ${error instanceof Error ? error.message : 'An unexpected error occurred'}`)
     }
   } else {
     throw new Error('Push notifications require a physical device.')

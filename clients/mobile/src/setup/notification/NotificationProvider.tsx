@@ -3,14 +3,18 @@ import * as Notifications from 'expo-notifications'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { parseJsonData } from '../../utility/jsonParser'
-import { NotificationContextType } from './NotificationContext'
+import { NotificationContextType } from './useNotificationContext'
 import { useNavigationReady } from './useNavigationReady'
-import { initialNotificationState, NotificationData } from './NotificationData'
+import { NotificationData, NotificationDataTypes } from './types'
 import { RootStackParamList } from '../navigation/navigationTypes'
 
 const NOTIFICATION_TO_SCREEN_MAP: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
   bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW },
   donorAcceptRequest: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
+}
+
+export const initialNotificationState: NotificationDataTypes = {
+  notificationData: null
 }
 
 export const NotificationContext = createContext<NotificationContextType>(initialNotificationState)
@@ -22,7 +26,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   useEffect(() => {
     let isMounted = true
-    try { void checkInitialNotification(isMounted) } catch (error) {}
+    try { void checkInitialNotification(isMounted) } catch (error) { }
 
     const foregroundListener = Notifications.addNotificationReceivedListener(notification => {
       const data = parseJsonData<NotificationData>(notification.request.content.data.payload)
@@ -67,7 +71,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   }
 
-  const checkInitialNotification = async(isMounted: boolean) => {
+  const checkInitialNotification = async (isMounted: boolean) => {
     try {
       const response = await Notifications.getLastNotificationResponseAsync()
       if (isNotificationValid(response, isMounted)) {
