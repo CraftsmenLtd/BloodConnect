@@ -14,7 +14,6 @@ export const Account = () => {
   const styles = createStyles(useTheme())
   const { userData, loading, handleSignOut } = useAccount()
   const navigation = useNavigation<NavigationProp<any>>()
-  const [fallbackSource, setFallbackSource] = React.useState<ImageSourcePropType>(imageSource)
 
   if (loading) {
     return <ActivityIndicator size="large" color="red" style={styles.loadingIndicator} />
@@ -27,7 +26,7 @@ export const Account = () => {
           <View style={styles.imageInnerBorder}>
             <Image
               style={styles.profileImage as StyleProp<ImageStyle>}
-              source={{ uri: 'https://images.unsplash.com/photo-1603005901058-02e1cfc65270?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}
+              source={require('./../../../../assets/images/profile.png') }
             />
           </View>
         </View>
