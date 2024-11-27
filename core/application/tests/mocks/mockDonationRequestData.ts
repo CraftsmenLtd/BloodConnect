@@ -10,7 +10,8 @@ import {
 import {
   BloodGroup,
   DonationDTO,
-  DonationStatus
+  DonationStatus,
+  DonorSearchDTO
 } from '../../../../commons/dto/DonationDTO'
 
 export const currentDate = new Date().toISOString()
@@ -74,7 +75,18 @@ export const mockQueryResult = {
 export const donorRoutingAttributesMock: DonorRoutingAttributes = {
   seekerId: 'seeker123',
   requestPostId: 'req123',
-  createdAt: currentDate
+  patientName: 'John Doe',
+  neededBloodGroup: 'O-' as BloodGroup,
+  bloodQuantity: 2,
+  urgencyLevel: 'urgent' as const,
+  city: 'Dhaka',
+  location: 'Baridhara, Dhaka',
+  geohash: 'geohash123',
+  donationDateTime: '2024-10-20T15:00:00Z',
+  contactNumber: '01712345678',
+  createdAt: currentDate,
+  transportationInfo: 'transportation Info',
+  shortDescription: 'short Description'
 }
 
 export const mockDonationDTO: DonationDTO = {
@@ -93,4 +105,21 @@ export const mockDonationDTO: DonationDTO = {
   longitude: 90.2792371,
   contactNumber: '01712345678',
   createdAt: currentDate
+}
+
+export const mockDonorSearchDTO: DonorSearchDTO = {
+  id: 'req123',
+  seekerId: 'seeker123',
+  status: DonationStatus.PENDING,
+  patientName: 'John Doe',
+  neededBloodGroup: 'O-' as BloodGroup,
+  bloodQuantity: 2,
+  urgencyLevel: 'urgent' as const,
+  city: 'Dhaka',
+  location: 'Baridhara, Dhaka',
+  geohash: 'geohash123',
+  donationDateTime: '2024-10-20T15:00:00Z',
+  contactNumber: '01712345678',
+  createdAt: currentDate,
+  retryCount: 0
 }

@@ -1,44 +1,35 @@
-import { formatteDate, formatPhoneNumber, formatErrorMessage, formatToTwoDecimalPlaces } from '../../src/utility/formatte'
+import { formattedDate, formatPhoneNumber, formatErrorMessage, formatToTwoDecimalPlaces } from '../../src/utility/formatting'
 
 describe('Utility Functions', () => {
-  describe('formatteDate', () => {
-    const originalTimezone = process.env.TZ
+  describe('formattedDate', () => {
+    describe('formattedDate', () => {
+      test('should format date string correctly', () => {
+        const dateString = '2024-10-23T14:30:00Z'
+        const expected = '10/23/2024, 2:30 PM'
+        expect(formattedDate(dateString)).toBe(expected)
+      })
 
-    beforeAll(() => {
-      process.env.TZ = 'UTC'
-      jest.useFakeTimers()
-      jest.setSystemTime(new Date('2024-10-23T14:30:00Z'))
-    })
+      test('should format Date object correctly', () => {
+        const dateObject = new Date('2024-10-23T14:30:00Z')
+        const expected = '10/23/2024, 2:30 PM'
+        expect(formattedDate(dateObject)).toBe(expected)
+      })
 
-    afterAll(() => {
-      process.env.TZ = originalTimezone
-      jest.useRealTimers()
-    })
+      test('should handle invalid date input', () => {
+        const invalidDate = 'invalid-date-string'
+        const expected = 'Invalid Date'
+        expect(formattedDate(invalidDate)).toBe(expected)
+      })
 
-    test('should format date with time', () => {
-      const dateString = '2024-10-23T14:30:00Z'
-      const result = formatteDate(dateString)
-      expect(result).toMatch(/10\/23\/2024, \d{1,2}:\d{2} [AP]M/)
-    })
-
-    test('should format Date object with time', () => {
-      const dateObject = new Date('2024-10-23T14:30:00Z')
-      const result = formatteDate(dateObject)
-      expect(result).toMatch(/10\/23\/2024, \d{1,2}:\d{2} [AP]M/)
-    })
-
-    test('should format date with showOnlyDate=true', () => {
-      const dateString = '2024-10-23T14:30:00Z'
-      expect(formatteDate(dateString, true)).toBe('10/23/2024')
-    })
-
-    test('should handle invalid date input', () => {
-      const invalidDate = 'invalid-date-string'
-      expect(formatteDate(invalidDate)).toBe('Invalid Date')
+      test('should handle empty string as input', () => {
+        const expected = 'Invalid Date'
+        expect(formattedDate('')).toBe(expected)
+      })
     })
 
     test('should handle empty string as input', () => {
-      expect(formatteDate('')).toBe('Invalid Date')
+      const expected = 'Invalid Date'
+      expect(formattedDate('')).toBe(expected)
     })
   })
 

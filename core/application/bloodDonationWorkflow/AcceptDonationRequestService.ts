@@ -5,23 +5,16 @@ import {
 } from '../../../commons/dto/DonationDTO'
 import Repository from '../models/policies/repositories/Repository'
 import { AcceptDonationRequestAttributes } from './Types'
-import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
 
 export class AcceptDonationService {
   async createAcceptanceRecord(
     acceptDonationRequestAttributes: AcceptDonationRequestAttributes,
-    userProfile: UserDetailsDTO,
     acceptDonationRequestRepository: Repository<AcceptedDonationDTO>
   ): Promise<string> {
     try {
-      const { donorId, seekerId, createdAt, requestPostId } = acceptDonationRequestAttributes
       const acceptanceRecord: AcceptedDonationDTO = {
-        donorId,
-        seekerId,
-        createdAt,
-        requestPostId,
-        name: userProfile?.name,
-        phoneNumbers: userProfile?.phoneNumbers,
+        ...acceptDonationRequestAttributes,
+        status: 'PENDING',
         acceptanceTime: new Date().toISOString()
       }
       await acceptDonationRequestRepository.create(acceptanceRecord)

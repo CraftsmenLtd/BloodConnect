@@ -80,7 +80,7 @@ describe('useLogin Hook', () => {
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
       expect(mockedNavigate).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Failed to sign in with Google.')
+      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
     })
 
     test('should set socialLoginError on Google sign-in failure', async() => {
@@ -92,7 +92,7 @@ describe('useLogin Hook', () => {
       })
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
-      expect(result.current.socialLoginError).toBe('Failed to sign in with Google.')
+      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
     })
   })
 
@@ -107,7 +107,7 @@ describe('useLogin Hook', () => {
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
       expect(mockedNavigate).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Failed to sign in with Facebook.')
+      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
     })
 
     test('should set socialLoginError on Facebook sign-in failure', async() => {
@@ -119,7 +119,7 @@ describe('useLogin Hook', () => {
       })
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
-      expect(result.current.socialLoginError).toBe('Failed to sign in with Facebook.')
+      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
     })
   })
 })

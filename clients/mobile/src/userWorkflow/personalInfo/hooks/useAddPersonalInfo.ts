@@ -8,7 +8,7 @@ import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { addPersonalInfoHandler } from '../../services/userServices'
 import { LocationService } from '../../../LocationService/LocationService'
-import { formatErrorMessage, formatToTwoDecimalPlaces } from '../../../utility/formatte'
+import { formatErrorMessage, formatToTwoDecimalPlaces } from '../../../utility/formatting'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -104,26 +104,17 @@ export const useAddPersonalInfo = (): any => {
     const locationService = new LocationService(GOOGLE_MAP_API)
 
     const formattedLocations = await Promise.all(
-      locations.map(async(area) => {
-        try {
-          const location = await locationService.getLatLon(area)
-          if (location !== null) {
-            const { latitude, longitude } = location
-            return {
-              area,
-              city,
-              latitude,
-              longitude
+      locations.map(async(area) =>
+        locationService.getLatLon(area)
+          .then((location) => {
+            if (location !== null) {
+              const { latitude, longitude } = location
+              return { area, city, latitude, longitude }
             }
-          } else {
-            return null
-          }
-        } catch (error) {
-          throw new Error(`Failed to fetch cordinate for ${area}`)
-        }
-      })
+          })
+          .catch(() => { return null })
+      )
     )
-
     return formattedLocations.filter((location): location is LocationData => location !== null)
   }
   const handleSubmit = async(): Promise<void> => {

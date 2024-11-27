@@ -36,7 +36,7 @@ export class UserService {
         id: generateUniqueID(),
         email: userAttributes.email,
         name: userAttributes.name,
-        phone: userAttributes.phone_number
+        phoneNumbers: userAttributes.phoneNumbers
       })
     } catch (error) {
       throw new UserOperationError(

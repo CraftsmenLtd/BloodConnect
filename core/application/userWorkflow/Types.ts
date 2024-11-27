@@ -4,12 +4,11 @@ import { BloodGroup } from '../../../commons/dto/DonationDTO'
 export type UserAttributes = {
   email: string;
   name: string;
-  phone_number: string;
+  phoneNumbers: string[];
 }
 
 export interface UpdateUserAttributes extends UserAttributes {
   userId: string;
-  phoneNumbers: string[];
   name: string;
   bloodGroup: BloodGroup;
   lastDonationDate: string;

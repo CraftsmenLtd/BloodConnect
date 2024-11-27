@@ -7,7 +7,7 @@ import { createDonation, DonationResponse, updateDonation } from '../donationSer
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
 import { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
-import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatte'
+import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
@@ -28,7 +28,7 @@ export interface BloodRequestData {
   city: string;
 }
 
-interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'shortDescription' | 'transportationInfo'> {}
+interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'shortDescription' | 'transportationInfo'> { }
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
   city: [validateRequired],

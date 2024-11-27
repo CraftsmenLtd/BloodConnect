@@ -27,14 +27,6 @@ async function acceptDonationRequestLambda(
   event: AcceptDonationRequestAttributes
 ): Promise<APIGatewayProxyResult> {
   try {
-    const acceptDonationRequestAttributes = {
-      donorId: event.donorId,
-      seekerId: event.seekerId,
-      createdAt: event.createdAt,
-      requestPostId: event.requestPostId,
-      acceptanceTime: event.acceptanceTime
-    }
-
     const userProfile = await userService.getUser(
       event.donorId,
       new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(
@@ -58,9 +50,23 @@ async function acceptDonationRequestLambda(
       throw new Error('Donation request is no longer available for acceptance.')
     }
 
+    const acceptDonationRequestAttributes = {
+      donorId: event.donorId,
+      seekerId: event.seekerId,
+      createdAt: event.createdAt,
+      requestPostId: event.requestPostId,
+      acceptanceTime: event.acceptanceTime,
+      status: event.status,
+      donorName: userProfile?.name,
+      phoneNumbers: userProfile?.phoneNumbers,
+      neededBloodGroup: donationPost.neededBloodGroup,
+      urgencyLevel: donationPost.urgencyLevel,
+      location: donationPost.location,
+      donationDateTime: donationPost.donationDateTime,
+      shortDescription: donationPost.shortDescription
+    }
     const response = await acceptDonationRequest.createAcceptanceRecord(
       acceptDonationRequestAttributes,
-      userProfile,
       new DynamoDbTableOperations<
       AcceptedDonationDTO,
       AcceptedDonationFields,
@@ -68,21 +74,20 @@ async function acceptDonationRequestLambda(
       >(new AcceptDonationRequestModel())
     )
 
+    const acceptedDonors = await bloodDonationService.getAcceptedDonorList(
+      event.seekerId,
+      event.requestPostId,
+      new DynamoDbTableOperations<AcceptedDonationDTO, AcceptedDonationFields, AcceptDonationRequestModel>(new AcceptDonationRequestModel())
+    )
+
     const notificationAttributes: NotificationAttributes = {
       userId: event.seekerId,
       title: 'Donor Found',
       body: `${donationPost.neededBloodGroup} blood found`,
-      type: 'donorAcceptRequest',
+      type: 'REQ_ACCEPTED',
       payload: {
-        seekerId: event.seekerId,
-        createdAt: event.createdAt,
-        requestPostId: event.requestPostId,
-        donorId: event.donorId,
-        donorName: userProfile.name,
-        neededBloodGroup: donationPost.neededBloodGroup,
-        donationDateTime: donationPost.donationDateTime,
-        location: donationPost.location,
-        shortDescription: donationPost.shortDescription
+        ...acceptDonationRequestAttributes,
+        acceptedDonors
       }
     }
 
