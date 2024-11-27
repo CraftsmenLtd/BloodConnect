@@ -8,7 +8,7 @@ import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
-import { checkUserProfile } from '../../../userWorkflow/services/userProfileService'
+import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -24,6 +24,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 
 export const useLogin = (): any => {
   const fetchClient = useFetchClient()
+  const { userProfile, fetchUserProfile } = useUserProfile()
   const { setIsAuthenticated } = useAuth()
   const [loginLoading, setLoginLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -73,8 +74,9 @@ export const useLogin = (): any => {
       await loginFunction()
       setIsAuthenticated(true)
       registerUserDeviceForNotification(fetchClient)
-      const userProfile = await checkUserProfile(fetchClient)
+      // const userProfile = await fetchUserProfile()
       const hasProfile = Boolean(userProfile?.bloodGroup)
+      console.log('hasProfile login', hasProfile)
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

@@ -8,8 +8,8 @@ import { googleLogin, facebookLogin } from '../../services/authService'
 import { useAuth } from '../../context/useAuth'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
-import { checkUserProfile } from '../../../userWorkflow/services/userProfileService'
 import { formatPhoneNumber } from '../../../utility/formatting'
+import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -29,6 +29,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 
 export const useRegister = (): any => {
   const fetchClient = useFetchClient()
+  const { userProfile, fetchUserProfile } = useUserProfile()
   const { setIsAuthenticated } = useAuth()
   const [googleLoading, setGoogleLoading] = useState(false)
   const [facebookLoading, setFacebookLoading] = useState(false)
@@ -80,7 +81,7 @@ export const useRegister = (): any => {
       await loginFunction()
       setIsAuthenticated(true)
       registerUserDeviceForNotification(fetchClient)
-      const userProfile = await checkUserProfile(fetchClient)
+      // const userProfile = await fetchUserProfile()
       const hasProfile = Boolean(userProfile?.bloodGroup)
       navigation.dispatch(
         CommonActions.reset({

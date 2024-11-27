@@ -1,16 +1,25 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { routes } from './routes'
 import { SCREENS } from '../constant/screens'
 import { useAuth } from '../../authentication/context/useAuth'
 import { View, ActivityIndicator } from 'react-native'
+import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
 
 const Stack = createStackNavigator()
 
 export default function Navigator() {
   const { isAuthenticated, loading } = useAuth()
-  if (loading) {
+  const { userProfile, fetchUserProfile, loading: profileLoading } = useUserProfile() // Add profileLoading
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      void fetchUserProfile()
+    }
+  }, [isAuthenticated])
+
+  if (loading || (isAuthenticated && profileLoading)) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
@@ -22,9 +31,19 @@ export default function Navigator() {
     return !route.protected || isAuthenticated
   })
 
+  const getInitialRoute = () => {
+    console.log('userProfile in initial route:', userProfile?.bloodGroup)
+    if (!isAuthenticated) {
+      return SCREENS.WELCOME
+    }
+    const hasProfile = Boolean(userProfile?.bloodGroup)
+    console.log('hasProfile from navigator', hasProfile)
+    return hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO
+  }
+
   return (
     <Stack.Navigator
-      initialRouteName={isAuthenticated ? SCREENS.BOTTOM_TABS : SCREENS.WELCOME}
+      initialRouteName={getInitialRoute()}
       screenOptions={{
         headerStyle: {
           height: 75

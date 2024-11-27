@@ -5,6 +5,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
 import { DonationData } from './useDonationPosts'
+import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 
 interface PostCardProps {
   post: DonationData;
@@ -18,6 +19,7 @@ interface DropdownPosition {
 
 export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
   const styles = createStyles(useTheme())
+  const { userProfile } = useUserProfile()
   const [showDropdown, setShowDropdown] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
   const iconRef = useRef<View>(null)
@@ -72,7 +74,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <View>
-          <Text style={styles.userName}>{post.patientName}</Text>
+          <Text style={styles.userName}>{userProfile?.name}</Text>
           <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
         </View>
 
