@@ -1,15 +1,12 @@
-export const formattedDate = (date: string | Date): string => {
+export const formattedDate = (date: string | Date, showOnlyDate = false): string => {
   const dte = new Date(date)
-  const formattedDate = dte.toLocaleString(undefined, {
-    timeZone: 'UTC',
+
+  return dte.toLocaleString(undefined, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
+    ...(showOnlyDate ? {} : { hour: 'numeric', minute: '2-digit', hour12: true })
   })
-  return formattedDate
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
@@ -21,23 +18,41 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
 }
 
 export function formatErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
+  if (error instanceof Error && typeof error.message === 'string') {
     const errorMessage = error.message.toLowerCase()
-
-    if (errorMessage.includes('user already exists')) {
-      return 'User already exists, Please Login.'
+    if (errorMessage.startsWith('failed to retrieve coordinates for')) {
+      return 'Couldn\'t retrieve coordinates for the location. Please try again.'
     }
-
-    if (errorMessage.includes('network error')) {
-      return 'Please check your connection.'
+    switch (errorMessage) {
+      case 'user already exists':
+        return 'User already exists, Please Login.'
+      case 'invalid request body':
+        return 'Please check your input and try again.'
+      case 'network error':
+        return 'Please check your internet connection.'
+      case 'timeout':
+        return 'Request timed out, please try again later.'
+      default:
+        return 'Something went wrong.'
     }
+  }
 
-    if (errorMessage.includes('timeout')) {
-      return 'Request timed out, Please try again later.'
+  if (typeof error === 'string') {
+    return error
+  }
+
+  if (typeof error === 'object' && error !== null) {
+    try {
+      return 'Error: ' + JSON.stringify(error)
+    } catch {
+      return 'An error occurred but could not be displayed.'
     }
-
-    return 'An unexpected error occurred: ' + error.message
   }
 
   return 'An unknown error occurred.'
+}
+
+export const formatToTwoDecimalPlaces = (value: string): number => {
+  const numValue = parseFloat(value)
+  return isNaN(numValue) ? 0 : parseFloat(numValue.toFixed(2))
 }

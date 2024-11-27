@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, CommonActions } from '@react-navigation/native'
 import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import { googleLogin, facebookLogin } from '../../services/authService'
+import { useAuth } from '../../context/useAuth'
+import { useFetchClient } from '../../../setup/clients/useFetchClient'
+import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { formatPhoneNumber } from '../../../utility/formatting'
 
 type CredentialKeys = keyof RegisterCredential
@@ -24,6 +27,8 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useRegister = (): any => {
+  const fetchClient = useFetchClient()
+  const { setIsAuthenticated } = useAuth()
   const navigation = useNavigation<RegisterScreenNavigationProp>()
   const [registerCredential, setRegisterCredential] = useState<RegisterCredential>(
     initializeState<RegisterCredential>(Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
@@ -67,22 +72,28 @@ export const useRegister = (): any => {
     })
   }
 
-  const handleGoogleSignIn = async(): Promise<void> => {
+  const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
     try {
-      await googleLogin()
-      navigation.navigate(SCREENS.PROFILE)
+      await loginFunction()
+      setIsAuthenticated(true)
+      registerUserDeviceForNotification(fetchClient)
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+        })
+      )
     } catch (error) {
-      setSocialLoginError('Failed to sign in with Google.')
+      setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     }
   }
 
+  const handleGoogleSignIn = async(): Promise<void> => {
+    await handleSocialSignIn(googleLogin, 'Google')
+  }
+
   const handleFacebookSignIn = async(): Promise<void> => {
-    try {
-      await facebookLogin()
-      navigation.navigate(SCREENS.PROFILE)
-    } catch (error) {
-      setSocialLoginError('Failed to sign in with Facebook.')
-    }
+    await handleSocialSignIn(facebookLogin, 'Facebook')
   }
 
   return {

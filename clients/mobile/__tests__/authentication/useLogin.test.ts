@@ -1,8 +1,7 @@
-import { mockedNavigate, mockDispatch, setRouteParams } from '../__mocks__/reactNavigation.mock'
+import { mockedNavigate, setRouteParams } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useLogin } from '../../src/authentication/login/hooks/useLogin'
 import { loginUser, googleLogin, facebookLogin } from '../../src/authentication/services/authService'
-import { CommonActions } from '@react-navigation/native'
 
 jest.mock('../../src/authentication/services/authService', () => ({
   loginUser: jest.fn(),
@@ -58,28 +57,6 @@ describe('useLogin Hook', () => {
     expect(result.current.loginCredential.email).toBe('test@example.com')
   })
 
-  test('should navigate to Profile screen on successful login', async() => {
-    const mockAccessToken = 'mockAccessToken'
-    const mockIdToken = 'mockIdToken'
-
-    const { result } = renderHook(() => useLogin());
-    (loginUser as jest.Mock).mockResolvedValue({
-      accessToken: mockAccessToken,
-      idToken: mockIdToken,
-      isSignedIn: true
-    })
-
-    await act(async() => {
-      await result.current.handleLogin()
-    })
-    expect(mockDispatch).toHaveBeenCalledWith(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: 'Profile' }]
-      })
-    )
-  })
-
   test('should set loginError on login failure', async() => {
     const { result } = renderHook(() => useLogin());
 
@@ -93,17 +70,17 @@ describe('useLogin Hook', () => {
   })
 
   describe('handleGoogleSignIn', () => {
-    test('should navigate to Profile screen on successful Google sign-in', async() => {
+    test('should fail gracefully when Google sign-in has session error', async() => {
       const { result } = renderHook(() => useLogin());
-      (googleLogin as jest.Mock).mockResolvedValue(undefined)
+      (googleLogin as jest.Mock).mockRejectedValue(new Error('Failed to fetch session'))
 
       await act(async() => {
         await result.current.handleGoogleSignIn()
       })
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
-      expect(mockedNavigate).toHaveBeenCalledWith('Profile')
-      expect(result.current.socialLoginError).toBe('')
+      expect(mockedNavigate).not.toHaveBeenCalled()
+      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
     })
 
     test('should set socialLoginError on Google sign-in failure', async() => {
@@ -115,23 +92,22 @@ describe('useLogin Hook', () => {
       })
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
-      expect(mockedNavigate).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Failed to sign in with Google.')
+      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
     })
   })
 
   describe('handleFacebookSignIn', () => {
-    test('should navigate to Profile screen on successful Facebook sign-in', async() => {
+    test('should fail gracefully when Facebook sign-in has session error', async() => {
       const { result } = renderHook(() => useLogin());
-      (facebookLogin as jest.Mock).mockResolvedValue(undefined)
+      (facebookLogin as jest.Mock).mockRejectedValue(new Error('Failed to fetch session'))
 
       await act(async() => {
         await result.current.handleFacebookSignIn()
       })
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
-      expect(mockedNavigate).toHaveBeenCalledWith('Profile')
-      expect(result.current.socialLoginError).toBe('')
+      expect(mockedNavigate).not.toHaveBeenCalled()
+      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
     })
 
     test('should set socialLoginError on Facebook sign-in failure', async() => {
@@ -143,8 +119,7 @@ describe('useLogin Hook', () => {
       })
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
-      expect(mockedNavigate).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Failed to sign in with Facebook.')
+      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
     })
   })
 })

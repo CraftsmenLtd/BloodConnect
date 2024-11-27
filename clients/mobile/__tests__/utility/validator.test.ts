@@ -3,7 +3,11 @@ import {
   validateEmail,
   validatePhoneNumber,
   validatePassword,
-  validateInput
+  validateInput,
+  validateDateOfBirth,
+  validateHeight,
+  validatePastOrTodayDate,
+  validateWeight
 } from '../../src/utility/validator'
 
 describe('Validation Functions', () => {
@@ -81,6 +85,66 @@ describe('Validation Functions', () => {
     it('should return null if no validation rules fail', () => {
       const rules = [validateRequired, validateEmail]
       expect(validateInput('ebrahim@example.com', rules)).toBeNull()
+    })
+  })
+
+  describe('validatePastOrTodayDate', () => {
+    it('should return error message for today\'s date', () => {
+      const today = new Date().toISOString().split('T')[0]
+      expect(validatePastOrTodayDate(today)).toBe('The date must be today or in the past.')
+    })
+
+    it('should return null for past dates', () => {
+      const pastDate = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+      expect(validatePastOrTodayDate(pastDate)).toBeNull()
+    })
+
+    it('should return error message for future dates', () => {
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 2)
+      const futureDateString = futureDate.toISOString().split('T')[0]
+
+      expect(validatePastOrTodayDate(futureDateString)).toBe('The date must be today or in the past.')
+    })
+  })
+
+  describe('validateDateOfBirth', () => {
+    it('should return error message for ages under 15', () => {
+      const today = new Date()
+      const fourteenYearsAgo = new Date(today)
+      fourteenYearsAgo.setFullYear(today.getFullYear() - 14)
+      expect(validateDateOfBirth(fourteenYearsAgo.toISOString().split('T')[0])).toBe('User must be at least 15 years old.')
+    })
+
+    it('should return null for ages 15 and over', () => {
+      const today = new Date()
+      const fifteenYearsAgo = new Date(today)
+      fifteenYearsAgo.setFullYear(today.getFullYear() - 16) // Using 16 to ensure we're well over 15
+      expect(validateDateOfBirth(fifteenYearsAgo.toISOString().split('T')[0])).toBeNull()
+    })
+  })
+
+  describe('validateHeight', () => {
+    it('should return null for valid height', () => {
+      expect(validateHeight('5.5')).toBeNull()
+    })
+
+    it('should return error message for invalid height values', () => {
+      expect(validateHeight('2.5')).toBe('Height must be between 3.0 and 8.0 feet')
+      expect(validateHeight('9.0')).toBe('Height must be between 3.0 and 8.0 feet')
+      expect(validateHeight('abc')).toBe('Height must be a valid number')
+    })
+  })
+
+  describe('validateWeight', () => {
+    it('should return null for valid weight', () => {
+      expect(validateWeight('70')).toBeNull()
+    })
+
+    it('should return error message for invalid weight values', () => {
+      expect(validateWeight('25')).toBe('Weight must be between 30 and 300 kg')
+      expect(validateWeight('350')).toBe('Weight must be between 30 and 300 kg')
+      expect(validateWeight('xyz')).toBe('Weight must be a valid number')
     })
   })
 })

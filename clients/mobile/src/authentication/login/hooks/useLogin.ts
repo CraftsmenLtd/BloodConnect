@@ -6,6 +6,8 @@ import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationT
 import { loginUser, googleLogin, facebookLogin } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
+import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
+import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -20,7 +22,8 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useLogin = (): any => {
-  const auth = useAuth()
+  const fetchClient = useFetchClient()
+  const { setIsAuthenticated } = useAuth()
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
   const [loginCredential, setLoginCredential] = useState<LoginCredential>(
@@ -43,7 +46,8 @@ export const useLogin = (): any => {
       setLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
-        auth?.setIsAuthenticated(true)
+        setIsAuthenticated(true)
+        registerUserDeviceForNotification(fetchClient)
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -61,22 +65,28 @@ export const useLogin = (): any => {
     }
   }
 
-  const handleGoogleSignIn = async(): Promise<void> => {
+  const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
     try {
-      await googleLogin()
-      navigation.navigate(SCREENS.PROFILE)
+      await loginFunction()
+      setIsAuthenticated(true)
+      registerUserDeviceForNotification(fetchClient)
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+        })
+      )
     } catch (error) {
-      setSocialLoginError('Failed to sign in with Google.')
+      setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     }
   }
 
+  const handleGoogleSignIn = async(): Promise<void> => {
+    await handleSocialSignIn(googleLogin, 'Google')
+  }
+
   const handleFacebookSignIn = async(): Promise<void> => {
-    try {
-      await facebookLogin()
-      navigation.navigate(SCREENS.PROFILE)
-    } catch (error) {
-      setSocialLoginError('Failed to sign in with Facebook.')
-    }
+    await handleSocialSignIn(facebookLogin, 'Facebook')
   }
 
   return {

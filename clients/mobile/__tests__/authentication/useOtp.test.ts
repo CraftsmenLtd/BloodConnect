@@ -1,13 +1,16 @@
-import { mockedNavigate, setRouteParams } from '../__mocks__/reactNavigation.mock'
+import { mockDispatch, setRouteParams } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useOtp } from '../../src/authentication/otp/hooks/useOtp'
 import { loginUser, submitOtp } from '../../src/authentication/services/authService'
 import { SCREENS } from '../../src/setup/constant/screens'
+import { CommonActions } from '@react-navigation/native'
 
 jest.mock('../../src/authentication/services/authService', () => ({
   submitOtp: jest.fn(),
   loginUser: jest.fn()
 }))
+
+jest.mock('../../src/utility/deviceRegistration')
 
 describe('useOtp Hook', () => {
   beforeEach(() => {
@@ -84,8 +87,12 @@ describe('useOtp Hook', () => {
     expect(submitOtp).toHaveBeenCalledTimes(1)
     expect(submitOtp).toHaveBeenCalledWith(mockEmail, result.current.otp.join(''))
 
-    // Verify that navigation happened
-    expect(mockedNavigate).toHaveBeenCalledWith(SCREENS.BOTTOM_TABS)
+    expect(mockDispatch).toHaveBeenCalledWith(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Profile' }]
+      })
+    )
   })
 
   test('should set error state on submission failure', async() => {

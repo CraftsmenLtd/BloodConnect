@@ -1,7 +1,11 @@
-import { Text } from 'react-native'
+import { useState, useEffect, useRef } from 'react'
+import { Text, View, Button, Platform } from 'react-native'
+
 const HomeScreen = () => {
   return (
-    <Text>HomeScreen</Text>
+    <View>
+      <Text>HomeScreen</Text>
+    </View>
   )
 }
 
