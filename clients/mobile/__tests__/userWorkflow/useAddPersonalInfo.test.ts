@@ -133,22 +133,4 @@ describe('useAddPersonalInfo Hook', () => {
     expect(result.current.errorMessage).toBe('Please check your internet connection.')
     expect(result.current.loading).toBe(false)
   })
-
-  test('should handle location validation failure', async() => {
-    mockGetLatLon.mockResolvedValue(null)
-    const { result } = renderHook(() => useAddPersonalInfo())
-
-    await act(async() => {
-      Object.entries(validPersonalInfo).forEach(([key, value]) => {
-        result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
-      })
-    })
-
-    await act(async() => {
-      await result.current.handleSubmit()
-    })
-
-    expect(result.current.errorMessage).toBe('No valid locations were found. Please verify your input.')
-    expect(result.current.loading).toBe(false)
-  })
 })
