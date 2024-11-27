@@ -26,7 +26,7 @@ export const Account = () => {
           <View style={styles.imageInnerBorder}>
             <Image
               style={styles.profileImage as StyleProp<ImageStyle>}
-              source={require('./../../../../assets/images/profile.png') }
+              source={{ uri: 'https://avatar.iran.liara.run/public/boy?username=Ash' }}
             />
           </View>
         </View>
