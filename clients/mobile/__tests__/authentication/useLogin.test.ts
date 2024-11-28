@@ -5,6 +5,7 @@ import { SCREENS } from '../../src/setup/constant/screens'
 
 const mockDispatch = jest.fn()
 const mockSetIsAuthenticated = jest.fn()
+let mockUserProfile: { bloodGroup?: string } | null = null
 
 jest.mock('@react-navigation/native', () => ({
   ...jest.requireActual('@react-navigation/native'),
@@ -25,7 +26,7 @@ jest.mock('../../src/authentication/services/authService', () => ({
 
 jest.mock('../../src/userWorkflow/context/UserProfileContext', () => ({
   useUserProfile: () => ({
-    userProfile: null,
+    userProfile: mockUserProfile,
     loading: false,
     error: null,
     fetchUserProfile: jest.fn()
@@ -58,6 +59,7 @@ jest.mock('../../src/utility/deviceRegistration', () => ({
 
 describe('useLogin Hook', () => {
   beforeEach(() => {
+    mockUserProfile = null
     jest.clearAllMocks()
   })
 
@@ -113,6 +115,21 @@ describe('useLogin Hook', () => {
     expect(result.current.loginError).toBe('Invalid Email or Password.')
   })
 
+  test('should navigate to BOTTOM_TABS on successful login', async() => {
+    const { result } = renderHook(() => useLogin());
+    (loginUser as jest.Mock).mockResolvedValue(true)
+
+    await act(async() => {
+      await result.current.handleLogin()
+    })
+
+    expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
+    expect(mockDispatch).toHaveBeenCalledWith({
+      index: 0,
+      routes: [{ name: SCREENS.BOTTOM_TABS }]
+    })
+  })
+
   describe('handleGoogleSignIn', () => {
     test('should fail gracefully when Google sign-in has session error', async() => {
       const { result } = renderHook(() => useLogin());
@@ -140,13 +157,7 @@ describe('useLogin Hook', () => {
     })
 
     test('should navigate to ADD_PERSONAL_INFO when no profile exists', async() => {
-      jest.spyOn(require('../../src/userWorkflow/context/UserProfileContext'), 'useUserProfile')
-        .mockImplementation(() => ({
-          userProfile: null,
-          loading: false,
-          error: null,
-          fetchUserProfile: jest.fn()
-        }));
+      mockUserProfile = null;
       (googleLogin as jest.Mock).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useLogin())
@@ -163,13 +174,7 @@ describe('useLogin Hook', () => {
     })
 
     test('should navigate to BOTTOM_TABS when profile exists', async() => {
-      jest.spyOn(require('../../src/userWorkflow/context/UserProfileContext'), 'useUserProfile')
-        .mockImplementation(() => ({
-          userProfile: { bloodGroup: 'A+' },
-          loading: false,
-          error: null,
-          fetchUserProfile: jest.fn()
-        }));
+      mockUserProfile = { bloodGroup: 'A+' };
       (googleLogin as jest.Mock).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useLogin())
@@ -210,6 +215,40 @@ describe('useLogin Hook', () => {
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
       expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
+    })
+
+    test('should navigate to ADD_PERSONAL_INFO when no profile exists', async() => {
+      mockUserProfile = null;
+      (facebookLogin as jest.Mock).mockResolvedValue(undefined)
+
+      const { result } = renderHook(() => useLogin())
+
+      await act(async() => {
+        await result.current.handleFacebookSignIn()
+      })
+
+      expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
+      expect(mockDispatch).toHaveBeenCalledWith({
+        index: 0,
+        routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+      })
+    })
+
+    test('should navigate to BOTTOM_TABS when profile exists', async() => {
+      mockUserProfile = { bloodGroup: 'A+' };
+      (facebookLogin as jest.Mock).mockResolvedValue(undefined)
+
+      const { result } = renderHook(() => useLogin())
+
+      await act(async() => {
+        await result.current.handleFacebookSignIn()
+      })
+
+      expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
+      expect(mockDispatch).toHaveBeenCalledWith({
+        index: 0,
+        routes: [{ name: SCREENS.BOTTOM_TABS }]
+      })
     })
   })
 })
