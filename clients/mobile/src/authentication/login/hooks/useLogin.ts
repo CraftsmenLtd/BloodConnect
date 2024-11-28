@@ -3,13 +3,12 @@ import { useNavigation, CommonActions } from '@react-navigation/native'
 import { validateRequired, ValidationRule } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
-import { loginUser, googleLogin, facebookLogin } from '../../services/authService'
+import { loginUser } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
-import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
-import { LoadingState } from '../../types/auth'
+import { useSocialAuth } from '../../socialAuth/hooks/useSocialAuth'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -25,9 +24,8 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 
 export const useLogin = (): any => {
   const fetchClient = useFetchClient()
-  const { userProfile } = useUserProfile()
   const { setIsAuthenticated } = useAuth()
-  const [loadingState, setLoadingState] = useState<LoadingState>('idle')
+  const [loginLoading, setLoginLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
   const [loginCredential, setLoginCredential] = useState<LoginCredential>(
     initializeState<LoginCredential>(Object.keys(validationRules) as Array<keyof LoginCredential>, '')
@@ -35,7 +33,8 @@ export const useLogin = (): any => {
 
   const [loginError, setLoginError] = useState<string>('')
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-  const [socialLoginError, setSocialLoginError] = useState<string>('')
+
+  const { socialLoadingState, socialLoginError, handleGoogleSignIn, handleFacebookSignIn } = useSocialAuth()
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     setLoginCredential(prevState => ({
@@ -46,7 +45,7 @@ export const useLogin = (): any => {
 
   const handleLogin = async(): Promise<void> => {
     try {
-      setLoadingState('login')
+      setLoginLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
         setIsAuthenticated(true)
@@ -59,53 +58,26 @@ export const useLogin = (): any => {
         )
       } else {
         setLoginError('User is not confirmed. Please verify your email.')
-        setLoadingState('idle')
+        setLoginLoading(false)
       }
     } catch (error) {
       setLoginError('Invalid Email or Password.')
     } finally {
-      setLoadingState('idle')
+      setLoginLoading(false)
     }
-  }
-
-  const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
-    try {
-      setLoadingState(socialMedia.toLowerCase() as LoadingState)
-      await loginFunction()
-      setIsAuthenticated(true)
-      registerUserDeviceForNotification(fetchClient)
-      const hasProfile = Boolean(userProfile?.bloodGroup)
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO }]
-        })
-      )
-    } catch (error) {
-      setSocialLoginError(`${socialMedia} login failed. Please try again.`)
-    } finally {
-      setLoadingState('idle')
-    }
-  }
-
-  const handleGoogleSignIn = async(): Promise<void> => {
-    await handleSocialSignIn(googleLogin, 'Google')
-  }
-
-  const handleFacebookSignIn = async(): Promise<void> => {
-    await handleSocialSignIn(facebookLogin, 'Facebook')
   }
 
   return {
-    loadingState,
+    loginLoading,
     loginError,
     loginCredential,
     handleInputChange,
     isPasswordVisible,
     setIsPasswordVisible,
     handleLogin,
+    socialLoadingState,
+    socialLoginError,
     handleGoogleSignIn,
-    handleFacebookSignIn,
-    socialLoginError
+    handleFacebookSignIn
   }
 }

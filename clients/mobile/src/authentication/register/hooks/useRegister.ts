@@ -1,16 +1,11 @@
 import { useMemo, useState } from 'react'
-import { useNavigation, CommonActions } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import { googleLogin, facebookLogin } from '../../services/authService'
-import { useAuth } from '../../context/useAuth'
-import { useFetchClient } from '../../../setup/clients/useFetchClient'
-import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { formatPhoneNumber } from '../../../utility/formatting'
-import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
-import { LoadingState } from '../../types/auth'
+import { useSocialAuth } from '../../socialAuth/hooks/useSocialAuth'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -29,10 +24,6 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useRegister = (): any => {
-  const fetchClient = useFetchClient()
-  const { userProfile } = useUserProfile()
-  const { setIsAuthenticated } = useAuth()
-  const [loadingState, setLoadingState] = useState<LoadingState>('idle')
   const navigation = useNavigation<RegisterScreenNavigationProp>()
   const [registerCredential, setRegisterCredential] = useState<RegisterCredential>(
     initializeState<RegisterCredential>(Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
@@ -40,7 +31,8 @@ export const useRegister = (): any => {
   const [errors, setErrors] = useState<RegisterErrors>(initializeState<RegisterCredential>(
     Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
   )
-  const [socialLoginError, setSocialLoginError] = useState<string>('')
+
+  const { socialLoadingState, socialLoginError, handleGoogleSignIn, handleFacebookSignIn } = useSocialAuth()
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     setRegisterCredential(prevState => ({
@@ -76,43 +68,15 @@ export const useRegister = (): any => {
     })
   }
 
-  const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
-    try {
-      setLoadingState(socialMedia.toLowerCase() as LoadingState)
-      await loginFunction()
-      setIsAuthenticated(true)
-      registerUserDeviceForNotification(fetchClient)
-      const hasProfile = Boolean(userProfile?.bloodGroup)
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO }]
-        })
-      )
-    } catch (error) {
-      setSocialLoginError(`${socialMedia} login failed. Please try again.`)
-    } finally {
-      setLoadingState('idle')
-    }
-  }
-
-  const handleGoogleSignIn = async(): Promise<void> => {
-    await handleSocialSignIn(googleLogin, 'Google')
-  }
-
-  const handleFacebookSignIn = async(): Promise<void> => {
-    await handleSocialSignIn(facebookLogin, 'Facebook')
-  }
-
   return {
     errors,
-    loadingState,
     registerCredential,
     handleInputChange,
     isButtonDisabled,
     handleRegister,
+    socialLoadingState,
+    socialLoginError,
     handleGoogleSignIn,
-    handleFacebookSignIn,
-    socialLoginError
+    handleFacebookSignIn
   }
 }
