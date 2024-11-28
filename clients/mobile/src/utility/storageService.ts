@@ -107,7 +107,7 @@ const getAllKeys = async(): Promise<KeySet> => {
  * @param keysToRemove The array of keys to remove.
  * @returns A promise that resolves when the keys have been removed.
  */
-const removeKeys = async(keysToRemove: readonly string[]) => {
+const removeKeys = async(keysToRemove: readonly string[]): Promise<void> => {
   try {
     await AsyncStorage.multiRemove(keysToRemove)
   } catch (error: unknown) {
