@@ -12,7 +12,9 @@ const darkTheme: Theme = {
     darkGrey: '#616161',
     charcoalGray: '#202325',
     black: 'black',
-    greyBG: '#F5F5F5'
+    greyBG: '#F5F5F5',
+    redFaded: '#FFA6A6',
+    goldenYellow: '#FFD64D'
   },
   typography: {
     fontSize: 16,

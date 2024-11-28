@@ -5,10 +5,10 @@ import { SCREENS } from '../constant/screens'
 import { parseJsonData } from '../../utility/jsonParser'
 import { NotificationContextType } from './useNotificationContext'
 import { useNavigationReady } from './useNavigationReady'
-import { NotificationData, NotificationDataTypes } from './types'
+import { NotificationData, NotificationDataTypes } from './NotificationData'
 import { RootStackParamList } from '../navigation/navigationTypes'
 
-const NOTIFICATION_TO_SCREEN_MAP: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
+const SCREEN_FOR_NOTIFICATION: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
   bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW },
   donorAcceptRequest: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
 }
@@ -60,7 +60,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     if (response === null) return
 
     const { type } = response.notification.request.content.data
-    const mapping = NOTIFICATION_TO_SCREEN_MAP[type]
+    const mapping = SCREEN_FOR_NOTIFICATION[type]
 
     if (mapping !== undefined) {
       const { screen, getParams } = mapping
@@ -71,7 +71,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   }
 
-  const checkInitialNotification = async (isMounted: boolean) => {
+  const checkInitialNotification = async(isMounted: boolean) => {
     try {
       const response = await Notifications.getLastNotificationResponseAsync()
       if (isNotificationValid(response, isMounted)) {

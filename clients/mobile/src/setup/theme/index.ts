@@ -16,6 +16,7 @@ interface Theme {
     black: string;
     greyBG: string;
     redFaded: string;
+    goldenYellow: string;
   };
   typography: {
     fontSize: number;
