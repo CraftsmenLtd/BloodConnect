@@ -67,7 +67,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       const params = getParams !== undefined ? getParams(parseJsonData<Record<string, unknown>>(response.notification.request.content.data.payload)) : undefined
       navigation.navigate(screen, params as any)
     } else {
-      throw new Error('Unknown notification.')
+      throw new Error('Unknown error on notification.')
     }
   }
 
@@ -81,7 +81,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         handleNotificationNavigation(response)
       }
     } catch (error) {
-      throw new Error(`Error processing notification: ${error}`)
+      throw new Error('Error processing notification from background')
     }
   }
 
