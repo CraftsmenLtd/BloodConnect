@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { formatteDate } from '../../utility/formatte'
+import { formattedDate } from '../../utility/formatting'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
@@ -67,7 +67,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
         {isRequired && <Text style={styles.asterisk}>*</Text>}
       </Text>
       <TouchableOpacity onPress={() => { setShowDatePicker(true) }} style={styles.datePicker}>
-        <Text>{value !== null ? formatteDate(value, isOnlyDate) : 'Select Date & Time'}</Text>
+        <Text>{value !== null ? formattedDate(value) : 'Select Date & Time'}</Text>
       </TouchableOpacity>
       {showDatePicker && (
         <DateTimePicker

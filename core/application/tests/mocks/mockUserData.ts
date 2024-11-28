@@ -5,14 +5,13 @@ export const mockUserWithStringId: UserDTO = {
   id: '12345',
   email: 'ebrahim@example.com',
   name: 'Ebrahim',
-  phone: '1234567890'
+  phoneNumbers: ['+8801834567890', '+8801755567822']
 }
 
 export const mockUserDetailsWithStringId: UserDetailsDTO = {
   id: '12345',
   email: 'ebrahim@example.com',
   name: 'Ebrahim',
-  phone: '1234567890',
   phoneNumbers: ['+8801834567890', '+8801755567822'],
   createdAt: '2023-09-16T12:00:00.000Z',
   bloodGroup: 'O-',
@@ -44,7 +43,6 @@ export const expectedUser: UserFields = {
   email: 'ebrahim@example.com',
   name: 'Ebrahim',
   phoneNumbers: ['+8801834567890', '+8801755567822'],
-  phone: '1234567890',
   createdAt: '2023-09-16T12:00:00.000Z',
   bloodGroup: 'O-',
   lastDonationDate: '2023-09-15T14:30:00Z',

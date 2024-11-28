@@ -36,7 +36,7 @@ export class UserService {
         id: generateUniqueID(),
         email: userAttributes.email,
         name: userAttributes.name,
-        phone: userAttributes.phone_number
+        phoneNumbers: userAttributes.phoneNumbers
       })
     } catch (error) {
       throw new UserOperationError(
@@ -59,6 +59,20 @@ export class UserService {
 
   getAppUserWelcomeMail(userName: string): GenericMessage {
     return getAppUserWelcomeMailMessage(userName)
+  }
+
+  async getUser(
+    userId: string,
+    userRepository: Repository<UserDetailsDTO>
+  ): Promise<UserDetailsDTO> {
+    const userProfile = await userRepository.getItem(
+      `USER#${userId}`,
+      'PROFILE'
+    )
+    if (userProfile == null) {
+      throw new Error('User not found')
+    }
+    return userProfile
   }
 
   async updateUser(

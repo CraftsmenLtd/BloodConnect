@@ -111,7 +111,8 @@
                 "geohash.$": "$.prepareDonorSearchResult.geohash",
                 "eligibleDonorsCount.$": "$.eligibleDonors.Count",
                 "totalDonorsToNotify.$": "$.prepareDonorSearchResult.totalDonorsToNotify",
-                "eligibleDonors.$": "$.eligibleDonors.Items"
+                "eligibleDonors.$": "$.eligibleDonors.Items",
+                "seekerId.$": "$.seekerId"
               },
               "ResultPath": "$.checkDonorSearchResult",
               "Next": "DecideNextStep"
@@ -188,7 +189,7 @@
                 "userId.$": "$.donorId",
                 "title": "Blood Request",
                 "body.$": "$.message",
-                "type": "bloodRequestPost",
+                "type": "BLOOD_REQ_POST",
                 "payload": {
                   "seekerId.$": "$.seekerId",
                   "requestPostId.$": "$.requestPostId",
@@ -221,7 +222,17 @@
         "QueueUrl": "${DONOR_SEARCH_RETRY_QUEUE_URL}",
         "MessageBody": {
           "PK.$": "States.Format('BLOOD_REQ#{}', $.seekerId)",
-          "SK.$": "States.Format('BLOOD_REQ#{}#{}', $.createdAt, $.requestPostId)"
+          "SK.$": "States.Format('BLOOD_REQ#{}#{}', $.createdAt, $.requestPostId)",
+          "neededBloodGroup.$": "$.neededBloodGroup",
+          "bloodQuantity.$": "$.bloodQuantity",
+          "urgencyLevel.$": "$.urgencyLevel",
+          "city.$": "$.city",
+          "location.$": "$.location",
+          "geohash.$": "$.geohash",
+          "donationDateTime.$": "$.donationDateTime",
+          "contactNumber.$": "$.contactNumber",
+          "transportationInfo.$": "$.transportationInfo",
+          "shortDescription.$": "$.shortDescription"
         },
         "DelaySeconds.$": "$.prepareDonorSearchResult.delayPeriod"
       },

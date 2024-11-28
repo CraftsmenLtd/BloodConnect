@@ -4,6 +4,7 @@ import { Button } from '../../../../components/button/Button'
 import { Ionicons } from '@expo/vector-icons'
 import createStyles from './createStyles'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
+import React from 'react'
 
 const ResponseDonationRequest = () => {
   const theme = useTheme()
@@ -12,7 +13,8 @@ const ResponseDonationRequest = () => {
     bloodRequest,
     handleAcceptRequest,
     handleIgnore,
-    formatDateTime
+    formatDateTime,
+    isRequestAccepted
   } = useResponseDonationRequest()
 
   if (bloodRequest === null) return null
@@ -101,8 +103,8 @@ const ResponseDonationRequest = () => {
       </ScrollView>
 
       <View style={styles.buttonContainer}>
-        <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />
-        <Button text="Accept Request" buttonStyle={styles.acceptButton} onPress={() => { void handleAcceptRequest() }} />
+        {!isRequestAccepted && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
+        <Button text={isRequestAccepted ? 'Request Accepted' : 'Accept Request'} disabled={isRequestAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
       </View>
     </SafeAreaView>
   )

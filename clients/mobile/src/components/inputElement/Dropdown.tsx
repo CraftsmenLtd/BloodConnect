@@ -42,10 +42,7 @@ const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, sele
         {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
       <CustomDropdown
-        style={[
-          styles.dropdown
-          // readonly && styles.dropdownReadonly
-        ]}
+        style={styles.dropdown}
         placeholderStyle={[styles.placeholderStyle, readonly && styles.textReadonly]}
         selectedTextStyle={[styles.selectedTextStyle, readonly && styles.textReadonly]}
         data={options}
@@ -74,11 +71,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     paddingHorizontal: 10,
     backgroundColor: theme.colors.white
   },
-  // dropdownReadonly: {
-  //   backgroundColor: theme.colors.greyBG,
-  //   borderColor: theme.colors.lightGrey,
-  //   opacity: 0.8
-  // },
   placeholderStyle: {
     fontSize: 16,
     color: theme.colors.grey
