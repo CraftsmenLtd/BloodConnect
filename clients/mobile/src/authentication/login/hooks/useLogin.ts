@@ -9,6 +9,7 @@ import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
+import { LoadingState } from '../../types/auth'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -26,9 +27,7 @@ export const useLogin = (): any => {
   const fetchClient = useFetchClient()
   const { userProfile } = useUserProfile()
   const { setIsAuthenticated } = useAuth()
-  const [loginLoading, setLoginLoading] = useState(false)
-  const [googleLoading, setGoogleLoading] = useState(false)
-  const [facebookLoading, setFacebookLoading] = useState(false)
+  const [loadingState, setLoadingState] = useState<LoadingState>('idle')
   const navigation = useNavigation<LoginScreenNavigationProp>()
   const [loginCredential, setLoginCredential] = useState<LoginCredential>(
     initializeState<LoginCredential>(Object.keys(validationRules) as Array<keyof LoginCredential>, '')
@@ -47,7 +46,7 @@ export const useLogin = (): any => {
 
   const handleLogin = async(): Promise<void> => {
     try {
-      setLoginLoading(true)
+      setLoadingState('login')
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
         setIsAuthenticated(true)
@@ -60,17 +59,18 @@ export const useLogin = (): any => {
         )
       } else {
         setLoginError('User is not confirmed. Please verify your email.')
-        setLoginLoading(false)
+        setLoadingState('idle')
       }
     } catch (error) {
       setLoginError('Invalid Email or Password.')
     } finally {
-      setLoginLoading(false)
+      setLoadingState('idle')
     }
   }
 
   const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
     try {
+      setLoadingState(socialMedia.toLowerCase() as LoadingState)
       await loginFunction()
       setIsAuthenticated(true)
       registerUserDeviceForNotification(fetchClient)
@@ -84,26 +84,21 @@ export const useLogin = (): any => {
     } catch (error) {
       setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     } finally {
-      setGoogleLoading(false)
-      setFacebookLoading(false)
+      setLoadingState('idle')
     }
   }
 
   const handleGoogleSignIn = async(): Promise<void> => {
-    setGoogleLoading(true)
     await handleSocialSignIn(googleLogin, 'Google')
   }
 
   const handleFacebookSignIn = async(): Promise<void> => {
-    setFacebookLoading(true)
     await handleSocialSignIn(facebookLogin, 'Facebook')
   }
 
   return {
+    loadingState,
     loginError,
-    loginLoading,
-    googleLoading,
-    facebookLoading,
     loginCredential,
     handleInputChange,
     isPasswordVisible,
