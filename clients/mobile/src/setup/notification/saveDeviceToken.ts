@@ -3,12 +3,14 @@ import authService from '../../authentication/services/authService'
 import StorageService from '../../utility/storageService'
 import { TOKEN } from '../constant/token'
 
-export const saveDeviceTokenToSNS = async(
+export const saveDeviceTokenOnSNS = async(
   deviceToken: string,
   fetchClient: any
 ): Promise<void> => {
   try {
-    if (await checkDeviceAlreadyRegisteredForSameUser()) {
+    const loggedInUser = await authService.currentLoggedInUser()
+
+    if (await isDeviceAlreadyRegisteredForUser(deviceToken, loggedInUser.userId)) {
       return
     }
 
@@ -35,19 +37,19 @@ export const saveDeviceTokenToSNS = async(
 export const saveDeviceTokenLocally = async(
   deviceToken: string
 ): Promise<void> => {
-  const loggedInUser = await authService.currentLogInUser()
+  const loggedInUser = await authService.currentLoggedInUser()
   await StorageService.storeItem<{ deviceToken: string; userId: string }>(
     TOKEN.DEVICE_TOKEN,
     { userId: loggedInUser.userId, deviceToken }
   )
 }
 
-export const checkDeviceAlreadyRegisteredForSameUser = async(): Promise<boolean> => {
+export const isDeviceAlreadyRegisteredForUser = async(deviceToken: string, userId: string): Promise<boolean> => {
   const registeredDevice = await StorageService.getItem<
   { deviceToken: string; userId: string }
   >(TOKEN.DEVICE_TOKEN)
 
-  const loggedInUser = await authService.currentLogInUser()
-
-  return (registeredDevice != null) && registeredDevice.userId === loggedInUser.userId
+  return (registeredDevice != null) &&
+    registeredDevice.deviceToken === deviceToken &&
+    registeredDevice.userId === userId
 }

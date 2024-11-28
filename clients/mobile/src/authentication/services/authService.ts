@@ -230,5 +230,5 @@ export default {
   logoutUser,
   fetchSession,
   decodeAccessToken,
-  currentLogInUser: currentLoggedInUser
+  currentLoggedInUser
 }
