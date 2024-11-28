@@ -11,7 +11,7 @@ const Stack = createStackNavigator()
 
 export default function Navigator() {
   const { isAuthenticated, loading } = useAuth()
-  const { userProfile, fetchUserProfile, loading: profileLoading } = useUserProfile() // Add profileLoading
+  const { userProfile, fetchUserProfile, loading: profileLoading } = useUserProfile()
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -32,12 +32,10 @@ export default function Navigator() {
   })
 
   const getInitialRoute = () => {
-    console.log('userProfile in initial route:', userProfile?.bloodGroup)
     if (!isAuthenticated) {
       return SCREENS.WELCOME
     }
     const hasProfile = Boolean(userProfile?.bloodGroup)
-    console.log('hasProfile from navigator', hasProfile)
     return hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO
   }
 

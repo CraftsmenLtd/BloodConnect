@@ -10,7 +10,6 @@ import { Cache } from 'aws-amplify/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../authentication/context/useAuth'
 import { Ionicons } from '@expo/vector-icons'
-import { useUserProfile } from './context/UserProfileContext'
 
 interface ProfileScreenProps {
   navigation: ProfileScreenNavigationProp;
@@ -64,8 +63,6 @@ const posts: Post[] = [
 ];
   const theme = useTheme()
   const auth = useAuth()
-  const { userProfile } = useUserProfile()
-  console.log('profile page userProfile', userProfile)
 
   const clearAllStorage = async () => {
     if (Platform.OS !== 'web') {
@@ -109,7 +106,7 @@ const posts: Post[] = [
       <View style={styles.profileInfo}>
         <Image source={{ uri: 'https://via.placeholder.com/100' }} style={styles.profileImage} />
         <Text style={styles.bloodGroup}>A+ (ve)</Text>
-        <Text style={styles.userName}>{ userProfile?.name }</Text>
+        <Text style={styles.userName}>Sufi Ahmed</Text>
         <Text style={styles.userLocation}>Mohakhali DOHS, Dhaka</Text>
         <Text style={styles.userDetails}>Age: 29  •  Weight: 82  •  Height: 5'6"</Text>
         <TouchableOpacity style={styles.callButton}>

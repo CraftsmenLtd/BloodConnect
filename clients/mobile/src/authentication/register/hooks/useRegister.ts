@@ -29,7 +29,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 
 export const useRegister = (): any => {
   const fetchClient = useFetchClient()
-  const { userProfile, fetchUserProfile } = useUserProfile()
+  const { userProfile } = useUserProfile()
   const { setIsAuthenticated } = useAuth()
   const [googleLoading, setGoogleLoading] = useState(false)
   const [facebookLoading, setFacebookLoading] = useState(false)
@@ -81,7 +81,6 @@ export const useRegister = (): any => {
       await loginFunction()
       setIsAuthenticated(true)
       registerUserDeviceForNotification(fetchClient)
-      // const userProfile = await fetchUserProfile()
       const hasProfile = Boolean(userProfile?.bloodGroup)
       navigation.dispatch(
         CommonActions.reset({
