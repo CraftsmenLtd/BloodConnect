@@ -9,11 +9,38 @@ jest.mock('../../src/authentication/services/authService', () => ({
   facebookLogin: jest.fn()
 }))
 
+jest.mock('../../src/authentication/context/useAuth', () => ({
+  useAuth: () => ({
+    setIsAuthenticated: jest.fn(),
+    accessToken: null,
+    idToken: null,
+    isAuthenticated: false,
+    loading: false,
+    logoutUser: jest.fn()
+  })
+}))
+
+
+jest.mock('../../src/userWorkflow/context/UserProfileContext', () => ({
+  useUserProfile: () => ({
+    userProfile: null,
+    loading: false,
+    error: null,
+    fetchUserProfile: jest.fn()
+  })
+}))
+
+jest.mock('../../src/setup/clients/useFetchClient', () => ({
+  useFetchClient: () => ({
+    get: jest.fn(),
+    post: jest.fn(),
+    patch: jest.fn()
+  })
+}))
+
 describe('useRegister Hook', () => {
   beforeEach(() => {
     setRouteParams({ email: 'test@example.com' })
-  })
-  afterEach(() => {
     jest.clearAllMocks()
   })
 
