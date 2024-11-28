@@ -1,15 +1,25 @@
 /* eslint-disable */
 // This page is not implemented yet just demo.
-import React from 'react'
-import { Text, Button, View, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView, Platform } from 'react-native'
-import { signOut } from 'aws-amplify/auth'
-import { useTheme } from '../setup/theme/hooks/useTheme'
-import { ProfileScreenNavigationProp } from '../setup/navigation/navigationTypes'
-import { SCREENS } from '../setup/constant/screens'
+import { Ionicons } from '@expo/vector-icons';
 import { Cache } from 'aws-amplify/utils';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useAuth } from '../authentication/context/useAuth'
-import { Ionicons } from '@expo/vector-icons'
+import React from 'react';
+import {
+  Button,
+  FlatList,
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+import { useAuth } from '../authentication/context/useAuth';
+import { SCREENS } from '../setup/constant/screens';
+import { TOKEN } from '../setup/constant/token';
+import { ProfileScreenNavigationProp } from '../setup/navigation/navigationTypes';
+import { useTheme } from '../setup/theme/hooks/useTheme';
+import StorageService from '../utility/storageService';
 
 interface ProfileScreenProps {
   navigation: ProfileScreenNavigationProp;
@@ -37,7 +47,7 @@ interface Post {
 }
 
 const Profile: React.FC<ProfileScreenProps> = ({ navigation }) => {
-const badges: Badge[] = [
+const badges: Badge[] = [];
 
 const achievements: Achievement[] = [
   { id: 2, icon: 'medkit', label: '5 times', subLabel: 'Platelet donor' },
@@ -64,17 +74,18 @@ const posts: Post[] = [
   const theme = useTheme()
   const auth = useAuth()
 
-  const clearAllStorage = async () => {
+  const clearStorageExceptDeviceToken = async () => {
     if (Platform.OS !== 'web') {
-      await AsyncStorage.clear();
+      const keys = await StorageService.getAllKeys()
+      const filteredKeys = keys.filter(TOKEN.DEVICE_TOKEN)
+      await filteredKeys.remove()
     }
   };
 
   const handleSignOut = async (): Promise<void> => {
     try {
-      await Promise.all([Cache.clear(), clearAllStorage()])
+      await Promise.all([Cache.clear(), clearStorageExceptDeviceToken()])
       await auth.logoutUser()
-      await signOut()
       navigation.navigate(SCREENS.WELCOME)
     } catch (error) {
       console.error('Error during sign out:', error instanceof Error ? error.message : 'Unknown error');

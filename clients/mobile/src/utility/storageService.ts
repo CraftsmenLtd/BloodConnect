@@ -41,9 +41,87 @@ const clearStorage = async(): Promise<void> => {
   }
 }
 
+/**
+ * Interface for a set of keys.
+ */
+interface KeySet {
+  /**
+   * Filters the set of keys to exclude the specified key.
+   * @param key The key to exclude.
+   * @returns A new KeySet object with the filtered keys.
+   */
+  filter(key: string): KeySet;
+
+  /**
+   * Returns the array of keys in the set.
+   * @returns The array of keys.
+   */
+  getKeys(): readonly string[];
+
+  /**
+   * Removes all keys in the set from storage.
+   * @returns A promise that resolves when the keys have been removed.
+   */
+  remove(): Promise<void>;
+}
+
+/**
+ * Creates a new KeySet object from an array of keys.
+ * @param keys The array of keys.
+ * @returns A new KeySet object.
+ */
+const createKeySet = (keys: readonly string[]): KeySet => {
+  const filter = (key: string): KeySet => {
+    return createKeySet(keys.filter(k => k !== key))
+  }
+
+  const remove = async(): Promise<void> => {
+    await removeKeys(keys)
+  }
+
+  return {
+    filter,
+    getKeys: () => keys,
+    remove
+  }
+}
+
+/**
+ * Retrieves all keys from storage and returns a KeySet object.
+ * @returns A promise that resolves with a KeySet object.
+ */
+const getAllKeys = async(): Promise<KeySet> => {
+  try {
+    const keys = await AsyncStorage.getAllKeys()
+    return createKeySet(keys)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to get all keys: ${error.message}`)
+    }
+    throw new Error('Failed to get all keys: An unknown error occurred')
+  }
+}
+
+/**
+ * Removes multiple keys from storage.
+ * @param keysToRemove The array of keys to remove.
+ * @returns A promise that resolves when the keys have been removed.
+ */
+const removeKeys = async(keysToRemove: readonly string[]) => {
+  try {
+    await AsyncStorage.multiRemove(keysToRemove)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to remove keys: ${error.message}`)
+    }
+    throw new Error('Failed to remove keys: An unknown error occurred')
+  }
+}
+
 export default {
   storeItem,
   getItem,
   removeItem,
-  clearStorage
+  clearStorage,
+  getAllKeys
 }
