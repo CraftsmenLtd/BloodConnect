@@ -20,7 +20,6 @@ jest.mock('../../src/authentication/context/useAuth', () => ({
   })
 }))
 
-
 jest.mock('../../src/userWorkflow/context/UserProfileContext', () => ({
   useUserProfile: () => ({
     userProfile: null,

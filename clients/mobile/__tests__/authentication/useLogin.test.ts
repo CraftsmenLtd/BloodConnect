@@ -1,7 +1,6 @@
 import { renderHook, act } from '@testing-library/react-native'
 import { useLogin } from '../../src/authentication/login/hooks/useLogin'
 import { loginUser, googleLogin, facebookLogin } from '../../src/authentication/services/authService'
-import { CommonActions } from '@react-navigation/native'
 import { SCREENS } from '../../src/setup/constant/screens'
 
 const mockDispatch = jest.fn()
