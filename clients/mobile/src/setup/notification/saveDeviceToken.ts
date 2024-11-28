@@ -1,7 +1,10 @@
 import { Platform } from 'react-native'
 import { HttpClient } from '../clients/HttpClient'
 
-export const saveDeviceTokenToSNS = async(deviceToken: string, fetchClient: HttpClient): Promise<void> => {
+export const saveDeviceTokenToSNS = async(
+  deviceToken: string,
+  fetchClient: HttpClient
+): Promise<void> => {
   try {
     const response = await fetchClient.post('/notification/register', {
       deviceToken,
@@ -9,9 +12,13 @@ export const saveDeviceTokenToSNS = async(deviceToken: string, fetchClient: Http
     })
 
     if (response.status !== 200) {
-      throw new Error(`Failed to register device. Server responded with status: ${response.status}`)
+      throw new Error(
+        'Failed to register your device. Please login again'
+      )
     }
   } catch (error) {
-    throw new Error(`Failed to register device token. ${error instanceof Error ? error.message : 'An unexpected error occurred'}`)
+    throw new Error(
+      'An unexpected error occurred'
+    )
   }
 }
