@@ -10,6 +10,7 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { formatPhoneNumber } from '../../../utility/formatting'
 import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
+import { LoadingState } from '../../types/auth'
 
 type CredentialKeys = keyof RegisterCredential
 
@@ -31,8 +32,7 @@ export const useRegister = (): any => {
   const fetchClient = useFetchClient()
   const { userProfile } = useUserProfile()
   const { setIsAuthenticated } = useAuth()
-  const [googleLoading, setGoogleLoading] = useState(false)
-  const [facebookLoading, setFacebookLoading] = useState(false)
+  const [loadingState, setLoadingState] = useState<LoadingState>('idle')
   const navigation = useNavigation<RegisterScreenNavigationProp>()
   const [registerCredential, setRegisterCredential] = useState<RegisterCredential>(
     initializeState<RegisterCredential>(Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
@@ -78,6 +78,7 @@ export const useRegister = (): any => {
 
   const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
     try {
+      setLoadingState(socialMedia.toLowerCase() as LoadingState)
       await loginFunction()
       setIsAuthenticated(true)
       registerUserDeviceForNotification(fetchClient)
@@ -91,25 +92,21 @@ export const useRegister = (): any => {
     } catch (error) {
       setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     } finally {
-      setGoogleLoading(false)
-      setFacebookLoading(false)
+      setLoadingState('idle')
     }
   }
 
   const handleGoogleSignIn = async(): Promise<void> => {
-    setGoogleLoading(true)
     await handleSocialSignIn(googleLogin, 'Google')
   }
 
   const handleFacebookSignIn = async(): Promise<void> => {
-    setFacebookLoading(true)
     await handleSocialSignIn(facebookLogin, 'Facebook')
   }
 
   return {
     errors,
-    googleLoading,
-    facebookLoading,
+    loadingState,
     registerCredential,
     handleInputChange,
     isButtonDisabled,

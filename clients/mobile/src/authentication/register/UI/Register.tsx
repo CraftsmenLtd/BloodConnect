@@ -16,7 +16,7 @@ interface RegisterScreenProps {
 }
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
-  const { errors, registerCredential, handleInputChange, handleRegister, isButtonDisabled, handleGoogleSignIn, handleFacebookSignIn, socialLoginError, googleLoading, facebookLoading } = useRegister()
+  const { errors, loadingState, registerCredential, handleInputChange, handleRegister, isButtonDisabled, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useRegister()
   const styles = createStyles(useTheme())
 
   return (
@@ -60,14 +60,14 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
       <SocialButton
         text="Continue with Google"
         onPress={handleGoogleSignIn}
-        loading={googleLoading}
+        loading={loadingState === 'google'}
         icon={require('../../../../assets/google-icon.png')}
       />
 
       <SocialButton
         text="Continue with Facebook"
         onPress={handleFacebookSignIn}
-        loading={facebookLoading}
+        loading={loadingState === 'facebook'}
         icon={require('../../../../assets/facebook-icon.png')}
       />
 
