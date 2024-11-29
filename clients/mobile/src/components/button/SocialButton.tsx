@@ -15,7 +15,7 @@ interface SocialButtonProps {
 export const SocialButton = ({ text, onPress, icon, loading, buttonStyle, textStyle }: SocialButtonProps) => {
   const theme = useTheme()
   const styles = createStyles(theme)
-  const isLoading = Boolean(loading)
+  const isLoading = loading ?? false
 
   return (
     <TouchableOpacity style={[styles.socialButton, buttonStyle]} onPress={onPress} disabled={loading}>
