@@ -1,4 +1,4 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../../authentication/context/useAuth'
@@ -8,6 +8,7 @@ import { signOut } from 'aws-amplify/auth'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SCREENS } from '../../../setup/constant/screens'
 import { FetchResponse } from '../../../setup/clients/FetchClient'
+import { AccountScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 
 interface User {
   name: string;
@@ -49,7 +50,7 @@ interface UseAccountReturnType {
 export const useAccount = (): UseAccountReturnType => {
   const auth = useAuth()
   const fetchClient = useFetchClient()
-  const navigation = useNavigation<NavigationProp<any>>()
+  const navigation = useNavigation<AccountScreenNavigationProp>()
   const [userData, setUserData] = useState<User | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)

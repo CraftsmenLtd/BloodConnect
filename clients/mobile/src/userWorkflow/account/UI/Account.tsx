@@ -1,22 +1,24 @@
 import React from 'react'
 import {
-  Text, View, TouchableOpacity, Image, ImageStyle, StyleProp, ActivityIndicator,
-  ImageSourcePropType
+  Text, View, TouchableOpacity, Image, ImageStyle, StyleProp
 } from 'react-native'
 import { SCREENS } from '../../../setup/constant/screens'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import createStyles from './createStyle'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { useAccount } from '../hooks/useAccount'
+import { COMMON_URLS } from '../../../setup/constant/commonUrls'
+import { ProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import Loader from '../../../components/loaders/loader'
 
 export const Account = () => {
   const styles = createStyles(useTheme())
   const { userData, loading, handleSignOut } = useAccount()
-  const navigation = useNavigation<NavigationProp<any>>()
+  const navigation = useNavigation<ProfileScreenNavigationProp>()
 
   if (loading) {
-    return <ActivityIndicator size="large" color="red" style={styles.loadingIndicator} />
+    return <Loader />
   }
 
   return (
@@ -26,7 +28,7 @@ export const Account = () => {
           <View style={styles.imageInnerBorder}>
             <Image
               style={styles.profileImage as StyleProp<ImageStyle>}
-              source={{ uri: 'https://avatar.iran.liara.run/public/boy?username=Ash' }}
+              source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
             />
           </View>
         </View>

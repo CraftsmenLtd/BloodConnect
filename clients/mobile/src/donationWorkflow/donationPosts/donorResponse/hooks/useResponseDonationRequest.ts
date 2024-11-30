@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useFetchClient } from '../../../../setup/clients/useFetchClient'
-import { useNavigation, NavigationProp } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { SCREENS } from '../../../../setup/constant/screens'
 import { useNotificationContext } from '../../../../setup/notification/useNotificationContext'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
+import { PostScreenNavigationProp } from '../../../../setup/navigation/navigationTypes'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -28,7 +29,7 @@ interface FetchResponse {
 }
 
 export const useResponseDonationRequest = (): useResponseDonationRequestReturnType => {
-  const navigation = useNavigation<NavigationProp<any>>()
+  const navigation = useNavigation<PostScreenNavigationProp>()
   const [isRequestAccepted, setIsRequestAccepted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

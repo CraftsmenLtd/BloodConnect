@@ -3,6 +3,7 @@ import { RouteProp } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { UserRegistrationCredentials } from '../../authentication/services/authService'
 import { DonationScreenParams } from '../../donationWorkflow/types'
+import { NotificationData } from '../notification/NotificationData'
 
 type FromScreen = SCREENS.SET_PASSWORD | SCREENS.FORGOT_PASSWORD
 
@@ -19,10 +20,12 @@ export type RootStackParamList = {
   [SCREENS.DONATION_POSTS]: { data: DonationScreenParams | null; isUpdating: boolean };
   [SCREENS.ADD_PERSONAL_INFO]: undefined;
   [SCREENS.POSTS]: undefined;
-  [SCREENS.BLOOD_REQUEST_PREVIEW]: undefined;
+  [SCREENS.BLOOD_REQUEST_PREVIEW]: { notificationData: NotificationData };
+  [SCREENS.ACCOUNT]: undefined;
 }
 
 export type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.WELCOME>
+export type PostScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.POSTS>
 export type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.REGISTER>
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.LOGIN>
 export type SetPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.SET_PASSWORD>
@@ -32,6 +35,7 @@ export type DonationScreenNavigationProp = StackNavigationProp<RootStackParamLis
 export type DonationPostsScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONATION_POSTS>
 export type BottomTabsNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BOTTOM_TABS>
 export type RequestPreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
+export type AccountScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.ACCOUNT>
 
 export type OtpScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.OTP>
 export type AddPersonalInfoNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.ADD_PERSONAL_INFO>
