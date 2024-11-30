@@ -3,8 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { routes } from './routes'
 import { SCREENS } from '../constant/screens'
 import { useAuth } from '../../authentication/context/useAuth'
-import { View, ActivityIndicator } from 'react-native'
-import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
+import { View } from 'react-native'
+import Loader from '../../components/loaders/loader'
 
 const Stack = createStackNavigator()
 
@@ -13,7 +13,7 @@ export default function Navigator() {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+        <Loader size="large" />
       </View>
     )
   }

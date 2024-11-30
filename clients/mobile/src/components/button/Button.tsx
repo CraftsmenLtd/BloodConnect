@@ -1,7 +1,8 @@
 import React from 'react'
-import { TouchableOpacity, Text, StyleSheet, StyleProp, ViewStyle, TextStyle, ActivityIndicator, View } from 'react-native'
+import { TouchableOpacity, Text, StyleSheet, StyleProp, ViewStyle, TextStyle, View } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
+import Loader from '../loaders/loader';
 
 interface ButtonProps {
   text: string;
@@ -18,7 +19,7 @@ export const Button = ({ text, onPress, buttonStyle, textStyle, loading, disable
     <TouchableOpacity style={[styles.button, buttonStyle, disabled && styles.disabledButton]} onPress={onPress} disabled={disabled}>
       <Text style={[styles.buttonText, textStyle, disabled && styles.disabledText]}>{loading !== null && loading === true
         ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="small" />
+          <Loader size="small" />
         </View>
         : text}</Text>
     </TouchableOpacity>
