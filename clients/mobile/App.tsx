@@ -11,7 +11,10 @@ import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
 import * as Notifications from 'expo-notifications'
 
-// LogBox.ignoreAllLogs(true)
+const currentEnvironment = process.env.APP_ENV
+if (currentEnvironment !== 'development') {
+  LogBox.ignoreAllLogs(true)
+}
 
 Amplify.configure(awsCognitoConfiguration)
 
