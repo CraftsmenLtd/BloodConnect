@@ -5,10 +5,13 @@ import DonationPosts from '../../donationWorkflow/donationPosts/DonationPosts'
 import MyActivityTab from '../../userWorkflow/MyActivityTab'
 import { SCREENS } from '../constant/screens'
 import Account from '../../userWorkflow/account/UI/Account'
+import { useTheme } from '../theme/hooks/useTheme'
 
 const Tab = createBottomTabNavigator()
 
 const BottomNavigation = () => {
+  const { colors } = useTheme()
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -19,7 +22,7 @@ const BottomNavigation = () => {
         headerTitleStyle: {
           fontSize: 20
         },
-        tabBarActiveTintColor: '#FF4D4D'
+        tabBarActiveTintColor: colors.primary
       }}
     >
       <Tab.Screen name={SCREENS.POSTS} component={DonationPosts} options={{
@@ -36,7 +39,7 @@ const BottomNavigation = () => {
           <Ionicons name="analytics-outline" color={color} size={size} />
         )
       }} />
-      <Tab.Screen name='Account' component={Account} options={{
+      <Tab.Screen name={SCREENS.ACCOUNT} component={Account} options={{
         headerTitle: 'Account',
         headerShown: true,
         tabBarIcon: ({ color, size }) => (
