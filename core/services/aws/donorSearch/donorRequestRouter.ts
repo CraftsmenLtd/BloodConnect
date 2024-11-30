@@ -1,5 +1,5 @@
 import { SQSEvent, SQSRecord } from 'aws-lambda'
-import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
+import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
 import { DonorRoutingAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { DonorSearchDTO } from '../../../../commons/dto/DonationDTO'
 import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
@@ -13,7 +13,7 @@ import {
 import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
 import { UserService } from '../../../application/userWorkflow/UserService'
 
-const bloodDonationService = new BloodDonationService()
+const donorSearchService = new DonorSearchService()
 const userService = new UserService()
 
 async function donorRequestRouter(event: SQSEvent): Promise<{ status: string }> {
@@ -61,7 +61,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     )
   )
 
-  await bloodDonationService.routeDonorRequest(
+  await donorSearchService.routeDonorRequest(
     donorRoutingAttributes,
     record.eventSourceARN,
     userProfile,

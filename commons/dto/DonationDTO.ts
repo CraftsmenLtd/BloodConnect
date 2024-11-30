@@ -50,6 +50,8 @@ export type DonorSearchDTO = DTO & HasIdentifier & {
   shortDescription?: string;
   createdAt: string;
   retryCount: number;
+  currentNeighborLevel?: number;
+  currentNeighborGeohashes?: string[];
 }
 
 type BaseAcceptedDonationDTO = {

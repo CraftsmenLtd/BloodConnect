@@ -49,12 +49,16 @@ locals {
       env_variables = {
       }
     }
-    donor-search-evaluator = {
-      name      = "donor-search-evaluator"
-      handler   = "donorSearchEvaluator.default"
-      zip_path  = "donorSearchEvaluator.zip"
-      statement = concat(local.policies.common_policies)
+    query-eligible-donors = {
+      name     = "query-eligible-donors"
+      handler  = "queryEligibleDonors.default"
+      zip_path = "queryEligibleDonors.zip"
+      statement = concat(
+        local.policies.common_policies,
+        local.policies.dynamodb_policy
+      )
       env_variables = {
+        DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
       }
     }
   }

@@ -44,10 +44,8 @@
       ],
       "ResultSelector": {
         "totalDonorsToNotify.$": "$.[0].calculationResults.totalDonorsToNotify",
-        "geohash.$": "$.[0].geohash",
-        "neededBloodGroup.$": "$.[0].neededBloodGroup",
-        "city.$": "$.[0].city",
-        "delayPeriod.$": "$.[0].calculationResults.delayPeriod"
+        "delayPeriod.$": "$.[0].calculationResults.delayPeriod",
+        "eligibleDonors": []
       },
       "ResultPath": "$.prepareDonorSearchResult",
       "Next": "DonorSearchProcess"
@@ -56,63 +54,20 @@
       "Type": "Parallel",
       "Branches": [
         {
-          "StartAt": "CheckGeohash",
+          "StartAt": "QueryEligibleDonors",
           "States": {
-            "CheckGeohash": {
-              "Type": "Choice",
-              "Choices": [
-                {
-                  "Variable": "$.prepareDonorSearchResult.geohash",
-                  "StringEquals": "",
-                  "Next": "QueryEligibleDonorsWithoutGeohash"
-                }
-              ],
-              "Default": "QueryEligibleDonorsWithGeohash"
-            },
-            "QueryEligibleDonorsWithGeohash": {
+            "QueryEligibleDonors": {
               "Type": "Task",
-              "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
+              "Resource": "${QUERY_ELIGIBLE_DONORS_LAMBDA_ARN}",
               "Parameters": {
-                "TableName": "${DYNAMODB_TABLE_NAME}",
-                "IndexName": "GSI1",
-                "KeyConditionExpression": "GSI1PK = :cityAndBloodGroupAndStatus AND begins_with(GSI1SK, :geohash)",
-                "ExpressionAttributeValues": {
-                  ":cityAndBloodGroupAndStatus": {
-                    "S.$": "States.Format('CITY#{}#BG#{}#DONATIONSTATUS#yes', $.city, $.neededBloodGroup)"
-                  },
-                  ":geohash": {
-                    "S.$": "$.prepareDonorSearchResult.geohash"
-                  }
-                }
-              },
-              "ResultPath": "$.eligibleDonors",
-              "Next": "CheckDonorStatus"
-            },
-            "QueryEligibleDonorsWithoutGeohash": {
-              "Type": "Task",
-              "Resource": "arn:aws:states:::aws-sdk:dynamodb:query",
-              "Parameters": {
-                "TableName": "${DYNAMODB_TABLE_NAME}",
-                "IndexName": "GSI1",
-                "KeyConditionExpression": "GSI1PK = :cityAndBloodGroupAndStatus",
-                "ExpressionAttributeValues": {
-                  ":cityAndBloodGroupAndStatus": {
-                    "S.$": "States.Format('CITY#{}#BG#{}#DONATIONSTATUS#yes', $.city, $.neededBloodGroup)"
-                  }
-                }
-              },
-              "ResultPath": "$.eligibleDonors",
-              "Next": "CheckDonorStatus"
-            },
-            "CheckDonorStatus": {
-              "Type": "Task",
-              "Resource": "${DONOR_SEARCH_EVALUATOR_LAMBDA_ARN}",
-              "Parameters": {
-                "geohash.$": "$.prepareDonorSearchResult.geohash",
-                "eligibleDonorsCount.$": "$.eligibleDonors.Count",
-                "totalDonorsToNotify.$": "$.prepareDonorSearchResult.totalDonorsToNotify",
-                "eligibleDonors.$": "$.eligibleDonors.Items",
-                "seekerId.$": "$.seekerId"
+                "seekerId.$": "$.seekerId",
+                "createdAt.$": "$.createdAt",
+                "requestPostId.$": "$.requestPostId",
+                "geohash.$": "$.geohash",
+                "city.$": "$.city",
+                "neededBloodGroup.$": "$.neededBloodGroup",
+                "eligibleDonors.$": "$.prepareDonorSearchResult.eligibleDonors",
+                "totalDonorsToNotify.$": "$.prepareDonorSearchResult.totalDonorsToNotify"
               },
               "ResultPath": "$.checkDonorSearchResult",
               "Next": "DecideNextStep"
@@ -127,23 +82,21 @@
                 },
                 {
                   "Variable": "$.checkDonorSearchResult.action",
-                  "StringEquals": "UpdateSearchFields",
-                  "Next": "UpdateSearchFields"
+                  "StringEquals": "RetryDonorsSearch",
+                  "Next": "RetryDonorsSearch"
                 }
               ],
               "Default": "EnoughDonorsFound"
             },
-            "UpdateSearchFields": {
+            "RetryDonorsSearch": {
               "Type": "Pass",
               "Parameters": {
                 "totalDonorsToNotify.$": "$.prepareDonorSearchResult.totalDonorsToNotify",
-                "city.$": "$.prepareDonorSearchResult.city",
-                "geohash.$": "$.checkDonorSearchResult.shortenedGeohash",
-                "neededBloodGroup.$": "$.prepareDonorSearchResult.neededBloodGroup",
-                "delayPeriod.$": "$.prepareDonorSearchResult.delayPeriod"
+                "delayPeriod.$": "$.prepareDonorSearchResult.delayPeriod",
+                "eligibleDonors.$": "$.checkDonorSearchResult.eligibleDonors"
               },
               "ResultPath": "$.prepareDonorSearchResult",
-              "Next": "CheckGeohash"
+              "Next": "QueryEligibleDonors"
             },
             "EnoughDonorsFound": {
               "Type": "Succeed"
@@ -152,16 +105,17 @@
         }
       ],
       "ResultSelector": {
-        "donorIds.$": "$.[0].checkDonorSearchResult.userIds"
+        "eligibleDonors.$": "$.[0].checkDonorSearchResult.eligibleDonors"
       },
       "ResultPath": "$.donorSearchResult",
       "Next": "NotifyDonors"
     },
     "NotifyDonors": {
       "Type": "Map",
-      "ItemsPath": "$.donorSearchResult.donorIds",
+      "ItemsPath": "$.donorSearchResult.eligibleDonors",
       "Parameters": {
-        "donorId.$": "$$.Map.Item.Value",
+        "donorId.$": "$$.Map.Item.Value.userId",
+        "locationId.$": "$$.Map.Item.Value.locationId",
         "seekerId.$": "$.seekerId",
         "requestPostId.$": "$.requestPostId",
         "createdAt.$": "$.createdAt",
@@ -194,6 +148,7 @@
                   "seekerId.$": "$.seekerId",
                   "requestPostId.$": "$.requestPostId",
                   "createdAt.$": "$.createdAt",
+                  "locationId.$": "$.locationId",
                   "seekerName.$": "$.seekerName",
                   "patientName.$": "$.patientName",
                   "neededBloodGroup.$": "$.neededBloodGroup",
@@ -231,6 +186,7 @@
           "geohash.$": "$.geohash",
           "donationDateTime.$": "$.donationDateTime",
           "contactNumber.$": "$.contactNumber",
+          "patientName.$": "$.patientName",
           "transportationInfo.$": "$.transportationInfo",
           "shortDescription.$": "$.shortDescription"
         },

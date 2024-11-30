@@ -11,11 +11,22 @@ export type LocationFields = Omit<LocationDTO, 'userId' | 'locationId' | 'city' 
 
 export default class LocationModel implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFields> {
   getIndexDefinitions(): IndexDefinitions<LocationFields> {
-    return {}
+    return {
+      GSI: {
+        GSI1: {
+          partitionKey: 'GSI1PK',
+          sortKey: 'GSI1SK'
+        }
+      }
+    }
   }
 
   getPrimaryIndex(): DbIndex<LocationFields> {
     return { partitionKey: 'PK', sortKey: 'SK' }
+  }
+
+  getGSIIndex(): DbIndex<LocationFields> {
+    return { partitionKey: 'GSI1PK', sortKey: 'GSI1SK' }
   }
 
   getIndex(indexType: IndexType, indexName: string): DbIndex<LocationFields> | undefined {

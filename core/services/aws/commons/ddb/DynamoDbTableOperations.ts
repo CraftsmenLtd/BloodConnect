@@ -59,7 +59,8 @@ export default class DynamoDbTableOperations<
   }
 
   async query(
-    queryInput: QueryInput<DbFields>
+    queryInput: QueryInput<DbFields>,
+    indexName?: string
   ): Promise<{ items: Dto[]; lastEvaluatedKey?: Record<string, unknown> }> {
     try {
       const {
@@ -76,6 +77,10 @@ export default class DynamoDbTableOperations<
         KeyConditionExpression: keyConditionExpression,
         ExpressionAttributeValues: expressionAttributeValues,
         ExpressionAttributeNames: expressionAttributeNames
+      }
+
+      if (indexName !== null) {
+        queryCommandInput.IndexName = indexName
       }
 
       this.applyQueryOptions(queryCommandInput, queryInput.options)
