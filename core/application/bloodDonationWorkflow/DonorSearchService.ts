@@ -33,7 +33,6 @@ export class DonorSearchService {
       `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
       `${DONOR_SEARCH_PK_PREFIX}#${createdAt}#${requestPostId}`
     )
-    console.log(donorSearchRecord)
 
     if (donorSearchRecord === null) {
       await donorSearchRepository.create({
@@ -130,7 +129,7 @@ export class DonorSearchService {
     remainingGeohashesToProcess: string[],
     currentNeighborSearchLevel: number,
     donorSearchRepository: Repository<DonorSearchDTO>
-  ): Promise<string> {
+  ): Promise<void> {
     const updatedRecord: Partial<DonorSearchDTO> = {
       id: requestPostId,
       seekerId,
@@ -145,7 +144,6 @@ export class DonorSearchService {
       updatedRecord.remainingGeohashesToProcess = remainingGeohashesToProcess
     }
     await donorSearchRepository.update(updatedRecord)
-    return 'Donor search updated successfully.'
   }
 
   async queryGeohash(
