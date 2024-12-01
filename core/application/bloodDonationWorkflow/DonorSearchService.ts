@@ -65,8 +65,8 @@ export class DonorSearchService {
       id: requestPostId,
       retryCount: retryCount + 1
     }
-
-    if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
+    const hasRetryCountExceeded = retryCount >= Number(process.env.MAX_RETRY_COUNT)
+    if (hasRetryCountExceeded) {
       updatedRecord.status = DonationStatus.COMPLETED
       await donorSearchRepository.update(updatedRecord)
       return

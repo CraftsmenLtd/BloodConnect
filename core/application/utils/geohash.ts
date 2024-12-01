@@ -1,3 +1,4 @@
+import { RADIUS_OF_EARTH } from '../../../commons/libs/constants/NoMagicNumbers'
 import ngeohash from 'ngeohash'
 
 export function generateGeohash(latitude: number, longitude: number, precision: number = 8): string {
@@ -63,13 +64,15 @@ export function getDistanceBetweenGeohashes(geohash1: string, geohash2: string):
 
   const toRadians = (degrees: number): number => (degrees * Math.PI) / 180
 
-  const R = 6371
-  const dLat = toRadians(lat2 - lat1)
-  const dLon = toRadians(lon2 - lon1)
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  const radiusOfEarth = RADIUS_OF_EARTH
+  const deltaLat = toRadians(lat2 - lat1)
+  const deltaLon = toRadians(lon2 - lon1)
 
-  return parseFloat((R * c).toFixed(2))
+  const centralAngle =
+    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+    Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2)
+
+  const angularDistance = 2 * Math.atan2(Math.sqrt(centralAngle), Math.sqrt(1 - centralAngle))
+  return parseFloat((radiusOfEarth * angularDistance).toFixed(2))
 }
