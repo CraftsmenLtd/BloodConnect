@@ -122,7 +122,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
             <Ionicons name="water" size={20} color="red" />
             <View style={styles.bloodText}>
               <Text style={styles.lookingForText}>Looking for</Text>
-              <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.neededBloodGroup} blood</Text>
+              <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} blood</Text>
             </View>
           </View>
           {post.urgencyLevel === 'urgent' && (

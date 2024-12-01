@@ -139,7 +139,7 @@ export const useBloodRequest = (): any => {
   }
 
   const updateBloodDonationRequest = async(): Promise<DonationResponse> => {
-    const { bloodQuantity, city, location, neededBloodGroup, ...rest } = bloodRequestData
+    const { bloodQuantity, city, location, requestedBloodGroup, ...rest } = bloodRequestData
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
       contactNumber: formatPhoneNumber(rest.contactNumber),
