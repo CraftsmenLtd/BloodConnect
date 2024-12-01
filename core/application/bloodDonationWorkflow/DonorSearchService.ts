@@ -42,22 +42,21 @@ export class DonorSearchService {
         retryCount: 0
       })
     }
+    const isDonationUpdateRequest = sourceQueueArn === process.env.DONOR_SEARCH_QUEUE_ARN
+    const hasDonationCompleted = donorSearchRecord !== null && donorSearchRecord.status === DonationStatus.COMPLETED
+    const bloodQuantityUpdated = donorSearchRecord !== null && donorRoutingAttributes.bloodQuantity > donorSearchRecord.bloodQuantity
 
-    if (donorSearchRecord !== null && donorSearchRecord.status === DonationStatus.COMPLETED) {
-      if (
-        sourceQueueArn === process.env.DONOR_SEARCH_QUEUE_ARN &&
-        donorRoutingAttributes.bloodQuantity > donorSearchRecord.bloodQuantity
-      ) {
-        const updatedRecord: Partial<DonorSearchDTO> = {
-          ...donorRoutingAttributes,
-          id: requestPostId,
-          status: DonationStatus.PENDING,
-          retryCount: 0
-        }
-        await donorSearchRepository.update(updatedRecord)
-      } else {
-        return
-      }
+    if (hasDonationCompleted && !isDonationUpdateRequest) {
+      return
+    }
+
+    if (isDonationUpdateRequest && hasDonationCompleted && bloodQuantityUpdated) {
+      await donorSearchRepository.update({
+        ...donorRoutingAttributes,
+        id: requestPostId,
+        status: DonationStatus.PENDING,
+        retryCount: 0
+      })
     }
 
     const retryCount = donorSearchRecord?.retryCount ?? 0
