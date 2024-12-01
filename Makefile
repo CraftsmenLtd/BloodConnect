@@ -115,7 +115,7 @@ install-node-packages:
 	find . -type f -name package.json -not -path "**node_modules**" -execdir npm i \;
 
 build-node-%:
-	cd core/services/aws && npm run build-$* $(EXTRA_ARGS)
+	cd core/services/aws && npm run build-$* -- $(NPM_ARGS)
 
 package-%:
 	cd core/services/aws && npm run package-$*
@@ -123,7 +123,7 @@ package-%:
 
 # Unit Test
 test:
-	npm run test
+	npm run test -- $(NPM_TEST_ARGS)
 
 
 # Lint
@@ -153,7 +153,7 @@ run-command-%:
 	docker rm -f $(DOCKER_DEV_CONTAINER_NAME)
 	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
-	           make $* EXTRA_ARGS=$(EXTRA_ARGS)
+	           make $* NPM_TEST_ARGS=$(NPM_TEST_ARGS) NPM_ARGS=$(NPM_ARGS)
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
