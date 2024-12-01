@@ -60,7 +60,7 @@ describe('DonorSearchService', () => {
       const donorSearchService = new DonorSearchService()
       donorSearchRepository.getItem.mockResolvedValue(mockDonorSearchDTO)
 
-      const result = await donorSearchService.routeDonorRequest(
+      await donorSearchService.routeDonorRequest(
         donorRoutingAttributesMock,
         'queueSource',
         mockUserDetailsWithStringId,
@@ -92,9 +92,6 @@ describe('DonorSearchService', () => {
         }),
         expect.any(String)
       )
-      expect(result).toBe(
-        'Request updated and donor search process initiated.'
-      )
     })
 
     test('should return expiration message if retry count reaches maximum', async() => {
@@ -106,16 +103,12 @@ describe('DonorSearchService', () => {
 
       donorSearchRepository.getItem.mockResolvedValue(expiredMockDonorSearchDTO)
 
-      const result = await donorSearchService.routeDonorRequest(
+      await donorSearchService.routeDonorRequest(
         donorRoutingAttributesMock,
         'queueSource',
         mockUserDetailsWithStringId,
         donorSearchRepository,
         stepFunctionModel
-      )
-
-      expect(result).toBe(
-        'Donor search process completed after reaching the maximum retry limit.'
       )
     })
 
@@ -126,7 +119,7 @@ describe('DonorSearchService', () => {
         status: DonationStatus.COMPLETED
       })
 
-      const result = await donorSearchService.routeDonorRequest(
+      await donorSearchService.routeDonorRequest(
         donorRoutingAttributesMock,
         'queueSource',
         mockUserDetailsWithStringId,
@@ -134,7 +127,6 @@ describe('DonorSearchService', () => {
         stepFunctionModel
       )
 
-      expect(result).toBe('Donor search has already been completed.')
       expect(stepFunctionModel.startExecution).not.toHaveBeenCalled()
     })
   })

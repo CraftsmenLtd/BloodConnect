@@ -114,8 +114,9 @@
       "Type": "Map",
       "ItemsPath": "$.donorSearchResult.eligibleDonors",
       "Parameters": {
-        "donorId.$": "$$.Map.Item.Value.userId",
+        "donorId.$": "$$.Map.Item.Key",
         "locationId.$": "$$.Map.Item.Value.locationId",
+        "distance.$": "$$.Map.Item.Value.distance",
         "seekerId.$": "$.seekerId",
         "requestPostId.$": "$.requestPostId",
         "createdAt.$": "$.createdAt",
@@ -149,6 +150,7 @@
                   "requestPostId.$": "$.requestPostId",
                   "createdAt.$": "$.createdAt",
                   "locationId.$": "$.locationId",
+                  "distance.$": "$.distance",
                   "seekerName.$": "$.seekerName",
                   "patientName.$": "$.patientName",
                   "requestedBloodGroup.$": "$.requestedBloodGroup",

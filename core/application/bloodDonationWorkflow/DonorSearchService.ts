@@ -26,13 +26,14 @@ export class DonorSearchService {
     userProfile: UserDetailsDTO,
     donorSearchRepository: Repository<DonorSearchDTO>,
     stepFunctionModel: StepFunctionModel
-  ): Promise<string> {
+  ): Promise<void> {
     const { seekerId, requestPostId, createdAt } = donorRoutingAttributes
 
     const donorSearchRecord = await donorSearchRepository.getItem(
       `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
       `${DONOR_SEARCH_PK_PREFIX}#${createdAt}#${requestPostId}`
     )
+    console.log(donorSearchRecord)
 
     if (donorSearchRecord === null) {
       await donorSearchRepository.create({
@@ -41,7 +42,9 @@ export class DonorSearchService {
         status: DonationStatus.PENDING,
         retryCount: 0
       })
-    } else if (donorSearchRecord.status === DonationStatus.COMPLETED) {
+    }
+
+    if (donorSearchRecord !== null && donorSearchRecord.status === DonationStatus.COMPLETED) {
       if (
         sourceQueueArn === process.env.DONOR_SEARCH_QUEUE_ARN &&
         donorRoutingAttributes.bloodQuantity > donorSearchRecord.bloodQuantity
@@ -54,7 +57,7 @@ export class DonorSearchService {
         }
         await donorSearchRepository.update(updatedRecord)
       } else {
-        return 'Donor search has already been completed.'
+        return
       }
     }
 
@@ -68,7 +71,7 @@ export class DonorSearchService {
     if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
       updatedRecord.status = DonationStatus.COMPLETED
       await donorSearchRepository.update(updatedRecord)
-      return 'Donor search process completed after reaching the maximum retry limit.'
+      return
     }
 
     await donorSearchRepository.update(updatedRecord)
@@ -101,7 +104,6 @@ export class DonorSearchService {
       stepFunctionPayload,
       `${requestPostId}-${donorRoutingAttributes.city}-(${donorRoutingAttributes.requestedBloodGroup})-${Math.floor(Date.now() / 1000)}`
     )
-    return 'Request updated and donor search process initiated.'
   }
 
   async getDonorSearch(
