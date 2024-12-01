@@ -3,7 +3,7 @@ import { DonationDTO } from '../../../../commons/dto/DonationDTO'
 export type DonationScreenParams = Pick<
 DonationDTO,
 | 'patientName'
-| 'neededBloodGroup'
+| 'requestedBloodGroup'
 | 'location'
 | 'donationDateTime'
 | 'contactNumber'

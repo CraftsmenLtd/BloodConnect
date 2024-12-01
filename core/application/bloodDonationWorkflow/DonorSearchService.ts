@@ -78,7 +78,7 @@ export class DonorSearchService {
       requestPostId,
       createdAt,
       donationDateTime: donorRoutingAttributes.donationDateTime,
-      neededBloodGroup: donorRoutingAttributes.neededBloodGroup,
+      requestedBloodGroup: donorRoutingAttributes.requestedBloodGroup,
       bloodQuantity: Number(donorRoutingAttributes.bloodQuantity),
       urgencyLevel: donorRoutingAttributes.urgencyLevel,
       geohash: donorRoutingAttributes.geohash,
@@ -92,14 +92,14 @@ export class DonorSearchService {
       retryCount: retryCount + 1,
       message: getBloodRequestMessage(
         donorRoutingAttributes.urgencyLevel,
-        donorRoutingAttributes.neededBloodGroup,
+        donorRoutingAttributes.requestedBloodGroup,
         donorRoutingAttributes.shortDescription ?? ''
       )
     }
 
     await stepFunctionModel.startExecution(
       stepFunctionPayload,
-      `${requestPostId}-${donorRoutingAttributes.city}-(${donorRoutingAttributes.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`
+      `${requestPostId}-${donorRoutingAttributes.city}-(${donorRoutingAttributes.requestedBloodGroup})-${Math.floor(Date.now() / 1000)}`
     )
     return 'Request updated and donor search process initiated.'
   }
@@ -125,8 +125,8 @@ export class DonorSearchService {
     createdAt: string,
     requestPostId: string,
     geohash: string,
-    currentNeighborGeohashes: string[],
-    currentNeighborLevel: number,
+    remainingGeohashesToProcess: string[],
+    currentNeighborSearchLevel: number,
     donorSearchRepository: Repository<DonorSearchDTO>
   ): Promise<string> {
     const updatedRecord: Partial<DonorSearchDTO> = {
@@ -134,13 +134,13 @@ export class DonorSearchService {
       seekerId,
       createdAt
     }
-    if (currentNeighborGeohashes.length === 0) {
-      const newNeighborGeohashes = getGeohashNthNeighbors(geohash, currentNeighborLevel + 1)
-      updatedRecord.currentNeighborLevel = currentNeighborLevel + 1
-      updatedRecord.currentNeighborGeohashes = newNeighborGeohashes
+    if (remainingGeohashesToProcess.length === 0) {
+      const newNeighborGeohashes = getGeohashNthNeighbors(geohash, currentNeighborSearchLevel + 1)
+      updatedRecord.currentNeighborSearchLevel = currentNeighborSearchLevel + 1
+      updatedRecord.remainingGeohashesToProcess = newNeighborGeohashes
     } else {
-      updatedRecord.currentNeighborLevel = currentNeighborLevel
-      updatedRecord.currentNeighborGeohashes = currentNeighborGeohashes
+      updatedRecord.currentNeighborSearchLevel = currentNeighborSearchLevel
+      updatedRecord.remainingGeohashesToProcess = remainingGeohashesToProcess
     }
     await donorSearchRepository.update(updatedRecord)
     return 'Donor search updated successfully.'
@@ -148,7 +148,7 @@ export class DonorSearchService {
 
   async queryGeohash(
     city: string,
-    neededBloodGroup: string,
+    requestedBloodGroup: string,
     geohash: string,
     locationRepository: Repository<LocationDTO, Record<string, unknown>>
   ): Promise<LocationDTO[]> {
@@ -162,7 +162,7 @@ export class DonorSearchService {
       partitionKeyCondition: {
         attributeName: gsiIndex.partitionKey as keyof AcceptedDonationFields,
         operator: QueryConditionOperator.EQUALS,
-        attributeValue: `CITY#${city}#BG#${neededBloodGroup}#DONATIONSTATUS#yes`
+        attributeValue: `CITY#${city}#BG#${requestedBloodGroup}#DONATIONSTATUS#yes`
       }
     }
 

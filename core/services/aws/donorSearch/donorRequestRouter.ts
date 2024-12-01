@@ -41,7 +41,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     seekerId: primaryIndex.split('#')[1],
     requestPostId: secondaryIndex.split('#')[2],
     createdAt: secondaryIndex.split('#')[1],
-    neededBloodGroup: body.neededBloodGroup,
+    requestedBloodGroup: body.requestedBloodGroup,
     bloodQuantity: body.bloodQuantity,
     urgencyLevel: body.urgencyLevel,
     city: body.city,

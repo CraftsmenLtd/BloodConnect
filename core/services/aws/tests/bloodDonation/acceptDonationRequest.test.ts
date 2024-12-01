@@ -66,7 +66,7 @@ describe('acceptDonationRequestLambda', () => {
         requestPostId: mockEvent.requestPostId,
         donationDateTime: mockDonationDTO.donationDateTime,
         location: mockDonationDTO.location,
-        neededBloodGroup: mockDonationDTO.neededBloodGroup,
+        requestedBloodGroup: mockDonationDTO.requestedBloodGroup,
         shortDescription: mockDonationDTO.shortDescription,
         status: mockDonationDTO.status,
         urgencyLevel: mockDonationDTO.urgencyLevel,
@@ -80,12 +80,12 @@ describe('acceptDonationRequestLambda', () => {
       {
         userId: mockEvent.seekerId,
         title: 'Donor Found',
-        body: `${mockDonationDTO.neededBloodGroup} blood found`,
+        body: `${mockDonationDTO.requestedBloodGroup} blood found`,
         type: 'REQ_ACCEPTED',
         payload: expect.objectContaining({
           donorId: mockEvent.donorId,
           donorName: mockUserDetailsWithStringId.name,
-          neededBloodGroup: mockDonationDTO.neededBloodGroup
+          requestedBloodGroup: mockDonationDTO.requestedBloodGroup
         })
       },
       expect.anything()

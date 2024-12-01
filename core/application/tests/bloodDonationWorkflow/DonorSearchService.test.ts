@@ -84,7 +84,7 @@ describe('DonorSearchService', () => {
           requestPostId: mockDonorSearchDTO.id,
           createdAt: mockDonorSearchDTO.createdAt,
           donationDateTime: mockDonorSearchDTO.donationDateTime,
-          neededBloodGroup: mockDonorSearchDTO.neededBloodGroup,
+          requestedBloodGroup: mockDonorSearchDTO.requestedBloodGroup,
           bloodQuantity: mockDonorSearchDTO.bloodQuantity,
           urgencyLevel: mockDonorSearchDTO.urgencyLevel,
           geohash: mockDonorSearchDTO.geohash,

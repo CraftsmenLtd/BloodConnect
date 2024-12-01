@@ -38,7 +38,7 @@ const DonationPosts = ({ navigation }: DonationPostsProps) => {
     return requests.map(request => ({
       requestPostId: request.reqPostId ?? '',
       patientName: request.patientName ?? '',
-      neededBloodGroup: request.neededBloodGroup ?? '',
+      requestedBloodGroup: request.requestedBloodGroup ?? '',
       bloodQuantity: formatBloodQuantity(request.bloodQuantity),
       urgencyLevel: request.urgencyLevel ?? '',
       location: request.location ?? '',

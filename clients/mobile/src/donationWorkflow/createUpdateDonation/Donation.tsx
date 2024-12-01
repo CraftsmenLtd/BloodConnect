@@ -44,12 +44,12 @@ const CreateBloodRequest = () => {
             placeholder=''
             label='Blood Group'
             options={bloodGroupOptions}
-            name='neededBloodGroup'
-            value={bloodRequestData.neededBloodGroup}
+            name='requestedBloodGroup'
+            value={bloodRequestData.requestedBloodGroup}
             onChangeText={handleInputChange}
             isVisible={isVisible}
             setIsVisible={setIsVisible}
-            error={errors.neededBloodGroup}
+            error={errors.requestedBloodGroup}
             isRequired={true}
             readOnly={isUpdating}
           />
