@@ -123,7 +123,7 @@ package-%:
 
 # Unit Test
 test:
-	npm run test $(EXTRA_ARGS)
+	npm run test
 
 
 # Lint
@@ -150,6 +150,7 @@ build-runner-image:
 	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
+	docker rm -f $(DOCKER_DEV_CONTAINER_NAME)
 	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
 	           make $* EXTRA_ARGS=$(EXTRA_ARGS)
