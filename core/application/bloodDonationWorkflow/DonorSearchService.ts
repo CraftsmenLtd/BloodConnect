@@ -22,58 +22,58 @@ import LocationModel from '../models/dbModels/LocationModel'
 export class DonorSearchService {
   async routeDonorRequest(
     donorRoutingAttributes: DonorRoutingAttributes,
-    queueSource: string,
+    sourceQueueArn: string,
     userProfile: UserDetailsDTO,
     donorSearchRepository: Repository<DonorSearchDTO>,
     stepFunctionModel: StepFunctionModel
   ): Promise<string> {
     const { seekerId, requestPostId, createdAt } = donorRoutingAttributes
 
-    const donorSearchItem = await donorSearchRepository.getItem(
+    const donorSearchRecord = await donorSearchRepository.getItem(
       `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
       `${DONOR_SEARCH_PK_PREFIX}#${createdAt}#${requestPostId}`
     )
 
-    if (donorSearchItem === null) {
+    if (donorSearchRecord === null) {
       await donorSearchRepository.create({
         id: donorRoutingAttributes.requestPostId,
         ...donorRoutingAttributes,
         status: DonationStatus.PENDING,
         retryCount: 0
       })
-    } else if (donorSearchItem.status === DonationStatus.COMPLETED) {
+    } else if (donorSearchRecord.status === DonationStatus.COMPLETED) {
       if (
-        queueSource === process.env.DONOR_SEARCH_QUEUE_ARN &&
-        donorRoutingAttributes.bloodQuantity > donorSearchItem.bloodQuantity
+        sourceQueueArn === process.env.DONOR_SEARCH_QUEUE_ARN &&
+        donorRoutingAttributes.bloodQuantity > donorSearchRecord.bloodQuantity
       ) {
-        const updateData: Partial<DonorSearchDTO> = {
+        const updatedRecord: Partial<DonorSearchDTO> = {
           ...donorRoutingAttributes,
           id: requestPostId,
           status: DonationStatus.PENDING,
           retryCount: 0
         }
-        await donorSearchRepository.update(updateData)
+        await donorSearchRepository.update(updatedRecord)
       } else {
-        return 'Donor search is completed'
+        return 'Donor search has already been completed.'
       }
     }
 
-    const retryCount = donorSearchItem?.retryCount ?? 0
-    const updateData: Partial<DonorSearchDTO> = {
+    const retryCount = donorSearchRecord?.retryCount ?? 0
+    const updatedRecord: Partial<DonorSearchDTO> = {
       ...donorRoutingAttributes,
       id: requestPostId,
       retryCount: retryCount + 1
     }
 
     if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
-      updateData.status = DonationStatus.COMPLETED
-      await donorSearchRepository.update(updateData)
-      return 'The donor search process completed after the maximum retry limit is reached.'
+      updatedRecord.status = DonationStatus.COMPLETED
+      await donorSearchRepository.update(updatedRecord)
+      return 'Donor search process completed after reaching the maximum retry limit.'
     }
 
-    await donorSearchRepository.update(updateData)
+    await donorSearchRepository.update(updatedRecord)
 
-    const stepFunctionInput: StepFunctionInput = {
+    const stepFunctionPayload: StepFunctionInput = {
       seekerId,
       requestPostId,
       createdAt,
@@ -98,11 +98,10 @@ export class DonorSearchService {
     }
 
     await stepFunctionModel.startExecution(
-      stepFunctionInput,
-      `${requestPostId}-${donorRoutingAttributes.city}-(${donorRoutingAttributes.neededBloodGroup
-      })-${Math.floor(Date.now() / 1000)}`
+      stepFunctionPayload,
+      `${requestPostId}-${donorRoutingAttributes.city}-(${donorRoutingAttributes.neededBloodGroup})-${Math.floor(Date.now() / 1000)}`
     )
-    return 'We have updated your request and initiated the donor search process.'
+    return 'Request updated and donor search process initiated.'
   }
 
   async getDonorSearch(
@@ -111,14 +110,14 @@ export class DonorSearchService {
     requestPostId: string,
     donorSearchRepository: Repository<DonorSearchDTO>
   ): Promise<DonorSearchDTO> {
-    const donorSearchItem = await donorSearchRepository.getItem(
+    const donorSearchRecord = await donorSearchRepository.getItem(
       `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
       `${DONOR_SEARCH_PK_PREFIX}#${createdAt}#${requestPostId}`
     )
-    if (donorSearchItem === null) {
-      throw new Error('Donor search Item not found.')
+    if (donorSearchRecord === null) {
+      throw new Error('Donor search record not found.')
     }
-    return donorSearchItem
+    return donorSearchRecord
   }
 
   async updateDonorSearch(
@@ -126,31 +125,25 @@ export class DonorSearchService {
     createdAt: string,
     requestPostId: string,
     geohash: string,
-    newCurrentNeighborGeohashes: string[],
+    currentNeighborGeohashes: string[],
     currentNeighborLevel: number,
     donorSearchRepository: Repository<DonorSearchDTO>
   ): Promise<string> {
-    const updateData: Partial<DonorSearchDTO> = {
+    const updatedRecord: Partial<DonorSearchDTO> = {
       id: requestPostId,
       seekerId,
       createdAt
     }
-    if (newCurrentNeighborGeohashes.length === 0) {
-      const newNeighborGeohashes = getGeohashNthNeighbors(
-        geohash,
-        currentNeighborLevel + 1
-      )
-
-      updateData.currentNeighborLevel = currentNeighborLevel + 1
-      updateData.currentNeighborGeohashes = newNeighborGeohashes
-
-      await donorSearchRepository.update(updateData)
+    if (currentNeighborGeohashes.length === 0) {
+      const newNeighborGeohashes = getGeohashNthNeighbors(geohash, currentNeighborLevel + 1)
+      updatedRecord.currentNeighborLevel = currentNeighborLevel + 1
+      updatedRecord.currentNeighborGeohashes = newNeighborGeohashes
     } else {
-      updateData.currentNeighborLevel = currentNeighborLevel
-      updateData.currentNeighborGeohashes = newCurrentNeighborGeohashes
-      await donorSearchRepository.update(updateData)
+      updatedRecord.currentNeighborLevel = currentNeighborLevel
+      updatedRecord.currentNeighborGeohashes = currentNeighborGeohashes
     }
-    return 'Donor Updated Successfully'
+    await donorSearchRepository.update(updatedRecord)
+    return 'Donor search updated successfully.'
   }
 
   async queryGeohash(

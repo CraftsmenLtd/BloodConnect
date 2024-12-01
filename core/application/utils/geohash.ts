@@ -1,6 +1,6 @@
 import ngeohash from 'ngeohash'
 
-export function generateGeohash(latitude: number, longitude: number, precision: number = 7): string {
+export function generateGeohash(latitude: number, longitude: number, precision: number = 8): string {
   return ngeohash.encode(latitude, longitude, precision)
 }
 
@@ -63,7 +63,7 @@ export function getDistanceBetweenGeohashes(geohash1: string, geohash2: string):
 
   const toRadians = (degrees: number): number => (degrees * Math.PI) / 180
 
-  const R = 6371000
+  const R = 6371
   const dLat = toRadians(lat2 - lat1)
   const dLon = toRadians(lon2 - lon1)
   const a =
@@ -71,5 +71,5 @@ export function getDistanceBetweenGeohashes(geohash1: string, geohash2: string):
     Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 
-  return R * c
+  return parseFloat((R * c).toFixed(2))
 }

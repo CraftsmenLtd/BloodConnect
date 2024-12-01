@@ -63,7 +63,7 @@
                 "seekerId.$": "$.seekerId",
                 "createdAt.$": "$.createdAt",
                 "requestPostId.$": "$.requestPostId",
-                "geohash.$": "$.geohash",
+                "seekerGeohash.$": "$.geohash",
                 "city.$": "$.city",
                 "neededBloodGroup.$": "$.neededBloodGroup",
                 "eligibleDonors.$": "$.prepareDonorSearchResult.eligibleDonors",
