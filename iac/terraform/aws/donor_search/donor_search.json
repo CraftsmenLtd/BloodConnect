@@ -114,7 +114,7 @@
       "Type": "Map",
       "ItemsPath": "$.donorSearchResult.eligibleDonors",
       "Parameters": {
-        "donorId.$": "$$.Map.Item.Key",
+        "userId.$": "$$.Map.Item.Value.userId",
         "locationId.$": "$$.Map.Item.Value.locationId",
         "distance.$": "$$.Map.Item.Value.distance",
         "seekerId.$": "$.seekerId",
@@ -141,7 +141,7 @@
             "Parameters": {
               "QueueUrl": "${NOTIFICATION_QUEUE_URL}",
               "MessageBody": {
-                "userId.$": "$.donorId",
+                "userId.$": "$.userId",
                 "title": "Blood Request",
                 "body.$": "$.message",
                 "type": "BLOOD_REQ_POST",

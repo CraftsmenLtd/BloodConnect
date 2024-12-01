@@ -104,7 +104,7 @@ async function queryEligibleDonors(
       seekerId,
       createdAt,
       requestPostId,
-      seekerGeohash,
+      seekerGeohash.slice(0, NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH),
       geohashesForNextIteration,
       currentNeighborSearchLevel,
       new DynamoDbTableOperations<DonorSearchDTO, DonorSearchFields, DonorSearchModel>(
