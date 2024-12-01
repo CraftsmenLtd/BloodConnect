@@ -42,16 +42,15 @@ export class DonorSearchService {
         retryCount: 0
       })
     }
-		const isDonationUpdateRequest = sourceQueueArn === process.env.DONOR_SEARCH_QUEUE_ARN &&
-			donorSearchRecord !== null &&
-			donorRoutingAttributes.bloodQuantity > donorSearchRecord.bloodQuantity
+    const isDonationUpdateRequest = sourceQueueArn === process.env.DONOR_SEARCH_QUEUE_ARN &&
+      donorSearchRecord !== null &&
+      donorRoutingAttributes.bloodQuantity > donorSearchRecord.bloodQuantity
     const hasDonationCompleted = donorSearchRecord !== null && donorSearchRecord.status === DonationStatus.COMPLETED
 
-    if (hasDonationCompleted && !isDonationUpdateRequest) {
-      return
-    }
-
-    if (hasDonationCompleted && isDonationUpdateRequest) {
+    if (hasDonationCompleted) {
+      if (!isDonationUpdateRequest) {
+        return
+      }
       await donorSearchRepository.update({
         ...donorRoutingAttributes,
         id: requestPostId,

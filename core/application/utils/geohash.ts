@@ -23,38 +23,27 @@ function getNeighbors(geohash: string): string[] {
 }
 
 export function getGeohashNthNeighbors(geohash: string, neighborLevel: number): string[] {
-  const visited = new Set()
-  visited.add(geohash)
+  const searchedHashes = new Set([geohash])
+  const hashesToSearch: Array<{ hash: string; level: number }> = [{ hash: geohash, level: 0 }]
 
-  let currentLevel = [{
-    hash: geohash,
-    level: 0
-  }]
-  const nthLevelNeighbors = []
+  const nthLevelNeighbors: string[] = []
 
-  for (let i = 0; i < neighborLevel; i++) {
-    const nextLevel = []
+  while (hashesToSearch.length > 0) {
+    const { hash, level } = hashesToSearch.shift() as { hash: string; level: number }
 
-    for (const current of currentLevel) {
-      const neighbors = getNeighbors(current.hash)
+    if (level === neighborLevel) {
+      nthLevelNeighbors.push(hash)
+    }
 
-      for (const neighbor of neighbors) {
-        if (visited.has(neighbor)) continue
-
-        visited.add(neighbor)
-        nextLevel.push({
-          hash: neighbor,
-          level: current.level + 1
-        })
-
-        if (current.level + 1 === neighborLevel) {
-          nthLevelNeighbors.push(neighbor)
+    if (level < neighborLevel) {
+      for (const neighbor of getNeighbors(hash)) {
+        if (!searchedHashes.has(neighbor)) {
+          searchedHashes.add(neighbor)
+          hashesToSearch.push({ hash: neighbor, level: level + 1 })
         }
       }
     }
-    currentLevel = nextLevel
   }
-
   return nthLevelNeighbors
 }
 
