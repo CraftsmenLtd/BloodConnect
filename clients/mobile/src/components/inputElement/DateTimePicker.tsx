@@ -1,25 +1,28 @@
 import React, { useState } from 'react'
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { formatteDate } from '../../utility/formatte'
+import { formattedDate } from '../../utility/formatting'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 
 interface DateTimePickerComponentProps {
+  name: string;
   label: string;
   value: Date | null;
   onChange: (date: Date) => void;
-  showDatePicker: boolean;
-  setShowDatePicker: (show: boolean) => void;
   error?: string | null;
   isRequired?: boolean;
+  isOnlyDate: boolean;
 }
 
-const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({ label, value, onChange, showDatePicker, setShowDatePicker, error, isRequired = false }) => {
+const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
+  name, label, value, onChange, error, isOnlyDate, isRequired = false
+}) => {
   const styles = createStyles(useTheme())
   const [isPickingTime, setIsPickingTime] = useState<boolean>(false)
-  console.log('value', value)
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false)
+
   const handleDateChange = (event: any, selectedDate: Date | undefined) => {
     if (event.type === 'dismissed') {
       setShowDatePicker(false)
@@ -30,8 +33,10 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({ label
     if (selectedDate !== undefined) {
       if (!isPickingTime) {
         setShowDatePicker(false)
-        setIsPickingTime(prevState => !prevState)
-        setTimeout(() => { setShowDatePicker(true) }, 20)
+        if (!isOnlyDate) {
+          setIsPickingTime(prevState => !prevState)
+          setTimeout(() => { setShowDatePicker(true) }, 20)
+        }
         onChange(new Date(selectedDate.toISOString()))
       } else {
         const currentDate = value ?? new Date()
@@ -62,12 +67,12 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({ label
         {isRequired && <Text style={styles.asterisk}>*</Text>}
       </Text>
       <TouchableOpacity onPress={() => { setShowDatePicker(true) }} style={styles.datePicker}>
-        <Text>{value !== null ? formatteDate(value) : 'Select Date & Time'}</Text>
+        <Text>{value !== null ? formattedDate(value) : 'Select Date & Time'}</Text>
       </TouchableOpacity>
       {showDatePicker && (
         <DateTimePicker
           value={value ?? new Date()}
-          mode={isPickingTime ? 'time' : 'date'}
+          mode={!isOnlyDate && isPickingTime ? 'time' : 'date'}
           display="default"
           onChange={handleDateChange}
           timeZoneName=''
@@ -78,6 +83,8 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({ label
   )
 }
 
+export default DateTimePickerComponent
+
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   ...commonStyles(theme),
   datePicker: {
@@ -87,5 +94,3 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderRadius: 4
   }
 })
-
-export default DateTimePickerComponent

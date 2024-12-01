@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import Constants from 'expo-constants'
 import { validateInput, validateRequired, ValidationRule, validatePhoneNumber, validateDateTime, validateDonationDateTime } from '../../utility/validator'
 import { initializeState } from '../../utility/stateUtils'
 import { LocationService } from '../../LocationService/LocationService'
@@ -6,8 +7,10 @@ import { createDonation, DonationResponse, updateDonation } from '../donationSer
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
 import { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
-import { formatPhoneNumber } from '../../utility/formatte'
+import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
+
+const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
 export const DONATION_DATE_TIME_INPUT_NAME = 'donationDateTime'
 type CredentialKeys = keyof BloodRequestData
@@ -22,11 +25,13 @@ export interface BloodRequestData {
   patientName?: string;
   shortDescription?: string;
   transportationInfo?: string;
+  city: string;
 }
 
-interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'shortDescription' | 'transportationInfo'> {}
+interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'shortDescription' | 'transportationInfo'> { }
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
+  city: [validateRequired],
   urgencyLevel: [validateRequired],
   requestedBloodGroup: [validateRequired],
   bloodQuantity: [validateRequired],
@@ -50,6 +55,7 @@ export const useBloodRequest = (): any => {
     patientName: '',
     shortDescription: '',
     transportationInfo: '',
+    city: '',
     ...data
   })
 
@@ -59,6 +65,12 @@ export const useBloodRequest = (): any => {
   const [errors, setErrors] = useState<BloodRequestDataErrors>(initializeState<BloodRequestDataErrors>(
     Object.keys(validationRules) as Array<keyof BloodRequestDataErrors>, null)
   )
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: isUpdating ? 'Update Blood Request' : 'Create Blood Request'
+    })
+  }, [isUpdating])
 
   const onDateChange = (selectedDate: string | Date): void => {
     const currentDate = typeof selectedDate === 'string' ? new Date(selectedDate) : selectedDate
@@ -109,11 +121,10 @@ export const useBloodRequest = (): any => {
   const removeEmptyAndNullProperty = (object: Record<string, unknown>): Record<string, unknown> => {
     return Object.fromEntries(Object.entries(object).filter(([_, v]) => v != null && v !== ''))
   }
-
   const createBloodDonationRequest = async(): Promise<DonationResponse> => {
     const { bloodQuantity, ...rest } = bloodRequestData
-    const locationService = new LocationService()
-    const coordinates = await locationService.getCoordinates(rest.location)
+    const locationService = new LocationService(GOOGLE_MAP_API)
+    const coordinates = await locationService.getLatLon(rest.location)
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
       contactNumber: formatPhoneNumber(rest.contactNumber),
@@ -121,20 +132,21 @@ export const useBloodRequest = (): any => {
       donationDateTime: typeof rest.donationDateTime === 'string'
         ? new Date(rest.donationDateTime).toISOString()
         : rest.donationDateTime.toISOString(),
-      latitude: +coordinates.lat,
-      longitude: +coordinates.lon
+      latitude: coordinates.latitude,
+      longitude: coordinates.longitude
     }
     return await createDonation(finalData, fetchClient)
   }
 
   const updateBloodDonationRequest = async(): Promise<DonationResponse> => {
-    const { bloodQuantity, location, requestedBloodGroup, ...rest } = bloodRequestData
+    const { bloodQuantity, city, location, neededBloodGroup, ...rest } = bloodRequestData
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
       contactNumber: formatPhoneNumber(rest.contactNumber),
       bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1'),
       donationDateTime: new Date(rest.donationDateTime).toISOString()
     }
+
     return await updateDonation(finalData, fetchClient)
   }
 
@@ -151,10 +163,10 @@ export const useBloodRequest = (): any => {
         : await createBloodDonationRequest()
 
       if (response.status === 200) {
-        navigation.navigate(SCREENS.PROFILE)
+        navigation.navigate(SCREENS.POSTS)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+      const errorMessage = formatErrorMessage(error)
       setErrorMessage(errorMessage)
     } finally {
       setLoading(false)

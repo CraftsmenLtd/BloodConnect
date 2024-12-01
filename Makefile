@@ -1,14 +1,18 @@
 # Environment Variables
+LOCALSTACK_VERSION?=4.0.2
 DEPLOYMENT_ENVIRONMENT?=localstack
-LOCALSTACK_AUTH_TOKEN?=set-localstack-auth-token
+LOCALSTACK_AUTH_TOKEN?=localstack-auth-token
 RUNNER_IMAGE_NAME?=dev-image
 DOCKER_SOCK_MOUNT?=-v /var/run/docker.sock:/var/run/docker.sock
 DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.7.3" \
                          --build-arg="NODE_MAJOR=20" \
                          --build-arg="CHECKOV_VERSION=3.1.40"
-DOCKER_RUN_MOUNT_OPTIONS:=-v ${PWD}:/app -w /app
+DOCKER_RUN_MOUNT_OPTIONS:=-v $(PWD):/app -w /app
 AWS_DEFAULT_REGION?=ap-south-1
 AWS_REGION?=$(AWS_DEFAULT_REGION)
+AWS_ACCESS_KEY_ID?=aws-access-key-id
+AWS_SECRET_ACCESS_KEY?=aws-secret-access-key
+AWS_SESSION_TOKEN?=aws-session-token
 
 # Docker Environment Variables
 TF_VARS=$(shell env | grep '^TF_VAR_' | awk '{print "-e", $$1}')
@@ -51,15 +55,6 @@ sphinx-html: bundle-openapi
 bundle-openapi:
 	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json
 
-replace-dev-url:
-	local_base_url=$$(make run-command-tf-output-aws_invoke_base_url | tail -n 1); \
-	if [[ "$$OSTYPE" == "darwin"* ]]; then \
-		command_prefix="''"; \
-	else \
-		command_prefix=""; \
-	fi; \
-	sed -i $$command_prefix "s|<<local_base_url>>|$$local_base_url|g" openapi/bruno/environments/local.bru
-
 
 # Terraform base command:
 # Depending on the deployment environment, we choose the appropriate Terraform command and directory.
@@ -81,7 +76,7 @@ check-docker:
 # Localstack
 localstack-start:
 	docker rm -f $(DOCKER_LOCALSTACK_CONTAINER_NAME)
-	docker run --rm --privileged --name $(DOCKER_LOCALSTACK_CONTAINER_NAME) -itd -e LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN} -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack-pro
+	docker run --rm --privileged --name $(DOCKER_LOCALSTACK_CONTAINER_NAME) -itd -e LOCALSTACK_AUTH_TOKEN=$(LOCALSTACK_AUTH_TOKEN) -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack-pro:$(LOCALSTACK_VERSION)
 
 # Terraform Commands
 tf-init:
@@ -120,7 +115,7 @@ install-node-packages:
 	find . -type f -name package.json -not -path "**node_modules**" -execdir npm i \;
 
 build-node-%:
-	cd core/services/aws && npm run build-$* $(EXTRA_ARGS)
+	cd core/services/aws && npm run build-$* -- $(NPM_ARGS)
 
 package-%:
 	cd core/services/aws && npm run package-$*
@@ -128,7 +123,7 @@ package-%:
 
 # Unit Test
 test:
-	npm run test $(EXTRA_ARGS)
+	npm run test -- $(NPM_TEST_ARGS)
 
 
 # Lint
@@ -155,15 +150,16 @@ build-runner-image:
 	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
 
 run-command-%:
+	docker rm -f $(DOCKER_DEV_CONTAINER_NAME)
 	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
-	           make $* EXTRA_ARGS=$(EXTRA_ARGS)
+	           make $* NPM_TEST_ARGS=$(NPM_TEST_ARGS) NPM_ARGS=$(NPM_ARGS)
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
 run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
-         run-command-tf-plan-apply run-command-tf-apply replace-dev-url
+         run-command-tf-plan-apply run-command-tf-apply
 
 
 # Swagger UI
