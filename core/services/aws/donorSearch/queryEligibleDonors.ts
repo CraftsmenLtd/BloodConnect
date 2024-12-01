@@ -166,14 +166,14 @@ async function queryAllDonors(
 function addEligibleDonors(
   donorMap: GeohashDonorMap,
   geohashToProcess: string,
-  geohash: string,
+  seekerGeohash: string,
   eligibleDonors: EligibleDonorInfo[]
 ): void {
   if (donorMap[geohashToProcess] !== undefined) {
     donorMap[geohashToProcess].forEach((donor) => {
       const eligibleDonor: EligibleDonorInfo = {
         ...donor,
-        distance: getDistanceBetweenGeohashes(geohash, geohashToProcess)
+        distance: getDistanceBetweenGeohashes(seekerGeohash, geohashToProcess)
       }
       eligibleDonors.push(eligibleDonor)
     })

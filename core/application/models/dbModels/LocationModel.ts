@@ -25,10 +25,6 @@ export default class LocationModel implements NosqlModel<LocationFields>, DbMode
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getGSIIndex(): DbIndex<LocationFields> {
-    return { partitionKey: 'GSI1PK', sortKey: 'GSI1SK' }
-  }
-
   getIndex(indexType: IndexType, indexName: string): DbIndex<LocationFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }

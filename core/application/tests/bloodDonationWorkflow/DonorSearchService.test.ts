@@ -93,7 +93,7 @@ describe('DonorSearchService', () => {
         expect.any(String)
       )
       expect(result).toBe(
-        'We have updated your request and initiated the donor search process.'
+        'Request updated and donor search process initiated.'
       )
     })
 
@@ -115,7 +115,7 @@ describe('DonorSearchService', () => {
       )
 
       expect(result).toBe(
-        'The donor search process completed after the maximum retry limit is reached.'
+        'Donor search process completed after reaching the maximum retry limit.'
       )
     })
 
@@ -134,7 +134,7 @@ describe('DonorSearchService', () => {
         stepFunctionModel
       )
 
-      expect(result).toBe('Donor search is completed')
+      expect(result).toBe('Donor search has already been completed.')
       expect(stepFunctionModel.startExecution).not.toHaveBeenCalled()
     })
   })

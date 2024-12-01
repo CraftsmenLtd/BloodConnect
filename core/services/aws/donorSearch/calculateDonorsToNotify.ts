@@ -19,11 +19,18 @@ const MIN_DELAY_PERIOD: Record<UrgencyType, number> = { urgent: 5, regular: 7 }
 const MAX_DELAY_PERIOD: Record<UrgencyType, number> = { urgent: 10, regular: 15 }
 const DELAY_PERIOD_WEIGHT = 7
 
-export function calculateRemainingBagsNeeded(bloodQuantity: number, donorsFoundCount: number): number {
+export function calculateRemainingBagsNeeded(bloodQuantity: number, donorsFoundCount: number):
+number {
   return Math.max(0, bloodQuantity - donorsFoundCount)
 }
 
-export function calculateTotalDonorsToNotify(remainingBagsNeeded: number, urgencyLevel: UrgencyType): number {
+export function calculateTotalDonorsToNotify(
+  remainingBagsNeeded: number,
+  urgencyLevel: UrgencyType
+): number {
+  if (remainingBagsNeeded === 0) {
+    return 0
+  }
   return remainingBagsNeeded + EXTRA_DONORS_TO_NOTIFY[urgencyLevel]
 }
 
@@ -35,7 +42,7 @@ export function calculateDelayPeriod(
   const minDelay = MIN_DELAY_PERIOD[urgencyLevel]
   const maxDelay = MAX_DELAY_PERIOD[urgencyLevel]
 
-  const delayPeriod = (daysUntilDonation * DELAY_PERIOD_WEIGHT / remainingBagsNeeded)
+  const delayPeriod = (daysUntilDonation * DELAY_PERIOD_WEIGHT) / remainingBagsNeeded
   return Math.round(Math.min(Math.max(minDelay, delayPeriod), maxDelay) * 60)
 }
 
@@ -47,7 +54,10 @@ async function calculateDonorsToNotify(event: CalculationInput): Promise<Calcula
 
   const donationDate = new Date(donationDateTime)
   const currentDate = new Date()
-  const daysUntilDonation = Math.max(0, (donationDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24))
+  const daysUntilDonation = Math.max(
+    0,
+    (donationDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
+  )
   const delayPeriod = calculateDelayPeriod(remainingBagsNeeded, daysUntilDonation, urgencyLevel)
 
   return {
