@@ -32,6 +32,10 @@ type EligibleDonorInfo = {
   locationId: string;
 }
 
+type EligibleDonorWithUserId = EligibleDonorInfo & {
+  userId: string;
+}
+
 type QueryEligibleDonorsInput = {
   seekerId: string;
   createdAt: string;
@@ -39,13 +43,13 @@ type QueryEligibleDonorsInput = {
   seekerGeohash: string;
   requestedBloodGroup: string;
   city: string;
-  eligibleDonors: Record<string, EligibleDonorInfo>;
+  eligibleDonors: EligibleDonorWithUserId[];
   totalDonorsToNotify: number;
 }
 
 type QueryEligibleDonorsOutput = {
   action: 'EnoughDonorsFound' | 'RetryDonorsSearch';
-  eligibleDonors: Record<string, EligibleDonorInfo>;
+  eligibleDonors: EligibleDonorWithUserId[];
 }
 
 const geohashCache = new GeohashCacheManager<string, GeohashDonorMap>(
@@ -93,7 +97,7 @@ async function queryEligibleDonors(
       requestedBloodGroup,
       seekerGeohash,
       seekerId,
-      eligibleDonors
+      transformEligibleDonorsToObject(eligibleDonors)
     )
 
     await donorSearchService.updateDonorSearch(
@@ -113,7 +117,7 @@ async function queryEligibleDonors(
         Object.keys(newEligibleDonors).length >= totalDonorsToNotify
           ? 'EnoughDonorsFound'
           : 'RetryDonorsSearch',
-      eligibleDonors: newEligibleDonors
+      eligibleDonors: revertEligibleDonorsToArray(newEligibleDonors)
     }
   } else {
     const closestDonors = await getClosestDonorsAcrossAll(
@@ -126,7 +130,7 @@ async function queryEligibleDonors(
 
     return {
       action: 'EnoughDonorsFound',
-      eligibleDonors: closestDonors
+      eligibleDonors: revertEligibleDonorsToArray(closestDonors)
     }
   }
 }
@@ -244,5 +248,20 @@ function groupDonorsByGeohash(queriedDonors: LocationDTO[]): GeohashDonorMap {
       locationId: donor.locationId
     })
     return groups
+  }, {})
+}
+
+function revertEligibleDonorsToArray(eligibleDonors: Record<string, EligibleDonorInfo>): EligibleDonorWithUserId[] {
+  return Object.entries(eligibleDonors).map(([userId, donor]) => ({
+    userId,
+    ...donor
+  }))
+}
+
+function transformEligibleDonorsToObject(eligibleDonorsArray: EligibleDonorWithUserId[]): Record<string, EligibleDonorInfo> {
+  return eligibleDonorsArray.reduce<Record<string, EligibleDonorInfo>>((accumulator, donor) => {
+    const { userId, ...donorInfo } = donor
+    accumulator[userId] = donorInfo
+    return accumulator
   }, {})
 }
