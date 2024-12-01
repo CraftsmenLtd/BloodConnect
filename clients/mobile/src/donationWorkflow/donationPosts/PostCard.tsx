@@ -74,7 +74,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <View>
-          <Text style={styles.userName}>{userProfile?.name}</Text>
+          <Text style={styles.userName}>{userProfile.name}</Text>
           <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
         </View>
 

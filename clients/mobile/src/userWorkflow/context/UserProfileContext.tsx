@@ -1,33 +1,78 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { checkUserProfile, UserProfile } from '../services/userProfileService'
+import { ProfileError } from '../../utility/errors'
 
 interface UserProfileContextData {
-  userProfile: UserProfile | null;
+  userProfile: UserProfile;
   loading: boolean;
-  error: string | null;
-  fetchUserProfile: () => Promise<UserProfile | null>;
+  error: string;
+  fetchUserProfile: () => Promise<void>;
+}
+
+const defaultProfile: UserProfile = {
+  bloodGroup: '',
+  name: '',
+  lastDonationDate: '',
+  height: 0,
+  weight: 0,
+  gender: '',
+  dateOfBirth: '',
+  availableForDonation: '',
+  lastVaccinatedDate: '',
+  NIDFront: '',
+  NIDBack: '',
+  phoneNumbers: [],
+  preferredDonationLocations: []
 }
 
 const UserProfileContext = createContext<UserProfileContextData | undefined>(undefined)
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
+  const [userProfile, setUserProfile] = useState<UserProfile>(defaultProfile)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string>('')
   const fetchClient = useFetchClient()
 
-  const fetchUserProfile = async(): Promise<UserProfile | null> => {
+  function formatUserProfile(profile: UserProfile): UserProfile {
+    return {
+      bloodGroup: profile.bloodGroup ?? '',
+      name: profile.name ?? '',
+      lastDonationDate: profile.lastDonationDate ?? '',
+      height: profile.height ?? 0,
+      weight: profile.weight ?? 0,
+      gender: profile.gender ?? '',
+      dateOfBirth: profile.dateOfBirth ?? '',
+      availableForDonation: profile.availableForDonation ?? '',
+      lastVaccinatedDate: profile.lastVaccinatedDate ?? '',
+      NIDFront: profile.NIDFront ?? '',
+      NIDBack: profile.NIDBack ?? '',
+      phoneNumbers: profile.phoneNumbers ?? [],
+      preferredDonationLocations: profile.preferredDonationLocations?.map(location => ({
+        area: location.area ?? '',
+        city: location.city ?? '',
+        latitude: location.latitude ?? 0,
+        longitude: location.longitude ?? 0
+      })) ?? []
+    }
+  }
+
+  const fetchUserProfile = async(): Promise<void> => {
     try {
       setLoading(true)
-      setError(null)
-      const profile = await checkUserProfile(fetchClient)
-      setUserProfile(profile)
-      return profile
+      setError('')
+      const response = await checkUserProfile(fetchClient)
+      if (response.status === 200 && (response.data != null)) {
+        const formattedProfile = formatUserProfile(response.data)
+        setUserProfile(formattedProfile)
+      } else {
+        setUserProfile(defaultProfile)
+        throw new ProfileError('Failed to get user profile data')
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       setError(errorMessage)
-      return null
+      setUserProfile(defaultProfile)
     } finally {
       setLoading(false)
     }
@@ -52,3 +97,58 @@ export const useUserProfile = (): UserProfileContextData => {
   }
   return context
 }
+
+// import React, { createContext, useState, useContext, ReactNode } from 'react'
+// import { useFetchClient } from '../../setup/clients/useFetchClient'
+// import { checkUserProfile, UserProfile } from '../services/userProfileService'
+
+// interface UserProfileContextData {
+//   userProfile: UserProfile | null;
+//   loading: boolean;
+//   error: string | null;
+//   fetchUserProfile: () => Promise<UserProfile | null>;
+// }
+
+// const UserProfileContext = createContext<UserProfileContextData | undefined>(undefined)
+
+// export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+//   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+//   const [loading, setLoading] = useState<boolean>(false)
+//   const [error, setError] = useState<string | null>(null)
+//   const fetchClient = useFetchClient()
+
+//   const fetchUserProfile = async(): Promise<UserProfile | null> => {
+//     try {
+//       setLoading(true)
+//       setError(null)
+//       const profile = await checkUserProfile(fetchClient)
+//       setUserProfile(profile)
+//       return profile
+//     } catch (error) {
+//       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+//       setError(errorMessage)
+//       return null
+//     } finally {
+//       setLoading(false)
+//     }
+//   }
+
+//   return (
+//     <UserProfileContext.Provider value={{
+//       userProfile,
+//       loading,
+//       error,
+//       fetchUserProfile
+//     }}>
+//       {children}
+//     </UserProfileContext.Provider>
+//   )
+// }
+
+// export const useUserProfile = (): UserProfileContextData => {
+//   const context = useContext(UserProfileContext)
+//   if (context === undefined) {
+//     throw new Error('useUserProfile must be used within a UserProfileProvider')
+//   }
+//   return context
+// }
