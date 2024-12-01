@@ -1,9 +1,13 @@
 name: 🧪 Continuous Integration
 
 on:
-  push:
-    branches-ignore:
-      - "master"
+  pull_request:
+    branches:
+      - "**"
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 permissions:
   contents: read
