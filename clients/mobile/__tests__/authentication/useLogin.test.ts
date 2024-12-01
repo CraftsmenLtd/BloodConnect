@@ -61,6 +61,10 @@ describe('useLogin Hook', () => {
   beforeEach(() => {
     mockUserProfile = null
     jest.clearAllMocks()
+    jest.useFakeTimers()
+  })
+  afterEach(() => {
+    jest.useRealTimers()
   })
 
   test('should initialize with default values', () => {
@@ -121,6 +125,7 @@ describe('useLogin Hook', () => {
 
     await act(async() => {
       await result.current.handleLogin()
+      jest.runAllTimers()
     })
 
     expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
@@ -164,6 +169,7 @@ describe('useLogin Hook', () => {
 
       await act(async() => {
         await result.current.handleGoogleSignIn()
+        jest.runAllTimers()
       })
 
       expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
@@ -181,6 +187,7 @@ describe('useLogin Hook', () => {
 
       await act(async() => {
         await result.current.handleGoogleSignIn()
+        jest.runAllTimers()
       })
 
       expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
@@ -225,6 +232,7 @@ describe('useLogin Hook', () => {
 
       await act(async() => {
         await result.current.handleFacebookSignIn()
+        jest.runAllTimers()
       })
 
       expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
@@ -242,6 +250,7 @@ describe('useLogin Hook', () => {
 
       await act(async() => {
         await result.current.handleFacebookSignIn()
+        jest.runAllTimers()
       })
 
       expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
