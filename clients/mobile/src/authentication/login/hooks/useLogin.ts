@@ -50,12 +50,14 @@ export const useLogin = (): any => {
       if (isSignedIn) {
         setIsAuthenticated(true)
         registerUserDeviceForNotification(fetchClient)
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: SCREENS.BOTTOM_TABS }]
-          })
-        )
+        setTimeout(() => {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: SCREENS.BOTTOM_TABS }]
+            })
+          )
+        }, 800)
       } else {
         setLoginError('User is not confirmed. Please verify your email.')
         setLoginLoading(false)

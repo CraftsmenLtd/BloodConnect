@@ -56,12 +56,14 @@ export const useOtp = (): any => {
       const isSignedIn = await loginUser(email, password)
       if (isSignedIn) {
         setIsAuthenticated(true)
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
-          })
-        )
+        setTimeout(() => {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+            })
+          )
+        }, 800)
       } else {
         navigation.navigate(SCREENS.LOGIN)
       }
