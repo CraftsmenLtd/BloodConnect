@@ -57,7 +57,7 @@ export const useLogin = (): any => {
               routes: [{ name: SCREENS.BOTTOM_TABS }]
             })
           )
-        }, 800)
+        }, 1000)
       } else {
         setLoginError('User is not confirmed. Please verify your email.')
         setLoginLoading(false)

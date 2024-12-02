@@ -8,6 +8,7 @@ import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { SocialLoadingState } from '../types/loadingType'
 import { RootStackParamList } from '../../../setup/navigation/navigationTypes'
+import { SOCIAL_TYPES } from '../constants/socialTypes'
 
 interface UseSocialAuthOutput {
   socialLoadingState: SocialLoadingState;
@@ -38,7 +39,7 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
             routes: [{ name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO }]
           })
         )
-      }, 800)
+      }, 1000)
     } catch (error) {
       setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     } finally {
@@ -47,11 +48,11 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
   }
 
   const handleGoogleSignIn = async(): Promise<void> => {
-    await handleSocialSignIn(googleLogin, 'Google')
+    await handleSocialSignIn(googleLogin, SOCIAL_TYPES.GOOGLE)
   }
 
   const handleFacebookSignIn = async(): Promise<void> => {
-    await handleSocialSignIn(facebookLogin, 'Facebook')
+    await handleSocialSignIn(facebookLogin, SOCIAL_TYPES.FACEBOOK)
   }
 
   return {

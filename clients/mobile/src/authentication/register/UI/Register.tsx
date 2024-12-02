@@ -10,6 +10,7 @@ import { SCREENS } from '../../../setup/constant/screens'
 import AuthLayout from '../../AuthLayout'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
+import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
 
 interface RegisterScreenProps {
   navigation: RegisterScreenNavigationProp;
@@ -60,14 +61,14 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
       <SocialButton
         text="Continue with Google"
         onPress={handleGoogleSignIn}
-        loading={socialLoadingState === 'google'}
+        loading={socialLoadingState === SOCIAL_TYPES.GOOGLE}
         icon={require('../../../../assets/google-icon.png')}
       />
 
       <SocialButton
         text="Continue with Facebook"
         onPress={handleFacebookSignIn}
-        loading={socialLoadingState === 'facebook'}
+        loading={socialLoadingState === SOCIAL_TYPES.FACEBOOK}
         icon={require('../../../../assets/facebook-icon.png')}
       />
 

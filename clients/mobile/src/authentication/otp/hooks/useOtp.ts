@@ -63,7 +63,7 @@ export const useOtp = (): any => {
               routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
             })
           )
-        }, 800)
+        }, 1000)
       } else {
         navigation.navigate(SCREENS.LOGIN)
       }

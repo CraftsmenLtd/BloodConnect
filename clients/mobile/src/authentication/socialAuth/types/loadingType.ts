@@ -1,1 +1,3 @@
-export type SocialLoadingState = 'idle' | 'google' | 'facebook'
+import { SocialType } from '../constants/socialTypes'
+
+export type SocialLoadingState = 'idle' | SocialType
