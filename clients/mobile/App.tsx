@@ -10,9 +10,11 @@ import { awsCognitoConfiguration } from './src/setup/config/cognito'
 import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
 import * as Notifications from 'expo-notifications'
+import Constants from 'expo-constants'
 
-const currentEnvironment = process.env.APP_ENV
-if (currentEnvironment !== 'development') {
+const { APP_ENV } = Constants.expoConfig?.extra ?? {}
+
+if (APP_ENV !== 'development') {
   LogBox.ignoreAllLogs(true)
 }
 
