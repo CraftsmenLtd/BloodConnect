@@ -23,7 +23,7 @@ interface APIResponse {
   status: number;
 }
 
-export const checkUserProfile = async(httpClient: HttpClient): Promise<APIResponse> => {
+export const fetchUserProfileFromApi = async(httpClient: HttpClient): Promise<APIResponse> => {
   try {
     const response = await httpClient.get<APIResponse>('/users')
     return {

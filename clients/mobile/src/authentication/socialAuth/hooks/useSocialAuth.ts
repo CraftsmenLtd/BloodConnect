@@ -32,14 +32,12 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
       setIsAuthenticated(true)
       registerUserDeviceForNotification(fetchClient)
       const hasProfile = Boolean(userProfile?.bloodGroup)
-      setTimeout(() => {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO }]
-          })
-        )
-      }, 1000)
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO }]
+        })
+      )
     } catch (error) {
       setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     } finally {

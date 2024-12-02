@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
-import { checkUserProfile, UserProfile } from '../services/userProfileService'
+import { fetchUserProfileFromApi, UserProfile } from '../services/userProfileService'
 import { ProfileError } from '../../utility/errors'
 
 interface UserProfileContextData {
@@ -61,7 +61,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     try {
       setLoading(true)
       setError('')
-      const response = await checkUserProfile(fetchClient)
+      const response = await fetchUserProfileFromApi(fetchClient)
       if (response.status === 200 && (response.data != null)) {
         const formattedProfile = formatUserProfile(response.data)
         setUserProfile(formattedProfile)
