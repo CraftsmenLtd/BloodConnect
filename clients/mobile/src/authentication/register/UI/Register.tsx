@@ -11,6 +11,7 @@ import AuthLayout from '../../AuthLayout'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
 import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
+import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
 
 interface RegisterScreenProps {
   navigation: RegisterScreenNavigationProp;
@@ -59,17 +60,17 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
       {socialLoginError !== '' && <Text style={styles.error}>{socialLoginError}</Text>}
 
       <SocialButton
-        text="Continue with Google"
+        text={SOCIAL_BUTTON_UI.GOOGLE.text}
         onPress={handleGoogleSignIn}
         loading={socialLoading === SOCIAL_TYPES.GOOGLE}
-        icon={require('../../../../assets/google-icon.png')}
+        icon={SOCIAL_BUTTON_UI.GOOGLE.icon}
       />
 
       <SocialButton
-        text="Continue with Facebook"
+        text={SOCIAL_BUTTON_UI.FACEBOOK.text}
         onPress={handleFacebookSignIn}
         loading={socialLoading === SOCIAL_TYPES.FACEBOOK}
-        icon={require('../../../../assets/facebook-icon.png')}
+        icon={SOCIAL_BUTTON_UI.FACEBOOK.icon}
       />
 
       <LinkWithText

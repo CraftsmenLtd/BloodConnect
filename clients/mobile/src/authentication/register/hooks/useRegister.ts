@@ -32,7 +32,7 @@ export const useRegister = (): any => {
     Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
   )
 
-  const { socialLoadingState, socialLoginError, handleGoogleSignIn, handleFacebookSignIn } = useSocialAuth()
+  const { socialLoading, socialLoginError, handleGoogleSignIn, handleFacebookSignIn } = useSocialAuth()
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     setRegisterCredential(prevState => ({
@@ -74,7 +74,7 @@ export const useRegister = (): any => {
     handleInputChange,
     isButtonDisabled,
     handleRegister,
-    socialLoadingState,
+    socialLoading,
     socialLoginError,
     handleGoogleSignIn,
     handleFacebookSignIn
