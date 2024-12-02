@@ -1,3 +1,3 @@
 import { SocialType } from '../constants/socialTypes'
 
-export type SocialLoadingState = 'idle' | SocialType
+export type SocialLoading = 'idle' | SocialType

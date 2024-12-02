@@ -34,7 +34,7 @@ export const useLogin = (): any => {
   const [loginError, setLoginError] = useState<string>('')
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
-  const { socialLoadingState, socialLoginError, handleGoogleSignIn, handleFacebookSignIn } = useSocialAuth()
+  const { socialLoading, socialLoginError, handleGoogleSignIn, handleFacebookSignIn } = useSocialAuth()
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     setLoginCredential(prevState => ({
@@ -77,7 +77,7 @@ export const useLogin = (): any => {
     isPasswordVisible,
     setIsPasswordVisible,
     handleLogin,
-    socialLoadingState,
+    socialLoading,
     socialLoginError,
     handleGoogleSignIn,
     handleFacebookSignIn

@@ -6,12 +6,12 @@ import { useAuth } from '../../context/useAuth'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
-import { SocialLoadingState } from '../types/loadingType'
+import { SocialLoading } from '../types/loadingType'
 import { RootStackParamList } from '../../../setup/navigation/navigationTypes'
 import { SOCIAL_TYPES } from '../constants/socialTypes'
 
 interface UseSocialAuthOutput {
-  socialLoadingState: SocialLoadingState;
+  socialLoading: SocialLoading;
   socialLoginError: string;
   handleGoogleSignIn: () => Promise<void>;
   handleFacebookSignIn: () => Promise<void>;
@@ -21,13 +21,13 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
   const fetchClient = useFetchClient()
   const { userProfile } = useUserProfile()
   const { setIsAuthenticated } = useAuth()
-  const [socialLoadingState, setSocialLoadingState] = useState<SocialLoadingState>('idle')
+  const [socialLoading, setSocialLoading] = useState<SocialLoading>('idle')
   const [socialLoginError, setSocialLoginError] = useState<string>('')
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
     try {
-      setSocialLoadingState(socialMedia.toLowerCase() as SocialLoadingState)
+      setSocialLoading(socialMedia.toLowerCase() as SocialLoading)
       await loginFunction()
       setIsAuthenticated(true)
       registerUserDeviceForNotification(fetchClient)
@@ -43,7 +43,7 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
     } catch (error) {
       setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     } finally {
-      setSocialLoadingState('idle')
+      setSocialLoading('idle')
     }
   }
 
@@ -56,7 +56,7 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
   }
 
   return {
-    socialLoadingState,
+    socialLoading,
     socialLoginError,
     handleGoogleSignIn,
     handleFacebookSignIn
