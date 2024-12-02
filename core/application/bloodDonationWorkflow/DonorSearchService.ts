@@ -42,12 +42,12 @@ export class DonorSearchService {
         retryCount: 0
       })
     }
-    const isDonationUpdateRequest = sourceQueueArn === process.env.DONOR_SEARCH_QUEUE_ARN &&
-      donorSearchRecord !== null &&
-      donorRoutingAttributes.bloodQuantity > donorSearchRecord.bloodQuantity
     const hasDonationCompleted = donorSearchRecord !== null && donorSearchRecord.status === DonationStatus.COMPLETED
 
     if (hasDonationCompleted) {
+      const isDonationUpdateRequest = sourceQueueArn === process.env.DONOR_SEARCH_QUEUE_ARN &&
+        donorSearchRecord !== null &&
+        donorRoutingAttributes.bloodQuantity > donorSearchRecord.bloodQuantity
       if (!isDonationUpdateRequest) {
         return
       }
@@ -165,7 +165,7 @@ export class DonorSearchService {
       }
     }
 
-    if (gsiIndex.sortKey != null && geohash.length > 0) {
+    if (gsiIndex.sortKey !== null && geohash.length > 0) {
       query.sortKeyCondition = {
         attributeName: gsiIndex.sortKey as keyof AcceptedDonationFields,
         operator: QueryConditionOperator.BEGINS_WITH,

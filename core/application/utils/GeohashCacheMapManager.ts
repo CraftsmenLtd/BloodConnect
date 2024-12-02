@@ -6,7 +6,9 @@ export class GeohashCacheManager<K, V> {
   private currentByteSize: number
 
   constructor(maxEntries: number, maxMBSize: number, cacheTimeoutMinutes: number) {
-    if (!Number.isInteger(maxEntries) || !Number.isInteger(maxMBSize) || !Number.isInteger(cacheTimeoutMinutes)) {
+    if (!Number.isInteger(maxEntries) ||
+      !Number.isInteger(maxMBSize) ||
+      !Number.isInteger(cacheTimeoutMinutes)) {
       throw new Error('All parameters must be integers!')
     }
 

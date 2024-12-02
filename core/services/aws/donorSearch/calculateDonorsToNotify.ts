@@ -28,10 +28,7 @@ export function calculateTotalDonorsToNotify(
   remainingBagsNeeded: number,
   urgencyLevel: UrgencyType
 ): number {
-  if (remainingBagsNeeded === 0) {
-    return 0
-  }
-  return remainingBagsNeeded + EXTRA_DONORS_TO_NOTIFY[urgencyLevel]
+  return remainingBagsNeeded === 0 ? 0 : remainingBagsNeeded + EXTRA_DONORS_TO_NOTIFY[urgencyLevel]
 }
 
 export function calculateDelayPeriod(
