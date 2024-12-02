@@ -146,7 +146,7 @@ describe('useLogin Hook', () => {
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
       expect(mockDispatch).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('google login failed. Please try again.')
     })
 
     test('should set socialLoginError on Google sign-in failure', async() => {
@@ -158,7 +158,7 @@ describe('useLogin Hook', () => {
       })
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
-      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('google login failed. Please try again.')
     })
 
     test('should navigate to ADD_PERSONAL_INFO when no profile exists', async() => {
@@ -209,7 +209,7 @@ describe('useLogin Hook', () => {
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
       expect(mockDispatch).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('facebook login failed. Please try again.')
     })
 
     test('should set socialLoginError on Facebook sign-in failure', async() => {
@@ -221,7 +221,7 @@ describe('useLogin Hook', () => {
       })
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
-      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('facebook login failed. Please try again.')
     })
 
     test('should navigate to ADD_PERSONAL_INFO when no profile exists', async() => {
