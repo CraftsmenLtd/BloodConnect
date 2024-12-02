@@ -1,25 +1,19 @@
 import { HttpClient } from '../../setup/clients/HttpClient'
 import { ProfileError } from '../../utility/errors'
+import { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
 
-export interface UserProfile {
-  bloodGroup?: string;
-  name?: string;
-  lastDonationDate?: string;
-  height?: number;
-  weight?: number;
-  gender?: string;
-  dateOfBirth?: string;
-  availableForDonation?: string;
-  lastVaccinatedDate?: string;
-  NIDFront?: string;
-  NIDBack?: string;
-  phoneNumbers?: string[];
-  preferredDonationLocations?: Array<{
-    area: string;
-    city: string;
-    latitude: number;
-    longitude: number;
-  }>;
+interface UserPreferedLocation {
+  area: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface UserProfile extends Partial<Omit<UserDetailsDTO, 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn' | 'bloodGroup' | 'gender' | 'availableForDonation'>> {
+  preferredDonationLocations?: UserPreferedLocation[];
+  bloodGroup: string;
+  gender: string;
+  availableForDonation: string;
 }
 
 interface APIResponse {
