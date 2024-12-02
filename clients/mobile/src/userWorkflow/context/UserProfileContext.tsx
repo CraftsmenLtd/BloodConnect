@@ -60,19 +60,16 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
   const fetchUserProfile = async(): Promise<void> => {
     try {
       setLoading(true)
-      setError('')
       const response = await fetchUserProfileFromApi(fetchClient)
       if (response.status === 200 && (response.data != null)) {
         const formattedProfile = formatUserProfile(response.data)
         setUserProfile(formattedProfile)
       } else {
-        setUserProfile(defaultProfile)
         throw new ProfileError('Failed to get user profile data')
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       setError(errorMessage)
-      setUserProfile(defaultProfile)
     } finally {
       setLoading(false)
     }
