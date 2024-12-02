@@ -1,9 +1,13 @@
 name: 🧪 Continuous Integration
 
 on:
-  push:
-    branches-ignore:
-      - "master"
+  pull_request:
+    branches:
+      - "**"
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 permissions:
   contents: read
@@ -32,3 +36,4 @@ jobs:
     secrets: inherit
     with:
       runner_image_name: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      deploy_localstack: true
