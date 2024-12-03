@@ -61,7 +61,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     try {
       setLoading(true)
       const response = await fetchUserProfileFromApi(fetchClient)
-      if (response.status === 200 && (response.data != null)) {
+      if (response.status === 200 && response.data !== null && response.data !== undefined) {
         const formattedProfile = formatUserProfile(response.data)
         setUserProfile(formattedProfile)
       } else {
