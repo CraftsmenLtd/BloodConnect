@@ -29,7 +29,7 @@ const ensureEnvVars = (vars: Record<string, string | undefined>): EnvVars => {
 }
 
 export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
-  const cfg = {
+  const environmentConfigs = {
     AWS_USER_POOL_ID: process.env.AWS_USER_POOL_ID,
     AWS_USER_POOL_CLIENT_ID: process.env.AWS_USER_POOL_CLIENT_ID,
     AWS_COGNITO_DOMAIN: process.env.AWS_COGNITO_DOMAIN,
@@ -46,17 +46,17 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
   }
 
   const ENV_VARS: Record<string, EnvVars> = {
-    development: ensureEnvVars({ ...cfg }),
-    preview: ensureEnvVars({ ...cfg }),
-    production: ensureEnvVars({ ...cfg })
+    development: ensureEnvVars({ ...environmentConfigs }),
+    preview: ensureEnvVars({ ...environmentConfigs }),
+    production: ensureEnvVars({ ...environmentConfigs })
   }
 
   return {
     ...config,
     extra: {
-      ...ENV_VARS[cfg.APP_ENV],
+      ...ENV_VARS[environmentConfigs.APP_ENV],
       eas: {
-        projectId: cfg.EAS_PROJECT_ID
+        projectId: environmentConfigs.EAS_PROJECT_ID
       }
     }
   }
