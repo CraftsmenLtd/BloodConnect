@@ -56,8 +56,6 @@ describe('donorRequestRouter', () => {
   })
 
   it('should process all records in the SQSEvent with correct PK and SK parsing', async() => {
-    const mockResponse = 'Blood donation created successfully'
-    mockDonorSearchService.prototype.routeDonorRequest.mockResolvedValue(mockResponse)
     mockUserService.prototype.getUser.mockResolvedValue(mockUserDetailsWithStringId)
 
     await donorRequestRouter(mockEvent)

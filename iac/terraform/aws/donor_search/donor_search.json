@@ -105,14 +105,16 @@
         }
       ],
       "ResultSelector": {
-        "eligibleDonors.$": "$.[0].checkDonorSearchResult.eligibleDonors"
+        "eligibleDonors.$": "$.[0].checkDonorSearchResult.eligibleDonors",
+        "delayPeriod.$": "$.[0].prepareDonorSearchResult.delayPeriod",
+        "totalDonorsToNotify.$": "$.[0].prepareDonorSearchResult.totalDonorsToNotify"
       },
-      "ResultPath": "$.donorSearchResult",
+      "ResultPath": "$.prepareDonorSearchResult",
       "Next": "NotifyDonors"
     },
     "NotifyDonors": {
       "Type": "Map",
-      "ItemsPath": "$.donorSearchResult.eligibleDonors",
+      "ItemsPath": "$.prepareDonorSearchResult.eligibleDonors",
       "Parameters": {
         "userId.$": "$$.Map.Item.Value.userId",
         "locationId.$": "$$.Map.Item.Value.locationId",

@@ -18,6 +18,10 @@ import { AcceptedDonationFields } from '../models/dbModels/AcceptDonationModel'
 import { LocationDTO, UserDetailsDTO } from '../../../commons/dto/UserDTO'
 import { getBloodRequestMessage } from './BloodDonationMessages'
 import LocationModel from '../models/dbModels/LocationModel'
+import {
+  MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL,
+  MAX_GEOHASHES_PER_PROCESSING_BATCH
+} from '../../../commons/libs/constants/NoMagicNumbers'
 
 export class DonorSearchService {
   async routeDonorRequest(
@@ -42,7 +46,8 @@ export class DonorSearchService {
         retryCount: 0
       })
     }
-    const hasDonationCompleted = donorSearchRecord !== null && donorSearchRecord.status === DonationStatus.COMPLETED
+    const hasDonationCompleted = donorSearchRecord !== null &&
+      donorSearchRecord.status === DonationStatus.COMPLETED
 
     if (hasDonationCompleted) {
       const isDonationUpdateRequest = sourceQueueArn === process.env.DONOR_SEARCH_QUEUE_ARN &&
@@ -135,8 +140,14 @@ export class DonorSearchService {
       createdAt
     }
     if (remainingGeohashesToProcess.length === 0) {
-      const newNeighborGeohashes = getGeohashNthNeighbors(geohash, currentNeighborSearchLevel + 1)
-      updatedRecord.currentNeighborSearchLevel = currentNeighborSearchLevel + 1
+      const { newNeighborGeohashes, finalNeighborLevel } =
+        this.getNeighborGeohashes(
+          geohash,
+          currentNeighborSearchLevel + 1,
+          remainingGeohashesToProcess
+        )
+
+      updatedRecord.currentNeighborSearchLevel = finalNeighborLevel
       updatedRecord.remainingGeohashesToProcess = newNeighborGeohashes
     } else {
       updatedRecord.currentNeighborSearchLevel = currentNeighborSearchLevel
@@ -177,5 +188,21 @@ export class DonorSearchService {
     )
     const donorsFoundList = queryResult.items ?? []
     return donorsFoundList
+  }
+
+  getNeighborGeohashes = (
+    geohash: string,
+    neighborLevel: number,
+    currentGeohashes: string[] = []
+  ): { newNeighborGeohashes: string[]; finalNeighborLevel: number } => {
+    const newGeohashes = getGeohashNthNeighbors(geohash, neighborLevel)
+    const updatedGeohashes = [...currentGeohashes, ...newGeohashes]
+
+    if (updatedGeohashes.length >= MAX_GEOHASHES_PER_PROCESSING_BATCH &&
+      neighborLevel <= MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL) {
+      return { newNeighborGeohashes: updatedGeohashes, finalNeighborLevel: neighborLevel }
+    }
+
+    return this.getNeighborGeohashes(geohash, neighborLevel + 1, updatedGeohashes)
   }
 }

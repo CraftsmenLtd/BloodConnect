@@ -88,17 +88,16 @@ async function queryEligibleDonors(
     const remainingGeohashes = previousDonorSearchRecord?.remainingGeohashesToProcess ?? [
       seekerGeohash.slice(0, NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH)
     ]
-    const geohashesToProcessNow = remainingGeohashes.slice(0, MAX_GEOHASHES_PER_PROCESSING_BATCH)
-    const geohashesForNextIteration = remainingGeohashes.slice(MAX_GEOHASHES_PER_PROCESSING_BATCH)
 
-    const newEligibleDonors = await getNewDonorsInNeighborGeohashes(
-      geohashesToProcessNow,
+    const { newEligibleDonors, processedGeohashCount } = await getNewDonorsInNeighborGeohash(
+      remainingGeohashes,
       city,
       requestedBloodGroup,
       seekerGeohash,
       seekerId,
       transformEligibleDonorsToObject(eligibleDonors)
     )
+    const geohashesForNextIteration = remainingGeohashes.slice(processedGeohashCount)
 
     await donorSearchService.updateDonorSearch(
       seekerId,
@@ -136,6 +135,67 @@ async function queryEligibleDonors(
 }
 
 export default queryEligibleDonors
+
+async function getNewDonorsInNeighborGeohash(
+  geohashesToProcess: string[],
+  city: string,
+  requestedBloodGroup: string,
+  seekerGeohash: string,
+  seekerId: string,
+  eligibleDonors: Record<string, EligibleDonorInfo>,
+  processedGeohashCount: number = 0
+): Promise<{ newEligibleDonors: Record<string, EligibleDonorInfo>; processedGeohashCount: number }> {
+  if (geohashesToProcess.length === 0 || processedGeohashCount >= MAX_GEOHASHES_PER_PROCESSING_BATCH || Object.keys(eligibleDonors).length > 10) {
+    return { newEligibleDonors: eligibleDonors, processedGeohashCount }
+  }
+
+  const geohashToProcess = geohashesToProcess[0]
+  const geohashCachePrefix = geohashToProcess.slice(0, CACHE_GEOHASH_PREFIX_LENGTH)
+  const cacheKey = `${city}-${requestedBloodGroup}-${geohashCachePrefix}`
+  const cachedGroupedGeohash = geohashCache.get(cacheKey)
+
+  if (cachedGroupedGeohash === undefined) {
+    const queriedDonors = await donorSearchService.queryGeohash(
+      city,
+      requestedBloodGroup,
+      geohashCachePrefix,
+      new DynamoDbTableOperations<LocationDTO, LocationFields, LocationModel>(
+        new LocationModel()
+      )
+    )
+    updateGroupedGeohashCache(queriedDonors, cacheKey)
+  }
+
+  const cachedDonorMap = geohashCache.get(cacheKey) as GeohashDonorMap
+  const donors = cachedDonorMap[geohashToProcess] ?? []
+
+  const newDonors = donors.reduce<Record<string, EligibleDonorInfo>>(
+    (donorAccumulator, donor) => {
+      const donorDistance = getDistanceBetweenGeohashes(seekerGeohash, geohashToProcess)
+      if (
+        donor.userId !== seekerId &&
+        (donorAccumulator[donor.userId] === undefined ||
+          donorAccumulator[donor.userId].distance < donorDistance)
+      ) {
+        donorAccumulator[donor.userId] = {
+          locationId: donor.locationId,
+          distance: donorDistance
+        }
+      }
+      return donorAccumulator
+    },
+    { ...eligibleDonors }
+  )
+
+  return getNewDonorsInNeighborGeohash(
+    geohashesToProcess.slice(1), city,
+    requestedBloodGroup,
+    seekerGeohash,
+    seekerId,
+    newDonors,
+    processedGeohashCount + 1
+  )
+}
 
 async function getClosestDonorsAcrossAll(
   city: string,
@@ -178,60 +238,6 @@ async function getClosestDonorsAcrossAll(
   return closestDonors
 }
 
-async function getNewDonorsInNeighborGeohashes(
-  geohashesToProcessNow: string[],
-  city: string,
-  requestedBloodGroup: string,
-  seekerGeohash: string,
-  seekerId: string,
-  eligibleDonors: Record<string, EligibleDonorInfo>
-): Promise<Record<string, EligibleDonorInfo>> {
-  return await geohashesToProcessNow.reduce<Promise<Record<string, EligibleDonorInfo>>>(
-    async(accumulator, geohashToProcess) => {
-      const currentAccumulator = await accumulator
-
-      const geohashCachePrefix = geohashToProcess.slice(0, CACHE_GEOHASH_PREFIX_LENGTH)
-      const cacheKey = `${city}-${requestedBloodGroup}-${geohashCachePrefix}`
-      const cachedGroupedGeohash = geohashCache.get(cacheKey)
-
-      if (cachedGroupedGeohash === undefined) {
-        const queriedDonors = await donorSearchService.queryGeohash(
-          city,
-          requestedBloodGroup,
-          geohashCachePrefix,
-          new DynamoDbTableOperations<LocationDTO, LocationFields, LocationModel>(
-            new LocationModel()
-          )
-        )
-        updateGroupedGeohashCache(queriedDonors, cacheKey)
-      }
-
-      const cachedDonorMap = geohashCache.get(cacheKey) as GeohashDonorMap
-
-      const donors = cachedDonorMap[geohashToProcess] ?? []
-      const newDonors = donors.reduce<Record<string, EligibleDonorInfo>>(
-        (accumulatorDonor, donor) => {
-          const donorDistance = getDistanceBetweenGeohashes(seekerGeohash, geohashToProcess)
-          if (
-            donor.userId !== seekerId &&
-            (eligibleDonors[donor.userId] === undefined ||
-              eligibleDonors[donor.userId].distance < donorDistance)
-          ) {
-            accumulatorDonor[donor.userId] = {
-              locationId: donor.locationId,
-              distance: donorDistance
-            }
-          }
-          return accumulatorDonor
-        },
-        { ...currentAccumulator }
-      )
-      return newDonors
-    },
-    Promise.resolve({})
-  )
-}
-
 function updateGroupedGeohashCache(queriedDonors: LocationDTO[], cacheKey: string): void {
   const donorMap = groupDonorsByGeohash(queriedDonors)
   geohashCache.set(cacheKey, donorMap)
@@ -251,14 +257,16 @@ function groupDonorsByGeohash(queriedDonors: LocationDTO[]): GeohashDonorMap {
   }, {})
 }
 
-function revertEligibleDonorsToArray(eligibleDonors: Record<string, EligibleDonorInfo>): EligibleDonorWithUserId[] {
+function revertEligibleDonorsToArray(eligibleDonors: Record<string, EligibleDonorInfo>):
+EligibleDonorWithUserId[] {
   return Object.entries(eligibleDonors).map(([userId, donor]) => ({
     userId,
     ...donor
   }))
 }
 
-function transformEligibleDonorsToObject(eligibleDonorsArray: EligibleDonorWithUserId[]): Record<string, EligibleDonorInfo> {
+function transformEligibleDonorsToObject(eligibleDonorsArray: EligibleDonorWithUserId[]):
+Record<string, EligibleDonorInfo> {
   return eligibleDonorsArray.reduce<Record<string, EligibleDonorInfo>>((accumulator, donor) => {
     const { userId, ...donorInfo } = donor
     accumulator[userId] = donorInfo
