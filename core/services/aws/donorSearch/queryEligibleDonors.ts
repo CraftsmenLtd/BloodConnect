@@ -95,7 +95,8 @@ async function queryEligibleDonors(
       requestedBloodGroup,
       seekerGeohash,
       seekerId,
-      transformEligibleDonorsToObject(eligibleDonors)
+      transformEligibleDonorsToObject(eligibleDonors),
+      totalDonorsToNotify
     )
     const geohashesForNextIteration = remainingGeohashes.slice(processedGeohashCount)
 
@@ -143,9 +144,12 @@ async function getNewDonorsInNeighborGeohash(
   seekerGeohash: string,
   seekerId: string,
   eligibleDonors: Record<string, EligibleDonorInfo>,
+  totalDonorsToNotify: number,
   processedGeohashCount: number = 0
 ): Promise<{ newEligibleDonors: Record<string, EligibleDonorInfo>; processedGeohashCount: number }> {
-  if (geohashesToProcess.length === 0 || processedGeohashCount >= MAX_GEOHASHES_PER_PROCESSING_BATCH || Object.keys(eligibleDonors).length > 10) {
+  if (geohashesToProcess.length === 0 ||
+    processedGeohashCount >= MAX_GEOHASHES_PER_PROCESSING_BATCH ||
+    Object.keys(eligibleDonors).length >= totalDonorsToNotify) {
     return { newEligibleDonors: eligibleDonors, processedGeohashCount }
   }
 
@@ -193,6 +197,7 @@ async function getNewDonorsInNeighborGeohash(
     seekerGeohash,
     seekerId,
     newDonors,
+    totalDonorsToNotify,
     processedGeohashCount + 1
   )
 }
