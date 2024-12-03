@@ -9,35 +9,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SCREENS } from '../../../setup/constant/screens'
 import { FetchResponse } from '../../../setup/clients/FetchClient'
 import { AccountScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import { UserResponseData } from '../../../../../../commons/dto/UserDTO'
 
 interface User {
   name: string;
   location: string;
-}
-
-interface UserResponseData {
-  success: boolean;
-  data: {
-    phoneNumbers: string[];
-    name: string;
-    bloodGroup: string;
-    lastDonationDate: string;
-    height: number;
-    weight: number;
-    gender: string;
-    dateOfBirth: string;
-    availableForDonation: string;
-    NIDFront: string;
-    NIDBack: string;
-    lastVaccinatedDate: string;
-    preferredDonationLocations: Array<{
-      area: string;
-      city: string;
-      latitude: number;
-      longitude: number;
-    }>;
-  };
-  message: string;
 }
 
 interface UseAccountReturnType {
@@ -70,27 +46,27 @@ export const useAccount = (): UseAccountReturnType => {
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Error: ${error.message}`)
-      } else {
-        throw new Error('Unknown error occurred during sign out')
       }
     }
   }
 
   const fetchUserData = async(): Promise<void> => {
-    setLoading(true)
-
     try {
       const response: FetchResponse<UserResponseData> = await fetchClient.get('/users')
 
       if (response.status !== 200) {
-        throw new Error(`Error: ${response.status} ${response.message ?? 'Unknown error'}`)
+        throw new Error('Could not fetch user data')
       }
 
       const { name, preferredDonationLocations } = response.data
-      const location = `${preferredDonationLocations[0].city}, ${preferredDonationLocations[0].area}`
-      setUserData({ name, location })
+
+      if (preferredDonationLocations.length > 0) {
+        const { city = 'Unknown City', area = 'Unknown Area' } = preferredDonationLocations[0]
+        const location = `${city}, ${area}`
+        setUserData({ name, location })
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred')
+      setError('An unknown error occurred')
     } finally {
       setLoading(false)
     }
