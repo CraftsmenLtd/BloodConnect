@@ -8,7 +8,7 @@ variable "dynamodb_table_arn" {
   description = "ARN of the DynamoDB table"
 }
 
-variable "after_donation_unavailable_period" {
+variable "min_months_between_donations" {
   type        = string
   description = "After donation unavailable period"
   default     = 4
