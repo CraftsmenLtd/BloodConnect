@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigation, CommonActions, NavigationProp } from '@react-navigation/native'
+import { useNavigation, CommonActions } from '@react-navigation/native'
 import { SCREENS } from '../../../setup/constant/screens'
 import { googleLogin, facebookLogin } from '../../services/authService'
 import { useAuth } from '../../context/useAuth'
@@ -7,7 +7,7 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { SocialLoading } from '../types/loadingType'
-import { RootStackParamList } from '../../../setup/navigation/navigationTypes'
+import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SOCIAL_TYPES } from '../constants/socialTypes'
 
 interface UseSocialAuthOutput {
@@ -23,7 +23,7 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
   const { setIsAuthenticated } = useAuth()
   const [socialLoading, setSocialLoading] = useState<SocialLoading>('idle')
   const [socialLoginError, setSocialLoginError] = useState<string>('')
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const navigation = useNavigation<LoginScreenNavigationProp>()
 
   const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
     try {
