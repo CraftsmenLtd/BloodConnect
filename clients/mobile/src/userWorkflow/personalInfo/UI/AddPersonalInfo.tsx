@@ -31,7 +31,7 @@ const AddPersonalInfo = () => {
     errorMessage,
     isVisible,
     setIsVisible,
-    isSSO // Get isSSO flag
+    isSSO
   } = useAddPersonalInfo()
 
   return (
@@ -54,7 +54,6 @@ const AddPersonalInfo = () => {
             />
           </View>
 
-          {/* Conditionally render phone number field for SSO users */}
           {(Boolean(isSSO)) && (
             <View>
               <Input

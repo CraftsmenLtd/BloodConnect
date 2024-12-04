@@ -35,58 +35,23 @@ export interface PersonalInfo {
   locations: string[];
   availableForDonation: string;
   acceptPolicy: boolean;
-  phoneNumber?: string; // Made optional since it's only required for SSO
+  phoneNumber?: string;
 }
 
-// interface PersonalInfoErrors extends PersonalInfo {}
 interface PersonalInfoErrors extends Omit<PersonalInfo, 'phoneNumber'> {
   phoneNumber?: string | null;
 }
-
-// const validationRules: Record<PersonalInfoKeys, ValidationRule[]> = {
-//   availableForDonation: [validateRequired],
-//   city: [validateRequired],
-//   locations: [validateRequired],
-//   bloodGroup: [validateRequired],
-//   lastDonationDate: [validateRequired, validatePastOrTodayDate],
-//   height: [validateRequired, validateHeight],
-//   weight: [validateRequired, validateWeight],
-//   gender: [validateRequired],
-//   dateOfBirth: [validateRequired, validateDateOfBirth],
-//   lastVaccinatedDate: [validateRequired, validatePastOrTodayDate],
-//   acceptPolicy: [validateRequired],
-//   phoneNumber: [validateRequired, validatePhoneNumber]
-// }
 
 export const useAddPersonalInfo = (): any => {
   const fetchClient = useFetchClient()
   const { fetchUserProfile } = useUserProfile()
   const navigation = useNavigation<AddPersonalInfoNavigationProp>()
-
-  // const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-  //   bloodGroup: '',
-  //   height: '',
-  //   weight: '',
-  //   gender: '',
-  //   lastDonationDate: new Date(new Date().setMonth(new Date().getMonth() - 6)),
-  //   dateOfBirth: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
-  //   lastVaccinatedDate: new Date(new Date().setMonth(new Date().getMonth() - 6)),
-  //   city: '',
-  //   locations: [],
-  //   availableForDonation: 'yes',
-  //   acceptPolicy: false,
-  //   phoneNumber: ''
-  // })
-
   const [isSSO, setIsSSO] = useState(false)
 
-  // Check if user is from SSO
   useEffect(() => {
     const checkAuthProvider = async(): Promise<void> => {
       try {
         const user = await getCurrentUser()
-        console.log('current--user', user)
-        // If signInDetails includes 'hostedUI', it means the user signed in through SSO
         setIsSSO(((user?.username?.includes('Google')) ?? false) || ((user?.username?.includes('Facebook')) ?? false) || false)
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
@@ -98,7 +63,6 @@ export const useAddPersonalInfo = (): any => {
     void checkAuthProvider()
   }, [])
 
-  // Create validation rules based on whether user is SSO or not
   const getValidationRules = (): Record<PersonalInfoKeys, ValidationRule[]> => {
     const rules: Partial<Record<PersonalInfoKeys, ValidationRule[]>> = {
       availableForDonation: [validateRequired],
@@ -113,8 +77,6 @@ export const useAddPersonalInfo = (): any => {
       lastVaccinatedDate: [validateRequired, validatePastOrTodayDate],
       acceptPolicy: [validateRequired]
     }
-
-    // Add phone number validation only for SSO users
     if (isSSO) {
       rules.phoneNumber = [validateRequired, validatePhoneNumber]
     }
@@ -134,12 +96,9 @@ export const useAddPersonalInfo = (): any => {
     locations: [],
     availableForDonation: 'yes',
     acceptPolicy: false,
-    ...(isSSO ? { phoneNumber: '' } : {}) // Only include phone number for SSO users
+    ...(isSSO ? { phoneNumber: '' } : {})
   })
 
-  // const [errors, setErrors] = useState<PersonalInfoErrors>(
-  //   initializeState<PersonalInfo>(Object.keys(validationRules) as PersonalInfoKeys[], null)
-  // )
   const [errors, setErrors] = useState<PersonalInfoErrors>(
     initializeState<PersonalInfo>(Object.keys(getValidationRules()) as PersonalInfoKeys[], null)
   )
@@ -157,14 +116,6 @@ export const useAddPersonalInfo = (): any => {
     handleInputValidation(name, value)
   }
 
-  // const handleInputValidation = (name: PersonalInfoKeys, value: string | boolean): void => {
-  //   const errorMsg = validateInput(value as string, validationRules[name])
-  //   setErrors(prevErrors => ({
-  //     ...prevErrors,
-  //     [name]: errorMsg
-  //   }))
-  // }
-
   const handleInputValidation = (name: PersonalInfoKeys, value: string | boolean): void => {
     const validationRules = getValidationRules()
     if (name in validationRules && Array.isArray(validationRules[name])) {
@@ -175,13 +126,6 @@ export const useAddPersonalInfo = (): any => {
       }))
     }
   }
-
-  // const isButtonDisabled = useMemo(() => {
-  //   return !(
-  //     Object.values(personalInfo).every(value => value !== '' && !(Array.isArray(value) && value.length === 0)) &&
-  //     Object.values(errors).every(error => error === null)
-  //   ) || !personalInfo.acceptPolicy
-  // }, [personalInfo, errors])
 
   const isButtonDisabled = useMemo(() => {
     const requiredFields = Object.keys(getValidationRules()) as PersonalInfoKeys[]
@@ -232,8 +176,7 @@ export const useAddPersonalInfo = (): any => {
         height: formatToTwoDecimalPlaces(personalInfo.height),
         weight: formatToTwoDecimalPlaces(personalInfo.weight),
         preferredDonationLocations,
-        // phoneNumbers: [formatPhoneNumber(phoneNumber)]
-        ...(isSSO && (phoneNumber != null) ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {}) // Only include phone number for SSO users
+        ...(isSSO && (phoneNumber != null) ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {})
       }
 
       const response = await addPersonalInfoHandler(finalData, fetchClient)
@@ -261,6 +204,6 @@ export const useAddPersonalInfo = (): any => {
     handleInputChange,
     isButtonDisabled,
     handleSubmit,
-    isSSO // Export isSSO flag to use in UI
+    isSSO
   }
 }
