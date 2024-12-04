@@ -18,10 +18,6 @@ import { AcceptedDonationFields } from '../models/dbModels/AcceptDonationModel'
 import { LocationDTO, UserDetailsDTO } from '../../../commons/dto/UserDTO'
 import { getBloodRequestMessage } from './BloodDonationMessages'
 import LocationModel from '../models/dbModels/LocationModel'
-import {
-  MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL,
-  MAX_GEOHASHES_PER_PROCESSING_BATCH
-} from '../../../commons/libs/constants/NoMagicNumbers'
 
 export class DonorSearchService {
   async routeDonorRequest(
@@ -129,7 +125,6 @@ export class DonorSearchService {
     seekerId: string,
     createdAt: string,
     requestPostId: string,
-    geohash: string,
     remainingGeohashesToProcess: string[],
     currentNeighborSearchLevel: number,
     donorSearchRepository: Repository<DonorSearchDTO>
@@ -137,21 +132,9 @@ export class DonorSearchService {
     const updatedRecord: Partial<DonorSearchDTO> = {
       id: requestPostId,
       seekerId,
-      createdAt
-    }
-    if (remainingGeohashesToProcess.length === 0) {
-      const { newNeighborGeohashes, finalNeighborLevel } =
-        this.getNeighborGeohashes(
-          geohash,
-          currentNeighborSearchLevel + 1,
-          remainingGeohashesToProcess
-        )
-
-      updatedRecord.currentNeighborSearchLevel = finalNeighborLevel
-      updatedRecord.remainingGeohashesToProcess = newNeighborGeohashes
-    } else {
-      updatedRecord.currentNeighborSearchLevel = currentNeighborSearchLevel
-      updatedRecord.remainingGeohashesToProcess = remainingGeohashesToProcess
+      createdAt,
+      currentNeighborSearchLevel,
+      remainingGeohashesToProcess
     }
     await donorSearchRepository.update(updatedRecord)
   }
@@ -194,13 +177,13 @@ export class DonorSearchService {
     geohash: string,
     neighborLevel: number,
     currentGeohashes: string[] = []
-  ): { newNeighborGeohashes: string[]; finalNeighborLevel: number } => {
+  ): { updatedNeighborGeohashes: string[]; updatedNeighborLevel: number } => {
     const newGeohashes = getGeohashNthNeighbors(geohash, neighborLevel)
     const updatedGeohashes = [...currentGeohashes, ...newGeohashes]
 
-    if (updatedGeohashes.length >= MAX_GEOHASHES_PER_PROCESSING_BATCH &&
-      neighborLevel <= MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL) {
-      return { newNeighborGeohashes: updatedGeohashes, finalNeighborLevel: neighborLevel }
+    if (updatedGeohashes.length >= Number(process.env.MAX_GEOHASHES_PER_PROCESSING_BATCH) ||
+      neighborLevel > Number(process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL)) {
+      return { updatedNeighborGeohashes: updatedGeohashes, updatedNeighborLevel: neighborLevel }
     }
 
     return this.getNeighborGeohashes(geohash, neighborLevel + 1, updatedGeohashes)
