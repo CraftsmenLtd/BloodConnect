@@ -16,6 +16,9 @@ interface Theme {
     black: string;
     greyBG: string;
     redFaded: string;
+    goldenSun: string;
+    peachCream: string;
+    darkAmber: string;
   };
   typography: {
     fontSize: number;

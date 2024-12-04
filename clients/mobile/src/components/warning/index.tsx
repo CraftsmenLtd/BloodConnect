@@ -1,5 +1,7 @@
 import React from 'react'
 import { Text, View, StyleSheet } from 'react-native'
+import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { Theme } from '../../setup/theme'
 
 interface WarningProps {
   text: string;
@@ -7,6 +9,7 @@ interface WarningProps {
 }
 
 const Warning: React.FC<WarningProps> = ({ text, showWarning }) => {
+  const styles = createStyles(useTheme())
   return (
     <>
       {showWarning && text.trim() !== '' && (
@@ -21,26 +24,26 @@ const Warning: React.FC<WarningProps> = ({ text, showWarning }) => {
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   warningContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
     borderWidth: 1,
-    borderColor: '#FFCC00',
+    borderColor: theme.colors.goldenSun,
     borderRadius: 8,
-    backgroundColor: '#FFF4D9',
+    backgroundColor: theme.colors.peachCream,
     marginVertical: 10
   },
   warningIcon: {
-    fontSize: 20,
+    fontSize: theme.typography.fontSize,
     marginRight: 10,
-    color: '#FF8C00'
+    color: theme.colors.darkAmber
   },
   warningText: {
     flex: 1,
-    fontSize: 14,
-    color: '#FF8C00',
+    fontSize: theme.typography.errorFontSize,
+    color: theme.colors.darkAmber,
     lineHeight: 18
   }
 })

@@ -13,7 +13,10 @@ const lightTheme: Theme = {
     charcoalGray: '#202325',
     black: '#212121',
     greyBG: '#F5F5F5',
-    redFaded: '#FFA6A6'
+    redFaded: '#FFA6A6',
+    goldenSun: '#FFCC00',
+    peachCream: '#FFF4D9',
+    darkAmber: '#FF8C00'
   },
   typography: {
     fontSize: 16,
