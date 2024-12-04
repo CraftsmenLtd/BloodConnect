@@ -4,8 +4,9 @@ import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
-import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
-import { UrgencyLevel } from '../../../../../commons/dto/DonationDTO'
+import { DonationData } from './useDonationPosts'
+
+const URGENT = 'urgent'
 
 interface PostCardProps {
   post: DonationData;
@@ -133,7 +134,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
                 <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.neededBloodGroup} blood</Text>
               </View>
             </View>
-            {post.urgencyLevel === UrgencyLevel.URGENT && (
+            {post.urgencyLevel === URGENT && (
               <View style={styles.urgentBadge}>
                 <Ionicons name="warning-outline" size={14} color={theme.colors.black} />
                 <Text style={styles.urgentText}>URGENT</Text>

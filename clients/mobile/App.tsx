@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler'
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { BackHandler, ToastAndroid } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native'
 import { ThemeProvider } from './src/setup/theme/context/ThemeContext'
 import Navigator from './src/setup/navigation/Navigator'
 import { Amplify } from 'aws-amplify'
@@ -10,6 +10,7 @@ import { awsCognitoConfiguration } from './src/setup/config/cognito'
 import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
 import * as Notifications from 'expo-notifications'
+import { RootStackParamList } from './src/setup/navigation/navigationTypes'
 
 Amplify.configure(awsCognitoConfiguration)
 
@@ -23,6 +24,7 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   const [backPressedOnce, setBackPressedOnce] = useState(false)
+  const navigationRef = useNavigationContainerRef<RootStackParamList>()
 
   useEffect(() => {
     const backAction = () => {
@@ -42,14 +44,14 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <AuthProvider>
-          <NotificationProvider>
+      <NavigationContainer ref={navigationRef}>
+        <NotificationProvider navigationRef={navigationRef}>
+          <AuthProvider>
             <ThemeProvider>
               <Navigator />
             </ThemeProvider>
-          </NotificationProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </NotificationProvider>
       </NavigationContainer>
     </SafeAreaProvider>
   )

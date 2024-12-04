@@ -1,10 +1,9 @@
 import React, { useState, useEffect, ReactNode, createContext } from 'react'
 import * as Notifications from 'expo-notifications'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { NavigationContainerRef, ParamListBase } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { parseJsonData } from '../../utility/jsonParser'
 import { NotificationContextType } from './useNotificationContext'
-import { useNavigationReady } from './useNavigationReady'
 import { NotificationData, NotificationDataTypes } from './NotificationData'
 import { RootStackParamList } from '../navigation/navigationTypes'
 
@@ -19,40 +18,55 @@ export const initialNotificationState: NotificationDataTypes = {
 
 export const NotificationContext = createContext<NotificationContextType>(initialNotificationState)
 
-export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef: NavigationContainerRef<ParamListBase> }> = ({ children, navigationRef }) => {
   const [notificationData, setNotificationData] = useState<NotificationData | null>(null)
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const waitForNavigationReady = useNavigationReady(navigation)
+  const [isReady, setIsReady] = useState(false)
+  const listenerAddedRef = React.useRef(false)
+  const lastProcessedNotification = React.useRef<string | null>(null)
 
   useEffect(() => {
-    let isMounted = true
-    try { void checkInitialNotification(isMounted) } catch (error) { }
+    if (!listenerAddedRef.current) {
+      const unsubscribe = navigationRef.addListener('state', () => {
+        if (navigationRef.isReady() && !isReady) setIsReady(true)
+      })
+      listenerAddedRef.current = true
+      return () => {
+        unsubscribe()
+        listenerAddedRef.current = false
+      }
+    }
+  }, [navigationRef, isReady])
 
-    const foregroundListener = Notifications.addNotificationReceivedListener(notification => {
-      const data = parseJsonData<NotificationData>(notification.request.content.data.payload)
-      if (data !== null) setNotificationData(data)
-    })
+  useEffect(() => {
+    if (!isReady) return
 
-    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+    Notifications.getLastNotificationResponseAsync().then(response => {
+      if (response === null || !isNotificationValid(response)) return
+
+      const identifier = response.notification.request.identifier
+      if (lastProcessedNotification.current === identifier) return
+
+      lastProcessedNotification.current = identifier
       const data = parseJsonData(response.notification.request.content.data.payload)
-      if (isNotificationValid(response, isMounted)) {
+      setNotificationData(data as NotificationData)
+      handleNotificationNavigation(response)
+    }).catch(() => { })
+
+    const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
+      if (isNotificationValid(response)) {
+        const data = parseJsonData(response.notification.request.content.data.payload)
         setNotificationData(data as NotificationData)
         handleNotificationNavigation(response)
       }
     })
 
-    return () => {
-      isMounted = false
-      foregroundListener.remove()
-      responseListener.remove()
-    }
-  }, [navigation])
+    return () => { responseListener.remove() }
+  }, [navigationRef, isReady])
 
-  const isNotificationValid = (response: Notifications.NotificationResponse | null, isMounted: boolean): boolean => {
+  const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => {
     return (
       Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0 &&
-      response?.notification.request.identifier !== null &&
-      isMounted
+      response?.notification.request.identifier !== null
     )
   }
 
@@ -65,23 +79,11 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     if (mapping !== undefined) {
       const { screen, getParams } = mapping
       const params = getParams !== undefined ? getParams(parseJsonData<Record<string, unknown>>(response.notification.request.content.data.payload)) : undefined
-      navigation.navigate(screen, params as any)
-    } else {
-      throw new Error('Unknown error on notification.')
-    }
-  }
-
-  const checkInitialNotification = async(isMounted: boolean) => {
-    try {
-      const response = await Notifications.getLastNotificationResponseAsync()
-      if (isNotificationValid(response, isMounted)) {
-        await waitForNavigationReady()
-        const data = parseJsonData(response?.notification.request.content.data.payload)
-        setNotificationData(data as NotificationData)
-        handleNotificationNavigation(response)
+      if (navigationRef.isReady()) {
+        navigationRef.navigate(screen, params as any)
       }
-    } catch (error) {
-      throw new Error('Error processing notification from background')
+    } else {
+      navigationRef.navigate(SCREENS.POSTS)
     }
   }
 
