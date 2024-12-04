@@ -11,6 +11,8 @@ import { SCREENS } from '../../../setup/constant/screens'
 import AuthLayout from '../../AuthLayout'
 import { SocialButton } from '../../../components/button/SocialButton'
 import { Divider } from '../../../components/button/Divider'
+import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
+import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
 
 interface LoginScreenProps {
   navigation: LoginScreenNavigationProp;
@@ -18,7 +20,7 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const styles = createStyles(useTheme())
-  const { loading, loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
+  const { loginLoading, socialLoading, loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
 
   return (
     <AuthLayout>
@@ -47,22 +49,28 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         onPress={() => { navigation.navigate(SCREENS.FORGOT_PASSWORD) }}
       />
 
-      <Button text="Login" onPress={handleLogin} loading={loading} />
+      <Button
+        text="Login"
+        onPress={handleLogin}
+        loading={loginLoading}
+      />
 
       <Divider text="Or" />
 
       {socialLoginError !== '' && <Text style={styles.error}>{socialLoginError}</Text>}
 
       <SocialButton
-        text="Continue with Google"
+        text={SOCIAL_BUTTON_UI.GOOGLE.text}
         onPress={handleGoogleSignIn}
-        icon={require('../../../../assets/google-icon.png')}
+        loading={socialLoading === SOCIAL_TYPES.GOOGLE}
+        icon={SOCIAL_BUTTON_UI.GOOGLE.icon}
       />
 
       <SocialButton
-        text="Continue via Facebook"
+        text={SOCIAL_BUTTON_UI.FACEBOOK.text}
         onPress={handleFacebookSignIn}
-        icon={require('../../../../assets/facebook-icon.png')}
+        loading={socialLoading === SOCIAL_TYPES.FACEBOOK}
+        icon={SOCIAL_BUTTON_UI.FACEBOOK.icon}
       />
 
       <LinkWithText

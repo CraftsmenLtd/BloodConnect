@@ -4,6 +4,7 @@ import { useAddPersonalInfo } from '../../src/userWorkflow/personalInfo/hooks/us
 import { addPersonalInfoHandler } from '../../src/userWorkflow/services/userServices'
 import { SCREENS } from '../../src/setup/constant/screens'
 
+const mockFetchUserProfile = jest.fn()
 const mockGetLatLon = jest.fn()
 
 jest.mock('../../src/userWorkflow/services/userServices', () => ({
@@ -16,8 +17,31 @@ jest.mock('../../src/LocationService/LocationService', () => ({
   }))
 }))
 
-jest.mock('@react-navigation/native', () => ({
-  useNavigation: jest.fn()
+jest.mock('../../src/userWorkflow/context/UserProfileContext', () => ({
+  useUserProfile: () => ({
+    userProfile: null,
+    loading: false,
+    error: null,
+    fetchUserProfile: mockFetchUserProfile
+  })
+}))
+
+jest.mock('../../src/setup/clients/useFetchClient', () => ({
+  useFetchClient: () => ({
+    get: jest.fn(),
+    post: jest.fn(),
+    patch: jest.fn()
+  })
+}))
+
+jest.mock('expo-constants', () => ({
+  default: {
+    expoConfig: {
+      extra: {
+        GOOGLE_MAP_API: 'mock-api-key'
+      }
+    }
+  }
 }))
 
 describe('useAddPersonalInfo Hook', () => {
@@ -38,7 +62,9 @@ describe('useAddPersonalInfo Hook', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockGetLatLon.mockReset()
+    mockFetchUserProfile.mockReset()
     mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 })
+    mockFetchUserProfile.mockResolvedValue(null)
   })
 
   test('should initialize with default values', () => {
@@ -111,6 +137,7 @@ describe('useAddPersonalInfo Hook', () => {
     })
 
     expect(addPersonalInfoHandler).toHaveBeenCalled()
+    expect(mockFetchUserProfile).toHaveBeenCalled()
     expect(mockedNavigate).toHaveBeenCalledWith(SCREENS.BOTTOM_TABS)
   })
 
