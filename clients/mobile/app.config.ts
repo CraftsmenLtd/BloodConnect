@@ -29,47 +29,34 @@ const ensureEnvVars = (vars: Record<string, string | undefined>): EnvVars => {
 }
 
 export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
-  const ENV = process.env.APP_ENV ?? 'preview'
+  const environmentConfigs = {
+    AWS_USER_POOL_ID: process.env.AWS_USER_POOL_ID,
+    AWS_USER_POOL_CLIENT_ID: process.env.AWS_USER_POOL_CLIENT_ID,
+    AWS_COGNITO_DOMAIN: process.env.AWS_COGNITO_DOMAIN,
+    EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,
+    API_BASE_URL: process.env.API_BASE_URL,
+    APP_NAME: process.env.APP_NAME,
+    APP_VERSION: process.env.APP_VERSION,
+    LOCATION_SERVICE_EMAIL: process.env.LOCATION_SERVICE_EMAIL,
+    GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
+    GOOGLE_MAP_API: process.env.GOOGLE_MAP_API,
+    OPEN_STREET_MAP_API: process.env.OPEN_STREET_MAP_API,
+    APP_ENV: process.env.APP_ENV ?? 'preview',
+    COUNTRY: process.env.COUNTRY
+  }
 
   const ENV_VARS: Record<string, EnvVars> = {
-    development: ensureEnvVars({
-      AWS_USER_POOL_ID: process.env.AWS_USER_POOL_ID,
-      AWS_USER_POOL_CLIENT_ID: process.env.AWS_USER_POOL_CLIENT_ID,
-      AWS_COGNITO_DOMAIN: process.env.AWS_COGNITO_DOMAIN,
-      EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,
-      API_BASE_URL: process.env.API_BASE_URL,
-      APP_NAME: process.env.APP_NAME,
-      APP_VERSION: process.env.APP_VERSION,
-      LOCATION_SERVICE_EMAIL: process.env.LOCATION_SERVICE_EMAIL,
-      GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
-      GOOGLE_MAP_API: process.env.GOOGLE_MAP_API,
-      OPEN_STREET_MAP_API: process.env.OPEN_STREET_MAP_API,
-      APP_ENV: process.env.APP_ENV,
-      COUNTRY: process.env.COUNTRY
-    }),
-    preview: ensureEnvVars({
-      AWS_USER_POOL_ID: process.env.AWS_USER_POOL_ID,
-      AWS_USER_POOL_CLIENT_ID: process.env.AWS_USER_POOL_CLIENT_ID,
-      AWS_COGNITO_DOMAIN: process.env.AWS_COGNITO_DOMAIN,
-      EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,
-      API_BASE_URL: process.env.API_BASE_URL,
-      APP_NAME: process.env.APP_NAME,
-      APP_VERSION: process.env.APP_VERSION,
-      LOCATION_SERVICE_EMAIL: process.env.LOCATION_SERVICE_EMAIL,
-      GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
-      GOOGLE_MAP_API: process.env.GOOGLE_MAP_API,
-      OPEN_STREET_MAP_API: process.env.OPEN_STREET_MAP_API,
-      APP_ENV: process.env.APP_ENV,
-      COUNTRY: process.env.COUNTRY
-    })
+    development: ensureEnvVars({ ...environmentConfigs }),
+    preview: ensureEnvVars({ ...environmentConfigs }),
+    production: ensureEnvVars({ ...environmentConfigs })
   }
 
   return {
     ...config,
     extra: {
-      ...ENV_VARS[ENV],
+      ...ENV_VARS[environmentConfigs.APP_ENV],
       eas: {
-        projectId: ENV_VARS[ENV].EAS_PROJECT_ID
+        projectId: environmentConfigs.EAS_PROJECT_ID
       }
     }
   }
