@@ -9,6 +9,7 @@ import { Amplify } from 'aws-amplify'
 import { awsCognitoConfiguration } from './src/setup/config/cognito'
 import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
+import { UserProfileProvider } from './src/userWorkflow/context/UserProfileContext'
 import * as Notifications from 'expo-notifications'
 import { RootStackParamList } from './src/setup/navigation/navigationTypes'
 
@@ -47,9 +48,11 @@ export default function App() {
       <NavigationContainer ref={navigationRef}>
         <NotificationProvider navigationRef={navigationRef}>
           <AuthProvider>
+          <UserProfileProvider>
             <ThemeProvider>
               <Navigator />
             </ThemeProvider>
+            </UserProfileProvider>
           </AuthProvider>
         </NotificationProvider>
       </NavigationContainer>

@@ -44,7 +44,7 @@ describe('UserService Tests', () => {
       items: [],
       lastEvaluatedKey: undefined
     })
-    process.env.AFTER_DONATION_UNAVAILABLE_PERIOD = '4'
+    process.env.MIN_MONTHS_BETWEEN_DONATIONS = '4'
   })
 
   test('should create a new user successfully', async() => {

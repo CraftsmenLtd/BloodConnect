@@ -3,11 +3,12 @@ import { useNavigation, CommonActions } from '@react-navigation/native'
 import { validateRequired, ValidationRule } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
-import { loginUser, googleLogin, facebookLogin } from '../../services/authService'
+import { loginUser } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
+import { useSocialAuth } from '../../socialAuth/hooks/useSocialAuth'
 
 type CredentialKeys = keyof LoginCredential
 
@@ -24,7 +25,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 export const useLogin = (): any => {
   const fetchClient = useFetchClient()
   const { setIsAuthenticated } = useAuth()
-  const [loading, setLoading] = useState(false)
+  const [loginLoading, setLoginLoading] = useState(false)
   const navigation = useNavigation<LoginScreenNavigationProp>()
   const [loginCredential, setLoginCredential] = useState<LoginCredential>(
     initializeState<LoginCredential>(Object.keys(validationRules) as Array<keyof LoginCredential>, '')
@@ -32,7 +33,8 @@ export const useLogin = (): any => {
 
   const [loginError, setLoginError] = useState<string>('')
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-  const [socialLoginError, setSocialLoginError] = useState<string>('')
+
+  const { socialLoading, socialLoginError, handleGoogleSignIn, handleFacebookSignIn } = useSocialAuth()
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     setLoginCredential(prevState => ({
@@ -43,7 +45,7 @@ export const useLogin = (): any => {
 
   const handleLogin = async(): Promise<void> => {
     try {
-      setLoading(true)
+      setLoginLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)
       if (isSignedIn) {
         setIsAuthenticated(true)
@@ -56,49 +58,26 @@ export const useLogin = (): any => {
         )
       } else {
         setLoginError('User is not confirmed. Please verify your email.')
-        setLoading(false)
+        setLoginLoading(false)
       }
     } catch (error) {
       setLoginError('Invalid Email or Password.')
     } finally {
-      setLoading(false)
+      setLoginLoading(false)
     }
-  }
-
-  const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
-    try {
-      await loginFunction()
-      setIsAuthenticated(true)
-      registerUserDeviceForNotification(fetchClient)
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
-        })
-      )
-    } catch (error) {
-      setSocialLoginError(`${socialMedia} login failed. Please try again.`)
-    }
-  }
-
-  const handleGoogleSignIn = async(): Promise<void> => {
-    await handleSocialSignIn(googleLogin, 'Google')
-  }
-
-  const handleFacebookSignIn = async(): Promise<void> => {
-    await handleSocialSignIn(facebookLogin, 'Facebook')
   }
 
   return {
+    loginLoading,
     loginError,
-    loading,
     loginCredential,
     handleInputChange,
     isPasswordVisible,
     setIsPasswordVisible,
     handleLogin,
+    socialLoading,
+    socialLoginError,
     handleGoogleSignIn,
-    handleFacebookSignIn,
-    socialLoginError
+    handleFacebookSignIn
   }
 }
