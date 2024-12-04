@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import Constants from 'expo-constants'
-import { Text, StyleSheet, ScrollView, TouchableWithoutFeedback, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
 import RadioButton from '../../components/inputElement/Radio'
 import { TextArea } from '../../components/inputElement/TextArea'
 import { Input } from '../../components/inputElement/Input'
 import { Button } from '../../components/button/Button'
+import Warning from '../../components/warning'
+import { WARNINGS } from '../../setup/constant/consts'
 import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodRequest'
-import { bloodGroupOptions, bloodBagOptions, transportationOptions } from './donationOption'
+import { bloodBagOptions, bloodGroupOptions, transportationOptions } from './donationOption'
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
@@ -14,6 +16,7 @@ import SearchMultiSelect from '../../components/inputElement/SearchMultiSelect'
 import { LocationService } from '../../LocationService/LocationService'
 import { districts } from '../../userWorkflow/personalInfo/options'
 import Dropdown from '../../components/inputElement/Dropdown'
+
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
 const locationService = new LocationService(GOOGLE_MAP_API)
@@ -128,6 +131,10 @@ const CreateBloodRequest = () => {
               keyboardType="phone-pad"
               error={errors.contactNumber}
               isRequired={true}
+            />
+            <Warning
+              text={WARNINGS.PHONE_NUMBER_VISIBLE}
+              showWarning={bloodRequestData.contactNumber !== ''}
             />
           </View>
 
