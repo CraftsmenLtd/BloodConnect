@@ -7,6 +7,10 @@ import { SCREENS } from '../../src/setup/constant/screens'
 const mockFetchUserProfile = jest.fn()
 const mockGetLatLon = jest.fn()
 
+jest.mock('aws-amplify/auth', () => ({
+  getCurrentUser: jest.fn().mockResolvedValue({ username: 'test-user' })
+}))
+
 jest.mock('../../src/userWorkflow/services/userServices', () => ({
   addPersonalInfoHandler: jest.fn()
 }))
