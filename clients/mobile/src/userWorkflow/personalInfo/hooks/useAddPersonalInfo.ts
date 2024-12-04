@@ -99,8 +99,8 @@ export const useAddPersonalInfo = (): any => {
   }, [])
 
   // Create validation rules based on whether user is SSO or not
-  const getValidationRules = (): Record<keyof PersonalInfo, ValidationRule[]> => {
-    const rules: Partial<Record<keyof PersonalInfo, ValidationRule[]>> = {
+  const getValidationRules = (): Record<PersonalInfoKeys, ValidationRule[]> => {
+    const rules: Partial<Record<PersonalInfoKeys, ValidationRule[]>> = {
       availableForDonation: [validateRequired],
       city: [validateRequired],
       locations: [validateRequired],
@@ -118,9 +118,8 @@ export const useAddPersonalInfo = (): any => {
     if (isSSO) {
       rules.phoneNumber = [validateRequired, validatePhoneNumber]
     }
-    console.log('rules', rules.phoneNumber)
 
-    return rules as Record<keyof PersonalInfo, ValidationRule[]>
+    return rules as Record<PersonalInfoKeys, ValidationRule[]>
   }
 
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
@@ -183,11 +182,12 @@ export const useAddPersonalInfo = (): any => {
   //     Object.values(errors).every(error => error === null)
   //   ) || !personalInfo.acceptPolicy
   // }, [personalInfo, errors])
+
   const isButtonDisabled = useMemo(() => {
-    const requiredFields = Object.keys(getValidationRules())
+    const requiredFields = Object.keys(getValidationRules()) as PersonalInfoKeys[]
     return !(
       requiredFields.every(field => {
-        const value = personalInfo[field as keyof PersonalInfo]
+        const value = personalInfo[field]
         return value !== '' && !(Array.isArray(value) && value.length === 0)
       }) &&
       Object.values(errors).every(error => error === null)
