@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, TouchableOpacity, StyleSheet, StyleProp, TextStyle, Linking } from 'react-native'
+import { Text, StyleSheet, StyleProp, TextStyle, Linking } from 'react-native'
 import { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
