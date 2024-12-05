@@ -44,9 +44,7 @@ export const useAccount = (): UseAccountReturnType => {
       await signOut()
       navigation.navigate(SCREENS.WELCOME)
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Error: ${error.message}`)
-      }
+      throw new Error('Something went wrong')
     }
   }
 
