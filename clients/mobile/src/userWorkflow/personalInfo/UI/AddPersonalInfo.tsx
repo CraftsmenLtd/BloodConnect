@@ -13,6 +13,8 @@ import { Theme } from '../../../setup/theme'
 import RadioButton from '../../../components/inputElement/Radio'
 import SearchMultiSelect from '../../../components/inputElement/SearchMultiSelect'
 import { LocationService } from '../../../LocationService/LocationService'
+import Warning from '../../../components/warning'
+import { WARNINGS } from '../../../setup/constant/consts'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -66,6 +68,10 @@ const AddPersonalInfo = () => {
                 isRequired={true}
                 error={errors.phoneNumber}
               />
+                <Warning
+                  text={WARNINGS.PHONE_NUMBER_VISIBLE}
+                  showWarning={Boolean(personalInfo.phoneNumber?.trim())}
+                />
             </View>
           )}
 
