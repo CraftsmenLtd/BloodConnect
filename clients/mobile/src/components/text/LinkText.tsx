@@ -59,9 +59,12 @@ export const LinkText: React.FC<LinkTextProps> = ({
   }, [url, onError])
 
   return (
-    <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
-      <Text style={[styles.link, style]}>{text}</Text>
-    </TouchableOpacity>
+    // <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
+    //   <Text style={[styles.link, style]}>{text}</Text>
+    // </TouchableOpacity>
+    <Text onPress={handlePress} style={[styles.link, style]}>
+      {text}
+    </Text>
   )
 }
 

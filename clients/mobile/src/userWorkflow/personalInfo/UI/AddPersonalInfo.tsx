@@ -266,14 +266,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   termsText: {
     fontSize: theme.typography.fontSize,
-    flexWrap: 'wrap',
-    flex: 1,
     color: theme.colors.textPrimary
   },
-  link: {
-    color: theme.colors.primary,
-    textDecorationLine: 'underline'
-  },
+  // link: {
+  //   color: theme.colors.primary,
+  //   textDecorationLine: 'underline',
+  //   fontSize: theme.typography.fontSize
+  // },
   errorMessage: {
     color: 'red',
     textAlign: 'center',
