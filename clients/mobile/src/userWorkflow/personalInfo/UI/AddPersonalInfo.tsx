@@ -15,6 +15,8 @@ import SearchMultiSelect from '../../../components/inputElement/SearchMultiSelec
 import { LocationService } from '../../../LocationService/LocationService'
 import Warning from '../../../components/warning'
 import { WARNINGS } from '../../../setup/constant/consts'
+import LinkText from '../../../components/text/LinkText'
+import { POLICY_URLS } from '../../../setup/constant/urls'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -31,6 +33,7 @@ const AddPersonalInfo = () => {
     handleSubmit,
     loading,
     errorMessage,
+    setErrorMessage,
     isVisible,
     setIsVisible,
     isSSO
@@ -192,8 +195,7 @@ const AddPersonalInfo = () => {
             />
           </View>
 
-          <View
-            style={styles.fieldSpacing}>
+          <View style={styles.fieldSpacing}>
             <TermsAndPrivacy
               name='acceptPolicy'
               isChecked={personalInfo.acceptPolicy}
@@ -202,9 +204,19 @@ const AddPersonalInfo = () => {
             >
               <Text style={styles.termsText}>
                 By continuing, you agree to our{' '}
-                <Text style={styles.link}>Terms of Service</Text>{' '}
+                <LinkText
+                  url={POLICY_URLS.TERMS_OF_SERVICE}
+                  text="Terms of Service"
+                  style={styles.link}
+                  onError={setErrorMessage}
+                />{' '}
                 and{' '}
-                <Text style={styles.link}>Privacy Policy</Text>
+                <LinkText
+                  url={POLICY_URLS.PRIVACY_POLICY}
+                  text="Privacy Policy"
+                  style={styles.link}
+                  onError={setErrorMessage}
+                />
               </Text>
             </TermsAndPrivacy>
           </View>
