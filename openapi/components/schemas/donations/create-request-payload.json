@@ -2,7 +2,7 @@
   "CreateDonationRequestModel": {
     "type": "object",
     "required": [
-      "neededBloodGroup",
+      "requestedBloodGroup",
       "bloodQuantity",
       "urgencyLevel",
       "location",
@@ -13,7 +13,7 @@
       "contactNumber"
     ],
     "properties": {
-      "neededBloodGroup": {
+      "requestedBloodGroup": {
         "$ref": "./../common-schemas.json#/BloodGroupEnum"
       },
       "bloodQuantity": {
@@ -63,7 +63,7 @@
     },
     "example": {
       "patientName": "John Doe",
-      "neededBloodGroup": "O-",
+      "requestedBloodGroup": "O-",
       "bloodQuantity": 2,
       "urgencyLevel": "urgent",
       "city": "Dhaka",

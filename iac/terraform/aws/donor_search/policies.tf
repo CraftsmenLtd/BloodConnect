@@ -23,7 +23,11 @@ locals {
           "dynamodb:UpdateItem",
           "dynamodb:Query"
         ]
-        resources = [var.dynamodb_table_arn]
+        resources = [
+          var.dynamodb_table_arn,
+          "${var.dynamodb_table_arn}/index/LSI1",
+          "${var.dynamodb_table_arn}/index/GSI1"
+        ]
       }
     ],
     sqs_policy = [

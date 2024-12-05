@@ -17,11 +17,11 @@ describe('calculateRemainingBagsNeeded', () => {
 
 describe('calculateTotalDonorsToNotify', () => {
   it('should calculate the correct total donors to notify for urgent urgency level', () => {
-    expect(calculateTotalDonorsToNotify(2, 'urgent', 1)).toBe(8)
+    expect(calculateTotalDonorsToNotify(2, 'urgent')).toBe(4)
   })
 
   it('should calculate the correct total donors to notify for regular urgency level', () => {
-    expect(calculateTotalDonorsToNotify(2, 'regular', 1)).toBe(4)
+    expect(calculateTotalDonorsToNotify(2, 'regular')).toBe(3)
   })
 })
 
@@ -63,7 +63,7 @@ describe('calculateDonorsToNotify', () => {
     const result = await calculateDonorsToNotify(input)
 
     expect(result.remainingBagsNeeded).toBe(6)
-    expect(result.totalDonorsToNotify).toBe(24)
+    expect(result.totalDonorsToNotify).toBe(8)
     expect(result.delayPeriod).toBeGreaterThanOrEqual(5)
     expect(result.delayPeriod).toBeLessThanOrEqual(300)
   })

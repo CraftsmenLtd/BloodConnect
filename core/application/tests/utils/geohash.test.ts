@@ -17,7 +17,7 @@ describe('Geohash Utility Functions', () => {
       (ngeohash.encode as jest.Mock).mockReturnValue(geohashMock)
       const result = generateGeohash(latitude, longitude)
 
-      expect(ngeohash.encode).toHaveBeenCalledWith(latitude, longitude, 7)
+      expect(ngeohash.encode).toHaveBeenCalledWith(latitude, longitude, 8)
       expect(result).toEqual(geohashMock)
     })
 
@@ -42,7 +42,7 @@ describe('Geohash Utility Functions', () => {
       (ngeohash.encode as jest.Mock).mockReturnValue(geohashMock)
       const result = generateGeohash(latitude, longitude)
 
-      expect(ngeohash.encode).toHaveBeenCalledWith(latitude, longitude, 7)
+      expect(ngeohash.encode).toHaveBeenCalledWith(latitude, longitude, 8)
       expect(result).toEqual(geohashMock)
     })
   })

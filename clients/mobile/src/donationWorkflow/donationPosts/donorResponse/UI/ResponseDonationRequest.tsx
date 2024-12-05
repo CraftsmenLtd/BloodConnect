@@ -35,7 +35,7 @@ const ResponseDonationRequest = () => {
                 <Image source={require('../../../../../assets/images/bloodtype.png')} style={styles.bloodtypeImage as StyleProp<ImageStyle>} />
                 <View style={styles.requestText}>
                   <Text style={styles.primaryCaption}>Looking for</Text>
-                  <Text style={styles.highlightedText}>{bloodRequest.bloodQuantity ?? 0} bags {bloodRequest.neededBloodGroup}(ve) blood</Text>
+                  <Text style={styles.highlightedText}>{bloodRequest.bloodQuantity ?? 0} bags {bloodRequest.requestedBloodGroup}(ve) blood</Text>
                 </View>
               </View>
               {bloodRequest.urgencyLevel === 'urgent' && (

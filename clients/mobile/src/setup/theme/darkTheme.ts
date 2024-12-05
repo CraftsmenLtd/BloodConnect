@@ -14,7 +14,10 @@ const darkTheme: Theme = {
     black: 'black',
     greyBG: '#F5F5F5',
     redFaded: '#FFA6A6',
-    goldenYellow: '#FFD64D'
+    goldenYellow: '#FFD64D',
+    goldenSun: '#FFB300',
+    peachCream: '#3A2C2C',
+    darkAmber: '#FF6A00'
   },
   typography: {
     fontSize: 16,

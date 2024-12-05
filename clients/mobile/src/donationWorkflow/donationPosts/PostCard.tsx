@@ -33,6 +33,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
   const iconRef = useRef<View>(null)
   const { height: windowHeight } = Dimensions.get('window')
+  console.log('POST', post)
 
   const handleToggleDropdown = useCallback(() => {
     if (!showDropdown && (iconRef.current != null)) {
@@ -132,7 +133,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
               <Ionicons name="water" size={20} color={theme.colors.textPrimary} />
               <View style={styles.bloodText}>
                 <Text style={styles.lookingForText}>Looking for</Text>
-                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.neededBloodGroup} blood</Text>
+                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} blood</Text>
               </View>
             </View>
             {post.urgencyLevel === UrgencyLevel.URGENT && (
