@@ -56,10 +56,10 @@ const CreateBloodRequest = () => {
               placeholder='Select Blood Group'
               options={bloodGroupOptions}
               readonly={isUpdating}
-              name='neededBloodGroup'
-              selectedValue={bloodRequestData.neededBloodGroup}
+              name='requestedBloodGroup'
+              selectedValue={bloodRequestData.requestedBloodGroup}
               onChange={handleInputChange}
-              error={errors.neededBloodGroup}
+              error={errors.requestedBloodGroup}
             />
           </View>
 

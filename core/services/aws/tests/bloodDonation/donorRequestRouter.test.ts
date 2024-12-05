@@ -1,13 +1,13 @@
 import { SQSEvent } from 'aws-lambda'
 import donorRequestRouter from '../../donorSearch/donorRequestRouter'
-import { BloodDonationService } from '../../../../application/bloodDonationWorkflow/BloodDonationService'
+import { DonorSearchService } from '../../../../application/bloodDonationWorkflow/DonorSearchService'
 import StepFunctionOperations from '../../commons/stepFunction/StepFunctionOperations'
 import DynamoDbTableOperations from '../../commons/ddb/DynamoDbTableOperations'
 import { donorRoutingAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 import { UserService } from '../../../../application/userWorkflow/UserService'
 import { mockUserDetailsWithStringId } from '../../../../application/tests/mocks/mockUserData'
 
-jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
+jest.mock('../../../../application/bloodDonationWorkflow/DonorSearchService')
 jest.mock('../../../../application/userWorkflow/UserService')
 jest.mock('../../commons/stepFunction/StepFunctionOperations')
 jest.mock('../../commons/ddb/DynamoDbTableOperations')
@@ -22,7 +22,7 @@ describe('donorRequestRouter', () => {
           PK: `SEEKER#${donorRoutingAttributesMock.seekerId}`,
           SK: `POST#${donorRoutingAttributesMock.createdAt}#${donorRoutingAttributesMock.requestPostId}`,
           bloodQuantity: donorRoutingAttributesMock.bloodQuantity,
-          neededBloodGroup: donorRoutingAttributesMock.neededBloodGroup,
+          requestedBloodGroup: donorRoutingAttributesMock.requestedBloodGroup,
           urgencyLevel: donorRoutingAttributesMock.urgencyLevel,
           city: donorRoutingAttributesMock.city,
           location: donorRoutingAttributesMock.location,
@@ -48,7 +48,7 @@ describe('donorRequestRouter', () => {
     ]
   }
 
-  const mockBloodDonationService: jest.MockedClass<typeof BloodDonationService> = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
+  const mockDonorSearchService: jest.MockedClass<typeof DonorSearchService> = DonorSearchService as jest.MockedClass<typeof DonorSearchService>
   const mockUserService: jest.MockedClass<typeof UserService> = UserService as jest.MockedClass<typeof UserService>
 
   afterEach(() => {
@@ -56,20 +56,18 @@ describe('donorRequestRouter', () => {
   })
 
   it('should process all records in the SQSEvent with correct PK and SK parsing', async() => {
-    const mockResponse = 'Blood donation created successfully'
-    mockBloodDonationService.prototype.routeDonorRequest.mockResolvedValue(mockResponse)
     mockUserService.prototype.getUser.mockResolvedValue(mockUserDetailsWithStringId)
 
     await donorRequestRouter(mockEvent)
 
-    expect(mockBloodDonationService.prototype.routeDonorRequest).toHaveBeenCalledTimes(mockEvent.Records.length)
-    expect(mockBloodDonationService.prototype.routeDonorRequest).toHaveBeenCalledWith(
+    expect(mockDonorSearchService.prototype.routeDonorRequest).toHaveBeenCalledTimes(mockEvent.Records.length)
+    expect(mockDonorSearchService.prototype.routeDonorRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         seekerId: donorRoutingAttributesMock.seekerId,
         requestPostId: donorRoutingAttributesMock.requestPostId,
         createdAt: donorRoutingAttributesMock.createdAt,
         patientName: donorRoutingAttributesMock.patientName,
-        neededBloodGroup: donorRoutingAttributesMock.neededBloodGroup,
+        requestedBloodGroup: donorRoutingAttributesMock.requestedBloodGroup,
         bloodQuantity: donorRoutingAttributesMock.bloodQuantity,
         urgencyLevel: donorRoutingAttributesMock.urgencyLevel,
         city: donorRoutingAttributesMock.city,
@@ -115,16 +113,16 @@ describe('donorRequestRouter', () => {
     }
 
     await expect(donorRequestRouter(invalidEvent)).rejects.toThrow()
-    expect(mockBloodDonationService.prototype.routeDonorRequest).not.toHaveBeenCalled()
+    expect(mockDonorSearchService.prototype.routeDonorRequest).not.toHaveBeenCalled()
   })
 
   it('should throw an error if routeDonorRequest fails', async() => {
     const errorMessage = 'Failed to route donor request'
-    mockBloodDonationService.prototype.routeDonorRequest.mockRejectedValue(new Error(errorMessage))
+    mockDonorSearchService.prototype.routeDonorRequest.mockRejectedValue(new Error(errorMessage))
     mockUserService.prototype.getUser.mockResolvedValue(mockUserDetailsWithStringId)
 
     await expect(donorRequestRouter(mockEvent)).rejects.toThrow(errorMessage)
-    expect(mockBloodDonationService.prototype.routeDonorRequest).toHaveBeenCalled()
+    expect(mockDonorSearchService.prototype.routeDonorRequest).toHaveBeenCalled()
     expect(mockUserService.prototype.getUser).toHaveBeenCalled()
   })
 
@@ -134,6 +132,6 @@ describe('donorRequestRouter', () => {
 
     await expect(donorRequestRouter(mockEvent)).rejects.toThrow(errorMessage)
     expect(mockUserService.prototype.getUser).toHaveBeenCalled()
-    expect(mockBloodDonationService.prototype.routeDonorRequest).not.toHaveBeenCalled()
+    expect(mockDonorSearchService.prototype.routeDonorRequest).not.toHaveBeenCalled()
   })
 })

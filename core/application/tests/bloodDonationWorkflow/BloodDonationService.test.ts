@@ -1,8 +1,7 @@
 import { BloodDonationService } from '../../bloodDonationWorkflow/BloodDonationService'
 import {
   DonationDTO,
-  DonationStatus,
-  DonorSearchDTO
+  DonationStatus
 } from '../../../../commons/dto/DonationDTO'
 import Repository from '../../models/policies/repositories/Repository'
 import { generateUniqueID } from '../../utils/idGenerator'
@@ -11,11 +10,8 @@ import { validateInputWithRules } from '../../utils/validator'
 import BloodDonationOperationError from '../../bloodDonationWorkflow/BloodDonationOperationError'
 import ThrottlingError from '../../bloodDonationWorkflow/ThrottlingError'
 import {
-  currentDate,
   donationAttributesMock,
-  donationDtoMock,
-  donorRoutingAttributesMock,
-  mockDonorSearchDTO
+  donationDtoMock
 } from '../mocks/mockDonationRequestData'
 import { mockRepository } from '../mocks/mockRepositories'
 import {
@@ -24,8 +20,6 @@ import {
 } from '../../models/dbModels/BloodDonationModel'
 import { QueryConditionOperator } from '../../models/policies/repositories/QueryTypes'
 import { GENERIC_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { StepFunctionModel } from '../../models/stepFunctions/StepFunctionModel'
-import { mockUserDetailsWithStringId } from '../mocks/mockUserData'
 
 jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
@@ -42,11 +36,6 @@ jest.mock('../../utils/validator', () => ({
 describe('BloodDonationService', () => {
   const bloodDonationRepository: jest.Mocked<Repository<DonationDTO>> =
     mockRepository as jest.Mocked<Repository<DonationDTO>>
-  const donorSearchRepository: jest.Mocked<Repository<DonorSearchDTO>> =
-    mockRepository
-  const stepFunctionModel: jest.Mocked<StepFunctionModel> = {
-    startExecution: jest.fn()
-  }
   const mockModel = new BloodDonationModel()
   const mockCreatedAt = '2024-01-01T00:00:00Z'
 
@@ -532,124 +521,6 @@ describe('BloodDonationService', () => {
           bloodDonationRepository
         )
       ).rejects.toThrow(/Operation failed/)
-    })
-  })
-
-  describe('routeDonorRequest', () => {
-    test('should initiate donor search process if retry count is below max and request is not completed or expired', async() => {
-      const bloodDonationService = new BloodDonationService()
-      donorSearchRepository.getItem.mockResolvedValue(mockDonorSearchDTO)
-
-      const result = await bloodDonationService.routeDonorRequest(
-        donorRoutingAttributesMock,
-        'queueSource',
-        mockUserDetailsWithStringId,
-        donorSearchRepository,
-        stepFunctionModel
-      )
-
-      expect(donorSearchRepository.getItem).toHaveBeenCalledWith(
-        'DONOR_SEARCH#seeker123',
-        `DONOR_SEARCH#${currentDate}#req123`
-      )
-      expect(donorSearchRepository.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          ...donorRoutingAttributesMock,
-          retryCount: 1
-        })
-      )
-      expect(stepFunctionModel.startExecution).toHaveBeenCalledWith(
-        expect.objectContaining({
-          seekerId: mockDonorSearchDTO.seekerId,
-          requestPostId: mockDonorSearchDTO.id,
-          createdAt: mockDonorSearchDTO.createdAt,
-          donationDateTime: mockDonorSearchDTO.donationDateTime,
-          neededBloodGroup: mockDonorSearchDTO.neededBloodGroup,
-          bloodQuantity: mockDonorSearchDTO.bloodQuantity,
-          urgencyLevel: mockDonorSearchDTO.urgencyLevel,
-          geohash: mockDonorSearchDTO.geohash,
-          city: 'Dhaka'
-        }),
-        expect.any(String)
-      )
-      expect(result).toBe(
-        'We have updated your request and initiated the donor search process.'
-      )
-    })
-
-    test('should return expiration message if retry count reaches maximum', async() => {
-      const bloodDonationService = new BloodDonationService()
-      const expiredMockDonorSearchDTO: DonorSearchDTO = {
-        ...mockDonorSearchDTO,
-        retryCount: 6
-      }
-
-      donorSearchRepository.getItem.mockResolvedValue(expiredMockDonorSearchDTO)
-
-      const result = await bloodDonationService.routeDonorRequest(
-        donorRoutingAttributesMock,
-        'queueSource',
-        mockUserDetailsWithStringId,
-        donorSearchRepository,
-        stepFunctionModel
-      )
-
-      expect(result).toBe(
-        'The donor search process completed after the maximum retry limit is reached.'
-      )
-    })
-
-    test('should return error message if blood donation is already completed or expired', async() => {
-      const bloodDonationService = new BloodDonationService()
-      donorSearchRepository.getItem.mockResolvedValue({
-        ...mockDonorSearchDTO,
-        status: DonationStatus.COMPLETED
-      })
-
-      const result = await bloodDonationService.routeDonorRequest(
-        donorRoutingAttributesMock,
-        'queueSource',
-        mockUserDetailsWithStringId,
-        donorSearchRepository,
-        stepFunctionModel
-      )
-
-      expect(result).toBe('Donor search is completed')
-      expect(stepFunctionModel.startExecution).not.toHaveBeenCalled()
-    })
-
-    test('should throw BloodDonationOperationError when an error occurs in routeDonorRequest', async() => {
-      const bloodDonationService = new BloodDonationService()
-      const expiredMockDonorSearchDTO: DonorSearchDTO = {
-        ...mockDonorSearchDTO,
-        retryCount: 2
-      }
-      donorSearchRepository.getItem.mockResolvedValue(expiredMockDonorSearchDTO)
-      donorSearchRepository.update.mockResolvedValue(mockDonorSearchDTO)
-      stepFunctionModel.startExecution.mockRejectedValue(
-        new Error('Step Function error')
-      )
-
-      await expect(
-        bloodDonationService.routeDonorRequest(
-          donorRoutingAttributesMock,
-          'queueSource',
-          mockUserDetailsWithStringId,
-          donorSearchRepository,
-          stepFunctionModel
-        )
-      ).rejects.toThrow(BloodDonationOperationError)
-
-      expect(donorSearchRepository.getItem).toHaveBeenCalledWith(
-        'DONOR_SEARCH#seeker123',
-        `DONOR_SEARCH#${currentDate}#req123`
-      )
-      expect(donorSearchRepository.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: 'req123'
-        })
-      )
-      expect(stepFunctionModel.startExecution).toHaveBeenCalled()
     })
   })
 })
