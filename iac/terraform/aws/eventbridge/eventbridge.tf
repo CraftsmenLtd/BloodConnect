@@ -26,7 +26,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   }
 
   target_parameters {
-    input_template = "{ \"PK\": \"<$.dynamodb.NewImage.PK.S>\", \"SK\": \"<$.dynamodb.NewImage.SK.S>\", \"neededBloodGroup\": \"<$.dynamodb.NewImage.neededBloodGroup.S>\", \"bloodQuantity\": \"<$.dynamodb.NewImage.bloodQuantity.N>\", \"city\": \"<$.dynamodb.NewImage.city.S>\", \"urgencyLevel\": \"<$.dynamodb.NewImage.urgencyLevel.S>\", \"createdAt\": \"<$.dynamodb.NewImage.createdAt.S>\", \"geohash\": \"<$.dynamodb.NewImage.geohash.S>\", \"location\": \"<$.dynamodb.NewImage.location.S>\", \"donationDateTime\": \"<$.dynamodb.NewImage.donationDateTime.S>\", \"patientName\": \"<$.dynamodb.NewImage.patientName.S>\", \"contactNumber\": \"<$.dynamodb.NewImage.contactNumber.S>\", \"shortDescription\": \"<$.dynamodb.NewImage.shortDescription.S>\", \"transportationInfo\": \"<$.dynamodb.NewImage.transportationInfo.S>\"}"
+    input_template = "{ \"PK\": \"<$.dynamodb.NewImage.PK.S>\", \"SK\": \"<$.dynamodb.NewImage.SK.S>\", \"requestedBloodGroup\": \"<$.dynamodb.NewImage.requestedBloodGroup.S>\", \"bloodQuantity\": \"<$.dynamodb.NewImage.bloodQuantity.N>\", \"city\": \"<$.dynamodb.NewImage.city.S>\", \"urgencyLevel\": \"<$.dynamodb.NewImage.urgencyLevel.S>\", \"createdAt\": \"<$.dynamodb.NewImage.createdAt.S>\", \"geohash\": \"<$.dynamodb.NewImage.geohash.S>\", \"location\": \"<$.dynamodb.NewImage.location.S>\", \"donationDateTime\": \"<$.dynamodb.NewImage.donationDateTime.S>\", \"patientName\": \"<$.dynamodb.NewImage.patientName.S>\", \"contactNumber\": \"<$.dynamodb.NewImage.contactNumber.S>\", \"shortDescription\": \"<$.dynamodb.NewImage.shortDescription.S>\", \"transportationInfo\": \"<$.dynamodb.NewImage.transportationInfo.S>\"}"
   }
 
   log_configuration {

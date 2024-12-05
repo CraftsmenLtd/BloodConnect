@@ -1,6 +1,6 @@
 export interface NotificationData {
   patientName: string;
-  neededBloodGroup: string;
+  requestedBloodGroup: string;
   bloodQuantity: number;
   urgencyLevel: string;
   location: string;

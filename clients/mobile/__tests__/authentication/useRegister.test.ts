@@ -9,11 +9,37 @@ jest.mock('../../src/authentication/services/authService', () => ({
   facebookLogin: jest.fn()
 }))
 
+jest.mock('../../src/authentication/context/useAuth', () => ({
+  useAuth: () => ({
+    setIsAuthenticated: jest.fn(),
+    accessToken: null,
+    idToken: null,
+    isAuthenticated: false,
+    loading: false,
+    logoutUser: jest.fn()
+  })
+}))
+
+jest.mock('../../src/userWorkflow/context/UserProfileContext', () => ({
+  useUserProfile: () => ({
+    userProfile: null,
+    loading: false,
+    error: null,
+    fetchUserProfile: jest.fn()
+  })
+}))
+
+jest.mock('../../src/setup/clients/useFetchClient', () => ({
+  useFetchClient: () => ({
+    get: jest.fn(),
+    post: jest.fn(),
+    patch: jest.fn()
+  })
+}))
+
 describe('useRegister Hook', () => {
   beforeEach(() => {
     setRouteParams({ email: 'test@example.com' })
-  })
-  afterEach(() => {
     jest.clearAllMocks()
   })
 
@@ -93,7 +119,7 @@ describe('useRegister Hook', () => {
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
       expect(mockedNavigate).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('google login failed. Please try again.')
     })
 
     test('should set socialLoginError on Google sign-in failure', async() => {
@@ -105,7 +131,7 @@ describe('useRegister Hook', () => {
       })
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
-      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('google login failed. Please try again.')
     })
   })
 
@@ -120,7 +146,7 @@ describe('useRegister Hook', () => {
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
       expect(mockedNavigate).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('facebook login failed. Please try again.')
     })
 
     test('should set socialLoginError on Facebook sign-in failure', async() => {
@@ -132,7 +158,7 @@ describe('useRegister Hook', () => {
       })
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
-      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('facebook login failed. Please try again.')
     })
   })
 })

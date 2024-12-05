@@ -9,6 +9,7 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { addPersonalInfoHandler } from '../../services/userServices'
 import { LocationService } from '../../../LocationService/LocationService'
 import { formatErrorMessage, formatToTwoDecimalPlaces } from '../../../utility/formatting'
+import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -53,6 +54,7 @@ const validationRules: Record<PersonalInfoKeys, ValidationRule[]> = {
 
 export const useAddPersonalInfo = (): any => {
   const fetchClient = useFetchClient()
+  const { fetchUserProfile } = useUserProfile()
   const navigation = useNavigation<AddPersonalInfoNavigationProp>()
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     bloodGroup: '',
@@ -141,6 +143,7 @@ export const useAddPersonalInfo = (): any => {
 
       const response = await addPersonalInfoHandler(finalData, fetchClient)
       if (response.status === 200) {
+        await fetchUserProfile()
         navigation.navigate(SCREENS.BOTTOM_TABS)
       }
     } catch (error) {

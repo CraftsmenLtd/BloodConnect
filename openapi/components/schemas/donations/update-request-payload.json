@@ -41,12 +41,12 @@
     "additionalProperties": false,
     "not": {
       "properties": {
-        "neededBloodGroup": {},
+        "requestedBloodGroup": {},
         "location": {},
         "latitude": {},
         "longitude": {}
       },
-      "required": ["neededBloodGroup", "location", "latitude", "longitude"]
+      "required": ["requestedBloodGroup", "location", "latitude", "longitude"]
     },
     "example": {
       "requestPostId": "01J9TGD6A4BTWZGHC52ASJ4XSM",

@@ -59,7 +59,7 @@ describe('Donation Service', () => {
       const mockData: BloodDonationRecord[] = [{
         reqPostId: '1',
         patientName: 'John Doe',
-        neededBloodGroup: 'O-',
+        requestedBloodGroup: 'O-',
         location: 'Baridhara, Dhaka',
         donationDateTime: '2024-10-28T15:30:00Z',
         contactNumber: '+880123456789',

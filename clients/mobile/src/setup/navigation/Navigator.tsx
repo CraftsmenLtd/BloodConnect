@@ -1,16 +1,25 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { routes } from './routes'
 import { SCREENS } from '../constant/screens'
 import { useAuth } from '../../authentication/context/useAuth'
-import { View } from 'react-native'
 import Loader from '../../components/loaders/loader'
+import { View } from 'react-native'
+import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 
 const Stack = createStackNavigator()
 
 export default function Navigator() {
   const { isAuthenticated, loading } = useAuth()
-  if (loading) {
+  const { userProfile, fetchUserProfile, loading: profileLoading } = useUserProfile()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      void fetchUserProfile()
+    }
+  }, [isAuthenticated])
+
+  if (loading || (isAuthenticated && profileLoading)) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Loader size="large" />
@@ -22,9 +31,17 @@ export default function Navigator() {
     return !route.protected || isAuthenticated
   })
 
+  const getInitialRoute = () => {
+    if (!isAuthenticated) {
+      return SCREENS.WELCOME
+    }
+    const hasProfile = Boolean(userProfile?.bloodGroup)
+    return hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO
+  }
+
   return (
     <Stack.Navigator
-      initialRouteName={isAuthenticated ? SCREENS.BOTTOM_TABS : SCREENS.WELCOME}
+      initialRouteName={getInitialRoute()}
       screenOptions={{
         headerStyle: {
           height: 75
@@ -38,11 +55,6 @@ export default function Navigator() {
       {filteredRoutes.map(({ name, component, options }) => (
         <Stack.Screen key={name} name={name} component={component} options={options} />
       ))}
-      {/* <Stack.Screen
-        name={SCREENS.BLOOD_REQUEST_PREVIEW}
-        component={ResponseDonationRequest}
-        options={{ headerTitle: 'Blood Request' }}
-      /> */}
     </Stack.Navigator>
   )
 }

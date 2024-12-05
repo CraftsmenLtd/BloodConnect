@@ -103,7 +103,14 @@ describe('LocationModel Tests', () => {
   describe('getIndexDefinitions', () => {
     it('should return empty index definitions', () => {
       const indexDefinitions = locationModel.getIndexDefinitions()
-      expect(indexDefinitions).toEqual({})
+      expect(indexDefinitions).toEqual({
+        GSI: {
+          GSI1: {
+            partitionKey: 'GSI1PK',
+            sortKey: 'GSI1SK'
+          }
+        }
+      })
     })
   })
 })

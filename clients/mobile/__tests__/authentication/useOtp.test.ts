@@ -14,14 +14,16 @@ jest.mock('../../src/utility/deviceRegistration')
 
 describe('useOtp Hook', () => {
   beforeEach(() => {
+    jest.useFakeTimers()
     setRouteParams({
       email: 'test@example.com',
       password: 'Qweqwe12@#',
-      fromScreen: 'SetPassword'
+      fromScreen: SCREENS.SET_PASSWORD
     })
   })
   afterEach(() => {
     jest.clearAllMocks()
+    jest.useRealTimers()
   })
 
   test('should initialize with default values', () => {
@@ -82,6 +84,7 @@ describe('useOtp Hook', () => {
 
     await act(async() => {
       await result.current.handleSubmit()
+      jest.runAllTimers()
     })
 
     expect(submitOtp).toHaveBeenCalledTimes(1)
@@ -90,7 +93,7 @@ describe('useOtp Hook', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: 'Profile' }]
+        routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
       })
     )
   })

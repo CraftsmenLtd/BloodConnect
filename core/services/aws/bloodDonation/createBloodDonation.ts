@@ -20,7 +20,7 @@ async function createBloodDonationLambda(
     const bloodDonationAttributes = {
       seekerId: event.seekerId,
       patientName: event.patientName,
-      neededBloodGroup: event.neededBloodGroup,
+      requestedBloodGroup: event.requestedBloodGroup,
       bloodQuantity: event.bloodQuantity,
       urgencyLevel: event.urgencyLevel,
       city: event.city,

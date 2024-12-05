@@ -74,7 +74,7 @@ export const useDonationPosts = (): any => {
     return requests.map(request => ({
       requestPostId: request.reqPostId ?? '',
       patientName: request.patientName ?? '',
-      neededBloodGroup: request.neededBloodGroup ?? '',
+      requestedBloodGroup: request.requestedBloodGroup ?? '',
       bloodQuantity: formatBloodQuantity(request.bloodQuantity),
       urgencyLevel: request.urgencyLevel ?? '',
       location: request.location ?? '',
@@ -82,7 +82,6 @@ export const useDonationPosts = (): any => {
       contactNumber: request.contactNumber ?? '',
       transportationInfo: request.transportationInfo ?? '',
       shortDescription: request.shortDescription ?? '',
-      // createdAt: request.createdAt ?? '',
       city: request.city ?? '',
       createdAt: request.createdAt ?? new Date().toISOString()
     }))

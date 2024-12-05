@@ -1,6 +1,19 @@
 import StorageService from '../../src/utility/storageService'
 import { signUp, confirmSignUp, signIn, signInWithRedirect, decodeJWT, fetchAuthSession, signOut, confirmResetPassword, resetPassword } from 'aws-amplify/auth'
-import { registerUser, submitOtp, loginUser, googleLogin, facebookLogin, UserRegistrationCredentials, decodeAccessToken, logoutUser, fetchSession, confirmResetPasswordHandler, resetPasswordHandler } from '../../src/authentication/services/authService'
+import {
+  registerUser,
+  submitOtp,
+  loginUser,
+  googleLogin,
+  facebookLogin,
+  UserRegistrationCredentials,
+  decodeAccessToken,
+  logoutUser,
+  fetchSession,
+  confirmResetPasswordHandler,
+  resetPasswordHandler,
+  currentLoggedInUser
+} from '../../src/authentication/services/authService'
 
 jest.mock('../../src/utility/storageService', () => ({
   getItem: jest.fn(),
@@ -90,6 +103,42 @@ describe('AuthService', () => {
       (fetchAuthSession as jest.Mock).mockRejectedValue(new Error('Session fetch failed'))
 
       await expect(fetchSession()).rejects.toThrow('Failed to fetch session')
+    })
+  })
+
+  describe('currentLoggedInUser', () => {
+    it('should return user details when session and tokens are valid', async() => {
+      const mockSession = {
+        tokens: {
+          idToken: {
+            payload: {
+              email: 'test@gmail.com',
+              'custom:userId': 'user123',
+              phone_number: '1234567890',
+              name: 'John Doe'
+            }
+          }
+        }
+      };
+
+      (fetchAuthSession as jest.Mock).mockResolvedValue(mockSession)
+
+      const user = await currentLoggedInUser()
+
+      expect(user).toEqual({
+        email: 'test@gmail.com',
+        userId: 'user123',
+        phoneNumber: '1234567890',
+        name: 'John Doe'
+      })
+    })
+
+    it('should throw an error when session or tokens are undefined', async() => {
+      (fetchAuthSession as jest.Mock).mockResolvedValue({
+        tokens: undefined
+      })
+
+      await expect(currentLoggedInUser()).rejects.toThrow('Session or tokens are undefined')
     })
   })
 

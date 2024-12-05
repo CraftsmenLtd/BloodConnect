@@ -17,7 +17,7 @@ export enum UrgencyLevel {
 
 export type DonationDTO = DTO & HasIdentifier & {
   seekerId: string;
-  neededBloodGroup: BloodGroup;
+  requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: 'regular' | 'urgent';
   city: string;
@@ -36,7 +36,7 @@ export type DonationDTO = DTO & HasIdentifier & {
 
 export type DonorSearchDTO = DTO & HasIdentifier & {
   seekerId: string;
-  neededBloodGroup: BloodGroup;
+  requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   city: string;
@@ -50,6 +50,8 @@ export type DonorSearchDTO = DTO & HasIdentifier & {
   shortDescription?: string;
   createdAt: string;
   retryCount: number;
+  currentNeighborSearchLevel?: number;
+  remainingGeohashesToProcess?: string[];
 }
 
 type BaseAcceptedDonationDTO = {

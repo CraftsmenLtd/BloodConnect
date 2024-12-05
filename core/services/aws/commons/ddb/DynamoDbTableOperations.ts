@@ -37,7 +37,7 @@ export default class DynamoDbTableOperations<
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
 > implements Repository<Dto, DbFields> {
   constructor(
-    private readonly modelAdapter: ModelAdapter,
+    protected readonly modelAdapter: ModelAdapter,
     private readonly client = DynamoDBDocumentClient.from(
       new DynamoDBClient({ region: process.env.AWS_REGION })
     )
@@ -59,7 +59,9 @@ export default class DynamoDbTableOperations<
   }
 
   async query(
-    queryInput: QueryInput<DbFields>
+    queryInput: QueryInput<DbFields>,
+    indexName?: string,
+    requestedAttributes?: string[]
   ): Promise<{ items: Dto[]; lastEvaluatedKey?: Record<string, unknown> }> {
     try {
       const {
@@ -78,12 +80,17 @@ export default class DynamoDbTableOperations<
         ExpressionAttributeNames: expressionAttributeNames
       }
 
+      if (indexName !== null) {
+        queryCommandInput.IndexName = indexName
+      }
+
+      if (requestedAttributes != null && requestedAttributes.length > 0) {
+        queryCommandInput.ProjectionExpression = requestedAttributes.join(', ')
+      }
+
       this.applyQueryOptions(queryCommandInput, queryInput.options)
 
-      const result = await this.client.send(
-        new QueryCommand(queryCommandInput)
-      )
-
+      const result = await this.client.send(new QueryCommand(queryCommandInput))
       return {
         items: (result.Items ?? []).map((item) =>
           this.modelAdapter.toDto(item as DbFields)

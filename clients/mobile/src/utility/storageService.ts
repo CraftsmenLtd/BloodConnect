@@ -41,9 +41,54 @@ const clearStorage = async(): Promise<void> => {
   }
 }
 
+interface KeySet {
+  filter(key: string): KeySet;
+  getKeys(): readonly string[];
+  remove(): Promise<void>;
+}
+const createKeySet = (keys: readonly string[]): KeySet => {
+  const filter = (key: string): KeySet => {
+    return createKeySet(keys.filter(k => k !== key))
+  }
+
+  const remove = async(): Promise<void> => {
+    await removeKeys(keys)
+  }
+
+  return {
+    filter,
+    getKeys: () => keys,
+    remove
+  }
+}
+
+const getAllKeys = async(): Promise<KeySet> => {
+  try {
+    const keys = await AsyncStorage.getAllKeys()
+    return createKeySet(keys)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to get all keys: ${error.message}`)
+    }
+    throw new Error('Failed to get all keys: An unknown error occurred')
+  }
+}
+
+const removeKeys = async(keysToRemove: readonly string[]): Promise<void> => {
+  try {
+    await AsyncStorage.multiRemove(keysToRemove)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to remove keys: ${error.message}`)
+    }
+    throw new Error('Failed to remove keys: An unknown error occurred')
+  }
+}
+
 export default {
   storeItem,
   getItem,
   removeItem,
-  clearStorage
+  clearStorage,
+  getAllKeys
 }

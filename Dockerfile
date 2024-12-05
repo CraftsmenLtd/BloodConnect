@@ -17,12 +17,11 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/aws
 
 # Python Packages
 ARG CHECKOV_VERSION
-RUN pip3 install awscli-local terraform-local checkov==${CHECKOV_VERSION} --break-system-packages
+RUN pip3 install terraform-local checkov==${CHECKOV_VERSION} --break-system-packages
 
 # Docs requirements
 COPY docs/requirements.txt /tmp
-RUN pip3 install -r /tmp/requirements.txt --break-system-packages
-RUN rm /tmp/requirements.txt
+RUN pip3 install -r /tmp/requirements.txt --break-system-packages && rm /tmp/requirements.txt
 
 # Terraform
 ARG TERRAFORM_VERSION
@@ -30,16 +29,12 @@ RUN curl -o /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip https://releases
     unzip /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/bin && \
     rm /tmp/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
-# Setup Nodejs and Docker Repo
+# Setup Nodejs
 ARG NODE_MAJOR
 RUN mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# Install Nodejs and Docker
-RUN apt update && apt install -y nodejs --no-install-recommends
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
+    apt update && apt install -y nodejs --no-install-recommends
 
 # Install API tools
 RUN npm install -g @stoplight/spectral-cli @redocly/cli@latest

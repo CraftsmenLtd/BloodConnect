@@ -17,7 +17,7 @@ type CredentialKeys = keyof BloodRequestData
 
 export interface BloodRequestData {
   urgencyLevel: string;
-  neededBloodGroup: string;
+  requestedBloodGroup: string;
   bloodQuantity: string;
   donationDateTime: Date | string;
   location: string;
@@ -33,7 +33,7 @@ interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
   city: [validateRequired],
   urgencyLevel: [validateRequired],
-  neededBloodGroup: [validateRequired],
+  requestedBloodGroup: [validateRequired],
   bloodQuantity: [validateRequired],
   donationDateTime: [validateRequired, validateDateTime],
   location: [validateRequired],
@@ -47,7 +47,7 @@ export const useBloodRequest = (): any => {
   const { data, isUpdating } = route.params
   const [bloodRequestData, setBloodRequestData] = useState<BloodRequestData>({
     urgencyLevel: 'regular',
-    neededBloodGroup: '',
+    requestedBloodGroup: '',
     bloodQuantity: '',
     donationDateTime: data !== null ? new Date(data.donationDateTime) : new Date(),
     location: '',
@@ -139,7 +139,7 @@ export const useBloodRequest = (): any => {
   }
 
   const updateBloodDonationRequest = async(): Promise<DonationResponse> => {
-    const { bloodQuantity, city, location, neededBloodGroup, ...rest } = bloodRequestData
+    const { bloodQuantity, city, location, requestedBloodGroup, ...rest } = bloodRequestData
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
       contactNumber: formatPhoneNumber(rest.contactNumber),

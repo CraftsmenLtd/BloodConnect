@@ -59,7 +59,7 @@ async function acceptDonationRequestLambda(
       status: event.status,
       donorName: userProfile?.name,
       phoneNumbers: userProfile?.phoneNumbers,
-      neededBloodGroup: donationPost.neededBloodGroup,
+      requestedBloodGroup: donationPost.requestedBloodGroup,
       urgencyLevel: donationPost.urgencyLevel,
       location: donationPost.location,
       donationDateTime: donationPost.donationDateTime,
@@ -83,7 +83,7 @@ async function acceptDonationRequestLambda(
     const notificationAttributes: NotificationAttributes = {
       userId: event.seekerId,
       title: 'Donor Found',
-      body: `${donationPost.neededBloodGroup} blood found`,
+      body: `${donationPost.requestedBloodGroup} blood found`,
       type: 'REQ_ACCEPTED',
       payload: {
         ...acceptDonationRequestAttributes,
