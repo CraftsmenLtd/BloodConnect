@@ -10,6 +10,7 @@ import {
 } from '../../../application/models/dbModels/DonorSearchModel'
 import { GeohashCacheManager } from '../../../application/utils/GeohashCacheMapManager'
 import { getDistanceBetweenGeohashes } from '../../../application/utils/geohash'
+import GeohashDynamoDbOperations from '../commons/ddb/GeohashDynamoDbOperations'
 
 type DonorInfo = {
   userId: string;
@@ -174,7 +175,7 @@ async function getNewDonorsInNeighborGeohash(
       city,
       requestedBloodGroup,
       geohashCachePrefix,
-      new DynamoDbTableOperations<LocationDTO, LocationFields, LocationModel>(
+      new GeohashDynamoDbOperations<LocationDTO, LocationFields, LocationModel>(
         new LocationModel()
       )
     )

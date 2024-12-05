@@ -5,5 +5,5 @@ locals {
   max_geohash_neighbor_search_level = 50
   cache_geohash_prefix_length = 6
   neighbor_search_geohash_prefix_length = 7
-  max_geohashes_per_processing_batch = 128
+  max_geohashes_per_processing_batch = 1024
 }

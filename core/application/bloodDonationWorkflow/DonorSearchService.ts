@@ -5,19 +5,14 @@ import {
 import Repository from '../models/policies/repositories/Repository'
 import { getGeohashNthNeighbors } from '../utils/geohash'
 import {
-  QueryConditionOperator,
-  QueryInput
-} from '../models/policies/repositories/QueryTypes'
-import {
   DonorRoutingAttributes,
   StepFunctionInput
 } from './Types'
 import { StepFunctionModel } from '../models/stepFunctions/StepFunctionModel'
 import { DONOR_SEARCH_PK_PREFIX } from '../models/dbModels/DonorSearchModel'
-import { AcceptedDonationFields } from '../models/dbModels/AcceptDonationModel'
 import { LocationDTO, UserDetailsDTO } from '../../../commons/dto/UserDTO'
 import { getBloodRequestMessage } from './BloodDonationMessages'
-import LocationModel from '../models/dbModels/LocationModel'
+import GeohashRepository from '../models/policies/repositories/GeohashRepository'
 
 export class DonorSearchService {
   async routeDonorRequest(
@@ -143,34 +138,24 @@ export class DonorSearchService {
     city: string,
     requestedBloodGroup: string,
     geohash: string,
-    locationRepository: Repository<LocationDTO, Record<string, unknown>>
+    geohashRepository: GeohashRepository<LocationDTO, Record<string, unknown>>,
+    lastEvaluatedKey: Record<string, unknown> | undefined = undefined,
+    foundDonors: LocationDTO[] = []
   ): Promise<LocationDTO[]> {
-    const locationModel = new LocationModel()
-    const gsiIndex = locationModel.getIndex('GSI', 'GSI1')
-    if (gsiIndex === undefined) {
-      throw new Error('Index not found.')
-    }
+    const queryResult = await geohashRepository.queryGeohash(city, requestedBloodGroup, geohash, lastEvaluatedKey)
+    const updatedDonors = [...foundDonors, ...(queryResult.items ?? [])]
+    const nextLastEvaluatedKey = queryResult.lastEvaluatedKey
 
-    const query: QueryInput<AcceptedDonationFields> = {
-      partitionKeyCondition: {
-        attributeName: gsiIndex.partitionKey as keyof AcceptedDonationFields,
-        operator: QueryConditionOperator.EQUALS,
-        attributeValue: `CITY#${city}#BG#${requestedBloodGroup}#DONATIONSTATUS#yes`
-      }
-    }
-
-    if (gsiIndex.sortKey !== null && geohash.length > 0) {
-      query.sortKeyCondition = {
-        attributeName: gsiIndex.sortKey as keyof AcceptedDonationFields,
-        operator: QueryConditionOperator.BEGINS_WITH,
-        attributeValue: geohash
-      }
-    }
-    const queryResult = await locationRepository.query(
-      query as QueryInput<Record<string, unknown>>, 'GSI1'
-    )
-    const donorsFoundList = queryResult.items ?? []
-    return donorsFoundList
+    return nextLastEvaluatedKey != null
+      ? this.queryGeohash(
+        city,
+        requestedBloodGroup,
+        geohash,
+        geohashRepository,
+        nextLastEvaluatedKey,
+        updatedDonors
+      )
+      : updatedDonors
   }
 
   getNeighborGeohashes = (
