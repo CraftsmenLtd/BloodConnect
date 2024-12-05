@@ -6,6 +6,8 @@ import { parseJsonData } from '../../utility/jsonParser'
 import { NotificationContextType } from './useNotificationContext'
 import { NotificationData, NotificationDataTypes } from './NotificationData'
 import { RootStackParamList } from '../navigation/navigationTypes'
+import storageService from '../../utility/storageService'
+import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
 
 const SCREEN_FOR_NOTIFICATION: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
   bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW },
@@ -21,32 +23,27 @@ export const NotificationContext = createContext<NotificationContextType>(initia
 export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef: NavigationContainerRef<ParamListBase> }> = ({ children, navigationRef }) => {
   const [notificationData, setNotificationData] = useState<NotificationData | null>(null)
   const [isReady, setIsReady] = useState(false)
-  const listenerAddedRef = React.useRef(false)
-  const lastProcessedNotification = React.useRef<string | null>(null)
 
   useEffect(() => {
-    if (!listenerAddedRef.current) {
+    if (!isReady) {
       const unsubscribe = navigationRef.addListener('state', () => {
         if (navigationRef.isReady() && !isReady) setIsReady(true)
       })
-      listenerAddedRef.current = true
-      return () => {
-        unsubscribe()
-        listenerAddedRef.current = false
-      }
+      return () => { unsubscribe() }
     }
-  }, [navigationRef, isReady])
+  }, [])
 
   useEffect(() => {
     if (!isReady) return
 
-    Notifications.getLastNotificationResponseAsync().then(response => {
+    Notifications.getLastNotificationResponseAsync().then(async response => {
       if (response === null || !isNotificationValid(response)) return
 
       const identifier = response.notification.request.identifier
-      if (lastProcessedNotification.current === identifier) return
+      const lastNotificationIdentifier = await storageService.getItem(LOCAL_STORAGE_KEYS.LAST_PROCESSED_NOTIFICATION_KEY)
+      if (lastNotificationIdentifier === identifier) return
 
-      lastProcessedNotification.current = identifier
+      void storageService.storeItem(LOCAL_STORAGE_KEYS.LAST_PROCESSED_NOTIFICATION_KEY, identifier)
       const data = parseJsonData(response.notification.request.content.data.payload)
       setNotificationData(data as NotificationData)
       handleNotificationNavigation(response)
@@ -78,7 +75,9 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
 
     if (mapping !== undefined) {
       const { screen, getParams } = mapping
-      const params = getParams !== undefined ? getParams(parseJsonData<Record<string, unknown>>(response.notification.request.content.data.payload)) : undefined
+      const params = getParams !== undefined
+        ? getParams(parseJsonData<Record<string, unknown>>(response.notification.request.content.data.payload))
+        : undefined
       if (navigationRef.isReady()) {
         navigationRef.navigate(screen, params as any)
       }

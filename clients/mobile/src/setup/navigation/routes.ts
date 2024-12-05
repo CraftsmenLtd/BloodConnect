@@ -27,7 +27,7 @@ export const routes = [
   {
     name: SCREENS.OTP,
     component: OTP,
-    options: { headerShown: true, headerTitle: '' },
+    options: { headerShown: true },
     protected: false
   },
   {
@@ -75,7 +75,7 @@ export const routes = [
   {
     name: SCREENS.DONAR_RESPONSE,
     component: DonorResponse,
-    options: { headerShown: true, headerTitle: '' },
+    options: { headerShown: true },
     protected: true
   }
 ]

@@ -6,8 +6,7 @@ import { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
 import { DonationData } from './useDonationPosts'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
-
-const URGENT = 'urgent'
+import { UrgencyLevel } from '../types'
 
 interface PostCardProps {
   post: DonationData;
@@ -136,7 +135,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
                 <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.neededBloodGroup} blood</Text>
               </View>
             </View>
-            {post.urgencyLevel === URGENT && (
+            {post.urgencyLevel === UrgencyLevel.URGENT && (
               <View style={styles.urgentBadge}>
                 <Ionicons name="warning-outline" size={14} color={theme.colors.black} />
                 <Text style={styles.urgentText}>URGENT</Text>

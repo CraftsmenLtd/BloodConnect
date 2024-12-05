@@ -21,3 +21,8 @@ Pick<DonationDTO, 'latitude' | 'longitude'> & {
   reqPostId: string;
   createdAt: string;
 }
+
+export const UrgencyLevel = {
+  REGULAR: 'regular',
+  URGENT: 'urgent'
+}
