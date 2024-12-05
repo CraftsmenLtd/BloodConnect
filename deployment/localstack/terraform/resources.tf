@@ -29,9 +29,9 @@ resource "aws_s3_bucket" "firebase_bucket" {
 }
 
 resource "aws_s3_object" "google_services" {
-  bucket = aws_s3_bucket.firebase_bucket.bucket
-  key    = "google-services"
-  content = "test-content"
+  bucket       = aws_s3_bucket.firebase_bucket.bucket
+  key          = "google-services"
+  content      = "test-content"
   content_type = "text/plain"
 }
 

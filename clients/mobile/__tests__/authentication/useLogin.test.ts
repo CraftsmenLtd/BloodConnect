@@ -1,7 +1,22 @@
-import { mockedNavigate, setRouteParams } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useLogin } from '../../src/authentication/login/hooks/useLogin'
 import { loginUser, googleLogin, facebookLogin } from '../../src/authentication/services/authService'
+import { SCREENS } from '../../src/setup/constant/screens'
+
+const mockDispatch = jest.fn()
+const mockSetIsAuthenticated = jest.fn()
+let mockUserProfile: { bloodGroup?: string } | null = null
+
+jest.mock('@react-navigation/native', () => ({
+  ...jest.requireActual('@react-navigation/native'),
+  useNavigation: () => ({
+    dispatch: mockDispatch,
+    navigate: jest.fn()
+  }),
+  CommonActions: {
+    reset: (config: any) => config
+  }
+}))
 
 jest.mock('../../src/authentication/services/authService', () => ({
   loginUser: jest.fn(),
@@ -9,12 +24,47 @@ jest.mock('../../src/authentication/services/authService', () => ({
   facebookLogin: jest.fn()
 }))
 
+jest.mock('../../src/userWorkflow/context/UserProfileContext', () => ({
+  useUserProfile: () => ({
+    userProfile: mockUserProfile,
+    loading: false,
+    error: null,
+    fetchUserProfile: jest.fn()
+  })
+}))
+
+jest.mock('../../src/authentication/context/useAuth', () => ({
+  useAuth: () => ({
+    setIsAuthenticated: mockSetIsAuthenticated,
+    accessToken: null,
+    idToken: null,
+    isAuthenticated: false,
+    loading: false,
+    logoutUser: jest.fn()
+  })
+}))
+
+jest.mock('../../src/setup/clients/useFetchClient', () => ({
+  useFetchClient: () => ({
+    get: jest.fn(),
+    post: jest.fn(),
+    patch: jest.fn()
+  })
+}))
+
+jest.mock('../../src/utility/deviceRegistration', () => ({
+  __esModule: true,
+  default: jest.fn()
+}))
+
 describe('useLogin Hook', () => {
   beforeEach(() => {
-    setRouteParams({ email: 'test@example.com' })
+    mockUserProfile = null
+    jest.clearAllMocks()
+    jest.useFakeTimers()
   })
   afterEach(() => {
-    jest.clearAllMocks()
+    jest.useRealTimers()
   })
 
   test('should initialize with default values', () => {
@@ -69,6 +119,22 @@ describe('useLogin Hook', () => {
     expect(result.current.loginError).toBe('Invalid Email or Password.')
   })
 
+  test('should navigate to BOTTOM_TABS on successful login', async() => {
+    const { result } = renderHook(() => useLogin());
+    (loginUser as jest.Mock).mockResolvedValue(true)
+
+    await act(async() => {
+      await result.current.handleLogin()
+      jest.runAllTimers()
+    })
+
+    expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
+    expect(mockDispatch).toHaveBeenCalledWith({
+      index: 0,
+      routes: [{ name: SCREENS.BOTTOM_TABS }]
+    })
+  })
+
   describe('handleGoogleSignIn', () => {
     test('should fail gracefully when Google sign-in has session error', async() => {
       const { result } = renderHook(() => useLogin());
@@ -79,8 +145,8 @@ describe('useLogin Hook', () => {
       })
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
-      expect(mockedNavigate).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
+      expect(mockDispatch).not.toHaveBeenCalled()
+      expect(result.current.socialLoginError).toBe('google login failed. Please try again.')
     })
 
     test('should set socialLoginError on Google sign-in failure', async() => {
@@ -92,7 +158,43 @@ describe('useLogin Hook', () => {
       })
 
       expect(googleLogin).toHaveBeenCalledTimes(1)
-      expect(result.current.socialLoginError).toBe('Google login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('google login failed. Please try again.')
+    })
+
+    test('should navigate to ADD_PERSONAL_INFO when no profile exists', async() => {
+      mockUserProfile = null;
+      (googleLogin as jest.Mock).mockResolvedValue(undefined)
+
+      const { result } = renderHook(() => useLogin())
+
+      await act(async() => {
+        await result.current.handleGoogleSignIn()
+        jest.runAllTimers()
+      })
+
+      expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
+      expect(mockDispatch).toHaveBeenCalledWith({
+        index: 0,
+        routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+      })
+    })
+
+    test('should navigate to BOTTOM_TABS when profile exists', async() => {
+      mockUserProfile = { bloodGroup: 'A+' };
+      (googleLogin as jest.Mock).mockResolvedValue(undefined)
+
+      const { result } = renderHook(() => useLogin())
+
+      await act(async() => {
+        await result.current.handleGoogleSignIn()
+        jest.runAllTimers()
+      })
+
+      expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
+      expect(mockDispatch).toHaveBeenCalledWith({
+        index: 0,
+        routes: [{ name: SCREENS.BOTTOM_TABS }]
+      })
     })
   })
 
@@ -106,8 +208,8 @@ describe('useLogin Hook', () => {
       })
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
-      expect(mockedNavigate).not.toHaveBeenCalled()
-      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
+      expect(mockDispatch).not.toHaveBeenCalled()
+      expect(result.current.socialLoginError).toBe('facebook login failed. Please try again.')
     })
 
     test('should set socialLoginError on Facebook sign-in failure', async() => {
@@ -119,7 +221,43 @@ describe('useLogin Hook', () => {
       })
 
       expect(facebookLogin).toHaveBeenCalledTimes(1)
-      expect(result.current.socialLoginError).toBe('Facebook login failed. Please try again.')
+      expect(result.current.socialLoginError).toBe('facebook login failed. Please try again.')
+    })
+
+    test('should navigate to ADD_PERSONAL_INFO when no profile exists', async() => {
+      mockUserProfile = null;
+      (facebookLogin as jest.Mock).mockResolvedValue(undefined)
+
+      const { result } = renderHook(() => useLogin())
+
+      await act(async() => {
+        await result.current.handleFacebookSignIn()
+        jest.runAllTimers()
+      })
+
+      expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
+      expect(mockDispatch).toHaveBeenCalledWith({
+        index: 0,
+        routes: [{ name: SCREENS.ADD_PERSONAL_INFO }]
+      })
+    })
+
+    test('should navigate to BOTTOM_TABS when profile exists', async() => {
+      mockUserProfile = { bloodGroup: 'A+' };
+      (facebookLogin as jest.Mock).mockResolvedValue(undefined)
+
+      const { result } = renderHook(() => useLogin())
+
+      await act(async() => {
+        await result.current.handleFacebookSignIn()
+        jest.runAllTimers()
+      })
+
+      expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true)
+      expect(mockDispatch).toHaveBeenCalledWith({
+        index: 0,
+        routes: [{ name: SCREENS.BOTTOM_TABS }]
+      })
     })
   })
 })

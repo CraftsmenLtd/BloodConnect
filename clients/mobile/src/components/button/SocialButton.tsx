@@ -1,5 +1,5 @@
 import React from 'react'
-import { TouchableOpacity, Text, StyleSheet, Image, View, ImageSourcePropType, StyleProp, ViewStyle, TextStyle } from 'react-native'
+import { TouchableOpacity, Text, StyleSheet, Image, View, ImageSourcePropType, StyleProp, ViewStyle, TextStyle, ActivityIndicator } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 
@@ -7,18 +7,21 @@ interface SocialButtonProps {
   text: string;
   onPress: () => void;
   icon: ImageSourcePropType;
+  loading?: boolean;
   buttonStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
 }
 
-export const SocialButton = ({ text, onPress, icon, buttonStyle, textStyle }: SocialButtonProps) => {
-  const styles = createStyles(useTheme())
+export const SocialButton = ({ text, onPress, icon, loading, buttonStyle, textStyle }: SocialButtonProps) => {
+  const theme = useTheme()
+  const styles = createStyles(theme)
+  const isLoading = loading ?? false
 
   return (
-    <TouchableOpacity style={[styles.socialButton, buttonStyle]} onPress={onPress}>
+    <TouchableOpacity style={[styles.socialButton, buttonStyle]} onPress={onPress} disabled={loading}>
       <View style={styles.socialButtonContent}>
         <Image source={icon} style={styles.socialIcon} />
-        <Text style={[styles.socialButtonText, textStyle]}>{text}</Text>
+        {isLoading ? (<ActivityIndicator size="small" color={theme.colors.primary}/>) : (<Text style={[styles.socialButtonText, textStyle]}>{text}</Text>)}
       </View>
     </TouchableOpacity>
   )
@@ -38,7 +41,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   socialButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    minHeight: 24
   },
   socialIcon: {
     width: 24,

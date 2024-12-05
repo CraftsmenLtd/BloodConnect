@@ -26,6 +26,7 @@ jobs:
     secrets: inherit
     with:
       runner_image_name: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      deploy_localstack: true
 
   deploy-stage:
     name: 🚀 Deploy Stage Infrastructure

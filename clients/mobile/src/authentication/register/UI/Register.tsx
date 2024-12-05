@@ -10,13 +10,15 @@ import { SCREENS } from '../../../setup/constant/screens'
 import AuthLayout from '../../AuthLayout'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
+import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
+import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
 
 interface RegisterScreenProps {
   navigation: RegisterScreenNavigationProp;
 }
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
-  const { errors, registerCredential, handleInputChange, handleRegister, isButtonDisabled, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useRegister()
+  const { errors, socialLoading, registerCredential, handleInputChange, handleRegister, isButtonDisabled, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useRegister()
   const styles = createStyles(useTheme())
 
   return (
@@ -58,15 +60,17 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
       {socialLoginError !== '' && <Text style={styles.error}>{socialLoginError}</Text>}
 
       <SocialButton
-        text="Continue with Google"
+        text={SOCIAL_BUTTON_UI.GOOGLE.text}
         onPress={handleGoogleSignIn}
-        icon={require('../../../../assets/google-icon.png')}
+        loading={socialLoading === SOCIAL_TYPES.GOOGLE}
+        icon={SOCIAL_BUTTON_UI.GOOGLE.icon}
       />
 
       <SocialButton
-        text="Continue via Facebook"
+        text={SOCIAL_BUTTON_UI.FACEBOOK.text}
         onPress={handleFacebookSignIn}
-        icon={require('../../../../assets/facebook-icon.png')}
+        loading={socialLoading === SOCIAL_TYPES.FACEBOOK}
+        icon={SOCIAL_BUTTON_UI.FACEBOOK.icon}
       />
 
       <LinkWithText
