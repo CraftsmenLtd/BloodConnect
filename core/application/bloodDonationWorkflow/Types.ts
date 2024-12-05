@@ -3,7 +3,7 @@ import { BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
 
 export interface BloodDonationAttributes {
   seekerId: string;
-  neededBloodGroup: BloodGroup;
+  requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   city: string;
@@ -41,7 +41,7 @@ export interface DonorRoutingAttributes {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
-  neededBloodGroup: BloodGroup;
+  requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   city: string;
@@ -59,7 +59,7 @@ export interface StepFunctionInput {
   requestPostId: string;
   createdAt: string;
   donationDateTime: string;
-  neededBloodGroup: BloodGroup;
+  requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   geohash: string;

@@ -4,7 +4,6 @@ import ThrottlingError from './ThrottlingError'
 import {
   DonationDTO,
   DonationStatus,
-  DonorSearchDTO,
   AcceptedDonationDTO
 } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
@@ -24,20 +23,13 @@ import {
   BloodDonationAttributes,
   validationRules,
   UpdateBloodDonationAttributes,
-  DonorRoutingAttributes,
-  StepFunctionInput,
   DonationStatusManagerAttributes
 } from './Types'
-import { StepFunctionModel } from '../models/stepFunctions/StepFunctionModel'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
-import { DONOR_SEARCH_PK_PREFIX } from '../models/dbModels/DonorSearchModel'
 import {
   AcceptDonationRequestModel,
   AcceptedDonationFields
 } from '../models/dbModels/AcceptDonationModel'
-import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
-import { getBloodRequestMessage } from './BloodDonationMessages'
-
 export class BloodDonationService {
   async createBloodDonation(
     donationAttributes: BloodDonationAttributes,
@@ -216,98 +208,6 @@ export class BloodDonationService {
       if (error instanceof BloodDonationOperationError) {
         throw error
       }
-      throw new BloodDonationOperationError(
-        `Failed to update blood donation post. Error: ${error}`,
-        GENERIC_CODES.ERROR
-      )
-    }
-  }
-
-  async routeDonorRequest(
-    donorRoutingAttributes: DonorRoutingAttributes,
-    queueSource: string,
-    userProfile: UserDetailsDTO,
-    donorSearchRepository: Repository<DonorSearchDTO>,
-    stepFunctionModel: StepFunctionModel
-  ): Promise<string> {
-    try {
-      const { seekerId, requestPostId, createdAt } = donorRoutingAttributes
-
-      const donorSearchItem = await donorSearchRepository.getItem(
-        `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
-        `${DONOR_SEARCH_PK_PREFIX}#${createdAt}#${requestPostId}`
-      )
-
-      if (donorSearchItem === null) {
-        await donorSearchRepository.create({
-          id: generateUniqueID(),
-          ...donorRoutingAttributes,
-          status: DonationStatus.PENDING,
-          retryCount: 0
-        })
-      } else if (donorSearchItem.status === DonationStatus.COMPLETED) {
-        if (
-          queueSource === process.env.DONOR_SEARCH_QUEUE_ARN &&
-          donorRoutingAttributes.bloodQuantity > donorSearchItem.bloodQuantity
-        ) {
-          const updateData: Partial<DonorSearchDTO> = {
-            ...donorRoutingAttributes,
-            id: requestPostId,
-            status: DonationStatus.PENDING,
-            retryCount: 0
-          }
-          await donorSearchRepository.update(updateData)
-        } else {
-          return 'Donor search is completed'
-        }
-      }
-
-      const retryCount = donorSearchItem?.retryCount ?? 0
-      const updateData: Partial<DonorSearchDTO> = {
-        ...donorRoutingAttributes,
-        id: requestPostId,
-        retryCount: retryCount + 1
-      }
-
-      if (retryCount >= Number(process.env.MAX_RETRY_COUNT)) {
-        updateData.status = DonationStatus.COMPLETED
-        await donorSearchRepository.update(updateData)
-        return 'The donor search process completed after the maximum retry limit is reached.'
-      }
-
-      await donorSearchRepository.update(updateData)
-
-      const stepFunctionInput: StepFunctionInput = {
-        seekerId,
-        requestPostId,
-        createdAt,
-        donationDateTime: donorRoutingAttributes.donationDateTime,
-        neededBloodGroup: donorRoutingAttributes.neededBloodGroup,
-        bloodQuantity: donorRoutingAttributes.bloodQuantity,
-        urgencyLevel: donorRoutingAttributes.urgencyLevel,
-        geohash: donorRoutingAttributes.geohash,
-        seekerName: userProfile.name,
-        patientName: donorRoutingAttributes.patientName ?? '',
-        location: donorRoutingAttributes.location,
-        contactNumber: donorRoutingAttributes.contactNumber,
-        transportationInfo: donorRoutingAttributes.transportationInfo ?? '',
-        shortDescription: donorRoutingAttributes.shortDescription ?? '',
-        city: donorRoutingAttributes.city,
-        retryCount: retryCount + 1,
-        message: getBloodRequestMessage(
-          donorRoutingAttributes.urgencyLevel,
-          donorRoutingAttributes.neededBloodGroup,
-          donorRoutingAttributes.shortDescription ?? ''
-        )
-      }
-
-      await stepFunctionModel.startExecution(
-        stepFunctionInput,
-        `${requestPostId}-${donorRoutingAttributes.city}-(${donorRoutingAttributes.neededBloodGroup
-        })-${Math.floor(Date.now() / 1000)}`
-      )
-      return 'We have updated your request and initiated the donor search process.'
-    } catch (error) {
       throw new BloodDonationOperationError(
         `Failed to update blood donation post. Error: ${error}`,
         GENERIC_CODES.ERROR

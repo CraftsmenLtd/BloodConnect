@@ -3,7 +3,7 @@ import { StepFunctionExecutionAttributes, StepFunctionInput } from '../../bloodD
 export const startExecutionInputMock: StepFunctionInput = {
   seekerId: 'seeker123',
   requestPostId: 'req123',
-  neededBloodGroup: 'O-' as const,
+  requestedBloodGroup: 'O-' as const,
   bloodQuantity: 2,
   urgencyLevel: 'urgent' as const,
   donationDateTime: '2024-10-20T15:00:00Z',

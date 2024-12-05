@@ -334,6 +334,7 @@ describe('DynamoDbTableOperations Tests', () => {
       const expectedKeys = [
         'TableName',
         'KeyConditionExpression',
+        'IndexName',
         'ExpressionAttributeValues',
         'ExpressionAttributeNames'
       ]
