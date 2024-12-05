@@ -268,11 +268,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: theme.typography.fontSize,
     color: theme.colors.textPrimary
   },
-  // link: {
-  //   color: theme.colors.primary,
-  //   textDecorationLine: 'underline',
-  //   fontSize: theme.typography.fontSize
-  // },
   errorMessage: {
     color: 'red',
     textAlign: 'center',
