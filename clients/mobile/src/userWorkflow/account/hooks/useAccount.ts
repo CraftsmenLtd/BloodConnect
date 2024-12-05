@@ -59,8 +59,11 @@ export const useAccount = (): UseAccountReturnType => {
       const { name, preferredDonationLocations } = response.data
 
       if (preferredDonationLocations.length > 0) {
-        const { city = 'Unknown City', area = 'Unknown Area' } = preferredDonationLocations[0]
+        const { city = '', area = '' } = preferredDonationLocations[0]
         const location = `${city}, ${area}`
+        setUserData({ name, location })
+      } else {
+        const location = ''
         setUserData({ name, location })
       }
     } catch (err) {
