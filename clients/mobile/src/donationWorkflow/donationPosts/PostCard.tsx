@@ -6,10 +6,18 @@ import { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
 import { DonationData } from './useDonationPosts'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
+import { UrgencyLevel } from '../types'
 
 interface PostCardProps {
   post: DonationData;
   updateHandler: (donationData: DonationData) => void;
+  detailHandler?: (donationData: DonationData) => void;
+  showContactNumber?: boolean;
+  showDescription?: boolean;
+  showTransportInfo?: boolean;
+  showPatientName?: boolean;
+  showButton?: boolean;
+  showHeader?: boolean;
 }
 
 interface DropdownPosition {
@@ -17,8 +25,9 @@ interface DropdownPosition {
   right: number;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
-  const styles = createStyles(useTheme())
+export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailHandler, showContactNumber = false, showDescription = false, showTransportInfo = false, showPatientName = false, showButton = true, showHeader = true }) => {
+  const theme = useTheme()
+  const styles = createStyles(theme)
   const { userProfile } = useUserProfile()
   const [showDropdown, setShowDropdown] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
@@ -71,103 +80,131 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler }) => {
   }), [dropdownPosition])
 
   return (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <View>
-          <Text style={styles.userName}>{userProfile.name}</Text>
-          <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
-        </View>
-
-        <View style={styles.menuContainer}>
-          <View ref={iconRef} collapsable={false}>
-            <TouchableOpacity
-              onPress={handleToggleDropdown}
-              style={styles.iconContainer}
+    <>
+      <View style={styles.card}>
+        {showHeader && <View style={styles.cardHeader}>
+          <View>
+            <Text style={styles.userName}>{userProfile.name}</Text>
+            <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
+          </View>
+          <View style={styles.menuContainer}>
+            <View ref={iconRef} collapsable={false}>
+              <TouchableOpacity
+                onPress={handleToggleDropdown}
+                style={styles.iconContainer}
+              >
+                <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.grey} />
+              </TouchableOpacity>
+            </View>
+            <Modal
+              visible={showDropdown}
+              transparent={true}
+              animationType="none"
+              onRequestClose={handleCloseDropdown}
             >
-              <Ionicons name="ellipsis-vertical" size={20} color="gray" />
-            </TouchableOpacity>
-          </View>
-
-          <Modal
-            visible={showDropdown}
-            transparent={true}
-            animationType="none"
-            onRequestClose={handleCloseDropdown}
-          >
-            <TouchableWithoutFeedback onPress={handleCloseDropdown}>
-              <View style={styles.modalOverlay}>
-                <TouchableWithoutFeedback>
-                  <View style={getDropdownStyle()}>
-                    <TouchableOpacity
-                      onPress={handleUpdate}
-                      style={styles.dropdownItem}
-                    >
-                      <Text style={styles.dropdownText}>Update</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={handleCloseDropdown}
-                      style={styles.dropdownItem}
-                    >
-                      <Text style={styles.dropdownText}>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
-                </TouchableWithoutFeedback>
-              </View>
-            </TouchableWithoutFeedback>
-          </Modal>
-        </View>
-      </View>
-
-      <View style={styles.bloodInfoWrapper}>
-        <View style={styles.bloodInfo}>
-          <View style={styles.bloodRow}>
-            <Ionicons name="water" size={20} color="red" />
-            <View style={styles.bloodText}>
-              <Text style={styles.lookingForText}>Looking for</Text>
-              <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} blood</Text>
-            </View>
-          </View>
-          {post.urgencyLevel === 'urgent' && (
-            <View style={styles.urgentBadge}>
-              <Ionicons name="warning-outline" size={14} color="#212121" />
-              <Text style={styles.urgentText}>URGENT</Text>
-            </View>
-          )}
-        </View>
-
-        <View style={styles.locationTimeContainer}>
-          <View style={styles.locationTimeWrapper}>
-            <View style={styles.infoSection}>
-              <View style={styles.infoHeader}>
-                <Ionicons name="location-outline" size={16} color="gray" />
-                <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
-              </View>
-              <Text>{post.location}</Text>
-            </View>
-          </View>
-          <View style={[styles.locationTimeWrapper, styles.noBorder]}>
-            <View style={styles.infoSection}>
-              <View style={styles.infoHeader}>
-                <Ionicons name="time-outline" size={16} color="gray" />
-                <Text style={styles.donationInfoPlaceholder}>Time & Date</Text>
-              </View>
-              <Text>{formatDateTime(post.donationDateTime)}</Text>
-            </View>
+              <TouchableWithoutFeedback onPress={handleCloseDropdown}>
+                <View style={styles.modalOverlay}>
+                  <TouchableWithoutFeedback>
+                    <View style={getDropdownStyle()}>
+                      <TouchableOpacity
+                        onPress={handleUpdate}
+                        style={styles.dropdownItem}
+                      >
+                        <Text style={styles.dropdownText}>Update</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={handleCloseDropdown}
+                        style={styles.dropdownItem}
+                      >
+                        <Text style={styles.dropdownText}>Delete</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
           </View>
         </View>
-
-        {post.shortDescription !== '' &&
-          <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>Short Description of the Problem</Text>
-            <Text style={styles.description}>{post.shortDescription}</Text>
-          </View>
         }
+        <View style={styles.bloodInfoWrapper}>
+          <View style={styles.bloodInfo}>
+            <View style={styles.bloodRow}>
+              <Ionicons name="water" size={20} color={theme.colors.textPrimary} />
+              <View style={styles.bloodText}>
+                <Text style={styles.lookingForText}>Looking for</Text>
+                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} blood</Text>
+              </View>
+            </View>
+            {post.urgencyLevel === UrgencyLevel.URGENT && (
+              <View style={styles.urgentBadge}>
+                <Ionicons name="warning-outline" size={14} color={theme.colors.black} />
+                <Text style={styles.urgentText}>URGENT</Text>
+              </View>
+            )}
+          </View>
+          <View style={styles.locationTimeContainer}>
+            <View style={styles.locationTimeWrapper}>
+              <View style={styles.infoSection}>
+                <View style={styles.infoHeader}>
+                  <Ionicons name="location-outline" size={16} color={theme.colors.black} />
+                  <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
+                </View>
+                <Text>{post.location}</Text>
+              </View>
+            </View>
+            <View style={[styles.locationTimeWrapper, styles.noBorder]}>
+              <View style={styles.infoSection}>
+                <View style={styles.infoHeader}>
+                  <Ionicons name="time-outline" size={16} color={theme.colors.black} />
+                  <Text style={styles.donationInfoPlaceholder}>Time & Date</Text>
+                </View>
+                <Text>{formatDateTime(post.donationDateTime)}</Text>
+              </View>
+            </View>
+          </View>
+          {post.contactNumber !== '' && showContactNumber &&
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.donationInfoPlaceholder}>Contact Number</Text>
+              <Text style={styles.description}>{post.contactNumber}</Text>
+            </View>
+          }
+          {post.patientName !== '' && showPatientName &&
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.donationInfoPlaceholder}>Name of the Patient</Text>
+              <Text style={styles.description}>{post.patientName}</Text>
+            </View>
+          }
+          {post.shortDescription !== '' && showDescription &&
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.donationInfoPlaceholder}>Short Description of the Problem</Text>
+              <Text style={styles.description}>{post.shortDescription}</Text>
+            </View>
+          }
+          {post.transportationInfo !== '' && showTransportInfo &&
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.donationInfoPlaceholder}>Transportation Facility for the Donor</Text>
+              <Text style={styles.description}>{post.transportationInfo}</Text>
+            </View>
+          }
+        </View>
+        <Text>Post Update</Text>
+        <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
+          <Ionicons name='time-outline' size={20} color={theme.colors.black} />
+          <View>
+            <Text>Number of Donar</Text>
+            <Text>3 donar accepted your request</Text>
+          </View>
+        </View>
+        {showButton && <View style={styles.buttonContainer}>
+          <Button
+            text='View details'
+            buttonStyle={styles.buttonStyle}
+            textStyle={styles.textStyle}
+            onPress={() => { detailHandler !== undefined && detailHandler(post) }}
+          />
+        </View>}
       </View>
-
-      <View style={styles.buttonContainer}>
-        <Button text='View details' buttonStyle={styles.buttonStyle} textStyle={styles.textStyle} onPress={() => { }} />
-      </View>
-    </View>
+    </>
   )
 }
 
@@ -176,13 +213,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     backgroundColor: theme.colors.white,
     padding: 18,
     marginBottom: 10,
-    position: 'relative',
-    borderRadius: 8,
-    elevation: 2,
-    shadowColor: theme.colors.black,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2
+    position: 'relative'
   },
   cardHeader: {
     flexDirection: 'row',
@@ -195,7 +226,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 16
   },
   postTime: {
-    color: 'gray',
+    color: theme.colors.grey,
     fontSize: 12
   },
   menuContainer: {
@@ -211,7 +242,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   dropdownContainer: {
     position: 'absolute',
-    backgroundColor: 'white',
+    backgroundColor: theme.colors.white,
     borderRadius: 8,
     padding: 8,
     shadowColor: theme.colors.black,
@@ -226,7 +257,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     paddingHorizontal: 12
   },
   dropdownText: {
-    color: 'black',
+    color: theme.colors.black,
     fontSize: 14
   },
   bloodInfoWrapper: {
@@ -234,6 +265,13 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderColor: theme.colors.extraLightGray,
     borderWidth: 1,
     marginBottom: 8
+  },
+  postUpdate: {
+    flexDirection: 'row',
+    padding: 8,
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 8
   },
   bloodInfo: {
     padding: 8,
@@ -261,13 +299,13 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   urgentBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFD64D',
+    backgroundColor: theme.colors.goldenYellow,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12
   },
   urgentText: {
-    color: '#212121',
+    color: theme.colors.black,
     fontWeight: '600',
     fontSize: 12,
     marginLeft: 4
