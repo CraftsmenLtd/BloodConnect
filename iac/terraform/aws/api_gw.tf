@@ -32,6 +32,10 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   lifecycle {
     create_before_destroy = true
   }
+  
+  triggers = {
+    deployment_timestamp = timestamp()
+  }
 }
 
 resource "aws_iam_role" "api_gw_role" {
