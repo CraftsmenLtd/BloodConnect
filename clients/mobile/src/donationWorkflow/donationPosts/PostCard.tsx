@@ -33,7 +33,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
   const iconRef = useRef<View>(null)
   const { height: windowHeight } = Dimensions.get('window')
-  console.log('POST', post)
 
   const handleToggleDropdown = useCallback(() => {
     if (!showDropdown && (iconRef.current != null)) {

@@ -1,10 +1,10 @@
-import React, { useState, useEffect, ReactNode, createContext } from 'react'
+import React, { useState, useEffect, ReactNode, createContext, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
 import { NavigationContainerRef, ParamListBase } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { parseJsonData } from '../../utility/jsonParser'
 import { NotificationContextType } from './useNotificationContext'
-import { NotificationData, NotificationDataTypes } from './NotificationData'
+import { NotificationData } from './NotificationData'
 import { RootStackParamList } from '../navigation/navigationTypes'
 import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
@@ -14,7 +14,7 @@ const SCREEN_FOR_NOTIFICATION: Partial<Record<string, { screen: keyof RootStackP
   donorAcceptRequest: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
 }
 
-export const initialNotificationState: NotificationDataTypes = {
+export const initialNotificationState: NotificationContextType = {
   notificationData: null
 }
 
@@ -22,33 +22,38 @@ export const NotificationContext = createContext<NotificationContextType>(initia
 
 export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef: NavigationContainerRef<ParamListBase> }> = ({ children, navigationRef }) => {
   const [notificationData, setNotificationData] = useState<NotificationData | null>(null)
-  const [isReady, setIsReady] = useState(false)
+  const navigationStateUnsubscribe = useRef<(() => void) | null>(null)
 
   useEffect(() => {
-    if (!isReady) {
-      const unsubscribe = navigationRef.addListener('state', () => {
-        if (navigationRef.isReady() && !isReady) setIsReady(true)
-      })
-      return () => { unsubscribe() }
-    }
+    const unsubscribe = navigationRef.addListener('state', () => {
+      if (navigationRef.isReady()) {
+        void handleLastNotification()
+        unsubscribeNavigationState()
+      }
+    })
+    navigationStateUnsubscribe.current = unsubscribe
   }, [])
 
-  useEffect(() => {
-    if (!isReady) return
-
-    Notifications.getLastNotificationResponseAsync().then(async response => {
+  const handleLastNotification = async() => {
+    try {
+      const response = await Notifications.getLastNotificationResponseAsync()
       if (response === null || !isNotificationValid(response)) return
 
       const identifier = response.notification.request.identifier
       const lastNotificationIdentifier = await storageService.getItem(LOCAL_STORAGE_KEYS.LAST_PROCESSED_NOTIFICATION_KEY)
       if (lastNotificationIdentifier === identifier) return
-
       void storageService.storeItem(LOCAL_STORAGE_KEYS.LAST_PROCESSED_NOTIFICATION_KEY, identifier)
       const data = parseJsonData(response.notification.request.content.data.payload)
       setNotificationData(data as NotificationData)
       handleNotificationNavigation(response)
-    }).catch(() => { })
+    } catch {}
+  }
 
+  const unsubscribeNavigationState = () => {
+    navigationStateUnsubscribe.current !== null && navigationStateUnsubscribe.current()
+  }
+
+  useEffect(() => {
     const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
       if (isNotificationValid(response)) {
         const data = parseJsonData(response.notification.request.content.data.payload)
@@ -58,7 +63,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
     })
 
     return () => { responseListener.remove() }
-  }, [navigationRef, isReady])
+  }, [])
 
   const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => {
     return (
