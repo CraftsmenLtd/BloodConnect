@@ -1,20 +1,16 @@
 import React, { useState, useEffect, ReactNode } from 'react'
 import * as Notifications from 'expo-notifications'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { parseJsonData } from '../../utility/jsonParser'
 import { NotificationContext } from './NotificationContext'
 import { useNavigationReady } from './useNavigationReady'
 import { NotificationData } from './NotificationData'
-
-type RootStackParamList = {
-  Home: undefined;
-  ResponseDonationRequest: { notificationData: NotificationData };
-}
+import { RequestPreviewScreenNavigationProp } from '../navigation/navigationTypes'
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [notificationData, setNotificationData] = useState<NotificationData | null>(null)
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const navigation = useNavigation<RequestPreviewScreenNavigationProp>()
   const waitForNavigationReady = useNavigationReady(navigation)
 
   useEffect(() => {

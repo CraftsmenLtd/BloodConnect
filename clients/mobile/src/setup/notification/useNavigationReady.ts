@@ -1,6 +1,6 @@
-import { NavigationProp } from '@react-navigation/native'
+import { RequestPreviewScreenNavigationProp } from '../navigation/navigationTypes'
 
-export const useNavigationReady = (navigation: NavigationProp<any>) => {
+export const useNavigationReady = (navigation: RequestPreviewScreenNavigationProp) => {
   return async(): Promise<void> => {
     let attempts = 0
     while (attempts < 10) {

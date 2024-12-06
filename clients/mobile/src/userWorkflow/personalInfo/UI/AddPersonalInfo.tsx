@@ -2,7 +2,7 @@ import React from 'react'
 import Constants from 'expo-constants'
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import Dropdown from '../../../components/inputElement/Dropdown'
-import TermsAndPrivacy from '../../../components/inputElement/Checkbox'
+import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
 import { useAddPersonalInfo } from '../hooks/useAddPersonalInfo'
@@ -172,7 +172,7 @@ const AddPersonalInfo = () => {
 
           <View
             style={styles.fieldSpacing}>
-            <TermsAndPrivacy
+            <Checkbox
               name='acceptPolicy'
               isChecked={personalInfo.acceptPolicy}
               checkboxColor={theme.colors.primary}
@@ -184,7 +184,7 @@ const AddPersonalInfo = () => {
                 and{' '}
                 <Text style={styles.link}>Privacy Policy</Text>
               </Text>
-            </TermsAndPrivacy>
+            </Checkbox>
           </View>
 
           {errorMessage !== '' && (
