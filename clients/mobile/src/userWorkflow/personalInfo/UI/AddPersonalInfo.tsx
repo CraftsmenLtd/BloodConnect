@@ -30,7 +30,8 @@ const AddPersonalInfo = () => {
     loading,
     errorMessage,
     isVisible,
-    setIsVisible
+    setIsVisible,
+    isSSO
   } = useAddPersonalInfo()
 
   return (
@@ -52,6 +53,21 @@ const AddPersonalInfo = () => {
               error={errors.bloodGroup}
             />
           </View>
+
+          {(Boolean(isSSO)) && (
+            <View>
+              <Input
+                name="phoneNumber"
+                label="Phone Number"
+                value={personalInfo.phoneNumber}
+                onChangeText={handleInputChange}
+                placeholder="01XXXXXXXXX"
+                keyboardType="phone-pad"
+                isRequired={true}
+                error={errors.phoneNumber}
+              />
+            </View>
+          )}
 
           <View style={styles.fieldSpacing}>
             <Dropdown

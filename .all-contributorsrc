@@ -158,10 +158,36 @@
       ]
     },
     {
+      "login": "Rezwanul-Haque",
+      "name": "Rezwanul Haque",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22642254?v=4",
+      "profile": "https://github.com/Rezwanul-Haque",
+      "contributions": [
+        "code",
+        "bug",
+        "research",
+        "doc",
+        "ideas",
+        "review",
+        "infra",
+        "test",
+        "question"
+      ]
+    },
+    {
       "login": "TahsinHani",
       "name": "Tahsin Hani",
       "avatar_url": "https://avatars.githubusercontent.com/u/65284841?v=4",
       "profile": "https://github.com/TahsinHani",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "shaownsetu",
+      "name": "Shaown Setu",
+      "avatar_url": "https://scontent.fdac175-1.fna.fbcdn.net/v/t39.30808-6/242401412_4628238340562363_6264251376412286933_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=K_7w0GnUp2cQ7kNvgHrEgHe&_nc_zt=23&_nc_ht=scontent.fdac175-1.fna&_nc_gid=A8Fc8e0WgJ6hbZjNPFi_-Eo&oh=00_AYAtNYQbn6NonjqGNsEJkSAzc9EEw92kWTMyWM6Wi1KhaA&oe=67567520",
+      "profile": "https://www.linkedin.com/in/shaownsetu",
       "contributions": [
         "design"
       ]
