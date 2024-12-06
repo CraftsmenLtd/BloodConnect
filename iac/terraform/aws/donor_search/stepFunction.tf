@@ -98,11 +98,11 @@ resource "aws_sfn_state_machine" "donor_search_state_machine" {
   role_arn = aws_iam_role.step_function_role.arn
 
   definition = templatefile("${path.module}/donor_search.json", {
-    DONOR_CALCULATE_LAMBDA_ARN        = module.step_function_lambda["calculate-donors-to-notify"].lambda_arn
-    QUERY_ELIGIBLE_DONORS_LAMBDA_ARN  = module.step_function_lambda["query-eligible-donors"].lambda_arn
-    DYNAMODB_TABLE_NAME               = split("/", var.dynamodb_table_arn)[1]
-    DONOR_SEARCH_RETRY_QUEUE_URL      = aws_sqs_queue.donor_search_retry_queue.url
-    NOTIFICATION_QUEUE_URL            = var.push_notification_queue.url
+    DONOR_CALCULATE_LAMBDA_ARN       = module.step_function_lambda["calculate-donors-to-notify"].lambda_arn
+    QUERY_ELIGIBLE_DONORS_LAMBDA_ARN = module.step_function_lambda["query-eligible-donors"].lambda_arn
+    DYNAMODB_TABLE_NAME              = split("/", var.dynamodb_table_arn)[1]
+    DONOR_SEARCH_RETRY_QUEUE_URL     = aws_sqs_queue.donor_search_retry_queue.url
+    NOTIFICATION_QUEUE_URL           = var.push_notification_queue.url
   })
 
   logging_configuration {
