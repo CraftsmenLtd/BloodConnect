@@ -1,9 +1,11 @@
-import { Text, StyleSheet } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 import { Input } from '../../../components/inputElement/Input'
 import { Button } from '../../../components/button/Button'
 import { SocialButton } from '../../../components/button/SocialButton'
 import { Divider } from '../../../components/button/Divider'
 import LinkWithText from '../../../components/button/LinkWithText'
+import Warning from '../../../components/warning'
+import { WARNINGS } from '../../../setup/constant/consts'
 import { useRegister } from '../hooks/useRegister'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
@@ -51,6 +53,10 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
         placeholder="01XXXXXXXXX"
         keyboardType="phone-pad"
         error={errors.phoneNumber}
+      />
+      <Warning
+        text={WARNINGS.PHONE_NUMBER_VISIBLE}
+        showWarning={registerCredential.phoneNumber !== ''}
       />
 
       <Button text="Continue" onPress={handleRegister} disabled={isButtonDisabled} />

@@ -1,86 +1,96 @@
-import React, { useState, useEffect, ReactNode } from 'react'
+import React, { useState, useEffect, ReactNode, createContext, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { NavigationContainerRef, ParamListBase } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { parseJsonData } from '../../utility/jsonParser'
-import { NotificationContext } from './NotificationContext'
-import { useNavigationReady } from './useNavigationReady'
+import { NotificationContextType } from './useNotificationContext'
 import { NotificationData } from './NotificationData'
+import { RootStackParamList } from '../navigation/navigationTypes'
+import storageService from '../../utility/storageService'
+import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
 
-type RootStackParamList = {
-  Home: undefined;
-  ResponseDonationRequest: { notificationData: NotificationData };
+const SCREEN_FOR_NOTIFICATION: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
+  bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW },
+  donorAcceptRequest: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
 }
 
-export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const initialNotificationState: NotificationContextType = {
+  notificationData: null
+}
+
+export const NotificationContext = createContext<NotificationContextType>(initialNotificationState)
+
+export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef: NavigationContainerRef<ParamListBase> }> = ({ children, navigationRef }) => {
   const [notificationData, setNotificationData] = useState<NotificationData | null>(null)
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const waitForNavigationReady = useNavigationReady(navigation)
+  const navigationStateUnsubscribe = useRef<(() => void) | null>(null)
 
   useEffect(() => {
-    let isMounted = true
-
-    const isNotificationValid = (
-      response: Notifications.NotificationResponse | null,
-      isMounted: boolean
-    ): boolean => {
-      return (
-        Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0 &&
-        response?.notification.request.identifier !== null &&
-        isMounted
-      )
-    }
-
-    const checkInitialNotification = async() => {
-      try {
-        const response = await Notifications.getLastNotificationResponseAsync()
-
-        if (isNotificationValid(response, isMounted)) {
-          await waitForNavigationReady()
-          const data = parseJsonData<NotificationData>(response?.notification.request.content.data.payload)
-
-          if (data !== null) {
-            setNotificationData(data)
-            navigation.navigate(SCREENS.BLOOD_REQUEST_PREVIEW, { notificationData: data })
-          } else {
-            throw new Error('Parsed notification data is null or invalid.')
-          }
-        } else {
-          throw new Error('Invalid or incomplete notification response.')
-        }
-      } catch (error) {
-        throw new Error(
-          `Error processing notification: ${
-            error instanceof Error ? error.message : 'An unexpected error occurred'
-          }`
-        )
-      }
-    }
-
-    void checkInitialNotification()
-
-    const foregroundListener = Notifications.addNotificationReceivedListener(notification => {
-      const data = parseJsonData<NotificationData>(notification.request.content.data.payload)
-      if (data !== null) setNotificationData(data)
-    })
-
-    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
-      const data = parseJsonData<NotificationData>(response.notification.request.content.data.payload)
-      if (isNotificationValid(response, isMounted) && data !== null) {
-        setNotificationData(data)
-        navigation.navigate(SCREENS.BLOOD_REQUEST_PREVIEW, { notificationData: data })
+    const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
+      if (isNotificationValid(response)) {
+        const data = parseJsonData(response.notification.request.content.data.payload)
+        setNotificationData(data as NotificationData)
+        handleNotificationNavigation(response)
       }
     })
 
-    return () => {
-      isMounted = false
-      foregroundListener.remove()
-      responseListener.remove()
+    const unsubscribe = navigationRef.addListener('state', () => {
+      if (navigationRef.isReady()) {
+        void handleLastNotification()
+        unsubscribeNavigationState()
+      }
+    })
+
+    navigationStateUnsubscribe.current = unsubscribe
+    return () => { responseListener.remove() }
+  }, [])
+
+  const handleLastNotification = async() => {
+    try {
+      const response = await Notifications.getLastNotificationResponseAsync()
+      if (response === null || !isNotificationValid(response)) return
+
+      const identifier = response.notification.request.identifier
+      const lastNotificationIdentifier = await storageService.getItem(LOCAL_STORAGE_KEYS.LAST_PROCESSED_NOTIFICATION_KEY)
+      if (lastNotificationIdentifier === identifier) return
+      void storageService.storeItem(LOCAL_STORAGE_KEYS.LAST_PROCESSED_NOTIFICATION_KEY, identifier)
+      const data = parseJsonData(response.notification.request.content.data.payload)
+      setNotificationData(data as NotificationData)
+      handleNotificationNavigation(response)
+    } catch {}
+  }
+
+  const unsubscribeNavigationState = () => {
+    navigationStateUnsubscribe.current !== null && navigationStateUnsubscribe.current()
+  }
+
+  const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => {
+    return (
+      Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0 &&
+      response?.notification.request.identifier !== null
+    )
+  }
+
+  const handleNotificationNavigation = (response: Notifications.NotificationResponse | null) => {
+    if (response === null) return
+
+    const { type } = response.notification.request.content.data
+    const mapping = SCREEN_FOR_NOTIFICATION[type]
+
+    if (mapping !== undefined) {
+      const { screen, getParams } = mapping
+      const params = getParams !== undefined
+        ? getParams(parseJsonData<Record<string, unknown>>(response.notification.request.content.data.payload))
+        : undefined
+      if (navigationRef.isReady()) {
+        navigationRef.navigate(screen, params as any)
+      }
+    } else {
+      navigationRef.navigate(SCREENS.POSTS)
     }
-  }, [navigation])
+  }
 
   return (
-    <NotificationContext.Provider value={{ notificationData, setNotificationData }}>
+    <NotificationContext.Provider value={{ notificationData }}>
       {children}
     </NotificationContext.Provider>
   )

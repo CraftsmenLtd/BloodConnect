@@ -3,9 +3,9 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { routes } from './routes'
 import { SCREENS } from '../constant/screens'
 import { useAuth } from '../../authentication/context/useAuth'
-import { View, ActivityIndicator } from 'react-native'
+import Loader from '../../components/loaders/loader'
+import { View } from 'react-native'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
-import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
 
 const Stack = createStackNavigator()
 
@@ -22,7 +22,7 @@ export default function Navigator() {
   if (loading || (isAuthenticated && profileLoading)) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+        <Loader size="large" />
       </View>
     )
   }
@@ -55,11 +55,6 @@ export default function Navigator() {
       {filteredRoutes.map(({ name, component, options }) => (
         <Stack.Screen key={name} name={name} component={component} options={options} />
       ))}
-      {/* <Stack.Screen
-        name={SCREENS.BLOOD_REQUEST_PREVIEW}
-        component={ResponseDonationRequest}
-        options={{ headerTitle: 'Blood Request' }}
-      /> */}
     </Stack.Navigator>
   )
 }

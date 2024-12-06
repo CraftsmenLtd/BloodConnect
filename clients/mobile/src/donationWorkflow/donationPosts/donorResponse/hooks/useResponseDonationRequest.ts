@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useFetchClient } from '../../../../setup/clients/useFetchClient'
-import { useNavigation, NavigationProp } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { SCREENS } from '../../../../setup/constant/screens'
 import { useNotificationContext } from '../../../../setup/notification/useNotificationContext'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
+import { PostScreenNavigationProp } from '../../../../setup/navigation/navigationTypes'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -28,7 +29,7 @@ interface FetchResponse {
 }
 
 export const useResponseDonationRequest = (): useResponseDonationRequestReturnType => {
-  const navigation = useNavigation<NavigationProp<any>>()
+  const navigation = useNavigation<PostScreenNavigationProp>()
   const [isRequestAccepted, setIsRequestAccepted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -46,11 +47,11 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
 
     setIsLoading(true)
     setError(null)
-
+    const isString = (value: unknown): value is string => typeof value === 'string'
     const requestPayload: AcceptRequestParams = {
-      requestPostId: bloodRequest.requestPostId,
-      seekerId: bloodRequest.seekerId,
-      createdAt: bloodRequest.createdAt,
+      requestPostId: isString(bloodRequest.requestPostId) ? bloodRequest.requestPostId : '',
+      seekerId: isString(bloodRequest.seekerId) ? bloodRequest.seekerId : '',
+      createdAt: isString(bloodRequest.createdAt) ? bloodRequest.createdAt : '',
       acceptanceTime: new Date().toISOString()
     }
     try {

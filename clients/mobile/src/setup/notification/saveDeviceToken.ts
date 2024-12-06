@@ -1,11 +1,12 @@
 import { Platform } from 'react-native'
+import { HttpClient } from '../clients/HttpClient'
 import authService from '../../authentication/services/authService'
 import StorageService from '../../utility/storageService'
 import { TOKEN } from '../constant/token'
 
 export const saveDeviceTokenOnSNS = async(
   deviceToken: string,
-  fetchClient: any
+  fetchClient: HttpClient
 ): Promise<void> => {
   try {
     const loggedInUser = await authService.currentLoggedInUser()
@@ -20,16 +21,13 @@ export const saveDeviceTokenOnSNS = async(
     })
 
     if (response.status !== 200) {
-      const statusText = typeof response.statusText === 'string' ? response.statusText : 'Unknown error'
       throw new Error(
-        `Failed to register device. Server responded with status: ${response.status} ${statusText}`
+        'Failed to register your device. Please login again'
       )
     }
   } catch (error) {
     throw new Error(
-      `Failed to register device token. ${
-        error instanceof Error ? error.message : 'An unexpected error occurred'
-      }`
+      'An unexpected error occurred'
     )
   }
 }

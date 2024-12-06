@@ -9,6 +9,10 @@ import BottomNavigation from './BottomNavigation'
 import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPassword'
 import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
+import DonorResponse from '../../donationWorkflow/donorResponse/DonorResponse'
+import { Account } from '../../userWorkflow/account/UI/Account'
+import Profile from '../../userWorkflow/Profile'
+
 export const routes = [
   {
     name: SCREENS.WELCOME,
@@ -25,7 +29,7 @@ export const routes = [
   {
     name: SCREENS.OTP,
     component: OTP,
-    options: { headerShown: true, headerTitle: '' },
+    options: { headerShown: true },
     protected: false
   },
   {
@@ -59,6 +63,12 @@ export const routes = [
     protected: true
   },
   {
+    name: SCREENS.ACCOUNT,
+    component: Account,
+    options: { headerShown: true, headerTitle: 'Account' },
+    protected: true
+  },
+  {
     name: SCREENS.ADD_PERSONAL_INFO,
     component: AddPersonalInfo,
     options: { headerShown: true, headerTitle: 'Add Personal Info' },
@@ -68,6 +78,18 @@ export const routes = [
     name: SCREENS.BLOOD_REQUEST_PREVIEW,
     component: ResponseDonationRequest,
     options: { headerShown: true, headerTitle: 'Blood Request' },
+    protected: true
+  },
+  {
+    name: SCREENS.DONAR_RESPONSE,
+    component: DonorResponse,
+    options: { headerShown: true },
+    protected: true
+  },
+  {
+    name: SCREENS.PROFILE,
+    component: Profile,
+    options: { headerShown: true, headerTitle: 'Account' },
     protected: true
   }
 ]

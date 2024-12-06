@@ -1,21 +1,23 @@
-import { FlatList, Text, TouchableOpacity, View, StyleSheet, Image, ActivityIndicator } from 'react-native'
+import { FlatList, Text, TouchableOpacity, View, StyleSheet, Image } from 'react-native'
 import { PostCard } from './PostCard'
 import { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { useDonationPosts } from './useDonationPosts'
+import { COMMON_URLS } from '../../setup/constant/commonUrls'
+import Loader from '../../components/loaders/loader'
 
 const DonationPosts = () => {
   const styles = createStyles(useTheme())
-  const { createPost, updatePost, donationPosts, loading, errorMessage } = useDonationPosts()
+  const { createPost, updatePost, donationPosts, loading, errorMessage, viewDetailsHandler } = useDonationPosts()
   if (loading === true) {
-    return <ActivityIndicator size="large" color="red" style={styles.loadingIndicator} />
+    return <Loader size='large' />
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerLeftContent}>
-          <Image source={{ uri: 'https://avatar.iran.liara.run/public/boy?username=Ash' }} style={styles.profileImage} />
+          <Image source={{ uri: COMMON_URLS.PROFILE_AVATAR }} style={styles.profileImage} />
           <Text style={styles.bloodNeeed}>Blood needed?</Text>
         </View>
         <TouchableOpacity style={styles.createPostButton} onPress={createPost}>
@@ -30,7 +32,7 @@ const DonationPosts = () => {
         : (
           <FlatList
             data={donationPosts}
-            renderItem={({ item }) => <PostCard post={item} updateHandler={updatePost} />}
+            renderItem={({ item }) => <PostCard post={item} updateHandler={updatePost} detailHandler={viewDetailsHandler} />}
             keyExtractor={item => item.requestPostId}
             contentContainerStyle={styles.postList}
           />
@@ -82,10 +84,6 @@ const createStyles = (theme: Theme) => {
     },
     postList: {
       paddingBottom: 10
-    },
-    loadingIndicator: {
-      marginTop: 20,
-      color: theme.colors.primary
     },
     noDataText: {
       textAlign: 'center',
