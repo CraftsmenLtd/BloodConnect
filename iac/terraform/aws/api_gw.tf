@@ -34,7 +34,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   }
   
   triggers = {
-    deployment_timestamp = timestamp()
+    directory_md5 = sha1(join("", [for f in fileset(var.openapi_directory, "**") : filesha1("${var.openapi_directory}/${f}")]))
   }
 }
 
