@@ -1,0 +1,44 @@
+{
+  "get": {
+    "operationId": "GetBloodRequestResponses",
+    "description": "Retrieve blood request responses",
+    "tags": [
+      "bloodconnect-donation"
+    ],
+    "responses": {
+      "200": {
+        "description": "200 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {}
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/donations/get-responses.json"
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
+  },
+  "options": {
+    "$ref": "./../cors-options.json"
+  }
+}
