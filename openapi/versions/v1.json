@@ -2,14 +2,6 @@
   "openapi": "3.0.1",
   "tags": [
     {
-      "name": "bloodconnect",
-      "description": "API Endpoints for BloodConnect"
-    },
-    {
-      "name": "bloodconnect-auth",
-      "description": "Auth module of BloodConnect"
-    },
-    {
       "name": "bloodconnect-user",
       "description": "User module of BloodConnect"
     },
@@ -60,6 +52,9 @@
     },
     "/donations/accept": {
       "$ref": "./../paths/donations/accept.json"
+    },
+    "/donations/posts/{city}": {
+      "$ref": "./../paths/donations/posts.json"
     },
     "/notification/register": {
       "$ref": "./../paths/notification/register.json"
