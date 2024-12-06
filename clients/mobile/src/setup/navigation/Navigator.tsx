@@ -3,7 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { routes } from './routes'
 import { SCREENS } from '../constant/screens'
 import { useAuth } from '../../authentication/context/useAuth'
-import { View, ActivityIndicator } from 'react-native'
+import Loader from '../../components/loaders/loader'
+import { View } from 'react-native'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 
 const Stack = createStackNavigator()
@@ -21,7 +22,7 @@ export default function Navigator() {
   if (loading || (isAuthenticated && profileLoading)) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+        <Loader size="large" />
       </View>
     )
   }
