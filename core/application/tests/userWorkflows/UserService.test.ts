@@ -33,7 +33,7 @@ describe('UserService Tests', () => {
   const mockUserAttributes = {
     email: 'ebrahim@example.com',
     name: 'Ebrahim',
-    phone_number: '1234567890',
+    phoneNumbers: ['+8801834567890', '+8801755567822'],
     createdAt: '2023-09-16T12:00:00.000Z'
   }
 
@@ -44,7 +44,7 @@ describe('UserService Tests', () => {
       items: [],
       lastEvaluatedKey: undefined
     })
-    process.env.AFTER_DONATION_UNAVAILABLE_PERIOD = '4'
+    process.env.MIN_MONTHS_BETWEEN_DONATIONS = '4'
   })
 
   test('should create a new user successfully', async() => {

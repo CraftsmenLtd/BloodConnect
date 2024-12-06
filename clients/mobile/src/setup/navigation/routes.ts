@@ -12,6 +12,8 @@ import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorR
 import Detail from '../../userWorkflow/Detail'
 import DonarProfile from '../../userWorkflow/DonarProfile'
 import DonorResponse from '../../donationWorkflow/donorResponse/DonorResponse'
+import { Account } from '../../userWorkflow/account/UI/Account'
+import Profile from '../../userWorkflow/Profile'
 
 export const routes = [
   {
@@ -29,7 +31,7 @@ export const routes = [
   {
     name: SCREENS.OTP,
     component: OTP,
-    options: { headerShown: true, headerTitle: '' },
+    options: { headerShown: true },
     protected: false
   },
   {
@@ -63,6 +65,12 @@ export const routes = [
     protected: true
   },
   {
+    name: SCREENS.ACCOUNT,
+    component: Account,
+    options: { headerShown: true, headerTitle: 'Account' },
+    protected: true
+  },
+  {
     name: SCREENS.ADD_PERSONAL_INFO,
     component: AddPersonalInfo,
     options: { headerShown: true, headerTitle: 'Add Personal Info' },
@@ -89,7 +97,13 @@ export const routes = [
   {
     name: SCREENS.DONAR_RESPONSE,
     component: DonorResponse,
-    options: { headerShown: true, headerTitle: '' },
+    options: { headerShown: true },
+    protected: true
+  },
+  {
+    name: SCREENS.PROFILE,
+    component: Profile,
+    options: { headerShown: true, headerTitle: 'Account' },
     protected: true
   }
 ]

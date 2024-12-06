@@ -7,7 +7,7 @@ import { createDonation, DonationResponse, updateDonation } from '../donationSer
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
 import { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
-import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatte'
+import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
@@ -17,7 +17,7 @@ type CredentialKeys = keyof BloodRequestData
 
 export interface BloodRequestData {
   urgencyLevel: string;
-  neededBloodGroup: string;
+  requestedBloodGroup: string;
   bloodQuantity: string;
   donationDateTime: Date | string;
   location: string;
@@ -28,12 +28,12 @@ export interface BloodRequestData {
   city: string;
 }
 
-interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'shortDescription' | 'transportationInfo'> {}
+interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'shortDescription' | 'transportationInfo'> { }
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
   city: [validateRequired],
   urgencyLevel: [validateRequired],
-  neededBloodGroup: [validateRequired],
+  requestedBloodGroup: [validateRequired],
   bloodQuantity: [validateRequired],
   donationDateTime: [validateRequired, validateDateTime],
   location: [validateRequired],
@@ -47,7 +47,7 @@ export const useBloodRequest = (): any => {
   const { data, isUpdating } = route.params
   const [bloodRequestData, setBloodRequestData] = useState<BloodRequestData>({
     urgencyLevel: 'regular',
-    neededBloodGroup: '',
+    requestedBloodGroup: '',
     bloodQuantity: '',
     donationDateTime: data !== null ? new Date(data.donationDateTime) : new Date(),
     location: '',
@@ -142,7 +142,7 @@ export const useBloodRequest = (): any => {
     if ('acceptedDonors' in bloodRequestData) {
       delete bloodRequestData.acceptedDonors
     }
-    const { bloodQuantity, city, location, neededBloodGroup, ...rest } = bloodRequestData
+    const { bloodQuantity, city, location, requestedBloodGroup, ...rest } = bloodRequestData
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
       contactNumber: formatPhoneNumber(rest.contactNumber),

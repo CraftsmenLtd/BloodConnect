@@ -6,45 +6,55 @@ import Constants from 'expo-constants'
 const { projectId } = Constants.expoConfig?.extra?.eas ?? {}
 
 export const registerForPushNotificationsAsync = async(): Promise<string | undefined> => {
-  let token: string | undefined
-
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C'
-    })
+  if (!Device.isDevice) {
+    throw new Error('Push notifications require a physical device.')
   }
 
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync()
-    let finalStatus = existingStatus
-
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync()
-      finalStatus = status
+  try {
+    if (Platform.OS === 'android') {
+      await setupAndroidNotificationChannel()
     }
 
-    if (finalStatus !== 'granted') {
-      throw new Error('Failed to get push notification permissions.')
+    const notificationPermission = await getNotificationPermissions()
+
+    if (notificationPermission !== 'granted') {
+      throw new Error('Push notification permissions not granted.')
     }
 
-    try {
-      if (projectId === null) throw new Error('Project ID not found.')
+    return await getDevicePushToken()
+  } catch (error) {
+    throw new Error('Failed device registration. Try again')
+  }
+}
 
-      token = (await Notifications.getDevicePushTokenAsync()).data
+const setupAndroidNotificationChannel = async(): Promise<void> => {
+  await Notifications.setNotificationChannelAsync('default', {
+    name: 'default',
+    importance: Notifications.AndroidImportance.MAX,
+    vibrationPattern: [0, 250, 250, 250],
+    lightColor: '#FF231F7C'
+  })
+}
 
-      if (token === null) throw new Error('Failed to retrieve device push token.')
-    } catch (error) {
-      throw new Error(
-        `Failed to get push token: ${
-          error instanceof Error ? error.message : 'An unexpected error occurred'
-        }`
-      )
-    }
-  } else {
-    throw new Error('Push notifications require a physical device.')
+const getNotificationPermissions = async(): Promise<Notifications.PermissionStatus> => {
+  const { status: existingStatus } = await Notifications.getPermissionsAsync()
+
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync()
+    return status
+  }
+
+  return existingStatus
+}
+
+const getDevicePushToken = async(): Promise<string> => {
+  if (projectId === null) {
+    throw new Error('Expo project ID not found.')
+  }
+
+  const token = (await Notifications.getDevicePushTokenAsync()).data
+  if (token === null) {
+    throw new Error('Failed to retrieve device push token.')
   }
 
   return token

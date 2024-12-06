@@ -1,22 +1,26 @@
-import { Text, StyleSheet } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 import { Input } from '../../../components/inputElement/Input'
 import { Button } from '../../../components/button/Button'
 import { SocialButton } from '../../../components/button/SocialButton'
 import { Divider } from '../../../components/button/Divider'
 import LinkWithText from '../../../components/button/LinkWithText'
+import Warning from '../../../components/warning'
+import { WARNINGS } from '../../../setup/constant/consts'
 import { useRegister } from '../hooks/useRegister'
 import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import AuthLayout from '../../AuthLayout'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
+import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
+import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
 
 interface RegisterScreenProps {
   navigation: RegisterScreenNavigationProp;
 }
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
-  const { errors, registerCredential, handleInputChange, handleRegister, isButtonDisabled, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useRegister()
+  const { errors, socialLoading, registerCredential, handleInputChange, handleRegister, isButtonDisabled, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useRegister()
   const styles = createStyles(useTheme())
 
   return (
@@ -50,6 +54,10 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
         keyboardType="phone-pad"
         error={errors.phoneNumber}
       />
+      <Warning
+        text={WARNINGS.PHONE_NUMBER_VISIBLE}
+        showWarning={registerCredential.phoneNumber !== ''}
+      />
 
       <Button text="Continue" onPress={handleRegister} disabled={isButtonDisabled} />
 
@@ -58,15 +66,17 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
       {socialLoginError !== '' && <Text style={styles.error}>{socialLoginError}</Text>}
 
       <SocialButton
-        text="Continue with Google"
+        text={SOCIAL_BUTTON_UI.GOOGLE.text}
         onPress={handleGoogleSignIn}
-        icon={require('../../../../assets/google-icon.png')}
+        loading={socialLoading === SOCIAL_TYPES.GOOGLE}
+        icon={SOCIAL_BUTTON_UI.GOOGLE.icon}
       />
 
       <SocialButton
-        text="Continue via Facebook"
+        text={SOCIAL_BUTTON_UI.FACEBOOK.text}
         onPress={handleFacebookSignIn}
-        icon={require('../../../../assets/facebook-icon.png')}
+        loading={socialLoading === SOCIAL_TYPES.FACEBOOK}
+        icon={SOCIAL_BUTTON_UI.FACEBOOK.icon}
       />
 
       <LinkWithText

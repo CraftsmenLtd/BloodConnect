@@ -1,8 +1,29 @@
-import { confirmSignUp, signUp, signIn, signInWithRedirect, signOut, decodeJWT, AuthSession, fetchAuthSession, resetPassword, confirmResetPassword, ResetPasswordOutput, resendSignUpCode } from 'aws-amplify/auth'
 import { JwtPayload } from '@aws-amplify/core/internals/utils'
+import {
+  AuthSession,
+  confirmResetPassword,
+  confirmSignUp,
+  decodeJWT,
+  fetchAuthSession,
+  resendSignUpCode,
+  resetPassword,
+  ResetPasswordOutput,
+  signIn,
+  signInWithRedirect,
+  signOut,
+  signUp
+} from 'aws-amplify/auth'
+import { TOKEN } from '../../setup/constant/token'
 import StorageService from '../../utility/storageService'
 import { handleAuthError } from './authErrorHandler'
-import { TOKEN } from '../../setup/constant/token'
+
+export interface User {
+  email: string;
+  userId: string;
+  phoneNumber: string;
+  name: string;
+}
+
 export interface UserRegistrationCredentials {
   name: string;
   email: string;
@@ -112,6 +133,20 @@ export const fetchSession = async(): Promise<FetchSessionResponse> => {
   }
 }
 
+export const currentLoggedInUser = async(): Promise<User> => {
+  const session: AuthSession = await fetchAuthSession()
+  if (session?.tokens === undefined) {
+    throw new Error('Session or tokens are undefined')
+  }
+
+  return {
+    email: session.tokens.idToken?.payload.email as string,
+    userId: session.tokens.idToken?.payload['custom:userId'] as string,
+    phoneNumber: session.tokens.idToken?.payload.phone_number as string,
+    name: session.tokens.idToken?.payload.name as string
+  } satisfies User
+}
+
 export const loginUser = async(email: string, password: string): Promise<boolean> => {
   try {
     const { isSignedIn } = await signIn({
@@ -127,21 +162,19 @@ export const loginUser = async(email: string, password: string): Promise<boolean
   }
 }
 
-export const googleLogin = async(): Promise<boolean> => {
+export const googleLogin = async(): Promise<void> => {
   try {
     await signInWithRedirect({ provider: 'Google' })
-    const session = await fetchSession()
-    return session.idToken.length > 0
+    await fetchSession()
   } catch (error) {
     throw new Error(`Error logging with google: ${error instanceof Error ? error.message : error}`)
   }
 }
 
-export const facebookLogin = async(): Promise<boolean> => {
+export const facebookLogin = async(): Promise<void> => {
   try {
     await signInWithRedirect({ provider: 'Facebook' })
-    const session = await fetchSession()
-    return session.idToken.length > 0
+    await fetchSession()
   } catch (error) {
     throw new Error(`Error logging with facebook: ${error instanceof Error ? error.message : error}`)
   }
@@ -196,5 +229,6 @@ export default {
   loginUser,
   logoutUser,
   fetchSession,
-  decodeAccessToken
+  decodeAccessToken,
+  currentLoggedInUser
 }

@@ -5,6 +5,8 @@ import { UserRegistrationCredentials } from '../../authentication/services/authS
 import { DonationScreenParams } from '../../donationWorkflow/types'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import { DonorResponseNotification } from '../../donationWorkflow/donorResponse/type'
+import { NotificationData } from '../notification/NotificationData'
+
 type FromScreen = SCREENS.SET_PASSWORD | SCREENS.FORGOT_PASSWORD
 
 export type RootStackParamList = {
@@ -20,14 +22,18 @@ export type RootStackParamList = {
   [SCREENS.DONATION_POSTS]: { data: DonationScreenParams | null; isUpdating: boolean };
   [SCREENS.ADD_PERSONAL_INFO]: undefined;
   [SCREENS.POSTS]: undefined;
-  [SCREENS.BLOOD_REQUEST_PREVIEW]: undefined;
+  // [SCREENS.BLOOD_REQUEST_PREVIEW]: undefined;
   [SCREENS.DETAILPOST]: { data: DonationData };
   [SCREENS.DONAR_PROFILE]: { donarId: string };
   [SCREENS.DONAR_RESPONSE]: { notificationData: DonorResponseNotification };
   [SCREENS.MY_ACTIVITY]: undefined;
+  [SCREENS.DONAR_RESPONSE]: { notificationData: DonorResponseNotification };
+  [SCREENS.BLOOD_REQUEST_PREVIEW]: { notificationData: NotificationData };
+  [SCREENS.ACCOUNT]: undefined;
 }
 
 export type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.WELCOME>
+export type PostScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.POSTS>
 export type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.REGISTER>
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.LOGIN>
 export type SetPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.SET_PASSWORD>
@@ -42,6 +48,8 @@ export type DonarProfileScreenNavigationProp = StackNavigationProp<RootStackPara
 export type MyActivityScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.MY_ACTIVITY>
 
 export type DonarResponseScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONAR_RESPONSE>
+export type AccountScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.ACCOUNT>
+
 export type OtpScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.OTP>
 export type AddPersonalInfoNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.ADD_PERSONAL_INFO>
 

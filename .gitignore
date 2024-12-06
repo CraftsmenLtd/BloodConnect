@@ -1,5 +1,6 @@
 # IDE
 .idea
+*~
 .vscode
 
 # Docs build
@@ -136,6 +137,7 @@ terraform.tfstate*
 localstack_providers_override.tf
 tf-apply.out
 tf-destroy.out
+errored.tfstate
 deployment/**/openapi.json
 
 # Temp builds

@@ -3,7 +3,7 @@ import { BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
 
 export interface BloodDonationAttributes {
   seekerId: string;
-  neededBloodGroup: BloodGroup;
+  requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   city: string;
@@ -41,6 +41,17 @@ export interface DonorRoutingAttributes {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
+  requestedBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyType;
+  city: string;
+  location: string;
+  geohash: string;
+  donationDateTime: string;
+  contactNumber: string;
+  patientName: string;
+  transportationInfo: string;
+  shortDescription: string;
 }
 
 export interface StepFunctionInput {
@@ -48,18 +59,18 @@ export interface StepFunctionInput {
   requestPostId: string;
   createdAt: string;
   donationDateTime: string;
-  neededBloodGroup: BloodGroup;
+  requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   geohash: string;
   city: string;
-  seekerName?: string;
-  patientName?: string;
-  location?: string;
-  contactNumber?: string;
-  transportationInfo?: string;
-  shortDescription?: string;
-  message?: string;
+  seekerName: string;
+  patientName: string;
+  location: string;
+  contactNumber: string;
+  transportationInfo: string;
+  shortDescription: string;
+  message: string;
   retryCount: number;
 }
 
@@ -76,6 +87,9 @@ export interface AcceptDonationRequestAttributes {
   createdAt: string;
   requestPostId: string;
   acceptanceTime: string;
+  status: string;
+  donorName: string;
+  phoneNumbers: string[];
 }
 
 export interface DonationStatusManagerAttributes {

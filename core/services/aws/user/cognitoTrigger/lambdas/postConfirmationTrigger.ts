@@ -19,7 +19,7 @@ async function postConfirmationLambda(
   const userAttributes = {
     email: event.request.userAttributes.email,
     name: event.request.userAttributes.name ?? '',
-    phone_number: event.request.userAttributes.phone_number ?? ''
+    phoneNumbers: [event.request.userAttributes.phone_number ?? '']
   }
 
   const dbResponse = await userService.createNewUser(

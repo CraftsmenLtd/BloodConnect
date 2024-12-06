@@ -6,6 +6,7 @@ import Header from './DonationHeader'
 import Posts from '../../components/donation/Posts'
 import { DonationPostsScreenNavigationProp } from '../../setup/navigation/navigationTypes'
 import { BloodDonationRecord } from '../types'
+import { COMMON_URLS } from '../../setup/constant/commonUrls'
 
 export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> & {
   requestPostId: string;
@@ -21,7 +22,7 @@ const DonationPosts = ({ navigation }: DonationPostsProps) => {
   return (
     <View style={styles.container}>
       <Header
-        profileImageUri="https://avatar.iran.liara.run/public/boy?username=Ash"
+        profileImageUri={COMMON_URLS.PROFILE_AVATAR}
         title="Blood needed?"
         buttonLabel="Create Post"
         onButtonPress={createPost}

@@ -2,14 +2,6 @@
   "openapi": "3.0.1",
   "tags": [
     {
-      "name": "bloodconnect",
-      "description": "API Endpoints for BloodConnect"
-    },
-    {
-      "name": "bloodconnect-auth",
-      "description": "Auth module of BloodConnect"
-    },
-    {
       "name": "bloodconnect-user",
       "description": "User module of BloodConnect"
     },
@@ -41,23 +33,28 @@
   },
   "servers": [
     {
-      "url": "https://API_GATEWAY_ID.execute-api.ap-south-1.amazonaws.com/api",
-      "description": "localstack"
+      "url": "https://BRANCH_NAME.bloodconnect.net/api"
     },
     {
-      "url": "https://${ENVIRONMENT}.bloodconnect.net/${API_VERSION}",
-      "description": "${ENVIRONMENT}"
+      "url": "https://API_GATEWAY_ID.execute-api.ap-south-1.amazonaws.com/api",
+      "description": "localstack"
     }
   ],
   "paths": {
     "/users": {
       "$ref": "./../paths/users/users.json"
     },
+    "/donors/{donorId}": {
+      "$ref": "./../paths/donors/donors.json"
+    },
     "/donations": {
       "$ref": "./../paths/donations/donations.json"
     },
     "/donations/accept": {
       "$ref": "./../paths/donations/accept.json"
+    },
+    "/donations/posts/{city}": {
+      "$ref": "./../paths/donations/posts.json"
     },
     "/notification/register": {
       "$ref": "./../paths/notification/register.json"

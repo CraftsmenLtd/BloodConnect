@@ -4,7 +4,9 @@ import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
-import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
+import { DonationData } from './useDonationPosts'
+import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
+import { UrgencyLevel } from '../types'
 
 interface PostCardProps {
   post: DonationData;
@@ -24,7 +26,9 @@ interface DropdownPosition {
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailHandler, showContactNumber = false, showDescription = false, showTransportInfo = false, showPatientName = false, showButton = true, showHeader = true }) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
+  const { userProfile } = useUserProfile()
   const [showDropdown, setShowDropdown] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
   const iconRef = useRef<View>(null)
@@ -80,20 +84,18 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
       <View style={styles.card}>
         {showHeader && <View style={styles.cardHeader}>
           <View>
-            <Text style={styles.userName}>{post.patientName}</Text>
+            <Text style={styles.userName}>{userProfile.name}</Text>
             <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
           </View>
-
           <View style={styles.menuContainer}>
             <View ref={iconRef} collapsable={false}>
               <TouchableOpacity
                 onPress={handleToggleDropdown}
                 style={styles.iconContainer}
               >
-                <Ionicons name="ellipsis-vertical" size={20} color="gray" />
+                <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.grey} />
               </TouchableOpacity>
             </View>
-
             <Modal
               visible={showDropdown}
               transparent={true}
@@ -124,29 +126,27 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
           </View>
         </View>
         }
-
         <View style={styles.bloodInfoWrapper}>
           <View style={styles.bloodInfo}>
             <View style={styles.bloodRow}>
-              <Ionicons name="water" size={20} color="red" />
+              <Ionicons name="water" size={20} color={theme.colors.textPrimary} />
               <View style={styles.bloodText}>
                 <Text style={styles.lookingForText}>Looking for</Text>
-                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.neededBloodGroup} blood</Text>
+                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} blood</Text>
               </View>
             </View>
-            {post.urgencyLevel === 'urgent' && (
+            {post.urgencyLevel === UrgencyLevel.URGENT && (
               <View style={styles.urgentBadge}>
-                <Ionicons name="warning-outline" size={14} color="#212121" />
+                <Ionicons name="warning-outline" size={14} color={theme.colors.black} />
                 <Text style={styles.urgentText}>URGENT</Text>
               </View>
             )}
           </View>
-
           <View style={styles.locationTimeContainer}>
             <View style={styles.locationTimeWrapper}>
               <View style={styles.infoSection}>
                 <View style={styles.infoHeader}>
-                  <Ionicons name="location-outline" size={16} color="gray" />
+                  <Ionicons name="location-outline" size={16} color={theme.colors.black} />
                   <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
                 </View>
                 <Text>{post.location}</Text>
@@ -155,7 +155,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
             <View style={[styles.locationTimeWrapper, styles.noBorder]}>
               <View style={styles.infoSection}>
                 <View style={styles.infoHeader}>
-                  <Ionicons name="time-outline" size={16} color="gray" />
+                  <Ionicons name="time-outline" size={16} color={theme.colors.black} />
                   <Text style={styles.donationInfoPlaceholder}>Time & Date</Text>
                 </View>
                 <Text>{formatDateTime(post.donationDateTime)}</Text>
@@ -164,7 +164,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
           </View>
           {post.contactNumber !== '' && showContactNumber &&
             <View style={styles.descriptionContainer}>
-              <Text style={styles.donationInfoPlaceholder}>Conatct Number</Text>
+              <Text style={styles.donationInfoPlaceholder}>Contact Number</Text>
               <Text style={styles.description}>{post.contactNumber}</Text>
             </View>
           }
@@ -174,7 +174,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
               <Text style={styles.description}>{post.patientName}</Text>
             </View>
           }
-
           {post.shortDescription !== '' && showDescription &&
             <View style={styles.descriptionContainer}>
               <Text style={styles.donationInfoPlaceholder}>Short Description of the Problem</Text>
@@ -187,14 +186,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
               <Text style={styles.description}>{post.transportationInfo}</Text>
             </View>
           }
-
         </View>
         <Text>Post Update</Text>
         <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
-          <Ionicons name='time-outline' size={20} color="gray" />
+          <Ionicons name='time-outline' size={20} color={theme.colors.black} />
           <View>
-            <Text>Number of Donars</Text>
-            <Text>3 donars accepted your request</Text>
+            <Text>Number of Donar</Text>
+            <Text>3 donar accepted your request</Text>
           </View>
         </View>
         {showButton &&
@@ -206,11 +204,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
             onPress={() => { detailHandler !== undefined && detailHandler(post) }}
           />
         </View>}
-
       </View>
-
     </>
-
   )
 }
 
@@ -232,7 +227,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 16
   },
   postTime: {
-    color: 'gray',
+    color: theme.colors.grey,
     fontSize: 12
   },
   menuContainer: {
@@ -248,7 +243,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   dropdownContainer: {
     position: 'absolute',
-    backgroundColor: 'white',
+    backgroundColor: theme.colors.white,
     borderRadius: 8,
     padding: 8,
     shadowColor: theme.colors.black,
@@ -263,7 +258,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     paddingHorizontal: 12
   },
   dropdownText: {
-    color: 'black',
+    color: theme.colors.black,
     fontSize: 14
   },
   bloodInfoWrapper: {
@@ -305,13 +300,13 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   urgentBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFD64D',
+    backgroundColor: theme.colors.goldenYellow,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12
   },
   urgentText: {
-    color: '#212121',
+    color: theme.colors.black,
     fontWeight: '600',
     fontSize: 12,
     marginLeft: 4

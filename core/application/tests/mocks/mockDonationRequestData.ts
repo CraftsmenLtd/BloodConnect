@@ -5,12 +5,13 @@ import {
 import {
   DonationFields,
   BLOOD_REQUEST_PK_PREFIX,
-  BLOOD_REQUEST_LSISK_PREFIX
+  BLOOD_REQUEST_LSI1SK_PREFIX
 } from '../../models/dbModels/BloodDonationModel'
 import {
   BloodGroup,
   DonationDTO,
-  DonationStatus
+  DonationStatus,
+  DonorSearchDTO
 } from '../../../../commons/dto/DonationDTO'
 
 export const currentDate = new Date().toISOString()
@@ -18,7 +19,7 @@ export const currentDate = new Date().toISOString()
 export const donationAttributesMock: BloodDonationAttributes = {
   seekerId: 'lkjhasdfka-qrwerie-sfsdl6usdf',
   patientName: 'John Doe',
-  neededBloodGroup: 'O-',
+  requestedBloodGroup: 'O-',
   bloodQuantity: 2,
   urgencyLevel: 'urgent',
   city: 'Dhaka',
@@ -34,7 +35,7 @@ export const donationAttributesMock: BloodDonationAttributes = {
 export const donationDtoMock: DonationDTO = {
   id: 'req123',
   seekerId: 'user456',
-  neededBloodGroup: 'A+',
+  requestedBloodGroup: 'A+',
   bloodQuantity: 2,
   urgencyLevel: 'urgent',
   city: 'Dhaka',
@@ -51,8 +52,10 @@ export const donationDtoMock: DonationDTO = {
 export const donationFieldsMock: DonationFields = {
   PK: `${BLOOD_REQUEST_PK_PREFIX}#user456`,
   SK: `${BLOOD_REQUEST_PK_PREFIX}#${currentDate}#req123`,
-  LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#req123`,
-  neededBloodGroup: 'A+',
+  GSI1PK: `CITY#Dhaka#STATUS#${DonationStatus.PENDING}`,
+  GSI1SK: 'BG#A+',
+  LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#req123`,
+  requestedBloodGroup: 'A+',
   bloodQuantity: 2,
   urgencyLevel: 'urgent',
   city: 'Dhaka',
@@ -74,7 +77,18 @@ export const mockQueryResult = {
 export const donorRoutingAttributesMock: DonorRoutingAttributes = {
   seekerId: 'seeker123',
   requestPostId: 'req123',
-  createdAt: currentDate
+  patientName: 'John Doe',
+  requestedBloodGroup: 'O-' as BloodGroup,
+  bloodQuantity: 2,
+  urgencyLevel: 'urgent' as const,
+  city: 'Dhaka',
+  location: 'Baridhara, Dhaka',
+  geohash: 'geohash123',
+  donationDateTime: '2024-10-20T15:00:00Z',
+  contactNumber: '01712345678',
+  createdAt: currentDate,
+  transportationInfo: 'transportation Info',
+  shortDescription: 'short Description'
 }
 
 export const mockDonationDTO: DonationDTO = {
@@ -82,7 +96,7 @@ export const mockDonationDTO: DonationDTO = {
   seekerId: 'seeker123',
   status: DonationStatus.PENDING,
   patientName: 'John Doe',
-  neededBloodGroup: 'O-' as BloodGroup,
+  requestedBloodGroup: 'O-' as BloodGroup,
   bloodQuantity: 2,
   urgencyLevel: 'urgent' as const,
   city: 'Dhaka',
@@ -93,4 +107,21 @@ export const mockDonationDTO: DonationDTO = {
   longitude: 90.2792371,
   contactNumber: '01712345678',
   createdAt: currentDate
+}
+
+export const mockDonorSearchDTO: DonorSearchDTO = {
+  id: 'req123',
+  seekerId: 'seeker123',
+  status: DonationStatus.PENDING,
+  patientName: 'John Doe',
+  requestedBloodGroup: 'O-' as BloodGroup,
+  bloodQuantity: 2,
+  urgencyLevel: 'urgent' as const,
+  city: 'Dhaka',
+  location: 'Baridhara, Dhaka',
+  geohash: 'geohash123',
+  donationDateTime: '2024-10-20T15:00:00Z',
+  contactNumber: '01712345678',
+  createdAt: currentDate,
+  retryCount: 0
 }

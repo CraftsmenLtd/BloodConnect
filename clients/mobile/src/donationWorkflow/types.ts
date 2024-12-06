@@ -3,7 +3,7 @@ import { DonationDTO } from '../../../../commons/dto/DonationDTO'
 export type DonationScreenParams = Pick<
 DonationDTO,
 | 'patientName'
-| 'neededBloodGroup'
+| 'requestedBloodGroup'
 | 'location'
 | 'donationDateTime'
 | 'contactNumber'
@@ -21,4 +21,9 @@ export type BloodDonationRecord = Omit<DonationScreenParams, 'requestPostId'> &
 Pick<DonationDTO, 'latitude' | 'longitude'> & {
   reqPostId: string;
   createdAt: string;
+}
+
+export const UrgencyLevel = {
+  REGULAR: 'regular',
+  URGENT: 'urgent'
 }

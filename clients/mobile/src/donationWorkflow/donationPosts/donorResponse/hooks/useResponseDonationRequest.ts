@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useFetchClient } from '../../../../setup/clients/useFetchClient'
-import { useNavigation, NavigationProp } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { SCREENS } from '../../../../setup/constant/screens'
 import { useNotificationContext } from '../../../../setup/notification/useNotificationContext'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
+import { PostScreenNavigationProp } from '../../../../setup/navigation/navigationTypes'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -19,6 +20,7 @@ interface useResponseDonationRequestReturnType {
   handleAcceptRequest: () => Promise<void>;
   handleIgnore: () => void;
   formatDateTime: (dateTime: string) => string;
+  isRequestAccepted: boolean;
 }
 
 interface FetchResponse {
@@ -27,7 +29,8 @@ interface FetchResponse {
 }
 
 export const useResponseDonationRequest = (): useResponseDonationRequestReturnType => {
-  const navigation = useNavigation<NavigationProp<any>>()
+  const navigation = useNavigation<PostScreenNavigationProp>()
+  const [isRequestAccepted, setIsRequestAccepted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fetchClient = useFetchClient()
@@ -54,12 +57,12 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     try {
       const response: FetchResponse = await fetchClient.post('/donations/accept', requestPayload)
 
-      if (response.status !== 200) {
+      if (response.status === 200) {
+        setIsRequestAccepted(true)
+      } else {
         const errorMessage = `Error: ${response.status} ${response.statusText ?? 'Unknown error'}`
         throw new Error(errorMessage)
       }
-
-      navigation.navigate(SCREENS.POSTS)
     } catch (error) {
       const errorMessage = error instanceof Error && typeof error.message === 'string'
         ? error.message
@@ -76,8 +79,9 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
   }
 
   return {
-    bloodRequest,
+    isRequestAccepted,
     isLoading,
+    bloodRequest,
     error,
     handleAcceptRequest,
     handleIgnore,

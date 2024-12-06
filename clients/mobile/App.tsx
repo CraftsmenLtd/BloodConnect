@@ -1,15 +1,24 @@
 import 'react-native-gesture-handler'
-import React, { useEffect, useState } from 'react'
-import { BackHandler, ToastAndroid } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { BackHandler, ToastAndroid, LogBox } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native'
 import { ThemeProvider } from './src/setup/theme/context/ThemeContext'
 import Navigator from './src/setup/navigation/Navigator'
 import { Amplify } from 'aws-amplify'
 import { awsCognitoConfiguration } from './src/setup/config/cognito'
 import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
+import { UserProfileProvider } from './src/userWorkflow/context/UserProfileContext'
 import * as Notifications from 'expo-notifications'
+import { RootStackParamList } from './src/setup/navigation/navigationTypes'
+import Constants from 'expo-constants'
+
+const { APP_ENV } = Constants.expoConfig?.extra ?? {}
+
+if (APP_ENV !== 'development') {
+  LogBox.ignoreAllLogs(true)
+}
 
 Amplify.configure(awsCognitoConfiguration)
 
@@ -23,6 +32,7 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   const [backPressedOnce, setBackPressedOnce] = useState(false)
+  const navigationRef = useNavigationContainerRef<RootStackParamList>()
 
   useEffect(() => {
     const backAction = () => {
@@ -42,14 +52,16 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <AuthProvider>
-          <NotificationProvider>
+      <NavigationContainer ref={navigationRef}>
+        <NotificationProvider navigationRef={navigationRef}>
+          <AuthProvider>
+          <UserProfileProvider>
             <ThemeProvider>
               <Navigator />
             </ThemeProvider>
-          </NotificationProvider>
-        </AuthProvider>
+            </UserProfileProvider>
+          </AuthProvider>
+        </NotificationProvider>
       </NavigationContainer>
     </SafeAreaProvider>
   )
