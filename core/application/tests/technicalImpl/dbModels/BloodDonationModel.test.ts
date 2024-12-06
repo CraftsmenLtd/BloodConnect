@@ -1,7 +1,7 @@
 import {
   BloodDonationModel,
   BLOOD_REQUEST_PK_PREFIX,
-  BLOOD_REQUEST_LSISK_PREFIX,
+  BLOOD_REQUEST_LSI1SK_PREFIX,
   DonationFields
 } from '../../../models/dbModels/BloodDonationModel'
 import {
@@ -42,7 +42,7 @@ describe('BloodDonationModel', () => {
         ...donationFieldsMock,
         PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
         SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}`,
-        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
+        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
         createdAt: mockCreatedAt
       })
     })
@@ -93,7 +93,7 @@ describe('BloodDonationModel', () => {
         `${BLOOD_REQUEST_PK_PREFIX}#${customCreatedAt}#${donationDtoMock.id}`
       )
       expect(result.LSI1SK).toBe(
-        `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`
+        `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`
       )
     })
   })
@@ -105,12 +105,14 @@ describe('BloodDonationModel', () => {
         createdAt: mockCreatedAt,
         PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
         SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}` as const,
-        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`
+        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`
       }
 
       const result = bloodDonationModel.toDto(fields)
 
       expect(result).toEqual({
+        GSI1PK: `CITY#${donationDtoMock.city}#STATUS#${DonationStatus.PENDING}`,
+        GSI1SK: `BG#${donationDtoMock.requestedBloodGroup}`,
         ...donationDtoMock,
         id: donationDtoMock.id,
         seekerId: donationDtoMock.seekerId,
@@ -124,7 +126,7 @@ describe('BloodDonationModel', () => {
         createdAt: mockCreatedAt,
         PK: `${BLOOD_REQUEST_PK_PREFIX}#custom-seeker-id`,
         SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#custom-request-id`,
-        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#custom-request-id`
+        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#custom-request-id`
       }
 
       const result = bloodDonationModel.toDto(customFields)
@@ -139,7 +141,7 @@ describe('BloodDonationModel', () => {
         createdAt: mockCreatedAt,
         PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
         SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}`,
-        LSI1SK: `${BLOOD_REQUEST_LSISK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
+        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
         patientName: 'Custom Name',
         contactNumber: 'Custom Phone',
         bloodQuantity: 5
