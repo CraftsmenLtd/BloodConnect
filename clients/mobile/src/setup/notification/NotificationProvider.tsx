@@ -25,13 +25,23 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
   const navigationStateUnsubscribe = useRef<(() => void) | null>(null)
 
   useEffect(() => {
+    const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
+      if (isNotificationValid(response)) {
+        const data = parseJsonData(response.notification.request.content.data.payload)
+        setNotificationData(data as NotificationData)
+        handleNotificationNavigation(response)
+      }
+    })
+
     const unsubscribe = navigationRef.addListener('state', () => {
       if (navigationRef.isReady()) {
         void handleLastNotification()
         unsubscribeNavigationState()
       }
     })
+
     navigationStateUnsubscribe.current = unsubscribe
+    return () => { responseListener.remove() }
   }, [])
 
   const handleLastNotification = async() => {
@@ -52,18 +62,6 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
   const unsubscribeNavigationState = () => {
     navigationStateUnsubscribe.current !== null && navigationStateUnsubscribe.current()
   }
-
-  useEffect(() => {
-    const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
-      if (isNotificationValid(response)) {
-        const data = parseJsonData(response.notification.request.content.data.payload)
-        setNotificationData(data as NotificationData)
-        handleNotificationNavigation(response)
-      }
-    })
-
-    return () => { responseListener.remove() }
-  }, [])
 
   const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => {
     return (
