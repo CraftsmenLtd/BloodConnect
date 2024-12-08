@@ -4,7 +4,7 @@ export interface DonorResponseNotification {
   donorId: string;
   donorName: string;
   location: string;
-  neededBloodGroup: string;
+  requestedBloodGroup: string;
   requestPostId: string;
   seekerId: string;
   shortDescription: string;
