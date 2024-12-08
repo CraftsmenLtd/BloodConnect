@@ -6,16 +6,21 @@ import { Theme } from '../../setup/theme'
 import { Button } from '../button/Button'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 
-interface PostCardProps {
-  post: DonationData;
-  updateHandler: (donationData: DonationData) => void;
-  detailHandler?: (donationData: DonationData) => void;
+export interface PostCardDisplayOptions {
   showContactNumber?: boolean;
   showDescription?: boolean;
   showTransportInfo?: boolean;
   showPatientName?: boolean;
   showButton?: boolean;
   showHeader?: boolean;
+  showOptions?: boolean;
+  showPostUpdatedOption?: boolean;
+}
+
+interface PostCardProps extends PostCardDisplayOptions {
+  post: DonationData;
+  updateHandler?: (donationData: DonationData) => void;
+  detailHandler?: (donationData: DonationData) => void;
 }
 
 interface DropdownPosition {
@@ -23,7 +28,7 @@ interface DropdownPosition {
   right: number;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailHandler, showContactNumber = false, showDescription = false, showTransportInfo = false, showPatientName = false, showButton = true, showHeader = true }) => {
+export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailHandler, showContactNumber = false, showDescription = true, showTransportInfo = false, showPatientName = false, showButton = true, showHeader = true, showOptions = true, showPostUpdatedOption = true }) => {
   const styles = createStyles(useTheme())
   const [showDropdown, setShowDropdown] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
@@ -49,7 +54,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
   }, [])
 
   const handleUpdate = useCallback(() => {
-    updateHandler(post)
+    updateHandler !== undefined && updateHandler(post)
     handleCloseDropdown()
   }, [post, updateHandler])
 
@@ -76,7 +81,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
   }), [dropdownPosition])
 
   return (
-    <>
       <View style={styles.card}>
         {showHeader &&
           <View style={styles.cardHeader}>
@@ -84,7 +88,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
               <Text style={styles.userName}>{post.patientName}</Text>
               <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
             </View>
-
+            {showOptions &&
             <View style={styles.menuContainer}>
               <View ref={iconRef} collapsable={false}>
                 <TouchableOpacity
@@ -122,7 +126,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
                   </View>
                 </TouchableWithoutFeedback>
               </Modal>
-            </View>
+            </View>}
           </View>
         }
         <View style={styles.bloodInfoWrapper}>
@@ -131,7 +135,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
               <Ionicons name="water" size={20} color="red" />
               <View style={styles.bloodText}>
                 <Text style={styles.lookingForText}>Looking for</Text>
-                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.neededBloodGroup} blood</Text>
+                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} (ve) blood</Text>
               </View>
             </View>
             {post.urgencyLevel === 'urgent' && (
@@ -149,7 +153,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
                   <Ionicons name="location-outline" size={16} color="gray" />
                   <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
                 </View>
-                <Text>{post.location}</Text>
+                <Text style={styles.description}>{post.location}</Text>
               </View>
             </View>
             <View style={[styles.locationTimeWrapper, styles.noBorder]}>
@@ -158,13 +162,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
                   <Ionicons name="time-outline" size={16} color="gray" />
                   <Text style={styles.donationInfoPlaceholder}>Time & Date</Text>
                 </View>
-                <Text>{formatDateTime(post.donationDateTime)}</Text>
+                <Text style={styles.description}>{formatDateTime(post.donationDateTime)}</Text>
               </View>
             </View>
           </View>
           {post.contactNumber !== '' && showContactNumber &&
             <View style={styles.descriptionContainer}>
-              <Text style={styles.donationInfoPlaceholder}>Conatct Number</Text>
+              <Text style={styles.donationInfoPlaceholder}>Contact Number</Text>
               <Text style={styles.description}>{post.contactNumber}</Text>
             </View>
           }
@@ -189,7 +193,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
           }
 
         </View>
-        {Array.isArray(post.acceptedDonors) && post.acceptedDonors.length > 0 && <>
+        {Array.isArray(post.acceptedDonors) && post.acceptedDonors.length > 0 && showPostUpdatedOption && <>
           <Text>Post Update</Text>
           <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
             <Ionicons name='time-outline' size={20} color="gray" />
@@ -207,10 +211,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
             onPress={() => { detailHandler !== undefined && detailHandler(post) }}
           />
         </View>}
-
       </View>
-
-    </>
   )
 }
 
@@ -337,8 +338,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginBottom: 4
   },
   donationInfoPlaceholder: {
-    fontSize: 12,
-    color: theme.colors.grey,
+    fontSize: 13,
+    color: theme.colors.textSecondary,
     marginLeft: 4
   },
   descriptionContainer: {
@@ -347,6 +348,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderTopColor: theme.colors.extraLightGray
   },
   description: {
+    fontSize: 15,
     marginTop: 4
   },
   buttonContainer: {
@@ -354,6 +356,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     width: '100%'
   },
   buttonStyle: {
+    paddingVertical: 10,
     backgroundColor: theme.colors.extraLightGray
   },
   textStyle: {

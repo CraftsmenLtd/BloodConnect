@@ -193,7 +193,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   acceptButtonText: {
     fontSize: theme.typography.fontSize,
     textAlign: 'center',
-    fontFamily: theme.typography.fontFamily,
+    // fontFamily: theme.typography.fontFamily,
     lineHeight: 24,
     letterSpacing: 0.15
   }

@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import useDonarProfile from './useDonarProfile'
+import { preferredDonationLocations } from '../../userWorkflow/services/userServices'
 
 const DonarProfile = () => {
   const { donarProfile, loading, error, handleCall } = useDonarProfile()
@@ -22,6 +23,12 @@ const DonarProfile = () => {
     )
   }
 
+  const calculateBMI = (weightKg: number, heightFeet: number): number => {
+    const heightInMeters = heightFeet * 0.3048
+    const bmi = weightKg / (heightInMeters ** 2)
+    return parseFloat(bmi.toFixed(2))
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
@@ -38,11 +45,11 @@ const DonarProfile = () => {
         </View>
       </View>
 
-      <Text style={styles.name}>{donarProfile.name}</Text>
+      <Text style={styles.name}>{donarProfile.donorName}</Text>
       <View>
         {Array.isArray(donarProfile.preferredDonationLocations) &&
           donarProfile.preferredDonationLocations.length > 0 &&
-          donarProfile.preferredDonationLocations.map((location, index) => (
+          donarProfile.preferredDonationLocations.map((location: preferredDonationLocations, index: number) => (
             <View style={styles.locationRow} key={index}>
               <Ionicons name="location-sharp" size={16} color="#FF5252" />
               <Text style={styles.locationText}>
@@ -53,11 +60,7 @@ const DonarProfile = () => {
       </View>
 
       <View style={styles.detailsRow}>
-        <Text style={styles.detailsText}>Age: {donarProfile.age}</Text>
-        <Text style={styles.detailsSeparator}>•</Text>
-        <Text style={styles.detailsText}>Weight: {donarProfile.weight}</Text>
-        <Text style={styles.detailsSeparator}>•</Text>
-        <Text style={styles.detailsText}>Height: {donarProfile.height}"</Text>
+        <Text style={styles.detailsText}>BMI: {calculateBMI(donarProfile.weight, donarProfile.height)}</Text>
       </View>
 
       <View style={{ width: '100%' }}>

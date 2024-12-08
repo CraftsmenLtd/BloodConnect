@@ -178,7 +178,6 @@ export const useAddPersonalInfo = (): any => {
         preferredDonationLocations,
         ...(isSSO && (phoneNumber != null) ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {})
       }
-      console.log('FINAL DATA', finalData)
 
       const response = await addPersonalInfoHandler(finalData, fetchClient)
       if (response.status === 200) {
@@ -186,7 +185,6 @@ export const useAddPersonalInfo = (): any => {
         navigation.navigate(SCREENS.BOTTOM_TABS)
       }
     } catch (error) {
-      console.log('ERROR', error)
       const errorMessage = formatErrorMessage(error)
       setErrorMessage(errorMessage)
     } finally {

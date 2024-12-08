@@ -9,8 +9,8 @@ export const useDonationResponse = (): any => {
   const route = useRoute<DonarResponseRouteProp>()
 
   const seeDetails = (): void => {
-    // Use navigation.replace to navigate to the DETAILPOST screen
-    navigation.replace(SCREENS.DETAILPOST, {
+    // Use navigation.replace to navigate to the DETAIL_POST screen
+    navigation.replace(SCREENS.DETAIL_POST, {
       data: route.params.notificationData,
       tab: 'Responses'
     })

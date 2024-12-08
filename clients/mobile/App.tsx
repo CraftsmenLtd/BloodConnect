@@ -13,6 +13,7 @@ import { UserProfileProvider } from './src/userWorkflow/context/UserProfileConte
 import * as Notifications from 'expo-notifications'
 import { RootStackParamList } from './src/setup/navigation/navigationTypes'
 import Constants from 'expo-constants'
+import { MyActivityProvider } from './src/myActivity/context/MyActivityProvider'
 
 const { APP_ENV } = Constants.expoConfig?.extra ?? {}
 
@@ -55,10 +56,12 @@ export default function App() {
       <NavigationContainer ref={navigationRef}>
         <NotificationProvider navigationRef={navigationRef}>
           <AuthProvider>
-          <UserProfileProvider>
-            <ThemeProvider>
-              <Navigator />
-            </ThemeProvider>
+            <UserProfileProvider>
+              <MyActivityProvider>
+                <ThemeProvider>
+                  <Navigator />
+                </ThemeProvider>
+              </MyActivityProvider>
             </UserProfileProvider>
           </AuthProvider>
         </NotificationProvider>

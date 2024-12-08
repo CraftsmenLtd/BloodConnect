@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useFetchClient } from '../../../../setup/clients/useFetchClient'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../../../setup/constant/screens'
 import { useNotificationContext } from '../../../../setup/notification/useNotificationContext'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
@@ -30,6 +30,7 @@ interface FetchResponse {
 
 export const useResponseDonationRequest = (): useResponseDonationRequestReturnType => {
   const navigation = useNavigation<PostScreenNavigationProp>()
+  const routes = useRoute()
   const [isRequestAccepted, setIsRequestAccepted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -37,9 +38,9 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
   const { notificationData: bloodRequest } = useNotificationContext()
 
   useEffect(() => {
-    if (bloodRequest === null) {
-      navigation.navigate(SCREENS.POSTS)
-    }
+    // if (bloodRequest === null) {
+    //   navigation.navigate(SCREENS.POSTS)
+    // }
   }, [bloodRequest, navigation])
 
   const handleAcceptRequest = async(): Promise<void> => {
@@ -81,7 +82,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
   return {
     isRequestAccepted,
     isLoading,
-    bloodRequest,
+    bloodRequest: bloodRequest ?? routes.params.notificationData,
     error,
     handleAcceptRequest,
     handleIgnore,
