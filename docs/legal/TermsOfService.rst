@@ -14,7 +14,7 @@ By accessing or using the BloodConnect application ("the App"), you agree to be 
 
 2. Service Description
 ----------------------
-BloodConnect is a platform that connects blood donors with recipients and healthcare organizations to facilitate blood donation processes. The App provides features including but not limited to:
+BloodConnect is a platform that connects blood donors with recipients to facilitate blood donation processes. The App provides features including but not limited to:
 
 - Donor registration and profile management
 - Blood request creation and management
@@ -30,12 +30,12 @@ BloodConnect is a platform that connects blood donors with recipients and health
 - You must provide accurate, current, and complete information during registration
 - You may register using email or social media accounts (Google, Facebook)
 - You must provide a valid phone number for verification
-- You must be at least 15 years old to create an account
+- You must be at least 18 years old to create an account
 
 3.2. Account Security
 ~~~~~~~~~~~~~~~~~~~~~
 - You are responsible for maintaining the confidentiality of your account credentials
-- You are responsible fo all activities under your account
+- You are responsible of all activities under your account
 - You must notify us immediately of any unauthorized use of your account
 - We reserve the right to disable any account for security reasons
 
