@@ -15,11 +15,11 @@ BloodConnect ("we," "us," or "our") is committed to protecting your privacy. Thi
 - Name
 - Email address
 - Phone number
-- Blood type
+- Blood Group
 - Date of birth
 - Gender
 - Physical characteristics (height, weight)
-- Location data
+- Location data (preferred city and location area)
 - Medical history relevant to blood donation
 - Last donation date
 - Vaccination history
@@ -52,9 +52,9 @@ We use collected information to:
 -----------------------
 4.1. With Other Users
 ~~~~~~~~~~~~~~~~~~~~~~
-- Blood type and donation availability
+- Name, Blood group and donation availability
 - General location information
-- Name and contact information (when explicitly authorized)
+- Contact information
 
 4.2. With Third Parties
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,7 +72,7 @@ We share information with:
 - Personal contact information without consent
 - More information than necessary for donation purposes
 
-5. Data Security
+1. Data Security
 -----------------
 We implement security measures including:
 
@@ -109,8 +109,8 @@ You have the right to:
 
 9. Children's Privacy
 ----------------------
-- Service not intended for users under 15
-- We do not knowingly collect data from users under 15
+- Service not intended for users under 18
+- We do not knowingly collect data from users under 18
 - Will delete any such data if discovered
 
 10. Third-Party Services
