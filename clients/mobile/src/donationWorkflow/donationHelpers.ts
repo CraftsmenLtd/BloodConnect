@@ -1,6 +1,4 @@
 import { BloodDonationRecord } from './types'
-import { useFetchClient } from '../setup/clients/useFetchClient'
-import { getDonationList } from './donationService'
 
 export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> & {
   requestPostId: string;
@@ -30,8 +28,8 @@ export const extractErrorMessage = (error: unknown): string => {
   return 'An unknown error occurred'
 }
 
-export const formatBloodQuantity = (bloodQuantity: string | null | undefined): string => {
-  if (bloodQuantity !== '' && bloodQuantity !== null && bloodQuantity !== undefined) {
+export const formatBloodQuantity = (bloodQuantity: string): string => {
+  if (bloodQuantity !== '') {
     const quantity = +bloodQuantity
     return quantity === 1 ? `${quantity} Bag` : `${quantity} Bags`
   }
@@ -42,7 +40,7 @@ export const formatDonations = (requests: BloodDonationRecord[]): DonationData[]
   return requests.map(request => ({
     requestPostId: request.reqPostId ?? '',
     patientName: request.patientName ?? '',
-    neededBloodGroup: request.neededBloodGroup ?? '',
+    requestedBloodGroup: request.requestedBloodGroup ?? '',
     bloodQuantity: formatBloodQuantity(request.bloodQuantity),
     urgencyLevel: request.urgencyLevel ?? '',
     location: request.location ?? '',
@@ -54,22 +52,4 @@ export const formatDonations = (requests: BloodDonationRecord[]): DonationData[]
     createdAt: request.createdAt ?? new Date().toISOString(),
     acceptedDonors: request.acceptedDonors ?? []
   }))
-}
-
-export const fetchData = async(fetchClient: ReturnType<typeof useFetchClient>, setDonationPosts: (data: DonationData[]) => void, setErrorMessage: (message: string) => void, setLoading: (loading: boolean) => void): Promise<void> => {
-  setLoading(true)
-  try {
-    const response = await getDonationList({}, fetchClient)
-    if (response.data !== undefined && response.data.length > 0) {
-      const formattedDonations = formatDonations(response.data)
-      setDonationPosts(formattedDonations)
-    } else {
-      setDonationPosts([])
-    }
-  } catch (error) {
-    const errorMessage = extractErrorMessage(error)
-    setErrorMessage(errorMessage)
-  } finally {
-    setLoading(false)
-  }
 }
