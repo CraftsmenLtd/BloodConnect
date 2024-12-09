@@ -13,6 +13,10 @@ import { Theme } from '../../../setup/theme'
 import RadioButton from '../../../components/inputElement/Radio'
 import SearchMultiSelect from '../../../components/inputElement/SearchMultiSelect'
 import { LocationService } from '../../../LocationService/LocationService'
+import Warning from '../../../components/warning'
+import { WARNINGS } from '../../../setup/constant/consts'
+import LinkText from '../../../components/text/LinkText'
+import { POLICY_URLS } from '../../../setup/constant/urls'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -29,6 +33,7 @@ const AddPersonalInfo = () => {
     handleSubmit,
     loading,
     errorMessage,
+    setErrorMessage,
     isVisible,
     setIsVisible,
     isSSO
@@ -66,6 +71,10 @@ const AddPersonalInfo = () => {
                 isRequired={true}
                 error={errors.phoneNumber}
               />
+                <Warning
+                  text={WARNINGS.PHONE_NUMBER_VISIBLE}
+                  showWarning={Boolean(personalInfo.phoneNumber?.trim())}
+                />
             </View>
           )}
 
@@ -85,7 +94,7 @@ const AddPersonalInfo = () => {
           <View style={styles.fieldSpacing}>
             <SearchMultiSelect
               name="locations"
-              label="Search Location"
+              label="Search Preferred Location"
               isVisible={isVisible}
               setIsVisible={setIsVisible}
               onChange={handleInputChange}
@@ -141,7 +150,7 @@ const AddPersonalInfo = () => {
             <DateTimePickerComponent
               name='lastDonationDate'
               isOnlyDate={true}
-              label="Last donation date"
+              label="Last Donation Date"
               value={new Date(personalInfo.lastDonationDate)}
               onChange={(date) => handleInputChange('lastDonationDate', date)}
               isRequired={true}
@@ -153,7 +162,7 @@ const AddPersonalInfo = () => {
             <DateTimePickerComponent
               name='dateOfBirth'
               isOnlyDate={true}
-              label="Date of birth"
+              label="Date of Birth"
               value={new Date(personalInfo.dateOfBirth)}
               onChange={(date) => handleInputChange('dateOfBirth', date)}
               isRequired={true}
@@ -165,7 +174,7 @@ const AddPersonalInfo = () => {
             <DateTimePickerComponent
               name='lastVaccinatedDate'
               isOnlyDate={true}
-              label="Last vaccinated date"
+              label="Last Vaccinated Date"
               value={new Date(personalInfo.lastVaccinatedDate)}
               onChange={(date) => handleInputChange('lastVaccinatedDate', date)}
               isRequired={true}
@@ -186,8 +195,7 @@ const AddPersonalInfo = () => {
             />
           </View>
 
-          <View
-            style={styles.fieldSpacing}>
+          <View style={styles.fieldSpacing}>
             <Checkbox
               name='acceptPolicy'
               isChecked={personalInfo.acceptPolicy}
@@ -196,9 +204,19 @@ const AddPersonalInfo = () => {
             >
               <Text style={styles.termsText}>
                 By continuing, you agree to our{' '}
-                <Text style={styles.link}>Terms of Service</Text>{' '}
+                <LinkText
+                  url={POLICY_URLS.TERMS_OF_SERVICE}
+                  text="Terms of Service"
+                  style={styles.link}
+                  onError={setErrorMessage}
+                />{' '}
                 and{' '}
-                <Text style={styles.link}>Privacy Policy</Text>
+                <LinkText
+                  url={POLICY_URLS.PRIVACY_POLICY}
+                  text="Privacy Policy"
+                  style={styles.link}
+                  onError={setErrorMessage}
+                />
               </Text>
             </Checkbox>
           </View>
@@ -248,13 +266,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   termsText: {
     fontSize: theme.typography.fontSize,
-    flexWrap: 'wrap',
-    flex: 1,
     color: theme.colors.textPrimary
-  },
-  link: {
-    color: theme.colors.primary,
-    textDecorationLine: 'underline'
   },
   errorMessage: {
     color: 'red',

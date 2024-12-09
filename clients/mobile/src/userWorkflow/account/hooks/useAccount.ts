@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '../../../authentication/context/useAuth'
 import { Platform } from 'react-native'
 import { Cache } from 'aws-amplify/utils'
-import { signOut } from 'aws-amplify/auth'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SCREENS } from '../../../setup/constant/screens'
 import { FetchResponse } from '../../../setup/clients/FetchClient'
 import { AccountScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { UserResponseData } from '../../../../../../commons/dto/UserDTO'
+import storageService from '../../../utility/storageService'
+import { TOKEN } from '../../../setup/constant/token'
 
 interface User {
   name: string;
@@ -31,17 +31,18 @@ export const useAccount = (): UseAccountReturnType => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const clearAllStorage = async(): Promise<void> => {
+  const clearStorageExceptDeviceToken = async(): Promise<void> => {
     if (Platform.OS !== 'web') {
-      await AsyncStorage.clear()
+      const keys = await storageService.getAllKeys()
+      const filteredKeys = keys.filter(TOKEN.DEVICE_TOKEN)
+      await filteredKeys.remove()
     }
   }
 
   const handleSignOut = async(): Promise<void> => {
     try {
+      await Promise.all([Cache.clear(), clearStorageExceptDeviceToken()])
       await auth.logoutUser()
-      await Promise.all([Cache.clear(), clearAllStorage()])
-      await signOut()
       navigation.navigate(SCREENS.WELCOME)
     } catch (error) {
       throw new Error('Something went wrong')
