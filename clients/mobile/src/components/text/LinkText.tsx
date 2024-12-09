@@ -10,30 +10,6 @@ interface LinkTextProps {
   onError?: (message: string) => void;
 }
 
-// export const LinkText: React.FC<LinkTextProps> = ({ url, text, style }) => {
-//   const theme = useTheme()
-//   const styles = createStyles(theme)
-
-//   const handlePress = async(): Promise<void> => {
-//     try {
-//       const supported = await Linking.canOpenURL(url)
-//       if (supported) {
-//         await Linking.openURL(url)
-//       } else {
-//         console.error('Cannot open URL:', url)
-//       }
-//     } catch (error) {
-//       console.error('Error opening URL:', error)
-//     }
-//   }
-
-//   return (
-//     <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
-//       <Text style={[styles.link, style]}>{text}</Text>
-//     </TouchableOpacity>
-//   )
-// }
-
 export const LinkText: React.FC<LinkTextProps> = ({
   url,
   text,
@@ -59,9 +35,6 @@ export const LinkText: React.FC<LinkTextProps> = ({
   }, [url, onError])
 
   return (
-    // <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
-    //   <Text style={[styles.link, style]}>{text}</Text>
-    // </TouchableOpacity>
     <Text onPress={handlePress} style={[styles.link, style]}>
       {text}
     </Text>
