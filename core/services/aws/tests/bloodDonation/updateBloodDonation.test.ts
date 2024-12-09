@@ -21,9 +21,8 @@ describe('updateBloodDonationLambda', () => {
 
   it('should return a successful response when blood donation is updated', async() => {
     const mockResponse = 'Blood donation updated successfully'
-    const mockNotificationResponse = 'Notification updated successfully.'
     mockBloodDonationService.prototype.updateBloodDonation.mockResolvedValue(mockResponse)
-    mockNotificationService.prototype.updateBloodDonationNotifications.mockResolvedValue(mockNotificationResponse)
+    mockNotificationService.prototype.updateBloodDonationNotifications.mockResolvedValue()
     mockGenerateApiGatewayResponse.mockReturnValue({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
 
     const result = await updateBloodDonationLambda(mockEvent)

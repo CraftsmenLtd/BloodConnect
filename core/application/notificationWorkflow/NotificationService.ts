@@ -24,10 +24,9 @@ export class NotificationService {
     notificationAttributes: NotificationAttributes,
     userSnsEndpointArn: string,
     snsModel: SNSModel
-  ): Promise<string> {
+  ): Promise<void> {
     try {
       await snsModel.publish(notificationAttributes, userSnsEndpointArn)
-      return 'Notified user successfully.'
     } catch (error) {
       throw new NotificationOperationError(
         `Failed to notify user. Error: ${error}`,
@@ -90,7 +89,7 @@ export class NotificationService {
     requestPostId: string,
     notificationPayload: Partial<BloodDonationPayloadAttributes>,
     notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
-  ): Promise<string> {
+  ): Promise<void> {
     try {
       const existingNotifications = await notificationRepository.queryBloodDonationNotifications(
         requestPostId
@@ -113,7 +112,6 @@ export class NotificationService {
 
         await notificationRepository.update(updatedNotification)
       }
-      return 'Notification updated successfully.'
     } catch (error) {
       throw new NotificationOperationError(
         `Failed to update notification. Error: ${error}`,
