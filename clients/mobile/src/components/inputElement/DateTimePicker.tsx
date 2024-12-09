@@ -7,7 +7,6 @@ import { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 
 interface DateTimePickerComponentProps {
-  name: string;
   label: string;
   value: Date | null;
   onChange: (date: Date) => void;
@@ -17,7 +16,7 @@ interface DateTimePickerComponentProps {
 }
 
 const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
-  name, label, value, onChange, error, isOnlyDate, isRequired = false
+  label, value, onChange, error, isOnlyDate, isRequired = false
 }) => {
   const styles = createStyles(useTheme())
   const [isPickingTime, setIsPickingTime] = useState<boolean>(false)

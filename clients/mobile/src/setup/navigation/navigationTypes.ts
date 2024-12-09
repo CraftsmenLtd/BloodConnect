@@ -48,3 +48,4 @@ export type SetPasswordRouteProp = RouteProp<RootStackParamList, SCREENS.SET_PAS
 export type DonationScreenRouteProp = RouteProp<RootStackParamList, SCREENS.DONATION>
 export type RequestPreviewRouteProp = RouteProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
 export type DonarResponseRouteProp = RouteProp<RootStackParamList, SCREENS.DONAR_RESPONSE>
+export type ProfileRouteProp = RouteProp<RootStackParamList, SCREENS.PROFILE>
