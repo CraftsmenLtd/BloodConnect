@@ -30,6 +30,7 @@ import {
   AcceptDonationRequestModel,
   AcceptedDonationFields
 } from '../models/dbModels/AcceptDonationModel'
+
 export class BloodDonationService {
   async createBloodDonation(
     donationAttributes: BloodDonationAttributes,
@@ -272,5 +273,21 @@ export class BloodDonationService {
         GENERIC_CODES.ERROR
       )
     }
+  }
+
+  async updateDonationPostStatus(
+    donationStatusManagerAttributes: DonationStatusManagerAttributes,
+    bloodDonationRepository: Repository<DonationDTO>
+  ): Promise<void> {
+    const { seekerId, requestPostId, createdAt } = donationStatusManagerAttributes
+
+    await bloodDonationRepository.update({
+      id: requestPostId,
+      seekerId,
+      createdAt,
+      status: DonationStatus.CANCELLED
+    }).catch((error) => {
+      throw error
+    })
   }
 }

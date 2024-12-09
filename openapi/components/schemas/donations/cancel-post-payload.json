@@ -1,0 +1,29 @@
+{
+  "CancelPostModel": {
+    "type": "object",
+    "required": [
+      "requestPostId",
+      "seekerId",
+      "createdAt"
+    ],
+    "properties": {
+      "requestPostId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "seekerId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "createdAt": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "example": {
+      "requestPostId": "example01110",
+      "seekerId": "123abc",
+      "createdAt": "2024-10-20T15:00:00Z"
+    }
+  }
+}
