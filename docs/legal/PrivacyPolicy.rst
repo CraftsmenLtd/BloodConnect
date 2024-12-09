@@ -1,175 +1,157 @@
-===============
+======================
 Privacy Policy
-===============
+======================
 
-Last Updated: December 6, 2024
+Last Updated: December 09, 2024
 
-Introduction
-~~~~~~~~~~~~
+1. Introduction
+----------------
 BloodConnect ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application.
 
-Information We Collect
-~~~~~~~~~~~~~~~~~~~~
-
-Personal Information
--------------------
+2. Information We Collect
+--------------------------
+2.1. Personal Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Name
 - Email address
 - Phone number
-- Date of birth
 - Blood type
+- Date of birth
 - Gender
-- Height and weight
-- Location information
-- Medical history related to blood donation
+- Physical characteristics (height, weight)
+- Location data
+- Medical history relevant to blood donation
 - Last donation date
 - Vaccination history
 
-Automatically Collected Information
---------------------------------
+2.2. Usage Information
+~~~~~~~~~~~~~~~~~~~~~~~
+- App usage statistics
 - Device information
 - IP address
-- Usage data
-- Location data (with permission)
 - Login information
+- Location data when using the app(with permission)
 - App interaction data
 
-How We Use Your Information
-~~~~~~~~~~~~~~~~~~~~~~~~~
+3. How We Use Your Information
+-------------------------------
 We use collected information to:
 
-- Facilitate blood donation matching
+- Match donors with recipients
 - Verify user identity
 - Process and manage donation requests
-- Send notifications about donation opportunities
+- Send notifications about donation requests
 - Improve our services
 - Maintain user profiles
 - Ensure platform safety and security
+- Communicate with users
 - Communicate important updates
+- Maintain donation records
 
-Information Sharing and Disclosure
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4. Information Sharing
+-----------------------
+4.1. With Other Users
+~~~~~~~~~~~~~~~~~~~~~~
+- Blood type and donation availability
+- General location information
+- Name and contact information (when explicitly authorized)
 
-We may share information with:
------------------------------
-- Other users (limited to necessary donation-related information)
-- Healthcare providers
-- Blood banks
-- Service providers
+4.2. With Third Parties
+~~~~~~~~~~~~~~~~~~~~~~~~
+We share information with:
+
+- Cloud service providers
+- Authentication services
+- Analytics providers
+- Emergency services (when required)
 - Legal authorities when required
 
-We will not share:
------------------
+4.3. We will not share:
+~~~~~~~~~~~~~~~~~~~~~~~~
 - Complete medical history
 - Personal contact information without consent
-- Financial information
 - More information than necessary for donation purposes
 
-Data Security
-~~~~~~~~~~~~
+5. Data Security
+-----------------
 We implement security measures including:
 
 - Encryption of sensitive data
+- Secure server infrastructure
 - Secure user authentication
 - Regular security audits
 - Access controls
 - Data backup systems
 
-User Rights
-~~~~~~~~~~
+6. User Rights
+---------------
 You have the right to:
 
-- Access your personal information
+- Access your personal data
 - Correct inaccurate data
-- Request data deletion
 - Opt-out of communications
-- Export your data
+- Control data sharing preferences
 - Withdraw consent
 
-Location Data
-~~~~~~~~~~~
+7. Location Data
+-----------------
+7.1. We collect location data to:
 
-We collect location data to:
---------------------------
 - Match donors with nearby recipients
 - Optimize donation logistics
 - Provide relevant blood donation opportunities
 
-You can control location sharing through:
---------------------------------------
-- App settings
-- Device settings
-- User preferences
-
-Data Retention
-~~~~~~~~~~~~
-We retain your information:
-
-- While your account is active
+8. Data Retention
+------------------
+- Active account data: Retained while account is active
+- Donation records: Retained for 5 years
 - As required by law
-- For legitimate business purposes
-- Until you request deletion
 
-Children's Privacy
-~~~~~~~~~~~~~~~
-The App is not intended for users under 15 years old. We do not knowingly collect information from children under 15.
+9. Children's Privacy
+----------------------
+- Service not intended for users under 15
+- We do not knowingly collect data from users under 15
+- Will delete any such data if discovered
 
-Third-Party Services
-~~~~~~~~~~~~~~~~~
+10. Third-Party Services
+-------------------------
+10.1. We use third-party services for:
 
-We use third-party services for:
-------------------------------
 - Authentication (AWS Cognito)
 - Location services (Google Maps)
+- Login with (Google & Facebook)
 - Analytics
 - Communication
 
-Third-party services have:
-------------------------
+10.2. Third-party services have:
+
 - Their own privacy policies
 - Independent data collection practices
 - Separate terms of service
 
-International Data Transfer
-~~~~~~~~~~~~~~~~~~~~~~~~
-Your information may be transferred and processed in countries where data protection laws differ.
+11. International Data Transfers
+--------------------------------
+- Data may be processed in different countries
+- We ensure appropriate safeguards for international transfers
+- Follow applicable data protection laws
 
-Cookies and Tracking
-~~~~~~~~~~~~~~~~~
-We use cookies and similar technologies to:
+12. Cookies and Tracking
+--------------------------
+We use:
 
-- Improve user experience
-- Remember preferences
-- Analyze usage patterns
-- Enhance security
+- Essential cookies for app functionality
+- Analytics cookies to improve service
+- Authentication tokens
+- Device identifiers
 
-Changes to Privacy Policy
-~~~~~~~~~~~~~~~~~~~~~~
-We may update this policy. Users will be notified of significant changes through:
+13. Changes to Privacy Policy
+------------------------------
+We may update this policy and will notify users of significant changes.
 
-- App notifications
-- Email communications
-- In-app announcements
+14. Contact Information
+------------------------
+For privacy-related inquiries contact us at: https://www.craftsmensoftware.com
 
-Contact Information
-~~~~~~~~~~~~~~~~~
-For privacy-related questions or concerns:
-
-- Email: [contact email]
-- Address: [physical address]
-- Phone: [contact number]
-
-Data Protection Rights
-~~~~~~~~~~~~~~~~~~~
-Under data protection laws, you have rights including:
-
-- Right to access
-- Right to rectification
-- Right to erasure
-- Right to restrict processing
-- Right to data portability
-- Right to object
-
-Consent
-~~~~~~
+15. Consent
+------------------------
 By using BloodConnect, you consent to this Privacy Policy and our data practices.
