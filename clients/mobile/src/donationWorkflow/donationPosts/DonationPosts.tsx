@@ -8,7 +8,7 @@ import Loader from '../../components/loaders/loader'
 
 const DonationPosts = () => {
   const styles = createStyles(useTheme())
-  const { createPost, updatePost, donationPosts, loading, errorMessage } = useDonationPosts()
+  const { createPost, updatePost, donationPosts, loading, errorMessage, viewDetailsHandler } = useDonationPosts()
   if (loading === true) {
     return <Loader size='large' />
   }
@@ -32,7 +32,7 @@ const DonationPosts = () => {
         : (
           <FlatList
             data={donationPosts}
-            renderItem={({ item }) => <PostCard post={item} updateHandler={updatePost} />}
+            renderItem={({ item }) => <PostCard post={item} updateHandler={updatePost} detailHandler={viewDetailsHandler} />}
             keyExtractor={item => item.requestPostId}
             contentContainerStyle={styles.postList}
           />

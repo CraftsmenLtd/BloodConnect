@@ -32,6 +32,10 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   lifecycle {
     create_before_destroy = true
   }
+
+  triggers = {
+    directory_md5 = sha1(join("", [for f in fileset(var.openapi_directory, "**") : filesha1("${var.openapi_directory}/${f}")]))
+  }
 }
 
 resource "aws_iam_role" "api_gw_role" {

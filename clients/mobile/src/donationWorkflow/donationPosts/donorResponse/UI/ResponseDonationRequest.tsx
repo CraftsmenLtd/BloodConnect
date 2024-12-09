@@ -3,15 +3,10 @@ import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
 import { Ionicons } from '@expo/vector-icons'
 import createStyles from './createStyles'
-import { DonationScreenParams } from '../../../types'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
 import React from 'react'
 
-interface DonationDetailsProps {
-  request: DonationScreenParams;
-};
-
-const ResponseDonationRequest: React.FC<DonationDetailsProps> = () => {
+const ResponseDonationRequest = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
   const {

@@ -1,6 +1,6 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
-import { NotificationDTO } from '../../../commons/dto/NotificationDTO'
+import { NotificationDTO, NotificationStatus } from '../../../commons/dto/NotificationDTO'
 import NotificationOperationError from './NotificationOperationError'
 import { BloodPostNotificationAttributes, NotificationAttributes, SnsRegistrationAttributes, StoreNotificationEndPoint } from './Types'
 import Repository from '../models/policies/repositories/Repository'
@@ -30,13 +30,17 @@ export class NotificationService {
         } else {
           await notificationRepository.create({
             ...notificationAttributes,
-            id: requestPostAttributes.payload.requestPostId
+            status: NotificationStatus.PENDING,
+            id: requestPostAttributes.payload.requestPostId,
+            createdAt: new Date().toISOString()
           })
         }
       } else {
         await notificationRepository.create({
           ...notificationAttributes,
-          id: generateUniqueID()
+          status: NotificationStatus.PENDING,
+          id: generateUniqueID(),
+          createdAt: new Date().toISOString()
         })
       }
 

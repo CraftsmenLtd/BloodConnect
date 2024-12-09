@@ -14,6 +14,7 @@ const lightTheme: Theme = {
     black: '#212121',
     greyBG: '#F5F5F5',
     redFaded: '#FFA6A6',
+    goldenYellow: '#FFD64D',
     goldenSun: '#FFCC00',
     peachCream: '#FFF4D9',
     darkAmber: '#FF8C00'
