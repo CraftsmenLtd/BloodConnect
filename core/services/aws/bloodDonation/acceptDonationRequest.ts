@@ -17,6 +17,7 @@ import { NotificationAttributes } from '../../../application/notificationWorkflo
 import { UserService } from '../../../application/userWorkflow/UserService'
 import { BloodDonationService } from './../../../application/bloodDonationWorkflow/BloodDonationService'
 import { DonationFields, BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
+import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
 const bloodDonationService = new BloodDonationService()
 const acceptDonationRequest = new AcceptDonationService()
@@ -40,7 +41,7 @@ async function acceptDonationRequestLambda(
       event.seekerId,
       event.requestPostId,
       event.createdAt,
-      new DynamoDbTableOperations<
+      new BloodDonationDynamoDbOperations<
       DonationDTO,
       DonationFields,
       BloodDonationModel

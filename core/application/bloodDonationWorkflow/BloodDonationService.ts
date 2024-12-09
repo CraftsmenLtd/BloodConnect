@@ -30,6 +30,7 @@ import {
   AcceptDonationRequestModel,
   AcceptedDonationFields
 } from '../models/dbModels/AcceptDonationModel'
+import BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
 export class BloodDonationService {
   async createBloodDonation(
     donationAttributes: BloodDonationAttributes,
@@ -123,11 +124,12 @@ export class BloodDonationService {
 
   async getDonationRequest(
     seekerId: string, requestPostId: string, createdAt: string,
-    bloodDonationRepository: Repository<DonationDTO>
+    bloodDonationRepository: BloodDonationRepository<DonationDTO>
   ): Promise<DonationDTO> {
-    const item = await bloodDonationRepository.getItem(
-      `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
-      `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
+    const item = await bloodDonationRepository.getDonationRequest(
+      seekerId,
+      requestPostId,
+      createdAt
     )
     if (item === null) {
       throw new Error('Item not found.')
@@ -166,27 +168,28 @@ export class BloodDonationService {
 
   async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
-    bloodDonationRepository: Repository<DonationDTO>
+    bloodDonationRepository: BloodDonationRepository<DonationDTO>
   ): Promise<string> {
     try {
-      const { requestPostId, donationDateTime, createdAt, ...restAttributes } =
+      const { seekerId, requestPostId, donationDateTime, createdAt, ...restAttributes } =
         donationAttributes
-
-      const item = await bloodDonationRepository.getItem(
-        `${BLOOD_REQUEST_PK_PREFIX}#${donationAttributes.seekerId}`,
-        `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
+      const item = await bloodDonationRepository.getDonationRequest(
+        seekerId,
+        requestPostId,
+        createdAt
       )
 
       if (item === null) {
         throw new Error('Item not found.')
       }
 
-      if (item?.status !== undefined && item.status === DonationStatus.COMPLETED) {
+      if (item?.status !== undefined && item.status === DonationStatus.CANCELLED) {
         throw new Error("You can't update a completed request")
       }
 
       const updateData: Partial<DonationDTO> = {
         ...restAttributes,
+        seekerId,
         id: requestPostId,
         createdAt
       }
