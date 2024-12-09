@@ -47,12 +47,11 @@ export default class DonationNotificationModel implements NosqlModel<BloodDonati
   toDto(dbFields: BloodDonationNotificationFields): BloodDonationNotificationDTO {
     const { PK, SK, GSI1PK, GSI1SK, LSI1SK, ...remainingBloodDonationNotificationFields } = dbFields
     const userId = PK.replace('NOTIFICATION#', '')
-    const parts = SK.split('#')
     return {
       ...remainingBloodDonationNotificationFields,
       userId,
-      type: parts[0] as NotificationType,
-      id: parts[1]
+      type: SK.split('#')[0] as NotificationType,
+      id: SK.split('#')[1]
     }
   }
 }

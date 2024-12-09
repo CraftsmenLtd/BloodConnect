@@ -34,12 +34,11 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
   toDto(dbFields: NotificationFields): NotificationDTO {
     const { PK, SK, ...remainingNotificationFields } = dbFields
     const userId = PK.replace('NOTIFICATION#', '')
-    const parts = SK.split('#')
     return {
       ...remainingNotificationFields,
       userId,
-      type: parts[0] as NotificationType,
-      id: parts[1]
+      type: SK.split('#')[0] as NotificationType,
+      id: SK.split('#')[1]
     }
   }
 }

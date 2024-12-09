@@ -9,11 +9,7 @@ export interface NotificationAttributes {
   payload: Record<string, unknown>;
 }
 
-export interface BloodDonationNotificationAttributes {
-  userId: string;
-  title: string;
-  body: string;
-  type: NotificationType;
+export type BloodDonationNotificationAttributes = Omit<NotificationAttributes, 'payload'> & {
   payload: BloodDonationPayloadAttributes;
 }
 
