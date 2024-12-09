@@ -184,7 +184,7 @@ export class UserService {
           userId: `${userId}`,
           locationId: generateUniqueID(),
           area: location.area,
-          city: location.city,
+          city: `${userAttributes.city}`,
           latitude: location.latitude,
           longitude: location.longitude,
           geohash: generateGeohash(location.latitude, location.longitude),
