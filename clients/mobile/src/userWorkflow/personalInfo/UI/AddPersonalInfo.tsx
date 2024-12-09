@@ -94,7 +94,7 @@ const AddPersonalInfo = () => {
           <View style={styles.fieldSpacing}>
             <SearchMultiSelect
               name="locations"
-              label="Search Location"
+              label="Search Preferred Location"
               isVisible={isVisible}
               setIsVisible={setIsVisible}
               onChange={handleInputChange}
@@ -150,7 +150,7 @@ const AddPersonalInfo = () => {
             <DateTimePickerComponent
               name='lastDonationDate'
               isOnlyDate={true}
-              label="Last donation date"
+              label="Last Donation Date"
               value={new Date(personalInfo.lastDonationDate)}
               onChange={(date) => handleInputChange('lastDonationDate', date)}
               isRequired={true}
@@ -162,7 +162,7 @@ const AddPersonalInfo = () => {
             <DateTimePickerComponent
               name='dateOfBirth'
               isOnlyDate={true}
-              label="Date of birth"
+              label="Date of Birth"
               value={new Date(personalInfo.dateOfBirth)}
               onChange={(date) => handleInputChange('dateOfBirth', date)}
               isRequired={true}
@@ -174,7 +174,7 @@ const AddPersonalInfo = () => {
             <DateTimePickerComponent
               name='lastVaccinatedDate'
               isOnlyDate={true}
-              label="Last vaccinated date"
+              label="Last Vaccinated Date"
               value={new Date(personalInfo.lastVaccinatedDate)}
               onChange={(date) => handleInputChange('lastVaccinatedDate', date)}
               isRequired={true}
