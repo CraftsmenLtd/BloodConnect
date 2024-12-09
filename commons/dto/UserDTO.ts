@@ -18,6 +18,7 @@ export interface UserDetailsDTO extends UserDTO {
   gender: Gender;
   dateOfBirth: string;
   age: number;
+  city: string;
   availableForDonation: AvailableForDonation;
   NIDFront: string;
   NIDBack: string;

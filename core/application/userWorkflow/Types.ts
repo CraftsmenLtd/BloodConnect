@@ -17,6 +17,7 @@ export interface UpdateUserAttributes extends UserAttributes {
   gender: Gender;
   dateOfBirth: string;
   age: number;
+  city: string;
   preferredDonationLocations: LocationDTO[];
   availableForDonation: AvailableForDonation;
   NIDFront: string;
