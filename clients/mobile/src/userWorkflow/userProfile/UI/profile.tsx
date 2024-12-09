@@ -72,6 +72,6 @@ const Profile: React.FC = () => {
       </View>
     </View>
   )
-}
+}                                  
 
 export default Profile
