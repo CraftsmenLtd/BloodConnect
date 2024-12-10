@@ -10,6 +10,7 @@ import { UserService } from '../../../../application/userWorkflow/UserService'
 import { mockUserDetailsWithStringId } from '../../../../application/tests/mocks/mockUserData'
 import { BloodDonationService } from '../../../../application/bloodDonationWorkflow/BloodDonationService'
 import { mockDonationDTO } from '../../../../application/tests/mocks/mockDonationRequestData'
+import { NotificationType } from '../../../../../commons/dto/NotificationDTO'
 
 jest.mock('../../../../application/bloodDonationWorkflow/AcceptDonationRequestService')
 jest.mock('../../../../application/notificationWorkflow/NotificationService')
@@ -81,7 +82,7 @@ describe('acceptDonationRequestLambda', () => {
         userId: mockEvent.seekerId,
         title: 'Donor Found',
         body: `${mockDonationDTO.requestedBloodGroup} blood found`,
-        type: 'REQ_ACCEPTED',
+        type: NotificationType.REQ_ACCEPTED,
         payload: expect.objectContaining({
           donorId: mockEvent.donorId,
           donorName: mockUserDetailsWithStringId.name,

@@ -1,0 +1,29 @@
+{
+  "CreateDonationRecordModel": {
+    "type": "object",
+    "required": [
+      "donorId",
+      "requestPostId",
+      "requestCreatedAt"
+    ],
+    "properties": {
+      "donorId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "requestPostId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "requestCreatedAt": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "example": {
+      "donorId": "123abc",
+      "requestPostId": "example01110",
+      "requestCreatedAt": "2024-12-09T23:08:14.136Z"
+    }
+  }
+}

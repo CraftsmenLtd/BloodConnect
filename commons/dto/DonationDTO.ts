@@ -66,3 +66,14 @@ type BaseAcceptedDonationDTO = {
 export type AcceptedDonationDTO = BaseAcceptedDonationDTO & DTO & {
   status?: string;
 }
+
+export type DonationRecordDTO = DTO & HasIdentifier & {
+  donorId: string;
+  seekerId: string;
+  requestPostId: string;
+  requestCreatedAt: string;
+  requestedBloodGroup: BloodGroup;
+  location: string;
+  donationDateTime: string;
+  createdAt?: string;
+}

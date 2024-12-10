@@ -97,3 +97,21 @@ export interface DonationStatusManagerAttributes {
   requestPostId: string;
   createdAt: string;
 }
+
+export interface DonationRecordEventAttributes {
+  donorId: string;
+  seekerId: string;
+  requestPostId: string;
+  requestCreatedAt: string;
+}
+
+export interface DonationRecordAttributes {
+  donorId: string;
+  seekerId: string;
+  requestPostId: string;
+  requestCreatedAt: string;
+  requestedBloodGroup: BloodGroup;
+  location: string;
+  donationDateTime: string;
+  createdAt?: string;
+}

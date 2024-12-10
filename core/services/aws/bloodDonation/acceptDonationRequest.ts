@@ -3,7 +3,11 @@ import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import { AcceptDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import { AcceptedDonationDTO, DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
+import {
+  AcceptedDonationDTO,
+  DonationDTO,
+  DonationStatus
+} from '../../../../commons/dto/DonationDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import {
   AcceptDonationRequestModel,
@@ -16,8 +20,20 @@ import SQSOperations from '../commons/sqs/SQSOperations'
 import { NotificationAttributes } from '../../../application/notificationWorkflow/Types'
 import { UserService } from '../../../application/userWorkflow/UserService'
 import { BloodDonationService } from './../../../application/bloodDonationWorkflow/BloodDonationService'
-import { DonationFields, BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
+import {
+  DonationFields,
+  BloodDonationModel
+} from '../../../application/models/dbModels/BloodDonationModel'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
+import {
+  BloodDonationNotificationDTO,
+  NotificationStatus,
+  NotificationType
+} from '../../../../commons/dto/NotificationDTO'
+import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
+import DonationNotificationModel, {
+  BloodDonationNotificationFields
+} from '../../../application/models/dbModels/DonationNotificationModel'
 
 const bloodDonationService = new BloodDonationService()
 const acceptDonationRequest = new AcceptDonationService()
@@ -30,9 +46,7 @@ async function acceptDonationRequestLambda(
   try {
     const userProfile = await userService.getUser(
       event.donorId,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(
-        new UserModel()
-      )
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
     )
     if (userProfile === null) {
       throw new Error('Cannot find user')
@@ -41,11 +55,9 @@ async function acceptDonationRequestLambda(
       event.seekerId,
       event.requestPostId,
       event.createdAt,
-      new BloodDonationDynamoDbOperations<
-      DonationDTO,
-      DonationFields,
-      BloodDonationModel
-      >(new BloodDonationModel())
+      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
+        new BloodDonationModel()
+      )
     )
     if (donationPost.status !== DonationStatus.PENDING) {
       throw new Error('Donation request is no longer available for acceptance.')
@@ -75,35 +87,44 @@ async function acceptDonationRequestLambda(
       >(new AcceptDonationRequestModel())
     )
 
+    await notificationService.updateDonorNotificationStatus(
+      event.donorId,
+      event.requestPostId,
+      NotificationType.BLOOD_REQ_POST,
+      NotificationStatus.ACCEPTED,
+      new NotificationDynamoDbOperations<
+      BloodDonationNotificationDTO,
+      BloodDonationNotificationFields,
+      DonationNotificationModel
+      >(new DonationNotificationModel())
+    )
+
     const acceptedDonors = await bloodDonationService.getAcceptedDonorList(
       event.seekerId,
       event.requestPostId,
-      new DynamoDbTableOperations<AcceptedDonationDTO, AcceptedDonationFields, AcceptDonationRequestModel>(new AcceptDonationRequestModel())
+      new DynamoDbTableOperations<
+      AcceptedDonationDTO,
+      AcceptedDonationFields,
+      AcceptDonationRequestModel
+      >(new AcceptDonationRequestModel())
     )
 
     const notificationAttributes: NotificationAttributes = {
       userId: event.seekerId,
       title: 'Donor Found',
       body: `${donationPost.requestedBloodGroup} blood found`,
-      type: 'REQ_ACCEPTED',
+      type: NotificationType.REQ_ACCEPTED,
       payload: {
         ...acceptDonationRequestAttributes,
         acceptedDonors
       }
     }
 
-    await notificationService.sendNotification(
-      notificationAttributes,
-      new SQSOperations()
-    )
+    await notificationService.sendNotification(notificationAttributes, new SQSOperations())
     return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred'
-    return generateApiGatewayResponse(
-      `Error: ${errorMessage}`,
-      HTTP_CODES.ERROR
-    )
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
 }
 

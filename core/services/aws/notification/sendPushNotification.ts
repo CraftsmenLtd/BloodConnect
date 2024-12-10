@@ -7,7 +7,8 @@ import { NotificationService } from '../../../application/notificationWorkflow/N
 import SNSOperations from '../commons/sns/SNSOperations'
 import {
   BloodDonationNotificationDTO,
-  NotificationDTO
+  NotificationDTO,
+  NotificationType
 } from '../../../../commons/dto/NotificationDTO'
 import NotificationModel, {
   NotificationFields
@@ -47,7 +48,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
 
   const { userId } = body
   if (body.type === undefined) {
-    body.type = 'COMMON'
+    body.type = NotificationType.COMMON
   }
 
   const cachedUserSnsEndpointArn = userDeviceToSnsEndpointMap.get(userId)
@@ -76,7 +77,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
 export default sendPushNotification
 
 async function createNotification(body: NotificationAttributes): Promise<void> {
-  if (['BLOOD_REQ_POST', 'REQ_ACCEPTED'].includes(body.type)) {
+  if ([NotificationType.BLOOD_REQ_POST, NotificationType.REQ_ACCEPTED].includes(body.type)) {
     const notificationData: BloodDonationNotificationAttributes = {
       type: body.type,
       payload: {

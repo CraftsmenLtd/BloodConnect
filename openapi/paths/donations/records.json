@@ -1,0 +1,53 @@
+{
+  "post": {
+    "operationId": "CreateDonationRecord",
+    "description": "Create Donation Record",
+    "tags": [
+      "bloodconnect-donation"
+    ],
+    "requestBody": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./../../components/schemas/donations/create-Donation-Record.json#/CreateDonationRecordModel"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "200 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {}
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/donations/post-donation-record.json"
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
+  },
+  "options": {
+    "$ref": "./../cors-options.json"
+  }
+}
