@@ -20,6 +20,7 @@ import {
 } from '../../models/dbModels/BloodDonationModel'
 import { QueryConditionOperator } from '../../models/policies/repositories/QueryTypes'
 import { GENERIC_CODES } from '../../../../commons/libs/constants/GenericCodes'
+import BloodDonationRepository from 'core/application/models/policies/repositories/BloodDonationRepository'
 
 jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
@@ -329,6 +330,12 @@ describe('BloodDonationService', () => {
   })
 
   describe('updateBloodDonation', () => {
+    const bloodDonationRepository: jest.Mocked<BloodDonationRepository<DonationDTO>> =
+    {
+      ...mockRepository,
+      getDonationRequest: jest.fn()
+    }
+
     test('should update blood donation if request exists and not completed', async() => {
       const bloodDonationService = new BloodDonationService()
       const existingDonation: DonationDTO = {
@@ -353,9 +360,10 @@ describe('BloodDonationService', () => {
         bloodDonationRepository
       )
 
-      expect(bloodDonationRepository.getItem).toHaveBeenCalledWith(
-        `${BLOOD_REQUEST_PK_PREFIX}#user123`,
-        `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#req123`
+      expect(bloodDonationRepository.getDonationRequest).toHaveBeenCalledWith(
+        'user123',
+        'req123',
+        mockCreatedAt
       )
       expect(bloodDonationRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -372,7 +380,7 @@ describe('BloodDonationService', () => {
 
     test('should throw BloodDonationOperationError if request does not exist', async() => {
       const bloodDonationService = new BloodDonationService()
-      bloodDonationRepository.getItem.mockResolvedValue(null)
+      bloodDonationRepository.getDonationRequest.mockResolvedValue(null)
 
       const donationAttributes = {
         seekerId: 'user123',
@@ -424,16 +432,16 @@ describe('BloodDonationService', () => {
       expect(bloodDonationRepository.update).not.toHaveBeenCalled()
     })
 
-    test('should throw BloodDonationOperationError if blood donation is already completed', async() => {
+    test('should throw BloodDonationOperationError if blood donation is already cancelled', async() => {
       const bloodDonationService = new BloodDonationService()
       const completedDonation: DonationDTO = {
         ...donationDtoMock,
         id: 'req123',
-        status: DonationStatus.COMPLETED,
+        status: DonationStatus.CANCELLED,
         createdAt: mockCreatedAt
       }
 
-      bloodDonationRepository.getItem.mockResolvedValue(completedDonation)
+      bloodDonationRepository.getDonationRequest.mockResolvedValue(completedDonation)
 
       const donationAttributes = {
         seekerId: 'user123',

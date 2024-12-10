@@ -9,15 +9,26 @@ export interface NotificationAttributes {
   payload: Record<string, unknown>;
 }
 
-export interface BloodPostNotificationAttributes {
-  userId: string;
-  title: string;
-  body: string;
-  type: NotificationType;
-  payload: {
-    requestPostId: string;
-    [key: string]: unknown;
-  };
+export type BloodDonationNotificationAttributes = Omit<NotificationAttributes, 'payload'> & {
+  payload: BloodDonationPayloadAttributes;
+}
+
+export interface BloodDonationPayloadAttributes {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+  bloodQuantity: string;
+  requestedBloodGroup: string;
+  urgencyLevel: string;
+  contactNumber: string;
+  donationDateTime: string;
+  seekerName: string;
+  patientName?: string;
+  location?: string;
+  locationId: string;
+  shortDescription?: string;
+  transportationInfo?: string;
+  distance?: number;
 }
 
 export interface StoreNotificationEndPoint extends UserDTO {

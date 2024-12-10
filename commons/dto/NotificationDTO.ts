@@ -18,3 +18,25 @@ export type NotificationDTO = DTO & HasIdentifier & {
   payload?: Record<string, unknown>;
   createdAt: string;
 }
+
+export type BloodDonationNotificationDTO = Omit<NotificationDTO, 'payload'> & {
+  payload: BloodDonationPayload;
+}
+
+export interface BloodDonationPayload {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+  bloodQuantity: string;
+  requestedBloodGroup: string;
+  urgencyLevel: string;
+  contactNumber: string;
+  donationDateTime: string;
+  seekerName: string;
+  patientName?: string;
+  location?: string;
+  locationId: string;
+  shortDescription?: string;
+  transportationInfo?: string;
+  distance?: number;
+}
