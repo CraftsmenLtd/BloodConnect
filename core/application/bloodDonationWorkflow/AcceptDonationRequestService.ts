@@ -1,10 +1,9 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import AcceptDonationRequestError from './AcceptDonationRequestError'
-import {
-  AcceptedDonationDTO
-} from '../../../commons/dto/DonationDTO'
+import { AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
 import Repository from '../models/policies/repositories/Repository'
 import { AcceptDonationRequestAttributes } from './Types'
+import AcceptedDonationRepository from '../models/policies/repositories/AcceptedDonationRepository'
 
 export class AcceptDonationService {
   async createAcceptanceRecord(
@@ -28,5 +27,17 @@ export class AcceptDonationService {
         GENERIC_CODES.ERROR
       )
     }
+  }
+
+  async getAcceptedDonorList(
+    seekerId: string,
+    requestPostId: string,
+    acceptDonationRepository: AcceptedDonationRepository<AcceptedDonationDTO>
+  ): Promise<AcceptedDonationDTO[]> {
+    const queryResult = await acceptDonationRepository.queryAcceptedRequests(
+      seekerId,
+      requestPostId
+    )
+    return queryResult ?? []
   }
 }

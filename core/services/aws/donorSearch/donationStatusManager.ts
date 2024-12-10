@@ -1,42 +1,39 @@
 import { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import { DonationStatusManagerAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import {
   AcceptedDonationDTO,
-  DonationDTO
+  DonationDTO,
+  DonationStatus
 } from '../../../../commons/dto/DonationDTO'
 import {
   BloodDonationModel,
   DonationFields
 } from '../../../application/models/dbModels/BloodDonationModel'
-import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import {
   AcceptedDonationFields,
   AcceptDonationRequestModel
 } from '../../../application/models/dbModels/AcceptDonationModel'
+import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
+import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
+import { AcceptDonationService } from 'core/application/bloodDonationWorkflow/AcceptDonationRequestService'
 
 const bloodDonationService = new BloodDonationService()
+const acceptDonationService = new AcceptDonationService()
 
-async function donationStatusManager(
-  event: SQSEvent
-): Promise<{ status: string }> {
+async function donationStatusManager(event: SQSEvent): Promise<{ status: string }> {
   try {
     for (const record of event.Records) {
       await processSQSRecord(record)
     }
     return { status: 'Success' }
   } catch (error) {
-    throw error instanceof Error
-      ? error
-      : new Error('An unknown error occurred')
+    throw error instanceof Error ? error : new Error('An unknown error occurred')
   }
 }
 
 async function processSQSRecord(record: SQSRecord): Promise<void> {
   const body =
-    typeof record.body === 'string' && record.body.trim() !== ''
-      ? JSON.parse(record.body)
-      : {}
+    typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
   const primaryIndex: string = body?.PK
   const secondaryIndex: string = body?.SK
@@ -45,25 +42,39 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     throw new Error('Missing PK or SK in the DynamoDB record')
   }
 
-  const donorRoutingAttributes: DonationStatusManagerAttributes = {
-    seekerId: primaryIndex.split('#')[1],
-    requestPostId: secondaryIndex.split('#')[1],
-    createdAt
-  }
+  const seekerId = primaryIndex.split('#')[1]
+  const requestPostId = secondaryIndex.split('#')[1]
 
-  await bloodDonationService.updateDonationStatus(
-    donorRoutingAttributes,
-    new DynamoDbTableOperations<
-    DonationDTO,
-    DonationFields,
-    BloodDonationModel
-    >(new BloodDonationModel()),
-    new DynamoDbTableOperations<
+  const donationPost = await bloodDonationService.getDonationRequest(
+    seekerId,
+    requestPostId,
+    createdAt,
+    new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
+      new BloodDonationModel()
+    )
+  )
+
+  const acceptedDonors = await acceptDonationService.getAcceptedDonorList(
+    seekerId,
+    requestPostId,
+    new AcceptedDonationDynamoDbOperations<
     AcceptedDonationDTO,
     AcceptedDonationFields,
     AcceptDonationRequestModel
     >(new AcceptDonationRequestModel())
   )
+
+  if (acceptedDonors.length >= donationPost.bloodQuantity) {
+    await bloodDonationService.updateDonationStatus(
+      seekerId,
+      requestPostId,
+      createdAt,
+      DonationStatus.MANAGED,
+      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
+        new BloodDonationModel()
+      )
+    )
+  }
 }
 
 export default donationStatusManager
