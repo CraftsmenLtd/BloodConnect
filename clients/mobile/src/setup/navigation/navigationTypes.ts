@@ -22,8 +22,7 @@ export type RootStackParamList = {
   [SCREENS.DONATION_POSTS]: { data: DonationScreenParams | null; isUpdating: boolean };
   [SCREENS.ADD_PERSONAL_INFO]: undefined;
   [SCREENS.POSTS]: undefined;
-  // [SCREENS.BLOOD_REQUEST_PREVIEW]: undefined;
-  [SCREENS.DETAILPOST]: { data: DonationData };
+  [SCREENS.DETAIL_POST]: { data: DonationData; tab?: string };
   [SCREENS.DONAR_PROFILE]: { donarId: string };
   [SCREENS.DONAR_RESPONSE]: { notificationData: DonorResponseNotification };
   [SCREENS.MY_ACTIVITY]: undefined;
@@ -43,7 +42,7 @@ export type DonationScreenNavigationProp = StackNavigationProp<RootStackParamLis
 export type DonationPostsScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONATION_POSTS>
 export type BottomTabsNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BOTTOM_TABS>
 export type RequestPreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
-export type DetailPostScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DETAILPOST>
+export type DetailPostScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DETAIL_POST>
 export type DonarProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONAR_PROFILE>
 export type MyActivityScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.MY_ACTIVITY>
 
@@ -57,6 +56,6 @@ export type OtpScreenRouteProp = RouteProp<RootStackParamList, SCREENS.OTP>
 export type SetPasswordRouteProp = RouteProp<RootStackParamList, SCREENS.SET_PASSWORD>
 export type DonationScreenRouteProp = RouteProp<RootStackParamList, SCREENS.DONATION>
 export type RequestPreviewRouteProp = RouteProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
-export type DetailPostRouteProp = RouteProp<RootStackParamList, SCREENS.DETAILPOST>
+export type DetailPostRouteProp = RouteProp<RootStackParamList, SCREENS.DETAIL_POST>
 export type DonarResponseRouteProp = RouteProp<RootStackParamList, SCREENS.DONAR_RESPONSE>
 export type DonarProfileRouteProp = RouteProp<RootStackParamList, SCREENS.DONAR_PROFILE>

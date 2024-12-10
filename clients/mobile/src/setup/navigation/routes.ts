@@ -9,8 +9,8 @@ import BottomNavigation from './BottomNavigation'
 import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPassword'
 import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
-import Detail from '../../userWorkflow/Detail'
-import DonarProfile from '../../userWorkflow/DonarProfile'
+import Detail from '../../myActivity/myPosts/details/Detail'
+import DonarProfile from '../../myActivity/donorProfile/DonarProfile'
 import DonorResponse from '../../donationWorkflow/donorResponse/DonorResponse'
 import { Account } from '../../userWorkflow/account/UI/Account'
 import Profile from '../../userWorkflow/Profile'
@@ -83,7 +83,7 @@ export const routes = [
     protected: true
   },
   {
-    name: SCREENS.DETAILPOST,
+    name: SCREENS.DETAIL_POST,
     component: Detail,
     options: { headerShown: true, headerTitle: 'My Post' },
     protected: true
