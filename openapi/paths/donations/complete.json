@@ -1,7 +1,7 @@
 {
   "post": {
-    "operationId": "CreateDonationRecord",
-    "description": "Create Donation Record",
+    "operationId": "CompleteDonation",
+    "description": "Complete Donation Record",
     "tags": [
       "bloodconnect-donation"
     ],
@@ -9,7 +9,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "./../../components/schemas/donations/create-Donation-Record.json#/CreateDonationRecordModel"
+            "$ref": "./../../components/schemas/donations/complete-donation.json#/CompleteDonationModel"
           }
         }
       }
@@ -39,7 +39,7 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../../integration/aws/donations/post-donation-record.json"
+      "$ref": "./../../integration/aws/donations/post-complete-donation.json"
     },
     "security": [
       {

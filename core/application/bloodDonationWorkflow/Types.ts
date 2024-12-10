@@ -99,7 +99,7 @@ export interface DonationStatusManagerAttributes {
 }
 
 export interface DonationRecordEventAttributes {
-  donorId: string;
+  donorIds: string[];
   seekerId: string;
   requestPostId: string;
   requestCreatedAt: string;

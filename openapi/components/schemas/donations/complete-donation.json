@@ -1,15 +1,17 @@
 {
-  "CreateDonationRecordModel": {
+  "CompleteDonationModel": {
     "type": "object",
     "required": [
-      "donorId",
+      "donorIds",
       "requestPostId",
       "requestCreatedAt"
     ],
     "properties": {
-      "donorId": {
-        "type": "string",
-        "minLength": 1
+      "donorIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       },
       "requestPostId": {
         "type": "string",
@@ -21,7 +23,9 @@
       }
     },
     "example": {
-      "donorId": "123abc",
+      "donorIds": [
+        "123abc"
+      ],
       "requestPostId": "example01110",
       "requestCreatedAt": "2024-12-09T23:08:14.136Z"
     }

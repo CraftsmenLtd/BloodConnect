@@ -34,9 +34,10 @@ import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbO
 import DonationNotificationModel, {
   BloodDonationNotificationFields
 } from '../../../application/models/dbModels/DonationNotificationModel'
+import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
 
 const bloodDonationService = new BloodDonationService()
-const acceptDonationRequest = new AcceptDonationService()
+const acceptDonationService = new AcceptDonationService()
 const userService = new UserService()
 const notificationService = new NotificationService()
 
@@ -78,7 +79,7 @@ async function acceptDonationRequestLambda(
       donationDateTime: donationPost.donationDateTime,
       shortDescription: donationPost.shortDescription
     }
-    const response = await acceptDonationRequest.createAcceptanceRecord(
+    const response = await acceptDonationService.createAcceptanceRecord(
       acceptDonationRequestAttributes,
       new DynamoDbTableOperations<
       AcceptedDonationDTO,
@@ -99,10 +100,10 @@ async function acceptDonationRequestLambda(
       >(new DonationNotificationModel())
     )
 
-    const acceptedDonors = await bloodDonationService.getAcceptedDonorList(
+    const acceptedDonors = await acceptDonationService.getAcceptedDonorList(
       event.seekerId,
       event.requestPostId,
-      new DynamoDbTableOperations<
+      new AcceptedDonationDynamoDbOperations<
       AcceptedDonationDTO,
       AcceptedDonationFields,
       AcceptDonationRequestModel

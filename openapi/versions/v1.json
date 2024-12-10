@@ -59,8 +59,8 @@
     "/donations/responses": {
       "$ref": "./../paths/donations/responses.json"
     },
-    "/donations/records": {
-      "$ref": "./../paths/donations/records.json"
+    "/donations/complete": {
+      "$ref": "./../paths/donations/complete.json"
     },
     "/notification/register": {
       "$ref": "./../paths/notification/register.json"

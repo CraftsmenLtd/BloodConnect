@@ -40,16 +40,16 @@ locals {
         NOTIFICATION_QUEUE_URL = var.push_notification_queue.url
       }
     },
-    create-donation-record = {
-      name     = "create-donation-record"
-      handler  = "createDonationRecord.default"
-      zip_path = "createDonationRecord.zip"
+    complete-donation = {
+      name     = "complete-donation-request"
+      handler  = "completeDonationRequest.default"
+      zip_path = "completeDonationRequest.zip"
       statement = concat(
         local.policies.common_policies,
         local.policies.dynamodb_create_policy,
         local.policies.dynamodb_update_policy
       )
-      invocation_arn_placeholder = "CREATE_DONATION_RECORD_INVOCATION_ARN"
+      invocation_arn_placeholder = "COMPLETE_DONATION_INVOCATION_ARN"
       env_variables = {
         DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
       }
