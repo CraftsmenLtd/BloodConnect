@@ -1,7 +1,7 @@
 {
   "patch": {
-    "operationId": "CancelBloodRequestPost",
-    "description": "Cancel a blood request post",
+    "operationId": "CancelBloodDonation",
+    "description": "Cancel a blood Donation",
     "tags": [
       "bloodconnect-donation"
     ],
@@ -9,7 +9,7 @@
       "content": {
         "application/json": {
           "schema": {
-            "$ref": "./../../components/schemas/donations/cancel-post-payload.json#/CancelPostModel"
+            "$ref": "./../../components/schemas/donations/cancel-donation-request.json#/CancelDonationModel"
           }
         }
       }
@@ -39,7 +39,7 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../../integration/aws/donations/cancel-post.json"
+      "$ref": "./../../integration/aws/donations/patch-cancel-donation.json"
     },
     "security": [
       {

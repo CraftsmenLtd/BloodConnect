@@ -1,7 +1,7 @@
 {
   "type": "aws",
   "httpMethod": "POST",
-  "uri": "${CANCEL_DONATION_POST_INVOCATION_ARN}",
+  "uri": "${CANCEL_DONATION_INVOCATION_ARN}",
   "responses": {
     "default": {
       "statusCode": "200",

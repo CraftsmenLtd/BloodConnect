@@ -15,7 +15,7 @@ import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoD
 
 const bloodDonationService = new BloodDonationService()
 
-async function cancelDonationPostLambda(
+async function cancelBloodDonation(
   event: DonationRecordEventAttributes
 ): Promise<APIGatewayProxyResult> {
   try {
@@ -41,4 +41,4 @@ async function cancelDonationPostLambda(
   }
 }
 
-export default cancelDonationPostLambda
+export default cancelBloodDonation

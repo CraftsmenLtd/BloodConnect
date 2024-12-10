@@ -1,5 +1,5 @@
 {
-  "CancelPostModel": {
+  "CancelDonationModel": {
     "type": "object",
     "required": [
       "requestPostId",
