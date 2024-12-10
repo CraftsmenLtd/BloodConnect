@@ -1,0 +1,33 @@
+{
+  "CompleteDonationModel": {
+    "type": "object",
+    "required": [
+      "donorIds",
+      "requestPostId",
+      "requestCreatedAt"
+    ],
+    "properties": {
+      "donorIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "requestPostId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "requestCreatedAt": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "example": {
+      "donorIds": [
+        "123abc"
+      ],
+      "requestPostId": "example01110",
+      "requestCreatedAt": "2024-12-09T23:08:14.136Z"
+    }
+  }
+}

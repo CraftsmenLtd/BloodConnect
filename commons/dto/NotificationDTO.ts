@@ -1,7 +1,10 @@
 import { DTO, HasIdentifier } from './DTOCommon'
 
-export type NotificationType = 'BLOOD_REQ_POST' | 'REQ_ACCEPTED' | 'COMMON'
-
+export enum NotificationType {
+  BLOOD_REQ_POST = 'BLOOD_REQ_POST',
+  REQ_ACCEPTED = 'REQ_ACCEPTED',
+  COMMON = 'COMMON'
+}
 export enum NotificationStatus {
   PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',

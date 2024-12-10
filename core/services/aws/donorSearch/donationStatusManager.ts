@@ -9,34 +9,31 @@ import {
   BloodDonationModel,
   DonationFields
 } from '../../../application/models/dbModels/BloodDonationModel'
-import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import {
   AcceptedDonationFields,
   AcceptDonationRequestModel
 } from '../../../application/models/dbModels/AcceptDonationModel'
+import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
+import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
+import { AcceptDonationService } from 'core/application/bloodDonationWorkflow/AcceptDonationRequestService'
 
 const bloodDonationService = new BloodDonationService()
+const acceptDonationService = new AcceptDonationService()
 
-async function donationStatusManager(
-  event: SQSEvent
-): Promise<{ status: string }> {
+async function donationStatusManager(event: SQSEvent): Promise<{ status: string }> {
   try {
     for (const record of event.Records) {
       await processSQSRecord(record)
     }
     return { status: 'Success' }
   } catch (error) {
-    throw error instanceof Error
-      ? error
-      : new Error('An unknown error occurred')
+    throw error instanceof Error ? error : new Error('An unknown error occurred')
   }
 }
 
 async function processSQSRecord(record: SQSRecord): Promise<void> {
   const body =
-    typeof record.body === 'string' && record.body.trim() !== ''
-      ? JSON.parse(record.body)
-      : {}
+    typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
   const primaryIndex: string = body?.PK
   const secondaryIndex: string = body?.SK
