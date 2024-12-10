@@ -10,7 +10,7 @@ import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
 
 const SCREEN_FOR_NOTIFICATION: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
-  bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW },
+  bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW, getParams: (data) => ({ notificationData: data }) },
   donorAcceptRequest: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
 }
 
@@ -28,6 +28,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
     const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
       if (isNotificationValid(response)) {
         const data = parseJsonData(response.notification.request.content.data.payload)
+        const identifier = response.notification.request.identifier
+        void storageService.storeItem(LOCAL_STORAGE_KEYS.LAST_PROCESSED_NOTIFICATION_KEY, identifier)
         setNotificationData(data as NotificationData)
         handleNotificationNavigation(response)
       }

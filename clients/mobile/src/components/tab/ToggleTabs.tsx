@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { Theme } from '../../setup/theme'
 
 interface ToggleTabsProps {
-  tabs: string[];
+  tabs: [string, ...string[]];
   onTabPress: (tab: string) => void;
   initialActiveTab?: string;
 }
 
 const ToggleTabs: React.FC<ToggleTabsProps> = ({ tabs, onTabPress, initialActiveTab }) => {
+  const styles = createStyles(useTheme())
   const [activeTab, setActiveTab] = useState(initialActiveTab ?? tabs[0])
 
   return (
@@ -15,7 +18,7 @@ const ToggleTabs: React.FC<ToggleTabsProps> = ({ tabs, onTabPress, initialActive
       {tabs.map((tab) => (
         <TouchableOpacity
           key={tab}
-          style={[styles.tab, activeTab === tab ? styles.activeTab : styles.inactiveTab]}
+          style={[styles.tab, activeTab === tab && styles.activeTab]}
           onPress={() => {
             setActiveTab(tab)
             onTabPress(tab)
@@ -28,12 +31,12 @@ const ToggleTabs: React.FC<ToggleTabsProps> = ({ tabs, onTabPress, initialActive
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flexDirection: 'row',
     borderRadius: 25,
     overflow: 'hidden',
-    backgroundColor: '#f5f5f5'
+    backgroundColor: theme.colors.greyBG
   },
   tab: {
     flex: 1,
@@ -42,17 +45,16 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   activeTab: {
-    backgroundColor: '#ff4d4d',
+    backgroundColor: theme.colors.primary,
     borderRadius: 100
   },
-  inactiveTab: {},
   text: {
     fontSize: 14,
-    color: '#000',
+    color: theme.colors.black,
     fontWeight: '500'
   },
   activeText: {
-    color: '#fff'
+    color: theme.colors.white
   }
 })
 

@@ -15,12 +15,16 @@ const DonorResponse = () => {
     <View style={styles.container}>
       <View>
         <Text style={styles.responseText}>{bloodRequest.donorName} responded to your request</Text>
-        <PostCard post={bloodRequest} showButton={false} showDescription showHeader={false} updateHandler={() => { }} />
+        <PostCard post={bloodRequest} showButton={false} showDescription showHeader={false} />
       </View>
 
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
-          <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: 'black' }} onPress={ignoreHandler} />
+          <Button
+            text="Ignore"
+            buttonStyle={styles.ignoreButton}
+            textStyle={styles.buttonTextStyle}
+            onPress={ignoreHandler} />
         </View>
         <View style={styles.buttonWrapper}>
           <Button text="See Responses" onPress={seeDetails} />
@@ -41,7 +45,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     backgroundColor: theme.colors.greyBG,
     flex: 1,
     marginRight: 10,
-    color: 'black'
+    color: theme.colors.black
+  },
+  buttonTextStyle: {
+    color: theme.colors.black
   },
   responseText: {
     textAlign: 'center',

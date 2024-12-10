@@ -10,6 +10,7 @@ import { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../set
 import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { useMyActivityContext } from '../../myActivity/context/useMyActivityContext'
+import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -45,6 +46,7 @@ export const useBloodRequest = (): any => {
   const fetchClient = useFetchClient()
   const route = useRoute<DonationScreenRouteProp>()
   const { fetchDonationPosts } = useMyActivityContext()
+  const { userProfile } = useUserProfile()
   const navigation = useNavigation<DonationScreenNavigationProp>()
   const { data, isUpdating } = route.params
   const [bloodRequestData, setBloodRequestData] = useState<BloodRequestData>({
@@ -54,7 +56,7 @@ export const useBloodRequest = (): any => {
     donationDateTime: data !== null ? new Date(data.donationDateTime) : new Date(),
     location: '',
     contactNumber: '',
-    patientName: '',
+    patientName: userProfile.name ?? '',
     shortDescription: '',
     transportationInfo: '',
     city: '',

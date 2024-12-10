@@ -1,10 +1,9 @@
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, RefreshControl } from 'react-native'
 import { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { useDonationPosts } from './useDonationPosts'
 import Header from './DonationHeader'
 import Posts from '../../components/donation/Posts'
-import { DonationPostsScreenNavigationProp } from '../../setup/navigation/navigationTypes'
 import { BloodDonationRecord } from '../types'
 import { COMMON_URLS } from '../../setup/constant/commonUrls'
 
@@ -12,12 +11,10 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
   requestPostId: string;
 }
 
-interface DonationPostsProps {
-  navigation: DonationPostsScreenNavigationProp;
-}
-const DonationPosts = ({ navigation }: DonationPostsProps) => {
-  const styles = createStyles(useTheme())
-  const { errorMessage, createPost, updatePost, donationPosts, loading, viewDetailsHandler } = useDonationPosts()
+const DonationPosts = () => {
+  const theme = useTheme()
+  const styles = createStyles(theme)
+  const { errorMessage, createPost, donationPosts, loading, viewDetailsHandler, refreshing, handleRefresh } = useDonationPosts()
 
   return (
     <View style={styles.container}>
@@ -27,7 +24,21 @@ const DonationPosts = ({ navigation }: DonationPostsProps) => {
         buttonLabel="Create Post"
         onButtonPress={createPost}
       />
-      <Posts errorMessage={errorMessage} loading={loading} donationPosts={donationPosts} updatePost={updatePost} detailHandler={viewDetailsHandler} />
+      <Posts
+        errorMessage={errorMessage}
+        loading={loading}
+        donationPosts={donationPosts}
+        detailHandler={viewDetailsHandler}
+        displayOptions={{ showOptions: false, showPostUpdatedOption: false }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[theme.colors.primary]}
+            tintColor={theme.colors.primary}
+          />
+        }
+      />
     </View>
   )
 }
