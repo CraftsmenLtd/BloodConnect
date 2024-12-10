@@ -66,9 +66,9 @@ async function completeDonationRequest(
           donationDateTime: donationPost.donationDateTime
         },
         new DonationRecordDynamoDbOperations<
-          DonationRecordDTO,
-          DonationRecordFields,
-          DonationRecordModel
+        DonationRecordDTO,
+        DonationRecordFields,
+        DonationRecordModel
         >(new DonationRecordModel())
       )
 
@@ -78,9 +78,9 @@ async function completeDonationRequest(
         NotificationType.BLOOD_REQ_POST,
         NotificationStatus.COMPLETED,
         new NotificationDynamoDbOperations<
-          BloodDonationNotificationDTO,
-          BloodDonationNotificationFields,
-          DonationNotificationModel
+        BloodDonationNotificationDTO,
+        BloodDonationNotificationFields,
+        DonationNotificationModel
         >(new DonationNotificationModel())
       )
     }
