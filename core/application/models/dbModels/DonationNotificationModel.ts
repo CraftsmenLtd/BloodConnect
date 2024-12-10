@@ -32,15 +32,14 @@ export default class DonationNotificationModel implements NosqlModel<BloodDonati
   }
 
   fromDto(BloodDonationNotificationDTO: BloodDonationNotificationDTO): BloodDonationNotificationFields {
-    const { id, userId, type, payload, ...remainingBloodDonationNotificationFields } = BloodDonationNotificationDTO
+    const { id, userId, type, ...remainingBloodDonationNotificationFields } = BloodDonationNotificationDTO
     return {
       PK: `${NOTIFICATION_PK_PREFIX}#${userId}`,
       SK: `${type}#${id}`,
       GSI1PK: `${id}`,
       GSI1SK: `${NOTIFICATION_PK_PREFIX}#${userId}`,
       LSI1SK: `STATUS#${remainingBloodDonationNotificationFields.status}#${id}`,
-      ...remainingBloodDonationNotificationFields,
-      payload
+      ...remainingBloodDonationNotificationFields
     }
   }
 

@@ -92,8 +92,20 @@ export interface AcceptDonationRequestAttributes {
   phoneNumbers: string[];
 }
 
-export interface DonationStatusManagerAttributes {
+export interface DonationRecordEventAttributes {
+  donorIds: string[];
   seekerId: string;
   requestPostId: string;
-  createdAt: string;
+  requestCreatedAt: string;
+}
+
+export interface DonationRecordAttributes {
+  donorId: string;
+  seekerId: string;
+  requestPostId: string;
+  requestCreatedAt: string;
+  requestedBloodGroup: BloodGroup;
+  location: string;
+  donationDateTime: string;
+  createdAt?: string;
 }

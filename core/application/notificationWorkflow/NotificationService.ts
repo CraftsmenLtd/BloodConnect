@@ -3,7 +3,8 @@ import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
 import {
   BloodDonationNotificationDTO,
   NotificationDTO,
-  NotificationStatus
+  NotificationStatus,
+  NotificationType
 } from '../../../commons/dto/NotificationDTO'
 import NotificationOperationError from './NotificationOperationError'
 import {
@@ -60,11 +61,13 @@ export class NotificationService {
   ): Promise<void> {
     try {
       const { userId, type, payload } = notificationAttributes
-      if (payload !== undefined && ['BLOOD_REQ_POST', 'REQ_ACCEPTED'].includes(type)) {
-        const requestPostAttributes = notificationAttributes
+      if (
+        payload !== undefined &&
+        [NotificationType.BLOOD_REQ_POST, NotificationType.REQ_ACCEPTED].includes(type)
+      ) {
         const existingItem = await notificationRepository.getBloodDonationNotification(
           userId,
-          requestPostAttributes.payload.requestPostId,
+          notificationAttributes.payload.requestPostId,
           type
         )
 
@@ -72,7 +75,7 @@ export class NotificationService {
           await notificationRepository.create({
             ...notificationAttributes,
             status: NotificationStatus.PENDING,
-            id: requestPostAttributes.payload.requestPostId,
+            id: notificationAttributes.payload.requestPostId,
             createdAt: new Date().toISOString()
           })
         }
@@ -118,6 +121,32 @@ export class NotificationService {
         GENERIC_CODES.ERROR
       )
     }
+  }
+
+  async updateDonorNotificationStatus(
+    donorId: string,
+    requestPostId: string,
+    type: NotificationType,
+    status: NotificationStatus,
+    notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
+  ): Promise<void> {
+    const existingItem = await notificationRepository.getBloodDonationNotification(
+      donorId,
+      requestPostId,
+      type
+    )
+    if (existingItem === null) {
+      throw new NotificationOperationError('Notification does not exist.', GENERIC_CODES.NOT_FOUND)
+    }
+
+    const updatedNotification: Partial<BloodDonationNotificationDTO> = {
+      ...existingItem,
+      id: requestPostId,
+      userId: donorId,
+      type,
+      status
+    }
+    await notificationRepository.update(updatedNotification)
   }
 
   async storeDevice(
