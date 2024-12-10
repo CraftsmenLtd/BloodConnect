@@ -13,10 +13,17 @@ interface PostsProps {
   detailHandler?: (donationData: DonationData) => void;
   refreshControl?: React.ReactElement;
   displayOptions?: PostCardDisplayOptions;
-  emptyMessage?: string;
 }
 
-const Posts: React.FC<PostsProps> = ({ updatePost, donationPosts, loading, errorMessage, detailHandler, refreshControl, displayOptions, emptyMessage = 'No items found.' }) => {
+const Posts: React.FC<PostsProps> = ({
+  updatePost,
+  donationPosts,
+  loading,
+  errorMessage,
+  detailHandler,
+  refreshControl,
+  displayOptions
+}) => {
   const styles = createStyles(useTheme())
   if (loading) {
     return <Loader />
@@ -27,7 +34,7 @@ const Posts: React.FC<PostsProps> = ({ updatePost, donationPosts, loading, error
       {!loading && errorMessage !== null
         ? <Text style={[styles.noDataText, styles.errorMessage]}>{errorMessage}</Text>
         : donationPosts.length === 0
-          ? <Text style={styles.noDataText}>{emptyMessage}</Text>
+          ? <Text style={styles.noDataText}>No items found.</Text>
           : <FlatList
               data={donationPosts}
               renderItem={({ item }) => (

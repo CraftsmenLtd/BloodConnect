@@ -37,14 +37,12 @@ const MyActivityTab = () => {
             loading={loading}
             updatePost={updatePost}
             errorMessage={errorMessage}
-            emptyMessage='You have not created any posts yet.'
             detailHandler={detailHandler} />
         : <Posts
             donationPosts={myResponses}
             loading={myResponsesLoading}
             errorMessage={myResponsesError}
             detailHandler={detailHandler}
-            emptyMessage='You have not responded to any posts yet.'
             displayOptions={{ showOptions: false, showButton: false }}
             refreshControl={
               <RefreshControl

@@ -1,3 +1,4 @@
+import { parseJsonData } from '../utility/jsonParser'
 import { BloodDonationRecord } from './types'
 
 export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> & {
@@ -5,12 +6,8 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
 }
 
 export const parseErrorMessage = (message: string): string | null => {
-  try {
-    const parsedError = JSON.parse(message)
-    return parsedError !== null && typeof parsedError.message === 'string' ? parsedError.message : null
-  } catch {
-    return null
-  }
+  const parsedError = parseJsonData<{ message: string }>(message)
+  return parsedError !== null && typeof parsedError.message === 'string' ? parsedError.message : null
 }
 
 export const extractErrorMessage = (error: unknown): string => {

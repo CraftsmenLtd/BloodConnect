@@ -5,6 +5,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { Button } from '../button/Button'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
+import { UrgencyLevel } from '../../donationWorkflow/types'
 
 export interface PostCardDisplayOptions {
   showContactNumber?: boolean;
@@ -151,7 +152,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                 <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} (ve) blood</Text>
               </View>
             </View>
-            {post.urgencyLevel === 'urgent' && (
+            {post.urgencyLevel === UrgencyLevel.URGENT && (
               <View style={styles.urgentBadge}>
                 <Ionicons name="warning-outline" size={14} color={theme.colors.black} />
                 <Text style={styles.urgentText}>URGENT</Text>
