@@ -61,7 +61,10 @@ export class NotificationService {
   ): Promise<void> {
     try {
       const { userId, type, payload } = notificationAttributes
-      if (payload !== undefined && [NotificationType.BLOOD_REQ_POST, NotificationType.REQ_ACCEPTED].includes(type)) {
+      if (
+        payload !== undefined &&
+        [NotificationType.BLOOD_REQ_POST, NotificationType.REQ_ACCEPTED].includes(type)
+      ) {
         const existingItem = await notificationRepository.getBloodDonationNotification(
           userId,
           notificationAttributes.payload.requestPostId,
@@ -127,33 +130,23 @@ export class NotificationService {
     status: NotificationStatus,
     notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
   ): Promise<void> {
-    try {
-      const existingItem = await notificationRepository.getBloodDonationNotification(
-        donorId,
-        requestPostId,
-        type
-      )
-      if (existingItem === null) {
-        throw new NotificationOperationError(
-          'Notification does not exist.',
-          GENERIC_CODES.NOT_FOUND
-        )
-      }
-
-      const updatedNotification: Partial<BloodDonationNotificationDTO> = {
-        ...existingItem,
-        id: requestPostId,
-        userId: donorId,
-        type,
-        status
-      }
-      await notificationRepository.update(updatedNotification)
-    } catch (error) {
-      throw new NotificationOperationError(
-        `Failed to update notification status. Error: ${error}`,
-        GENERIC_CODES.ERROR
-      )
+    const existingItem = await notificationRepository.getBloodDonationNotification(
+      donorId,
+      requestPostId,
+      type
+    )
+    if (existingItem === null) {
+      throw new NotificationOperationError('Notification does not exist.', GENERIC_CODES.NOT_FOUND)
     }
+
+    const updatedNotification: Partial<BloodDonationNotificationDTO> = {
+      ...existingItem,
+      id: requestPostId,
+      userId: donorId,
+      type,
+      status
+    }
+    await notificationRepository.update(updatedNotification)
   }
 
   async storeDevice(

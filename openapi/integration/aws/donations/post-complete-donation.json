@@ -16,7 +16,7 @@
     }
   },
   "requestTemplates": {
-    "application/json": "#set($inputRoot = $input.path('$'))\n{\n \"donorId\": \"$inputRoot.donorId\",\n \"requestPostId\": \"$inputRoot.requestPostId\",\n \"seekerId\": \"$context.authorizer.claims['custom:userId']\",\n \"requestCreatedAt\": \"$inputRoot.requestCreatedAt\"\n}"
+    "application/json": "#set($inputRoot = $input.path('$'))\n{\n \"donorIds\": $inputRoot.donorIds,\n \"requestPostId\": \"$inputRoot.requestPostId\",\n \"seekerId\": \"$context.authorizer.claims['custom:userId']\",\n \"requestCreatedAt\": \"$inputRoot.requestCreatedAt\"\n}"
   },
   "passthroughBehavior": "never"
 }

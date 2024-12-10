@@ -92,12 +92,6 @@ export interface AcceptDonationRequestAttributes {
   phoneNumbers: string[];
 }
 
-export interface DonationStatusManagerAttributes {
-  seekerId: string;
-  requestPostId: string;
-  createdAt: string;
-}
-
 export interface DonationRecordEventAttributes {
   donorIds: string[];
   seekerId: string;

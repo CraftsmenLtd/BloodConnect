@@ -175,21 +175,12 @@ export class BloodDonationService {
     status: DonationStatus,
     bloodDonationRepository: BloodDonationRepository<DonationDTO>
   ): Promise<void> {
-    try {
-      const updateData: Partial<DonationDTO> = {
-        seekerId,
-        id: requestPostId,
-        createdAt,
-        status
-      }
-      await bloodDonationRepository.update(updateData)
-    } catch (error) {
-      throw new BloodDonationOperationError(
-        `Failed to update donation status: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-        GENERIC_CODES.ERROR
-      )
+    const updateData: Partial<DonationDTO> = {
+      seekerId,
+      id: requestPostId,
+      createdAt,
+      status
     }
+    await bloodDonationRepository.update(updateData)
   }
 }

@@ -1,9 +1,9 @@
 import { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import { DonationStatusManagerAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import {
   AcceptedDonationDTO,
-  DonationDTO
+  DonationDTO,
+  DonationStatus
 } from '../../../../commons/dto/DonationDTO'
 import {
   BloodDonationModel,
@@ -42,25 +42,39 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     throw new Error('Missing PK or SK in the DynamoDB record')
   }
 
-  const donorRoutingAttributes: DonationStatusManagerAttributes = {
-    seekerId: primaryIndex.split('#')[1],
-    requestPostId: secondaryIndex.split('#')[1],
-    createdAt
-  }
+  const seekerId = primaryIndex.split('#')[1]
+  const requestPostId = secondaryIndex.split('#')[1]
 
-  await bloodDonationService.updateDonationStatus(
-    donorRoutingAttributes,
-    new DynamoDbTableOperations<
-    DonationDTO,
-    DonationFields,
-    BloodDonationModel
-    >(new BloodDonationModel()),
-    new DynamoDbTableOperations<
+  const donationPost = await bloodDonationService.getDonationRequest(
+    seekerId,
+    requestPostId,
+    createdAt,
+    new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
+      new BloodDonationModel()
+    )
+  )
+
+  const acceptedDonors = await acceptDonationService.getAcceptedDonorList(
+    seekerId,
+    requestPostId,
+    new AcceptedDonationDynamoDbOperations<
     AcceptedDonationDTO,
     AcceptedDonationFields,
     AcceptDonationRequestModel
     >(new AcceptDonationRequestModel())
   )
+
+  if (acceptedDonors.length >= donationPost.bloodQuantity) {
+    await bloodDonationService.updateDonationStatus(
+      seekerId,
+      requestPostId,
+      createdAt,
+      DonationStatus.MANAGED,
+      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
+        new BloodDonationModel()
+      )
+    )
+  }
 }
 
 export default donationStatusManager
