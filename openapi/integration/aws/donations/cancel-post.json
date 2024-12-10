@@ -16,7 +16,7 @@
     }
   },
   "requestTemplates": {
-    "application/json": "\"#set($inputRoot = $input.path('$'))\\r\\n{\\r\\n  \\\"seekerId\\\": \\\"$context.authorizer.claims['custom:userId']\\\",\\r\\n  \\\"requestPostId\\\": \\\"$inputRoot.requestPostId\\\",\\r\\n  \\\"createdAt\\\": \\\"$inputRoot.createdAt\\\"\\r\\n}\""
+    "application/json": "#set($inputRoot = $input.path('$'))\n{\n \"seekerId\": \"$context.authorizer.claims['custom:userId']\",\n \"requestPostId\": \"$inputRoot.requestPostId\",\n \"createdAt\": \"$inputRoot.createdAt\"\n}"
   },
   "passthroughBehavior": "never"
 }
