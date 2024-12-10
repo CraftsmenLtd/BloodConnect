@@ -5,6 +5,13 @@ import { useUserProfile } from '../../context/UserProfileContext'
 
 type Gender = 'male' | 'female' | 'other'
 
+export interface DonationLocation {
+  area: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface UserProfile {
   bloodGroup: string;
   name: string;
@@ -18,7 +25,7 @@ export interface UserProfile {
   NIDFront: string;
   NIDBack: string;
   phoneNumbers: string[];
-  preferredDonationLocations: string[];
+  preferredDonationLocations: DonationLocation[];
 }
 
 export interface UserProfileDetails extends UserProfile {

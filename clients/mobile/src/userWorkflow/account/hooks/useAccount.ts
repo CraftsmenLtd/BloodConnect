@@ -33,7 +33,8 @@ interface UseAccountReturnType {
 }
 
 export const useAccount = (): UseAccountReturnType => {
-  const { userProfile } = useUserProfile
+  const { userProfile } = useUserProfile()
+
   const auth = useAuth()
   const fetchClient = useFetchClient()
   const navigation = useNavigation<AccountScreenNavigationProp>()

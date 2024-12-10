@@ -8,25 +8,6 @@ import { useUserProfile } from '../../context/UserProfileContext'
 import { useProfile } from '../hooks/useProfile'
 import { UserProfileContextData } from '../../context/UserProfileContext'
 
-type Gender = 'Male' | 'Female' | 'Other'
-
-export interface UserProfile {
-  bloodGroup: string;
-  name: string;
-  lastDonationDate: string;
-  height: number;
-  weight: number;
-  gender: Gender;
-  dateOfBirth: string;
-  availableForDonation: string;
-  lastVaccinatedDate: string;
-  NIDFront: string;
-  NIDBack: string;
-  phoneNumbers: string[];
-  preferredDonationLocations: string[];
-  // location: string;
-}
-
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
   const { userDetails } = useProfile()
@@ -72,6 +53,6 @@ const Profile: React.FC = () => {
       </View>
     </View>
   )
-}                                  
+}
 
 export default Profile
