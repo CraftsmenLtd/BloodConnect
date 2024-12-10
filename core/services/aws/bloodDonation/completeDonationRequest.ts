@@ -86,7 +86,7 @@ async function completeDonationRequest(
     }
 
     return generateApiGatewayResponse(
-      { message: 'Donation record is created successfully' },
+      { message: 'Donation completed and donation record added successfully' },
       HTTP_CODES.OK
     )
   } catch (error) {
