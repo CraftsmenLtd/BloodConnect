@@ -3,21 +3,21 @@
     "type": "object",
     "required": [
       "requestPostId",
-      "createdAt"
+      "requestCreatedAt"
     ],
     "properties": {
       "requestPostId": {
         "type": "string",
         "minLength": 1
       },
-      "createdAt": {
+      "requestCreatedAt": {
         "type": "string",
         "format": "date-time"
       }
     },
     "example": {
       "requestPostId": "example01110",
-      "createdAt": "2024-10-20T15:00:00Z"
+      "requestCreatedAt": "2024-10-20T15:00:00Z"
     }
   }
 }

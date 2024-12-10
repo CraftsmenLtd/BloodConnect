@@ -183,20 +183,4 @@ export class BloodDonationService {
     }
     await bloodDonationRepository.update(updateData)
   }
-
-  async updateDonationPostStatus(
-    donationStatusManagerAttributes: DonationStatusManagerAttributes,
-    bloodDonationRepository: Repository<DonationDTO>
-  ): Promise<void> {
-    const { seekerId, requestPostId, createdAt } = donationStatusManagerAttributes
-
-    await bloodDonationRepository.update({
-      id: requestPostId,
-      seekerId,
-      createdAt,
-      status: DonationStatus.CANCELLED
-    }).catch((error) => {
-      throw error
-    })
-  }
 }

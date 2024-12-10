@@ -3,36 +3,32 @@ import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import {
-  DonationStatusManagerAttributes
+  DonationRecordEventAttributes
 } from '../../../application/bloodDonationWorkflow/Types'
 import { DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 import {
   BloodDonationModel,
   DonationFields
 } from '../../../application/models/dbModels/BloodDonationModel'
-import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
+import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
 const bloodDonationService = new BloodDonationService()
 
 async function cancelDonationPostLambda(
-  event: DonationStatusManagerAttributes
+  event: DonationRecordEventAttributes
 ): Promise<APIGatewayProxyResult> {
   try {
-    const payload = {
-      seekerId: event.seekerId,
-      requestPostId: event.requestPostId,
-      createdAt: event.createdAt,
-      status: DonationStatus.CANCELLED
-    }
-    await bloodDonationService.updateDonationPostStatus(
-      payload,
-      new DynamoDbTableOperations<
-      DonationDTO,
-      DonationFields,
-      BloodDonationModel
-      >(new BloodDonationModel())
+    await bloodDonationService.updateDonationStatus(
+      event.seekerId,
+      event.requestPostId,
+      event.requestCreatedAt,
+      DonationStatus.CANCELLED,
+      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
+        new BloodDonationModel()
+      )
     )
+
     return generateApiGatewayResponse({ message: 'Donation post cancelled successfully' }, HTTP_CODES.OK)
   } catch (error) {
     const errorMessage =
