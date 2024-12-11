@@ -42,7 +42,7 @@
         }
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#9e000f"
       },
       "googleServicesFile": "./google-services.json"
