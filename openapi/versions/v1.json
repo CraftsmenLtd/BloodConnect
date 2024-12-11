@@ -56,6 +56,9 @@
     "/donations/posts/{city}": {
       "$ref": "./../paths/donations/posts.json"
     },
+    "/donations/cancel": {
+      "$ref": "./../paths/donations/cancel.json"
+    },
     "/donations/responses": {
       "$ref": "./../paths/donations/responses.json"
     },
