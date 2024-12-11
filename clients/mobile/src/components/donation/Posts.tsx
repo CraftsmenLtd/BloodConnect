@@ -11,6 +11,7 @@ interface PostsProps {
   loading: boolean;
   errorMessage: string | null;
   detailHandler?: (donationData: DonationData) => void;
+  cancelPost?: (donationData: DonationData) => void;
   refreshControl?: React.ReactElement;
   displayOptions?: PostCardDisplayOptions;
 }
@@ -21,6 +22,7 @@ const Posts: React.FC<PostsProps> = ({
   loading,
   errorMessage,
   detailHandler,
+  cancelPost,
   refreshControl,
   displayOptions
 }) => {
@@ -42,6 +44,7 @@ const Posts: React.FC<PostsProps> = ({
                   post={item}
                   updateHandler={updatePost}
                   detailHandler={detailHandler}
+                  cancelHandler={cancelPost}
                   {...displayOptions}
                 />)}
               keyExtractor={(item) => item.donationDateTime}

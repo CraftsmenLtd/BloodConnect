@@ -15,6 +15,7 @@ const MyActivityTab = () => {
     handleTabPress,
     updatePost,
     detailHandler,
+    cancelPost,
     myResponses,
     myResponsesLoading,
     myResponsesError,
@@ -37,7 +38,9 @@ const MyActivityTab = () => {
             loading={loading}
             updatePost={updatePost}
             errorMessage={errorMessage}
-            detailHandler={detailHandler} />
+            detailHandler={detailHandler}
+            cancelPost={cancelPost}
+          />
         : <Posts
             donationPosts={myResponses}
             loading={myResponsesLoading}

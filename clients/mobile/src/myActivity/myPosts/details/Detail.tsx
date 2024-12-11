@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Text } from 'react-native'
 import ToggleTabs from '../../../components/tab/ToggleTabs'
 import { DetailPostRouteProp, DetailPostScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import PostCard from '../../../components/donation/PostCard'
@@ -9,6 +9,7 @@ import DonorResponses from '../donorResponses/DonorResponses'
 import { TabConfig } from '../../types'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
+import { useMyActivity } from '../../useMyActivity'
 
 interface DetailProps {
   navigation: DetailPostScreenNavigationProp;
@@ -22,6 +23,7 @@ const DETAIL_POST_TAB_CONFIG: TabConfig = {
 
 const Detail = ({ navigation, route }: DetailProps) => {
   const styles = createStyles(useTheme())
+  const { cancelPost, cancelPostError } = useMyActivity()
   const { data, tab } = route.params
   const [currentTab, setCurrentTab] = useState(tab ?? DETAIL_POST_TAB_CONFIG.initialTab)
 
@@ -55,7 +57,12 @@ const Detail = ({ navigation, route }: DetailProps) => {
               showPatientName
               showTransportInfo
               showButton={false}
-              updateHandler={updatePost} />
+              updateHandler={updatePost}
+              cancelHandler={cancelPost}
+            />
+            {cancelPostError !== '' &&
+              <Text style={styles.errorMessage}>{cancelPostError}</Text>
+            }
           </View>
         : <DonorResponses acceptedDonors={data.acceptedDonors} handlePressDonor={handlePressDonor} />
       }
@@ -77,6 +84,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     marginTop: 20,
     backgroundColor: theme.colors.white,
     flex: 1
+  },
+  errorMessage: {
+    color: theme.colors.primary,
+    textAlign: 'center',
+    marginTop: 16,
+    fontSize: theme.typography.fontSize
   }
 })
 
