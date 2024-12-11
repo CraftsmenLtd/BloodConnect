@@ -14,7 +14,7 @@ If you do not agree to all the Terms and Conditions stated herein, you are prohi
 ----------------------
 BloodConnect is an open-source platform aimed at improving the blood donation process by facilitating efficient and effective communication between donors and blood seekers. The platform prioritizes ease of use, data security, and rapid communication to address the challenges of manual donor identification and coordination in emergency situations.
 
-1. Open Source Usage
+2. Open Source Usage
 --------------------
 BloodConnect is an open-source project licensed under the [Insert License Name, e.g., MIT License]. As an open-source project:
 
