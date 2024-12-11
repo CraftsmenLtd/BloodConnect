@@ -67,7 +67,6 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
         ? error.message
         : 'An unexpected error occurred while accepting the request'
       setError(errorMessage)
-      throw new Error(`Failed to accept request: ${errorMessage}`)
     } finally {
       setIsLoading(false)
     }

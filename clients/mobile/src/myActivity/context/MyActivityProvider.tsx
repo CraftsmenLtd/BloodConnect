@@ -27,7 +27,7 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(false)
   const fetchClient = useFetchClient()
 
-  useEffect(() => { void fetchDonationPosts() }, [])
+  useEffect(() => { void fetchDonationPosts() }, [userProfile])
 
   const fetchDonationPosts = async(): Promise<void> => {
     setLoading(true)

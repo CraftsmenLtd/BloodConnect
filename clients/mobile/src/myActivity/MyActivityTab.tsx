@@ -60,13 +60,16 @@ const MyActivityTab = () => {
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 12
+    paddingBottom: 48
   },
   tabHeader: {
     paddingHorizontal: 8,
     backgroundColor: theme.colors.white,
     paddingVertical: 16,
-    marginBottom: -18.5
+    borderBottomColor: theme.colors.extraLightGray,
+    borderBottomWidth: 1,
+    borderTopColor: theme.colors.extraLightGray,
+    borderTopWidth: 1
   },
   contentContainer: {
     marginTop: 20

@@ -39,7 +39,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.tabHeader}>
+      <View style={[styles.tabHeader, currentTab === DETAIL_POST_TAB_CONFIG.initialTab ? { marginBottom: -18.5 } : {}]}>
         <ToggleTabs
           tabs={DETAIL_POST_TAB_CONFIG.tabs}
           onTabPress={handleTabPress}
@@ -71,7 +71,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     paddingHorizontal: 8,
     backgroundColor: theme.colors.white,
     paddingVertical: 16,
-    marginBottom: -18.5
+    borderBottomColor: theme.colors.extraLightGray,
+    borderBottomWidth: 1,
+    borderTopColor: theme.colors.extraLightGray,
+    borderTopWidth: 1
   },
   postCardContainer: {
     marginTop: 20,

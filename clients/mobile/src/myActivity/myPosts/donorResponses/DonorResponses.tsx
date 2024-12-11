@@ -28,9 +28,12 @@ const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProp
               <FlatList
                 data={acceptedDonors}
                 keyExtractor={(item) => item.donorId}
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
                   <TouchableOpacity
-                    style={styles.donorItem}
+                    style={[
+                      styles.donorItem,
+                      index === acceptedDonors.length - 1 && styles.donorItemLast
+                    ]}
                     onPress={() => { handlePressDonor(item.donorId) }}>
                     <Image
                       source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
@@ -67,7 +70,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       textAlign: 'center'
     },
     responseContainer: {
-      marginTop: 20,
       backgroundColor: theme.colors.white
     },
     container: {
@@ -85,6 +87,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       paddingVertical: 10,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.lightGrey
+    },
+    donorItemLast: {
+      borderBottomWidth: 0,
+      borderBottomColor: 'transparent'
     },
     avatar: {
       width: 40,

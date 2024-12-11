@@ -10,8 +10,8 @@ import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
 
 const SCREEN_FOR_NOTIFICATION: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
-  bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW, getParams: (data) => ({ notificationData: data }) },
-  donorAcceptRequest: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
+  BLOOD_REQ_POST: { screen: SCREENS.BLOOD_REQUEST_PREVIEW, getParams: (data) => ({ notificationData: data }) },
+  REQ_ACCEPTED: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
 }
 
 export const initialNotificationState: NotificationContextType = {

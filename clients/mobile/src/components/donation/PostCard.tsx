@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, Image, ImageStyle } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { Button } from '../button/Button'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import { UrgencyLevel } from '../../donationWorkflow/types'
+import BloodImage from '../../../assets/images/bloodtype.png'
 
 export interface PostCardDisplayOptions {
   showContactNumber?: boolean;
@@ -146,7 +147,7 @@ export const PostCard: React.FC<PostCardProps> = ({
         <View style={styles.bloodInfoWrapper}>
           <View style={styles.bloodInfo}>
             <View style={styles.bloodRow}>
-              <Ionicons name="water" size={20} color={theme.colors.primary} />
+            <Image source={BloodImage} style={styles.bloodImage as StyleProp<ImageStyle>} />
               <View style={styles.bloodText}>
                 <Text style={styles.lookingForText}>Looking for</Text>
                 <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} (ve) blood</Text>
@@ -207,12 +208,12 @@ export const PostCard: React.FC<PostCardProps> = ({
           }
         </View>
         {Array.isArray(post.acceptedDonors) && post.acceptedDonors.length > 0 && showPostUpdatedOption && <>
-          <Text>Post Update</Text>
+          <Text style={styles.bloodAmount}>Post Update</Text>
           <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
             <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
             <View>
-              <Text>Number of Donors</Text>
-              <Text>{post.acceptedDonors.length} donors accepted your request</Text>
+              <Text style={styles.donationInfoPlaceholder}>Number of Donors</Text>
+              <Text style={styles.bloodAmount}>{post.acceptedDonors.length} donors accepted your request</Text>
             </View>
           </View>
         </>}
@@ -259,6 +260,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: 'transparent'
+  },
+  bloodImage: {
+    width: 28,
+    height: 28
   },
   dropdownContainer: {
     position: 'absolute',
@@ -351,7 +356,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginBottom: 4
   },
   donationInfoPlaceholder: {
-    fontSize: 13,
+    fontSize: 14,
     color: theme.colors.textSecondary,
     marginLeft: 4
   },
@@ -361,7 +366,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderTopColor: theme.colors.extraLightGray
   },
   description: {
-    fontSize: 15,
+    fontSize: 16,
     marginTop: 4
   },
   buttonContainer: {
