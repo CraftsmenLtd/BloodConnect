@@ -45,7 +45,8 @@ export class BloodDonationService {
         ...donationAttributes,
         status: DonationStatus.PENDING,
         geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
-        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString()
+        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString(),
+        createdAt: new Date().toISOString()
       })
       return 'We have accepted your request, and we will let you know when we find a donor.'
     } catch (error) {

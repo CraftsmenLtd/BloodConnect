@@ -1,4 +1,4 @@
-import { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import { DonationDTO, BloodGroup } from '../../../../commons/dto/DonationDTO'
 import {
   DbModelDtoAdapter,
   HasTimeLog,
@@ -15,9 +15,9 @@ export type DonationFields = Omit<DonationDTO, 'id' | 'seekerId'> &
 HasTimeLog & {
   PK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}`;
   SK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}#${string}`;
-  GSI1PK: `CITY#${string}#STATUS#${string}`;
-  GSI1SK: `BG#${string}`;
-  LSI1SK: `${typeof BLOOD_REQUEST_LSI1SK_PREFIX}#${string}#${string}`;
+  GSI1PK?: `CITY#${string}#STATUS#${string}`;
+  GSI1SK?: `BG#${string}`;
+  LSI1SK?: `${typeof BLOOD_REQUEST_LSI1SK_PREFIX}#${string}#${string}`;
 }
 
 export class BloodDonationModel
@@ -35,17 +35,25 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
   }
 
   fromDto(donationDto: DonationDTO): DonationFields {
-    const { seekerId, id, ...remainingDonationData } = donationDto
-    const postCreationDate = remainingDonationData.createdAt ?? new Date().toISOString()
-    return {
+    const { seekerId, id, createdAt, ...remainingDonationData } = donationDto
+
+    const data: DonationFields = {
       PK: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
-      SK: `${BLOOD_REQUEST_PK_PREFIX}#${postCreationDate}#${id}`,
-      GSI1PK: `CITY#${remainingDonationData.city}#STATUS#${remainingDonationData.status}`,
-      GSI1SK: `BG#${remainingDonationData.requestedBloodGroup}`,
-      LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${remainingDonationData.status}#${id}`,
+      SK: `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${id}`,
       ...remainingDonationData,
-      createdAt: postCreationDate
+      createdAt
     }
+
+    if (remainingDonationData.city !== undefined && remainingDonationData.status !== undefined) {
+      data.GSI1PK = `CITY#${remainingDonationData.city}#STATUS#${remainingDonationData.status}`
+    }
+    if ((remainingDonationData.requestedBloodGroup as BloodGroup) !== undefined) {
+      data.GSI1SK = `BG#${remainingDonationData.requestedBloodGroup}`
+    }
+    if (remainingDonationData.status !== undefined) {
+      data.LSI1SK = `${BLOOD_REQUEST_LSI1SK_PREFIX}#${remainingDonationData.status}#${id}`
+    }
+    return data
   }
 
   toDto(dbFields: DonationFields): DonationDTO {
