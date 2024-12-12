@@ -1,3 +1,4 @@
+import { AcceptDonationStatus, AcceptedDonationDTO } from './DonationDTO'
 import { DTO, HasIdentifier } from './DTOCommon'
 
 export enum NotificationType {
@@ -8,7 +9,8 @@ export enum NotificationType {
 export enum NotificationStatus {
   PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',
-  COMPLETED = 'COMPLETED'
+  COMPLETED = 'COMPLETED',
+  IGNORED = 'IGNORED'
 }
 
 export type NotificationDTO = DTO & HasIdentifier & {
@@ -22,24 +24,40 @@ export type NotificationDTO = DTO & HasIdentifier & {
   createdAt: string;
 }
 
-export type BloodDonationNotificationDTO = Omit<NotificationDTO, 'payload'> & {
-  payload: BloodDonationPayload;
+export type BloodDonationNotificationDTO = Omit<NotificationDTO, 'payload' | 'status'> & {
+  payload: DonationRequestPayload | DonationAcceptancePayload;
+  status: AcceptDonationStatus;
 }
 
-export interface BloodDonationPayload {
+export type DonationRequestPayload = {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
-  bloodQuantity: string;
+  bloodQuantity: number;
   requestedBloodGroup: string;
   urgencyLevel: string;
   contactNumber: string;
   donationDateTime: string;
-  seekerName: string;
+  seekerName?: string;
   patientName?: string;
   location?: string;
-  locationId: string;
+  locationId?: string;
   shortDescription?: string;
   transportationInfo?: string;
   distance?: number;
+}
+
+export type DonationAcceptancePayload = {
+  seekerId: string;
+  requestPostId: string;
+  donorId: string;
+  createdAt: string;
+  donorName: string;
+  phoneNumbers: string[];
+  requestedBloodGroup: string;
+  urgencyLevel: string;
+  location: string;
+  donationDateTime: string;
+  acceptedDonors?: AcceptedDonationDTO[];
+  shortDescription?: string;
 }

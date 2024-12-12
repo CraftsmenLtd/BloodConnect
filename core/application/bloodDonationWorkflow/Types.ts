@@ -1,5 +1,5 @@
 import { ValidationRule, validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
-import { BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
+import { AcceptDonationStatus, BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
 
 export interface BloodDonationAttributes {
   seekerId: string;
@@ -86,8 +86,8 @@ export interface AcceptDonationRequestAttributes {
   seekerId: string;
   createdAt: string;
   requestPostId: string;
-  acceptanceTime: string;
-  status: string;
+  acceptanceTime?: string;
+  status: AcceptDonationStatus;
   donorName: string;
   phoneNumbers: string[];
 }

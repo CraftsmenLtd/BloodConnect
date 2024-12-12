@@ -18,6 +18,18 @@ export default class AcceptedDonationDynamoDbOperations<
   DbFields extends Record<string, unknown>,
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
 > extends DynamoDbTableOperations<Dto, DbFields, ModelAdapter> {
+  async getAcceptedRequest(
+    seekerId: string,
+    requestPostId: string,
+    donorId: string
+  ): Promise<Dto | null> {
+    const item = await super.getItem(
+      `${ACCEPTED_DONATION_PK_PREFIX}#${seekerId}`,
+      `${ACCEPTED_DONATION_SK_PREFIX}#${requestPostId}#${donorId}`
+    )
+    return item
+  }
+
   async queryAcceptedRequests(seekerId: string, requestPostId: string): Promise<Dto[] | null> {
     const primaryIndex = this.modelAdapter.getPrimaryIndex()
     const query: QueryInput<DbFields> = {
@@ -37,5 +49,16 @@ export default class AcceptedDonationDynamoDbOperations<
     }
     const queryResult = await super.query(query as QueryInput<Record<string, unknown>>)
     return queryResult.items
+  }
+
+  async deleteAcceptedRequest(
+    seekerId: string,
+    requestPostId: string,
+    donorId: string
+  ): Promise<void> {
+    await super.delete(
+      `${ACCEPTED_DONATION_PK_PREFIX}#${seekerId}`,
+      `${ACCEPTED_DONATION_SK_PREFIX}#${requestPostId}#${donorId}`
+    )
   }
 }
