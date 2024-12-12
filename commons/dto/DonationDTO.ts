@@ -55,11 +55,18 @@ export type DonorSearchDTO = DTO & HasIdentifier & {
   remainingGeohashesToProcess?: string[];
 }
 
+export enum AcceptDonationStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  COMPLETED = 'COMPLETED',
+  IGNORED = 'IGNORED'
+}
+
 type BaseAcceptedDonationDTO = {
   donorId: string;
   requestPostId: string;
-  acceptanceTime: string;
-  status: string;
+  acceptanceTime?: string;
+  status: AcceptDonationStatus;
   seekerId: string;
   createdAt: string;
 }

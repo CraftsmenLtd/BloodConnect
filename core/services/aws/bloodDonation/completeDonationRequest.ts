@@ -3,7 +3,7 @@ import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { DonationRecordService } from '../../../application/bloodDonationWorkflow/DonationRecordService'
 import { DonationRecordEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import { DonationDTO, DonationRecordDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
+import { AcceptDonationStatus, DonationDTO, DonationRecordDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
 import {
   DonationRecordModel,
   DonationRecordFields
@@ -18,7 +18,6 @@ import DonationRecordDynamoDbOperations from '../commons/ddb/DonationRecordDynam
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import {
   BloodDonationNotificationDTO,
-  NotificationStatus,
   NotificationType
 } from 'commons/dto/NotificationDTO'
 import DonationNotificationModel, {
@@ -72,11 +71,11 @@ async function completeDonationRequest(
         >(new DonationRecordModel())
       )
 
-      await notificationService.updateDonorNotificationStatus(
+      await notificationService.updateBloodDonationNotificationStatus(
         donorId,
         event.requestPostId,
         NotificationType.BLOOD_REQ_POST,
-        NotificationStatus.COMPLETED,
+        AcceptDonationStatus.COMPLETED,
         new NotificationDynamoDbOperations<
         BloodDonationNotificationDTO,
         BloodDonationNotificationFields,
