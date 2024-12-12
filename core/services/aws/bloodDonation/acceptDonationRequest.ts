@@ -65,7 +65,10 @@ async function acceptDonationRequest(
     }
 
     if ((status === AcceptDonationStatus.ACCEPTED && acceptanceRecord !== null)) {
-      throw new Error('You already accepted the donation')
+      return generateApiGatewayResponse(
+        { message: 'Donation request accepted successfully.' },
+        HTTP_CODES.OK
+      )
     }
 
     if (status === AcceptDonationStatus.ACCEPTED && acceptanceRecord === null) {
