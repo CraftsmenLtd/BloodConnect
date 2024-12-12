@@ -10,14 +10,14 @@ export interface DonationResponse<T = undefined> {
 export type preferredDonationLocations = { area: string; city: string }
 
 export interface DonorProfile {
-  phoneNumbers: string[];
-  donorName: string;
-  bloodGroup: string;
-  age: number;
-  height: number;
-  weight: number;
-  gender: string;
-  preferredDonationLocations: preferredDonationLocations[];
+  phoneNumbers?: string[];
+  donorName?: string;
+  bloodGroup?: string;
+  age?: number;
+  height?: number;
+  weight?: number;
+  gender?: string;
+  preferredDonationLocations?: preferredDonationLocations[];
 }
 
 export const addPersonalInfoHandler = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {

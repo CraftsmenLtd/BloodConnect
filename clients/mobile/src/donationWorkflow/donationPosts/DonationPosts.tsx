@@ -46,8 +46,7 @@ const DonationPosts = () => {
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
     container: {
-      flex: 1,
-      marginBottom: 48
+      flex: 1
     }
   })
 }

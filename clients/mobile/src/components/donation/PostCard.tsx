@@ -7,6 +7,7 @@ import { Button } from '../button/Button'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import { UrgencyLevel } from '../../donationWorkflow/types'
 import BloodImage from '../../../assets/images/bloodtype.png'
+import StatusBadge from './StatusBadge'
 
 export interface PostCardDisplayOptions {
   showContactNumber?: boolean;
@@ -17,6 +18,7 @@ export interface PostCardDisplayOptions {
   showHeader?: boolean;
   showOptions?: boolean;
   showPostUpdatedOption?: boolean;
+  showStatus?: boolean;
 }
 
 interface PostCardProps extends PostCardDisplayOptions {
@@ -30,7 +32,7 @@ interface DropdownPosition {
   right: number;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({
+export const PostCard: React.FC<PostCardProps> = React.memo(({
   post,
   updateHandler,
   detailHandler,
@@ -41,7 +43,8 @@ export const PostCard: React.FC<PostCardProps> = ({
   showButton = true,
   showHeader = true,
   showOptions = true,
-  showPostUpdatedOption = true
+  showPostUpdatedOption = true,
+  showStatus = false
 }) => {
   const theme = useTheme()
   const styles = createStyles(theme)
@@ -103,6 +106,7 @@ export const PostCard: React.FC<PostCardProps> = ({
               <Text style={styles.userName}>{post.patientName}</Text>
               <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
             </View>
+            {showStatus && <StatusBadge status={post.status} />}
             {showOptions &&
             <View style={styles.menuContainer}>
               <View ref={iconRef} collapsable={false}>
@@ -116,7 +120,7 @@ export const PostCard: React.FC<PostCardProps> = ({
 
               <Modal
                 visible={showDropdown}
-                transparent={true}
+                transparent
                 animationType="none"
                 onRequestClose={handleCloseDropdown}
               >
@@ -227,7 +231,7 @@ export const PostCard: React.FC<PostCardProps> = ({
         </View>}
       </View>
   )
-}
+})
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   card: {

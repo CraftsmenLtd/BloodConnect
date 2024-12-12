@@ -2,6 +2,8 @@ import React, { createContext, useState, useContext, ReactNode } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { fetchUserProfileFromApi, UserProfile } from '../services/userProfileService'
 import { ProfileError } from '../../utility/errors'
+import storageService from '../../utility/storageService'
+import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
 
 interface UserProfileContextData {
   userProfile: UserProfile;
@@ -65,6 +67,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       const response = await fetchUserProfileFromApi(fetchClient)
       if (response.status === 200 && response.data !== null && response.data !== undefined) {
         const formattedProfile = formatUserProfile(response.data)
+        await storageService.storeItem<UserProfile>(LOCAL_STORAGE_KEYS.USER_PROFILE, formattedProfile)
         setUserProfile(formattedProfile)
       } else {
         throw new ProfileError('Failed to get user profile data')

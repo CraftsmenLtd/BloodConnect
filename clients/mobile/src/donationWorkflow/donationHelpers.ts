@@ -35,7 +35,8 @@ export const formatBloodQuantity = (bloodQuantity: string): string => {
 
 export const formatDonations = (requests: BloodDonationRecord[], name?: string): DonationData[] => {
   return requests.map(request => ({
-    requestPostId: request.reqPostId ?? '',
+    requestPostId: request.requestPostId ?? '',
+    seekerId: request.seekerId ?? '',
     patientName: name ?? request.patientName ?? '',
     requestedBloodGroup: request.requestedBloodGroup ?? '',
     bloodQuantity: formatBloodQuantity(request.bloodQuantity),
@@ -46,6 +47,7 @@ export const formatDonations = (requests: BloodDonationRecord[], name?: string):
     transportationInfo: request.transportationInfo ?? '',
     shortDescription: request.shortDescription ?? '',
     city: request.city ?? '',
+    status: request.status ?? '',
     createdAt: request.createdAt ?? new Date().toISOString(),
     acceptedDonors: request.acceptedDonors ?? []
   }))

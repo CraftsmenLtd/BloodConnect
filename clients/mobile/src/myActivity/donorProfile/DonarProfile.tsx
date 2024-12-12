@@ -3,10 +3,11 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ImageStyle, StyleProp 
 import { Ionicons } from '@expo/vector-icons'
 import useDonarProfile from './useDonarProfile'
 import { preferredDonationLocations } from '../../userWorkflow/services/userServices'
-import Loader from '../../components/loaders/loader'
 import { COMMON_URLS } from '../../setup/constant/commonUrls'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
+import StateAwareContainer from '../../components/StateAwareContainer'
+import Loader from '../../components/loaders/loader'
 
 const DonarProfile = () => {
   const theme = useTheme()
@@ -32,42 +33,44 @@ const DonarProfile = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.profileContainer}>
-        <Image
-          source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-          style={styles.profileImage as StyleProp<ImageStyle>}
-        />
-        <View style={styles.bloodGroupBadge}>
-          <Text style={styles.bloodGroupText}>
-            {donarProfile.bloodGroup}(ve)
-          </Text>
+    <StateAwareContainer loading={loading} errorMessage={error} data={donarProfile}>
+      <View style={styles.container}>
+        <View style={styles.profileContainer}>
+          <Image
+            source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
+            style={styles.profileImage as StyleProp<ImageStyle>}
+          />
+          <View style={styles.bloodGroupBadge}>
+            <Text style={styles.bloodGroupText}>
+              {donarProfile?.bloodGroup ?? ''}(ve)
+            </Text>
+          </View>
+        </View>
+
+        <Text style={styles.name}>{donarProfile?.donorName ?? ''}</Text>
+        <View>
+          {Array.isArray(donarProfile?.preferredDonationLocations) &&
+            donarProfile.preferredDonationLocations.map((location: preferredDonationLocations, index: number) => (
+              <View style={styles.locationRow} key={index}>
+                <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
+                <Text style={styles.locationText}>
+                  {location?.area ?? ''}, {location?.city ?? ''}
+                </Text>
+              </View>
+            ))}
+        </View>
+
+        <View style={styles.detailsRow}>
+            <Text style={styles.detailsText}>BMI: {calculateBMI(donarProfile.weight, donarProfile.height)}</Text>
+          </View>
+
+        <View style={{ width: '100%' }}>
+          <TouchableOpacity style={styles.callButton} onPress={() => handleCall(donarProfile.phoneNumbers)}>
+            <Text style={styles.callButtonText}>Call now</Text>
+          </TouchableOpacity>
         </View>
       </View>
-
-      <Text style={styles.name}>{donarProfile.donorName}</Text>
-      <View>
-        {Array.isArray(donarProfile.preferredDonationLocations) &&
-          donarProfile.preferredDonationLocations.map((location: preferredDonationLocations, index: number) => (
-            <View style={styles.locationRow} key={index}>
-              <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
-              <Text style={styles.locationText}>
-                {location.area}, {location.city}
-              </Text>
-            </View>
-          ))}
-      </View>
-
-      <View style={styles.detailsRow}>
-        <Text style={styles.detailsText}>BMI: {calculateBMI(donarProfile.weight, donarProfile.height)}</Text>
-      </View>
-
-      <View style={{ width: '100%' }}>
-        <TouchableOpacity style={styles.callButton} onPress={() => handleCall(donarProfile.phoneNumbers)}>
-          <Text style={styles.callButtonText}>Call now</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </StateAwareContainer>
   )
 }
 

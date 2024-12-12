@@ -5,12 +5,15 @@ import { Ionicons } from '@expo/vector-icons'
 import createStyles from './createStyles'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
 import React from 'react'
+import { useUserProfile } from '../../../../userWorkflow/context/UserProfileContext'
 
 const ResponseDonationRequest = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
+  const { userProfile } = useUserProfile()
   const {
     bloodRequest,
+    isLoading,
     handleAcceptRequest,
     handleIgnore,
     formatDateTime,
@@ -102,10 +105,12 @@ const ResponseDonationRequest = () => {
         </View>
       </ScrollView>
 
+      {userProfile.id !== bloodRequest.seekerId &&
       <View style={styles.buttonContainer}>
-        {!isRequestAccepted && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
-        <Button text={isRequestAccepted ? 'Request Accepted' : 'Accept Request'} disabled={isRequestAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
+        {!isLoading && !isRequestAccepted && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
+        <Button text={isRequestAccepted ? 'Request Accepted' : 'Accept Request'} loading={isLoading} disabled={isRequestAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
       </View>
+    }
     </SafeAreaView>
   )
 }

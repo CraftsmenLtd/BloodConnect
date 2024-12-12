@@ -1,9 +1,10 @@
-import { FlatList, Text, View, StyleSheet } from 'react-native'
+import { FlatList, StyleSheet } from 'react-native'
 import { PostCard, PostCardDisplayOptions } from './PostCard'
 import { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
-import Loader from '../loaders/loader'
+import React from 'react'
+import StateAwareContainer from '../StateAwareContainer'
 
 interface PostsProps {
   updatePost?: (donationData: DonationData) => void;
@@ -25,31 +26,23 @@ const Posts: React.FC<PostsProps> = ({
   displayOptions
 }) => {
   const styles = createStyles(useTheme())
-  if (loading) {
-    return <Loader />
-  }
 
   return (
-    <View>
-      {!loading && errorMessage !== null
-        ? <Text style={[styles.noDataText, styles.errorMessage]}>{errorMessage}</Text>
-        : donationPosts.length === 0
-          ? <Text style={styles.noDataText}>No items found.</Text>
-          : <FlatList
-              data={donationPosts}
-              renderItem={({ item }) => (
-                <PostCard
-                  post={item}
-                  updateHandler={updatePost}
-                  detailHandler={detailHandler}
-                  {...displayOptions}
-                />)}
-              keyExtractor={(item) => item.donationDateTime}
-              contentContainerStyle={styles.postList}
-              refreshControl={refreshControl}
-            />
-      }
-    </View>
+    <StateAwareContainer loading={loading} errorMessage={errorMessage} data={donationPosts}>
+      <FlatList
+        data={donationPosts}
+        renderItem={({ item }) => (
+          <PostCard
+            post={item}
+            updateHandler={updatePost}
+            detailHandler={detailHandler}
+            {...displayOptions}
+          />)}
+        keyExtractor={(item) => item.requestPostId}
+        contentContainerStyle={styles.postList}
+        refreshControl={refreshControl}
+      />
+    </StateAwareContainer>
   )
 }
 

@@ -43,7 +43,7 @@ const MyActivityTab = () => {
             loading={myResponsesLoading}
             errorMessage={myResponsesError}
             detailHandler={detailHandler}
-            displayOptions={{ showOptions: false, showButton: false }}
+            displayOptions={{ showOptions: false, showButton: false, showStatus: true }}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -59,8 +59,7 @@ const MyActivityTab = () => {
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
-    flex: 1,
-    paddingBottom: 48
+    flex: 1
   },
   tabHeader: {
     paddingHorizontal: 8,
