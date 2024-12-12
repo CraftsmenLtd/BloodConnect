@@ -21,12 +21,16 @@ const RadioButton: React.FC<RadioButtonProps> = ({ name, options, value, onPress
       </Text>
       <View style={styles.wrapper}>
         {options.map(item => (
-          <View key={item} style={styles.option}>
-            <TouchableOpacity style={[styles.outer, value === item && styles.selectedOptionColor]} onPress={() => { onPress(name, item) }}>
+          <TouchableOpacity
+            key={item}
+            style={styles.option}
+            onPress={() => { onPress(name, item) }}
+          >
+            <View style={[styles.outer, value === item && styles.selectedOptionColor]}>
               {value === item && <View style={styles.inner} />}
-            </TouchableOpacity>
+            </View>
             <Text style={styles.item}>{item}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
       {extraInfo.trim().length > 0 && <Text style={styles.extraInfo}>{extraInfo}</Text>}
