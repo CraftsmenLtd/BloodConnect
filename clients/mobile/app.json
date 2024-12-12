@@ -4,10 +4,10 @@
     "slug": "bloodconnect",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.jpg",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash1.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -42,14 +42,24 @@
         }
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.jpg",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#9e000f"
       },
       "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#9e000f",
+          "defaultChannel": "default"
+        }
+      ]
+    ],
     "owner": "shahed_chy_suzan"
   }
 }
