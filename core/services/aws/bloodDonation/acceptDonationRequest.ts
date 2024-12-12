@@ -171,7 +171,10 @@ async function acceptBloodDonationRequest(
   }
 
   await notificationService.sendNotification(notificationAttributes, new SQSOperations())
+  await updateDonationNotification(donorId, requestPostId, status, seekerId, createdAt, donationPost)
+}
 
+async function updateDonationNotification(donorId: string, requestPostId: string, status: AcceptDonationStatus, seekerId: string, createdAt: string, donationPost: DonationDTO): Promise<void> {
   const existingNotification = await notificationService.getBloodDonationNotification(
     donorId,
     requestPostId,
