@@ -195,13 +195,10 @@ async function acceptBloodDonationRequest(
         urgencyLevel: donationPost.urgencyLevel as string,
         contactNumber: donationPost.contactNumber,
         donationDateTime: donationPost.donationDateTime,
-        // seekerName: donationPost.seekerName as string,
         patientName: donationPost.patientName as string,
         location: donationPost.location,
-        // locationId: donationPost.locationId as string,
         shortDescription: donationPost.shortDescription as string,
         transportationInfo: donationPost.transportationInfo as string
-        // distance: donationPost.distance as number
       },
       status: status as AcceptDonationStatus,
       userId: donorId,
