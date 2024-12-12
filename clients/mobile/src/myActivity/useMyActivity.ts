@@ -8,6 +8,7 @@ import { useFetchClient } from '../setup/clients/useFetchClient'
 import { extractErrorMessage, formatDonations } from '../donationWorkflow/donationHelpers'
 import { TabConfig } from './types'
 import { useUserProfile } from '../userWorkflow/context/UserProfileContext'
+import useToast from '../components/toast/useToast'
 
 export const MY_ACTIVITY_TAB_CONFIG: TabConfig = {
   tabs: ['My Posts', 'My Responses'],
@@ -21,6 +22,7 @@ export interface DonationData extends Omit<BloodDonationRecord, 'reqPostId' | 'l
 export const useMyActivity = (): any => {
   const fetchClient = useFetchClient()
   const { userProfile } = useUserProfile()
+  const { showToastMessage, showToast, toastAnimationFinished } = useToast()
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const [currentTab, setCurrentTab] = useState(MY_ACTIVITY_TAB_CONFIG.initialTab)
   const [myResponses, setMyResponses] = useState<DonationData[]>([])
@@ -62,7 +64,10 @@ export const useMyActivity = (): any => {
     }
 
     try {
-      await cancelDonation(payload, fetchClient)
+      const response = await cancelDonation(payload, fetchClient)
+      if (response.success === true) {
+        showToastMessage({ message: response.message ?? '', type: 'success', toastAnimationFinished })
+      }
     } catch (error) {
       const errorMessage = extractErrorMessage(error)
       setCancelPostError(errorMessage)
@@ -89,6 +94,7 @@ export const useMyActivity = (): any => {
     myResponsesLoading,
     myResponsesError,
     cancelPostError,
+    showToast,
     handleRefresh: refreshPosts,
     refreshing
   }
