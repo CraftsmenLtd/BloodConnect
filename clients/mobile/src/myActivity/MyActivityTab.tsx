@@ -5,6 +5,7 @@ import { useTheme } from '../setup/theme/hooks/useTheme'
 import { Theme } from '../setup/theme'
 import Posts from '../components/donation/Posts'
 import { useMyActivityContext } from './context/useMyActivityContext'
+import Toast from '../components/toast'
 
 const MyActivityTab = () => {
   const theme = useTheme()
@@ -15,11 +16,14 @@ const MyActivityTab = () => {
     handleTabPress,
     updatePost,
     detailHandler,
+    cancelPost,
     myResponses,
     myResponsesLoading,
     myResponsesError,
     refreshing,
-    handleRefresh
+    handleRefresh,
+    showToast,
+    toastAnimationFinished
   } = useMyActivity()
 
   return (
@@ -32,12 +36,21 @@ const MyActivityTab = () => {
         />
       </View>
       {currentTab === MY_ACTIVITY_TAB_CONFIG.initialTab
-        ? <Posts
-            donationPosts={donationPosts}
-            loading={loading}
-            updatePost={updatePost}
-            errorMessage={errorMessage}
-            detailHandler={detailHandler} />
+        ? <>
+            <Posts
+              donationPosts={donationPosts}
+              loading={loading}
+              updatePost={updatePost}
+              errorMessage={errorMessage}
+              detailHandler={detailHandler}
+              cancelPost={cancelPost}
+            />
+            {showToast != null && <Toast
+                message={showToast?.message}
+                type={showToast?.type}
+                toastAnimationFinished={toastAnimationFinished}
+            />}
+          </>
         : <Posts
             donationPosts={myResponses}
             loading={myResponsesLoading}

@@ -3,11 +3,12 @@ import { useNavigation } from '@react-navigation/native'
 import { BloodDonationRecord } from '../donationWorkflow/types'
 import { SCREENS } from '../setup/constant/screens'
 import { DonationPostsScreenNavigationProp } from '../setup/navigation/navigationTypes'
-import { fetchMyResponses } from '../donationWorkflow/donationService'
+import { fetchMyResponses, cancelDonation } from '../donationWorkflow/donationService'
 import { useFetchClient } from '../setup/clients/useFetchClient'
 import { extractErrorMessage, formatDonations } from '../donationWorkflow/donationHelpers'
 import { TabConfig } from './types'
 import { useUserProfile } from '../userWorkflow/context/UserProfileContext'
+import useToast from '../components/toast/useToast'
 
 export const MY_ACTIVITY_TAB_CONFIG: TabConfig = {
   tabs: ['My Posts', 'My Responses'],
@@ -21,11 +22,13 @@ export interface DonationData extends Omit<BloodDonationRecord, 'reqPostId' | 'l
 export const useMyActivity = (): any => {
   const fetchClient = useFetchClient()
   const { userProfile } = useUserProfile()
+  const { showToastMessage, showToast, toastAnimationFinished } = useToast()
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const [currentTab, setCurrentTab] = useState(MY_ACTIVITY_TAB_CONFIG.initialTab)
   const [myResponses, setMyResponses] = useState<DonationData[]>([])
   const [myResponsesLoading, setMyResponsesLoading] = useState(false)
   const [myResponsesError, setMyResponsesError] = useState<string | null>(null)
+  const [cancelPostError, setCancelPostError] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => { void getMyResponses() }, [])
@@ -54,6 +57,23 @@ export const useMyActivity = (): any => {
     navigation.navigate(SCREENS.DETAIL_POST, { data: { ...donationData, patientName: userProfile.name } })
   }
 
+  const cancelPost = async(donationData: DonationData): Promise<void> => {
+    const payload = {
+      reqPostId: donationData.requestPostId,
+      requestedCreatedAt: donationData.createdAt
+    }
+
+    try {
+      const response = await cancelDonation(payload, fetchClient)
+      if (response.success === true) {
+        showToastMessage({ message: response.message ?? '', type: 'success', toastAnimationFinished })
+      }
+    } catch (error) {
+      const errorMessage = extractErrorMessage(error)
+      setCancelPostError(errorMessage)
+    }
+  }
+
   const handleTabPress = (tab: string): void => {
     setCurrentTab(tab)
   }
@@ -69,9 +89,12 @@ export const useMyActivity = (): any => {
     handleTabPress,
     updatePost,
     detailHandler,
+    cancelPost,
     myResponses,
     myResponsesLoading,
     myResponsesError,
+    cancelPostError,
+    showToast,
     handleRefresh: refreshPosts,
     refreshing
   }
