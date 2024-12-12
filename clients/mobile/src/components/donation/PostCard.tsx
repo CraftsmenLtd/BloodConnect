@@ -25,6 +25,7 @@ interface PostCardProps extends PostCardDisplayOptions {
   post: DonationData;
   updateHandler?: (donationData: DonationData) => void;
   detailHandler?: (donationData: DonationData) => void;
+  cancelHandler?: (donationData: DonationData) => void;
 }
 
 interface DropdownPosition {
@@ -36,6 +37,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   post,
   updateHandler,
   detailHandler,
+  cancelHandler,
   showContactNumber = false,
   showDescription = true,
   showTransportInfo = false,
@@ -75,6 +77,11 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
     updateHandler !== undefined && updateHandler(post)
     handleCloseDropdown()
   }, [post, updateHandler])
+
+  const handleCancel = useCallback(() => {
+    cancelHandler !== undefined && cancelHandler(post)
+    handleCloseDropdown()
+  }, [post, cancelHandler])
 
   const formatDateTime = (date: string) => {
     const dateObj = new Date(date)
@@ -135,10 +142,10 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                           <Text style={styles.dropdownText}>Update</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          onPress={handleCloseDropdown}
+                          onPress={handleCancel}
                           style={styles.dropdownItem}
                         >
-                          <Text style={styles.dropdownText}>Delete</Text>
+                          <Text style={styles.dropdownText}>Cancel</Text>
                         </TouchableOpacity>
                       </View>
                     </TouchableWithoutFeedback>

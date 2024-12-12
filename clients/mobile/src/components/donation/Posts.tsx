@@ -12,6 +12,7 @@ interface PostsProps {
   loading: boolean;
   errorMessage: string | null;
   detailHandler?: (donationData: DonationData) => void;
+  cancelPost?: (donationData: DonationData) => void;
   refreshControl?: React.ReactElement;
   displayOptions?: PostCardDisplayOptions;
 }
@@ -22,6 +23,7 @@ const Posts: React.FC<PostsProps> = ({
   loading,
   errorMessage,
   detailHandler,
+  cancelPost,
   refreshControl,
   displayOptions
 }) => {
