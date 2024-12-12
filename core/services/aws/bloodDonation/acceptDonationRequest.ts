@@ -41,12 +41,15 @@ const acceptDonationService = new AcceptDonationService()
 const userService = new UserService()
 const notificationService = new NotificationService()
 
-async function acceptDonationRequestLambda(
+async function acceptDonationRequest(
   event: AcceptDonationRequestAttributes
 ): Promise<APIGatewayProxyResult> {
   try {
     const { donorId, seekerId, requestPostId, createdAt, status } = event
 
+    if (status !== AcceptDonationStatus.ACCEPTED && status !== AcceptDonationStatus.IGNORED) {
+      throw new Error('Invalid status for accept donation request')
+    }
     const acceptanceRecord = await acceptDonationService.getAcceptanceRecord(
       seekerId,
       requestPostId,
@@ -61,30 +64,36 @@ async function acceptDonationRequestLambda(
       throw new Error('You already donated.')
     }
 
+    if ((status === AcceptDonationStatus.ACCEPTED && acceptanceRecord !== null)) {
+      throw new Error('You already accepted the donation')
+    }
+
     if (status === AcceptDonationStatus.ACCEPTED && acceptanceRecord === null) {
       await acceptBloodDonationRequest(donorId, seekerId, requestPostId, createdAt, status)
-    } else if (status === AcceptDonationStatus.IGNORED && acceptanceRecord !== null) {
-      await acceptDonationService.deleteAcceptedRequest(
-        seekerId,
-        requestPostId,
-        donorId,
-        new AcceptedDonationDynamoDbOperations<
-        AcceptedDonationDTO,
-        AcceptedDonationFields,
-        AcceptDonationRequestModel
-        >(new AcceptDonationRequestModel())
-      )
-      await notificationService.updateBloodDonationNotificationStatus(
-        donorId,
-        requestPostId,
-        NotificationType.BLOOD_REQ_POST,
-        status,
-        new NotificationDynamoDbOperations<
-        BloodDonationNotificationDTO,
-        BloodDonationNotificationFields,
-        DonationNotificationModel
-        >(new DonationNotificationModel())
-      )
+    } else {
+      if (acceptanceRecord !== null) {
+        await acceptDonationService.deleteAcceptedRequest(
+          seekerId,
+          requestPostId,
+          donorId,
+          new AcceptedDonationDynamoDbOperations<
+          AcceptedDonationDTO,
+          AcceptedDonationFields,
+          AcceptDonationRequestModel
+          >(new AcceptDonationRequestModel())
+        )
+        await notificationService.updateBloodDonationNotificationStatus(
+          donorId,
+          requestPostId,
+          NotificationType.BLOOD_REQ_POST,
+          status,
+          new NotificationDynamoDbOperations<
+          BloodDonationNotificationDTO,
+          BloodDonationNotificationFields,
+          DonationNotificationModel
+          >(new DonationNotificationModel())
+        )
+      }
     }
 
     return generateApiGatewayResponse(
@@ -97,7 +106,7 @@ async function acceptDonationRequestLambda(
   }
 }
 
-export default acceptDonationRequestLambda
+export default acceptDonationRequest
 
 async function acceptBloodDonationRequest(
   donorId: string,
