@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler'
-import React, { useState, useEffect } from 'react'
-import { BackHandler, ToastAndroid, LogBox } from 'react-native'
+import { LogBox } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native'
 import { ThemeProvider } from './src/setup/theme/context/ThemeContext'
@@ -13,6 +12,8 @@ import { UserProfileProvider } from './src/userWorkflow/context/UserProfileConte
 import * as Notifications from 'expo-notifications'
 import { RootStackParamList } from './src/setup/navigation/navigationTypes'
 import Constants from 'expo-constants'
+import { MyActivityProvider } from './src/myActivity/context/MyActivityProvider'
+import useBackPressHandler from './src/hooks/useBackPressHandler'
 
 const { APP_ENV } = Constants.expoConfig?.extra ?? {}
 
@@ -31,34 +32,20 @@ Notifications.setNotificationHandler({
 })
 
 export default function App() {
-  const [backPressedOnce, setBackPressedOnce] = useState(false)
+  useBackPressHandler()
   const navigationRef = useNavigationContainerRef<RootStackParamList>()
-
-  useEffect(() => {
-    const backAction = () => {
-      if (backPressedOnce) {
-        BackHandler.exitApp()
-      } else {
-        setBackPressedOnce(true)
-        ToastAndroid.show('Press back again to exit', ToastAndroid.SHORT)
-        setTimeout(() => { setBackPressedOnce(false) }, 2000)
-      }
-      return true
-    }
-
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
-    return () => { backHandler.remove() }
-  }, [backPressedOnce])
 
   return (
     <SafeAreaProvider>
       <NavigationContainer ref={navigationRef}>
         <NotificationProvider navigationRef={navigationRef}>
           <AuthProvider>
-          <UserProfileProvider>
-            <ThemeProvider>
-              <Navigator />
-            </ThemeProvider>
+            <UserProfileProvider>
+              <MyActivityProvider>
+                <ThemeProvider>
+                  <Navigator />
+                </ThemeProvider>
+              </MyActivityProvider>
             </UserProfileProvider>
           </AuthProvider>
         </NotificationProvider>

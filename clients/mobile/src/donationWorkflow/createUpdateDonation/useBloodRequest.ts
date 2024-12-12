@@ -9,6 +9,8 @@ import { SCREENS } from '../../setup/constant/screens'
 import { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
 import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
+import { useMyActivityContext } from '../../myActivity/context/useMyActivityContext'
+import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -43,6 +45,8 @@ const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = 
 export const useBloodRequest = (): any => {
   const fetchClient = useFetchClient()
   const route = useRoute<DonationScreenRouteProp>()
+  const { fetchDonationPosts } = useMyActivityContext()
+  const { userProfile } = useUserProfile()
   const navigation = useNavigation<DonationScreenNavigationProp>()
   const { data, isUpdating } = route.params
   const [bloodRequestData, setBloodRequestData] = useState<BloodRequestData>({
@@ -52,7 +56,7 @@ export const useBloodRequest = (): any => {
     donationDateTime: data !== null ? new Date(data.donationDateTime) : new Date(),
     location: '',
     contactNumber: '',
-    patientName: '',
+    patientName: userProfile.name ?? '',
     shortDescription: '',
     transportationInfo: '',
     city: '',
@@ -139,6 +143,9 @@ export const useBloodRequest = (): any => {
   }
 
   const updateBloodDonationRequest = async(): Promise<DonationResponse> => {
+    if ('acceptedDonors' in bloodRequestData) {
+      delete bloodRequestData.acceptedDonors
+    }
     const { bloodQuantity, city, location, requestedBloodGroup, ...rest } = bloodRequestData
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
@@ -163,6 +170,7 @@ export const useBloodRequest = (): any => {
         : await createBloodDonationRequest()
 
       if (response.status === 200) {
+        void fetchDonationPosts()
         navigation.navigate(SCREENS.POSTS)
       }
     } catch (error) {

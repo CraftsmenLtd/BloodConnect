@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useFetchClient } from '../../../../setup/clients/useFetchClient'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../../../setup/constant/screens'
-import { useNotificationContext } from '../../../../setup/notification/useNotificationContext'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
-import { PostScreenNavigationProp } from '../../../../setup/navigation/navigationTypes'
+import { PostScreenNavigationProp, RequestPreviewRouteProp } from '../../../../setup/navigation/navigationTypes'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -30,11 +29,11 @@ interface FetchResponse {
 
 export const useResponseDonationRequest = (): useResponseDonationRequestReturnType => {
   const navigation = useNavigation<PostScreenNavigationProp>()
+  const { notificationData: bloodRequest } = useRoute<RequestPreviewRouteProp>().params
   const [isRequestAccepted, setIsRequestAccepted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fetchClient = useFetchClient()
-  const { notificationData: bloodRequest } = useNotificationContext()
 
   useEffect(() => {
     if (bloodRequest === null) {
@@ -68,7 +67,6 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
         ? error.message
         : 'An unexpected error occurred while accepting the request'
       setError(errorMessage)
-      throw new Error(`Failed to accept request: ${errorMessage}`)
     } finally {
       setIsLoading(false)
     }

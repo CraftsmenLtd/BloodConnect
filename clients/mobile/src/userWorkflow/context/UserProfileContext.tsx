@@ -14,6 +14,7 @@ const defaultProfile: UserProfile = {
   bloodGroup: '',
   name: '',
   lastDonationDate: '',
+  city: '',
   height: 0,
   weight: 0,
   gender: '',
@@ -38,6 +39,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     return {
       bloodGroup: profile.bloodGroup ?? '',
       name: profile.name ?? '',
+      city: profile.city ?? '',
       lastDonationDate: profile.lastDonationDate ?? '',
       height: profile.height ?? 0,
       weight: profile.weight ?? 0,
