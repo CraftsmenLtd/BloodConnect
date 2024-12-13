@@ -9,6 +9,7 @@ import { RouteProp, useRoute } from '@react-navigation/native'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { initializeState } from '../../../utility/stateUtils'
 import { Alert } from 'react-native'
+import { useUserProfile } from '../../context/UserProfileContext'
 
 interface UseEditProfileResult {
   profileData: typeof profileData;
@@ -49,6 +50,7 @@ const validationRules: Record<keyof ProfileDataErrors, ValidationRule[]> = {
 }
 
 export const useEditProfile = () => {
+  const { fetchUserProfile } = useUserProfile()
   const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>()
   const fetchClient = useFetchClient()
   const { userDetails } = route.params
@@ -111,7 +113,11 @@ export const useEditProfile = () => {
       }
 
       const response = await fetchClient.patch('/users', requestPayload)
-      if (response.status !== 200) throw new Error('Failed to update profile')
+      if (response.status !== 200) {
+        throw new Error('Failed to update profile')
+      } else {
+        await fetchUserProfile()
+      }
     } catch (error) {
       Alert.alert('Error', 'Could not update profile.')
     }
