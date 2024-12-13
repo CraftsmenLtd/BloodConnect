@@ -195,6 +195,7 @@ export const useAddPersonalInfo = (): any => {
   return {
     loading,
     errorMessage,
+    setErrorMessage,
     errors,
     isVisible,
     setIsVisible,
