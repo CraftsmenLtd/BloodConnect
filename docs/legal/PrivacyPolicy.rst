@@ -150,8 +150,11 @@ We may update this policy and will notify users of significant changes.
 
 14. Contact Information
 ------------------------
-For privacy-related inquiries contact us at: https://www.craftsmensoftware.com
+For privacy-related inquiries contact us at:
 
-15. Consent
+| Email: info@craftsmensoftware.com
+| Website: www.bloodconnect.net
+
+15.  Consent
 ------------------------
 By using BloodConnect, you consent to this Privacy Policy and our data practices.

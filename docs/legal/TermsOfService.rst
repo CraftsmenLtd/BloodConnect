@@ -27,7 +27,7 @@ BloodConnect is an open-source project licensed under the [Insert License Name, 
 The platform is designed for the following purposes:
 
 - Connecting blood donors and recipients efficiently and effectively.
-- Facilitating secure communication between all stakeholders in the blood donation process.
+- Facilitating secure communication between donors and seekers in the blood donation process.
 - In future release we will add healthcare organizations for assisting in managing donor lists, blood availability, and reporting.
 
 You agree to use BloodConnect only for its intended purpose and comply with all applicable laws and regulations while using the platform.
@@ -41,7 +41,7 @@ BloodConnect is a platform that connects blood donors with recipients to facilit
 - Donor-recipient matching
 - Location-based donor search
 - Communication between donors and recipients
-- Blood donation tracking
+- Blood donation history and records
 
 5. User Responsibilities
 ------------------------
@@ -79,7 +79,7 @@ For more details, please check our Privacy Policy.
 
 7. Limitation of Liability
 --------------------------
-- BloodConnect is provided as an open-source tool to facilitate healthcare workflows. It is not a substitute for professional medical advice or emergency services.
+- BloodConnect is provided as an open-source platform to facilitate blood donation connections and processes. It is not a substitute for professional medical advice or emergency services.
 - The platform and its contributors are not liable for any loss, damage, or harm arising from the use of the software, including delays in finding donors or inaccuracies in the data.
 - The platform's reliance on user-provided data means that BloodConnect cannot guarantee the accuracy, completeness, or availability of information at all times.
 
@@ -119,4 +119,7 @@ These Terms and Conditions shall be governed by and construed in accordance with
 
 13. Contact
 ------------
-For any questions, concerns, or feedback regarding these Terms and Conditions, please contact us at https://www.craftsmensoftware.com.
+For any questions, concerns, or feedback regarding these Terms and Conditions, please contact us:
+
+| Email: info@craftsmensoftware.com
+| Website: https://bloodconnect.net
