@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet } from 'react-native'
+import { FlatList, StyleSheet, View, Text } from 'react-native'
 import { PostCard, PostCardDisplayOptions } from './PostCard'
 import { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -15,6 +15,7 @@ interface PostsProps {
   cancelPost?: (donationData: DonationData) => void;
   refreshControl?: React.ReactElement;
   displayOptions?: PostCardDisplayOptions;
+  emptyDataMessage?: string;
 }
 
 const Posts: React.FC<PostsProps> = ({
@@ -25,7 +26,8 @@ const Posts: React.FC<PostsProps> = ({
   detailHandler,
   cancelPost,
   refreshControl,
-  displayOptions
+  displayOptions,
+  emptyDataMessage
 }) => {
   const styles = createStyles(useTheme())
 
@@ -40,6 +42,11 @@ const Posts: React.FC<PostsProps> = ({
             detailHandler={detailHandler}
             {...displayOptions}
           />)}
+          ListEmptyComponent={
+            <View style={styles.emptyDataMessage}>
+              <Text>{emptyDataMessage}</Text>
+            </View>
+          }
         keyExtractor={(item) => item.requestPostId}
         contentContainerStyle={styles.postList}
         refreshControl={refreshControl}
@@ -61,6 +68,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: theme.colors.textSecondary
+  },
+  emptyDataMessage: {
+    padding: 20,
+    alignItems: 'center'
   },
   errorMessage: {
     color: theme.colors.primary

@@ -38,6 +38,7 @@ export const useDonationPosts = (): any => {
     } catch (error) {
       setErrorMessage(extractErrorMessage(error))
     } finally {
+      setRefreshing(false)
       setLoading(false)
     }
   }

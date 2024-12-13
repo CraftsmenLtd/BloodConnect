@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { fetchDonationList } from '../../donationWorkflow/donationService'
-import { DonationData, formatDonations } from '../../donationWorkflow/donationHelpers'
+import { DonationData, extractErrorMessage, formatDonations } from '../../donationWorkflow/donationHelpers'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import useFetchData from '../../setup/clients/useFetchData'
 import storageService from '../../utility/storageService'
@@ -36,7 +36,7 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
       return formatDonations(response.data, userName)
     }
     return []
-  }, { shouldExecuteOnMount: true })
+  }, { shouldExecuteOnMount: true, parseError: extractErrorMessage })
 
   return (
     <MyActivityContext.Provider value={{ donationPosts: data ?? [], errorMessage, loading, fetchDonationPosts }}>
