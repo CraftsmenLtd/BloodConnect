@@ -1,23 +1,31 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, Image, ImageStyle } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
-import { Button } from '../../components/button/Button'
-import { DonationData } from './useDonationPosts'
-import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
-import { UrgencyLevel } from '../types'
+import { Button } from '../button/Button'
+import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
+import { UrgencyLevel } from '../../donationWorkflow/types'
+import BloodImage from '../../../assets/images/bloodtype.png'
+import StatusBadge from './StatusBadge'
 
-interface PostCardProps {
-  post: DonationData;
-  updateHandler: (donationData: DonationData) => void;
-  detailHandler?: (donationData: DonationData) => void;
+export interface PostCardDisplayOptions {
   showContactNumber?: boolean;
   showDescription?: boolean;
   showTransportInfo?: boolean;
   showPatientName?: boolean;
   showButton?: boolean;
   showHeader?: boolean;
+  showOptions?: boolean;
+  showPostUpdatedOption?: boolean;
+  showStatus?: boolean;
+}
+
+interface PostCardProps extends PostCardDisplayOptions {
+  post: DonationData;
+  updateHandler?: (donationData: DonationData) => void;
+  detailHandler?: (donationData: DonationData) => void;
+  cancelHandler?: (donationData: DonationData) => void;
 }
 
 interface DropdownPosition {
@@ -25,10 +33,23 @@ interface DropdownPosition {
   right: number;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailHandler, showContactNumber = false, showDescription = false, showTransportInfo = false, showPatientName = false, showButton = true, showHeader = true }) => {
+export const PostCard: React.FC<PostCardProps> = React.memo(({
+  post,
+  updateHandler,
+  detailHandler,
+  cancelHandler,
+  showContactNumber = false,
+  showDescription = true,
+  showTransportInfo = false,
+  showPatientName = false,
+  showButton = true,
+  showHeader = true,
+  showOptions = true,
+  showPostUpdatedOption = true,
+  showStatus = false
+}) => {
   const theme = useTheme()
   const styles = createStyles(theme)
-  const { userProfile } = useUserProfile()
   const [showDropdown, setShowDropdown] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
   const iconRef = useRef<View>(null)
@@ -53,9 +74,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
   }, [])
 
   const handleUpdate = useCallback(() => {
-    updateHandler(post)
+    updateHandler !== undefined && updateHandler(post)
     handleCloseDropdown()
   }, [post, updateHandler])
+
+  const handleCancel = useCallback(() => {
+    cancelHandler !== undefined && cancelHandler(post)
+    handleCloseDropdown()
+  }, [post, cancelHandler])
 
   const formatDateTime = (date: string) => {
     const dateObj = new Date(date)
@@ -80,59 +106,62 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
   }), [dropdownPosition])
 
   return (
-    <>
       <View style={styles.card}>
-        {showHeader && <View style={styles.cardHeader}>
-          <View>
-            <Text style={styles.userName}>{userProfile.name}</Text>
-            <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
-          </View>
-          <View style={styles.menuContainer}>
-            <View ref={iconRef} collapsable={false}>
-              <TouchableOpacity
-                onPress={handleToggleDropdown}
-                style={styles.iconContainer}
-              >
-                <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.grey} />
-              </TouchableOpacity>
+        {showHeader &&
+          <View style={styles.cardHeader}>
+            <View>
+              <Text style={styles.userName}>{post.patientName}</Text>
+              <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
             </View>
-            <Modal
-              visible={showDropdown}
-              transparent={true}
-              animationType="none"
-              onRequestClose={handleCloseDropdown}
-            >
-              <TouchableWithoutFeedback onPress={handleCloseDropdown}>
-                <View style={styles.modalOverlay}>
-                  <TouchableWithoutFeedback>
-                    <View style={getDropdownStyle()}>
-                      <TouchableOpacity
-                        onPress={handleUpdate}
-                        style={styles.dropdownItem}
-                      >
-                        <Text style={styles.dropdownText}>Update</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={handleCloseDropdown}
-                        style={styles.dropdownItem}
-                      >
-                        <Text style={styles.dropdownText}>Delete</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </TouchableWithoutFeedback>
-                </View>
-              </TouchableWithoutFeedback>
-            </Modal>
+            {showStatus && <StatusBadge status={post.status} />}
+            {showOptions &&
+            <View style={styles.menuContainer}>
+              <View ref={iconRef} collapsable={false}>
+                <TouchableOpacity
+                  onPress={handleToggleDropdown}
+                  style={styles.iconContainer}
+                >
+                  <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.grey} />
+                </TouchableOpacity>
+              </View>
+
+              <Modal
+                visible={showDropdown}
+                transparent
+                animationType="none"
+                onRequestClose={handleCloseDropdown}
+              >
+                <TouchableWithoutFeedback onPress={handleCloseDropdown}>
+                  <View style={styles.modalOverlay}>
+                    <TouchableWithoutFeedback>
+                      <View style={getDropdownStyle()}>
+                        <TouchableOpacity
+                          onPress={handleUpdate}
+                          style={styles.dropdownItem}
+                        >
+                          <Text style={styles.dropdownText}>Update</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={handleCancel}
+                          style={styles.dropdownItem}
+                        >
+                          <Text style={styles.dropdownText}>Cancel</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </View>
+                </TouchableWithoutFeedback>
+              </Modal>
+            </View>}
           </View>
-        </View>
         }
         <View style={styles.bloodInfoWrapper}>
           <View style={styles.bloodInfo}>
             <View style={styles.bloodRow}>
-              <Ionicons name="water" size={20} color={theme.colors.textPrimary} />
+            <Image source={BloodImage} style={styles.bloodImage as StyleProp<ImageStyle>} />
               <View style={styles.bloodText}>
                 <Text style={styles.lookingForText}>Looking for</Text>
-                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} blood</Text>
+                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} (ve) blood</Text>
               </View>
             </View>
             {post.urgencyLevel === UrgencyLevel.URGENT && (
@@ -142,23 +171,24 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
               </View>
             )}
           </View>
+
           <View style={styles.locationTimeContainer}>
             <View style={styles.locationTimeWrapper}>
               <View style={styles.infoSection}>
                 <View style={styles.infoHeader}>
-                  <Ionicons name="location-outline" size={16} color={theme.colors.black} />
+                  <Ionicons name="location-outline" size={16} color={theme.colors.grey} />
                   <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
                 </View>
-                <Text>{post.location}</Text>
+                <Text style={styles.description}>{post.location}</Text>
               </View>
             </View>
             <View style={[styles.locationTimeWrapper, styles.noBorder]}>
               <View style={styles.infoSection}>
                 <View style={styles.infoHeader}>
-                  <Ionicons name="time-outline" size={16} color={theme.colors.black} />
+                  <Ionicons name="time-outline" size={16} color={theme.colors.grey} />
                   <Text style={styles.donationInfoPlaceholder}>Time & Date</Text>
                 </View>
-                <Text>{formatDateTime(post.donationDateTime)}</Text>
+                <Text style={styles.description}>{formatDateTime(post.donationDateTime)}</Text>
               </View>
             </View>
           </View>
@@ -174,6 +204,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
               <Text style={styles.description}>{post.patientName}</Text>
             </View>
           }
+
           {post.shortDescription !== '' && showDescription &&
             <View style={styles.descriptionContainer}>
               <Text style={styles.donationInfoPlaceholder}>Short Description of the Problem</Text>
@@ -187,14 +218,16 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
             </View>
           }
         </View>
-        <Text>Post Update</Text>
-        <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
-          <Ionicons name='time-outline' size={20} color={theme.colors.black} />
-          <View>
-            <Text>Number of Donar</Text>
-            <Text>3 donar accepted your request</Text>
+        {Array.isArray(post.acceptedDonors) && post.acceptedDonors.length > 0 && showPostUpdatedOption && <>
+          <Text style={styles.bloodAmount}>Post Update</Text>
+          <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
+            <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
+            <View>
+              <Text style={styles.donationInfoPlaceholder}>Number of Donors</Text>
+              <Text style={styles.bloodAmount}>{post.acceptedDonors.length} donors accepted your request</Text>
+            </View>
           </View>
-        </View>
+        </>}
         {showButton && <View style={styles.buttonContainer}>
           <Button
             text='View details'
@@ -204,9 +237,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post, updateHandler, detailH
           />
         </View>}
       </View>
-    </>
   )
-}
+})
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   card: {
@@ -239,6 +271,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: 'transparent'
+  },
+  bloodImage: {
+    width: 28,
+    height: 28
   },
   dropdownContainer: {
     position: 'absolute',
@@ -331,8 +367,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginBottom: 4
   },
   donationInfoPlaceholder: {
-    fontSize: 12,
-    color: theme.colors.grey,
+    fontSize: 14,
+    color: theme.colors.textSecondary,
     marginLeft: 4
   },
   descriptionContainer: {
@@ -341,6 +377,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderTopColor: theme.colors.extraLightGray
   },
   description: {
+    fontSize: 16,
     marginTop: 4
   },
   buttonContainer: {
@@ -348,6 +385,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     width: '100%'
   },
   buttonStyle: {
+    paddingVertical: 10,
     backgroundColor: theme.colors.extraLightGray
   },
   textStyle: {
