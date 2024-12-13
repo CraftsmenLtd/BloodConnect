@@ -12,7 +12,7 @@ import {
 } from '../../../application/models/dbModels/BloodDonationModel'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
-import { BloodDonationPayloadAttributes } from '../../../application/notificationWorkflow/Types'
+import { DonationRequestPayloadAttributes } from '../../../application/notificationWorkflow/Types'
 import DonationNotificationModel, {
   BloodDonationNotificationFields
 } from '../../..//application/models/dbModels/DonationNotificationModel'
@@ -60,7 +60,7 @@ async function updateBloodDonationLambda(
 
     await notificationService.updateBloodDonationNotifications(
       event.requestPostId,
-      bloodDonationAttributes as Partial<BloodDonationPayloadAttributes>,
+      bloodDonationAttributes as Partial<DonationRequestPayloadAttributes>,
       new NotificationDynamoDbOperations<
       BloodDonationNotificationDTO,
       BloodDonationNotificationFields,

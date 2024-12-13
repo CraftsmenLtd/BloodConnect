@@ -1,0 +1,23 @@
+{
+  "CancelDonationModel": {
+    "type": "object",
+    "required": [
+      "requestPostId",
+      "requestCreatedAt"
+    ],
+    "properties": {
+      "requestPostId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "requestCreatedAt": {
+        "type": "string",
+        "format": "date-time"
+      }
+    },
+    "example": {
+      "requestPostId": "example01110",
+      "requestCreatedAt": "2024-10-20T15:00:00Z"
+    }
+  }
+}

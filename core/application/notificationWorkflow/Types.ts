@@ -1,4 +1,5 @@
-import { NotificationType } from '../../../commons/dto/NotificationDTO'
+import { AcceptDonationStatus, AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
+import { NotificationType, NotificationStatus } from '../../../commons/dto/NotificationDTO'
 import { UserDTO } from '../../../commons/dto/UserDTO'
 
 export interface NotificationAttributes {
@@ -6,29 +7,46 @@ export interface NotificationAttributes {
   title: string;
   body: string;
   type: NotificationType;
+  status?: NotificationStatus;
   payload: Record<string, unknown>;
 }
 
-export type BloodDonationNotificationAttributes = Omit<NotificationAttributes, 'payload'> & {
-  payload: BloodDonationPayloadAttributes;
+export type DonationNotificationAttributes = Omit<NotificationAttributes, 'payload' | 'status'> & {
+  payload: DonationRequestPayloadAttributes | DonationAcceptancePayloadAttributes;
+  status: AcceptDonationStatus;
 }
 
-export interface BloodDonationPayloadAttributes {
+export type DonationRequestPayloadAttributes = {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
-  bloodQuantity: string;
+  bloodQuantity: number;
   requestedBloodGroup: string;
   urgencyLevel: string;
   contactNumber: string;
   donationDateTime: string;
-  seekerName: string;
+  seekerName?: string;
   patientName?: string;
-  location?: string;
-  locationId: string;
+  location: string;
+  locationId?: string;
   shortDescription?: string;
   transportationInfo?: string;
   distance?: number;
+}
+
+export type DonationAcceptancePayloadAttributes = {
+  seekerId: string;
+  requestPostId: string;
+  donorId: string;
+  createdAt: string;
+  donorName: string;
+  phoneNumbers: string[];
+  requestedBloodGroup: string;
+  urgencyLevel: string;
+  location: string;
+  donationDateTime: string;
+  acceptedDonors?: AcceptedDonationDTO[];
+  shortDescription?: string;
 }
 
 export interface StoreNotificationEndPoint extends UserDTO {

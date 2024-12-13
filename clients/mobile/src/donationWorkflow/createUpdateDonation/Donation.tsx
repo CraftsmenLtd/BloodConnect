@@ -37,7 +37,6 @@ const CreateBloodRequest = () => {
 
   return (
     <TouchableWithoutFeedback onPress={() => { setIsVisible('') }}>
-      <View style={styles.container}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
@@ -90,7 +89,7 @@ const CreateBloodRequest = () => {
             />
           </View>
 
-          <View style={styles.fieldSpacing}>
+          <View style={[styles.fieldSpacing]}>
             <Dropdown
               label='Select City'
               isRequired={true}
@@ -187,7 +186,6 @@ const CreateBloodRequest = () => {
             />
           </View>
         </ScrollView>
-      </View>
     </TouchableWithoutFeedback>
   )
 }
@@ -199,7 +197,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 18
+    padding: 18,
+    backgroundColor: theme.colors.white
   },
   fieldSpacing: {
     marginTop: 5

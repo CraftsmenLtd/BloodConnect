@@ -89,3 +89,4 @@ Documents Index
    architecture/index
    development/index
    devops/index
+   legal/index

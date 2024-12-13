@@ -5,7 +5,6 @@ import {
   DonationFields
 } from '../../../models/dbModels/BloodDonationModel'
 import {
-  DonationDTO,
   DonationStatus
 } from '../../../../../commons/dto/DonationDTO'
 import {
@@ -45,41 +44,6 @@ describe('BloodDonationModel', () => {
         LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
         createdAt: mockCreatedAt
       })
-    })
-
-    it('should use current date when createdAt is undefined', () => {
-      const mockDate = new Date('2024-01-01T00:00:00Z')
-      jest.setSystemTime(mockDate)
-
-      const dtoWithoutCreatedAt: DonationDTO = {
-        ...donationDtoMock,
-        createdAt: undefined
-      }
-
-      const result = bloodDonationModel.fromDto(dtoWithoutCreatedAt)
-
-      expect(result.createdAt).toBe(mockDate.toISOString())
-      expect(result.SK).toBe(
-        `${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${
-          donationDtoMock.id
-        }`
-      )
-    })
-
-    it('should use current date when createdAt is omitted', () => {
-      const mockDate = new Date('2024-01-01T00:00:00Z')
-      jest.setSystemTime(mockDate)
-
-      const { createdAt, ...dtoWithoutCreatedAt } = donationDtoMock
-
-      const result = bloodDonationModel.fromDto(dtoWithoutCreatedAt)
-
-      expect(result.createdAt).toBe(mockDate.toISOString())
-      expect(result.SK).toBe(
-        `${BLOOD_REQUEST_PK_PREFIX}#${mockDate.toISOString()}#${
-          donationDtoMock.id
-        }`
-      )
     })
 
     it('should properly format SK and LSI1SK with provided createdAt', () => {

@@ -1,14 +1,16 @@
 import { SQSEvent, SQSRecord } from 'aws-lambda'
 import {
-  BloodDonationNotificationAttributes,
+  DonationNotificationAttributes,
   NotificationAttributes
 } from '../../../application/notificationWorkflow/Types'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import SNSOperations from '../commons/sns/SNSOperations'
 import {
   BloodDonationNotificationDTO,
-  NotificationDTO
+  NotificationDTO,
+  NotificationType
 } from '../../../../commons/dto/NotificationDTO'
+import { AcceptDonationStatus, AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
 import NotificationModel, {
   NotificationFields
 } from '../../../application/models/dbModels/NotificationModel'
@@ -47,7 +49,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
 
   const { userId } = body
   if (body.type === undefined) {
-    body.type = 'COMMON'
+    body.type = NotificationType.COMMON
   }
 
   const cachedUserSnsEndpointArn = userDeviceToSnsEndpointMap.get(userId)
@@ -76,14 +78,14 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
 export default sendPushNotification
 
 async function createNotification(body: NotificationAttributes): Promise<void> {
-  if (['BLOOD_REQ_POST', 'REQ_ACCEPTED'].includes(body.type)) {
-    const notificationData: BloodDonationNotificationAttributes = {
+  if (body.type === NotificationType.BLOOD_REQ_POST) {
+    const notificationData: DonationNotificationAttributes = {
       type: body.type,
       payload: {
         seekerId: body.payload.seekerId as string,
         requestPostId: body.payload.requestPostId as string,
         createdAt: body.payload.createdAt as string,
-        bloodQuantity: body.payload.bloodQuantity as string,
+        bloodQuantity: body.payload.bloodQuantity as number,
         requestedBloodGroup: body.payload.requestedBloodGroup as string,
         urgencyLevel: body.payload.urgencyLevel as string,
         contactNumber: body.payload.contactNumber as string,
@@ -96,6 +98,38 @@ async function createNotification(body: NotificationAttributes): Promise<void> {
         transportationInfo: body.payload.transportationInfo as string,
         distance: body.payload.distance as number
       },
+      status: body.payload.status as AcceptDonationStatus,
+      userId: body.userId,
+      title: body.title,
+      body: body.body
+    }
+
+    await notificationService.createBloodDonationNotification(
+      notificationData,
+      new NotificationDynamoDbOperations<
+      BloodDonationNotificationDTO,
+      BloodDonationNotificationFields,
+      DonationNotificationModel
+      >(new DonationNotificationModel())
+    )
+  } else if (body.type === NotificationType.REQ_ACCEPTED) {
+    const notificationData: DonationNotificationAttributes = {
+      type: body.type,
+      payload: {
+        seekerId: body.payload.seekerId as string,
+        requestPostId: body.payload.requestPostId as string,
+        createdAt: body.payload.createdAt as string,
+        donorId: body.payload.donorId as string,
+        donorName: body.payload.donorName as string,
+        phoneNumbers: body.payload.phoneNumbers as string[],
+        requestedBloodGroup: body.payload.requestedBloodGroup as string,
+        urgencyLevel: body.payload.urgencyLevel as string,
+        donationDateTime: body.payload.donationDateTime as string,
+        location: body.payload.location as string,
+        shortDescription: body.payload.shortDescription as string,
+        acceptedDonors: body.payload.acceptedDonors as AcceptedDonationDTO[]
+      },
+      status: body.payload.status as AcceptDonationStatus,
       userId: body.userId,
       title: body.title,
       body: body.body
