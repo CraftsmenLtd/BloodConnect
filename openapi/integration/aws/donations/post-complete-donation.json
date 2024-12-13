@@ -1,0 +1,22 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "${COMPLETE_DONATION_INVOCATION_ARN}",
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'POST'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
+      }
+    }
+  },
+  "requestTemplates": {
+    "application/json": "#set($inputRoot = $input.path('$'))\n{\n \"donorIds\": $inputRoot.donorIds,\n \"requestPostId\": \"$inputRoot.requestPostId\",\n \"seekerId\": \"$context.authorizer.claims['custom:userId']\",\n \"requestCreatedAt\": \"$inputRoot.requestCreatedAt\"\n}"
+  },
+  "passthroughBehavior": "never"
+}

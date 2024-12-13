@@ -7,6 +7,7 @@ export enum DonationStatus {
   PENDING = 'PENDING',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
+  MANAGED = 'MANAGED',
   EXPIRED = 'EXPIRED',
 }
 
@@ -54,15 +55,33 @@ export type DonorSearchDTO = DTO & HasIdentifier & {
   remainingGeohashesToProcess?: string[];
 }
 
+export enum AcceptDonationStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  COMPLETED = 'COMPLETED',
+  IGNORED = 'IGNORED'
+}
+
 type BaseAcceptedDonationDTO = {
   donorId: string;
   requestPostId: string;
-  acceptanceTime: string;
-  status: string;
+  acceptanceTime?: string;
+  status: AcceptDonationStatus;
   seekerId: string;
   createdAt: string;
 }
 
 export type AcceptedDonationDTO = BaseAcceptedDonationDTO & DTO & {
   status?: string;
+}
+
+export type DonationRecordDTO = DTO & HasIdentifier & {
+  donorId: string;
+  seekerId: string;
+  requestPostId: string;
+  requestCreatedAt: string;
+  requestedBloodGroup: BloodGroup;
+  location: string;
+  donationDateTime: string;
+  createdAt?: string;
 }

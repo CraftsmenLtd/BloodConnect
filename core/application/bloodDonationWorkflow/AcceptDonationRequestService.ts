@@ -1,32 +1,84 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import AcceptDonationRequestError from './AcceptDonationRequestError'
-import {
-  AcceptedDonationDTO
-} from '../../../commons/dto/DonationDTO'
-import Repository from '../models/policies/repositories/Repository'
 import { AcceptDonationRequestAttributes } from './Types'
+import AcceptedDonationRepository from '../models/policies/repositories/AcceptedDonationRepository'
+import { AcceptDonationStatus, AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
 
 export class AcceptDonationService {
   async createAcceptanceRecord(
     acceptDonationRequestAttributes: AcceptDonationRequestAttributes,
-    acceptDonationRequestRepository: Repository<AcceptedDonationDTO>
-  ): Promise<string> {
-    try {
-      const acceptanceRecord: AcceptedDonationDTO = {
-        ...acceptDonationRequestAttributes,
-        status: 'PENDING',
-        acceptanceTime: new Date().toISOString()
-      }
-      await acceptDonationRequestRepository.create(acceptanceRecord)
-      return 'Donation request accepted successfully.'
-    } catch (error: any) {
-      if (error.code === 'ConditionalCheckFailedException') {
-        return 'The request is complete'
-      }
+    acceptDonationRequestRepository: AcceptedDonationRepository<AcceptedDonationDTO>
+  ): Promise<void> {
+    const acceptanceRecord: AcceptedDonationDTO = {
+      ...acceptDonationRequestAttributes,
+      acceptanceTime: new Date().toISOString()
+    }
+    await acceptDonationRequestRepository.create(acceptanceRecord).catch(() => {
+      throw new AcceptDonationRequestError('Failed to accept donation request', GENERIC_CODES.ERROR)
+    })
+  }
+
+  async updateAcceptanceRecord(
+    acceptDonationRequestAttributes: AcceptDonationRequestAttributes,
+    acceptDonationRequestRepository: AcceptedDonationRepository<AcceptedDonationDTO>
+  ): Promise<void> {
+    await acceptDonationRequestRepository.update(acceptDonationRequestAttributes).catch(() => {
       throw new AcceptDonationRequestError(
-        `Failed to accept donation request. Error: ${error}`,
+        'Failed to update accept donation request',
         GENERIC_CODES.ERROR
       )
+    })
+  }
+
+  async updateAcceptanceRecordStatus(
+    seekerId: string,
+    requestPostId: string,
+    donorId: string,
+    status: AcceptDonationStatus,
+    acceptDonationRequestRepository: AcceptedDonationRepository<AcceptedDonationDTO>
+  ): Promise<void> {
+    const updateData: Partial<AcceptedDonationDTO> = {
+      seekerId,
+      requestPostId,
+      donorId,
+      status
     }
+    await acceptDonationRequestRepository.update(updateData).catch(() => {
+      throw new AcceptDonationRequestError(
+        'Failed to update accept donation request',
+        GENERIC_CODES.ERROR
+      )
+    })
+  }
+
+  async getAcceptanceRecord(
+    seekerId: string,
+    requestPostId: string,
+    donorId: string,
+    acceptDonationRepository: AcceptedDonationRepository<AcceptedDonationDTO>
+  ): Promise<AcceptedDonationDTO | null> {
+    const item = await acceptDonationRepository.getAcceptedRequest(seekerId, requestPostId, donorId)
+    return item
+  }
+
+  async getAcceptedDonorList(
+    seekerId: string,
+    requestPostId: string,
+    acceptDonationRepository: AcceptedDonationRepository<AcceptedDonationDTO>
+  ): Promise<AcceptedDonationDTO[]> {
+    const queryResult = await acceptDonationRepository.queryAcceptedRequests(
+      seekerId,
+      requestPostId
+    )
+    return queryResult ?? []
+  }
+
+  async deleteAcceptedRequest(
+    seekerId: string,
+    requestPostId: string,
+    donorId: string,
+    acceptDonationRepository: AcceptedDonationRepository<AcceptedDonationDTO>
+  ): Promise<void> {
+    await acceptDonationRepository.deleteAcceptedRequest(seekerId, requestPostId, donorId)
   }
 }

@@ -1,11 +1,7 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import {
-  DonationDTO,
-  DonationStatus,
-  AcceptedDonationDTO
-} from '../../../commons/dto/DonationDTO'
+import { DonationDTO, DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import Repository from '../models/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
@@ -15,21 +11,11 @@ import {
   BloodDonationModel,
   DonationFields
 } from '../models/dbModels/BloodDonationModel'
-import {
-  QueryConditionOperator,
-  QueryInput
-} from '../models/policies/repositories/QueryTypes'
-import {
-  BloodDonationAttributes,
-  validationRules,
-  UpdateBloodDonationAttributes,
-  DonationStatusManagerAttributes
-} from './Types'
+import { QueryConditionOperator, QueryInput } from '../models/policies/repositories/QueryTypes'
+import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes } from './Types'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
-import {
-  AcceptDonationRequestModel,
-  AcceptedDonationFields
-} from '../models/dbModels/AcceptDonationModel'
+import BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
+
 export class BloodDonationService {
   async createBloodDonation(
     donationAttributes: BloodDonationAttributes,
@@ -58,13 +44,9 @@ export class BloodDonationService {
         id: generateUniqueID(),
         ...donationAttributes,
         status: DonationStatus.PENDING,
-        geohash: generateGeohash(
-          donationAttributes.latitude,
-          donationAttributes.longitude
-        ),
-        donationDateTime: new Date(
-          donationAttributes.donationDateTime
-        ).toISOString()
+        geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
+        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString(),
+        createdAt: new Date().toISOString()
       })
       return 'We have accepted your request, and we will let you know when we find a donor.'
     } catch (error) {
@@ -122,80 +104,52 @@ export class BloodDonationService {
   }
 
   async getDonationRequest(
-    seekerId: string, requestPostId: string, createdAt: string,
-    bloodDonationRepository: Repository<DonationDTO>
+    seekerId: string,
+    requestPostId: string,
+    createdAt: string,
+    bloodDonationRepository: BloodDonationRepository<DonationDTO>
   ): Promise<DonationDTO> {
-    const item = await bloodDonationRepository.getItem(
-      `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
-      `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
+    const item = await bloodDonationRepository.getDonationRequest(
+      seekerId,
+      requestPostId,
+      createdAt
     )
     if (item === null) {
-      throw new Error('Item not found.')
+      throw new Error('Donation not found.')
     }
     return item
   }
 
-  async getAcceptedDonorList(
-    seekerId: string,
-    requestPostId: string,
-    acceptDonationRepository: Repository<AcceptedDonationDTO>
-  ): Promise<AcceptedDonationDTO[]> {
-    const acceptDonationModel = new AcceptDonationRequestModel()
-    const primaryIndex = acceptDonationModel.getPrimaryIndex()
-    const query: QueryInput<AcceptedDonationFields> = {
-      partitionKeyCondition: {
-        attributeName: primaryIndex.partitionKey,
-        operator: QueryConditionOperator.EQUALS,
-        attributeValue: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`
-      }
-    }
-
-    if (primaryIndex.sortKey != null) {
-      query.sortKeyCondition = {
-        attributeName: primaryIndex.sortKey,
-        operator: QueryConditionOperator.BEGINS_WITH,
-        attributeValue: `ACCEPTED#${requestPostId}`
-      }
-    }
-    const queryResult = await acceptDonationRepository.query(
-      query as QueryInput<Record<string, unknown>>
-    )
-    const acceptedItems = queryResult.items ?? []
-    return acceptedItems
-  }
-
   async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
-    bloodDonationRepository: Repository<DonationDTO>
+    bloodDonationRepository: BloodDonationRepository<DonationDTO>
   ): Promise<string> {
     try {
-      const { requestPostId, donationDateTime, createdAt, ...restAttributes } =
+      const { seekerId, requestPostId, donationDateTime, createdAt, ...restAttributes } =
         donationAttributes
-
-      const item = await bloodDonationRepository.getItem(
-        `${BLOOD_REQUEST_PK_PREFIX}#${donationAttributes.seekerId}`,
-        `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
+      const item = await bloodDonationRepository.getDonationRequest(
+        seekerId,
+        requestPostId,
+        createdAt
       )
 
       if (item === null) {
         throw new Error('Item not found.')
       }
 
-      if (item?.status !== undefined && item.status === DonationStatus.COMPLETED) {
+      if (item?.status !== undefined && item.status === DonationStatus.CANCELLED) {
         throw new Error("You can't update a completed request")
       }
 
       const updateData: Partial<DonationDTO> = {
         ...restAttributes,
+        seekerId,
         id: requestPostId,
         createdAt
       }
 
       if (donationDateTime !== undefined) {
-        const validationResponse = validateInputWithRules(
-          { donationDateTime },
-          validationRules
-        )
+        const validationResponse = validateInputWithRules({ donationDateTime }, validationRules)
         if (validationResponse !== null) {
           throw new Error(validationResponse)
         }
@@ -216,61 +170,18 @@ export class BloodDonationService {
   }
 
   async updateDonationStatus(
-    donationStatusManagerAttributes: DonationStatusManagerAttributes,
-    bloodDonationRepository: Repository<DonationDTO>,
-    acceptDonationRepository: Repository<AcceptedDonationDTO>
-  ): Promise<string> {
-    try {
-      const { seekerId, requestPostId, createdAt } = donationStatusManagerAttributes
-      const bloodReqItem = await bloodDonationRepository.getItem(
-        `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
-        `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
-      )
-      if (bloodReqItem === null) {
-        return 'Donation request not found.'
-      }
-      if (
-        bloodReqItem.status === DonationStatus.COMPLETED ||
-        bloodReqItem.status === DonationStatus.EXPIRED
-      ) {
-        return "Can't update the donation request"
-      }
-
-      const acceptDonationModel = new AcceptDonationRequestModel()
-      const primaryIndex = acceptDonationModel.getPrimaryIndex()
-      const query: QueryInput<AcceptedDonationFields> = {
-        partitionKeyCondition: {
-          attributeName: primaryIndex.partitionKey,
-          operator: QueryConditionOperator.EQUALS,
-          attributeValue: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`
-        }
-      }
-
-      if (primaryIndex.sortKey != null) {
-        query.sortKeyCondition = {
-          attributeName: primaryIndex.sortKey,
-          operator: QueryConditionOperator.BEGINS_WITH,
-          attributeValue: `ACCEPTED#${requestPostId}`
-        }
-      }
-      const queryResult = await acceptDonationRepository.query(
-        query as QueryInput<Record<string, unknown>>
-      )
-      const acceptedItems = queryResult.items ?? []
-
-      if (acceptedItems.length >= bloodReqItem.bloodQuantity) {
-        bloodReqItem.status = DonationStatus.COMPLETED
-        await bloodDonationRepository.update(bloodReqItem)
-        return 'Donation request is complete.'
-      }
-
-      return 'More donors are needed to fulfill the blood quantity.'
-    } catch (error) {
-      throw new BloodDonationOperationError(
-        `Failed to check donor numbers: ${error instanceof Error ? error.message : 'Unknown error'
-        }`,
-        GENERIC_CODES.ERROR
-      )
+    seekerId: string,
+    requestPostId: string,
+    createdAt: string,
+    status: DonationStatus,
+    bloodDonationRepository: BloodDonationRepository<DonationDTO>
+  ): Promise<void> {
+    const updateData: Partial<DonationDTO> = {
+      seekerId,
+      id: requestPostId,
+      createdAt,
+      status
     }
+    await bloodDonationRepository.update(updateData)
   }
 }

@@ -2,10 +2,14 @@
   "UpdateDonationRequestModel": {
     "type": "object",
     "required": [
-      "requestPostId"
+      "requestPostId",
+      "createdAt"
     ],
     "properties": {
       "requestPostId": {
+        "type": "string"
+      },
+      "createdAt": {
         "type": "string"
       },
       "bloodQuantity": {
@@ -29,9 +33,6 @@
         "minLength": 1
       },
       "transportationInfo": {
-        "type": "string"
-      },
-      "createdAt": {
         "type": "string"
       },
       "shortDescription": {
