@@ -29,7 +29,7 @@ async function cancelBloodDonation(
       )
     )
 
-    return generateApiGatewayResponse({ message: 'Donation post cancelled successfully' }, HTTP_CODES.OK)
+    return generateApiGatewayResponse({ message: 'Donation post cancelled successfully', success: true }, HTTP_CODES.OK)
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'An unknown error occurred'
