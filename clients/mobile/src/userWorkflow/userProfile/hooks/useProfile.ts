@@ -19,7 +19,7 @@ export interface UserProfile {
   height: number;
   weight: number;
   gender: Gender;
-  dateOfBirth: string;
+  dateOfBirth: string | Date;
   availableForDonation: string;
   lastVaccinatedDate: string;
   NIDFront: string;

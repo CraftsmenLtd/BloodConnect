@@ -7,10 +7,15 @@ import createStyles from './createStyle'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { useProfile } from '../hooks/useProfile'
 import { UserProfileContextData } from '../../context/UserProfileContext'
+import { SCREENS } from '../../../setup/constant/screens'
+import { EditProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import { useNavigation } from '@react-navigation/native'
 
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
   const { userDetails } = useProfile()
+  console.log('profile userDetails', userDetails)
+  const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
   const renderDetailRow = (label: string, value: string): JSX.Element => (
     <View style={styles.row}>
@@ -48,7 +53,7 @@ const Profile: React.FC = () => {
           buttonStyle={styles.editButton}
           textStyle={styles.editButtonText}
           text='Edit'
-          onPress={() => console.log('Edit button pressed')}
+          onPress={() => { navigation.navigate(SCREENS.EDIT_PROFILE, { userDetails:userDetails }) }}
         />
       </View>
     </View>
