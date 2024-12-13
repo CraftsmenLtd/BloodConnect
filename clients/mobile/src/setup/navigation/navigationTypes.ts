@@ -16,6 +16,7 @@ export type RootStackParamList = {
   [SCREENS.SET_PASSWORD]: { routeParams: UserRegistrationCredentials | { email: string; otp: string }; fromScreen: SCREENS };
   [SCREENS.FORGOT_PASSWORD]: undefined;
   [SCREENS.PROFILE]: undefined;
+  [SCREENS.EDIT_PROFILE]: undefined;
   [SCREENS.DONATION]: { data: DonationScreenParams | null; isUpdating: boolean };
   [SCREENS.BOTTOM_TABS]: undefined;
   [SCREENS.DONATION_POSTS]: { data: DonationScreenParams | null; isUpdating: boolean };
@@ -33,6 +34,7 @@ export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 
 export type SetPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.SET_PASSWORD>
 export type ForgotPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.FORGOT_PASSWORD>
 export type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.PROFILE>
+export type EditProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.EDIT_PROFILE>
 export type DonationScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONATION>
 export type DonationPostsScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONATION_POSTS>
 export type BottomTabsNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BOTTOM_TABS>
@@ -49,3 +51,4 @@ export type DonationScreenRouteProp = RouteProp<RootStackParamList, SCREENS.DONA
 export type RequestPreviewRouteProp = RouteProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
 export type DonarResponseRouteProp = RouteProp<RootStackParamList, SCREENS.DONAR_RESPONSE>
 export type ProfileRouteProp = RouteProp<RootStackParamList, SCREENS.PROFILE>
+export type EditProfileRouteProp = RouteProp<RootStackParamList, SCREENS.EDIT_PROFILE>

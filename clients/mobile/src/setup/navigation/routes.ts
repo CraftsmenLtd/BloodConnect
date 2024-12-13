@@ -11,7 +11,8 @@ import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
 import DonorResponse from '../../donationWorkflow/donorResponse/DonorResponse'
 import { Account } from '../../userWorkflow/account/UI/Account'
-import Profile from '../../userWorkflow/userProfile/UI/profile'
+import Profile from '../../userWorkflow/userProfile/UI/Profile'
+import EditProfile from '../../userWorkflow/editUserProfile/UI/EditProfile'
 
 export const routes = [
   {
@@ -90,6 +91,12 @@ export const routes = [
     name: SCREENS.PROFILE,
     component: Profile,
     options: { headerShown: true, headerTitle: 'Profile' },
+    protected: true
+  },
+  {
+    name: SCREENS.EDIT_PROFILE,
+    component: EditProfile,
+    options: { headerShown: true, headerTitle: 'Edited Profile' },
     protected: true
   }
 ]
