@@ -29,14 +29,6 @@ export interface UserDetailsDTO extends UserDTO {
   snsEndpointArn?: string;
 }
 
-export interface UserResponseData {
-  success: boolean;
-  data: {
-    preferredDonationLocations: Array<Omit<LocationDTO, 'userId' | 'locationId' | 'geohash' | 'createdAt'>>;
-    message: string;
-  } & Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'>;
-}
-
 export interface LocationDTO {
   userId: string;
   locationId: string;

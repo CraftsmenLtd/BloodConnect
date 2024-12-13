@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Text, View, TouchableOpacity, Image, ImageStyle, StyleProp
+  Text, View, TouchableOpacity
 } from 'react-native'
 import { SCREENS } from '../../../setup/constant/screens'
 import { MaterialIcons } from '@expo/vector-icons'
@@ -8,13 +8,13 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import createStyles from './createStyle'
 import { useNavigation } from '@react-navigation/native'
 import { useAccount } from '../hooks/useAccount'
-import { COMMON_URLS } from '../../../setup/constant/commonUrls'
 import { ProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import Loader from '../../../components/loaders/loader'
+import ProfileSection from '../../components/ProfileSection'
 
 export const Account = () => {
   const styles = createStyles(useTheme())
-  const { userData, loading, handleSignOut } = useAccount()
+  const { userProfileData, loading, handleSignOut } = useAccount()
   const navigation = useNavigation<ProfileScreenNavigationProp>()
 
   if (loading) {
@@ -23,26 +23,13 @@ export const Account = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.profileSection}>
-        <View style={styles.imageOuterBorder}>
-          <View style={styles.imageInnerBorder}>
-            <Image
-              style={styles.profileImage as StyleProp<ImageStyle>}
-              source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-            />
-          </View>
-        </View>
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileName}>{userData?.name ?? 'User Name'}</Text>
-          <View style={styles.profileLocationSection}>
-            <MaterialIcons name="location-on" size={16} style={styles.iconStyle} />
-            <Text style={styles.profileLocation}>{userData?.location ?? 'User Location'}</Text>
-          </View>
-        </View>
-      </View>
+      {userProfileData !== null && <ProfileSection
+        name={userProfileData?.name ?? ''}
+        location={userProfileData?.location ?? ''}
+      ></ProfileSection>}
 
       <View style={styles.optionsSection}>
-        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.PROFILE) }}>
+        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.PROFILE, { userProfileData: userProfileData}) }}>
           <MaterialIcons name="person-outline" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Profile</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
