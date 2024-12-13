@@ -2,7 +2,7 @@
 Privacy Policy
 ======================
 
-Last Updated: December 09, 2024
+Last Updated: December 13, 2024
 
 1. Introduction
 ----------------
@@ -72,7 +72,7 @@ We share information with:
 - Personal contact information without consent
 - More information than necessary for donation purposes
 
-1. Data Security
+5. Data Security
 -----------------
 We implement security measures including:
 
@@ -116,7 +116,7 @@ You have the right to:
 10. Third-Party Services
 -------------------------
 10.1. We use third-party services for:
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Authentication (AWS Cognito)
 - Location services (Google Maps)
 - Login with (Google & Facebook)
@@ -124,7 +124,7 @@ You have the right to:
 - Communication
 
 10.2. Third-party services have:
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Their own privacy policies
 - Independent data collection practices
 - Separate terms of service
@@ -152,9 +152,8 @@ We may update this policy and will notify users of significant changes.
 ------------------------
 For privacy-related inquiries contact us at:
 
-| Email: info@craftsmensoftware.com
-| Website: www.bloodconnect.net
+| Email: bloodconnect@craftsmensoftware.com
 
-15.  Consent
+15. Consent
 ------------------------
 By using BloodConnect, you consent to this Privacy Policy and our data practices.

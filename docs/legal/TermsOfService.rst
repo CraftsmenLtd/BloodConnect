@@ -2,7 +2,7 @@
 Terms and Conditions
 ======================
 
-Last Updated: December 11, 2024
+Last Updated: December 13, 2024
 
 Introduction
 ------------
@@ -16,7 +16,7 @@ BloodConnect is an open-source platform aimed at improving the blood donation pr
 
 2. Open Source Usage
 --------------------
-BloodConnect is an open-source project licensed under the www.bloodconnect.net. As an open-source project:
+BloodConnect is an open-source project. As an open-source project:
 
 - You are free to use, copy, modify, and distribute the software, subject to the terms of the license.
 - The platform is provided "as is," without warranties of any kind, express or implied, including but not limited to fitness for a particular purpose or non-infringement.
@@ -121,5 +121,4 @@ These Terms and Conditions shall be governed by and construed in accordance with
 ------------
 For any questions, concerns, or feedback regarding these Terms and Conditions, please contact us:
 
-| Email: info@craftsmensoftware.com
-| Website: https://bloodconnect.net
+| Email: bloodconnect@craftsmensoftware.com
