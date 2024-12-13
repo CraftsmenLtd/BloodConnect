@@ -1,0 +1,22 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "${CREATE_USER_INVOCATION_ARN}",
+  "responses": {
+    "default": {
+      "statusCode": "201",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'POST'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
+      }
+    }
+  },
+  "requestTemplates": {
+    "application/json": "#set($inputRoot = $input.path('$'))\n{\n \"userId\": \"$context.authorizer.claims['custom:userId']\",\n \"cloudFrontRequestId\": \"$input.params('X-Amz-Cf-Id')\",\n \"apiGwRequestId\": \"$context.requestId\"\n #if($inputRoot.phoneNumbers != '')\n , \"phoneNumbers\": $inputRoot.phoneNumbers\n #end\n #if($inputRoot.name != '')\n , \"name\": \"$inputRoot.name\"\n #end\n #if($inputRoot.bloodGroup != '')\n , \"bloodGroup\": \"$inputRoot.bloodGroup\"\n #end\n #if($inputRoot.lastDonationDate != '')\n , \"lastDonationDate\": \"$inputRoot.lastDonationDate\"\n #end\n #if($inputRoot.height != '')\n , \"height\": \"$inputRoot.height\"\n #end\n #if($inputRoot.weight != '')\n , \"weight\": \"$inputRoot.weight\"\n #end\n #if($inputRoot.gender != '')\n , \"gender\": \"$inputRoot.gender\"\n #end\n #if($inputRoot.dateOfBirth != '')\n , \"dateOfBirth\": \"$inputRoot.dateOfBirth\"\n #end\n #if($inputRoot.age != '')\n , \"age\": \"$inputRoot.age\"\n #end\n #if($inputRoot.city != '')\n , \"city\": \"$inputRoot.city\"\n #end\n #if($inputRoot.preferredDonationLocations != '')\n , \"preferredDonationLocations\": $inputRoot.preferredDonationLocations\n #end\n #if($inputRoot.availableForDonation != '')\n , \"availableForDonation\": \"$inputRoot.availableForDonation\"\n #end\n #if($inputRoot.NIDFront != '')\n , \"NIDFront\": \"$inputRoot.NIDFront\"\n #end\n #if($inputRoot.NIDBack != '')\n , \"NIDBack\": \"$inputRoot.NIDBack\"\n #end\n #if($inputRoot.lastVaccinatedDate != '')\n , \"lastVaccinatedDate\": \"$inputRoot.lastVaccinatedDate\"\n #end\n}"
+  },
+  "passthroughBehavior": "never"
+}
