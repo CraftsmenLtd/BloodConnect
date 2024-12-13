@@ -24,7 +24,7 @@ export const Account = () => {
   return (
     <View style={styles.container}>
       {userProfileData !== null && <ProfileSection
-        name={userProfileData?.name ?? 'name'}
+        name={userProfileData?.name ?? ''}
         location={userProfileData?.location ?? ''}
       ></ProfileSection>}
 
