@@ -1,0 +1,6 @@
+#set($inputRoot = $input.path('$'))
+{
+  "seekerId": "$context.authorizer.claims['custom:userId']",
+  "requestPostId": "$inputRoot.requestPostId",
+  "requestCreatedAt": "$inputRoot.requestCreatedAt"
+}

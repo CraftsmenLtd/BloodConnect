@@ -1,0 +1,10 @@
+{
+  "TableName": "${DYNAMODB_TABLE_NAME}",
+  "KeyConditionExpression": "PK = :PK",
+  "ExpressionAttributeValues": {
+    ":PK": {
+      "S": "BLOOD_REQ#$context.authorizer.claims['custom:userId']"
+    }
+  },
+  "ScanIndexForward": false
+}

@@ -1,0 +1,9 @@
+{
+  "TableName": "fixes-branch-bloodConnect-table",
+  "KeyConditionExpression": "PK = :pk",
+  "ExpressionAttributeValues": {
+    ":pk": {
+      "S": "USER#$input.params('donorId')"
+    }
+  }
+}

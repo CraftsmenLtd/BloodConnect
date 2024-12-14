@@ -2,6 +2,9 @@
   "type": "aws",
   "httpMethod": "POST",
   "uri": "${CREATE_BLOOD_DONATION_INVOCATION_ARN}",
+  "requestTemplates": {
+    "application/json": "#importVtl donations/vtl/requestTemplates/post-donation.vtl"
+  },
   "responses": {
     "default": {
       "statusCode": "200",
@@ -11,12 +14,9 @@
         "method.response.header.Access-Control-Allow-Origin": "'*'"
       },
       "responseTemplates": {
-        "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
+        "application/json": "#importVtl donations/vtl/responseTemplates/post-donation.vtl"
       }
     }
-  },
-  "requestTemplates": {
-    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"seekerId\": \"$context.authorizer.claims['custom:userId']\",\n  \"requestedBloodGroup\": \"$inputRoot.requestedBloodGroup\",\n  \"bloodQuantity\": $inputRoot.bloodQuantity,\n  \"urgencyLevel\": \"$inputRoot.urgencyLevel\",\n  \"city\": \"$inputRoot.city\",\n  \"location\": \"$inputRoot.location\",\n  \"latitude\": $inputRoot.latitude,\n  \"longitude\": $inputRoot.longitude,\n  \"donationDateTime\": \"$inputRoot.donationDateTime\",\n  \"patientName\": \"$inputRoot.patientName\",\n  \"contactNumber\": \"$inputRoot.contactNumber\",\n  \"transportationInfo\": \"$inputRoot.transportationInfo\",\n  \"shortDescription\": \"$inputRoot.shortDescription\"\n}"
   },
   "passthroughBehavior": "never"
 }

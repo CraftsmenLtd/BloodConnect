@@ -1,0 +1,55 @@
+#set($inputRoot = $input.path('$'))
+#if($inputRoot.Items.size() == 0)
+{
+  "success": false,
+  "message": "No user data found"
+}
+#set($context.responseOverride.status = 404)
+#else
+{
+  "success": true,
+  "data": {
+    #foreach($item in $inputRoot.Items)
+      #if($item.SK.S == 'PROFILE')
+        "phoneNumbers": [
+          #foreach($phone in $item.phoneNumbers.L)
+            "$phone.S"#if($foreach.hasNext),#end
+          #end
+        ],
+        "name": "$item.name.S",
+        "bloodGroup": "$item.bloodGroup.S",
+        "lastDonationDate": "$item.lastDonationDate.S",
+        "city": "$item.city.S",
+        #if($item.height && $item.height.S != "")
+          "height": $item.height.S,
+        #end
+        #if($item.weight && $item.weight.S != "")
+          "weight": $item.weight.S,
+        #end
+        "gender": "$item.gender.S",
+        "dateOfBirth": "$item.dateOfBirth.S",
+        "availableForDonation": "$item.availableForDonation.S",
+        "NIDFront": "$item.NIDFront.S",
+        "NIDBack": "$item.NIDBack.S",
+        "lastVaccinatedDate": "$item.lastVaccinatedDate.S",
+      #end
+    #end
+    "preferredDonationLocations": [
+      #set($isFirstIter = true)
+      #foreach($location in $inputRoot.Items)
+        #if($location.SK.S.startsWith('LOCATION#'))
+          #if(!$isFirstIter),#end
+          #set($isFirstIter = false)
+          {
+            "area": "$location.area.S",
+            "city": "Dhaka",
+            "latitude": $location.latitude.N,
+            "longitude": $location.longitude.N
+          }
+        #end
+      #end
+    ]
+  },
+  "message": "User data retrieved successfully"
+}
+#end
