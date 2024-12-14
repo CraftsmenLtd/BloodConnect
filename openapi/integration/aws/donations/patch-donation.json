@@ -2,6 +2,9 @@
   "type": "aws",
   "httpMethod": "POST",
   "uri": "${UPDATE_BLOOD_DONATION_INVOCATION_ARN}",
+  "requestTemplates": {
+    "application/json": "#importVtl donations/vtl/requestTemplates/patch-donation.vtl"
+  },
   "responses": {
     "default": {
       "statusCode": "200",
@@ -11,12 +14,9 @@
         "method.response.header.Access-Control-Allow-Origin": "'*'"
       },
       "responseTemplates": {
-        "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
+        "application/json": "#importVtl donations/vtl/responseTemplates/patch-donation.vtl"
       }
     }
-  },
-  "requestTemplates": {
-    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"seekerId\": \"$context.authorizer.claims['custom:userId']\",\n  \"requestPostId\": \"$inputRoot.requestPostId\",\n  \"createdAt\": \"$inputRoot.createdAt\"\n  #if($inputRoot.bloodQuantity != '')\n  , \"bloodQuantity\": $inputRoot.bloodQuantity\n  #end\n  #if($inputRoot.urgencyLevel != '')\n  , \"urgencyLevel\": \"$inputRoot.urgencyLevel\"\n  #end\n  #if($inputRoot.donationDateTime != '')\n  , \"donationDateTime\": \"$inputRoot.donationDateTime\"\n  #end\n  #if($inputRoot.contactNumber != '')\n  , \"contactNumber\": \"$inputRoot.contactNumber\"\n  #end\n  #if($inputRoot.patientName != '')\n  , \"patientName\": \"$inputRoot.patientName\"\n  #end\n  #if($inputRoot.transportationInfo != '')\n  , \"transportationInfo\": \"$inputRoot.transportationInfo\"\n  #end\n  #if($inputRoot.shortDescription != '')\n  , \"shortDescription\": \"$inputRoot.shortDescription\"\n  #end\n}"
   },
   "passthroughBehavior": "never"
 }

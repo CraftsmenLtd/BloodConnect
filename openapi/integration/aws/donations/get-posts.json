@@ -3,6 +3,9 @@
   "httpMethod": "POST",
   "uri": "arn:aws:apigateway:${AWS_REGION}:dynamodb:action/Query",
   "credentials": "${API_GATEWAY_DYNAMODB_ROLE}",
+  "requestTemplates": {
+    "application/json": "#importVtl donations/vtl/requestTemplates/get-posts.vtl"
+  },
   "responses": {
     "default": {
       "statusCode": "200",
@@ -12,12 +15,9 @@
         "method.response.header.Access-Control-Allow-Origin": "'*'"
       },
       "responseTemplates": {
-        "application/json": "#set($inputRoot = $input.path('$'))\n{\n \"success\": true,\n \"data\": [\n #foreach($item in $inputRoot.Items)\n {\n \"seekerId\": \"$item.PK.S.split('#')[1]\",\n \"requestPostId\": \"$item.SK.S.split('#')[2]\",\n \"createdAt\": \"$item.createdAt.S\",\n \"location\": \"$item.location.S\",\n \"urgencyLevel\": \"$item.urgencyLevel.S\",\n \"contactNumber\": \"$item.contactNumber.S\",\n \"status\": \"$item.status.S\",\n \"requestedBloodGroup\": \"$item.requestedBloodGroup.S\",\n \"patientName\": \"$item.patientName.S\",\n \"city\": \"$item.city.S\",\n \"bloodQuantity\": $item.bloodQuantity.N,\n \"shortDescription\": \"$item.shortDescription.S\",\n \"transportationInfo\": \"$item.transportationInfo.S\",\n \"donationDateTime\": \"$item.donationDateTime.S\",\n \"longitude\": $item.longitude.N,\n \"latitude\": $item.latitude.N\n }#if($foreach.hasNext),#end\n #end\n ],\n \"message\": \"Posts retrieved successfully\"\n}"
+        "application/json": "#importVtl donations/vtl/responseTemplates/get-posts.vtl"
       }
     }
-  },
-  "requestTemplates": {
-    "application/json": "{\n \"TableName\": \"${DYNAMODB_TABLE_NAME}\",\n \"IndexName\": \"GSI1\",\n \"KeyConditionExpression\": \"GSI1PK = :gsi1pk AND begins_with(GSI1SK, :gsi1skPrefix)\",\n \"ExpressionAttributeValues\": {\n \":gsi1pk\": {\n \"S\": \"CITY#$input.params('city')#STATUS#PENDING\"\n },\n \":gsi1skPrefix\": {\n #if($input.params('bloodGroup') && $input.params('bloodGroup') != \"\")\n \"S\": \"BG#$input.params('bloodGroup')\"\n #else\n \"S\": \"BG#\"\n #end\n }\n },\n \"ScanIndexForward\": false,\n \"Limit\": 20\n}"
   },
   "passthroughBehavior": "never"
 }

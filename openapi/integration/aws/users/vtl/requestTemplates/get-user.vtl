@@ -1,0 +1,9 @@
+{
+  "TableName": "${DYNAMODB_TABLE_NAME}",
+  "KeyConditionExpression": "PK = :pk",
+  "ExpressionAttributeValues": {
+    ":pk": {
+      "S": "USER#$context.authorizer.claims['custom:userId']"
+    }
+  }
+}

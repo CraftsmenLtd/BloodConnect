@@ -1,0 +1,26 @@
+#set($inputRoot = $input.path('$'))
+{
+  "success": true,
+  "data": [
+    #foreach($item in $inputRoot.Items)
+    {
+      "requestPostId": "$item.payload.M.requestPostId.S",
+      "createdAt": "$item.payload.M.createdAt.S",
+      "seekerId": "$item.payload.M.seekerId.S",
+      "requestedBloodGroup": "$item.payload.M.requestedBloodGroup.S",
+      "donationDateTime": "$item.payload.M.donationDateTime.S",
+      "bloodQuantity": "$item.payload.M.bloodQuantity.N",
+      "location": "$item.payload.M.location.S",
+      "status": "$item.status.S",
+      "urgencyLevel": "$item.payload.M.urgencyLevel.S",
+      "distance": "$item.payload.M.distance.N",
+      "shortDescription": "$item.payload.M.shortDescription.S",
+      "transportationInfo": "$item.payload.M.transportationInfo.S",
+      "patientName": "$item.payload.M.patientName.S",
+      "contactNumber": "$item.payload.M.contactNumber.S"
+    }
+    #if($foreach.hasNext),#end
+    #end
+  ],
+  "message": "Responses retrieved successfully"
+}

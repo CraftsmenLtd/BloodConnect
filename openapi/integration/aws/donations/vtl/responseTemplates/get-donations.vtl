@@ -1,0 +1,53 @@
+#set($inputRoot = $input.path('$'))
+#set($isFirstPost = true)
+{
+  "success": true,
+  "data": [
+    #foreach($item in $inputRoot.Items)
+      #if($item.SK.S.startsWith('BLOOD_REQ#'))
+        #if(!$isFirstPost),#end
+        #set($isFirstPost = false)
+        {
+          "requestPostId": "$item.SK.S.split('#')[2]",
+          "patientName": "$item.patientName.S",
+          "requestedBloodGroup": "$item.requestedBloodGroup.S",
+          "bloodQuantity": "$item.bloodQuantity.N",
+          "urgencyLevel": "$item.urgencyLevel.S",
+          "city": "$item.city.S",
+          "location": "$item.location.S",
+          "longitude": "$item.longitude.N",
+          "latitude": "$item.latitude.N",
+          "donationDateTime": "$item.donationDateTime.S",
+          "contactNumber": "$item.contactNumber.S",
+          "transportationInfo": "$item.transportationInfo.S",
+          "shortDescription": "$item.shortDescription.S",
+          "status": "$item.status.S",
+          "createdAt": "$item.createdAt.S",
+          "acceptedDonors": [
+            #set($isFirstDonor = true)
+            #foreach($acceptedItem in $inputRoot.Items)
+              #if($acceptedItem.SK.S.startsWith('ACCEPTED#') && $acceptedItem.PK.S == $item.PK.S)
+                #set($acceptedrequestPostId = $acceptedItem.SK.S.split('#')[1])
+                #if($acceptedrequestPostId == $item.SK.S.split('#')[2])
+                  #if(!$isFirstDonor),#end
+                  #set($isFirstDonor = false)
+                  {
+                    "requestPostId": "$acceptedrequestPostId",
+                    "donorId": "$acceptedItem.donorId.S",
+                    "donorName": "$acceptedItem.donorName.S",
+                    "phoneNumbers": [
+                      #foreach($phoneNumber in $acceptedItem.phoneNumbers.L)
+                        "$phoneNumber.S" #if($foreach.hasNext),#end
+                      #end
+                    ]
+                  }
+                #end
+              #end
+            #end
+          ]
+        }
+      #end
+    #end
+  ],
+  "message": "Donations retrieved successfully"
+}

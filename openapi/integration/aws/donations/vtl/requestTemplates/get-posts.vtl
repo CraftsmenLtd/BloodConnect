@@ -1,0 +1,19 @@
+{
+  "TableName": "${DYNAMODB_TABLE_NAME}",
+  "IndexName": "GSI1",
+  "KeyConditionExpression": "GSI1PK = :gsi1pk AND begins_with(GSI1SK, :gsi1skPrefix)",
+  "ExpressionAttributeValues": {
+    ":gsi1pk": {
+      "S": "CITY#$input.params('city')#STATUS#PENDING"
+    },
+    ":gsi1skPrefix": {
+      #if($input.params('bloodGroup') && $input.params('bloodGroup') != "")
+        "S": "BG#$input.params('bloodGroup')"
+      #else
+        "S": "BG#"
+      #end
+    }
+  },
+  "ScanIndexForward": false,
+  "Limit": 20
+}
