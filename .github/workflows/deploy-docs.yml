@@ -37,7 +37,7 @@ jobs:
         run: npm install -g @redocly/cli@latest
 
       - name: Combine OpenAPI specs
-        run: redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json --config openapi/versions/redocly.yaml
+        run: redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json --config openapi/configs/redocly.yaml
 
       - name: Deploy Docs
         id: deployment
