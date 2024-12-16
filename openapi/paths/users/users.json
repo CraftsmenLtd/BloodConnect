@@ -1,4 +1,52 @@
 {
+  "post": {
+    "operationId": "CreateUser",
+    "description": "Create user",
+    "tags": [
+      "bloodconnect-user"
+    ],
+    "requestBody": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "./../../components/schemas/users/create-user-payload.json#/CreateUserRequestModel"
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "201 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {}
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/users/post-user.json"
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
+  },
   "patch": {
     "operationId": "UpdateUser",
     "description": "Update user",
