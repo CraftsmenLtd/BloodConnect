@@ -53,7 +53,7 @@ sphinx-html: bundle-openapi
 
 # API
 bundle-openapi:
-	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json --config openapi/versions/redocly.yaml
+	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json --config openapi/configs/redocly.yaml
 
 
 # Terraform base command:
