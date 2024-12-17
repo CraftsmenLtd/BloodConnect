@@ -176,7 +176,16 @@ export class BloodDonationService {
     status: DonationStatus,
     bloodDonationRepository: BloodDonationRepository<DonationDTO>
   ): Promise<void> {
+    const item = await bloodDonationRepository.getDonationRequest(
+      seekerId,
+      requestPostId,
+      createdAt
+    )
+    if (item === null) {
+      throw new Error('Donation not found.')
+    }
     const updateData: Partial<DonationDTO> = {
+      ...item,
       seekerId,
       id: requestPostId,
       createdAt,

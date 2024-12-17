@@ -1,0 +1,16 @@
+#set($inputRoot = $input.path('$'))
+{
+  "seekerId": "$context.authorizer.claims['custom:userId']",
+  "requestedBloodGroup": "$inputRoot.requestedBloodGroup",
+  "bloodQuantity": $inputRoot.bloodQuantity,
+  "urgencyLevel": "$inputRoot.urgencyLevel",
+  "city": "$inputRoot.city",
+  "location": "$inputRoot.location",
+  "latitude": $inputRoot.latitude,
+  "longitude": $inputRoot.longitude,
+  "donationDateTime": "$inputRoot.donationDateTime",
+  "patientName": "$inputRoot.patientName",
+  "contactNumber": "$inputRoot.contactNumber",
+  "transportationInfo": "$inputRoot.transportationInfo",
+  "shortDescription": "$inputRoot.shortDescription"
+}

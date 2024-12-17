@@ -1,0 +1,51 @@
+#set($inputRoot = $input.path('$'))
+{
+ "userId": "$context.authorizer.claims['custom:userId']",
+ "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+ "apiGwRequestId": "$context.requestId"
+ #if($inputRoot.phoneNumbers != '')
+ , "phoneNumbers": $inputRoot.phoneNumbers
+ #end
+ #if($inputRoot.name != '')
+ , "name": "$inputRoot.name"
+ #end
+ #if($inputRoot.bloodGroup != '')
+ , "bloodGroup": "$inputRoot.bloodGroup"
+ #end
+ #if($inputRoot.lastDonationDate != '')
+ , "lastDonationDate": "$inputRoot.lastDonationDate"
+ #end
+ #if($inputRoot.height != '')
+ , "height": "$inputRoot.height"
+ #end
+ #if($inputRoot.weight != '')
+ , "weight": "$inputRoot.weight"
+ #end
+ #if($inputRoot.gender != '')
+ , "gender": "$inputRoot.gender"
+ #end
+ #if($inputRoot.dateOfBirth != '')
+ , "dateOfBirth": "$inputRoot.dateOfBirth"
+ #end
+ #if($inputRoot.age != '')
+ , "age": "$inputRoot.age"
+ #end
+ #if($inputRoot.city != '')
+ , "city": "$inputRoot.city"
+ #end
+ #if($inputRoot.preferredDonationLocations != '')
+ , "preferredDonationLocations": $inputRoot.preferredDonationLocations
+ #end
+ #if($inputRoot.availableForDonation != '')
+ , "availableForDonation": "$inputRoot.availableForDonation"
+ #end
+ #if($inputRoot.NIDFront != '')
+ , "NIDFront": "$inputRoot.NIDFront"
+ #end
+ #if($inputRoot.NIDBack != '')
+ , "NIDBack": "$inputRoot.NIDBack"
+ #end
+ #if($inputRoot.lastVaccinatedDate != '')
+ , "lastVaccinatedDate": "$inputRoot.lastVaccinatedDate"
+ #end
+}
