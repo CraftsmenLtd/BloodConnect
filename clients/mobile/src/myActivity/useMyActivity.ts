@@ -27,6 +27,7 @@ export const useMyActivity = (): any => {
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const [currentTab, setCurrentTab] = useState(MY_ACTIVITY_TAB_CONFIG.initialTab)
   const [cancelPostError, setCancelPostError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
 
   const [getMyResponses, myResponsesLoading, myResponses, myResponsesError] = useFetchData(async() => {
@@ -47,6 +48,7 @@ export const useMyActivity = (): any => {
   }
 
   const cancelPost = async(donationData: DonationData): Promise<void> => {
+    setIsLoading(true)
     const payload = {
       requestPostId: donationData.requestPostId,
       requestCreatedAt: donationData.createdAt
@@ -60,6 +62,8 @@ export const useMyActivity = (): any => {
     } catch (error) {
       const errorMessage = extractErrorMessage(error)
       setCancelPostError(errorMessage)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -83,6 +87,7 @@ export const useMyActivity = (): any => {
     myResponsesLoading,
     myResponsesError,
     cancelPostError,
+    isLoading,
     showToast,
     handleRefresh: refreshPosts,
     refreshing
