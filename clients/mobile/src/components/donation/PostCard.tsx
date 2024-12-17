@@ -8,6 +8,7 @@ import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPo
 import { UrgencyLevel } from '../../donationWorkflow/types'
 import BloodImage from '../../../assets/images/bloodtype.png'
 import StatusBadge from './StatusBadge'
+import GenericModal from '../modal'
 
 export interface PostCardDisplayOptions {
   showContactNumber?: boolean;
@@ -26,6 +27,7 @@ interface PostCardProps extends PostCardDisplayOptions {
   updateHandler?: (donationData: DonationData) => void;
   detailHandler?: (donationData: DonationData) => void;
   cancelHandler?: (donationData: DonationData) => void;
+  isLoading?: boolean;
 }
 
 interface DropdownPosition {
@@ -46,11 +48,13 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   showHeader = true,
   showOptions = true,
   showPostUpdatedOption = true,
-  showStatus = false
+  showStatus = false,
+  isLoading = false
 }) => {
   const theme = useTheme()
   const styles = createStyles(theme)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [isModalOpen, setModalOpen] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
   const iconRef = useRef<View>(null)
   const { height: windowHeight } = Dimensions.get('window')
@@ -80,8 +84,19 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
 
   const handleCancel = useCallback(() => {
     cancelHandler !== undefined && cancelHandler(post)
-    handleCloseDropdown()
+    if (!isLoading) {
+      closeModal()
+    }
   }, [post, cancelHandler])
+
+  const openModal = () => {
+    handleCloseDropdown()
+    setModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setModalOpen(false)
+  }
 
   const formatDateTime = (date: string) => {
     const dateObj = new Date(date)
@@ -142,7 +157,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                           <Text style={styles.dropdownText}>Update</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          onPress={handleCancel}
+                          onPress={openModal}
                           style={styles.dropdownItem}
                         >
                           <Text style={styles.dropdownText}>Cancel</Text>
@@ -152,6 +167,33 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                   </View>
                 </TouchableWithoutFeedback>
               </Modal>
+              {/* GenericModal component */}
+              {isModalOpen && (
+                <GenericModal
+                  visible={isModalOpen}
+                  title="Confirmation"
+                  message="Are you sure you want to cancel?"
+                  buttons={[
+                    {
+                      onPress: closeModal,
+                      style: {
+                        backgroundColor: theme.colors.greyBG,
+                        color: theme.colors.textPrimary
+                      },
+                      text: 'Close'
+                    },
+                    {
+                      onPress: handleCancel,
+                      style: {
+                        backgroundColor: theme.colors.primary
+                      },
+                      text: 'OK',
+                      loading: isLoading
+                    }
+                  ]}
+                  onClose={closeModal}
+                />
+              )}
             </View>}
           </View>
         }
