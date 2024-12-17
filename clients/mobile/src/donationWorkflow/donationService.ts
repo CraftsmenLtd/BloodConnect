@@ -103,7 +103,8 @@ export const cancelDonation = async(payload: Record<string, unknown>, httpClient
     const response = await httpClient.patch<DonationResponse>('/donations/cancel', payload)
     return {
       message: response.message,
-      status: response.status
+      status: response.status,
+      success: response.success
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'

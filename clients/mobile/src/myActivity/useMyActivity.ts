@@ -48,8 +48,8 @@ export const useMyActivity = (): any => {
 
   const cancelPost = async(donationData: DonationData): Promise<void> => {
     const payload = {
-      reqPostId: donationData.requestPostId,
-      requestedCreatedAt: donationData.createdAt
+      requestPostId: donationData.requestPostId,
+      requestCreatedAt: donationData.createdAt
     }
 
     try {
