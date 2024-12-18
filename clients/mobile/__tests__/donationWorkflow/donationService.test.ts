@@ -1,4 +1,4 @@
-import { createDonation, updateDonation, getDonationList, DonationResponse } from '../../src/donationWorkflow/donationService'
+import { createDonation, updateDonation, fetchDonationList, DonationResponse } from '../../src/donationWorkflow/donationService'
 import { BloodDonationRecord } from '../../src/donationWorkflow/types'
 import { FetchResponse } from '../../src/setup/clients/FetchClient'
 import { FetchClientError } from '../../src/setup/clients/FetchClientError'
@@ -54,7 +54,7 @@ describe('Donation Service', () => {
     })
   })
 
-  describe('getDonationList', () => {
+  describe('fetchDonationList', () => {
     it('should return data and status on success', async() => {
       const mockData: BloodDonationRecord[] = [{
         reqPostId: '1',
@@ -74,7 +74,7 @@ describe('Donation Service', () => {
       const mockResponse: FetchResponse<DonationResponse> = { data: mockData, status: 200 }
       mockHttpClient.get.mockResolvedValueOnce(mockResponse)
 
-      const result = await getDonationList(payload, mockHttpClient)
+      const result = await fetchDonationList(payload, mockHttpClient)
 
       expect(mockHttpClient.get).toHaveBeenCalledWith('/donations', payload)
       expect(result).toEqual({ data: mockData, status: 200 })
@@ -83,7 +83,7 @@ describe('Donation Service', () => {
     it('should throw an error on failure', async() => {
       mockHttpClient.get.mockRejectedValueOnce(new FetchClientError('Fetch Error', 500))
 
-      await expect(getDonationList(payload, mockHttpClient)).rejects.toThrow('Fetch Error')
+      await expect(fetchDonationList(payload, mockHttpClient)).rejects.toThrow('Fetch Error')
     })
   })
 })

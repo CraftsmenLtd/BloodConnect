@@ -36,7 +36,7 @@ const CreateBloodRequest = () => {
   } = useBloodRequest()
 
   return (
-    <TouchableWithoutFeedback onPress={() => { setIsVisible('') }}>
+    <TouchableWithoutFeedback>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
