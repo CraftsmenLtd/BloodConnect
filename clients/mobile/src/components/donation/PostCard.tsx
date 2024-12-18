@@ -167,33 +167,30 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                   </View>
                 </TouchableWithoutFeedback>
               </Modal>
-              {/* GenericModal component */}
-              {isModalOpen && (
-                <GenericModal
-                  visible={isModalOpen}
-                  title="Confirmation"
-                  message="Are you sure you want to cancel?"
-                  buttons={[
-                    {
-                      onPress: closeModal,
-                      style: {
-                        backgroundColor: theme.colors.greyBG,
-                        color: theme.colors.textPrimary
-                      },
-                      text: 'Close'
+              <GenericModal
+                visible={isModalOpen}
+                title="Confirmation"
+                message="Are you sure you want to cancel?"
+                buttons={[
+                  {
+                    onPress: closeModal,
+                    style: {
+                      backgroundColor: theme.colors.greyBG,
+                      color: theme.colors.textPrimary
                     },
-                    {
-                      onPress: handleCancel,
-                      style: {
-                        backgroundColor: theme.colors.primary
-                      },
-                      text: 'OK',
-                      loading: isLoading
-                    }
-                  ]}
-                  onClose={closeModal}
-                />
-              )}
+                    text: 'Close'
+                  },
+                  {
+                    onPress: handleCancel,
+                    style: {
+                      backgroundColor: theme.colors.primary
+                    },
+                    text: 'OK',
+                    loading: isLoading
+                  }
+                ]}
+                onClose={closeModal}
+              />
             </View>}
           </View>
         }
