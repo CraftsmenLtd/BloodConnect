@@ -29,7 +29,7 @@ export const Button = ({ text, onPress, buttonStyle, textStyle, loading = false,
     >
       <View style={styles.buttonContent}>
         {loading && <View style={styles.loaderOverlay}><Loader size='small' /></View>}
-      <Text style={[styles.buttonText, textStyle, isDisabled && styles.disabledText]}>{text}</Text>
+        <Text style={[styles.buttonText, textStyle, isDisabled && styles.disabledText]}>{text}</Text>
       </View>
     </TouchableOpacity>
   )
