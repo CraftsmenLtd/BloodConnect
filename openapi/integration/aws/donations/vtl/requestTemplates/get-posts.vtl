@@ -2,6 +2,7 @@
   "TableName": "${DYNAMODB_TABLE_NAME}",
   "IndexName": "GSI1",
   "KeyConditionExpression": "GSI1PK = :gsi1pk AND begins_with(GSI1SK, :gsi1skPrefix)",
+  "FilterExpression": "PK <> :PK",
   "ExpressionAttributeValues": {
     ":gsi1pk": {
       "S": "CITY#$input.params('city')#STATUS#PENDING"
@@ -12,6 +13,9 @@
       #else
         "S": "BG#"
       #end
+    },
+    ":PK": {
+      "S": "BLOOD_REQ#$context.authorizer.claims['custom:userId']"
     }
   },
   "ScanIndexForward": false,

@@ -48,7 +48,7 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
       data.GSI1PK = `CITY#${remainingDonationData.city}#STATUS#${remainingDonationData.status}`
     }
     if ((remainingDonationData.requestedBloodGroup as BloodGroup) !== undefined) {
-      data.GSI1SK = `BG#${remainingDonationData.requestedBloodGroup}`
+      data.GSI1SK = `BG#${remainingDonationData.requestedBloodGroup}#${createdAt}`
     }
     if (remainingDonationData.status !== undefined) {
       data.LSI1SK = `${BLOOD_REQUEST_LSI1SK_PREFIX}#${remainingDonationData.status}#${id}`
