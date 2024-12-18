@@ -52,7 +52,7 @@ type GenericModalProps = {
  * Usage Examples:
  *
  * 1. Basic Modal with a Single Button:
- *   ```
+ *   ```ts
  *    <GenericModal
  *      visible={isVisible}
  *      title="Welcome"
@@ -65,7 +65,7 @@ type GenericModalProps = {
  *    ```
  *
  * 2. Modal with Multiple Buttons and Custom Styles:
- *    ```
+ *    ```ts
  *    <GenericModal
  *      visible={isVisible}
  *      title="Confirmation"
@@ -78,7 +78,7 @@ type GenericModalProps = {
  *    ```
  *
  * 3. Modal with an Icon:
- *    ```
+ *    ```ts
  *    <GenericModal
  *      visible={isVisible}
  *      title="Success!"
