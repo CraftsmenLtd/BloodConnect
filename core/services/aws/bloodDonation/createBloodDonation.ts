@@ -10,12 +10,20 @@ import {
 } from '../../../application/models/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
+import { CREATE_DONATION_REQUEST_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 
 const bloodDonationService = new BloodDonationService()
 
 async function createBloodDonationLambda(
-  event: BloodDonationAttributes
+  event: BloodDonationAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
+  const httpLogger = createHTTPLogger(
+    event.seekerId,
+    event.apiGwRequestId,
+    event.cloudFrontRequestId
+  )
+
   try {
     const bloodDonationAttributes = {
       seekerId: event.seekerId,
@@ -43,6 +51,7 @@ async function createBloodDonationLambda(
     )
     return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {
+    httpLogger.error(error)
     const errorMessage =
       error instanceof Error ? error.message : 'An unknown error occurred'
     const errorCode =

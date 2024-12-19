@@ -35,6 +35,7 @@ import DonationNotificationModel, {
 } from '../../../application/models/dbModels/DonationNotificationModel'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
 import { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 
 const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
@@ -42,8 +43,13 @@ const userService = new UserService()
 const notificationService = new NotificationService()
 
 async function acceptDonationRequest(
-  event: AcceptDonationRequestAttributes
+  event: AcceptDonationRequestAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
+  const httpLogger = createHTTPLogger(
+    event.donorId,
+    event.apiGwRequestId,
+    event.cloudFrontRequestId
+  )
   try {
     const { donorId, seekerId, requestPostId, createdAt, status } = event
 
@@ -135,6 +141,7 @@ async function acceptDonationRequest(
       HTTP_CODES.OK
     )
   } catch (error) {
+    httpLogger.error(error)
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
