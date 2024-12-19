@@ -39,7 +39,7 @@ describe('createBloodDonationLambda', () => {
       body: JSON.stringify({ message: mockResponse })
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda({ ...mockEvent } as BloodDonationAttributes & HttpLoggerAttributes)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.OK,
