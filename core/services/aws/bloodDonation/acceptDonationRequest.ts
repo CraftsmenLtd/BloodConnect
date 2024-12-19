@@ -73,7 +73,7 @@ async function acceptDonationRequest(
 
     if (acceptanceRecord !== null && status === acceptanceRecord.status) {
       return generateApiGatewayResponse(
-        { message: 'Donation request already accepted successfully.' },
+        { message: 'Donation request was accepted earlier.' },
         HTTP_CODES.OK
       )
     }
@@ -224,7 +224,7 @@ async function sendNotificationToSeeker(
     body:
       status === AcceptDonationStatus.ACCEPTED
         ? `${donationPost.requestedBloodGroup} blood found`
-        : 'unfortunately donor Ignored the request',
+        : 'request was ignored by donor',
     type: NotificationType.REQ_ACCEPTED,
     payload: {
       donorId,
