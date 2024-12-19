@@ -10,6 +10,14 @@ import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/notificationWorkflow/NotificationService')
 jest.mock('../../commons/lambda/ApiGateway')
+jest.mock('../../commons/httpLogger/HttpLogger', () => ({
+  createHTTPLogger: jest.fn(() => ({
+    error: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn()
+  }))
+}))
 
 const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
 const mockNotificationService = NotificationService as jest.MockedClass<typeof NotificationService>
