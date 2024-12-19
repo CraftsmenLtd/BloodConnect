@@ -42,6 +42,7 @@ describe('BloodDonationModel', () => {
         PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
         SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}`,
         LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
+        GSI1SK: `BG#${donationDtoMock.requestedBloodGroup}#${mockCreatedAt}`,
         createdAt: mockCreatedAt
       })
     })
@@ -76,7 +77,7 @@ describe('BloodDonationModel', () => {
 
       expect(result).toEqual({
         GSI1PK: `CITY#${donationDtoMock.city}#STATUS#${DonationStatus.PENDING}`,
-        GSI1SK: `BG#${donationDtoMock.requestedBloodGroup}`,
+        GSI1SK: `BG#${donationDtoMock.requestedBloodGroup}#${donationFieldsMock.createdAt}`,
         ...donationDtoMock,
         id: donationDtoMock.id,
         seekerId: donationDtoMock.seekerId,

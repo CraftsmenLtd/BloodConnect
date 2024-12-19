@@ -35,6 +35,7 @@ import DonationNotificationModel, {
 } from '../../../application/models/dbModels/DonationNotificationModel'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
 import { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 
 const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
@@ -42,14 +43,20 @@ const userService = new UserService()
 const notificationService = new NotificationService()
 
 async function acceptDonationRequest(
-  event: AcceptDonationRequestAttributes
+  event: AcceptDonationRequestAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
+  const httpLogger = createHTTPLogger(
+    event.donorId,
+    event.apiGwRequestId,
+    event.cloudFrontRequestId
+  )
   try {
     const { donorId, seekerId, requestPostId, createdAt, status } = event
 
-    if (status !== AcceptDonationStatus.ACCEPTED && status !== AcceptDonationStatus.IGNORED) {
-      throw new Error('Invalid status for accept donation request')
+    if (![AcceptDonationStatus.ACCEPTED, AcceptDonationStatus.IGNORED].includes(status)) {
+      throw new Error('Invalid status for donation response.')
     }
+
     const acceptanceRecord = await acceptDonationService.getAcceptanceRecord(
       seekerId,
       requestPostId,
@@ -60,21 +67,42 @@ async function acceptDonationRequest(
       AcceptDonationRequestModel
       >(new AcceptDonationRequestModel())
     )
-    if (acceptanceRecord !== null && acceptanceRecord.status === AcceptDonationStatus.COMPLETED) {
+    if (isAlreadyDonated(acceptanceRecord)) {
       throw new Error('You already donated.')
     }
 
-    if ((status === AcceptDonationStatus.ACCEPTED && acceptanceRecord !== null)) {
+    if (acceptanceRecord !== null && status === acceptanceRecord.status) {
       return generateApiGatewayResponse(
-        { message: 'Donation request accepted successfully.' },
+        { message: 'Donation request was accepted earlier.' },
         HTTP_CODES.OK
       )
     }
 
-    if (status === AcceptDonationStatus.ACCEPTED && acceptanceRecord === null) {
-      await acceptBloodDonationRequest(donorId, seekerId, requestPostId, createdAt, status)
+    const userProfile = await userService.getUser(
+      donorId,
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
+    )
+    const donationPost = await getDonationRequest(seekerId, requestPostId, createdAt)
+
+    if (userProfile.bloodGroup !== donationPost.requestedBloodGroup) {
+      throw new Error('Your blood group doesn\'t match with the request blood group')
+    }
+
+    if (acceptanceRecord === null) {
+      if (status === AcceptDonationStatus.ACCEPTED) {
+        await createAcceptanceRecord(donorId, seekerId, createdAt, requestPostId, userProfile)
+        await sendNotificationToSeeker(
+          seekerId,
+          requestPostId,
+          donationPost,
+          donorId,
+          createdAt,
+          status,
+          userProfile
+        )
+      }
     } else {
-      if (acceptanceRecord !== null) {
+      if (status === AcceptDonationStatus.IGNORED) {
         await acceptDonationService.deleteAcceptedRequest(
           seekerId,
           requestPostId,
@@ -85,46 +113,49 @@ async function acceptDonationRequest(
           AcceptDonationRequestModel
           >(new AcceptDonationRequestModel())
         )
-        await notificationService.updateBloodDonationNotificationStatus(
-          donorId,
+      }
+      if (status !== acceptanceRecord.status) {
+        await sendNotificationToSeeker(
+          seekerId,
           requestPostId,
-          NotificationType.BLOOD_REQ_POST,
+          donationPost,
+          donorId,
+          createdAt,
           status,
-          new NotificationDynamoDbOperations<
-          BloodDonationNotificationDTO,
-          BloodDonationNotificationFields,
-          DonationNotificationModel
-          >(new DonationNotificationModel())
+          userProfile
         )
       }
     }
+
+    await updateDonationNotification(
+      donorId,
+      requestPostId,
+      seekerId,
+      createdAt,
+      status,
+      donationPost
+    )
 
     return generateApiGatewayResponse(
       { message: 'Donation request accepted successfully.' },
       HTTP_CODES.OK
     )
   } catch (error) {
+    httpLogger.error(error)
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
 }
 
-export default acceptDonationRequest
+function isAlreadyDonated(acceptanceRecord: AcceptedDonationDTO | null): boolean {
+  return acceptanceRecord != null && acceptanceRecord.status === AcceptDonationStatus.COMPLETED
+}
 
-async function acceptBloodDonationRequest(
-  donorId: string,
+async function getDonationRequest(
   seekerId: string,
   requestPostId: string,
-  createdAt: string,
-  status: AcceptDonationStatus
-): Promise<void> {
-  const userProfile = await userService.getUser(
-    donorId,
-    new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
-  )
-  if (userProfile === null) {
-    throw new Error('Cannot find user')
-  }
+  createdAt: string
+): Promise<DonationDTO> {
   const donationPost = await bloodDonationService.getDonationRequest(
     seekerId,
     requestPostId,
@@ -133,15 +164,26 @@ async function acceptBloodDonationRequest(
       new BloodDonationModel()
     )
   )
+
   if (donationPost.status !== DonationStatus.PENDING) {
     throw new Error('Donation request is no longer available for acceptance.')
   }
+  return donationPost
+}
+
+async function createAcceptanceRecord(
+  donorId: string,
+  seekerId: string,
+  createdAt: string,
+  requestPostId: string,
+  userProfile: UserDetailsDTO
+): Promise<void> {
   const acceptDonationRequestAttributes: AcceptDonationRequestAttributes = {
     donorId,
     seekerId,
     createdAt,
     requestPostId,
-    status: status as AcceptDonationStatus,
+    status: AcceptDonationStatus.ACCEPTED,
     donorName: userProfile?.name,
     phoneNumbers: userProfile?.phoneNumbers
   }
@@ -154,7 +196,17 @@ async function acceptBloodDonationRequest(
     AcceptDonationRequestModel
     >(new AcceptDonationRequestModel())
   )
+}
 
+async function sendNotificationToSeeker(
+  seekerId: string,
+  requestPostId: string,
+  donationPost: DonationDTO,
+  donorId: string,
+  createdAt: string,
+  status: AcceptDonationStatus,
+  userProfile: UserDetailsDTO
+): Promise<void> {
   const acceptedDonors = await acceptDonationService.getAcceptedDonorList(
     seekerId,
     requestPostId,
@@ -167,12 +219,20 @@ async function acceptBloodDonationRequest(
 
   const notificationAttributes: DonationNotificationAttributes = {
     userId: seekerId,
-    title: 'Donor Found',
-    status: AcceptDonationStatus.ACCEPTED,
-    body: `${donationPost.requestedBloodGroup} blood found`,
+    title: status === AcceptDonationStatus.ACCEPTED ? 'Donor Found' : 'Donor Ignored',
+    status,
+    body:
+      status === AcceptDonationStatus.ACCEPTED
+        ? `${donationPost.requestedBloodGroup} blood found`
+        : 'request was ignored by donor',
     type: NotificationType.REQ_ACCEPTED,
     payload: {
-      ...acceptDonationRequestAttributes,
+      donorId,
+      seekerId,
+      createdAt,
+      requestPostId,
+      donorName: userProfile?.name,
+      phoneNumbers: userProfile?.phoneNumbers,
       requestedBloodGroup: donationPost.requestedBloodGroup,
       urgencyLevel: donationPost.urgencyLevel,
       location: donationPost.location,
@@ -183,10 +243,16 @@ async function acceptBloodDonationRequest(
   }
 
   await notificationService.sendNotification(notificationAttributes, new SQSOperations())
-  await updateDonationNotification(donorId, requestPostId, status, seekerId, createdAt, donationPost)
 }
 
-async function updateDonationNotification(donorId: string, requestPostId: string, status: AcceptDonationStatus, seekerId: string, createdAt: string, donationPost: DonationDTO): Promise<void> {
+async function updateDonationNotification(
+  donorId: string,
+  requestPostId: string,
+  seekerId: string,
+  createdAt: string,
+  status: AcceptDonationStatus,
+  donationPost: DonationDTO
+): Promise<void> {
   const existingNotification = await notificationService.getBloodDonationNotification(
     donorId,
     requestPostId,
@@ -198,37 +264,39 @@ async function updateDonationNotification(donorId: string, requestPostId: string
     >(new DonationNotificationModel())
   )
 
-  if (existingNotification === null && status === AcceptDonationStatus.ACCEPTED) {
-    const notificationData: DonationNotificationAttributes = {
-      type: NotificationType.BLOOD_REQ_POST,
-      payload: {
-        seekerId,
-        requestPostId,
-        createdAt,
-        bloodQuantity: donationPost.bloodQuantity,
-        requestedBloodGroup: donationPost.requestedBloodGroup as string,
-        urgencyLevel: donationPost.urgencyLevel as string,
-        contactNumber: donationPost.contactNumber,
-        donationDateTime: donationPost.donationDateTime,
-        patientName: donationPost.patientName as string,
-        location: donationPost.location,
-        shortDescription: donationPost.shortDescription as string,
-        transportationInfo: donationPost.transportationInfo as string
-      },
-      status: status as AcceptDonationStatus,
-      userId: donorId,
-      title: 'Blood Request Accepted',
-      body: `${donationPost.requestedBloodGroup} blood request Accepted`
-    }
+  if (existingNotification === null) {
+    if (status === AcceptDonationStatus.ACCEPTED) {
+      const notificationData: DonationNotificationAttributes = {
+        type: NotificationType.BLOOD_REQ_POST,
+        payload: {
+          seekerId,
+          requestPostId,
+          createdAt,
+          bloodQuantity: donationPost.bloodQuantity,
+          requestedBloodGroup: donationPost.requestedBloodGroup as string,
+          urgencyLevel: donationPost.urgencyLevel as string,
+          contactNumber: donationPost.contactNumber,
+          donationDateTime: donationPost.donationDateTime,
+          patientName: donationPost.patientName as string,
+          location: donationPost.location,
+          shortDescription: donationPost.shortDescription as string,
+          transportationInfo: donationPost.transportationInfo as string
+        },
+        status: status as AcceptDonationStatus,
+        userId: donorId,
+        title: 'Blood Request Accepted',
+        body: `${donationPost.requestedBloodGroup} blood request Accepted`
+      }
 
-    await notificationService.createBloodDonationNotification(
-      notificationData,
-      new NotificationDynamoDbOperations<
-      BloodDonationNotificationDTO,
-      BloodDonationNotificationFields,
-      DonationNotificationModel
-      >(new DonationNotificationModel())
-    )
+      await notificationService.createBloodDonationNotification(
+        notificationData,
+        new NotificationDynamoDbOperations<
+        BloodDonationNotificationDTO,
+        BloodDonationNotificationFields,
+        DonationNotificationModel
+        >(new DonationNotificationModel())
+      )
+    }
   } else {
     await notificationService.updateBloodDonationNotificationStatus(
       donorId,
@@ -243,3 +311,5 @@ async function updateDonationNotification(donorId: string, requestPostId: string
     )
   }
 }
+
+export default acceptDonationRequest

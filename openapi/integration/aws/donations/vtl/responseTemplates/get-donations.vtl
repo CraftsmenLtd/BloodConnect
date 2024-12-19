@@ -33,7 +33,7 @@
                   #set($isFirstDonor = false)
                   {
                     "requestPostId": "$acceptedrequestPostId",
-                    "donorId": "$acceptedItem.donorId.S",
+                    "donorId": "$acceptedItem.SK.S.split('#')[2]",
                     "donorName": "$acceptedItem.donorName.S",
                     "phoneNumbers": [
                       #foreach($phoneNumber in $acceptedItem.phoneNumbers.L)

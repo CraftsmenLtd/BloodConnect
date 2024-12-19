@@ -1,7 +1,9 @@
 #set($inputRoot = $input.path('$'))
 {
+  "seekerId": "$context.authorizer.claims['custom:userId']",
+  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "apiGwRequestId": "$context.requestId",
   "donorIds": $inputRoot.donorIds,
   "requestPostId": "$inputRoot.requestPostId",
-  "seekerId": "$context.authorizer.claims['custom:userId']",
   "requestCreatedAt": "$inputRoot.requestCreatedAt"
 }

@@ -19,15 +19,16 @@ import {
 async function createUserLambda(
   event: UpdateUserAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
+  const { userId, apiGwRequestId, cloudFrontRequestId } = event
   const httpLogger = createHTTPLogger(
-    event.userId,
-    event.apiGwRequestId,
-    event.cloudFrontRequestId
+    userId,
+    apiGwRequestId,
+    cloudFrontRequestId
   )
   try {
     const userService = new UserService()
     const userAttributes = {
-      userId: event.userId,
+      userId,
       ...Object.fromEntries(
         Object.entries(event).filter(
           ([_, value]) => value !== undefined && value !== ''
