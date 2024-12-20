@@ -3,6 +3,7 @@ import { RouteProp } from '@react-navigation/native'
 import { SCREENS } from '../constant/screens'
 import { UserRegistrationCredentials } from '../../authentication/services/authService'
 import { DonationScreenParams } from '../../donationWorkflow/types'
+import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import { DonorResponseNotification } from '../../donationWorkflow/donorResponse/type'
 import { NotificationData } from '../notification/NotificationData'
 
@@ -21,6 +22,10 @@ export type RootStackParamList = {
   [SCREENS.DONATION_POSTS]: { data: DonationScreenParams | null; isUpdating: boolean };
   [SCREENS.ADD_PERSONAL_INFO]: undefined;
   [SCREENS.POSTS]: undefined;
+  [SCREENS.DETAIL_POST]: { data: DonationData; tab?: string };
+  [SCREENS.DONAR_PROFILE]: { donorId: string };
+  [SCREENS.DONAR_RESPONSE]: { notificationData: DonorResponseNotification };
+  [SCREENS.MY_ACTIVITY]: undefined;
   [SCREENS.DONAR_RESPONSE]: { notificationData: DonorResponseNotification };
   [SCREENS.BLOOD_REQUEST_PREVIEW]: { notificationData: NotificationData };
   [SCREENS.ACCOUNT]: undefined;
@@ -37,6 +42,10 @@ export type DonationScreenNavigationProp = StackNavigationProp<RootStackParamLis
 export type DonationPostsScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONATION_POSTS>
 export type BottomTabsNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BOTTOM_TABS>
 export type RequestPreviewScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
+export type DetailPostScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DETAIL_POST>
+export type DonarProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONAR_PROFILE>
+export type MyActivityScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.MY_ACTIVITY>
+
 export type DonarResponseScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONAR_RESPONSE>
 export type AccountScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.ACCOUNT>
 
@@ -47,4 +56,6 @@ export type OtpScreenRouteProp = RouteProp<RootStackParamList, SCREENS.OTP>
 export type SetPasswordRouteProp = RouteProp<RootStackParamList, SCREENS.SET_PASSWORD>
 export type DonationScreenRouteProp = RouteProp<RootStackParamList, SCREENS.DONATION>
 export type RequestPreviewRouteProp = RouteProp<RootStackParamList, SCREENS.BLOOD_REQUEST_PREVIEW>
+export type DetailPostRouteProp = RouteProp<RootStackParamList, SCREENS.DETAIL_POST>
 export type DonarResponseRouteProp = RouteProp<RootStackParamList, SCREENS.DONAR_RESPONSE>
+export type DonarProfileRouteProp = RouteProp<RootStackParamList, SCREENS.DONAR_PROFILE>

@@ -159,8 +159,8 @@ export const useAddPersonalInfo = (): any => {
   const handleSubmit = async(): Promise<void> => {
     try {
       setLoading(true)
-      const { locations, city, dateOfBirth, lastDonationDate, lastVaccinatedDate, phoneNumber, ...rest } = personalInfo
-      const preferredDonationLocations = await formatLocations(locations, city)
+      const { locations, dateOfBirth, lastDonationDate, lastVaccinatedDate, phoneNumber, ...rest } = personalInfo
+      const preferredDonationLocations = await formatLocations(locations, personalInfo.city)
 
       if (preferredDonationLocations.length === 0) {
         setErrorMessage('No valid locations were found. Please verify your input.')
@@ -178,7 +178,6 @@ export const useAddPersonalInfo = (): any => {
         preferredDonationLocations,
         ...(isSSO && (phoneNumber != null) ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {})
       }
-
       const response = await addPersonalInfoHandler(finalData, fetchClient)
       if (response.status === 200) {
         await fetchUserProfile()

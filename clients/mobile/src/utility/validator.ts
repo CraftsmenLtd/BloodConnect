@@ -1,3 +1,5 @@
+import { ACCOUNT_CREATION_MINIMUM_AGE } from '../setup/constant/consts'
+
 interface PasswordPolicy {
   minimum_length: number;
   require_lowercase: boolean;
@@ -103,8 +105,8 @@ export const validateDateOfBirth = (dateOfBirth: string): string | null => {
 
   const actualAge = hasBirthdayPassedThisYear ? age : age - 1
 
-  if (actualAge < 15) {
-    return 'User must be at least 15 years old.'
+  if (actualAge < ACCOUNT_CREATION_MINIMUM_AGE) {
+    return `User must be at least ${ACCOUNT_CREATION_MINIMUM_AGE} years old.`
   }
 
   return null

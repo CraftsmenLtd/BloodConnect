@@ -196,6 +196,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontFamily: theme.typography.fontFamily,
     lineHeight: 24,
     letterSpacing: 0.15
+  },
+  error: {
+    color: theme.colors.primary,
+    textAlign: 'center'
   }
 })
 

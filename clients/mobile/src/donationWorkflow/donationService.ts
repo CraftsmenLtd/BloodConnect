@@ -34,11 +34,50 @@ export const updateDonation = async(payload: Record<string, unknown>, httpClient
   }
 }
 
-export const getDonationList = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+export const fetchDonationPublicPosts = async(city: string, httpClient: HttpClient): Promise<DonationResponse> => {
+  try {
+    const response = await httpClient.get<DonationResponse>(`/donations/posts/${city}`, {})
+    return {
+      data: response.data,
+      status: response.status
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
+    throw new Error(errorMessage)
+  }
+}
+
+export const fetchDonationList = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.get<DonationResponse>('/donations', payload)
     return {
       data: response.data,
+      status: response.status
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
+    throw new Error(errorMessage)
+  }
+}
+
+export const fetchMyResponses = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+  try {
+    const response = await httpClient.get<DonationResponse>('/donations/responses', payload)
+    return {
+      data: response.data,
+      status: response.status
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
+    throw new Error(errorMessage)
+  }
+}
+
+export const cancelDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+  try {
+    const response = await httpClient.patch<DonationResponse>('/donations/cancel', payload)
+    return {
+      message: response.message,
       status: response.status
     }
   } catch (error) {
