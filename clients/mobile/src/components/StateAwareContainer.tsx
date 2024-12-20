@@ -11,7 +11,7 @@ interface StateAwareContainerProps {
   loadingComponent?: React.ReactElement;
   errorComponent?: (message: string) => React.ReactElement;
   emptyComponent?: React.ReactElement;
-  children: React.ReactNode;
+  ViewComponent: () => React.ReactNode;
 }
 
 const StateAwareContainer: React.FC<StateAwareContainerProps> = ({
@@ -21,7 +21,7 @@ const StateAwareContainer: React.FC<StateAwareContainerProps> = ({
   loadingComponent,
   errorComponent,
   emptyComponent,
-  children
+  ViewComponent
 }) => {
   const styles = createStyles(useTheme())
 
@@ -49,7 +49,7 @@ const StateAwareContainer: React.FC<StateAwareContainerProps> = ({
     return emptyComponent ?? <Text style={styles.messageText}>No items found.</Text>
   }
 
-  return <>{children}</>
+  return <ViewComponent />
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({

@@ -30,28 +30,26 @@ const Posts: React.FC<PostsProps> = ({
   emptyDataMessage
 }) => {
   const styles = createStyles(useTheme())
-
+  const ViewToRender = () => <FlatList
+  data={donationPosts}
+  renderItem={({ item }) => (
+    <PostCard
+      post={item}
+      updateHandler={updatePost}
+      detailHandler={detailHandler}
+      {...displayOptions}
+    />)}
+    ListEmptyComponent={
+      <View style={styles.emptyDataMessage}>
+        <Text>{emptyDataMessage}</Text>
+      </View>
+    }
+  keyExtractor={(item) => item.requestPostId}
+  contentContainerStyle={styles.postList}
+  refreshControl={refreshControl}
+/>
   return (
-    <StateAwareContainer loading={loading} errorMessage={errorMessage} data={donationPosts}>
-      <FlatList
-        data={donationPosts}
-        renderItem={({ item }) => (
-          <PostCard
-            post={item}
-            updateHandler={updatePost}
-            detailHandler={detailHandler}
-            {...displayOptions}
-          />)}
-          ListEmptyComponent={
-            <View style={styles.emptyDataMessage}>
-              <Text>{emptyDataMessage}</Text>
-            </View>
-          }
-        keyExtractor={(item) => item.requestPostId}
-        contentContainerStyle={styles.postList}
-        refreshControl={refreshControl}
-      />
-    </StateAwareContainer>
+    <StateAwareContainer loading={loading} errorMessage={errorMessage} data={donationPosts} ViewComponent={ViewToRender} />
   )
 }
 

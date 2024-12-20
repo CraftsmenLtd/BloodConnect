@@ -16,6 +16,7 @@ interface DonorResponsesProps {
 
 const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProps) => {
   const styles = createStyles(useTheme())
+
   return (
     <View style={styles.rootContainer}>
       {acceptedDonors.length === 0

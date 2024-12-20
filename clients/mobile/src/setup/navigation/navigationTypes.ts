@@ -23,7 +23,7 @@ export type RootStackParamList = {
   [SCREENS.ADD_PERSONAL_INFO]: undefined;
   [SCREENS.POSTS]: undefined;
   [SCREENS.DETAIL_POST]: { data: DonationData; tab?: string };
-  [SCREENS.DONAR_PROFILE]: { donarId: string };
+  [SCREENS.DONAR_PROFILE]: { donorId: string };
   [SCREENS.DONAR_RESPONSE]: { notificationData: DonorResponseNotification };
   [SCREENS.MY_ACTIVITY]: undefined;
   [SCREENS.DONAR_RESPONSE]: { notificationData: DonorResponseNotification };
