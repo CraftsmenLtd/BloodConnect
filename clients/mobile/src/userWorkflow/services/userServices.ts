@@ -20,7 +20,7 @@ export interface DonorProfile {
   preferredDonationLocations?: preferredDonationLocations[];
 }
 
-export const addPersonalInfoHandler = async (payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+export const addPersonalInfoHandler = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.patch<DonationResponse>('/users', payload)
     return {
@@ -33,7 +33,7 @@ export const addPersonalInfoHandler = async (payload: Record<string, unknown>, h
   }
 }
 
-export const getDonarProfile = async (donorId: string, httpClient: HttpClient): Promise<DonationResponse<DonorProfile>> => {
+export const getDonarProfile = async(donorId: string, httpClient: HttpClient): Promise<DonationResponse<DonorProfile>> => {
   try {
     const response = await httpClient.get<DonationResponse<DonorProfile>>(`/donors/${donorId}`, {})
     return {
