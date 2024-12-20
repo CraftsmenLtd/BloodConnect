@@ -12,12 +12,18 @@ import {
 } from '../../../application/models/dbModels/BloodDonationModel'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 
 const bloodDonationService = new BloodDonationService()
 
 async function cancelBloodDonation(
-  event: DonationRecordEventAttributes
+  event: DonationRecordEventAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
+  const httpLogger = createHTTPLogger(
+    event.seekerId,
+    event.apiGwRequestId,
+    event.cloudFrontRequestId
+  )
   try {
     await bloodDonationService.updateDonationStatus(
       event.seekerId,
@@ -31,6 +37,7 @@ async function cancelBloodDonation(
 
     return generateApiGatewayResponse({ message: 'Donation post cancelled successfully', success: true }, HTTP_CODES.OK)
   } catch (error) {
+    httpLogger.error(error)
     const errorMessage =
       error instanceof Error ? error.message : 'An unknown error occurred'
     const errorCode =

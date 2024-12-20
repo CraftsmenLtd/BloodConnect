@@ -17,14 +17,14 @@ const donorSearchService = new DonorSearchService()
 const userService = new UserService()
 
 async function donorRequestRouter(event: SQSEvent): Promise<{ status: string }> {
-  try {
-    for (const record of event.Records) {
+  for (const record of event.Records) {
+    try {
       await processSQSRecord(record)
+    } catch (error) {
+      throw error instanceof Error ? error : new Error('An unknown error occurred')
     }
-    return { status: 'Success' }
-  } catch (error) {
-    throw error instanceof Error ? error : new Error('An unknown error occurred')
   }
+  return { status: 'Success' }
 }
 
 async function processSQSRecord(record: SQSRecord): Promise<void> {
@@ -56,9 +56,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
 
   const userProfile = await userService.getUser(
     donorRoutingAttributes.seekerId,
-    new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(
-      new UserModel()
-    )
+    new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
   )
 
   await donorSearchService.routeDonorRequest(
