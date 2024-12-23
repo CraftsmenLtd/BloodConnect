@@ -1,4 +1,14 @@
-import { Text, View, Image, SafeAreaView, ScrollView, TouchableOpacity, Linking, StyleProp, ImageStyle } from 'react-native'
+import {
+  Text,
+  View,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+  StyleProp,
+  ImageStyle
+} from 'react-native'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
 import { Ionicons } from '@expo/vector-icons'
@@ -28,10 +38,14 @@ const ResponseDonationRequest = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.card}>
           <Text style={styles.header}>Blood Request</Text>
-          <Text style={styles.name}>{bloodRequest.seekerName ?? 'Patient Name'}</Text>
-          <Text style={styles.subText}>  Posted on {bloodRequest?.donationDateTime !== null && bloodRequest?.donationDateTime !== undefined
-            ? new Date(bloodRequest.donationDateTime).toLocaleString()
-            : 'N/A'}</Text>
+          <Text style={styles.name}>{bloodRequest.patientName ?? 'Patient Name'}</Text>
+          <Text style={styles.subText}>Posted on {
+            bloodRequest?.donationDateTime !== null &&
+            bloodRequest?.donationDateTime !== undefined
+              ? new Date(bloodRequest.donationDateTime).toLocaleString()
+              : 'N/A'
+          }
+          </Text>
           <View style={styles.emptyPadding}></View>
           <View style={styles.seekerDetails}>
             <View style={styles.frameBloodType}>
@@ -74,15 +88,32 @@ const ResponseDonationRequest = () => {
               <View style={styles.contactRow}>
                 <View>
                   <Text style={styles.label}>Contact Number</Text>
-                  <Text style={styles.phoneNumber}>{bloodRequest.contactNumber ?? 'Contact Not Shared'}</Text>
+                  {isRequestAccepted
+                    ? (
+                    <Text style={styles.phoneNumber}>
+                      {bloodRequest.contactNumber ?? 'Contact Not Shared'}
+                    </Text>
+                      )
+                    : (
+                    <Text style={styles.hiddenNumber}>{`${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`}</Text>
+                      )}
                 </View>
-                <TouchableOpacity style={styles.callButton} onPress={() => { void (async() => { await Linking.openURL(`tel:${bloodRequest.contactNumber}`) })() }} >
-                  <Image
-                    source={require('../../../../../assets/images/call.png')}
-                    style={styles.callIcon as StyleProp<ImageStyle>}
-                  />
-                  <Text style={styles.callText}>Call</Text>
-                </TouchableOpacity>
+                {isRequestAccepted && (
+                  <TouchableOpacity
+                    style={styles.callButton}
+                    onPress={() => {
+                      void (async() => {
+                        await Linking.openURL(`tel:${bloodRequest.contactNumber}`)
+                      })()
+                    }}
+                  >
+                    <Image
+                      source={require('../../../../../assets/images/call.png')}
+                      style={styles.callIcon as StyleProp<ImageStyle>}
+                    />
+                    <Text style={styles.callText}>Call</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
 
