@@ -38,8 +38,9 @@ const Posts: React.FC<PostsProps> = ({
         post={item}
         updateHandler={updatePost}
         detailHandler={detailHandler}
+        cancelHandler={cancelPost}
         {...displayOptions}
-      />)}
+          />)}
     ListEmptyComponent={
       <View style={styles.emptyDataMessage}>
         <Text>{emptyDataMessage}</Text>

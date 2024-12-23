@@ -24,7 +24,7 @@ const DETAIL_POST_TAB_CONFIG: TabConfig = {
 
 const Detail = ({ navigation, route }: DetailProps) => {
   const styles = createStyles(useTheme())
-  const { cancelPost, cancelPostError, showToast, toastAnimationFinished } = useMyActivity()
+  const { cancelPost, cancelPostError, isLoading, showToast, toastAnimationFinished } = useMyActivity()
   const { data, tab } = route.params
   const [currentTab, setCurrentTab] = useState(tab ?? DETAIL_POST_TAB_CONFIG.initialTab)
 
@@ -51,25 +51,26 @@ const Detail = ({ navigation, route }: DetailProps) => {
       </View>
       {currentTab === DETAIL_POST_TAB_CONFIG.initialTab
         ? <View style={styles.postCardContainer}>
-          <PostCard
-            post={data}
-            showContactNumber
-            showDescription
-            showPatientName
-            showTransportInfo
-            showButton={false}
-            updateHandler={updatePost}
-            cancelHandler={cancelPost}
-          />
-          {cancelPostError !== '' &&
-            <Text style={styles.errorMessage}>{cancelPostError}</Text>
-          }
-          {showToast != null && <Toast
-            message={showToast?.message}
-            type={showToast?.type}
-            toastAnimationFinished={toastAnimationFinished}
-          />}
-        </View>
+            <PostCard
+              post={data}
+              showContactNumber
+              showDescription
+              showPatientName
+              showTransportInfo
+              showButton={false}
+              updateHandler={updatePost}
+              cancelHandler={cancelPost}
+              isLoading={isLoading}
+            />
+            {cancelPostError !== '' &&
+              <Text style={styles.errorMessage}>{cancelPostError}</Text>
+            }
+            {showToast != null && <Toast
+                message={showToast?.message}
+                type={showToast?.type}
+                toastAnimationFinished={toastAnimationFinished}
+            />}
+          </View>
         : <DonorResponses acceptedDonors={data.acceptedDonors} handlePressDonor={handlePressDonor} />
       }
     </View>
