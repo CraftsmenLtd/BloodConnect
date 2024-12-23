@@ -9,6 +9,8 @@ import BottomNavigation from './BottomNavigation'
 import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPassword'
 import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
+import Detail from '../../myActivity/myPosts/details/Detail'
+import DonarProfile from '../../myActivity/donorProfile/DonarProfile'
 import DonorResponse from '../../donationWorkflow/donorResponse/DonorResponse'
 import { Account } from '../../userWorkflow/account/UI/Account'
 import Profile from '../../userWorkflow/Profile'
@@ -78,6 +80,18 @@ export const routes = [
     name: SCREENS.BLOOD_REQUEST_PREVIEW,
     component: ResponseDonationRequest,
     options: { headerShown: true, headerTitle: 'Blood Request' },
+    protected: true
+  },
+  {
+    name: SCREENS.DETAIL_POST,
+    component: Detail,
+    options: { headerShown: true, headerTitle: 'My Post' },
+    protected: true
+  },
+  {
+    name: SCREENS.DONAR_PROFILE,
+    component: DonarProfile,
+    options: { headerShown: true, headerTitle: 'Profile' },
     protected: true
   },
   {

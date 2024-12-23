@@ -11,6 +11,7 @@ interface UserPreferedLocation {
 
 export interface UserProfile extends Partial<Omit<UserDetailsDTO, 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn' | 'bloodGroup' | 'gender' | 'availableForDonation'>> {
   preferredDonationLocations?: UserPreferedLocation[];
+  city: string;
   bloodGroup: string;
   gender: string;
   availableForDonation: string;
