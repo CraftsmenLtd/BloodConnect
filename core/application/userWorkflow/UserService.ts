@@ -34,7 +34,7 @@ export class UserService {
       })
       .catch((error) => {
         throw new UserOperationError(
-          `Failed to create new user. Error: ${error}`,
+          `Failed to create new user. ${error}`,
           GENERIC_CODES.ERROR
         )
       })
@@ -134,7 +134,7 @@ export class UserService {
     userAttributes: Partial<UserDetailsDTO>,
     locationRepository: LocationRepository<LocationDTO, Record<string, unknown>>
   ): Promise<void> {
-    if (preferredDonationLocations.length === 0 && userAttributes.city !== undefined) {
+    if (preferredDonationLocations !== undefined && preferredDonationLocations.length === 0 && userAttributes.city !== undefined) {
       await locationRepository.deleteUserLocations(userId)
 
       for (const location of preferredDonationLocations) {

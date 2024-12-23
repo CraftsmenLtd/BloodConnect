@@ -70,7 +70,7 @@ describe('UserService Tests', () => {
     mockRepository.create.mockRejectedValue(originalError)
     await expect(
       userService.createNewUser(mockUserAttributes, mockRepository)
-    ).rejects.toThrow(new Error(errorMessage))
+    ).rejects.toThrow(new Error('Failed to create new user. Error: Database error'))
     expect(mockRepository.create).toHaveBeenCalledTimes(1)
   })
 

@@ -31,9 +31,12 @@ describe('createBloodDonationLambda', () => {
   })
 
   it('should return a successful response when blood donation is created', async() => {
-    const mockResponse = 'Blood donation created successfully'
+    const mockResponse = 'We have accepted your request, and we will let you know when we find a donor.'
 
-    mockBloodDonationService.prototype.createBloodDonation.mockResolvedValue(mockResponse)
+    mockBloodDonationService.prototype.createBloodDonation.mockResolvedValue({
+      requestPostId: expect.any(String),
+      createdAt: expect.any(String)
+    })
     mockGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
       body: JSON.stringify({ message: mockResponse })
@@ -51,7 +54,13 @@ describe('createBloodDonationLambda', () => {
       expect.any(Object)
     )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
-      { message: mockResponse },
+      {
+        data: {
+          createdAt: expect.any(String),
+          requestPostId: expect.any(String)
+        },
+        message: mockResponse
+      },
       HTTP_CODES.OK
     )
   })

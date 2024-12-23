@@ -41,27 +41,28 @@ export class BloodDonationService {
       validationRules
     )
     if (validationResponse !== null) {
-      throw new Error(validationResponse)
+      throw new BloodDonationOperationError(
+        `Invalid parameters for blood donation request. Error: ${validationResponse}`,
+        GENERIC_CODES.ERROR
+      )
     }
 
-    const response: DonationDTO = await bloodDonationRepository
-      .create({
-        id: generateUniqueID(),
-        ...donationAttributes,
-        status: DonationStatus.PENDING,
-        geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
-        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString(),
-        createdAt: new Date().toISOString()
-      })
-      .catch((error) => {
-        if (error instanceof ThrottlingError) {
-          throw error
-        }
-        throw new BloodDonationOperationError(
-          `Failed to submit blood donation request. Error: ${error}`,
-          GENERIC_CODES.ERROR
-        )
-      })
+    const response: DonationDTO = await bloodDonationRepository.create({
+      id: generateUniqueID(),
+      ...donationAttributes,
+      status: DonationStatus.PENDING,
+      geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
+      donationDateTime: new Date(donationAttributes.donationDateTime).toISOString(),
+      createdAt: new Date().toISOString()
+    }).catch((error) => {
+      if (error instanceof ThrottlingError) {
+        throw error
+      }
+      throw new BloodDonationOperationError(
+        `Failed to submit blood donation request. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
+    })
 
     return {
       requestPostId: response.id as string,

@@ -1,4 +1,3 @@
-import LocationModel from '../../../../application/models/dbModels/LocationModel'
 import { UpdateUserAttributes } from '../../../../application/userWorkflow/Types'
 import { UserService } from '../../../../application/userWorkflow/UserService'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
@@ -7,6 +6,7 @@ import DynamoDbTableOperations from '../../commons/ddb/DynamoDbTableOperations'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import updateUserLambda from '../../user/updateUser'
 import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
+import LocationDynamoDbOperations from '../../commons/ddb/LocationDynamoDbOperations'
 
 jest.mock('../../../../application/userWorkflow/UserService')
 jest.mock('../../commons/ddb/DynamoDbTableOperations')
@@ -49,7 +49,7 @@ describe('updateUserLambda', () => {
       lastVaccinatedDate: '2023-05-01'
     }
 
-    const mockResponse = 'User updated successfully'
+    const mockResponse = 'Your Profile info has been updated.'
     mockedUserService.prototype.updateUser.mockResolvedValue()
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
@@ -63,11 +63,10 @@ describe('updateUserLambda', () => {
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining(mockEvent),
       expect.any(DynamoDbTableOperations),
-      expect.any(DynamoDbTableOperations),
-      expect.any(LocationModel)
+      expect.any(LocationDynamoDbOperations)
     )
     expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
-      { message: mockResponse },
+      { success: true, message: mockResponse },
       HTTP_CODES.OK
     )
     expect(result.statusCode).toBe(HTTP_CODES.OK)
@@ -105,8 +104,7 @@ describe('updateUserLambda', () => {
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining(mockEvent),
       expect.any(DynamoDbTableOperations),
-      expect.any(DynamoDbTableOperations),
-      expect.any(LocationModel)
+      expect.any(LocationDynamoDbOperations)
     )
     expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
       `Error: ${mockError.message}`,
@@ -124,7 +122,7 @@ describe('updateUserLambda', () => {
       address: undefined
     }
 
-    const mockResponse = 'User updated successfully'
+    const mockResponse = 'Your Profile info has been updated.'
     mockedUserService.prototype.updateUser.mockResolvedValue()
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
@@ -138,11 +136,10 @@ describe('updateUserLambda', () => {
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining({ userId: 'user123', email: 'test@example.com' }),
       expect.any(DynamoDbTableOperations),
-      expect.any(DynamoDbTableOperations),
-      expect.any(LocationModel)
+      expect.any(LocationDynamoDbOperations)
     )
     expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
-      { message: mockResponse },
+      { success: true, message: mockResponse },
       HTTP_CODES.OK
     )
     expect(result.statusCode).toBe(HTTP_CODES.OK)

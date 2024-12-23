@@ -90,9 +90,7 @@ describe('BloodDonationService', () => {
           donationDateTime: expect.any(String)
         })
       )
-      expect(result).toBe(
-        'We have accepted your request, and we will let you know when we find a donor.'
-      )
+      expect(result).toStrictEqual({ createdAt: expect.any(String), requestPostId: 'req123' })
     })
 
     test('should throw BloodDonationOperationError if input is invalid', async() => {
@@ -170,15 +168,14 @@ describe('BloodDonationService', () => {
         lastEvaluatedKey: undefined
       })
 
+      bloodDonationRepository.create.mockResolvedValue(donationDtoMock)
       const result = await bloodDonationService.createBloodDonation(
         donationAttributesMock,
         bloodDonationRepository,
         mockModel
       )
 
-      expect(result).toBe(
-        'We have accepted your request, and we will let you know when we find a donor.'
-      )
+      expect(result).toStrictEqual({ createdAt: expect.any(String), requestPostId: 'req123' })
       expect(bloodDonationRepository.query).toHaveBeenCalledWith({
         partitionKeyCondition: {
           attributeName: 'PK',
