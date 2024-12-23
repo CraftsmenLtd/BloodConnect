@@ -57,7 +57,7 @@ export class UserService {
     userRepository: Repository<UserDetailsDTO>
   ): Promise<UserDetailsDTO> {
     const userProfile = await userRepository.getItem(`USER#${userId}`, 'PROFILE')
-    if (userProfile == null) {
+    if (userProfile === null) {
       throw new Error('User not found')
     }
     return userProfile

@@ -49,10 +49,11 @@ async function createBloodDonationLambda(
     )
     return generateApiGatewayResponse(
       {
+        success: true,
         message: CREATE_DONATION_REQUEST_SUCCESS,
         data: response
       },
-      HTTP_CODES.OK
+      HTTP_CODES.CREATED
     )
   } catch (error) {
     httpLogger.error(error)

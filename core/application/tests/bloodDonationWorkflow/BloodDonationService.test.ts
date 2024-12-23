@@ -351,7 +351,7 @@ describe('BloodDonationService', () => {
         donationDateTime: new Date().toISOString(),
         bloodQuantity: 3
       }
-
+      bloodDonationRepository.update.mockResolvedValue(donationDtoMock)
       const result = await bloodDonationService.updateBloodDonation(
         donationAttributes,
         bloodDonationRepository
@@ -370,8 +370,8 @@ describe('BloodDonationService', () => {
           bloodQuantity: 3
         })
       )
-      expect(result).toBe(
-        'We have updated your request and will let you know once there is an update.'
+      expect(result).toStrictEqual(
+        { createdAt: expect.any(String), requestPostId: 'req123' }
       )
     })
 
@@ -420,7 +420,7 @@ describe('BloodDonationService', () => {
           donationAttributes,
           bloodDonationRepository
         )
-      ).rejects.toThrow(BloodDonationOperationError)
+      ).rejects.toThrow(Error)
 
       expect(validateInputWithRules).toHaveBeenCalledWith(
         { donationDateTime: 'invalid-date' },

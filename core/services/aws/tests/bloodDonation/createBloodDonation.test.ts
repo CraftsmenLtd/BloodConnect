@@ -55,13 +55,14 @@ describe('createBloodDonationLambda', () => {
     )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
       {
+        success: true,
         data: {
           createdAt: expect.any(String),
           requestPostId: expect.any(String)
         },
         message: mockResponse
       },
-      HTTP_CODES.OK
+      HTTP_CODES.CREATED
     )
   })
 

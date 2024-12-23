@@ -42,27 +42,29 @@ export class BloodDonationService {
     )
     if (validationResponse !== null) {
       throw new BloodDonationOperationError(
-        `Invalid parameters for blood donation request. Error: ${validationResponse}`,
+        `Invalid parameters for blood donation request. ${validationResponse}`,
         GENERIC_CODES.ERROR
       )
     }
 
-    const response: DonationDTO = await bloodDonationRepository.create({
-      id: generateUniqueID(),
-      ...donationAttributes,
-      status: DonationStatus.PENDING,
-      geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
-      donationDateTime: new Date(donationAttributes.donationDateTime).toISOString(),
-      createdAt: new Date().toISOString()
-    }).catch((error) => {
-      if (error instanceof ThrottlingError) {
-        throw error
-      }
-      throw new BloodDonationOperationError(
-        `Failed to submit blood donation request. Error: ${error}`,
-        GENERIC_CODES.ERROR
-      )
-    })
+    const response: DonationDTO = await bloodDonationRepository
+      .create({
+        id: generateUniqueID(),
+        ...donationAttributes,
+        status: DonationStatus.PENDING,
+        geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
+        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString(),
+        createdAt: new Date().toISOString()
+      })
+      .catch((error) => {
+        if (error instanceof ThrottlingError) {
+          throw error
+        }
+        throw new BloodDonationOperationError(
+          `Failed to submit blood donation request. ${error}`,
+          GENERIC_CODES.ERROR
+        )
+      })
 
     return {
       requestPostId: response.id as string,
@@ -86,7 +88,7 @@ export class BloodDonationService {
       }
     }
 
-    if (primaryIndex.sortKey != null) {
+    if (primaryIndex.sortKey !== undefined) {
       query.sortKeyCondition = {
         attributeName: primaryIndex.sortKey,
         operator: QueryConditionOperator.BEGINS_WITH,
@@ -133,49 +135,53 @@ export class BloodDonationService {
   async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
     bloodDonationRepository: BloodDonationRepository<DonationDTO>
-  ): Promise<string> {
-    try {
-      const { seekerId, requestPostId, donationDateTime, createdAt, ...restAttributes } =
-        donationAttributes
-      const item = await bloodDonationRepository.getDonationRequest(
-        seekerId,
-        requestPostId,
-        createdAt
+  ): Promise<BloodDonationResponseAttributes> {
+    const { seekerId, requestPostId, donationDateTime, createdAt, ...restAttributes } =
+      donationAttributes
+    const item = await bloodDonationRepository.getDonationRequest(
+      seekerId,
+      requestPostId,
+      createdAt
+    )
+
+    if (item === null) {
+      throw new BloodDonationOperationError('Item not found.', GENERIC_CODES.ERROR)
+    }
+
+    if (item?.status !== undefined && item.status === DonationStatus.CANCELLED) {
+      throw new BloodDonationOperationError(
+        'You can\'t update a cancelled request',
+        GENERIC_CODES.ERROR
       )
+    }
 
-      if (item === null) {
-        throw new Error('Item not found.')
+    const updateData: Partial<DonationDTO> = {
+      ...restAttributes,
+      seekerId,
+      id: requestPostId,
+      createdAt
+    }
+
+    if (donationDateTime !== undefined) {
+      const validationResponse = validateInputWithRules({ donationDateTime }, validationRules)
+      if (validationResponse !== null) {
+        throw new Error(validationResponse)
       }
+      updateData.donationDateTime = new Date(donationDateTime).toISOString()
+    }
 
-      if (item?.status !== undefined && item.status === DonationStatus.CANCELLED) {
-        throw new Error("You can't update a completed request")
-      }
-
-      const updateData: Partial<DonationDTO> = {
-        ...restAttributes,
-        seekerId,
-        id: requestPostId,
-        createdAt
-      }
-
-      if (donationDateTime !== undefined) {
-        const validationResponse = validateInputWithRules({ donationDateTime }, validationRules)
-        if (validationResponse !== null) {
-          throw new Error(validationResponse)
-        }
-        updateData.donationDateTime = new Date(donationDateTime).toISOString()
-      }
-
-      await bloodDonationRepository.update(updateData)
-      return 'We have updated your request and will let you know once there is an update.'
-    } catch (error) {
+    await bloodDonationRepository.update(updateData).catch((error) => {
       if (error instanceof BloodDonationOperationError) {
         throw error
       }
       throw new BloodDonationOperationError(
-        `Failed to update blood donation post. Error: ${error}`,
+        `Failed to update blood donation post. ${error}`,
         GENERIC_CODES.ERROR
       )
+    })
+    return {
+      requestPostId,
+      createdAt
     }
   }
 
