@@ -12,7 +12,12 @@ import {
   DonationFields
 } from '../models/dbModels/BloodDonationModel'
 import { QueryConditionOperator, QueryInput } from '../models/policies/repositories/QueryTypes'
-import { BloodDonationAttributes, validationRules, UpdateBloodDonationAttributes } from './Types'
+import {
+  BloodDonationAttributes,
+  validationRules,
+  UpdateBloodDonationAttributes,
+  BloodDonationResponseAttributes
+} from './Types'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
 import BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
 
@@ -21,26 +26,26 @@ export class BloodDonationService {
     donationAttributes: BloodDonationAttributes,
     bloodDonationRepository: Repository<DonationDTO, DonationFields>,
     model: BloodDonationModel
-  ): Promise<string> {
-    try {
-      await this.checkDailyRequestThrottling(
-        donationAttributes.seekerId,
-        bloodDonationRepository,
-        model
-      )
+  ): Promise<BloodDonationResponseAttributes> {
+    await this.checkDailyRequestThrottling(
+      donationAttributes.seekerId,
+      bloodDonationRepository,
+      model
+    )
 
-      const validationResponse = validateInputWithRules(
-        {
-          bloodQuantity: donationAttributes.bloodQuantity,
-          donationDateTime: donationAttributes.donationDateTime
-        },
-        validationRules
-      )
-      if (validationResponse !== null) {
-        throw new Error(validationResponse)
-      }
+    const validationResponse = validateInputWithRules(
+      {
+        bloodQuantity: donationAttributes.bloodQuantity,
+        donationDateTime: donationAttributes.donationDateTime
+      },
+      validationRules
+    )
+    if (validationResponse !== null) {
+      throw new Error(validationResponse)
+    }
 
-      await bloodDonationRepository.create({
+    const response: DonationDTO = await bloodDonationRepository
+      .create({
         id: generateUniqueID(),
         ...donationAttributes,
         status: DonationStatus.PENDING,
@@ -48,15 +53,19 @@ export class BloodDonationService {
         donationDateTime: new Date(donationAttributes.donationDateTime).toISOString(),
         createdAt: new Date().toISOString()
       })
-      return 'We have accepted your request, and we will let you know when we find a donor.'
-    } catch (error) {
-      if (error instanceof ThrottlingError) {
-        throw error
-      }
-      throw new BloodDonationOperationError(
-        `Failed to submit blood donation request. Error: ${error}`,
-        GENERIC_CODES.ERROR
-      )
+      .catch((error) => {
+        if (error instanceof ThrottlingError) {
+          throw error
+        }
+        throw new BloodDonationOperationError(
+          `Failed to submit blood donation request. Error: ${error}`,
+          GENERIC_CODES.ERROR
+        )
+      })
+
+    return {
+      requestPostId: response.id as string,
+      createdAt: response.createdAt
     }
   }
 
