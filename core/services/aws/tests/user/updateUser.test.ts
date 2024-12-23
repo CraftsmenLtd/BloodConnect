@@ -50,7 +50,7 @@ describe('updateUserLambda', () => {
     }
 
     const mockResponse = 'User updated successfully'
-    mockedUserService.prototype.updateUser.mockResolvedValue(mockResponse)
+    mockedUserService.prototype.updateUser.mockResolvedValue()
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
       body: JSON.stringify({ message: mockResponse })
@@ -125,7 +125,7 @@ describe('updateUserLambda', () => {
     }
 
     const mockResponse = 'User updated successfully'
-    mockedUserService.prototype.updateUser.mockResolvedValue(mockResponse)
+    mockedUserService.prototype.updateUser.mockResolvedValue()
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
       body: JSON.stringify({ message: mockResponse })

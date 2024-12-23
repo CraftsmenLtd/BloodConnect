@@ -109,3 +109,9 @@ export interface DonationRecordAttributes {
   donationDateTime: string;
   createdAt?: string;
 }
+
+export interface GetDonationRequestAttributes {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+}
