@@ -1,19 +1,29 @@
 import { AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
-import { DbModelDtoAdapter, HasTimeLog, NosqlModel, DbIndex, IndexDefinitions, IndexType } from './DbModelDefinitions'
+import {
+  DbModelDtoAdapter,
+  HasTimeLog,
+  NosqlModel,
+  DbIndex,
+  IndexDefinitions,
+  IndexType
+} from './DbModelDefinitions'
 
 export const ACCEPTED_DONATION_PK_PREFIX = 'BLOOD_REQ'
 export const ACCEPTED_DONATION_SK_PREFIX = 'ACCEPTED'
-export const ACCEPTED_DONATION_GSI1PK_PREFIX = 'DONOR'
-export const ACCEPTED_DONATION_GSI1SK_PREFIX = 'STATUS'
 
-export type AcceptedDonationFields = Omit<AcceptedDonationDTO, 'id' | 'seekerId'> & HasTimeLog & {
+export type AcceptedDonationFields = Omit<
+AcceptedDonationDTO,
+'id' | 'seekerId' | 'requestPostId' | 'donorId'
+> &
+HasTimeLog & {
   PK: `${typeof ACCEPTED_DONATION_PK_PREFIX}#${string}`;
   SK: `${typeof ACCEPTED_DONATION_SK_PREFIX}#${string}#${string}`;
-  GSI1PK: `${typeof ACCEPTED_DONATION_GSI1PK_PREFIX}#${string}`;
-  GSI1SK: `${typeof ACCEPTED_DONATION_GSI1SK_PREFIX}#${string}`;
 }
 
-export class AcceptDonationRequestModel implements NosqlModel<AcceptedDonationFields>, DbModelDtoAdapter<AcceptedDonationDTO, AcceptedDonationFields> {
+export class AcceptDonationRequestModel
+implements
+    NosqlModel<AcceptedDonationFields>,
+    DbModelDtoAdapter<AcceptedDonationDTO, AcceptedDonationFields> {
   getIndexDefinitions(): IndexDefinitions<AcceptedDonationFields> {
     return {}
   }
@@ -27,23 +37,21 @@ export class AcceptDonationRequestModel implements NosqlModel<AcceptedDonationFi
   }
 
   fromDto(acceptedDonationDto: AcceptedDonationDTO): AcceptedDonationFields {
+    const { seekerId, requestPostId, donorId, ...remainingData } = acceptedDonationDto
     return {
-      PK: `${ACCEPTED_DONATION_PK_PREFIX}#${acceptedDonationDto.seekerId}`,
-      SK: `${ACCEPTED_DONATION_SK_PREFIX}#${acceptedDonationDto.requestPostId}#${acceptedDonationDto.donorId}`,
-      GSI1PK: `${ACCEPTED_DONATION_GSI1PK_PREFIX}#${acceptedDonationDto.donorId}`,
-      GSI1SK: `${ACCEPTED_DONATION_GSI1SK_PREFIX}#${acceptedDonationDto.status}`,
-      ...acceptedDonationDto
+      PK: `${ACCEPTED_DONATION_PK_PREFIX}#${seekerId}`,
+      SK: `${ACCEPTED_DONATION_SK_PREFIX}#${requestPostId}#${donorId}`,
+      ...remainingData
     }
   }
 
   toDto(dbFields: AcceptedDonationFields): AcceptedDonationDTO {
-    const { PK, SK, GSI1PK, GSI1SK, ...remainingFields } = dbFields
+    const { PK, SK, ...remainingFields } = dbFields
     return {
       ...remainingFields,
       seekerId: PK.replace(`${ACCEPTED_DONATION_PK_PREFIX}#`, ''),
-      requestPostId: SK.split('#')[1],
-      donorId: SK.split('#')[2],
-      status: GSI1SK.replace('STATUS#', '')
+      requestPostId: SK.replace(`${ACCEPTED_DONATION_SK_PREFIX}#`, '').split('#')[0],
+      donorId: SK.replace(`${ACCEPTED_DONATION_SK_PREFIX}#`, '').split('#')[1]
     }
   }
 }

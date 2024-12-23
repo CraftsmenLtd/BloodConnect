@@ -1,53 +1,157 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
-import { NotificationDTO } from '../../../commons/dto/NotificationDTO'
+import {
+  BloodDonationNotificationDTO,
+  NotificationDTO,
+  NotificationStatus,
+  NotificationType
+} from '../../../commons/dto/NotificationDTO'
 import NotificationOperationError from './NotificationOperationError'
-import { BloodPostNotificationAttributes, NotificationAttributes, SnsRegistrationAttributes, StoreNotificationEndPoint } from './Types'
+import {
+  DonationNotificationAttributes,
+  DonationRequestPayloadAttributes,
+  NotificationAttributes,
+  SnsRegistrationAttributes,
+  StoreNotificationEndPoint
+} from './Types'
 import Repository from '../models/policies/repositories/Repository'
 import { SNSModel } from '../../application/models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
 import { QueueModel } from '../models/queue/QueueModel'
+import NotificationRepository from '../models/policies/repositories/NotificationRepository'
+import { AcceptDonationStatus } from '../../../commons/dto/DonationDTO'
 
 export class NotificationService {
   async publishNotification(
     notificationAttributes: NotificationAttributes,
     userSnsEndpointArn: string,
-    notificationRepository: Repository<NotificationDTO>,
     snsModel: SNSModel
-  ): Promise<string> {
+  ): Promise<void> {
     try {
-      const { userId, type, payload } = notificationAttributes
-
-      if (payload !== undefined && ['BLOOD_REQ_POST', 'REQ_ACCEPTED'].includes(type)) {
-        const requestPostAttributes = notificationAttributes as BloodPostNotificationAttributes
-        const existingItem = await notificationRepository.getItem(
-          `NOTIFICATION#${userId}`,
-          `${type}#${payload.requestPostId}`
-        )
-
-        if (existingItem !== null) {
-          return 'Already notified'
-        } else {
-          await notificationRepository.create({
-            ...notificationAttributes,
-            id: requestPostAttributes.payload.requestPostId
-          })
-        }
-      } else {
-        await notificationRepository.create({
-          ...notificationAttributes,
-          id: generateUniqueID()
-        })
-      }
-
       await snsModel.publish(notificationAttributes, userSnsEndpointArn)
-      return 'Notified user successfully.'
     } catch (error) {
       throw new NotificationOperationError(
         `Failed to notify user. Error: ${error}`,
         GENERIC_CODES.ERROR
       )
     }
+  }
+
+  async createNotification(
+    notificationAttributes: NotificationAttributes,
+    notificationRepository: NotificationRepository<NotificationDTO>
+  ): Promise<void> {
+    try {
+      await notificationRepository.create({
+        ...notificationAttributes,
+        status: NotificationStatus.PENDING,
+        id: generateUniqueID(),
+        createdAt: new Date().toISOString()
+      })
+    } catch (error) {
+      throw new NotificationOperationError(
+        `Failed to create notification. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
+    }
+  }
+
+  async createBloodDonationNotification(
+    notificationAttributes: DonationNotificationAttributes,
+    notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
+  ): Promise<void> {
+    try {
+      const { userId, type, payload } = notificationAttributes
+      if (
+        payload !== undefined &&
+        [NotificationType.BLOOD_REQ_POST, NotificationType.REQ_ACCEPTED].includes(type)
+      ) {
+        const existingItem = await notificationRepository.getBloodDonationNotification(
+          userId,
+          notificationAttributes.payload.requestPostId,
+          type
+        )
+
+        if (existingItem === null) {
+          await notificationRepository.create({
+            ...notificationAttributes,
+            status: AcceptDonationStatus.PENDING,
+            id: notificationAttributes.payload.requestPostId,
+            createdAt: new Date().toISOString()
+          })
+        }
+      }
+    } catch (error) {
+      throw new NotificationOperationError(
+        `Failed to create notification. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
+    }
+  }
+
+  async updateBloodDonationNotifications(
+    requestPostId: string,
+    notificationPayload: Partial<DonationRequestPayloadAttributes>,
+    notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
+  ): Promise<void> {
+    try {
+      const existingNotifications = await notificationRepository.queryBloodDonationNotifications(
+        requestPostId
+      )
+
+      if (existingNotifications === null) {
+        throw new NotificationOperationError(
+          'Notifications does not exist.',
+          GENERIC_CODES.NOT_FOUND
+        )
+      }
+
+      for (const notification of existingNotifications) {
+        const updatedNotification: Partial<BloodDonationNotificationDTO> = {
+          id: requestPostId,
+          userId: notification.userId,
+          type: notification.type,
+          payload: { ...notification.payload, ...notificationPayload }
+        }
+
+        await notificationRepository.update(updatedNotification)
+      }
+    } catch (error) {
+      throw new NotificationOperationError(
+        `Failed to update notification. Error: ${error}`,
+        GENERIC_CODES.ERROR
+      )
+    }
+  }
+
+  async updateBloodDonationNotificationStatus(
+    donorId: string,
+    requestPostId: string,
+    type: NotificationType,
+    status: AcceptDonationStatus,
+    notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
+  ): Promise<void> {
+    const updatedNotification: Partial<BloodDonationNotificationDTO> = {
+      id: requestPostId,
+      userId: donorId,
+      type,
+      status
+    }
+    await notificationRepository.update(updatedNotification)
+  }
+
+  async getBloodDonationNotification(
+    donorId: string,
+    requestPostId: string,
+    type: NotificationType,
+    notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
+  ): Promise<BloodDonationNotificationDTO | null> {
+    const existingItem = await notificationRepository.getBloodDonationNotification(
+      donorId,
+      requestPostId,
+      type
+    )
+    return existingItem
   }
 
   async storeDevice(
@@ -58,9 +162,7 @@ export class NotificationService {
     try {
       const { userId } = registrationAttributes
 
-      const { snsEndpointArn } = await snsModel.createPlatformEndpoint(
-        registrationAttributes
-      )
+      const { snsEndpointArn } = await snsModel.createPlatformEndpoint(registrationAttributes)
       if (snsEndpointArn === '') {
         throw new Error('Device registration failed.')
       }
@@ -80,23 +182,29 @@ export class NotificationService {
     } catch (error: unknown) {
       const typedError = error as Error
       if (typedError.name === 'InvalidParameterException') {
-        const arnMatch = typedError.message.match(
-          /arn:aws:sns:[\w-]+:\d+:endpoint\/\S+/
-        )
+        const arnMatch = typedError.message.match(/arn:aws:sns:[\w-]+:\d+:endpoint\/\S+/)
         const existingArn = arnMatch !== null ? arnMatch[0] : null
 
         if (existingArn !== null) {
-          return await this.handleExistingSnsEndpoint(snsModel, existingArn, userRepository, registrationAttributes)
+          return await this.handleExistingSnsEndpoint(
+            snsModel,
+            existingArn,
+            userRepository,
+            registrationAttributes
+          )
         }
       }
       throw new Error('Failed to store Endpoint ARN')
     }
   }
 
-  private async handleExistingSnsEndpoint(snsModel: SNSModel, existingArn: string, userRepository: Repository<UserDetailsDTO>, registrationAttributes: SnsRegistrationAttributes): Promise<string> {
-    const existingAttributes = await snsModel.getEndpointAttributes(
-      existingArn
-    )
+  private async handleExistingSnsEndpoint(
+    snsModel: SNSModel,
+    existingArn: string,
+    userRepository: Repository<UserDetailsDTO>,
+    registrationAttributes: SnsRegistrationAttributes
+  ): Promise<string> {
+    const existingAttributes = await snsModel.getEndpointAttributes(existingArn)
     const oldUpdateData: Partial<StoreNotificationEndPoint> = {
       id: existingAttributes.CustomUserData,
       snsEndpointArn: '',
@@ -105,10 +213,7 @@ export class NotificationService {
 
     await userRepository.update(oldUpdateData)
 
-    await snsModel.setEndpointAttributes(
-      existingArn,
-      registrationAttributes
-    )
+    await snsModel.setEndpointAttributes(existingArn, registrationAttributes)
     const { userId } = registrationAttributes
 
     const updateData: Partial<StoreNotificationEndPoint> = {
@@ -121,14 +226,11 @@ export class NotificationService {
   }
 
   async sendNotification(
-    notificationAttributes: NotificationAttributes,
+    notificationAttributes: NotificationAttributes | DonationNotificationAttributes,
     queueModel: QueueModel
-  ): Promise<string> {
-    try {
-      await queueModel.queue(notificationAttributes)
-      return 'Device registration successful.'
-    } catch (error: unknown) {
+  ): Promise<void> {
+    await queueModel.queue(notificationAttributes).catch(() => {
       throw new Error('Failed to send notification.')
-    }
+    })
   }
 }

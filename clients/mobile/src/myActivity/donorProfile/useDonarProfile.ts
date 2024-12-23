@@ -15,7 +15,7 @@ type FormattedDonorProfile = Required<{
 
 const useDonarProfile = (): any => {
   const fetchClient = useFetchClient()
-  const { donarId } = useRoute<DonarProfileRouteProp>().params
+  const { donorId } = useRoute<DonarProfileRouteProp>().params
 
   const formatDonarProfile = (donorProfile: DonorProfile): FormattedDonorProfile => {
     return {
@@ -36,7 +36,7 @@ const useDonarProfile = (): any => {
   }
 
   const { loading, error, data: donarProfile } = useFetchData<FormattedDonorProfile>(async() => {
-    const response = await getDonarProfile(donarId, fetchClient)
+    const response = await getDonarProfile(donorId, fetchClient)
     if (response.data !== undefined) {
       return formatDonarProfile(response.data)
     }

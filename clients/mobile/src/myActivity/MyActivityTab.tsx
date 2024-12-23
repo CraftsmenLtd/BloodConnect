@@ -6,6 +6,7 @@ import { Theme } from '../setup/theme'
 import Posts from '../components/donation/Posts'
 import { useMyActivityContext } from './context/useMyActivityContext'
 import Toast from '../components/toast'
+import React from 'react'
 
 const MyActivityTab = () => {
   const theme = useTheme()

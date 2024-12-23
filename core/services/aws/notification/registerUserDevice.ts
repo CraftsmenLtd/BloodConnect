@@ -1,7 +1,7 @@
 import { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import { UserDTO } from '../../../../commons/dto/UserDTO'
+import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import UserModel, {
@@ -33,7 +33,7 @@ async function registerUserDevice(
     }
     const response = await notificationService.storeDevice(
       snsAttributes,
-      new DynamoDbTableOperations<UserDTO, UserFields, UserModel>(
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(
         new UserModel()
       ),
       new SNSOperations()

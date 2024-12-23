@@ -4,11 +4,14 @@ import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import { mockEvent } from '../cannedData/updateBloodDonationLambdaEvent'
 import { UpdateBloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
+import { NotificationService } from '../../../../application/notificationWorkflow/NotificationService'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
+jest.mock('../../../../application/notificationWorkflow/NotificationService')
 jest.mock('../../commons/lambda/ApiGateway')
 
 const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
+const mockNotificationService = NotificationService as jest.MockedClass<typeof NotificationService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('updateBloodDonationLambda', () => {
@@ -19,6 +22,7 @@ describe('updateBloodDonationLambda', () => {
   it('should return a successful response when blood donation is updated', async() => {
     const mockResponse = 'Blood donation updated successfully'
     mockBloodDonationService.prototype.updateBloodDonation.mockResolvedValue(mockResponse)
+    mockNotificationService.prototype.updateBloodDonationNotifications.mockResolvedValue()
     mockGenerateApiGatewayResponse.mockReturnValue({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
 
     const result = await updateBloodDonationLambda(mockEvent)

@@ -28,8 +28,8 @@ const Detail = ({ navigation, route }: DetailProps) => {
   const { data, tab } = route.params
   const [currentTab, setCurrentTab] = useState(tab ?? DETAIL_POST_TAB_CONFIG.initialTab)
 
-  const handlePressDonor = (donarId: string) => {
-    navigation.navigate(SCREENS.DONAR_PROFILE, { donarId })
+  const handlePressDonor = (donorId: string) => {
+    navigation.navigate(SCREENS.DONAR_PROFILE, { donorId })
   }
 
   const handleTabPress = (tab: string): void => {

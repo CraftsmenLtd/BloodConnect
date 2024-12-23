@@ -1,5 +1,5 @@
 import { ValidationRule, validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
-import { BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
+import { AcceptDonationStatus, BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
 
 export interface BloodDonationAttributes {
   seekerId: string;
@@ -26,6 +26,7 @@ export const validationRules: Record<CredentialKeys, Array<ValidationRule<any>>>
 export interface UpdateBloodDonationAttributes {
   requestPostId: string;
   seekerId: string;
+  createdAt: string;
   bloodQuantity?: number;
   urgencyLevel?: UrgencyType;
   donationDateTime?: string;
@@ -34,7 +35,6 @@ export interface UpdateBloodDonationAttributes {
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
-  createdAt?: string;
 }
 
 export interface DonorRoutingAttributes {
@@ -86,14 +86,26 @@ export interface AcceptDonationRequestAttributes {
   seekerId: string;
   createdAt: string;
   requestPostId: string;
-  acceptanceTime: string;
-  status: string;
+  acceptanceTime?: string;
+  status: AcceptDonationStatus;
   donorName: string;
   phoneNumbers: string[];
 }
 
-export interface DonationStatusManagerAttributes {
+export interface DonationRecordEventAttributes {
+  donorIds: string[];
   seekerId: string;
   requestPostId: string;
-  createdAt: string;
+  requestCreatedAt: string;
+}
+
+export interface DonationRecordAttributes {
+  donorId: string;
+  seekerId: string;
+  requestPostId: string;
+  requestCreatedAt: string;
+  requestedBloodGroup: BloodGroup;
+  location: string;
+  donationDateTime: string;
+  createdAt?: string;
 }

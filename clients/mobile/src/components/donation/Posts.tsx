@@ -1,10 +1,10 @@
-import { FlatList, StyleSheet } from 'react-native'
+import { FlatList, StyleSheet, View, Text } from 'react-native'
 import { PostCard, PostCardDisplayOptions } from './PostCard'
 import { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import React from 'react'
-import StateAwareContainer from '../StateAwareContainer'
+import StateAwareRenderer from '../StateAwareRenderer'
 
 interface PostsProps {
   updatePost?: (donationData: DonationData) => void;
@@ -15,6 +15,7 @@ interface PostsProps {
   cancelPost?: (donationData: DonationData) => void;
   refreshControl?: React.ReactElement;
   displayOptions?: PostCardDisplayOptions;
+  emptyDataMessage?: string;
 }
 
 const Posts: React.FC<PostsProps> = ({
@@ -25,27 +26,32 @@ const Posts: React.FC<PostsProps> = ({
   detailHandler,
   cancelPost,
   refreshControl,
-  displayOptions
+  displayOptions,
+  emptyDataMessage
 }) => {
   const styles = createStyles(useTheme())
 
-  return (
-    <StateAwareContainer loading={loading} errorMessage={errorMessage} data={donationPosts}>
-      <FlatList
-        data={donationPosts}
-        renderItem={({ item }) => (
-          <PostCard
-            post={item}
-            updateHandler={updatePost}
-            detailHandler={detailHandler}
-            cancelHandler={cancelPost}
-            {...displayOptions}
+  const ViewToRender = () => <FlatList
+    data={donationPosts}
+    renderItem={({ item }) => (
+      <PostCard
+        post={item}
+        updateHandler={updatePost}
+        detailHandler={detailHandler}
+        cancelHandler={cancelPost}
+        {...displayOptions}
           />)}
-        keyExtractor={(item) => item.requestPostId}
-        contentContainerStyle={styles.postList}
-        refreshControl={refreshControl}
-      />
-    </StateAwareContainer>
+    ListEmptyComponent={
+      <View style={styles.emptyDataMessage}>
+        <Text>{emptyDataMessage}</Text>
+      </View>
+    }
+    keyExtractor={(item) => item.requestPostId}
+    contentContainerStyle={styles.postList}
+    refreshControl={refreshControl}
+  />
+  return (
+    <StateAwareRenderer loading={loading} errorMessage={errorMessage} data={donationPosts} ViewComponent={ViewToRender} />
   )
 }
 
@@ -62,6 +68,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: theme.colors.textSecondary
+  },
+  emptyDataMessage: {
+    padding: 20,
+    alignItems: 'center'
   },
   errorMessage: {
     color: theme.colors.primary

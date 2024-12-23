@@ -4,52 +4,48 @@ import { useTheme } from '../setup/theme/hooks/useTheme'
 import Loader from './loaders/loader'
 import { Theme } from '../setup/theme'
 
-interface StateAwareContainerProps {
+interface StateAwareRendererProps {
   loading: boolean;
   errorMessage: string | null;
   data: unknown;
-  loadingComponent?: React.ReactElement;
-  errorComponent?: (message: string) => React.ReactElement;
-  emptyComponent?: React.ReactElement;
-  children: React.ReactNode;
+  LoadingComponent?: React.ReactElement;
+  ErrorComponent?: React.ReactElement;
+  EmptyComponent?: React.ReactElement;
+  ViewComponent: () => React.ReactNode;
 }
 
-const StateAwareContainer: React.FC<StateAwareContainerProps> = ({
+const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
   loading,
   errorMessage,
   data,
-  loadingComponent,
-  errorComponent,
-  emptyComponent,
-  children
+  LoadingComponent,
+  ErrorComponent,
+  EmptyComponent,
+  ViewComponent
 }) => {
   const styles = createStyles(useTheme())
 
   if (loading) {
-    return loadingComponent ?? <Loader />
+    return LoadingComponent ?? <Loader />
   }
 
-  if (errorMessage !== null) {
-    return (
-      errorComponent !== undefined
-        ? errorComponent(errorMessage)
-        : <Text style={[styles.messageText, styles.errorMessage]}>{errorMessage}</Text>
-    )
+  if (errorMessage !== null || ErrorComponent !== undefined) {
+    return ErrorComponent ?? <Text style={[styles.messageText, styles.errorMessage]}>{errorMessage}</Text>
   }
 
-  const isEmpty = (data: any): boolean => {
+  const isEmpty = (data: unknown): boolean => {
     if (data === null || data === undefined) return true
     if (typeof data === 'string') return data.trim() === ''
-    if (Array.isArray(data)) return data.length === 0
+    if (Array.isArray(data)) return false
     if (typeof data === 'object') return Object.keys(data).length === 0
     return false
   }
 
   if (isEmpty(data)) {
-    return emptyComponent ?? <Text style={styles.messageText}>No items found.</Text>
+    return EmptyComponent ?? <Text style={styles.messageText}>No items found.</Text>
   }
 
-  return <>{children}</>
+  return <ViewComponent />
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
@@ -64,4 +60,4 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   }
 })
 
-export default StateAwareContainer
+export default StateAwareRenderer

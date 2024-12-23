@@ -1,11 +1,11 @@
 {
-  "AcceptDonationRequestModel": {
+  "UpdateDonationResponseModel": {
     "type": "object",
     "required": [
       "requestPostId",
       "seekerId",
       "createdAt",
-      "acceptanceTime"
+      "status"
     ],
     "properties": {
       "requestPostId": {
@@ -20,16 +20,20 @@
         "type": "string",
         "format": "date-time"
       },
-      "acceptanceTime": {
+      "status": {
         "type": "string",
-        "format": "date-time"
+        "minLength": 1,
+        "enum": [
+          "ACCEPTED",
+          "IGNORED"
+        ]
       }
     },
     "example": {
       "requestPostId": "example01110",
       "seekerId": "123abc",
       "createdAt": "2024-10-20T15:00:00Z",
-      "acceptanceTime": "2024-10-20T15:00:00Z"
+      "status": "ACCEPTED"
     }
   }
 }

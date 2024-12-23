@@ -33,9 +33,9 @@ export const addPersonalInfoHandler = async(payload: Record<string, unknown>, ht
   }
 }
 
-export const getDonarProfile = async(donarId: string, httpClient: HttpClient): Promise<DonationResponse<DonorProfile>> => {
+export const getDonarProfile = async(donorId: string, httpClient: HttpClient): Promise<DonationResponse<DonorProfile>> => {
   try {
-    const response = await httpClient.get<DonationResponse<DonorProfile>>(`/donors/${donarId}`, {})
+    const response = await httpClient.get<DonationResponse<DonorProfile>>(`/donors/${donorId}`, {})
     return {
       message: response.message,
       status: response.status,

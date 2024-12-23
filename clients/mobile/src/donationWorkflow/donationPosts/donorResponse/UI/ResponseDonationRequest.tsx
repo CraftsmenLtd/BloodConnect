@@ -13,6 +13,7 @@ const ResponseDonationRequest = () => {
   const { userProfile } = useUserProfile()
   const {
     bloodRequest,
+    error,
     isLoading,
     handleAcceptRequest,
     handleIgnore,
@@ -104,6 +105,8 @@ const ResponseDonationRequest = () => {
           </View>
         </View>
       </ScrollView>
+
+      {error !== null && <Text style={styles.error}>{error}</Text>}
 
       {userProfile.id !== bloodRequest.seekerId &&
       <View style={styles.buttonContainer}>
