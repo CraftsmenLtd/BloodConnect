@@ -1,0 +1,3 @@
+#set($inputRoot = $input.path('$'))
+#set($context.responseOverride.status = $inputRoot.statusCode)
+$inputRoot.body
