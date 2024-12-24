@@ -54,6 +54,7 @@ async function completeDonationRequest(
 
     const donationDetails = {
       ...donationPost,
+      requestPostId: donationPost.id,
       acceptedDonors
     }
     return generateApiGatewayResponse(

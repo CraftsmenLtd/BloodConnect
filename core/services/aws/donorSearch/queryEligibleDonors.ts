@@ -11,6 +11,7 @@ import {
 import { GeohashCacheManager } from '../../../application/utils/GeohashCacheMapManager'
 import { getDistanceBetweenGeohashes } from '../../../application/utils/geohash'
 import GeohashDynamoDbOperations from '../commons/ddb/GeohashDynamoDbOperations'
+import { createLambdaLogger, LambdaLoggerAttributes } from '../commons/httpLogger/LambdaLogger'
 
 type DonorInfo = {
   userId: string;
@@ -40,7 +41,7 @@ type QueryEligibleDonorsInput = {
 }
 
 type QueryEligibleDonorsOutput = {
-  action: 'EnoughDonorsFound' | 'RetryDonorsSearch';
+  action: 'EnoughDonorsFound' | 'RetryDonorsSearch' | 'HandleSearchError';
   eligibleDonors: EligibleDonorWithUserId[];
 }
 
@@ -52,60 +53,66 @@ const geohashCache = new GeohashCacheManager<string, GeohashDonorMap>(
 const donorSearchService = new DonorSearchService()
 
 async function queryEligibleDonors(
-  event: QueryEligibleDonorsInput
+  event: QueryEligibleDonorsInput & LambdaLoggerAttributes
 ): Promise<QueryEligibleDonorsOutput> {
-  const {
-    seekerId,
-    createdAt,
-    requestPostId,
-    seekerGeohash,
-    requestedBloodGroup,
-    city,
-    eligibleDonors,
-    totalDonorsToNotify
-  } = event
+  const LambdaLogger = createLambdaLogger(event.seekerId)
+  try {
+    const {
+      seekerId,
+      createdAt,
+      requestPostId,
+      seekerGeohash,
+      requestedBloodGroup,
+      city,
+      eligibleDonors,
+      totalDonorsToNotify
+    } = event
 
-  const {
-    currentNeighborSearchLevel,
-    updatedNeighborGeohashes,
-    updatedNeighborLevel
-  } = await getUpdatedNeighborGeohashes(seekerId, createdAt, requestPostId, seekerGeohash)
+    const { currentNeighborSearchLevel, updatedNeighborGeohashes, updatedNeighborLevel } =
+      await getUpdatedNeighborGeohashes(seekerId, createdAt, requestPostId, seekerGeohash)
 
-  if (currentNeighborSearchLevel > Number(process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL)) {
-    return {
-      action: 'EnoughDonorsFound',
-      eligibleDonors
+    if (currentNeighborSearchLevel > Number(process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL)) {
+      return {
+        action: 'EnoughDonorsFound',
+        eligibleDonors
+      }
     }
-  }
 
-  const { newEligibleDonors, processedGeohashCount } = await getNewDonorsInNeighborGeohash(
-    seekerId,
-    requestedBloodGroup,
-    city,
-    seekerGeohash,
-    updatedNeighborGeohashes,
-    transformEligibleDonorsToObject(eligibleDonors),
-    totalDonorsToNotify
-  )
-  const geohashesForNextIteration = updatedNeighborGeohashes.slice(processedGeohashCount)
-
-  await donorSearchService.updateDonorSearch(
-    seekerId,
-    createdAt,
-    requestPostId,
-    geohashesForNextIteration,
-    updatedNeighborLevel,
-    new DynamoDbTableOperations<DonorSearchDTO, DonorSearchFields, DonorSearchModel>(
-      new DonorSearchModel()
+    const { newEligibleDonors, processedGeohashCount } = await getNewDonorsInNeighborGeohash(
+      seekerId,
+      requestedBloodGroup,
+      city,
+      seekerGeohash,
+      updatedNeighborGeohashes,
+      transformEligibleDonorsToObject(eligibleDonors),
+      totalDonorsToNotify
     )
-  )
+    const geohashesForNextIteration = updatedNeighborGeohashes.slice(processedGeohashCount)
 
-  return {
-    action:
-      Object.keys(newEligibleDonors).length >= totalDonorsToNotify
-        ? 'EnoughDonorsFound'
-        : 'RetryDonorsSearch',
-    eligibleDonors: revertEligibleDonorsToArray(newEligibleDonors)
+    await donorSearchService.updateDonorSearch(
+      seekerId,
+      createdAt,
+      requestPostId,
+      geohashesForNextIteration,
+      updatedNeighborLevel,
+      new DynamoDbTableOperations<DonorSearchDTO, DonorSearchFields, DonorSearchModel>(
+        new DonorSearchModel()
+      )
+    )
+
+    return {
+      action:
+        Object.keys(newEligibleDonors).length >= totalDonorsToNotify
+          ? 'EnoughDonorsFound'
+          : 'RetryDonorsSearch',
+      eligibleDonors: revertEligibleDonorsToArray(newEligibleDonors)
+    }
+  } catch (error) {
+    LambdaLogger.error(error)
+    return {
+      action: 'HandleSearchError',
+      eligibleDonors: event.eligibleDonors
+    }
   }
 }
 
@@ -158,15 +165,23 @@ async function getNewDonorsInNeighborGeohash(
   eligibleDonors: Record<string, EligibleDonorInfo>,
   totalDonorsToNotify: number,
   processedGeohashCount: number = 0
-): Promise<{ newEligibleDonors: Record<string, EligibleDonorInfo>; processedGeohashCount: number }> {
-  if (geohashesToProcess.length === 0 ||
+): Promise<{
+    newEligibleDonors: Record<string, EligibleDonorInfo>;
+    processedGeohashCount: number;
+  }> {
+  if (
+    geohashesToProcess.length === 0 ||
     processedGeohashCount >= Number(process.env.MAX_GEOHASHES_PER_PROCESSING_BATCH) ||
-    Object.keys(eligibleDonors).length >= totalDonorsToNotify) {
+    Object.keys(eligibleDonors).length >= totalDonorsToNotify
+  ) {
     return { newEligibleDonors: eligibleDonors, processedGeohashCount }
   }
 
   const geohashToProcess = geohashesToProcess[0]
-  const geohashCachePrefix = geohashToProcess.slice(0, Number(process.env.CACHE_GEOHASH_PREFIX_LENGTH))
+  const geohashCachePrefix = geohashToProcess.slice(
+    0,
+    Number(process.env.CACHE_GEOHASH_PREFIX_LENGTH)
+  )
   const cacheKey = `${city}-${requestedBloodGroup}-${geohashCachePrefix}`
   const cachedGroupedGeohash = geohashCache.get(cacheKey)
 
@@ -175,9 +190,7 @@ async function getNewDonorsInNeighborGeohash(
       city,
       requestedBloodGroup,
       geohashCachePrefix,
-      new GeohashDynamoDbOperations<LocationDTO, LocationFields, LocationModel>(
-        new LocationModel()
-      )
+      new GeohashDynamoDbOperations<LocationDTO, LocationFields, LocationModel>(new LocationModel())
     )
     updateGroupedGeohashCache(queriedDonors, cacheKey)
   }
@@ -222,7 +235,10 @@ function updateGroupedGeohashCache(queriedDonors: LocationDTO[], cacheKey: strin
 
 function groupDonorsByGeohash(queriedDonors: LocationDTO[]): GeohashDonorMap {
   return queriedDonors.reduce<GeohashDonorMap>((groups, donor) => {
-    const donorGeohash = donor.geohash.slice(0, Number(process.env.NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH))
+    const donorGeohash = donor.geohash.slice(
+      0,
+      Number(process.env.NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH)
+    )
     if (groups[donorGeohash] == null) {
       groups[donorGeohash] = []
     }
@@ -234,16 +250,18 @@ function groupDonorsByGeohash(queriedDonors: LocationDTO[]): GeohashDonorMap {
   }, {})
 }
 
-function revertEligibleDonorsToArray(eligibleDonors: Record<string, EligibleDonorInfo>):
-EligibleDonorWithUserId[] {
+function revertEligibleDonorsToArray(
+  eligibleDonors: Record<string, EligibleDonorInfo>
+): EligibleDonorWithUserId[] {
   return Object.entries(eligibleDonors).map(([userId, donor]) => ({
     userId,
     ...donor
   }))
 }
 
-function transformEligibleDonorsToObject(eligibleDonorsArray: EligibleDonorWithUserId[]):
-Record<string, EligibleDonorInfo> {
+function transformEligibleDonorsToObject(
+  eligibleDonorsArray: EligibleDonorWithUserId[]
+): Record<string, EligibleDonorInfo> {
   return eligibleDonorsArray.reduce<Record<string, EligibleDonorInfo>>((accumulator, donor) => {
     const { userId, ...donorInfo } = donor
     accumulator[userId] = donorInfo

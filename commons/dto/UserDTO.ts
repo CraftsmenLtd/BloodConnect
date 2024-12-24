@@ -12,7 +12,7 @@ export type AvailableForDonation = 'yes' | 'no'
 
 export interface UserDetailsDTO extends UserDTO {
   bloodGroup: BloodGroup;
-  lastDonationDate: string;
+  lastDonationDate?: string;
   height: number;
   weight: number;
   gender: Gender;
@@ -22,7 +22,7 @@ export interface UserDetailsDTO extends UserDTO {
   availableForDonation: AvailableForDonation;
   NIDFront: string;
   NIDBack: string;
-  lastVaccinatedDate: string;
+  lastVaccinatedDate?: string;
   createdAt: string;
   updatedAt?: string;
   deviceToken?: string;
