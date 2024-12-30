@@ -7,6 +7,7 @@ import { BloodDonationAttributes } from '../../../../application/bloodDonationWo
 import { donationAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 import BloodDonationOperationError from '../../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
+import { CREATE_DONATION_REQUEST_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../commons/lambda/ApiGateway')
@@ -31,7 +32,7 @@ describe('createBloodDonationLambda', () => {
   })
 
   it('should return a successful response when blood donation is created', async() => {
-    const mockResponse = 'We have accepted your request, and we will let you know when we find a donor.'
+    const mockResponse = CREATE_DONATION_REQUEST_SUCCESS
 
     mockBloodDonationService.prototype.createBloodDonation.mockResolvedValue({
       requestPostId: expect.any(String),

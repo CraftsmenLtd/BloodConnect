@@ -7,6 +7,7 @@ import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import updateUserLambda from '../../user/updateUser'
 import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
 import LocationDynamoDbOperations from '../../commons/ddb/LocationDynamoDbOperations'
+import { UPDATE_PROFILE_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
 jest.mock('../../../../application/userWorkflow/UserService')
 jest.mock('../../commons/ddb/DynamoDbTableOperations')
@@ -49,7 +50,7 @@ describe('updateUserLambda', () => {
       lastVaccinatedDate: '2023-05-01'
     }
 
-    const mockResponse = 'Your Profile info has been updated.'
+    const mockResponse = UPDATE_PROFILE_SUCCESS
     mockedUserService.prototype.updateUser.mockResolvedValue()
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
@@ -122,7 +123,7 @@ describe('updateUserLambda', () => {
       address: undefined
     }
 
-    const mockResponse = 'Your Profile info has been updated.'
+    const mockResponse = UPDATE_PROFILE_SUCCESS
     mockedUserService.prototype.updateUser.mockResolvedValue()
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,

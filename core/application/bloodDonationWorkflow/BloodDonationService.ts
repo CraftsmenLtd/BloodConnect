@@ -43,7 +43,7 @@ export class BloodDonationService {
     if (validationResponse !== null) {
       throw new BloodDonationOperationError(
         `Invalid parameters for blood donation request. ${validationResponse}`,
-        GENERIC_CODES.ERROR
+        GENERIC_CODES.BAD_REQUEST
       )
     }
 
@@ -145,7 +145,7 @@ export class BloodDonationService {
     )
 
     if (item === null) {
-      throw new BloodDonationOperationError('Item not found.', GENERIC_CODES.ERROR)
+      throw new BloodDonationOperationError('Item not found.', GENERIC_CODES.NOT_FOUND)
     }
 
     if (item?.status !== undefined && item.status === DonationStatus.CANCELLED) {
