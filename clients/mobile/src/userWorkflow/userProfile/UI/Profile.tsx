@@ -4,12 +4,21 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
-import { useUserProfile } from '../../context/UserProfileContext'
+import { useUserProfile, UserProfileContextData } from '../../context/UserProfileContext'
 import { useProfile } from '../hooks/useProfile'
-import { UserProfileContextData } from '../../context/UserProfileContext'
 import { SCREENS } from '../../../setup/constant/screens'
 import { EditProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { useNavigation } from '@react-navigation/native'
+
+export interface EditProfileData {
+  phone: string;
+  weight: string;
+  height: string;
+  dateOfBirth: string;
+  name: string;
+  gender: string;
+  [key: string]: any;
+}
 
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
@@ -43,8 +52,8 @@ const Profile: React.FC = () => {
           {renderDetailRow('Age', userDetails.age.toString())}
           {renderDetailRow('Weight (kg)', userDetails.weight.toString())}
           {renderDetailRow('Height (feet)', userDetails.height.toString())}
-          {renderDetailRow('Gender', userDetails.gender)}
           {renderDetailRow('Phone', userDetails.phoneNumbers[0] ?? '')}
+          {renderDetailRow('Gender', userDetails.gender)}
         </View>
       </ScrollView>
 
@@ -53,7 +62,7 @@ const Profile: React.FC = () => {
           buttonStyle={styles.editButton}
           textStyle={styles.editButtonText}
           text='Edit'
-          onPress={() => { navigation.navigate(SCREENS.EDIT_PROFILE, { userDetails:userDetails }) }}
+          onPress={() => { navigation.navigate(SCREENS.EDIT_PROFILE, { userDetails }) }}
         />
       </View>
     </View>

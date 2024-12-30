@@ -6,6 +6,7 @@ import { DonationScreenParams } from '../../donationWorkflow/types'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import { DonorResponseNotification } from '../../donationWorkflow/donorResponse/type'
 import { NotificationData } from '../notification/NotificationData'
+import { EditProfileData } from '../../userWorkflow/userProfile/UI/Profile'
 
 type FromScreen = SCREENS.SET_PASSWORD | SCREENS.FORGOT_PASSWORD
 
@@ -17,7 +18,7 @@ export type RootStackParamList = {
   [SCREENS.SET_PASSWORD]: { routeParams: UserRegistrationCredentials | { email: string; otp: string }; fromScreen: SCREENS };
   [SCREENS.FORGOT_PASSWORD]: undefined;
   [SCREENS.PROFILE]: undefined;
-  [SCREENS.EDIT_PROFILE]: undefined;
+  [SCREENS.EDIT_PROFILE]: { userDetails: EditProfileData};
   [SCREENS.DONATION]: { data: DonationScreenParams | null; isUpdating: boolean };
   [SCREENS.BOTTOM_TABS]: undefined;
   [SCREENS.DONATION_POSTS]: { data: DonationScreenParams | null; isUpdating: boolean };
