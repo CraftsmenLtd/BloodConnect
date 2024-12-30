@@ -52,7 +52,7 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     extra: {
       ...ENV_VARS[environmentConfigs.APP_ENV],
       eas: {
-        projectId: environmentConfigs.EAS_PROJECT_ID
+        projectId: environmentConfigs.EAS_PROJECT_ID?.trim()
       }
     }
   }

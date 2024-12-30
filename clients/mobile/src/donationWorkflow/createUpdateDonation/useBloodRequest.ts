@@ -169,7 +169,7 @@ export const useBloodRequest = (): any => {
         ? await updateBloodDonationRequest()
         : await createBloodDonationRequest()
 
-      if (response.status === 200) {
+      if (response.status === 201 || response.status === 200) {
         void fetchDonationPosts()
         navigation.navigate(SCREENS.POSTS)
       }
