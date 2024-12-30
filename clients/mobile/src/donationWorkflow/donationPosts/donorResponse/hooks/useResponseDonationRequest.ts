@@ -5,6 +5,9 @@ import { SCREENS } from '../../../../setup/constant/screens'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
 import { PostScreenNavigationProp, RequestPreviewRouteProp } from '../../../../setup/navigation/navigationTypes'
 import { STATUS } from '../../../types'
+import { scheduleNotification } from '../../../../setup/notification/scheduleNotification'
+import { LOCAL_NOTIFICATION_TYPE, REMINDER_NOTIFICATION_BODY, REMINDER_NOTIFICATION_TITLE, REMINDING_HOURS_BEFORE_DONATION } from '../../../../setup/constant/consts'
+import { replaceTemplatePlaceholders } from '../../../../utility/formatting'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -42,6 +45,24 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     }
   }, [bloodRequest, navigation])
 
+  const handleNotification = (donationDateTime: string | Date): void => {
+    const donationTime = new Date(donationDateTime)
+
+    REMINDING_HOURS_BEFORE_DONATION.forEach((hoursBefore) => {
+      const reminderTime = new Date(donationTime.getTime() - hoursBefore * 60 * 1000)
+      const content = {
+        title: hoursBefore === 1
+          ? REMINDER_NOTIFICATION_TITLE.FINAL
+          : replaceTemplatePlaceholders(REMINDER_NOTIFICATION_TITLE.DEFAULT, hoursBefore.toString()),
+        body: hoursBefore === 1
+          ? REMINDER_NOTIFICATION_BODY.FINAL
+          : replaceTemplatePlaceholders(REMINDER_NOTIFICATION_BODY.DEFAULT, hoursBefore.toString()),
+        data: { payload: { }, type: LOCAL_NOTIFICATION_TYPE.REMINDER }
+      }
+      void scheduleNotification({ date: reminderTime }, content)
+    })
+  }
+
   const handleAcceptRequest = async(): Promise<void> => {
     if (bloodRequest === null) return
 
@@ -57,6 +78,10 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     try {
       const response: FetchResponse = await fetchClient.patch('/donations/responses', requestPayload)
       if (response.status === 200) {
+        if (bloodRequest !== null) {
+          const testDonationTime = new Date(new Date().getTime() + 6 * 60 * 1000)
+          handleNotification(testDonationTime)
+        }
         setIsRequestAccepted(true)
       } else {
         const errorMessage = `Error: ${response.status} ${response.statusText ?? 'Unknown error'}`

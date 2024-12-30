@@ -1,11 +1,11 @@
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { SCREENS } from '../../setup/constant/screens'
-import { DonarResponseRouteProp, RootStackParamList } from '../../setup/navigation/navigationTypes'
+import { DonorResponseRouteProp, RootStackParamList } from '../../setup/navigation/navigationTypes'
 
 export const useDonationResponse = (): any => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, SCREENS.DONAR_RESPONSE>>()
-  const route = useRoute<DonarResponseRouteProp>()
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, SCREENS.DONOR_RESPONSE>>()
+  const route = useRoute<DonorResponseRouteProp>()
 
   const seeDetails = (): void => {
     navigation.replace(SCREENS.DETAIL_POST, {
