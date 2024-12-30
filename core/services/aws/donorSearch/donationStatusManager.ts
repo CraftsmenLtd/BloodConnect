@@ -16,6 +16,7 @@ import {
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 import { AcceptDonationService } from 'core/application/bloodDonationWorkflow/AcceptDonationRequestService'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
@@ -27,7 +28,7 @@ async function donationStatusManager(event: SQSEvent): Promise<{ status: string 
     }
     return { status: 'Success' }
   } catch (error) {
-    throw error instanceof Error ? error : new Error('An unknown error occurred')
+    throw error instanceof Error ? error : new Error(UNKNOWN_ERROR_MESSAGE)
   }
 }
 

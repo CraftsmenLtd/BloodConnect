@@ -84,6 +84,11 @@
                   "Variable": "$.checkDonorSearchResult.action",
                   "StringEquals": "RetryDonorsSearch",
                   "Next": "RetryDonorsSearch"
+                },
+                {
+                  "Variable": "$.checkDonorSearchResult.action",
+                  "StringEquals": "HandleSearchError",
+                  "Next": "EnoughDonorsFound"
                 }
               ],
               "Default": "EnoughDonorsFound"

@@ -36,6 +36,7 @@ import DonationNotificationModel, {
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
 import { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
@@ -142,7 +143,7 @@ async function acceptDonationRequest(
     )
   } catch (error) {
     httpLogger.error(error)
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
 }

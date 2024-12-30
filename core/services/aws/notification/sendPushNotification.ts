@@ -24,6 +24,7 @@ import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbO
 import DonationNotificationModel, {
   BloodDonationNotificationFields
 } from '../../../application/models/dbModels/DonationNotificationModel'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(
   MAX_LOCAL_CACHE_SIZE_COUNT
@@ -39,7 +40,7 @@ async function sendPushNotification(event: SQSEvent): Promise<{ status: string }
     }
     return { status: 'Success' }
   } catch (error) {
-    throw error instanceof Error ? error : new Error('An unknown error occurred')
+    throw error instanceof Error ? error : new Error(UNKNOWN_ERROR_MESSAGE)
   }
 }
 

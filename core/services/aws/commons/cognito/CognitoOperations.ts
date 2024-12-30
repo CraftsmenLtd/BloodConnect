@@ -3,6 +3,7 @@ import {
   AdminUpdateUserAttributesCommand
 } from '@aws-sdk/client-cognito-identity-provider'
 import { UpdateCognitoAttributes } from '../../../../application/models/cognito/CognitoModel'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
 const cognitoClient = new CognitoIdentityProviderClient({
   region: process.env.AWS_REGION
@@ -29,7 +30,7 @@ export async function updateCognitoUserInfo({
     await cognitoClient.send(command)
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred'
+      error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     throw new Error(
       `Failed to update user attributes in Cognito: ${errorMessage}`
     )

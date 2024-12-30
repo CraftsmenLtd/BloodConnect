@@ -109,3 +109,14 @@ export interface DonationRecordAttributes {
   donationDateTime: string;
   createdAt?: string;
 }
+
+export type GetDonationRequestAttributes = {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+}
+
+export type BloodDonationResponseAttributes = {
+  requestPostId: string;
+  createdAt: string;
+}

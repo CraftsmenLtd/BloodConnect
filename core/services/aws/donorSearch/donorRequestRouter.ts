@@ -12,6 +12,7 @@ import {
 } from '../../../application/models/dbModels/DonorSearchModel'
 import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
 import { UserService } from '../../../application/userWorkflow/UserService'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const donorSearchService = new DonorSearchService()
 const userService = new UserService()
@@ -21,7 +22,7 @@ async function donorRequestRouter(event: SQSEvent): Promise<{ status: string }> 
     try {
       await processSQSRecord(record)
     } catch (error) {
-      throw error instanceof Error ? error : new Error('An unknown error occurred')
+      throw error instanceof Error ? error : new Error(UNKNOWN_ERROR_MESSAGE)
     }
   }
   return { status: 'Success' }

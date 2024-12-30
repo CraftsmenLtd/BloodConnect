@@ -14,6 +14,7 @@ import {
   createHTTPLogger,
   HttpLoggerAttributes
 } from '../commons/httpLogger/HttpLogger'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const notificationService = new NotificationService()
 
@@ -42,7 +43,7 @@ async function registerUserDevice(
   } catch (error) {
     httpLogger.error(error)
     const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred'
+      error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     const errorCode =
       error instanceof BloodDonationOperationError
         ? error.errorCode

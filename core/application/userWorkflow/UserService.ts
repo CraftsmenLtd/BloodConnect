@@ -16,44 +16,32 @@ import {
 import Repository from '../models/policies/repositories/Repository'
 import { UserAttributes, UpdateUserAttributes } from './Types'
 import { generateGeohash } from '../utils/geohash'
-import {
-  QueryConditionOperator,
-  QueryInput
-} from '../models/policies/repositories/QueryTypes'
-import LocationModel, {
-  LocationFields
-} from '../models/dbModels/LocationModel'
 import { differenceInYears, differenceInMonths } from 'date-fns'
 import { BloodGroup } from '../../../commons/dto/DonationDTO'
+import LocationRepository from '../models/policies/repositories/LocationRepository'
 
 export class UserService {
   async createNewUser(
     userAttributes: UserAttributes,
     userRepository: Repository<UserDTO>
   ): Promise<UserDTO> {
-    try {
-      return userRepository.create({
+    return userRepository
+      .create({
         id: generateUniqueID(),
         email: userAttributes.email,
         name: userAttributes.name,
         phoneNumbers: userAttributes.phoneNumbers
       })
-    } catch (error) {
-      throw new UserOperationError(
-        `Failed to create new user. Error: ${error}`,
-        GENERIC_CODES.ERROR
-      )
-    }
+      .catch((error) => {
+        throw new UserOperationError(`Failed to create new user. ${error}`, GENERIC_CODES.ERROR)
+      })
   }
 
   getPostSignUpMessage(userName: string, securityCode: string): GenericMessage {
     return getEmailVerificationMessage(userName, securityCode)
   }
 
-  getForgotPasswordMessage(
-    userName: string,
-    securityCode: string
-  ): GenericMessage {
+  getForgotPasswordMessage(userName: string, securityCode: string): GenericMessage {
     return getPasswordResetVerificationMessage(userName, securityCode)
   }
 
@@ -65,11 +53,8 @@ export class UserService {
     userId: string,
     userRepository: Repository<UserDetailsDTO>
   ): Promise<UserDetailsDTO> {
-    const userProfile = await userRepository.getItem(
-      `USER#${userId}`,
-      'PROFILE'
-    )
-    if (userProfile == null) {
+    const userProfile = await userRepository.getItem(`USER#${userId}`, 'PROFILE')
+    if (userProfile === null) {
       throw new Error('User not found')
     }
     return userProfile
@@ -78,54 +63,50 @@ export class UserService {
   async updateUser(
     userAttributes: UpdateUserAttributes,
     userRepository: Repository<UserDetailsDTO>,
-    locationRepository: Repository<LocationDTO>,
-    model: LocationModel
-  ): Promise<string> {
-    try {
-      const { userId, preferredDonationLocations, ...restAttributes } =
-        userAttributes
-      const updateData: Partial<UserDetailsDTO> = {
-        ...restAttributes,
-        id: userId,
-        updatedAt: new Date().toISOString()
-      }
+    locationRepository: LocationRepository<LocationDTO>
+  ): Promise<void> {
+    const { userId, preferredDonationLocations, ...restAttributes } = userAttributes
+    const updateData: Partial<UserDetailsDTO> = {
+      ...restAttributes,
+      id: userId,
+      updatedAt: new Date().toISOString()
+    }
 
-      updateData.age = this.calculateAge(userAttributes.dateOfBirth)
-      updateData.availableForDonation = this.calculateAvailableForDonation(
-        userAttributes.lastDonationDate,
-        userAttributes.availableForDonation
-      )
+    updateData.age = this.calculateAge(userAttributes.dateOfBirth)
+    updateData.availableForDonation = this.checkLastDonationDate(
+      userAttributes.lastDonationDate,
+      userAttributes.availableForDonation
+    )
 
-      await userRepository.update(updateData)
-      await this.updateUserLocation(
-        model,
-        userId,
-        locationRepository,
-        preferredDonationLocations,
-        updateData
-      )
-      return 'Updated your Profile info'
-    } catch (error) {
+    await userRepository.update(updateData).catch((error) => {
+      throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
+    })
+
+    await this.updateUserLocation(
+      userId,
+      preferredDonationLocations,
+      updateData,
+      locationRepository
+    ).catch((error) => {
       throw new UserOperationError(
-        `Failed to update user. Error: ${error}`,
+        `Failed to update user location. Error: ${error}`,
         GENERIC_CODES.ERROR
       )
-    }
+    })
   }
 
-  private calculateAvailableForDonation(
-    lastDonationDate: string,
+  private checkLastDonationDate(
+    lastDonationDate: string | undefined,
     availableForDonation: AvailableForDonation
   ): AvailableForDonation {
-    if (lastDonationDate !== '') {
+    if (lastDonationDate !== undefined && lastDonationDate !== '') {
       const donationDate = new Date(lastDonationDate)
       const currentDate = new Date()
 
       if (!isNaN(donationDate.getTime())) {
         const donationMonths = differenceInMonths(currentDate, donationDate)
-        return donationMonths >
-          Number(process.env.MIN_MONTHS_BETWEEN_DONATIONS)
-          ? 'yes'
+        return donationMonths > Number(process.env.MIN_MONTHS_BETWEEN_DONATIONS)
+          ? availableForDonation
           : 'no'
       }
     }
@@ -145,40 +126,18 @@ export class UserService {
   }
 
   private async updateUserLocation(
-    model: LocationModel,
     userId: string,
-    locationRepository: Repository<LocationDTO, Record<string, unknown>>,
     preferredDonationLocations: LocationDTO[],
-    userAttributes: Partial<UserDetailsDTO>
+    userAttributes: Partial<UserDetailsDTO>,
+    locationRepository: LocationRepository<LocationDTO, Record<string, unknown>>
   ): Promise<void> {
-    const primaryIndex = model.getPrimaryIndex()
-    const query: QueryInput<LocationFields> = {
-      partitionKeyCondition: {
-        attributeName: primaryIndex.partitionKey,
-        operator: QueryConditionOperator.EQUALS,
-        attributeValue: `USER#${userId}`
-      }
-    }
+    if (
+      preferredDonationLocations !== undefined &&
+      preferredDonationLocations.length !== 0 &&
+      userAttributes.city !== undefined
+    ) {
+      await locationRepository.deleteUserLocations(userId)
 
-    if (primaryIndex.sortKey != null) {
-      query.sortKeyCondition = {
-        attributeName: primaryIndex.sortKey,
-        operator: QueryConditionOperator.BEGINS_WITH,
-        attributeValue: 'LOCATION#'
-      }
-    }
-
-    const existingLocations = await locationRepository.query(
-      query as QueryInput<Record<string, unknown>>
-    )
-    for (const location of existingLocations.items) {
-      await locationRepository.delete(
-        `USER#${userId}`,
-        `LOCATION#${location.locationId}`
-      )
-    }
-
-    if (preferredDonationLocations != null) {
       for (const location of preferredDonationLocations) {
         const locationData: LocationDTO = {
           userId: `${userId}`,
@@ -189,8 +148,7 @@ export class UserService {
           longitude: location.longitude,
           geohash: generateGeohash(location.latitude, location.longitude),
           bloodGroup: userAttributes.bloodGroup as BloodGroup,
-          availableForDonation:
-            userAttributes.availableForDonation as AvailableForDonation,
+          availableForDonation: userAttributes.availableForDonation as AvailableForDonation,
           lastVaccinatedDate: `${userAttributes.lastVaccinatedDate}`,
           createdAt: new Date().toISOString()
         }
@@ -204,20 +162,14 @@ export class UserService {
     userRepository: Repository<UserDetailsDTO>
   ): Promise<string> {
     try {
-      const userProfile = await userRepository.getItem(
-        `USER#${userId}`,
-        'PROFILE'
-      )
+      const userProfile = await userRepository.getItem(`USER#${userId}`, 'PROFILE')
       if (userProfile?.snsEndpointArn == null) {
         throw new Error('User has no registered device for notifications')
       }
 
       return userProfile.snsEndpointArn
     } catch (error) {
-      throw new UserOperationError(
-        `Failed to update user. Error: ${error}`,
-        GENERIC_CODES.ERROR
-      )
+      throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
 }
