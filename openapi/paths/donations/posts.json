@@ -41,6 +41,11 @@
             "schema": {
               "type": "string"
             }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            }
           }
         },
         "content": {}
