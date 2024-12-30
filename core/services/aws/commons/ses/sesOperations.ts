@@ -1,6 +1,6 @@
 import { SESClient, SendEmailCommand, SendEmailCommandInput } from '@aws-sdk/client-ses'
 import { GenericMessage } from '../../../../../commons/dto/MessageDTO'
-import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages';
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
 const sesClient = new SESClient({ region: process.env.AWS_REGION })
 

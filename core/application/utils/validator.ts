@@ -1,4 +1,4 @@
-import { UNKNOWN_ERROR_MESSAGE } from "../../../commons/libs/constants/ApiResponseMessages"
+import { UNKNOWN_ERROR_MESSAGE } from '../../../commons/libs/constants/ApiResponseMessages'
 
 export function validateDonationDateTime(donationDateTime: string): null {
   const now = new Date()
