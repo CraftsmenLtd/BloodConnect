@@ -12,7 +12,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   gradientBottom: {
     flex: 1,
-    backgroundColor: '#fbeee6',
+    backgroundColor: theme.colors.gradientBackground,
     opacity: 0.8
   },
   scrollContent: {
@@ -21,9 +21,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   infoContainer: {
     padding: 16
-  },
-  inputFieldStyle: {
-    // marginBottom: 16
   },
   inputStyle: {
     backgroundColor: theme.colors.white

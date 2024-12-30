@@ -11,7 +11,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     paddingVertical: 16
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.white,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: theme.colors.lightGrey
@@ -23,24 +23,14 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   label: {
     fontSize: 14,
-    color: '#757575',
+    color: theme.colors.textSecondary,
     textTransform: 'capitalize',
     marginBottom: 4
   },
   value: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#000'
-  },
-  input: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#000',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 8,
-    backgroundColor: '#f9f9f9'
+    color: theme.colors.black
   },
   buttonContainer: {
     padding: 16,
