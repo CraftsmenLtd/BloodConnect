@@ -77,16 +77,20 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     }
     try {
       const response: FetchResponse = await fetchClient.patch('/donations/responses', requestPayload)
-      if (response.status === 200) {
-        if (bloodRequest !== null) {
-          const testDonationTime = new Date(new Date().getTime() + 6 * 60 * 1000)
-          handleNotification(testDonationTime)
-        }
-        setIsRequestAccepted(true)
-      } else {
+      if (response.status !== 200) {
         const errorMessage = `Error: ${response.status} ${response.statusText ?? 'Unknown error'}`
         throw new Error(errorMessage)
       }
+
+      if (bloodRequest === null ||
+        !(bloodRequest.donationDateTime instanceof Date ||
+        typeof bloodRequest.donationDateTime === 'string' ||
+        typeof bloodRequest.donationDateTime === 'number')) {
+        return
+      }
+
+      handleNotification(new Date(bloodRequest.donationDateTime))
+      setIsRequestAccepted(true)
     } catch (error) {
       const errorMessage = error instanceof Error && typeof error.message === 'string'
         ? error.message

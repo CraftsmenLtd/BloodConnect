@@ -6,22 +6,22 @@ type NotificationTrigger =
   | { repeats: boolean; interval: 'minute' | 'hour' | 'day' | 'week' }
 
 export const scheduleNotification = async(trigger: NotificationTrigger, content: Notifications.NotificationContentInput): Promise<void> => {
-  let notificationTrigger: Notifications.NotificationTriggerInput
+  await Notifications.scheduleNotificationAsync({ content, trigger: notificationTrigger(trigger) })
+}
 
+const notificationTrigger = (trigger: NotificationTrigger): Notifications.NotificationTriggerInput => {
   if ('date' in trigger) {
-    notificationTrigger = trigger.date
+    return trigger.date
   } else if ('seconds' in trigger) {
-    notificationTrigger = { seconds: trigger.seconds }
+    return { seconds: trigger.seconds }
   } else if ('repeats' in trigger) {
-    notificationTrigger = {
+    return {
       seconds: calculateIntervalInSeconds(trigger.interval),
       repeats: trigger.repeats
     }
   } else {
     throw new Error('Invalid notification trigger format.')
   }
-
-  await Notifications.scheduleNotificationAsync({ content, trigger: notificationTrigger })
 }
 
 const calculateIntervalInSeconds = (interval: 'minute' | 'hour' | 'day' | 'week'): number => {
