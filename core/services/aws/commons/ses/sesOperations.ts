@@ -1,5 +1,6 @@
 import { SESClient, SendEmailCommand, SendEmailCommandInput } from '@aws-sdk/client-ses'
 import { GenericMessage } from '../../../../../commons/dto/MessageDTO'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages';
 
 const sesClient = new SESClient({ region: process.env.AWS_REGION })
 
@@ -34,7 +35,7 @@ export async function sendAppUserWelcomeMail({ email, emailContent }: SendWelcom
   try {
     await sesClient.send(new SendEmailCommand(emailParams))
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     throw new Error(`Failed to send welcome email: ${errorMessage}`)
   }
 }

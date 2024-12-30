@@ -24,6 +24,7 @@ import {
 import { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
 interface CreateUpdateExpressionsReturnType {
   updateExpression: string[];
@@ -277,7 +278,7 @@ export default class DynamoDbTableOperations<
       )
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'An unknown error occurred'
+        error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
       throw new Error(
         `Failed to update item in ${this.getTableName()}. Error: ${errorMessage}`
       )
@@ -331,7 +332,7 @@ export default class DynamoDbTableOperations<
       await this.client.send(new DeleteCommand(input))
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'An unknown error occurred'
+        error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
       throw new Error(
         `Failed to delete item in ${this.getTableName()}. Error: ${errorMessage}`
       )

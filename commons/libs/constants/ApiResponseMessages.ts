@@ -2,3 +2,4 @@ export const CREATE_DONATION_REQUEST_SUCCESS = 'We have accepted your request, a
 export const UPDATE_DONATION_REQUEST_SUCCESS = 'We have updated your request and will let you know once there is an update.'
 export const CREATE_PROFILE_SUCCESS = 'Your Profile info has been created.'
 export const UPDATE_PROFILE_SUCCESS = 'Your Profile info has been updated.'
+export const UNKNOWN_ERROR_MESSAGE = 'An unknown error occurred'

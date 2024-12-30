@@ -1,3 +1,5 @@
+import { UNKNOWN_ERROR_MESSAGE } from "../../../commons/libs/constants/ApiResponseMessages"
+
 export function validateDonationDateTime(donationDateTime: string): null {
   const now = new Date()
   const donationDate = new Date(donationDateTime)
@@ -34,7 +36,7 @@ export function validateInputWithRules<T extends Record<string, unknown>>(
           return `${key}: ${result}`
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+        const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
         return errorMessage
       }
     }

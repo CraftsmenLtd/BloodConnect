@@ -8,7 +8,7 @@ import LocationModel from '../../../application/models/dbModels/LocationModel'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
-import { CREATE_PROFILE_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { CREATE_PROFILE_SUCCESS, UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
 
 async function createUserLambda(
@@ -36,7 +36,7 @@ async function createUserLambda(
     )
   } catch (error) {
     httpLogger.error(error)
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
 }

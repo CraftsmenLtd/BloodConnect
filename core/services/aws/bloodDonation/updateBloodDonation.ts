@@ -17,7 +17,7 @@ import DonationNotificationModel, {
   BloodDonationNotificationFields
 } from '../../..//application/models/dbModels/DonationNotificationModel'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
-import { UPDATE_DONATION_REQUEST_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { UNKNOWN_ERROR_MESSAGE, UPDATE_DONATION_REQUEST_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [
   'bloodQuantity',
@@ -84,7 +84,7 @@ async function updateBloodDonationLambda(
     )
   } catch (error) {
     httpLogger.error(error)
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
 }

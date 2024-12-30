@@ -20,6 +20,7 @@ import {
   AcceptedDonationFields
 } from '../../../application/models/dbModels/AcceptDonationModel'
 import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
@@ -67,7 +68,7 @@ async function completeDonationRequest(
     )
   } catch (error) {
     httpLogger.error(error)
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     const errorCode =
       error instanceof DonationRecordOperationError ? error.errorCode : HTTP_CODES.ERROR
     return generateApiGatewayResponse(`Error: ${errorMessage}`, errorCode)
