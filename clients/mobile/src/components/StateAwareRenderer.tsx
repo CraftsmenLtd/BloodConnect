@@ -5,8 +5,9 @@ import Loader from './loaders/loader'
 import { Theme } from '../setup/theme'
 
 interface StateAwareRendererProps {
-  loading: boolean;
+  loading?: boolean;
   errorMessage: string | null;
+  showEmptyMessageForEmptyArray?: boolean;
   data: unknown;
   LoadingComponent?: React.ReactElement;
   ErrorComponent?: React.ReactElement;
@@ -21,11 +22,12 @@ const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
   LoadingComponent,
   ErrorComponent,
   EmptyComponent,
-  ViewComponent
+  ViewComponent,
+  showEmptyMessageForEmptyArray = false
 }) => {
   const styles = createStyles(useTheme())
 
-  if (loading) {
+  if (loading !== undefined && loading) {
     return LoadingComponent ?? <Loader />
   }
 
@@ -36,12 +38,12 @@ const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
   const isEmpty = (data: unknown): boolean => {
     if (data === null || data === undefined) return true
     if (typeof data === 'string') return data.trim() === ''
-    if (Array.isArray(data)) return false
+    if (Array.isArray(data)) return data.length === 0
     if (typeof data === 'object') return Object.keys(data).length === 0
     return false
   }
 
-  if (isEmpty(data)) {
+  if (isEmpty(data) && (showEmptyMessageForEmptyArray || !Array.isArray(data))) {
     return EmptyComponent ?? <Text style={styles.messageText}>No items found.</Text>
   }
 

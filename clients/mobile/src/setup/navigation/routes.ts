@@ -10,10 +10,12 @@ import ForgotPassword from '../../authentication/forgotPassword/UI/ForgotPasswor
 import AddPersonalInfo from '../../userWorkflow/personalInfo/UI/AddPersonalInfo'
 import ResponseDonationRequest from '../../donationWorkflow/donationPosts/donorResponse/UI/ResponseDonationRequest'
 import Detail from '../../myActivity/myPosts/details/Detail'
-import DonarProfile from '../../myActivity/donorProfile/DonarProfile'
+import DonorProfile from '../../myActivity/donorProfile/DonorProfile'
 import DonorResponse from '../../donationWorkflow/donorResponse/DonorResponse'
 import { Account } from '../../userWorkflow/account/UI/Account'
 import Profile from '../../userWorkflow/Profile'
+import RequestStatusScreen from '../../myActivity/donorTracking/bloodRequestStatus/RequestStatusScreen'
+import DonorConfirmationScreen from '../../myActivity/donorTracking/donorConfirmation/DonorConfirmationScreen'
 
 export const routes = [
   {
@@ -89,13 +91,13 @@ export const routes = [
     protected: true
   },
   {
-    name: SCREENS.DONAR_PROFILE,
-    component: DonarProfile,
+    name: SCREENS.DONOR_PROFILE,
+    component: DonorProfile,
     options: { headerShown: true, headerTitle: 'Profile' },
     protected: true
   },
   {
-    name: SCREENS.DONAR_RESPONSE,
+    name: SCREENS.DONOR_RESPONSE,
     component: DonorResponse,
     options: { headerShown: true },
     protected: true
@@ -104,6 +106,18 @@ export const routes = [
     name: SCREENS.PROFILE,
     component: Profile,
     options: { headerShown: true, headerTitle: 'Account' },
+    protected: true
+  },
+  {
+    name: SCREENS.REQUEST_STATUS,
+    component: RequestStatusScreen,
+    options: { headerShown: true, headerTitle: '' },
+    protected: true
+  },
+  {
+    name: SCREENS.DONOR_CONFIRMATION,
+    component: DonorConfirmationScreen,
+    options: { headerShown: true, headerTitle: '' },
     protected: true
   }
 ]
