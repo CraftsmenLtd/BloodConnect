@@ -34,6 +34,8 @@ interface UseAccountReturnType {
 
 export const useAccount = (): UseAccountReturnType => {
   const { userProfile } = useUserProfile()
+  console.log(userProfile);
+  
 
   const auth = useAuth()
   const fetchClient = useFetchClient()

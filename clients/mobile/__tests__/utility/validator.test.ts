@@ -113,13 +113,13 @@ describe('Validation Functions', () => {
       const today = new Date()
       const fourteenYearsAgo = new Date(today)
       fourteenYearsAgo.setFullYear(today.getFullYear() - 14)
-      expect(validateDateOfBirth(fourteenYearsAgo.toISOString().split('T')[0])).toBe('User must be at least 15 years old.')
+      expect(validateDateOfBirth(fourteenYearsAgo.toISOString().split('T')[0])).toBe('User must be at least 18 years old.')
     })
 
     it('should return null for ages 15 and over', () => {
       const today = new Date()
       const fifteenYearsAgo = new Date(today)
-      fifteenYearsAgo.setFullYear(today.getFullYear() - 16) // Using 16 to ensure we're well over 15
+      fifteenYearsAgo.setFullYear(today.getFullYear() - 16)
       expect(validateDateOfBirth(fifteenYearsAgo.toISOString().split('T')[0])).toBeNull()
     })
   })
