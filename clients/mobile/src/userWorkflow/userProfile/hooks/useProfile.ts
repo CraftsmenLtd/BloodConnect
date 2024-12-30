@@ -1,6 +1,4 @@
-import { useState, useMemo } from 'react'
-import { User } from '../../account/hooks/useAccount'
-import { UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
+import { useMemo } from 'react'
 import { useUserProfile } from '../../context/UserProfileContext'
 
 type Gender = 'male' | 'female' | 'other'
@@ -51,7 +49,6 @@ const defaultProfile: UserProfile = {
 
 export const useProfile = (): { userDetails: UserProfileDetails } => {
   const { userProfile } = useUserProfile()
-  //   const [userDetails, setUserDetails] = useState(userProfile)
   const normalizeProfile = (profile: UserProfile): UserProfile => ({
     ...defaultProfile,
     ...profile,
