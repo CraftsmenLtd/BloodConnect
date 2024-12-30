@@ -1,11 +1,5 @@
 import { HttpClient } from '../../setup/clients/HttpClient'
-
-export interface DonationResponse<T = undefined> {
-  success?: boolean;
-  message?: string;
-  status?: number;
-  data?: T;
-}
+import { ApiResponse } from '../../setup/clients/response'
 
 export type preferredDonationLocations = { area: string; city: string }
 
@@ -20,9 +14,9 @@ export interface DonorProfile {
   preferredDonationLocations?: preferredDonationLocations[];
 }
 
-export const addPersonalInfoHandler = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+export const addPersonalInfoHandler = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<ApiResponse> => {
   try {
-    const response = await httpClient.patch<DonationResponse>('/users', payload)
+    const response = await httpClient.patch<ApiResponse>('/users', payload)
     return {
       message: response.message,
       status: response.status
@@ -33,9 +27,9 @@ export const addPersonalInfoHandler = async(payload: Record<string, unknown>, ht
   }
 }
 
-export const getDonarProfile = async(donorId: string, httpClient: HttpClient): Promise<DonationResponse<DonorProfile>> => {
+export const getDonorProfile = async(donorId: string, httpClient: HttpClient): Promise<ApiResponse<DonorProfile>> => {
   try {
-    const response = await httpClient.get<DonationResponse<DonorProfile>>(`/donors/${donorId}`, {})
+    const response = await httpClient.get<ApiResponse<DonorProfile>>(`/donors/${donorId}`, {})
     return {
       message: response.message,
       status: response.status,
