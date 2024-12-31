@@ -6,23 +6,39 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
 }
 
 export const parseErrorMessage = (message: string): string | null => {
-  const parsedError = parseJsonData<{ message: string }>(message)
-  return parsedError !== null && typeof parsedError.message === 'string' ? parsedError.message : null
+  try {
+    const parsedError = parseJsonData<{ message: string }>(message)
+    return parsedError !== null && typeof parsedError.message === 'string' ? parsedError.message : null
+  } catch (error) {
+    return null
+  }
 }
 
 export const extractErrorMessage = (error: unknown): string => {
-  if (error instanceof Error) {
-    const message = error.message
-    const parsedMessage = parseErrorMessage(message)
-    if (parsedMessage !== null) return parsedMessage
-  }
+  try {
+    if (error instanceof Error) {
+      const parsedMessage = parseErrorMessage(error.message)
+      if (parsedMessage !== null) return parsedMessage
+      return error.message
+    }
 
-  if (typeof error === 'string') {
-    const parsedMessage = parseErrorMessage(error)
-    if (parsedMessage !== null) return parsedMessage
-  }
+    if (typeof error === 'string') {
+      const parsedMessage = parseErrorMessage(error)
+      if (parsedMessage !== null) return parsedMessage
+      return error
+    }
 
-  return 'An unknown error occurred'
+    if (typeof error === 'object' && error !== null && 'message' in error) {
+      const message = (error as { message: string }).message
+      const parsedMessage = parseErrorMessage(message)
+      if (parsedMessage !== null) return parsedMessage
+      return message
+    }
+
+    return 'An unknown error occurred'
+  } catch (e) {
+    return 'An unknown error occurred'
+  }
 }
 
 export const formatBloodQuantity = (bloodQuantity: string): string => {

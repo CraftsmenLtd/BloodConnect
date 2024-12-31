@@ -28,7 +28,7 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
   const { userProfile } = useUserProfile()
   const fetchClient = useFetchClient()
 
-  const { executeFunction: fetchDonationPosts, loading, error: errorMessage, data } = useFetchData(async() => {
+  const [fetchDonationPosts, loading, data, errorMessage] = useFetchData(async() => {
     const response = await fetchDonationList({}, fetchClient)
 
     if (response.data !== undefined && response.data.length > 0) {

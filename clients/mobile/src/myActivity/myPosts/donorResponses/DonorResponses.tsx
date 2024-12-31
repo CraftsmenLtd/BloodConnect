@@ -4,7 +4,7 @@ import { COMMON_URLS } from '../../../setup/constant/commonUrls'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
 
-interface DonorItem {
+export interface DonorItem {
   donorId: string;
   donorName: string;
 }

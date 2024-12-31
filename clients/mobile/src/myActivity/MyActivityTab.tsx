@@ -44,6 +44,7 @@ const MyActivityTab = () => {
               updatePost={updatePost}
               errorMessage={errorMessage}
               detailHandler={detailHandler}
+              emptyDataMessage="No posts found."
               cancelPost={cancelPost}
             />
             {showToast != null && <Toast
@@ -56,6 +57,7 @@ const MyActivityTab = () => {
             donationPosts={myResponses}
             loading={myResponsesLoading}
             errorMessage={myResponsesError}
+            emptyDataMessage="You haven't responded to any of the posts. Pull to refresh."
             detailHandler={detailHandler}
             displayOptions={{ showOptions: false, showButton: false, showStatus: true }}
             refreshControl={

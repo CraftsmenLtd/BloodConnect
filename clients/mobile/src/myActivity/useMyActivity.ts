@@ -30,7 +30,7 @@ export const useMyActivity = (): any => {
   const [isLoading, setIsLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
 
-  const { executeFunction: getMyResponses, loading: myResponsesLoading, error: myResponsesError, data: myResponses } = useFetchData(async() => {
+  const [getMyResponses, myResponsesLoading, myResponses, myResponsesError] = useFetchData(async() => {
     const response = await fetchMyResponses({}, fetchClient)
     if (response.data !== undefined && response.data.length > 0) {
       return formatDonations(response.data)
@@ -39,7 +39,8 @@ export const useMyActivity = (): any => {
   }, { shouldExecuteOnMount: true, parseError: extractErrorMessage })
 
   const updatePost = (donationData: DonationData): void => {
-    navigation.navigate(SCREENS.DONATION, { data: { ...donationData }, isUpdating: true })
+    const { status, acceptedDonors, ...rest } = donationData
+    navigation.navigate(SCREENS.DONATION, { data: rest, isUpdating: true })
   }
 
   const detailHandler = (donationData: DonationData): void => {

@@ -1,8 +1,8 @@
 import { useRoute } from '@react-navigation/native'
-import { DonarProfileRouteProp } from '../../setup/navigation/navigationTypes'
+import { DonorProfileRouteProp } from '../../setup/navigation/navigationTypes'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { Alert, Linking } from 'react-native'
-import { DonorProfile, getDonarProfile } from '../../userWorkflow/services/userServices'
+import { DonorProfile, getDonorProfile } from '../../userWorkflow/services/userServices'
 import useFetchData from '../../setup/clients/useFetchData'
 
 type FormattedDonorProfile = Required<{
@@ -13,11 +13,11 @@ type FormattedDonorProfile = Required<{
     : DonorProfile[K];
 }>
 
-const useDonarProfile = (): any => {
+const useDonorProfile = (): any => {
   const fetchClient = useFetchClient()
-  const { donorId } = useRoute<DonarProfileRouteProp>().params
+  const { donorId } = useRoute<DonorProfileRouteProp>().params
 
-  const formatDonarProfile = (donorProfile: DonorProfile): FormattedDonorProfile => {
+  const formatDonorProfile = (donorProfile: DonorProfile): FormattedDonorProfile => {
     return {
       age: donorProfile.age ?? 0,
       bloodGroup: donorProfile.bloodGroup ?? '',
@@ -35,27 +35,27 @@ const useDonarProfile = (): any => {
     }
   }
 
-  const { loading, error, data: donarProfile } = useFetchData<FormattedDonorProfile>(async() => {
-    const response = await getDonarProfile(donorId, fetchClient)
+  const [, loading, donorProfile, error] = useFetchData<FormattedDonorProfile>(async() => {
+    const response = await getDonorProfile(donorId, fetchClient)
     if (response.data !== undefined) {
-      return formatDonarProfile(response.data)
+      return formatDonorProfile(response.data)
     }
     throw new Error('Failed to fetch donor profile.')
   }, { shouldExecuteOnMount: true, errorMessage: 'Failed to fetch donor profile.' })
 
   const handleCall = (): void => {
-    if (!Array.isArray(donarProfile?.phoneNumbers) || donarProfile.phoneNumbers.length === 0) {
+    if (!Array.isArray(donorProfile?.phoneNumbers) || donorProfile.phoneNumbers.length === 0) {
       Alert.alert('No Phone Number', 'No phone number available for this donor.')
       return
     }
 
-    const phoneNumber = donarProfile.phoneNumbers[0]
+    const phoneNumber = donorProfile.phoneNumbers[0]
     Linking.openURL(`tel:${phoneNumber}`).catch(() => {
       Alert.alert('Error', 'Unable to make a call. Please try again later.')
     })
   }
 
-  return { donarProfile, loading, error, handleCall }
+  return { donorProfile, loading, error, handleCall }
 }
 
-export default useDonarProfile
+export default useDonorProfile
