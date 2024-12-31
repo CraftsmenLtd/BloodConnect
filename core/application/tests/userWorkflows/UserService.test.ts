@@ -20,6 +20,7 @@ jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflow/userMessages')
 const locationMockRepository = {
   ...mockRepository,
+  queryUserLocations: jest.fn(),
   deleteUserLocations: jest.fn()
 }
 describe('UserService Tests', () => {
