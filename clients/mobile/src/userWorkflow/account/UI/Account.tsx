@@ -42,7 +42,7 @@ export const Account = () => {
       </View>
 
       <View style={styles.optionsSection}>
-        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.PROFILE) }}>
+        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.PROFILE) }} disabled>
           <MaterialIcons name="person-outline" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Profile</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />

@@ -3,9 +3,9 @@ import { saveDeviceTokenOnSNS, saveDeviceTokenLocally } from '../setup/notificat
 import { registerForPushNotificationsAsync } from '../setup/notification/registerForPushNotifications'
 
 const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
-  registerForPushNotificationsAsync().then(token => {
-    void saveDeviceTokenOnSNS(token as string, fetchClient)
-    void saveDeviceTokenLocally(token as string)
+  registerForPushNotificationsAsync().then(async token => {
+    await saveDeviceTokenOnSNS(token as string, fetchClient)
+    await saveDeviceTokenLocally(token as string)
   })
     .catch(error => {
       throw new Error(
