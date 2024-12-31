@@ -1,9 +1,9 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import Constants from 'expo-constants'
 import { validateInput, validateRequired, ValidationRule, validatePhoneNumber, validateDateTime, validateDonationDateTime } from '../../utility/validator'
 import { initializeState } from '../../utility/stateUtils'
 import { LocationService } from '../../LocationService/LocationService'
-import { createDonation, DonationResponse, updateDonation } from '../donationService'
+import { createDonation, DonationCreateUpdateResponse, updateDonation } from '../donationService'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
 import { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
@@ -11,6 +11,9 @@ import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { useMyActivityContext } from '../../myActivity/context/useMyActivityContext'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
+import { LOCAL_NOTIFICATION_TYPE } from '../../setup/constant/consts'
+import { cancelNotificationById, fetchScheduledNotifications, scheduleNotification } from '../../setup/notification/scheduleNotification'
+import { NotificationRequest } from 'expo-notifications'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -49,6 +52,7 @@ export const useBloodRequest = (): any => {
   const { userProfile } = useUserProfile()
   const navigation = useNavigation<DonationScreenNavigationProp>()
   const { data, isUpdating } = route.params
+  const currentBloodRequestData = useRef(data)
   const [bloodRequestData, setBloodRequestData] = useState<BloodRequestData>({
     urgencyLevel: 'regular',
     requestedBloodGroup: '',
@@ -106,6 +110,20 @@ export const useBloodRequest = (): any => {
     }))
   }
 
+  const adjustNotificationTime = (notificationDate: string | Date): Date => {
+    const adjustedDate = new Date(notificationDate)
+    adjustedDate.setDate(adjustedDate.getDate() + 1)
+
+    const hours = adjustedDate.getHours()
+    if (hours >= 22) {
+      adjustedDate.setHours(22, 0, 0, 0)
+    } else if (hours < 9) {
+      adjustedDate.setHours(9, 0, 0, 0)
+    }
+
+    return adjustedDate
+  }
+
   const isButtonDisabled = useMemo(() => {
     const hasErrors = !Object.values(errors).every(error => error === null)
 
@@ -125,7 +143,8 @@ export const useBloodRequest = (): any => {
   const removeEmptyAndNullProperty = (object: Record<string, unknown>): Record<string, unknown> => {
     return Object.fromEntries(Object.entries(object).filter(([_, v]) => v != null && v !== ''))
   }
-  const createBloodDonationRequest = async(): Promise<DonationResponse> => {
+
+  const createBloodDonationRequest = async(): Promise<DonationCreateUpdateResponse> => {
     const { bloodQuantity, ...rest } = bloodRequestData
     const locationService = new LocationService(GOOGLE_MAP_API)
     const coordinates = await locationService.getLatLon(rest.location)
@@ -142,19 +161,54 @@ export const useBloodRequest = (): any => {
     return await createDonation(finalData, fetchClient)
   }
 
-  const updateBloodDonationRequest = async(): Promise<DonationResponse> => {
-    if ('acceptedDonors' in bloodRequestData) {
-      delete bloodRequestData.acceptedDonors
-    }
-    const { bloodQuantity, city, location, requestedBloodGroup, ...rest } = bloodRequestData
-    const finalData = {
-      ...removeEmptyAndNullProperty(rest),
-      contactNumber: formatPhoneNumber(rest.contactNumber),
-      bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1'),
-      donationDateTime: new Date(rest.donationDateTime).toISOString()
+  const updateBloodDonationRequest = async(): Promise<DonationCreateUpdateResponse> => {
+    if (!('requestPostId' in bloodRequestData) || !('createdAt' in bloodRequestData)) {
+      throw new Error('Invalid bloodRequestData: Missing requestPostId or createdAt')
     }
 
+    const { bloodQuantity } = bloodRequestData
+    const finalData = {
+      urgencyLevel: bloodRequestData.urgencyLevel,
+      donationDateTime: new Date(bloodRequestData.donationDateTime).toISOString(),
+      contactNumber: formatPhoneNumber(bloodRequestData.contactNumber),
+      patientName: bloodRequestData.patientName,
+      shortDescription: bloodRequestData.shortDescription,
+      transportationInfo: bloodRequestData.transportationInfo,
+      requestPostId: bloodRequestData?.requestPostId,
+      createdAt: bloodRequestData?.createdAt,
+      bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1')
+    }
     return await updateDonation(finalData, fetchClient)
+  }
+
+  const findNotificationByRequestPostId = (
+    notifications: NotificationRequest[],
+    requestPostId: string): NotificationRequest | undefined =>
+    notifications.find(notification => notification.content?.data?.payload?.requestPostId === requestPostId
+    )
+
+  const updateNotificationTriggerTime = async(donationDateTime: string | Date, requestPostId: string): Promise<void> => {
+    try {
+      const notifications = await fetchScheduledNotifications()
+      const notificationToUpdate = findNotificationByRequestPostId(notifications, requestPostId)
+      if (notificationToUpdate == null) return
+      await cancelNotificationById(notificationToUpdate.identifier)
+      const adjustedTime = adjustNotificationTime(donationDateTime)
+      void scheduleNotification({ date: adjustedTime }, notificationToUpdate.content?.data?.payload)
+    } catch {}
+  }
+
+  const handleNotification = (donationDateTime: string | Date, donationResponse: { requestPostId: string; createdAt: string }): void => {
+    if (isUpdating && currentBloodRequestData.current?.donationDateTime === bloodRequestData.donationDateTime) return
+    if (isUpdating) { void updateNotificationTriggerTime(donationDateTime, donationResponse.requestPostId) }
+    const adjustedTime = adjustNotificationTime(donationDateTime)
+    const content = {
+      title: 'Blood Request Status Update',
+      body: 'It\'s been a day since your donation. Thank you!',
+      data: { payload: { ...donationResponse }, type: LOCAL_NOTIFICATION_TYPE.REQUEST_STATUS }
+    }
+
+    void scheduleNotification({ date: adjustedTime }, content)
   }
 
   const handlePostNow = async(): Promise<void> => {
@@ -165,14 +219,16 @@ export const useBloodRequest = (): any => {
         setErrorMessage(validateDonationDate)
         return
       }
-      const response: DonationResponse = isUpdating
+      const response = isUpdating
         ? await updateBloodDonationRequest()
         : await createBloodDonationRequest()
+      if (response.status !== 201 && response.status !== 200) return
 
-      if (response.status === 200) {
-        void fetchDonationPosts()
-        navigation.navigate(SCREENS.POSTS)
+      if (response.data !== undefined) {
+        handleNotification(bloodRequestData.donationDateTime, response.data)
       }
+      void fetchDonationPosts()
+      navigation.navigate(SCREENS.MY_ACTIVITY)
     } catch (error) {
       const errorMessage = formatErrorMessage(error)
       setErrorMessage(errorMessage)

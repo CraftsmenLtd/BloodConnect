@@ -1,12 +1,5 @@
 import { useCallback, useState, useRef, useEffect } from 'react'
 
-interface UseFetchDataReturnType<DataFetchType> {
-  executeFunction: (...args: any[]) => Promise<void>;
-  loading: boolean;
-  data: DataFetchType | null;
-  error: string | null;
-}
-
 interface UseFetchDataProps {
   shouldExecuteOnMount?: boolean;
   parseError?: (error: unknown) => string;
@@ -16,15 +9,21 @@ interface UseFetchDataProps {
 const useFetchData = <DataFetchType>(
   dataFetchFunction: (...args: any[]) => Promise<DataFetchType>,
   { shouldExecuteOnMount = false, parseError, errorMessage }: UseFetchDataProps = {}
-): UseFetchDataReturnType<DataFetchType> => {
-  const [loading, setLoading] = useState(true)
+): [executeFunction: (...args: any[]) => Promise<void>, loading: boolean, data: DataFetchType | null, error: string | null] => {
+  const [loading, setLoading] = useState(false)
   const [data, setData] = useState<DataFetchType | null>(null)
   const [error, setError] = useState<string | null>(null)
   const dataFetchFunctionRef = useRef(dataFetchFunction)
 
   const getErrorMessage = (error: unknown): string => {
     if (errorMessage !== undefined) return errorMessage
-    if (parseError !== undefined) return parseError(error)
+    if (parseError !== undefined) {
+      try {
+        return parseError(error)
+      } catch (parseErrorException) {
+        return 'Failed to parse error'
+      }
+    }
     if (error instanceof Error) return error.message
     return 'An unknown error occurred'
   }
@@ -37,8 +36,9 @@ const useFetchData = <DataFetchType>(
         const result = await dataFetchFunctionRef.current(...args)
         setData(result)
       } catch (error) {
+        const message = getErrorMessage(error)
         setData(null)
-        setError(getErrorMessage(error))
+        setError(message)
       } finally {
         setLoading(false)
       }
@@ -52,7 +52,7 @@ const useFetchData = <DataFetchType>(
     }
   }, [shouldExecuteOnMount, executeFunction])
 
-  return { executeFunction, loading, data, error }
+  return [executeFunction, loading, data, error]
 }
 
 export default useFetchData

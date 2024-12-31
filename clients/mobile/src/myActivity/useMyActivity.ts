@@ -27,9 +27,10 @@ export const useMyActivity = (): any => {
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const [currentTab, setCurrentTab] = useState(MY_ACTIVITY_TAB_CONFIG.initialTab)
   const [cancelPostError, setCancelPostError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
 
-  const { executeFunction: getMyResponses, loading: myResponsesLoading, error: myResponsesError, data: myResponses } = useFetchData(async() => {
+  const [getMyResponses, myResponsesLoading, myResponses, myResponsesError] = useFetchData(async() => {
     const response = await fetchMyResponses({}, fetchClient)
     if (response.data !== undefined && response.data.length > 0) {
       return formatDonations(response.data)
@@ -38,7 +39,8 @@ export const useMyActivity = (): any => {
   }, { shouldExecuteOnMount: true, parseError: extractErrorMessage })
 
   const updatePost = (donationData: DonationData): void => {
-    navigation.navigate(SCREENS.DONATION, { data: { ...donationData }, isUpdating: true })
+    const { status, acceptedDonors, ...rest } = donationData
+    navigation.navigate(SCREENS.DONATION, { data: rest, isUpdating: true })
   }
 
   const detailHandler = (donationData: DonationData): void => {
@@ -46,9 +48,10 @@ export const useMyActivity = (): any => {
   }
 
   const cancelPost = async(donationData: DonationData): Promise<void> => {
+    setIsLoading(true)
     const payload = {
-      reqPostId: donationData.requestPostId,
-      requestedCreatedAt: donationData.createdAt
+      requestPostId: donationData.requestPostId,
+      requestCreatedAt: donationData.createdAt
     }
 
     try {
@@ -59,6 +62,8 @@ export const useMyActivity = (): any => {
     } catch (error) {
       const errorMessage = extractErrorMessage(error)
       setCancelPostError(errorMessage)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -82,6 +87,7 @@ export const useMyActivity = (): any => {
     myResponsesLoading,
     myResponsesError,
     cancelPostError,
+    isLoading,
     showToast,
     handleRefresh: refreshPosts,
     refreshing

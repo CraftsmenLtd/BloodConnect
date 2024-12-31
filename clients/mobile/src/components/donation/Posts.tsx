@@ -4,7 +4,7 @@ import { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import React from 'react'
-import StateAwareContainer from '../StateAwareContainer'
+import StateAwareRenderer from '../StateAwareRenderer'
 
 interface PostsProps {
   updatePost?: (donationData: DonationData) => void;
@@ -31,27 +31,27 @@ const Posts: React.FC<PostsProps> = ({
 }) => {
   const styles = createStyles(useTheme())
 
-  return (
-    <StateAwareContainer loading={loading} errorMessage={errorMessage} data={donationPosts}>
-      <FlatList
-        data={donationPosts}
-        renderItem={({ item }) => (
-          <PostCard
-            post={item}
-            updateHandler={updatePost}
-            detailHandler={detailHandler}
-            {...displayOptions}
+  const ViewToRender = () => <FlatList
+    data={donationPosts}
+    renderItem={({ item }) => (
+      <PostCard
+        post={item}
+        updateHandler={updatePost}
+        detailHandler={detailHandler}
+        cancelHandler={cancelPost}
+        {...displayOptions}
           />)}
-          ListEmptyComponent={
-            <View style={styles.emptyDataMessage}>
-              <Text>{emptyDataMessage}</Text>
-            </View>
-          }
-        keyExtractor={(item) => item.requestPostId}
-        contentContainerStyle={styles.postList}
-        refreshControl={refreshControl}
-      />
-    </StateAwareContainer>
+    ListEmptyComponent={
+      <View style={styles.emptyDataMessage}>
+        <Text>{emptyDataMessage}</Text>
+      </View>
+    }
+    keyExtractor={(item) => item.requestPostId}
+    contentContainerStyle={styles.postList}
+    refreshControl={refreshControl}
+  />
+  return (
+    <StateAwareRenderer loading={loading} errorMessage={errorMessage} data={donationPosts} ViewComponent={ViewToRender} />
   )
 }
 

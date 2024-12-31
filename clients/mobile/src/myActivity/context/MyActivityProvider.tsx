@@ -28,8 +28,9 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
   const { userProfile } = useUserProfile()
   const fetchClient = useFetchClient()
 
-  const { executeFunction: fetchDonationPosts, loading, error: errorMessage, data } = useFetchData(async() => {
+  const [fetchDonationPosts, loading, data, errorMessage] = useFetchData(async() => {
     const response = await fetchDonationList({}, fetchClient)
+
     if (response.data !== undefined && response.data.length > 0) {
       const profile = await storageService.getItem<UserProfile>(LOCAL_STORAGE_KEYS.USER_PROFILE)
       const userName = userProfile.name === '' ? profile?.name : userProfile.name

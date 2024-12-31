@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, Image, ImageStyle } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, Image, ImageStyle, Linking, Alert } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
@@ -8,6 +8,7 @@ import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPo
 import { UrgencyLevel } from '../../donationWorkflow/types'
 import BloodImage from '../../../assets/images/bloodtype.png'
 import StatusBadge from './StatusBadge'
+import GenericModal from '../modal'
 
 export interface PostCardDisplayOptions {
   showContactNumber?: boolean;
@@ -26,6 +27,7 @@ interface PostCardProps extends PostCardDisplayOptions {
   updateHandler?: (donationData: DonationData) => void;
   detailHandler?: (donationData: DonationData) => void;
   cancelHandler?: (donationData: DonationData) => void;
+  isLoading?: boolean;
 }
 
 interface DropdownPosition {
@@ -46,11 +48,13 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   showHeader = true,
   showOptions = true,
   showPostUpdatedOption = true,
-  showStatus = false
+  showStatus = false,
+  isLoading = false
 }) => {
   const theme = useTheme()
   const styles = createStyles(theme)
   const [showDropdown, setShowDropdown] = useState(false)
+  const [isModalOpen, setModalOpen] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, right: 0 })
   const iconRef = useRef<View>(null)
   const { height: windowHeight } = Dimensions.get('window')
@@ -80,8 +84,19 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
 
   const handleCancel = useCallback(() => {
     cancelHandler !== undefined && cancelHandler(post)
-    handleCloseDropdown()
+    if (!isLoading) {
+      closeModal()
+    }
   }, [post, cancelHandler])
+
+  const openModal = () => {
+    handleCloseDropdown()
+    setModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setModalOpen(false)
+  }
 
   const formatDateTime = (date: string) => {
     const dateObj = new Date(date)
@@ -97,6 +112,10 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
     const year = dateObj.getFullYear()
 
     return `${timeStr}, ${day} ${month} ${year}`
+  }
+  const OpenLocation = ({ location }: { location: string }) => {
+    const url = `https://www.google.com/maps?q=${encodeURIComponent(location)}`
+    Linking.openURL(url).catch(() => { Alert.alert('Error', 'Failed to open the map. Please try again.') })
   }
 
   const getDropdownStyle = useCallback((): ViewStyle => ({
@@ -142,7 +161,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                           <Text style={styles.dropdownText}>Update</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          onPress={handleCancel}
+                          onPress={openModal}
                           style={styles.dropdownItem}
                         >
                           <Text style={styles.dropdownText}>Cancel</Text>
@@ -152,6 +171,30 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                   </View>
                 </TouchableWithoutFeedback>
               </Modal>
+              <GenericModal
+                visible={isModalOpen}
+                title="Confirmation"
+                message="Are you sure you want to cancel?"
+                buttons={[
+                  {
+                    onPress: closeModal,
+                    style: {
+                      backgroundColor: theme.colors.greyBG,
+                      color: theme.colors.textPrimary
+                    },
+                    text: 'Close'
+                  },
+                  {
+                    onPress: handleCancel,
+                    style: {
+                      backgroundColor: theme.colors.primary
+                    },
+                    text: 'OK',
+                    loading: isLoading
+                  }
+                ]}
+                onClose={closeModal}
+              />
             </View>}
           </View>
         }
@@ -179,7 +222,9 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                   <Ionicons name="location-outline" size={16} color={theme.colors.grey} />
                   <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
                 </View>
-                <Text style={styles.description}>{post.location}</Text>
+                <TouchableOpacity onPress={() => { OpenLocation({ location: post.location }) }}>
+                <Text style={[styles.description, styles.link]}>{post.location}</Text>
+                </TouchableOpacity>
               </View>
             </View>
             <View style={[styles.locationTimeWrapper, styles.noBorder]}>
@@ -246,6 +291,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     padding: 18,
     marginBottom: 10,
     position: 'relative'
+  },
+  link: {
+    textDecorationLine: 'underline'
   },
   cardHeader: {
     flexDirection: 'row',

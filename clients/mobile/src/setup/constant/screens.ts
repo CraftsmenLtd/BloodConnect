@@ -17,6 +17,8 @@ export enum SCREENS {
   MY_ACTIVITY = 'My Activity',
   BLOOD_REQUEST_PREVIEW = 'BloodRequestPreview',
   DETAIL_POST = 'DetailPost',
-  DONAR_PROFILE = 'DonarProfile',
-  DONAR_RESPONSE = 'DonorResponse'
+  DONOR_PROFILE = 'DonorProfile',
+  DONOR_RESPONSE = 'DonorResponse',
+  REQUEST_STATUS = 'RequestStatus',
+  DONOR_CONFIRMATION = 'DonorConfirmation'
 }

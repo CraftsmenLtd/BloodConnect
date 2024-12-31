@@ -24,12 +24,12 @@ const DETAIL_POST_TAB_CONFIG: TabConfig = {
 
 const Detail = ({ navigation, route }: DetailProps) => {
   const styles = createStyles(useTheme())
-  const { cancelPost, cancelPostError, showToast, toastAnimationFinished } = useMyActivity()
+  const { cancelPost, cancelPostError, isLoading, showToast, toastAnimationFinished } = useMyActivity()
   const { data, tab } = route.params
   const [currentTab, setCurrentTab] = useState(tab ?? DETAIL_POST_TAB_CONFIG.initialTab)
 
-  const handlePressDonor = (donarId: string) => {
-    navigation.navigate(SCREENS.DONAR_PROFILE, { donarId })
+  const handlePressDonor = (donorId: string) => {
+    navigation.navigate(SCREENS.DONOR_PROFILE, { donorId })
   }
 
   const handleTabPress = (tab: string): void => {
@@ -60,6 +60,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
               showButton={false}
               updateHandler={updatePost}
               cancelHandler={cancelPost}
+              isLoading={isLoading}
             />
             {cancelPostError !== '' &&
               <Text style={styles.errorMessage}>{cancelPostError}</Text>

@@ -90,9 +90,7 @@ describe('BloodDonationService', () => {
           donationDateTime: expect.any(String)
         })
       )
-      expect(result).toBe(
-        'We have accepted your request, and we will let you know when we find a donor.'
-      )
+      expect(result).toStrictEqual({ createdAt: expect.any(String), requestPostId: 'req123' })
     })
 
     test('should throw BloodDonationOperationError if input is invalid', async() => {
@@ -170,15 +168,14 @@ describe('BloodDonationService', () => {
         lastEvaluatedKey: undefined
       })
 
+      bloodDonationRepository.create.mockResolvedValue(donationDtoMock)
       const result = await bloodDonationService.createBloodDonation(
         donationAttributesMock,
         bloodDonationRepository,
         mockModel
       )
 
-      expect(result).toBe(
-        'We have accepted your request, and we will let you know when we find a donor.'
-      )
+      expect(result).toStrictEqual({ createdAt: expect.any(String), requestPostId: 'req123' })
       expect(bloodDonationRepository.query).toHaveBeenCalledWith({
         partitionKeyCondition: {
           attributeName: 'PK',
@@ -354,7 +351,7 @@ describe('BloodDonationService', () => {
         donationDateTime: new Date().toISOString(),
         bloodQuantity: 3
       }
-
+      bloodDonationRepository.update.mockResolvedValue(donationDtoMock)
       const result = await bloodDonationService.updateBloodDonation(
         donationAttributes,
         bloodDonationRepository
@@ -373,8 +370,8 @@ describe('BloodDonationService', () => {
           bloodQuantity: 3
         })
       )
-      expect(result).toBe(
-        'We have updated your request and will let you know once there is an update.'
+      expect(result).toStrictEqual(
+        { createdAt: expect.any(String), requestPostId: 'req123' }
       )
     })
 
@@ -423,7 +420,7 @@ describe('BloodDonationService', () => {
           donationAttributes,
           bloodDonationRepository
         )
-      ).rejects.toThrow(BloodDonationOperationError)
+      ).rejects.toThrow(Error)
 
       expect(validateInputWithRules).toHaveBeenCalledWith(
         { donationDateTime: 'invalid-date' },

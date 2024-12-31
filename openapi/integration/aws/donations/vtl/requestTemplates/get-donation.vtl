@@ -1,0 +1,7 @@
+{
+  "seekerId": "$context.authorizer.claims['custom:userId']",
+  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "apiGwRequestId": "$context.requestId",
+  "requestPostId": "$input.params('requestPostId')",
+  "createdAt": "$util.urlDecode($input.params('createdAt'))"
+}

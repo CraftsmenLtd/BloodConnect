@@ -1,0 +1,29 @@
+#set($inputRoot = $input.path('$'))
+{
+  "seekerId": "$context.authorizer.claims['custom:userId']",
+  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "apiGwRequestId": "$context.requestId",
+  "requestPostId": "$inputRoot.requestPostId",
+  "createdAt": "$inputRoot.createdAt"
+  #if($inputRoot.bloodQuantity != '')
+    , "bloodQuantity": $inputRoot.bloodQuantity
+  #end
+  #if($inputRoot.urgencyLevel != '')
+    , "urgencyLevel": "$inputRoot.urgencyLevel"
+  #end
+  #if($inputRoot.donationDateTime != '')
+    , "donationDateTime": "$inputRoot.donationDateTime"
+  #end
+  #if($inputRoot.contactNumber != '')
+    , "contactNumber": "$inputRoot.contactNumber"
+  #end
+  #if($inputRoot.patientName != '')
+    , "patientName": "$inputRoot.patientName"
+  #end
+  #if($inputRoot.transportationInfo != '')
+    , "transportationInfo": "$inputRoot.transportationInfo"
+  #end
+  #if($inputRoot.shortDescription != '')
+    , "shortDescription": "$inputRoot.shortDescription"
+  #end
+}

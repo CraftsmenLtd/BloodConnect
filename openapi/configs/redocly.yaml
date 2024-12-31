@@ -1,0 +1,5 @@
+plugins:
+  - plugins/decorators.cjs
+
+decorators:
+  decorators/Inject-vtl-content: on

@@ -6,9 +6,19 @@ import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import { BloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
 import { donationAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 import BloodDonationOperationError from '../../../../application/bloodDonationWorkflow/BloodDonationOperationError'
+import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
+import { CREATE_DONATION_REQUEST_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../commons/lambda/ApiGateway')
+jest.mock('../../commons/httpLogger/HttpLogger', () => ({
+  createHTTPLogger: jest.fn(() => ({
+    error: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn()
+  }))
+}))
 
 const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
@@ -22,15 +32,18 @@ describe('createBloodDonationLambda', () => {
   })
 
   it('should return a successful response when blood donation is created', async() => {
-    const mockResponse = 'Blood donation created successfully'
+    const mockResponse = CREATE_DONATION_REQUEST_SUCCESS
 
-    mockBloodDonationService.prototype.createBloodDonation.mockResolvedValue(mockResponse)
+    mockBloodDonationService.prototype.createBloodDonation.mockResolvedValue({
+      requestPostId: expect.any(String),
+      createdAt: expect.any(String)
+    })
     mockGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
       body: JSON.stringify({ message: mockResponse })
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda({ ...mockEvent })
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.OK,
@@ -42,8 +55,15 @@ describe('createBloodDonationLambda', () => {
       expect.any(Object)
     )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
-      { message: mockResponse },
-      HTTP_CODES.OK
+      {
+        success: true,
+        data: {
+          createdAt: expect.any(String),
+          requestPostId: expect.any(String)
+        },
+        message: mockResponse
+      },
+      HTTP_CODES.CREATED
     )
   })
 
@@ -55,7 +75,7 @@ describe('createBloodDonationLambda', () => {
       body: `Error: ${errorMessage}`
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.ERROR,
@@ -78,7 +98,7 @@ describe('createBloodDonationLambda', () => {
       body: `Error: ${errorMessage}`
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
 
     expect(result).toEqual({
       statusCode: customErrorCode,
@@ -98,7 +118,7 @@ describe('createBloodDonationLambda', () => {
       body: 'Error: An unknown error occurred'
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.ERROR,
@@ -120,7 +140,7 @@ describe('createBloodDonationLambda', () => {
       body: `Error: ${errorMessage}`
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.TOO_MANY_REQUESTS,

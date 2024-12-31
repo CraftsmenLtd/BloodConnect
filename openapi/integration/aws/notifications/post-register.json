@@ -2,6 +2,9 @@
   "type": "aws",
   "httpMethod": "POST",
   "uri": "${REGISTER_USER_DEVICE_INVOCATION_ARN}",
+  "requestTemplates": {
+    "application/json": "#importVtl notifications/vtl/requestTemplates/post-register.vtl"
+  },
   "responses": {
     "default": {
       "statusCode": "200",
@@ -11,12 +14,9 @@
         "method.response.header.Access-Control-Allow-Origin": "'*'"
       },
       "responseTemplates": {
-        "application/json": "#set($inputRoot = $input.path('$'))\n#set($context.responseOverride.status = $inputRoot.statusCode)\n$inputRoot.body"
+        "application/json": "#importVtl notifications/vtl/responseTemplates/post-register.vtl"
       }
     }
-  },
-  "requestTemplates": {
-    "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"userId\": \"$context.authorizer.claims['custom:userId']\",\n   \"cloudFrontRequestId\": \"$input.params('X-Amz-Cf-Id')\",\n   \"apiGwRequestId\": \"$context.requestId\",\n  \"deviceToken\": \"$inputRoot.deviceToken\",\n  \"platform\": \"$inputRoot.platform\"\n}"
   },
   "passthroughBehavior": "never"
 }

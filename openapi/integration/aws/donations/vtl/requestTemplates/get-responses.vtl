@@ -1,0 +1,14 @@
+{
+  "TableName": "${DYNAMODB_TABLE_NAME}",
+  "KeyConditionExpression": "PK = :pk AND begins_with(SK, :skPrefix)",
+  "ExpressionAttributeValues": {
+    ":pk": {
+      "S": "NOTIFICATION#$context.authorizer.claims['custom:userId']"
+    },
+    ":skPrefix": {
+      "S": "BLOOD_REQ_POST#"
+    }
+  },
+  "ScanIndexForward": false,
+  "Limit": 20
+}

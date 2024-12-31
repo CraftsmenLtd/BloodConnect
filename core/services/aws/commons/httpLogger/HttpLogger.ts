@@ -6,12 +6,11 @@ export const createHTTPLogger = (
   apiGwRequestId: string,
   cloudFrontRequestId: string
 ): Logger => {
-  const { info, error, warn, debug } = JsonLogger.child({
+  return JsonLogger.child({
     userId,
     apiGwRequestId,
     cloudFrontRequestId
   })
-  return { info, error, warn, debug }
 }
 
 export type HttpLoggerAttributes = {

@@ -1,76 +1,62 @@
 import React from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, ImageStyle, StyleProp } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import useDonarProfile from './useDonarProfile'
+import useDonorProfile from './useDonorProfile'
 import { preferredDonationLocations } from '../../userWorkflow/services/userServices'
 import { COMMON_URLS } from '../../setup/constant/commonUrls'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
-import StateAwareContainer from '../../components/StateAwareContainer'
-import Loader from '../../components/loaders/loader'
+import StateAwareRenderer from '../../components/StateAwareRenderer'
 
-const DonarProfile = () => {
+const DonorProfile = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
-  const { donarProfile, loading, error, handleCall } = useDonarProfile()
-
-  if (loading === true) {
-    return <Loader />
-  }
-
-  if (error !== null) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
-    )
-  }
+  const { donorProfile, loading, error, handleCall } = useDonorProfile()
 
   const calculateBMI = (weightKg: number, heightFeet: number): number => {
     const heightInMeters = heightFeet * 0.3048
     const bmi = weightKg / (heightInMeters ** 2)
     return parseFloat(bmi.toFixed(2))
   }
+  const ViewToRender = () => <View style={styles.container}>
+    <View style={styles.profileContainer}>
+      <Image
+        source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
+        style={styles.profileImage as StyleProp<ImageStyle>}
+      />
+      <View style={styles.bloodGroupBadge}>
+        <Text style={styles.bloodGroupText}>
+          {donorProfile?.bloodGroup ?? ''}(ve)
+        </Text>
+      </View>
+    </View>
 
-  return (
-    <StateAwareContainer loading={loading} errorMessage={error} data={donarProfile}>
-      <View style={styles.container}>
-        <View style={styles.profileContainer}>
-          <Image
-            source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-            style={styles.profileImage as StyleProp<ImageStyle>}
-          />
-          <View style={styles.bloodGroupBadge}>
-            <Text style={styles.bloodGroupText}>
-              {donarProfile?.bloodGroup ?? ''}(ve)
+    <Text style={styles.name}>{donorProfile?.donorName ?? ''}</Text>
+    <View>
+      {Array.isArray(donorProfile?.preferredDonationLocations) &&
+        donorProfile.preferredDonationLocations.map((location: preferredDonationLocations, index: number) => (
+          <View style={styles.locationRow} key={index}>
+            <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
+            <Text style={styles.locationText}>
+              {location?.area ?? ''}, {location?.city ?? ''}
             </Text>
           </View>
-        </View>
+        ))}
+    </View>
 
-        <Text style={styles.name}>{donarProfile?.donorName ?? ''}</Text>
-        <View>
-          {Array.isArray(donarProfile?.preferredDonationLocations) &&
-            donarProfile.preferredDonationLocations.map((location: preferredDonationLocations, index: number) => (
-              <View style={styles.locationRow} key={index}>
-                <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
-                <Text style={styles.locationText}>
-                  {location?.area ?? ''}, {location?.city ?? ''}
-                </Text>
-              </View>
-            ))}
-        </View>
+    <View style={styles.detailsRow}>
+      <Text style={styles.detailsText}>BMI: {calculateBMI(donorProfile.weight, donorProfile.height)}</Text>
+    </View>
 
-        <View style={styles.detailsRow}>
-            <Text style={styles.detailsText}>BMI: {calculateBMI(donarProfile.weight, donarProfile.height)}</Text>
-          </View>
+    <View style={{ width: '100%' }}>
+      <TouchableOpacity style={styles.callButton} onPress={() => handleCall(donorProfile.phoneNumbers)}>
+        <Text style={styles.callButtonText}>Call now</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
 
-        <View style={{ width: '100%' }}>
-          <TouchableOpacity style={styles.callButton} onPress={() => handleCall(donarProfile.phoneNumbers)}>
-            <Text style={styles.callButtonText}>Call now</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </StateAwareContainer>
+  return (
+    <StateAwareRenderer loading={loading} errorMessage={error} data={donorProfile} ViewComponent={ViewToRender} />
   )
 }
 
@@ -172,4 +158,4 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     }
   })
 
-export default DonarProfile
+export default DonorProfile
