@@ -8,7 +8,6 @@ import { SCREENS } from '../../../setup/constant/screens'
 import { FetchResponse } from '../../../setup/clients/FetchClient'
 import { AccountScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { LocationDTO, UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
-import { useUserProfile } from '../../context/UserProfileContext'
 import storageService from '../../../utility/storageService'
 import { TOKEN } from '../../../setup/constant/token'
 
@@ -33,10 +32,6 @@ interface UseAccountReturnType {
 }
 
 export const useAccount = (): UseAccountReturnType => {
-  const { userProfile } = useUserProfile()
-  console.log(userProfile);
-  
-
   const auth = useAuth()
   const fetchClient = useFetchClient()
   const navigation = useNavigation<AccountScreenNavigationProp>()
