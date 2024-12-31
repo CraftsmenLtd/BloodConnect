@@ -29,7 +29,7 @@ export const Account = () => {
       ></ProfileSection>}
 
       <View style={styles.optionsSection}>
-        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.PROFILE, { userProfileData: userProfileData}) }}>
+        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.PROFILE) }}>
           <MaterialIcons name="person-outline" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Profile</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
