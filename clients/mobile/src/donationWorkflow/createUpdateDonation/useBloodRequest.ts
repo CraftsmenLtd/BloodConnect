@@ -162,14 +162,22 @@ export const useBloodRequest = (): any => {
   }
 
   const updateBloodDonationRequest = async(): Promise<DonationCreateUpdateResponse> => {
-    const { bloodQuantity, city, location, requestedBloodGroup, ...rest } = bloodRequestData
-    const finalData = {
-      ...removeEmptyAndNullProperty(rest),
-      contactNumber: formatPhoneNumber(rest.contactNumber),
-      bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1'),
-      donationDateTime: new Date(rest.donationDateTime).toISOString()
+    if (!('requestPostId' in bloodRequestData) || !('createdAt' in bloodRequestData)) {
+      throw new Error('Invalid bloodRequestData: Missing requestPostId or createdAt')
     }
 
+    const { bloodQuantity } = bloodRequestData
+    const finalData = {
+      urgencyLevel: bloodRequestData.urgencyLevel,
+      donationDateTime: new Date(bloodRequestData.donationDateTime).toISOString(),
+      contactNumber: formatPhoneNumber(bloodRequestData.contactNumber),
+      patientName: bloodRequestData.patientName,
+      shortDescription: bloodRequestData.shortDescription,
+      transportationInfo: bloodRequestData.transportationInfo,
+      requestPostId: bloodRequestData?.requestPostId,
+      createdAt: bloodRequestData?.createdAt,
+      bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1')
+    }
     return await updateDonation(finalData, fetchClient)
   }
 
@@ -220,7 +228,7 @@ export const useBloodRequest = (): any => {
         handleNotification(bloodRequestData.donationDateTime, response.data)
       }
       void fetchDonationPosts()
-      navigation.navigate(SCREENS.POSTS)
+      navigation.navigate(SCREENS.MY_ACTIVITY)
     } catch (error) {
       const errorMessage = formatErrorMessage(error)
       setErrorMessage(errorMessage)
