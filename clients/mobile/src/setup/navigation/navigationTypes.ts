@@ -18,7 +18,7 @@ export type RootStackParamList = {
   [SCREENS.SET_PASSWORD]: { routeParams: UserRegistrationCredentials | { email: string; otp: string }; fromScreen: SCREENS };
   [SCREENS.FORGOT_PASSWORD]: undefined;
   [SCREENS.PROFILE]: undefined;
-  [SCREENS.EDIT_PROFILE]: { userDetails: EditProfileData};
+  [SCREENS.EDIT_PROFILE]: { userDetails: EditProfileData };
   [SCREENS.DONATION]: { data: DonationScreenParams | null; isUpdating: boolean };
   [SCREENS.BOTTOM_TABS]: undefined;
   [SCREENS.DONATION_POSTS]: { data: DonationScreenParams | null; isUpdating: boolean };

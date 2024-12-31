@@ -53,7 +53,7 @@ const EditProfile = () => {
                         <DateTimePickerComponent
                         label="Date of Birth"
                         value={new Date(profileData.dateOfBirth)}
-                        onChange={(date) => { handleInputChange('dateOfBirth', date.toISOString()) }}
+                        onChange={handleInputChange}
                         isOnlyDate={true}
                         inputStyle={styles.inputStyle}
                         showOnlyDate={true}
@@ -112,7 +112,7 @@ const EditProfile = () => {
                         />
                         <Warning
                         text={WARNINGS.PHONE_NUMBER_VISIBLE}
-                        showWarning={profileData.contactNumber !== ''}
+                        showWarning={profileData.phone !== ''}
                         />
                     </View>
 
@@ -129,11 +129,7 @@ const EditProfile = () => {
                 <View style={styles.buttonContainer}>
                 <Button
                     text="Save"
-                    onPress={() => {
-                      handleSave().catch((error) => {
-                        console.error('Error in handleSave:', error)
-                      })
-                    }}
+                    onPress={handleSave}
                     disabled={isButtonDisabled}
                 />
                 </View>

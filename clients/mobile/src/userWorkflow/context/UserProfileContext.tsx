@@ -29,7 +29,12 @@ const defaultProfile: UserProfile = {
   preferredDonationLocations: []
 }
 
-const UserProfileContext = createContext<UserProfileContextData | undefined>(undefined)
+const UserProfileContext = createContext<UserProfileContextData | undefined>({
+  userProfile: defaultProfile,
+  loading: true,
+  error: '',
+  fetchUserProfile: async() => {}
+})
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userProfile, setUserProfile] = useState<UserProfile>(defaultProfile)

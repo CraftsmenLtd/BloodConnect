@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useUserProfile } from '../../context/UserProfileContext'
-
-type Gender = 'male' | 'female' | 'other'
+import { UserProfile } from '../../services/userProfileService'
 
 export interface DonationLocation {
   area: string;
@@ -10,53 +9,14 @@ export interface DonationLocation {
   longitude: number;
 }
 
-export interface UserProfile {
-  bloodGroup: string;
-  name: string;
-  lastDonationDate: string;
-  height: number;
-  weight: number;
-  gender: Gender;
-  dateOfBirth: string | Date;
-  availableForDonation: string;
-  lastVaccinatedDate: string;
-  NIDFront: string;
-  NIDBack: string;
-  phoneNumbers: string[];
-  preferredDonationLocations: DonationLocation[];
-}
-
 export interface UserProfileDetails extends UserProfile {
   age: number;
   location: string;
-}
-
-const defaultProfile: UserProfile = {
-  bloodGroup: '',
-  name: '',
-  lastDonationDate: '',
-  height: 0,
-  weight: 0,
-  gender: 'other',
-  dateOfBirth: '',
-  availableForDonation: '',
-  lastVaccinatedDate: '',
-  NIDFront: '',
-  NIDBack: '',
-  phoneNumbers: [],
-  preferredDonationLocations: []
+  phone: string;
 }
 
 export const useProfile = (): { userDetails: UserProfileDetails } => {
   const { userProfile } = useUserProfile()
-  const normalizeProfile = (profile: UserProfile): UserProfile => ({
-    ...defaultProfile,
-    ...profile,
-    name: profile.name ?? '',
-    gender: (['male', 'female', 'other'].includes(profile.gender)
-      ? profile.gender
-      : 'Other') as Gender
-  })
 
   const getLocation = (preferredDonationLocations: Array<{ city: string; area: string }>): string => {
     if (preferredDonationLocations.length > 0) {
@@ -67,6 +27,8 @@ export const useProfile = (): { userDetails: UserProfileDetails } => {
   }
 
   const calculateAge = (dateOfBirth: string): number => {
+    if (dateOfBirth === null) return 0
+
     const birthDate = new Date(dateOfBirth)
     const today = new Date()
     const age = today.getFullYear() - birthDate.getFullYear()
@@ -81,15 +43,18 @@ export const useProfile = (): { userDetails: UserProfileDetails } => {
     return age
   }
 
-  const normalizedProfile = normalizeProfile(userProfile)
+  const userDetails = useMemo(() => {
+    const location = userProfile.preferredDonationLocations !== undefined ? getLocation(userProfile.preferredDonationLocations) : ''
+    const age = userProfile.dateOfBirth !== undefined ? calculateAge(userProfile.dateOfBirth) : 0
+    const phone = userProfile.phoneNumbers?.[0] ?? ''
 
-  const enhancedUserDetails = useMemo(() => ({
-    ...normalizedProfile,
-    age: calculateAge(normalizedProfile.dateOfBirth),
-    location: getLocation(normalizedProfile.preferredDonationLocations)
-  }), [normalizedProfile])
+    return {
+      ...userProfile,
+      location,
+      age,
+      phone
+    }
+  }, [userProfile])
 
-  return {
-    userDetails: enhancedUserDetails
-  }
+  return { userDetails }
 }

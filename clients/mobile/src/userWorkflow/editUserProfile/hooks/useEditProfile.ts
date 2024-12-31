@@ -11,24 +11,16 @@ import { initializeState } from '../../../utility/stateUtils'
 import { Alert } from 'react-native'
 import { useUserProfile } from '../../context/UserProfileContext'
 
-type ProfileFields = keyof ProfileData
+type ProfileFields = keyof Omit<ProfileData, 'location'>
 
 interface ProfileData {
   phone: string;
-  weight: string;
+  weight: string | undefined;
   height: string;
   dateOfBirth: string;
   name: string;
   gender: string;
-  [key: string]: any;
-}
-
-interface UseEditProfileResult {
-  profileData: ProfileData;
-  errors: ProfileDataErrors;
-  handleInputChange: (field: keyof ProfileFields, value: any) => void;
-  handleSave: () => Promise<void>;
-  isButtonDisabled: boolean;
+  location: string;
 }
 
 type ProfileDataErrors = {
@@ -43,11 +35,11 @@ interface RouteParams {
     weight: string;
     height: string;
     gender: string;
-    [key: string]: any;
+    location: string;
   };
 }
 
-const validationRules: Record<keyof ProfileDataErrors, ValidationRule[]> = {
+const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRule[]> = {
   name: [validateRequired],
   dateOfBirth: [validateDateOfBirth, validateRequired],
   weight: [validateRequired, validateWeight],
@@ -56,11 +48,12 @@ const validationRules: Record<keyof ProfileDataErrors, ValidationRule[]> = {
   phone: [validateRequired, validatePhoneNumber]
 }
 
-export const useEditProfile = (): UseEditProfileResult => {
+export const useEditProfile = (): any => {
   const { fetchUserProfile } = useUserProfile()
   const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>()
   const fetchClient = useFetchClient()
   const { userDetails } = route.params
+
   const [profileData, setProfileData] = useState({
     ...userDetails,
     phone: userDetails.phoneNumbers[0]
@@ -69,7 +62,7 @@ export const useEditProfile = (): UseEditProfileResult => {
     initializeState<ProfileDataErrors>(Object.keys(validationRules) as ProfileFields[], null)
   )
 
-  const handleInputChange = (field: keyof ProfileFields, value: string): void => {
+  const handleInputChange = (field: ProfileFields, value: string): void => {
     setProfileData((prev) => ({
       ...prev,
       [field]: value
@@ -86,28 +79,16 @@ export const useEditProfile = (): UseEditProfileResult => {
     }))
   }
 
-  // const validateField = (field: keyof ProfileDataErrors, value: any): string | undefined => {
-  //   const rules = validationRules[field]
-  //   if (rules === null || rules === undefined) return undefined
-
-  //   for (const rule of rules) {
-  //     const error = rule(value)
-  //     if (error !== null) return error
-  //   }
-
-  //   return undefined
-  // }
-
   const handleSave = async(): Promise<void> => {
-    const newErrors: Partial<ProfileData> = {};
-
-    (Object.keys(validationRules) as Array<keyof ProfileData>).forEach((field) => {
+    const newErrors: Record<string, string | null> = {}
+    const tst = Object.keys(validationRules) as ProfileFields[]
+    tst.forEach(field => {
       const value = profileData[field]
       const rules = validationRules[field]
       newErrors[field] = validateInput(value, rules)
     })
 
-    setErrors(newErrors as ProfileData)
+    setErrors(newErrors)
 
     if (Object.values(newErrors).some((error) => error)) {
       Alert.alert('Validation Error', 'Please fix the highlighted errors.')
