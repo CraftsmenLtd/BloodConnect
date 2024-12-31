@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode } from 'react'
+import React, { createContext, ReactNode, useEffect } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { fetchDonationList } from '../../donationWorkflow/donationService'
 import { DonationData, extractErrorMessage, formatDonations } from '../../donationWorkflow/donationHelpers'
@@ -7,6 +7,7 @@ import useFetchData from '../../setup/clients/useFetchData'
 import storageService from '../../utility/storageService'
 import { UserProfile } from '../../userWorkflow/services/userProfileService'
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
+import { useAuth } from '../../authentication/context/useAuth'
 
 export interface MyActivityContextType {
   donationPosts: DonationData[];
@@ -26,6 +27,7 @@ export const MyActivityContext = createContext<MyActivityContextType>(defaultCon
 
 export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { userProfile } = useUserProfile()
+  const { isAuthenticated } = useAuth()
   const fetchClient = useFetchClient()
 
   const [fetchDonationPosts, loading, data, errorMessage] = useFetchData(async() => {
@@ -37,7 +39,11 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
       return formatDonations(response.data, userName)
     }
     return []
-  }, { shouldExecuteOnMount: true, parseError: extractErrorMessage })
+  }, { parseError: extractErrorMessage })
+
+  useEffect(() => {
+    void fetchDonationPosts()
+  }, [isAuthenticated])
 
   return (
     <MyActivityContext.Provider value={{ donationPosts: data ?? [], errorMessage, loading, fetchDonationPosts }}>
