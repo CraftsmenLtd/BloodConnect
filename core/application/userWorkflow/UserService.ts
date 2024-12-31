@@ -95,6 +95,23 @@ export class UserService {
     })
   }
 
+  async UpdateUserAttributes(
+    userId: string,
+    userAttributes: UpdateUserAttributes,
+    userRepository: Repository<UserDetailsDTO>,
+    locationRepository: LocationRepository<LocationDTO>
+  ): Promise<void> {
+    const userProfile: UserDetailsDTO = await this.getUser(userId, userRepository)
+    const userLocations: LocationDTO[] = await locationRepository.queryUserLocations(userId)
+    const updatedUserAttributes: UpdateUserAttributes = {
+      ...userProfile,
+      ...userAttributes,
+      preferredDonationLocations: userLocations,
+      userId
+    }
+    await this.updateUser(updatedUserAttributes, userRepository, locationRepository)
+  }
+
   private checkLastDonationDate(
     lastDonationDate: string | undefined,
     availableForDonation: AvailableForDonation

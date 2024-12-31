@@ -31,7 +31,8 @@ locals {
         actions = [
           "dynamodb:UpdateItem",
           "dynamodb:GetItem",
-          "dynamodb:Query"
+          "dynamodb:Query",
+          "dynamodb:DeleteItem"
         ]
         resources = [
           var.dynamodb_table_arn,
