@@ -178,9 +178,6 @@ export const useBloodRequest = (): any => {
       createdAt: bloodRequestData?.createdAt,
       bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1')
     }
-    
-    console.log('Pretty print: `finalData` object: \n', JSON.stringify(finalData, null, 2))
-    
     return await updateDonation(finalData, fetchClient)
   }
 
