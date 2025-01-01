@@ -78,8 +78,14 @@ resource "aws_iam_role_policy_attachment" "api_gw_policy_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
 }
 
+resource "aws_cloudwatch_log_group" "api_gateway_logs" {
+  name              = "/aws/api-gateway/${var.environment}-api"
+  retention_in_days = 60
+}
+
 resource "aws_api_gateway_account" "main" {
   cloudwatch_role_arn = aws_iam_role.api_gw_role.arn
+  depends_on = [aws_cloudwatch_log_group.api_gateway_logs]
 }
 
 resource "aws_api_gateway_method_settings" "api_gw_settings" {
