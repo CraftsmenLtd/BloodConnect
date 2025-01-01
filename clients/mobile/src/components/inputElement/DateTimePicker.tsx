@@ -15,11 +15,10 @@ interface DateTimePickerComponentProps {
   isRequired?: boolean;
   isOnlyDate: boolean;
   inputStyle?: StyleProp<ViewStyle>;
-  showOnlyDate?: boolean;
 }
 
 const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
-  label, value, onChange, error, isOnlyDate, isRequired = false, inputStyle, showOnlyDate = false
+  label, value, onChange, error, isOnlyDate, isRequired = false, inputStyle
 }) => {
   const styles = createStyles(useTheme())
   const [isPickingTime, setIsPickingTime] = useState<boolean>(false)
@@ -69,7 +68,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
         {isRequired && <Text style={styles.asterisk}>*</Text>}
       </Text>
       <TouchableOpacity onPress={() => { setShowDatePicker(true) }} style={[styles.datePicker, inputStyle]}>
-        <Text>{value !== null ? formattedDate(value, showOnlyDate) : 'Select Date & Time'}</Text>
+        <Text>{value !== null ? formattedDate(value, isOnlyDate) : 'Select Date & Time'}</Text>
         <MaterialCommunityIcons
           name="calendar-range"
           size={24}
