@@ -56,7 +56,7 @@ const EditProfile = () => {
                         onChange={handleInputChange}
                         isOnlyDate={true}
                         inputStyle={styles.inputStyle}
-                        showOnlyDate={true}
+                        // showOnlyDate={true}
                         error={errors.dateOfBirth}
                         />
                     </View>

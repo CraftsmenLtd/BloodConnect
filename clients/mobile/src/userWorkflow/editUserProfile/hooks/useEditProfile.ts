@@ -72,11 +72,11 @@ export const useEditProfile = (): any => {
   }
 
   const handleInputValidation = (field: ProfileFields, value: string): void => {
-    const errorMsg = validateInput(value, validationRules[field])
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [field]: errorMsg
-    }))
+    setErrors((prevErrors) => {
+      const errorMsg = validateInput(value, validationRules[field])
+      if (prevErrors[field] === errorMsg) return prevErrors
+      return { ...prevErrors, [field]: errorMsg }
+    })
   }
 
   const handleSave = async(): Promise<void> => {
@@ -91,7 +91,7 @@ export const useEditProfile = (): any => {
     setErrors(newErrors)
 
     if (Object.values(newErrors).some((error) => error)) {
-      Alert.alert('Validation Error', 'Please fix the highlighted errors.')
+      Alert.alert('Please fix the highlighted errors.')
       return
     }
 
@@ -116,24 +116,21 @@ export const useEditProfile = (): any => {
     }
   }
 
-  const isButtonDisabled = useMemo(() => {
-    const hasErrors = Object.values(errors).some((error) => error !== undefined && error !== null)
-    const requiredFieldsFilled = Object.keys(validationRules).every((key: string) => {
-      const value = profileData[key as keyof typeof profileData]
-      if (typeof value === 'string') {
-        return value.trim() !== ''
-      } else if (value instanceof Date) {
-        return !isNaN(value.getTime())
-      } else if (typeof value === 'number') {
-        return !isNaN(value)
-      } else if (value === null || value === undefined) {
-        return false
-      }
-      return true
-    })
+  const hasErrors = useMemo(
+    () => Object.values(errors).some((error) => error),
+    [errors]
+  )
 
-    return hasErrors || !requiredFieldsFilled
-  }, [errors, profileData])
+  const areRequiredFieldsFilled = useMemo(
+    () =>
+      Object.keys(validationRules).every((key) => {
+        const value = profileData[key as keyof ProfileData]
+        return value !== null && value !== undefined && value.toString().trim() !== ''
+      }),
+    [profileData]
+  )
+
+  const isButtonDisabled = hasErrors || !areRequiredFieldsFilled
 
   return {
     profileData,

@@ -32,17 +32,18 @@ const Profile: React.FC = () => {
   )
 
   const handleEditPress = () => {
-    if (userDetails !== null) {
-      navigation.navigate(SCREENS.EDIT_PROFILE, {
-        userDetails: {
-          ...userDetails,
-          weight: userDetails.weight?.toString() ?? '',
-          height: userDetails.height?.toString() ?? '',
-          dateOfBirth: userDetails.dateOfBirth ?? '',
-          name: userDetails.name ?? ''
-        }
-      })
-    }
+    if (userDetails === null) return
+
+    const { weight, height, dateOfBirth, name, ...rest } = userDetails
+    navigation.navigate(SCREENS.EDIT_PROFILE, {
+      userDetails: {
+        ...rest,
+        weight: userDetails.weight?.toString() ?? '',
+        height: userDetails.height?.toString() ?? '',
+        dateOfBirth: userDetails.dateOfBirth ?? '',
+        name: userDetails.name ?? ''
+      }
+    })
   }
 
   return (

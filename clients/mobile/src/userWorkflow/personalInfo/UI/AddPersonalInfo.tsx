@@ -148,7 +148,6 @@ const AddPersonalInfo = () => {
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              name='lastDonationDate'
               isOnlyDate={true}
               label="Last Donation Date"
               value={new Date(personalInfo.lastDonationDate)}
@@ -160,7 +159,6 @@ const AddPersonalInfo = () => {
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              name='dateOfBirth'
               isOnlyDate={true}
               label="Date of Birth"
               value={new Date(personalInfo.dateOfBirth)}
@@ -172,7 +170,6 @@ const AddPersonalInfo = () => {
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              name='lastVaccinatedDate'
               isOnlyDate={true}
               label="Last Vaccinated Date"
               value={new Date(personalInfo.lastVaccinatedDate)}
