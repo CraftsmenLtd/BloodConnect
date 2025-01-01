@@ -6,8 +6,6 @@
       "name",
       "bloodGroup",
       "lastDonationDate",
-      "height",
-      "weight",
       "gender",
       "dateOfBirth",
       "city",

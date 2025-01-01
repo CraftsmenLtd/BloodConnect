@@ -1,0 +1,21 @@
+{
+  "CreateLogModel": {
+    "type": "object",
+    "required": [
+      "log"
+    ],
+    "properties": {
+      "log": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Log details in JSON format"
+      }
+    },
+    "example": {
+      "log": {
+        "message": "User logged in successfully",
+        "error": "User ID not found"
+      }
+    }
+  }
+}
