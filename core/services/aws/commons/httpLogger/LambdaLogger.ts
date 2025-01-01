@@ -4,10 +4,9 @@ import { JsonLogger } from '../../../../../commons/libs/logger/JsonLogger'
 export const createLambdaLogger = (
   userId: string
 ): Logger => {
-  const { info, error, warn, debug } = JsonLogger.child({
+  return JsonLogger.child({
     userId
   })
-  return { info, error, warn, debug }
 }
 
 export type LambdaLoggerAttributes = {

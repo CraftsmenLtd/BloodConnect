@@ -1,0 +1,5 @@
+#set($inputRoot = $input.path('$'))
+{
+  "userId": "$context.authorizer.claims['custom:userId']",
+  "log": "$inputRoot.log"
+}

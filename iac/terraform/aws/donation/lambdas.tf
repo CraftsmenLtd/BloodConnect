@@ -32,7 +32,7 @@ locals {
         local.policies.common_policies,
         local.policies.dynamodb_update_policy
       )
-    invocation_arn_placeholder = "CANCEL_DONATION_INVOCATION_ARN"
+      invocation_arn_placeholder = "CANCEL_DONATION_INVOCATION_ARN"
       env_variables = {
         DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
       }

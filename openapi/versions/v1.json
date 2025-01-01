@@ -67,6 +67,9 @@
     },
     "/notification/register": {
       "$ref": "./../paths/notification/register.json"
+    },
+    "/logger": {
+      "$ref": "./../paths/logger/logger.json"
     }
   },
   "components": {

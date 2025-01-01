@@ -1,0 +1,22 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "${ADD_UI_LOGS_INVOCATION_ARN}",
+  "requestTemplates": {
+    "application/json": "#importVtl logger/vtl/requestTemplates/post-logger.vtl"
+  },
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'POST'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#importVtl logger/vtl/responseTemplates/post-logger.vtl"
+      }
+    }
+  },
+  "passthroughBehavior": "never"
+}
