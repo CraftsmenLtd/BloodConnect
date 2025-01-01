@@ -4,7 +4,8 @@ locals {
   all_lambda_metadata = concat(
     module.blood_donation.lambda_metadata,
     module.notification.lambda_metadata,
-    module.user.lambda_metadata
+    module.user.lambda_metadata,
+    module.logger.lambda_metadata
   )
 
   all_lambda_invoke_arns = merge({
