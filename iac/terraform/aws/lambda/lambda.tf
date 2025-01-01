@@ -18,3 +18,8 @@ resource "aws_lambda_function" "lambda_function" {
     create_before_destroy = true
   }
 }
+
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/${aws_lambda_function.lambda_function.function_name}-logs"
+  retention_in_days = var.log_retention_in_days
+}

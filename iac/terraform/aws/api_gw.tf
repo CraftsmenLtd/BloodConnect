@@ -85,7 +85,7 @@ resource "aws_cloudwatch_log_group" "api_gateway_logs" {
 
 resource "aws_api_gateway_account" "main" {
   cloudwatch_role_arn = aws_iam_role.api_gw_role.arn
-  depends_on = [aws_cloudwatch_log_group.api_gateway_logs]
+  depends_on          = [aws_cloudwatch_log_group.api_gateway_logs]
 }
 
 resource "aws_api_gateway_method_settings" "api_gw_settings" {

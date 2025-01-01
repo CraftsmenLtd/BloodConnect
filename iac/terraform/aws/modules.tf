@@ -76,6 +76,6 @@ module "notification" {
 }
 
 module "logger" {
-  source                         = "./logger"
-  environment                    = var.environment
+  source      = "./logger"
+  environment = var.environment
 }
