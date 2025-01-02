@@ -111,7 +111,7 @@ describe('UserService Tests', () => {
       phoneNumbers: ['1234567890'],
       bloodGroup: 'A+',
       lastDonationDate: '2023-06-01',
-      height: 170,
+      height: '5.10',
       weight: 65,
       availableForDonation: 'yes',
       gender: 'male',
