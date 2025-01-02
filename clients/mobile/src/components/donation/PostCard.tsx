@@ -8,6 +8,7 @@ import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPo
 import { UrgencyLevel } from '../../donationWorkflow/types'
 import BloodImage from '../../../assets/images/bloodtype.png'
 import StatusBadge from './StatusBadge'
+import Badge from '../badge'
 import GenericModal from '../modal'
 
 export interface PostCardDisplayOptions {
@@ -132,70 +133,72 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
               <Text style={styles.userName}>{post.patientName}</Text>
               <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
             </View>
-            {showStatus && <StatusBadge status={post.status} />}
-            {showOptions &&
-            <View style={styles.menuContainer}>
-              <View ref={iconRef} collapsable={false}>
-                <TouchableOpacity
-                  onPress={handleToggleDropdown}
-                  style={styles.iconContainer}
-                >
-                  <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.grey} />
-                </TouchableOpacity>
-              </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {showStatus && <StatusBadge status={post.status} />}
+              {showOptions &&
+              <View style={styles.menuContainer}>
+                <View ref={iconRef} collapsable={false}>
+                  <TouchableOpacity
+                    onPress={handleToggleDropdown}
+                    style={styles.iconContainer}
+                  >
+                    <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.grey} />
+                  </TouchableOpacity>
+                </View>
 
-              <Modal
-                visible={showDropdown}
-                transparent
-                animationType="none"
-                onRequestClose={handleCloseDropdown}
-              >
-                <TouchableWithoutFeedback onPress={handleCloseDropdown}>
-                  <View style={styles.modalOverlay}>
-                    <TouchableWithoutFeedback>
-                      <View style={getDropdownStyle()}>
-                        <TouchableOpacity
-                          onPress={handleUpdate}
-                          style={styles.dropdownItem}
-                        >
-                          <Text style={styles.dropdownText}>Update</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={openModal}
-                          style={styles.dropdownItem}
-                        >
-                          <Text style={styles.dropdownText}>Cancel</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </TouchableWithoutFeedback>
-                  </View>
-                </TouchableWithoutFeedback>
-              </Modal>
-              <GenericModal
-                visible={isModalOpen}
-                title="Confirmation"
-                message="Are you sure you want to cancel?"
-                buttons={[
-                  {
-                    onPress: closeModal,
-                    style: {
-                      backgroundColor: theme.colors.greyBG,
-                      color: theme.colors.textPrimary
+                <Modal
+                  visible={showDropdown}
+                  transparent
+                  animationType="none"
+                  onRequestClose={handleCloseDropdown}
+                >
+                  <TouchableWithoutFeedback onPress={handleCloseDropdown}>
+                    <View style={styles.modalOverlay}>
+                      <TouchableWithoutFeedback>
+                        <View style={getDropdownStyle()}>
+                          <TouchableOpacity
+                            onPress={handleUpdate}
+                            style={styles.dropdownItem}
+                          >
+                            <Text style={styles.dropdownText}>Update</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={openModal}
+                            style={styles.dropdownItem}
+                          >
+                            <Text style={styles.dropdownText}>Cancel</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </Modal>
+                <GenericModal
+                  visible={isModalOpen}
+                  title="Confirmation"
+                  message="Are you sure you want to cancel?"
+                  buttons={[
+                    {
+                      onPress: closeModal,
+                      style: {
+                        backgroundColor: theme.colors.greyBG,
+                        color: theme.colors.textPrimary
+                      },
+                      text: 'Close'
                     },
-                    text: 'Close'
-                  },
-                  {
-                    onPress: handleCancel,
-                    style: {
-                      backgroundColor: theme.colors.primary
-                    },
-                    text: 'OK',
-                    loading: isLoading
-                  }
-                ]}
-                onClose={closeModal}
-              />
-            </View>}
+                    {
+                      onPress: handleCancel,
+                      style: {
+                        backgroundColor: theme.colors.primary
+                      },
+                      text: 'OK',
+                      loading: isLoading
+                    }
+                  ]}
+                  onClose={closeModal}
+                />
+              </View>}
+            </View>
           </View>
         }
         <View style={styles.bloodInfoWrapper}>
@@ -208,10 +211,12 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
               </View>
             </View>
             {post.urgencyLevel === UrgencyLevel.URGENT && (
-              <View style={styles.urgentBadge}>
-                <Ionicons name="warning-outline" size={14} color={theme.colors.black} />
-                <Text style={styles.urgentText}>URGENT</Text>
-              </View>
+                <Badge
+                    text="URGENT"
+                    containerStyle={styles.urgentBadge}
+                    textStyle={styles.urgentText}
+                    iconName='triangle-exclamation'
+                />
             )}
           </View>
 

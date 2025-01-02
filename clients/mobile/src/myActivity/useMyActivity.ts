@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { BloodDonationRecord } from '../donationWorkflow/types'
+import { BloodDonationRecord, STATUS } from '../donationWorkflow/types'
 import { SCREENS } from '../setup/constant/screens'
 import { DonationPostsScreenNavigationProp } from '../setup/navigation/navigationTypes'
 import { fetchMyResponses, cancelDonation } from '../donationWorkflow/donationService'
@@ -10,6 +10,7 @@ import { TabConfig } from './types'
 import { useUserProfile } from '../userWorkflow/context/UserProfileContext'
 import useFetchData from '../setup/clients/useFetchData'
 import useToast from '../components/toast/useToast'
+import { useMyActivityContext } from './context/useMyActivityContext'
 
 export const MY_ACTIVITY_TAB_CONFIG: TabConfig = {
   tabs: ['My Posts', 'My Responses'],
@@ -23,6 +24,7 @@ export interface DonationData extends Omit<BloodDonationRecord, 'reqPostId' | 'l
 export const useMyActivity = (): any => {
   const fetchClient = useFetchClient()
   const { userProfile } = useUserProfile()
+  const { fetchDonationPosts } = useMyActivityContext()
   const { showToastMessage, showToast, toastAnimationFinished } = useToast()
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const [currentTab, setCurrentTab] = useState(MY_ACTIVITY_TAB_CONFIG.initialTab)
@@ -54,14 +56,19 @@ export const useMyActivity = (): any => {
       requestCreatedAt: donationData.createdAt
     }
 
+    const previousStatus = donationData.status
+    donationData.status = STATUS.CANCELLED
+
     try {
       const response = await cancelDonation(payload, fetchClient)
       if (response.success === true) {
         showToastMessage({ message: response.message ?? '', type: 'success', toastAnimationFinished })
+        void fetchDonationPosts()
       }
     } catch (error) {
       const errorMessage = extractErrorMessage(error)
       setCancelPostError(errorMessage)
+      donationData.status = previousStatus
     } finally {
       setIsLoading(false)
     }

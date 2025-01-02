@@ -58,6 +58,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
               showPatientName
               showTransportInfo
               showButton={false}
+              showStatus={true}
               updateHandler={updatePost}
               cancelHandler={cancelPost}
               isLoading={isLoading}
