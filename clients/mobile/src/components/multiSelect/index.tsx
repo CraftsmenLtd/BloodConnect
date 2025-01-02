@@ -35,6 +35,55 @@ interface MultiSelectProps {
   editable?: boolean;
 }
 
+/**
+ * MultiSelect Component
+ *
+ * A customizable multi-select dropdown component.
+ *
+ * @param {Option[]} options - Array of options available for selection. Each option has `label` and `value` properties.
+ * @param {Option[]} selectedValues - Array of currently selected options.
+ * @param {(selected: Option[]) => void} onSelect - Callback triggered when the selected options are updated.
+ * @param {string} [placeholder='Select options'] - Placeholder text shown when no options are selected.
+ * @param {string} [label] - Label displayed above the dropdown.
+ * @param {boolean} [isRequired=false] - Whether the field is required.
+ * @param {string} [minRequiredLabel] - Optional text indicating a minimum required condition.
+ * @param {boolean} [enableSearch=false] - Whether to enable the search feature in the dropdown.
+ * @param {(searchText: string) => Promise<Option[]>} [fetchOptions] - Function to fetch options dynamically based on search text.
+ * @param {boolean} [editable=true] - Whether the input is editable.
+ *
+ * @example
+ * // Example Usage:
+ * const options = [
+ *   { label: 'Option 1', value: '1' },
+ *   { label: 'Option 2', value: '2' },
+ *   { label: 'Option 3', value: '3' },
+ * ];
+ * const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
+ *
+ * const handleSelect = (selected: Option[]) => {
+ *   setSelectedOptions(selected);
+ * };
+ *
+ * <MultiSelect
+ *   options={options}
+ *   selectedValues={selectedOptions}
+ *   onSelect={handleSelect}
+ *   placeholder="Select options"
+ *   label="Choose Options"
+ *   isRequired={true}
+ *   minRequiredLabel="Please select at least one option."
+ *   enableSearch={true}
+ *   fetchOptions={async (searchText) => {
+ *     // Fetch dynamic options based on `searchText`
+ *     return [
+ *       { label: `Dynamic ${searchText}`, value: `dynamic_${searchText}` },
+ *     ];
+ *   }}
+ *   editable={true}
+ * />
+ *
+ * @returns {React.FC} A multi-select dropdown component.
+ */
 const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   options,
   selectedValues,
