@@ -3,13 +3,13 @@ import { useNavigation } from '@react-navigation/native'
 import { BloodDonationRecord } from '../donationWorkflow/types'
 import { SCREENS } from '../setup/constant/screens'
 import { DonationPostsScreenNavigationProp } from '../setup/navigation/navigationTypes'
-import { fetchMyResponses, cancelDonation } from '../donationWorkflow/donationService'
+import { cancelDonation } from '../donationWorkflow/donationService'
 import { useFetchClient } from '../setup/clients/useFetchClient'
-import { extractErrorMessage, formatDonations } from '../donationWorkflow/donationHelpers'
+import { extractErrorMessage } from '../donationWorkflow/donationHelpers'
 import { TabConfig } from './types'
 import { useUserProfile } from '../userWorkflow/context/UserProfileContext'
-import useFetchData from '../setup/clients/useFetchData'
 import useToast from '../components/toast/useToast'
+import { useMyActivityContext } from './context/useMyActivityContext'
 
 export const MY_ACTIVITY_TAB_CONFIG: TabConfig = {
   tabs: ['My Posts', 'My Responses'],
@@ -23,20 +23,13 @@ export interface DonationData extends Omit<BloodDonationRecord, 'reqPostId' | 'l
 export const useMyActivity = (): any => {
   const fetchClient = useFetchClient()
   const { userProfile } = useUserProfile()
+  const { getMyResponses } = useMyActivityContext()
   const { showToastMessage, showToast, toastAnimationFinished } = useToast()
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const [currentTab, setCurrentTab] = useState(MY_ACTIVITY_TAB_CONFIG.initialTab)
   const [cancelPostError, setCancelPostError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
-
-  const [getMyResponses, myResponsesLoading, myResponses, myResponsesError] = useFetchData(async() => {
-    const response = await fetchMyResponses({}, fetchClient)
-    if (response.data !== undefined && response.data.length > 0) {
-      return formatDonations(response.data)
-    }
-    return []
-  }, { shouldExecuteOnMount: true, parseError: extractErrorMessage })
 
   const updatePost = (donationData: DonationData): void => {
     const { status, acceptedDonors, ...rest } = donationData
@@ -83,9 +76,6 @@ export const useMyActivity = (): any => {
     updatePost,
     detailHandler,
     cancelPost,
-    myResponses,
-    myResponsesLoading,
-    myResponsesError,
     cancelPostError,
     isLoading,
     showToast,

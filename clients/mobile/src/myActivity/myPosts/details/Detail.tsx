@@ -11,6 +11,7 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
 import { useMyActivity } from '../../useMyActivity'
 import Toast from '../../../components/toast'
+import Button from '../../../components/button/Button'
 
 interface DetailProps {
   navigation: DetailPostScreenNavigationProp;
@@ -40,6 +41,13 @@ const Detail = ({ navigation, route }: DetailProps) => {
     navigation.navigate(SCREENS.DONATION, { data: { ...donationData }, isUpdating: true })
   }
 
+  const handleCompleteRequest = () => {
+    navigation.navigate(SCREENS.REQUEST_STATUS, {
+      requestPostId: data.requestPostId,
+      createdAt: data.createdAt
+    })
+  }
+
   return (
     <View style={styles.container}>
       <View style={[styles.tabHeader, currentTab === DETAIL_POST_TAB_CONFIG.initialTab ? { marginBottom: -18.5 } : {}]}>
@@ -51,25 +59,30 @@ const Detail = ({ navigation, route }: DetailProps) => {
       </View>
       {currentTab === DETAIL_POST_TAB_CONFIG.initialTab
         ? <View style={styles.postCardContainer}>
-            <PostCard
-              post={data}
-              showContactNumber
-              showDescription
-              showPatientName
-              showTransportInfo
-              showButton={false}
-              updateHandler={updatePost}
-              cancelHandler={cancelPost}
-              isLoading={isLoading}
-            />
-            {cancelPostError !== '' &&
-              <Text style={styles.errorMessage}>{cancelPostError}</Text>
-            }
-            {showToast != null && <Toast
-                message={showToast?.message}
-                type={showToast?.type}
-                toastAnimationFinished={toastAnimationFinished}
-            />}
+              <PostCard
+                post={data}
+                showContactNumber
+                showDescription
+                showPatientName
+                showTransportInfo
+                showButton={false}
+                updateHandler={updatePost}
+                cancelHandler={cancelPost}
+                isLoading={isLoading}
+              />
+              {cancelPostError !== '' && (
+                <Text style={styles.errorMessage}>{cancelPostError}</Text>
+              )}
+              {showToast != null && (
+                <Toast
+                  message={showToast?.message}
+                  type={showToast?.type}
+                  toastAnimationFinished={toastAnimationFinished}
+                />
+              )}
+            <View style={styles.buttonContainer}>
+              <Button text="Complete Request" onPress={handleCompleteRequest} />
+            </View>
           </View>
         : <DonorResponses acceptedDonors={data.acceptedDonors} handlePressDonor={handlePressDonor} />
       }
@@ -92,8 +105,14 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   postCardContainer: {
     marginTop: 20,
-    backgroundColor: theme.colors.white,
-    flex: 1
+    flex: 1,
+    backgroundColor: theme.colors.white
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 10,
+    left: 20,
+    right: 20
   },
   errorMessage: {
     color: theme.colors.primary,
