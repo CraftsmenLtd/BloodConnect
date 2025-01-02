@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Constants from 'expo-constants'
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import Dropdown from '../../../components/inputElement/Dropdown'
@@ -11,12 +11,12 @@ import { Input } from '../../../components/inputElement/Input'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
 import RadioButton from '../../../components/inputElement/Radio'
-import SearchMultiSelect from '../../../components/inputElement/SearchMultiSelect'
 import { LocationService } from '../../../LocationService/LocationService'
 import Warning from '../../../components/warning'
 import { WARNINGS } from '../../../setup/constant/consts'
 import LinkText from '../../../components/text/LinkText'
 import { POLICY_URLS } from '../../../setup/constant/urls'
+import MultiSelect from '../../../components/multiSelect'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -25,6 +25,7 @@ const locationService = new LocationService(GOOGLE_MAP_API)
 const AddPersonalInfo = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
+  const [selectedValues, setSelectedValues] = useState<Array<{ label: string; value: string }>>([])
   const {
     personalInfo,
     handleInputChange,
@@ -34,8 +35,6 @@ const AddPersonalInfo = () => {
     loading,
     errorMessage,
     setErrorMessage,
-    isVisible,
-    setIsVisible,
     isSSO
   } = useAddPersonalInfo()
 
@@ -49,7 +48,7 @@ const AddPersonalInfo = () => {
             <Dropdown
               label='Blood Group'
               isRequired={true}
-              placeholder='Select blood group'
+              placeholder='Select Blood Group'
               options={bloodGroupOptions}
               name='bloodGroup'
               selectedValue={personalInfo.bloodGroup}
@@ -81,7 +80,7 @@ const AddPersonalInfo = () => {
             <Dropdown
               label='Preferred District for Donating Blood'
               isRequired={true}
-              placeholder='Select city'
+              placeholder='Select City'
               options={districts}
               name='city'
               selectedValue={personalInfo.city}
@@ -91,18 +90,20 @@ const AddPersonalInfo = () => {
           </View>
 
           <View style={styles.fieldSpacing}>
-            <SearchMultiSelect
-              name="locations"
-              label="Search Preferred Location"
-              isVisible={isVisible}
-              setIsVisible={setIsVisible}
-              onChange={handleInputChange}
-              editable={personalInfo.city.length > 0}
-              error={errors.locations}
-              multiSelect={true}
+            <MultiSelect
+              label="Select Preferred Location"
+              options={[]}
+              selectedValues={selectedValues}
+              onSelect={setSelectedValues}
+              placeholder="Select Preferred Location"
               isRequired={true}
-              fetchOptions={async(searchText) => locationService.preferredLocationAutocomplete(searchText, personalInfo.city)}
-              extraInfo='Add minimum 1 area.'
+              enableSearch={true}
+              fetchOptions={
+                async(searchText) =>
+                  locationService.preferredLocationAutocomplete(searchText, personalInfo.city)
+              }
+              minRequiredLabel='Add minimum 1 area.'
+              editable={personalInfo.city.length > 0}
             />
           </View>
 
