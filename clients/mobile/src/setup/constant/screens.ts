@@ -5,6 +5,7 @@ export enum SCREENS {
   OTP = 'OTP',
   FORGOT_PASSWORD = 'ForgotPassword',
   PROFILE = 'Profile',
+  EDIT_PROFILE = 'EditProfile',
   WELCOME = 'Welcome',
   DONATION = 'Donation',
   DONATION_POSTS = 'DonationPosts',

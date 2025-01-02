@@ -1,16 +1,17 @@
 import React from 'react'
-import { View, TextInput, Text, StyleSheet, KeyboardTypeOptions } from 'react-native'
+import { View, TextInput, Text, StyleSheet, KeyboardTypeOptions, StyleProp, ViewStyle } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 import { InputProps } from './types'
 
 interface InputElementProps extends InputProps {
-  keyboardType: KeyboardTypeOptions;
+  keyboardType?: KeyboardTypeOptions;
   readOnly?: boolean;
+  inputStyle?: StyleProp<ViewStyle>;
 }
 
-export const Input = ({ name, label, value, onChangeText, placeholder, error, keyboardType = 'default', isRequired = false, readOnly = false }: InputElementProps) => {
+export const Input = ({ name, label, value, onChangeText, placeholder, error, keyboardType = 'default', isRequired = false, readOnly = false, inputStyle }: InputElementProps) => {
   const styles = createStyles(useTheme())
 
   return (
@@ -20,7 +21,7 @@ export const Input = ({ name, label, value, onChangeText, placeholder, error, ke
         {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, inputStyle]}
         placeholder={placeholder}
         value={value}
         onChangeText={(text) => { onChangeText(name, text) }}
