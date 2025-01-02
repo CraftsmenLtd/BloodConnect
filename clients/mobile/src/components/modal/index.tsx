@@ -130,8 +130,9 @@ const GenericModal: React.FC<GenericModalProps> = ({
 
               {/* Buttons */}
               <View style={styles.buttonContainer}>
-                {buttons.map((button) => (
+                {buttons.map((button, index) => (
                     <Button
+                        key={`${button.text}-${index}`}
                         text={button.text}
                         onPress={button.onPress}
                         buttonStyle={[styles.button, button.style]}

@@ -74,3 +74,8 @@ module "notification" {
   firebase_token_s3_url          = var.firebase_token_s3_url
   donor_search_state_machine_arn = module.donor_search.donor_search_state_machine_arn
 }
+
+module "logger" {
+  source      = "./logger"
+  environment = var.environment
+}

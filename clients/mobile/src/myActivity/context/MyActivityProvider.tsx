@@ -1,6 +1,6 @@
-import React, { createContext, ReactNode, useEffect } from 'react'
+import React, { createContext, ReactNode, useCallback, useEffect } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
-import { fetchDonationList } from '../../donationWorkflow/donationService'
+import { fetchDonationList, fetchMyResponses } from '../../donationWorkflow/donationService'
 import { DonationData, extractErrorMessage, formatDonations } from '../../donationWorkflow/donationHelpers'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import useFetchData from '../../setup/clients/useFetchData'
@@ -11,16 +11,24 @@ import { useAuth } from '../../authentication/context/useAuth'
 
 export interface MyActivityContextType {
   donationPosts: DonationData[];
+  myResponses: DonationData[];
   errorMessage: string | null;
+  myResponsesError: string | null;
   loading: boolean;
+  myResponsesLoading: boolean;
   fetchDonationPosts: () => Promise<void>;
+  getMyResponses: () => Promise<void>;
 }
 
 const defaultContextValue = {
   donationPosts: [],
+  myResponses: [],
   errorMessage: null,
+  myResponsesError: null,
   loading: false,
-  fetchDonationPosts: async() => { }
+  myResponsesLoading: false,
+  fetchDonationPosts: async() => { },
+  getMyResponses: async() => { }
 }
 
 export const MyActivityContext = createContext<MyActivityContextType>(defaultContextValue)
@@ -30,23 +38,52 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
   const { isAuthenticated } = useAuth()
   const fetchClient = useFetchClient()
 
-  const [fetchDonationPosts, loading, data, errorMessage] = useFetchData(async() => {
-    const response = await fetchDonationList({}, fetchClient)
+  const fetchMyResponsesCallback = useCallback(async() => {
+    const response = await fetchMyResponses({}, fetchClient)
+    if (response.data !== undefined && response.data.length > 0) {
+      return formatDonations(response.data)
+    }
+    return []
+  }, [fetchClient])
 
+  const [getMyResponses, myResponsesLoading, myResponses, myResponsesError] = useFetchData(fetchMyResponsesCallback, {
+    parseError: extractErrorMessage
+  })
+
+  const fetchDonationPostsCallback = useCallback(async() => {
+    const response = await fetchDonationList({}, fetchClient)
     if (response.data !== undefined && response.data.length > 0) {
       const profile = await storageService.getItem<UserProfile>(LOCAL_STORAGE_KEYS.USER_PROFILE)
       const userName = userProfile.name === '' ? profile?.name : userProfile.name
       return formatDonations(response.data, userName)
     }
     return []
-  }, { parseError: extractErrorMessage })
+  }, [fetchClient, userProfile.name])
+
+  const [fetchDonationPosts, loading, data, errorMessage] = useFetchData(fetchDonationPostsCallback, {
+    parseError: extractErrorMessage
+  })
 
   useEffect(() => {
-    void fetchDonationPosts()
-  }, [isAuthenticated])
+    if (isAuthenticated) {
+      void fetchDonationPosts()
+      void getMyResponses()
+    }
+  }, [isAuthenticated, fetchDonationPosts, getMyResponses])
 
   return (
-    <MyActivityContext.Provider value={{ donationPosts: data ?? [], errorMessage, loading, fetchDonationPosts }}>
+    <MyActivityContext.Provider
+      value={{
+        donationPosts: data ?? [],
+        myResponses: myResponses ?? [],
+        myResponsesLoading,
+        myResponsesError,
+        errorMessage,
+        loading,
+        fetchDonationPosts,
+        getMyResponses
+      }}
+    >
       {children}
     </MyActivityContext.Provider>
   )

@@ -15,12 +15,14 @@ import { Ionicons } from '@expo/vector-icons'
 import createStyles from './createStyles'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
 import React from 'react'
-import { useUserProfile } from '../../../../userWorkflow/context/UserProfileContext'
+import { openMapLocation } from '../../../../utility/mapUtils'
+import { useMyActivityContext } from '../../../../myActivity/context/useMyActivityContext'
+import { STATUS } from '../../../types'
 
 const ResponseDonationRequest = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
-  const { userProfile } = useUserProfile()
+  const { myResponses } = useMyActivityContext()
   const {
     bloodRequest,
     error,
@@ -32,6 +34,12 @@ const ResponseDonationRequest = () => {
   } = useResponseDonationRequest()
 
   if (bloodRequest === null) return null
+
+  const isRequestAlreadyAccepted = myResponses.some(
+    (response) =>
+      response.requestPostId === bloodRequest.requestPostId &&
+      response.status === STATUS.ACCEPTED
+  )
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,7 +61,7 @@ const ResponseDonationRequest = () => {
                 <Image source={require('../../../../../assets/images/bloodtype.png')} style={styles.bloodtypeImage as StyleProp<ImageStyle>} />
                 <View style={styles.requestText}>
                   <Text style={styles.primaryCaption}>Looking for</Text>
-                  <Text style={styles.highlightedText}>{bloodRequest.bloodQuantity ?? 0} bags {bloodRequest.requestedBloodGroup}(ve) blood</Text>
+                  <Text style={styles.highlightedText}>{bloodRequest.bloodQuantity ?? 0} {bloodRequest.requestedBloodGroup}(ve) blood</Text>
                 </View>
               </View>
               {bloodRequest.urgencyLevel === 'urgent' && (
@@ -70,7 +78,12 @@ const ResponseDonationRequest = () => {
                   <Ionicons name="location-outline" size={14} color="gray" style={styles.icons} />
                   <Text style={styles.label}>Donation point</Text>
                 </View>
-                <Text style={styles.value}>{bloodRequest.location ?? 'Location not provided'}</Text>
+                {bloodRequest.location !== ''
+                  ? <TouchableOpacity onPress={() => { openMapLocation({ location: bloodRequest.location }) }}>
+                      <Text style={[styles.value, styles.link]}>{bloodRequest.location}</Text>
+                    </TouchableOpacity>
+                  : <Text style={styles.value}>Location not provided</Text>}
+
               </View>
               <View style={styles.dividerHorizontal}></View>
               <View style={styles.infoRow}>
@@ -89,14 +102,11 @@ const ResponseDonationRequest = () => {
                 <View>
                   <Text style={styles.label}>Contact Number</Text>
                   {isRequestAccepted
-                    ? (
-                    <Text style={styles.phoneNumber}>
+                    ? <Text style={styles.phoneNumber}>
                       {bloodRequest.contactNumber ?? 'Contact Not Shared'}
                     </Text>
-                      )
-                    : (
-                    <Text style={styles.hiddenNumber}>{`${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`}</Text>
-                      )}
+                    : <Text style={styles.hiddenNumber}>{`${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`}</Text>
+                  }
                 </View>
                 {isRequestAccepted && (
                   <TouchableOpacity
@@ -116,35 +126,36 @@ const ResponseDonationRequest = () => {
                 )}
               </View>
             </View>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Name of the Patient</Text>
-              <Text style={styles.value}>{bloodRequest.patientName ?? 'Patient Name not provided'}</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Short Description of the Problem</Text>
-              <Text style={styles.value}>
-                {bloodRequest.shortDescription ?? 'No description provided'}
-              </Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Transportation Facility for the Donor</Text>
-              <Text style={styles.value}>{bloodRequest.transportationInfo ?? 'No transportation info'}</Text>
-            </View>
+            {bloodRequest.patientName !== '' &&
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Name of the Patient</Text>
+                <Text style={styles.value}>{bloodRequest.patientName ?? 'Patient Name not provided'}</Text>
+              </View>
+            }
+            {bloodRequest.shortDescription !== '' &&
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Short Description of the Problem</Text>
+                <Text style={styles.value}>
+                  {bloodRequest.shortDescription ?? 'No description provided'}
+                </Text>
+              </View>
+            }
+            {bloodRequest.transportationInfo !== '' &&
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Transportation Facility for the Donor</Text>
+                <Text style={styles.value}>{bloodRequest.transportationInfo ?? 'No transportation info'}</Text>
+              </View>
+            }
           </View>
         </View>
       </ScrollView>
 
       {error !== null && <Text style={styles.error}>{error}</Text>}
 
-      {userProfile.id !== bloodRequest.seekerId &&
       <View style={styles.buttonContainer}>
-        {!isLoading && !isRequestAccepted && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
-        <Button text={isRequestAccepted ? 'Request Accepted' : 'Accept Request'} loading={isLoading} disabled={isRequestAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
+        {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
+        <Button text={isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 'Accept Request'} loading={isLoading} disabled={isRequestAccepted || isRequestAlreadyAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
       </View>
-    }
     </SafeAreaView>
   )
 }
