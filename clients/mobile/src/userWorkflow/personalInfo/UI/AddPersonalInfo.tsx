@@ -40,8 +40,7 @@ const AddPersonalInfo = () => {
   } = useAddPersonalInfo()
 
   return (
-    <TouchableWithoutFeedback onPress={() => { setIsVisible('') }}>
-      <View style={styles.container}>
+    <TouchableWithoutFeedback>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
@@ -71,10 +70,10 @@ const AddPersonalInfo = () => {
                 isRequired={true}
                 error={errors.phoneNumber}
               />
-                <Warning
-                  text={WARNINGS.PHONE_NUMBER_VISIBLE}
-                  showWarning={Boolean(personalInfo.phoneNumber?.trim())}
-                />
+              <Warning
+                text={WARNINGS.PHONE_NUMBER_VISIBLE}
+                showWarning={Boolean(personalInfo.phoneNumber?.trim())}
+              />
             </View>
           )}
 
@@ -237,19 +236,15 @@ const AddPersonalInfo = () => {
             />
           </View>
         </ScrollView>
-      </View>
     </TouchableWithoutFeedback>
   )
 }
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.white
-  },
   scrollContent: {
     padding: 16,
-    paddingBottom: 32
+    paddingBottom: 32,
+    backgroundColor: theme.colors.white
   },
   fieldSpacing: {
     marginBottom: 7
