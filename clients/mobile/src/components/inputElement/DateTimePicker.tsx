@@ -67,7 +67,13 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
         {isRequired && <Text style={styles.asterisk}>*</Text>}
       </Text>
       <TouchableOpacity onPress={() => { setShowDatePicker(true) }} style={styles.datePicker}>
-        <Text>{value !== null ? formattedDate(value, isOnlyDate) : 'Select Date & Time'}</Text>
+      <Text>
+        {value !== null
+          ? formattedDate(value, isOnlyDate)
+          : isOnlyDate
+            ? 'Select Date'
+            : 'Select Date & Time'}
+      </Text>
       </TouchableOpacity>
       {showDatePicker && (
         <DateTimePicker
