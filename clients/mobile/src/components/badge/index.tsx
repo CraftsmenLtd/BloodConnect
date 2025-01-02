@@ -85,7 +85,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   text: {
     fontSize: 12,
-    fontWeight: '700'
+    fontWeight: '600'
   },
   icon: {
     marginRight: 4
