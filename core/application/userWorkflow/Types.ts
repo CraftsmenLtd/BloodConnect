@@ -12,7 +12,7 @@ export interface CreateUserAttributes extends UserAttributes {
   name: string;
   bloodGroup: BloodGroup;
   lastDonationDate: string;
-  height: number;
+  height: string;
   weight: number;
   gender: Gender;
   dateOfBirth: string;
@@ -30,7 +30,7 @@ export interface UpdateUserAttributes extends UserAttributes {
   name: string;
   bloodGroup: BloodGroup;
   lastDonationDate?: string;
-  height: number;
+  height: string;
   weight: number;
   gender: Gender;
   dateOfBirth: string;
