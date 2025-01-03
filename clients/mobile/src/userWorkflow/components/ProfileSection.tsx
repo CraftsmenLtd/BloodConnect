@@ -82,7 +82,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   cameraIconContainer: {
     position: 'absolute',
     bottom: -10,
-    // right: 0,
     alignSelf: 'center',
     backgroundColor: theme.colors.white,
     borderRadius: 20,
@@ -90,7 +89,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     height: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
+    shadowColor: theme.colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
@@ -106,14 +105,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    // padding: 8,
     alignItems: 'center',
     justifyContent: 'center'
   },
   cameraIcon: {
     color: theme.colors.black,
     fontSize: 18,
-    // backgroundColor: 'red',
     width: 16,
     height: 16,
     transform: [{ scaleX: -1 }]

@@ -10,6 +10,8 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { initializeState } from '../../../utility/stateUtils'
 import { Alert } from 'react-native'
 import { useUserProfile } from '../../context/UserProfileContext'
+import useFetchData from '../../../setup/clients/useFetchData'
+import { updateUserProfile } from '../../services/userProfileService'
 
 type ProfileFields = keyof Omit<ProfileData, 'location'>
 
@@ -62,6 +64,20 @@ export const useEditProfile = (): any => {
     initializeState<ProfileDataErrors>(Object.keys(validationRules) as ProfileFields[], null)
   )
 
+  const [executeUpdateProfile, loading, , updateError] = useFetchData(
+    async(payload: Partial<ProfileData>) => {
+      const response = await updateUserProfile(payload, fetchClient)
+
+      if (response.status !== 200) {
+        throw new Error('Failed to update profile')
+      }
+      await fetchUserProfile()
+    },
+    {
+      parseError: (error) => (error instanceof Error ? error.message : 'Unknown error')
+    }
+  )
+
   const handleInputChange = (field: ProfileFields, value: string): void => {
     setProfileData((prev) => ({
       ...prev,
@@ -81,8 +97,8 @@ export const useEditProfile = (): any => {
 
   const handleSave = async(): Promise<void> => {
     const newErrors: Record<string, string | null> = {}
-    const tst = Object.keys(validationRules) as ProfileFields[]
-    tst.forEach(field => {
+    const validationFields = Object.keys(validationRules) as ProfileFields[]
+    validationFields.forEach(field => {
       const value = profileData[field]
       const rules = validationRules[field]
       newErrors[field] = validateInput(value, rules)
@@ -101,12 +117,11 @@ export const useEditProfile = (): any => {
     try {
       const requestPayload = {
         ...rest,
-        weight: parseFloat(profileData.weight),
-        height: parseFloat(profileData.height)
+        weight: parseFloat(profileData.weight)
       }
 
-      const response = await fetchClient.patch('/users', requestPayload)
-      if (response.status !== 200) {
+      await executeUpdateProfile(requestPayload)
+      if (updateError !== null) {
         throw new Error('Failed to update profile')
       } else {
         await fetchUserProfile()
@@ -134,6 +149,7 @@ export const useEditProfile = (): any => {
 
   return {
     profileData,
+    loading,
     errors,
     handleInputChange,
     handleSave,
