@@ -59,20 +59,21 @@ const Detail = ({ navigation, route }: DetailProps) => {
       </View>
       {currentTab === DETAIL_POST_TAB_CONFIG.initialTab
         ? <View style={styles.postCardContainer}>
-              <PostCard
-                post={data}
-                showContactNumber
-                showDescription
-                showPatientName
-                showTransportInfo
-                showButton={false}
-                updateHandler={updatePost}
-                cancelHandler={cancelPost}
-                isLoading={isLoading}
-              />
-              {cancelPostError !== '' && (
+            <PostCard
+              post={data}
+              showContactNumber
+              showDescription
+              showPatientName
+              showTransportInfo
+              showButton={false}
+              showStatus={true}
+              updateHandler={updatePost}
+              cancelHandler={cancelPost}
+              isLoading={isLoading}
+            />
+            {cancelPostError !== '' && (
                 <Text style={styles.errorMessage}>{cancelPostError}</Text>
-              )}
+            )}
               {showToast != null && (
                 <Toast
                   message={showToast?.message}

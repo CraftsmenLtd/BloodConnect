@@ -50,6 +50,9 @@ const MyActivityTab = () => {
               errorMessage={errorMessage}
               detailHandler={detailHandler}
               emptyDataMessage="No posts found."
+              displayOptions={{
+                showStatus: true
+              }}
               cancelPost={cancelPost}
               refreshControl={
                 <RefreshControl
