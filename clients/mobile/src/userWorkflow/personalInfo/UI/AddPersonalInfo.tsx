@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Constants from 'expo-constants'
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import Dropdown from '../../../components/inputElement/Dropdown'
@@ -25,7 +25,6 @@ const locationService = new LocationService(GOOGLE_MAP_API)
 const AddPersonalInfo = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
-  const [selectedValues, setSelectedValues] = useState<Array<{ label: string; value: string }>>([])
   const {
     personalInfo,
     handleInputChange,
@@ -91,10 +90,11 @@ const AddPersonalInfo = () => {
 
           <View style={styles.fieldSpacing}>
             <MultiSelect
+              name='locations'
               label="Select Preferred Location"
               options={[]}
-              selectedValues={selectedValues}
-              onSelect={setSelectedValues}
+              selectedValues={personalInfo.locations}
+              onSelect={handleInputChange}
               placeholder="Select Preferred Location"
               isRequired={true}
               enableSearch={true}

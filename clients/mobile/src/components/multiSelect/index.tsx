@@ -24,23 +24,24 @@ interface Option {
 }
 
 interface MultiSelectProps {
-  options: Option[];
-  selectedValues: Option[];
-  onSelect: (selected: Option[]) => void;
-  placeholder?: string;
+  name: string;
   label?: string;
+  options: Option[];
+  selectedValues: string[];
+  onSelect: (name: string, selected: string[]) => void;
+  placeholder?: string;
   isRequired?: boolean;
   minRequiredLabel?: string;
   enableSearch?: boolean;
   fetchOptions?: (searchText: string) => Promise<Option[]>;
   editable?: boolean;
+  error?: string | null;
 }
 
 /**
  * MultiSelect Component
  *
  * A customizable multi-select dropdown component.
- *
  *
  * @example
  * // Example Usage:
@@ -49,15 +50,16 @@ interface MultiSelectProps {
  *   { label: 'Option 2', value: '2' },
  *   { label: 'Option 3', value: '3' },
  * ];
- * const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
+ * const [selectedValues, setSelectedValues] = useState<string[]>([]);
  *
- * const handleSelect = (selected: Option[]) => {
- *   setSelectedOptions(selected);
+ * const handleSelect = (name: string, selected: string[]) => {
+ *   setSelectedValues(selected);
  * };
  *
  * <MultiSelect
+ *   name="example"
  *   options={options}
- *   selectedValues={selectedOptions}
+ *   selectedValues={selectedValues}
  *   onSelect={handleSelect}
  *   placeholder="Select options"
  *   label="Choose Options"
@@ -76,6 +78,7 @@ interface MultiSelectProps {
  * @returns {React.FC} A multi-select dropdown component.
  */
 const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
+  name,
   options,
   selectedValues,
   onSelect,
@@ -85,7 +88,8 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   minRequiredLabel,
   enableSearch = false,
   fetchOptions,
-  editable = true
+  editable = true,
+  error
 }) => {
   const theme = useTheme()
   const styles = createStyles(theme)
@@ -144,29 +148,21 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   }, [])
 
   const handleSelect = useCallback((item: Option) => {
-    const isSelected = selectedValues.some((selected) => selected.value === item.value)
+    const isSelected = selectedValues.includes(item.value)
 
     if (isSelected) {
-      const updatedValues = selectedValues.filter((selected) => selected.value !== item.value)
-      onSelect(updatedValues)
+      const updatedValues = selectedValues.filter((value) => value !== item.value)
+      onSelect(name, updatedValues)
     } else {
-      const updatedValues = [...selectedValues, item]
-      onSelect(updatedValues)
+      const updatedValues = [...selectedValues, item.value]
+      onSelect(name, updatedValues)
     }
-  }, [selectedValues, onSelect])
+  }, [selectedValues, onSelect, name])
 
   const removeSelectedValue = useCallback((value: string) => {
-    const updatedValues = selectedValues.filter((selected) => selected.value !== value)
-    onSelect(updatedValues)
-  }, [selectedValues, onSelect])
-
-  const formatLabel = (label: string) => {
-    const parts = label.split(',')
-    if (parts.length > 2) {
-      return `${parts[0]},${parts[1]}`
-    }
-    return label
-  }
+    const updatedValues = selectedValues.filter((selected) => selected !== value)
+    onSelect(name, updatedValues)
+  }, [selectedValues, onSelect, name])
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -211,7 +207,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
                 onPress={() => { handleSelect(item) }}
               >
                 <Text style={styles.optionText}>{item.label}</Text>
-                {selectedValues.some((selected) => selected.value === item.value) && (
+                {selectedValues.includes(item.value) && (
                   <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
                 )}
               </TouchableOpacity>
@@ -241,20 +237,25 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
               <Text style={styles.placeholder}>{placeholder}</Text>
               )
             : (
-                selectedValues.map((item) => (
-                <View key={item.value} style={styles.selectedItem}>
-                  <Text style={styles.selectedItemText}>{formatLabel(item.label)}</Text>
-                  <TouchableOpacity onPress={() => { removeSelectedValue(item.value) }}>
-                    <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
-                  </TouchableOpacity>
-                </View>
-                ))
+                selectedValues.map((value) => {
+                  return (
+                    <View key={value} style={styles.selectedItem}>
+                      <Text style={styles.selectedItemText}>
+                        {value}
+                      </Text>
+                      <TouchableOpacity onPress={() => { removeSelectedValue(value) }}>
+                        <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+                      </TouchableOpacity>
+                    </View>
+                  )
+                })
               )}
         </View>
         <Ionicons name={isVisible ? 'chevron-up' : 'chevron-down'} size={14} color={theme.colors.textSecondary} />
       </TouchableOpacity>
 
       {(minRequiredLabel != null) && <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>}
+      {error !== null && <Text style={styles.error}>{error}</Text>}
 
       <Modal transparent={true} visible={isVisible} onRequestClose={toggleDropdown}>
         <TouchableOpacity
@@ -277,7 +278,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   container: {
     width: '100%',
-    marginVertical: 10
+    marginVertical: 3
   },
   requiredStar: {
     color: theme.colors.primary
@@ -287,7 +288,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: theme.colors.extraLightGray,
     borderRadius: 8,
     padding: 12,
     backgroundColor: theme.colors.white
@@ -300,7 +301,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     flexWrap: 'wrap',
     flex: 1,
-    gap: 5
+    gap: 5,
+    paddingVertical: 3
   },
   selectedItem: {
     flexDirection: 'row',
