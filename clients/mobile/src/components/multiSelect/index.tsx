@@ -10,7 +10,8 @@ import {
   TextInput,
   ActivityIndicator,
   Keyboard,
-  Platform
+  Platform,
+  TouchableWithoutFeedback
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { Theme } from '../../setup/theme'
@@ -40,16 +41,6 @@ interface MultiSelectProps {
  *
  * A customizable multi-select dropdown component.
  *
- * @param {Option[]} options - Array of options available for selection. Each option has `label` and `value` properties.
- * @param {Option[]} selectedValues - Array of currently selected options.
- * @param {(selected: Option[]) => void} onSelect - Callback triggered when the selected options are updated.
- * @param {string} [placeholder='Select options'] - Placeholder text shown when no options are selected.
- * @param {string} [label] - Label displayed above the dropdown.
- * @param {boolean} [isRequired=false] - Whether the field is required.
- * @param {string} [minRequiredLabel] - Optional text indicating a minimum required condition.
- * @param {boolean} [enableSearch=false] - Whether to enable the search feature in the dropdown.
- * @param {(searchText: string) => Promise<Option[]>} [fetchOptions] - Function to fetch options dynamically based on search text.
- * @param {boolean} [editable=true] - Whether the input is editable.
  *
  * @example
  * // Example Usage:
@@ -104,8 +95,8 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   const [dropdownTop, setDropdownTop] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<View>(null)
+  const searchInputRef = useRef<TextInput>(null)
 
-  // Fetch dynamic options when search text changes
   useEffect(() => {
     if (enableSearch && (fetchOptions != null) && (searchText.trim() !== '')) {
       const fetchData = () => {
@@ -122,7 +113,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
           })
       }
 
-      const timeoutId = setTimeout(fetchData, 500) // 500ms debounce
+      const timeoutId = setTimeout(fetchData, 500)
 
       return () => { clearTimeout(timeoutId) }
     } else {
@@ -130,7 +121,6 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
     }
   }, [searchText])
 
-  // Measure input position and set dropdown top dynamically
   const measureInputPosition = useCallback(() => {
     inputRef.current?.measureInWindow((x, y, width, height) => {
       setDropdownTop(y + height)
@@ -140,11 +130,14 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   const toggleDropdown = useCallback(() => {
     if (!isVisible) {
       measureInputPosition()
+      if (enableSearch && (searchInputRef.current !== null)) {
+        searchInputRef.current.focus()
+      }
     }
     setIsVisible(!isVisible)
     setSearchText('')
     setFilteredOptions(options)
-  }, [isVisible, options, measureInputPosition])
+  }, [isVisible, options, measureInputPosition, enableSearch])
 
   const handleSearch = useCallback((text: string) => {
     setSearchText(text)
@@ -175,7 +168,6 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
     return label
   }
 
-  // Adjust dropdown position when keyboard is shown or hidden
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
@@ -194,38 +186,44 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
 
   const dropdownContent = useMemo(() => {
     return (
-      <View style={styles.dropdown}>
-        {enableSearch && (
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search..."
-            value={searchText}
-            onChangeText={handleSearch}
-            editable={editable}
-          />
-        )}
-        {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
-        <ScrollView>
-          {filteredOptions.map((item) => (
-            <TouchableOpacity
-              key={item.value}
-              style={styles.option}
-              onPress={() => { handleSelect(item) }}
-            >
-              <Text style={styles.optionText}>{item.label}</Text>
-              {selectedValues.some((selected) => selected.value === item.value) && (
-                <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
-              )}
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      <TouchableWithoutFeedback onPress={() => {}}>
+        <View style={styles.dropdown}>
+          {enableSearch && (
+            <View style={styles.searchContainer}>
+              <Ionicons name="search" size={20} color={theme.colors.textSecondary} style={styles.searchIcon} />
+              <TextInput
+                ref={searchInputRef}
+                style={styles.searchInput}
+                placeholder="Search..."
+                value={searchText}
+                onChangeText={handleSearch}
+                editable={editable}
+                autoFocus={isVisible && enableSearch}
+              />
+            </View>
+          )}
+          {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
+          <ScrollView>
+            {filteredOptions.map((item) => (
+              <TouchableOpacity
+                key={item.value}
+                style={styles.option}
+                onPress={() => { handleSelect(item) }}
+              >
+                <Text style={styles.optionText}>{item.label}</Text>
+                {selectedValues.some((selected) => selected.value === item.value) && (
+                  <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                )}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </TouchableWithoutFeedback>
     )
-  }, [enableSearch, searchText, isLoading, filteredOptions, selectedValues, handleSelect, handleSearch])
+  }, [enableSearch, searchText, isLoading, filteredOptions, selectedValues, handleSelect, handleSearch, isVisible])
 
   return (
     <View style={styles.container}>
-      {/* Label and Input Field */}
       {(label != null) && (
         <Text style={styles.label}>
           {label}
@@ -256,10 +254,8 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         <Ionicons name={isVisible ? 'chevron-up' : 'chevron-down'} size={14} color={theme.colors.textSecondary} />
       </TouchableOpacity>
 
-      {/* Optional Minimum Required Label */}
       {(minRequiredLabel != null) && <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>}
 
-      {/* Modal */}
       <Modal transparent={true} visible={isVisible} onRequestClose={toggleDropdown}>
         <TouchableOpacity
           style={styles.backdrop}
@@ -344,12 +340,23 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     shadowRadius: 4,
     elevation: 5
   },
-  searchInput: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: theme.colors.lightGrey,
     borderRadius: 8,
-    padding: 8,
+    paddingHorizontal: 10,
     marginBottom: 10
+  },
+  searchIcon: {
+    marginRight: 8
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: theme.colors.textPrimary,
+    paddingVertical: 8
   },
   option: {
     flexDirection: 'row',
