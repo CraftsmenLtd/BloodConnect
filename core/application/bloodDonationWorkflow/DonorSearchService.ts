@@ -31,7 +31,6 @@ export class DonorSearchService {
 
     if (donorSearchRecord === null) {
       await donorSearchRepository.create({
-        id: donorRoutingAttributes.requestPostId,
         ...donorRoutingAttributes,
         status: DonationStatus.PENDING,
         retryCount: 0
@@ -49,7 +48,6 @@ export class DonorSearchService {
       }
       await donorSearchRepository.update({
         ...donorRoutingAttributes,
-        id: requestPostId,
         status: DonationStatus.PENDING,
         retryCount: 0
       })
@@ -58,7 +56,6 @@ export class DonorSearchService {
     const retryCount = donorSearchRecord?.retryCount ?? 0
     const updatedRecord: Partial<DonorSearchDTO> = {
       ...donorRoutingAttributes,
-      id: requestPostId,
       retryCount: retryCount + 1
     }
     const hasRetryCountExceeded = retryCount >= Number(process.env.MAX_RETRY_COUNT)
@@ -125,7 +122,7 @@ export class DonorSearchService {
     donorSearchRepository: Repository<DonorSearchDTO>
   ): Promise<void> {
     const updatedRecord: Partial<DonorSearchDTO> = {
-      id: requestPostId,
+      requestPostId,
       seekerId,
       createdAt,
       currentNeighborSearchLevel,

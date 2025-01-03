@@ -11,19 +11,26 @@ import {
 export const BLOOD_REQUEST_PK_PREFIX = 'BLOOD_REQ'
 export const BLOOD_REQUEST_LSI1SK_PREFIX = 'STATUS'
 
-export type DonationFields = Omit<DonationDTO, 'id' | 'seekerId'> &
+export type DonationFields = Omit<DonationDTO, 'requestPostId' | 'seekerId'> &
 HasTimeLog & {
   PK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}`;
   SK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}#${string}`;
   GSI1PK?: `CITY#${string}#STATUS#${string}`;
-  GSI1SK?: `BG#${string}`;
+  GSI1SK?: `${string}#BG#${string}`;
   LSI1SK?: `${typeof BLOOD_REQUEST_LSI1SK_PREFIX}#${string}#${string}`;
 }
 
 export class BloodDonationModel
 implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFields> {
   getIndexDefinitions(): IndexDefinitions<DonationFields> {
-    return {}
+    return {
+      GSI: {
+        GSI1: {
+          partitionKey: 'GSI1PK',
+          sortKey: 'GSI1SK'
+        }
+      }
+    }
   }
 
   getPrimaryIndex(): DbIndex<DonationFields> {
@@ -35,11 +42,11 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
   }
 
   fromDto(donationDto: DonationDTO): DonationFields {
-    const { seekerId, id, createdAt, ...remainingDonationData } = donationDto
+    const { seekerId, requestPostId, createdAt, ...remainingDonationData } = donationDto
 
     const data: DonationFields = {
       PK: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
-      SK: `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${id}`,
+      SK: `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`,
       ...remainingDonationData,
       createdAt
     }
@@ -48,10 +55,10 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
       data.GSI1PK = `CITY#${remainingDonationData.city}#STATUS#${remainingDonationData.status}`
     }
     if ((remainingDonationData.requestedBloodGroup as BloodGroup) !== undefined) {
-      data.GSI1SK = `BG#${remainingDonationData.requestedBloodGroup}#${createdAt}`
+      data.GSI1SK = `${createdAt}#BG#${remainingDonationData.requestedBloodGroup}`
     }
     if (remainingDonationData.status !== undefined) {
-      data.LSI1SK = `${BLOOD_REQUEST_LSI1SK_PREFIX}#${remainingDonationData.status}#${id}`
+      data.LSI1SK = `${BLOOD_REQUEST_LSI1SK_PREFIX}#${remainingDonationData.status}#${requestPostId}`
     }
     return data
   }
@@ -60,7 +67,7 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
     const { PK, SK, LSI1SK, createdAt, ...remainingDonationFields } = dbFields
     return {
       ...remainingDonationFields,
-      id: SK.replace(`${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#`, ''),
+      requestPostId: SK.replace(`${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#`, ''),
       seekerId: PK.replace(`${BLOOD_REQUEST_PK_PREFIX}#`, ''),
       createdAt
     }

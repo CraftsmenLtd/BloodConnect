@@ -86,7 +86,18 @@ export default class DynamoDbTableOperations<
       }
 
       if (requestedAttributes != null && requestedAttributes.length > 0) {
-        queryCommandInput.ProjectionExpression = requestedAttributes.join(', ')
+        queryCommandInput.ExpressionAttributeNames = {
+          ...queryCommandInput.ExpressionAttributeNames,
+          ...requestedAttributes.reduce<Record<string, string>>((acc, attr, index) => {
+            const alias = `#attr${index}`
+            acc[alias] = attr
+            return acc
+          }, {})
+        }
+
+        queryCommandInput.ProjectionExpression = requestedAttributes
+          .map((_, index) => `#attr${index}`)
+          .join(', ')
       }
 
       this.applyQueryOptions(queryCommandInput, queryInput.options)

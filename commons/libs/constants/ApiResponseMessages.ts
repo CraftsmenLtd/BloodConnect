@@ -3,3 +3,4 @@ export const UPDATE_DONATION_REQUEST_SUCCESS = 'We have updated your request and
 export const CREATE_PROFILE_SUCCESS = 'Your Profile info has been created.'
 export const UPDATE_PROFILE_SUCCESS = 'Your Profile info has been updated.'
 export const UNKNOWN_ERROR_MESSAGE = 'An unknown error occurred'
+export const PUBLIC_POSTS_MESSAGE = 'Posts retrieved successfully'

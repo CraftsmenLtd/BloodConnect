@@ -40,9 +40,9 @@ describe('BloodDonationModel', () => {
       expect(result).toEqual({
         ...donationFieldsMock,
         PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
-        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}`,
-        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
-        GSI1SK: `BG#${donationDtoMock.requestedBloodGroup}#${mockCreatedAt}`,
+        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.requestPostId}`,
+        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.requestPostId}`,
+        GSI1SK: `${mockCreatedAt}#BG#${donationDtoMock.requestedBloodGroup}`,
         createdAt: mockCreatedAt
       })
     })
@@ -55,10 +55,10 @@ describe('BloodDonationModel', () => {
       })
 
       expect(result.SK).toBe(
-        `${BLOOD_REQUEST_PK_PREFIX}#${customCreatedAt}#${donationDtoMock.id}`
+        `${BLOOD_REQUEST_PK_PREFIX}#${customCreatedAt}#${donationDtoMock.requestPostId}`
       )
       expect(result.LSI1SK).toBe(
-        `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`
+        `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.requestPostId}`
       )
     })
   })
@@ -69,17 +69,17 @@ describe('BloodDonationModel', () => {
         ...donationFieldsMock,
         createdAt: mockCreatedAt,
         PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
-        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}` as const,
-        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`
+        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.requestPostId}` as const,
+        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.requestPostId}`
       }
 
       const result = bloodDonationModel.toDto(fields)
 
       expect(result).toEqual({
         GSI1PK: `CITY#${donationDtoMock.city}#STATUS#${DonationStatus.PENDING}`,
-        GSI1SK: `BG#${donationDtoMock.requestedBloodGroup}#${donationFieldsMock.createdAt}`,
+        GSI1SK: `${donationFieldsMock.createdAt}#BG#${donationDtoMock.requestedBloodGroup}`,
         ...donationDtoMock,
-        id: donationDtoMock.id,
+        requestPostId: donationDtoMock.requestPostId,
         seekerId: donationDtoMock.seekerId,
         createdAt: mockCreatedAt
       })
@@ -96,7 +96,7 @@ describe('BloodDonationModel', () => {
 
       const result = bloodDonationModel.toDto(customFields)
 
-      expect(result.id).toBe('custom-request-id')
+      expect(result.requestPostId).toBe('custom-request-id')
       expect(result.seekerId).toBe('custom-seeker-id')
     })
 
@@ -105,8 +105,8 @@ describe('BloodDonationModel', () => {
         ...donationFieldsMock,
         createdAt: mockCreatedAt,
         PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
-        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.id}`,
-        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.id}`,
+        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.requestPostId}`,
+        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.requestPostId}`,
         patientName: 'Custom Name',
         contactNumber: 'Custom Phone',
         bloodQuantity: 5
@@ -184,15 +184,36 @@ describe('BloodDonationModel', () => {
 
     it('should return empty object', () => {
       const result = bloodDonationModel.getIndexDefinitions()
-      expect(result).toEqual({})
+      expect(result).toEqual({
+        GSI: {
+          GSI1: {
+            partitionKey: 'GSI1PK',
+            sortKey: 'GSI1SK'
+          }
+        }
+      })
     })
 
     it('should always return a new empty object instance', () => {
       const result1 = bloodDonationModel.getIndexDefinitions()
       const result2 = bloodDonationModel.getIndexDefinitions()
 
-      expect(result1).toEqual({})
-      expect(result2).toEqual({})
+      expect(result1).toEqual({
+        GSI: {
+          GSI1: {
+            partitionKey: 'GSI1PK',
+            sortKey: 'GSI1SK'
+          }
+        }
+      })
+      expect(result2).toEqual({
+        GSI: {
+          GSI1: {
+            partitionKey: 'GSI1PK',
+            sortKey: 'GSI1SK'
+          }
+        }
+      })
       expect(result1).not.toBe(result2)
     })
   })

@@ -16,7 +16,8 @@ export enum UrgencyLevel {
   URGENT = 'urgent',
 }
 
-export type DonationDTO = DTO & HasIdentifier & {
+export type DonationDTO = DTO & {
+  requestPostId: string;
   seekerId: string;
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
@@ -30,12 +31,14 @@ export type DonationDTO = DTO & HasIdentifier & {
   status: DonationStatus;
   contactNumber: string;
   patientName?: string;
+  seekerName?: string;
   transportationInfo?: string;
   shortDescription?: string;
   createdAt: string;
 }
 
-export type DonorSearchDTO = DTO & HasIdentifier & {
+export type DonorSearchDTO = DTO & {
+  requestPostId: string;
   seekerId: string;
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
