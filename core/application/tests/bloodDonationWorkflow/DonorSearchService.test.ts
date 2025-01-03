@@ -81,7 +81,7 @@ describe('DonorSearchService', () => {
       expect(stepFunctionModel.startExecution).toHaveBeenCalledWith(
         expect.objectContaining({
           seekerId: mockDonorSearchDTO.seekerId,
-          requestPostId: mockDonorSearchDTO.id,
+          requestPostId: mockDonorSearchDTO.requestPostId,
           createdAt: mockDonorSearchDTO.createdAt,
           donationDateTime: mockDonorSearchDTO.donationDateTime,
           requestedBloodGroup: mockDonorSearchDTO.requestedBloodGroup,
