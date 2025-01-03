@@ -8,6 +8,8 @@ import { STATUS } from '../../../types'
 import { scheduleNotification } from '../../../../setup/notification/scheduleNotification'
 import { LOCAL_NOTIFICATION_TYPE, REMINDER_NOTIFICATION_BODY, REMINDER_NOTIFICATION_TITLE, REMINDING_HOURS_BEFORE_DONATION } from '../../../../setup/constant/consts'
 import { replaceTemplatePlaceholders } from '../../../../utility/formatting'
+import { extractErrorMessage } from '../../../donationHelpers'
+import { useMyActivityContext } from '../../../../myActivity/context/useMyActivityContext'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -33,6 +35,7 @@ interface FetchResponse {
 
 export const useResponseDonationRequest = (): useResponseDonationRequestReturnType => {
   const navigation = useNavigation<PostScreenNavigationProp>()
+  const { getMyResponses } = useMyActivityContext()
   const { notificationData: bloodRequest } = useRoute<RequestPreviewRouteProp>().params
   const [isRequestAccepted, setIsRequestAccepted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -90,11 +93,10 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
       }
 
       handleNotification(new Date(bloodRequest.donationDateTime))
+      await getMyResponses()
       setIsRequestAccepted(true)
     } catch (error) {
-      const errorMessage = error instanceof Error && typeof error.message === 'string'
-        ? error.message
-        : 'An unexpected error occurred while accepting the request'
+      const errorMessage = extractErrorMessage(error)
       setError(errorMessage)
     } finally {
       setIsLoading(false)

@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useCallback, useEffect } from 'react'
+import React, { createContext, ReactNode, useEffect } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { fetchDonationList, fetchMyResponses } from '../../donationWorkflow/donationService'
 import { DonationData, extractErrorMessage, formatDonations } from '../../donationWorkflow/donationHelpers'
@@ -38,19 +38,15 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
   const { isAuthenticated } = useAuth()
   const fetchClient = useFetchClient()
 
-  const fetchMyResponsesCallback = useCallback(async() => {
+  const fetchMyResponsesCallback = async() => {
     const response = await fetchMyResponses({}, fetchClient)
     if (response.data !== undefined && response.data.length > 0) {
       return formatDonations(response.data)
     }
     return []
-  }, [fetchClient])
+  }
 
-  const [getMyResponses, myResponsesLoading, myResponses, myResponsesError] = useFetchData(fetchMyResponsesCallback, {
-    parseError: extractErrorMessage
-  })
-
-  const fetchDonationPostsCallback = useCallback(async() => {
+  const fetchDonationPostsCallback = async() => {
     const response = await fetchDonationList({}, fetchClient)
     if (response.data !== undefined && response.data.length > 0) {
       const profile = await storageService.getItem<UserProfile>(LOCAL_STORAGE_KEYS.USER_PROFILE)
@@ -58,7 +54,11 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
       return formatDonations(response.data, userName)
     }
     return []
-  }, [fetchClient, userProfile.name])
+  }
+
+  const [getMyResponses, myResponsesLoading, myResponses, myResponsesError] = useFetchData(fetchMyResponsesCallback, {
+    parseError: extractErrorMessage
+  })
 
   const [fetchDonationPosts, loading, data, errorMessage] = useFetchData(fetchDonationPostsCallback, {
     parseError: extractErrorMessage
@@ -69,7 +69,7 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
       void fetchDonationPosts()
       void getMyResponses()
     }
-  }, [isAuthenticated, fetchDonationPosts, getMyResponses])
+  }, [isAuthenticated])
 
   return (
     <MyActivityContext.Provider
