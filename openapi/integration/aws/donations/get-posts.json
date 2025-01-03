@@ -1,8 +1,7 @@
 {
   "type": "aws",
   "httpMethod": "POST",
-  "uri": "arn:aws:apigateway:${AWS_REGION}:dynamodb:action/Query",
-  "credentials": "${API_GATEWAY_DYNAMODB_ROLE}",
+  "uri": "${GET_PUBLIC_POSTS_INVOCATION_ARN}",
   "requestTemplates": {
     "application/json": "#importVtl donations/vtl/requestTemplates/get-posts.vtl"
   },

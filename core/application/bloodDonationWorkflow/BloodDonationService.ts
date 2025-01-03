@@ -1,7 +1,7 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import { DonationDTO, DonationStatus } from '../../../commons/dto/DonationDTO'
+import { BloodGroup, DonationDTO, DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import Repository from '../models/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
@@ -49,7 +49,7 @@ export class BloodDonationService {
 
     const response: DonationDTO = await bloodDonationRepository
       .create({
-        id: generateUniqueID(),
+        requestPostId: generateUniqueID(),
         ...donationAttributes,
         status: DonationStatus.PENDING,
         geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
@@ -67,7 +67,7 @@ export class BloodDonationService {
       })
 
     return {
-      requestPostId: response.id as string,
+      requestPostId: response.requestPostId,
       createdAt: response.createdAt
     }
   }
@@ -158,7 +158,7 @@ export class BloodDonationService {
     const updateData: Partial<DonationDTO> = {
       ...restAttributes,
       seekerId,
-      id: requestPostId,
+      requestPostId,
       createdAt
     }
 
@@ -203,10 +203,31 @@ export class BloodDonationService {
     const updateData: Partial<DonationDTO> = {
       ...item,
       seekerId,
-      id: requestPostId,
+      requestPostId,
       createdAt,
       status
     }
     await bloodDonationRepository.update(updateData)
+  }
+
+  async queryPublicDonations(
+    userId: string,
+    city: string,
+    requestedBloodGroup: BloodGroup,
+    bloodDonationRepository: BloodDonationRepository<DonationDTO>
+  ): Promise<DonationDTO[]> {
+    const { items } = await bloodDonationRepository.queryPublicDonations(city)
+
+    const now = new Date()
+    const filteredItems = items.filter((item) => {
+      const donationDateTime = new Date(item.donationDateTime)
+      return donationDateTime >= now && item.seekerId !== userId
+    })
+
+    if (requestedBloodGroup !== undefined) {
+      const res = filteredItems.filter((item) => item.requestedBloodGroup === requestedBloodGroup)
+      return res
+    }
+    return items
   }
 }

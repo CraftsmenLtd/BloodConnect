@@ -12,8 +12,12 @@ import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 import { CREATE_DONATION_REQUEST_SUCCESS, UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { UserService } from '../../../application/userWorkflow/UserService'
+import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
 
 const bloodDonationService = new BloodDonationService()
+const userService = new UserService()
 
 async function createBloodDonationLambda(
   event: BloodDonationAttributes & HttpLoggerAttributes
@@ -25,8 +29,14 @@ async function createBloodDonationLambda(
   )
 
   try {
-    const bloodDonationAttributes = {
+    const userProfile = await userService.getUser(
+      event.seekerId,
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
+    )
+
+    const bloodDonationAttributes: BloodDonationAttributes = {
       seekerId: event.seekerId,
+      seekerName: userProfile.name,
       patientName: event.patientName,
       requestedBloodGroup: event.requestedBloodGroup,
       bloodQuantity: event.bloodQuantity,

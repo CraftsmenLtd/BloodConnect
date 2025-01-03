@@ -6,4 +6,8 @@ export default interface BloodDonationRepository<
   DbFields extends Record<string, unknown> = Record<string, unknown>
 > extends Repository<T, DbFields> {
   getDonationRequest(seekerId: string, requestPostId: string, createdAt: string): Promise<T | null>;
+  queryPublicDonations(
+    city: string,
+    lastEvaluatedKey?: Record<string, unknown> | undefined
+  ): Promise<{ items: T[]; lastEvaluatedKey?: Record<string, unknown> }>;
 }
