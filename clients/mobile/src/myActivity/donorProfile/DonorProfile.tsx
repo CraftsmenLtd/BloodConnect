@@ -13,8 +13,9 @@ const DonorProfile = () => {
   const styles = createStyles(theme)
   const { donorProfile, loading, error, handleCall } = useDonorProfile()
 
-  const calculateBMI = (weightKg: number, heightFeet: number): number => {
-    const heightInMeters = heightFeet * 0.3048
+  const calculateBMI = (weightKg: number, heightFeet: number | string): number => {
+    const heightInFeet = typeof heightFeet === 'string' ? parseFloat(heightFeet) : heightFeet
+    const heightInMeters = heightInFeet * 0.3048
     const bmi = weightKg / (heightInMeters ** 2)
     return parseFloat(bmi.toFixed(2))
   }

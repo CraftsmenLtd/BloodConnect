@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, Image, ImageStyle, Linking, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, Image, ImageStyle } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
@@ -10,6 +10,7 @@ import BloodImage from '../../../assets/images/bloodtype.png'
 import StatusBadge from './StatusBadge'
 import Badge from '../badge'
 import GenericModal from '../modal'
+import { openMapLocation } from '../../utility/mapUtils'
 
 export interface PostCardDisplayOptions {
   showContactNumber?: boolean;
@@ -113,10 +114,6 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
     const year = dateObj.getFullYear()
 
     return `${timeStr}, ${day} ${month} ${year}`
-  }
-  const OpenLocation = ({ location }: { location: string }) => {
-    const url = `https://www.google.com/maps?q=${encodeURIComponent(location)}`
-    Linking.openURL(url).catch(() => { Alert.alert('Error', 'Failed to open the map. Please try again.') })
   }
 
   const getDropdownStyle = useCallback((): ViewStyle => ({
@@ -227,7 +224,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                   <Ionicons name="location-outline" size={16} color={theme.colors.grey} />
                   <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
                 </View>
-                <TouchableOpacity onPress={() => { OpenLocation({ location: post.location }) }}>
+                <TouchableOpacity onPress={() => { openMapLocation({ location: post.location }) }}>
                 <Text style={[styles.description, styles.link]}>{post.location}</Text>
                 </TouchableOpacity>
               </View>
@@ -421,8 +418,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   donationInfoPlaceholder: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
-    marginLeft: 4
+    color: theme.colors.textSecondary
   },
   descriptionContainer: {
     padding: 8,

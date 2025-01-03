@@ -14,7 +14,7 @@ import {
   getAppUserWelcomeMailMessage
 } from './userMessages'
 import Repository from '../models/policies/repositories/Repository'
-import { UserAttributes, UpdateUserAttributes } from './Types'
+import { UserAttributes, UpdateUserAttributes, CreateUserAttributes } from './Types'
 import { generateGeohash } from '../utils/geohash'
 import { differenceInYears, differenceInMonths } from 'date-fns'
 import { BloodGroup } from '../../../commons/dto/DonationDTO'
@@ -61,7 +61,7 @@ export class UserService {
   }
 
   async updateUser(
-    userAttributes: UpdateUserAttributes,
+    userAttributes: CreateUserAttributes | UpdateUserAttributes,
     userRepository: Repository<UserDetailsDTO>,
     locationRepository: LocationRepository<LocationDTO>
   ): Promise<void> {
