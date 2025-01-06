@@ -21,6 +21,7 @@ interface Theme {
     peachCream: string;
     darkAmber: string;
     gradientBackground: string;
+    bloodRed: string;
   };
   typography: {
     fontSize: number;

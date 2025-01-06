@@ -18,6 +18,8 @@ import React from 'react'
 import { openMapLocation } from '../../../../utility/mapUtils'
 import { useMyActivityContext } from '../../../../myActivity/context/useMyActivityContext'
 import { STATUS } from '../../../types'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { MaterialIcons } from '@expo/vector-icons'
 
 const ResponseDonationRequest = () => {
   const theme = useTheme()
@@ -58,7 +60,11 @@ const ResponseDonationRequest = () => {
           <View style={styles.seekerDetails}>
             <View style={styles.frameBloodType}>
               <View style={styles.requestSection}>
-                <Image source={require('../../../../../assets/images/bloodtype.png')} style={styles.bloodtypeImage as StyleProp<ImageStyle>} />
+                <MaterialIcons
+                name='bloodtype'
+                style={styles.bloodtypeImage as StyleProp<ImageStyle>}
+                size={32}
+                />
                 <View style={styles.requestText}>
                   <Text style={styles.primaryCaption}>Looking for</Text>
                   <Text style={styles.highlightedText}>{bloodRequest.bloodQuantity ?? 0} {bloodRequest.requestedBloodGroup}(ve) blood</Text>
@@ -66,7 +72,9 @@ const ResponseDonationRequest = () => {
               </View>
               {bloodRequest.urgencyLevel === 'urgent' && (
                 <View style={styles.requestUrgency}>
-                  <Image source={require('../../../../../assets/images/alert.png')} style={styles.alertImage as StyleProp<ImageStyle>} />
+                  <MaterialCommunityIcons
+                    name='alert'
+                  />
                   <Text style={styles.urgentText}>URGENT</Text>
                 </View>
               )}
