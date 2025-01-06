@@ -2,6 +2,7 @@ import { Theme } from './index'
 const darkTheme: Theme = {
   colors: {
     primary: '#FF4D4D',
+    bloodRed: '#E32323',
     secondary: '#2ecc71',
     white: '#ffffff',
     textPrimary: '#090A0A',

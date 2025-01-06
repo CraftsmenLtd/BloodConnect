@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import createStyles from './createStyles'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
 import React from 'react'
@@ -58,7 +58,11 @@ const ResponseDonationRequest = () => {
           <View style={styles.seekerDetails}>
             <View style={styles.frameBloodType}>
               <View style={styles.requestSection}>
-                <Image source={require('../../../../../assets/images/bloodtype.png')} style={styles.bloodtypeImage as StyleProp<ImageStyle>} />
+                <MaterialIcons
+                name='bloodtype'
+                style={styles.bloodtypeImage as StyleProp<ImageStyle>}
+                size={32}
+                />
                 <View style={styles.requestText}>
                   <Text style={styles.primaryCaption}>Looking for</Text>
                   <Text style={styles.highlightedText}>{bloodRequest.bloodQuantity ?? 0} {bloodRequest.requestedBloodGroup}(ve) blood</Text>
@@ -66,7 +70,9 @@ const ResponseDonationRequest = () => {
               </View>
               {bloodRequest.urgencyLevel === 'urgent' && (
                 <View style={styles.requestUrgency}>
-                  <Image source={require('../../../../../assets/images/alert.png')} style={styles.alertImage as StyleProp<ImageStyle>} />
+                  <MaterialCommunityIcons
+                    name='alert'
+                  />
                   <Text style={styles.urgentText}>URGENT</Text>
                 </View>
               )}
@@ -153,8 +159,8 @@ const ResponseDonationRequest = () => {
       {error !== null && <Text style={styles.error}>{error}</Text>}
 
       <View style={styles.buttonContainer}>
-        {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
-        <Button text={isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 'Accept Request'} loading={isLoading} disabled={isRequestAccepted || isRequestAlreadyAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
+        {!isLoading && !(isRequestAccepted || (Boolean(isRequestAlreadyAccepted))) && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
+        <Button text={isRequestAccepted || (Boolean(isRequestAlreadyAccepted)) ? 'Request Accepted' : 'Accept Request'} loading={isLoading} disabled={isRequestAccepted || isRequestAlreadyAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
       </View>
     </SafeAreaView>
   )
