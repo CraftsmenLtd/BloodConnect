@@ -258,13 +258,15 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   termsText: {
     fontSize: theme.typography.fontSize,
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
+    textAlign: 'left',
+    paddingHorizontal: 10
   },
   errorMessage: {
     color: 'red',
     textAlign: 'center',
     padding: 8,
-    backgroundColor: '#FFF3F3',
+    backgroundColor: theme.colors.greyBG,
     borderRadius: 6
   },
   buttonContainer: {

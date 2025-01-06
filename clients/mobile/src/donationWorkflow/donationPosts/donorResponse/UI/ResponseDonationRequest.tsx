@@ -11,15 +11,13 @@ import {
 } from 'react-native'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import createStyles from './createStyles'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
 import React from 'react'
 import { openMapLocation } from '../../../../utility/mapUtils'
 import { useMyActivityContext } from '../../../../myActivity/context/useMyActivityContext'
 import { STATUS } from '../../../types'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { MaterialIcons } from '@expo/vector-icons'
 
 const ResponseDonationRequest = () => {
   const theme = useTheme()
@@ -161,8 +159,8 @@ const ResponseDonationRequest = () => {
       {error !== null && <Text style={styles.error}>{error}</Text>}
 
       <View style={styles.buttonContainer}>
-        {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
-        <Button text={isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 'Accept Request'} loading={isLoading} disabled={isRequestAccepted || isRequestAlreadyAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
+        {!isLoading && !(isRequestAccepted || (Boolean(isRequestAlreadyAccepted))) && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
+        <Button text={isRequestAccepted || (Boolean(isRequestAlreadyAccepted)) ? 'Request Accepted' : 'Accept Request'} loading={isLoading} disabled={isRequestAccepted || isRequestAlreadyAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
       </View>
     </SafeAreaView>
   )
