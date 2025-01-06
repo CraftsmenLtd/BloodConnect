@@ -13,7 +13,7 @@ export type AvailableForDonation = 'yes' | 'no'
 export interface UserDetailsDTO extends UserDTO {
   bloodGroup: BloodGroup;
   lastDonationDate?: string;
-  height: number;
+  height: string;
   weight: number;
   gender: Gender;
   dateOfBirth: string;

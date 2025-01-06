@@ -19,7 +19,7 @@
         "format": "date"
       },
       "height": {
-        "type": "number"
+        "type": "string"
       },
       "weight": {
         "type": "number"
@@ -86,7 +86,7 @@
       "name": "John Doe",
       "bloodGroup": "O-",
       "lastDonationDate": "2023-09-15",
-      "height": 5.10,
+      "height": "5.10",
       "weight": 70,
       "gender": "male",
       "dateOfBirth": "1990-05-15",

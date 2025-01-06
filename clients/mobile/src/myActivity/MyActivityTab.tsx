@@ -11,16 +11,21 @@ import React from 'react'
 const MyActivityTab = () => {
   const theme = useTheme()
   const styles = createStyles(useTheme())
-  const { donationPosts, errorMessage, loading, fetchDonationPosts } = useMyActivityContext()
+  const {
+    donationPosts,
+    errorMessage,
+    loading,
+    fetchDonationPosts,
+    myResponses,
+    myResponsesError,
+    myResponsesLoading
+  } = useMyActivityContext()
   const {
     currentTab,
     handleTabPress,
     updatePost,
     detailHandler,
     cancelPost,
-    myResponses,
-    myResponsesLoading,
-    myResponsesError,
     refreshing,
     handleRefresh,
     showToast,
@@ -45,6 +50,9 @@ const MyActivityTab = () => {
               errorMessage={errorMessage}
               detailHandler={detailHandler}
               emptyDataMessage="No posts found."
+              displayOptions={{
+                showStatus: true
+              }}
               cancelPost={cancelPost}
               refreshControl={
                 <RefreshControl

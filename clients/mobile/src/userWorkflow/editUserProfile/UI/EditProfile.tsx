@@ -53,10 +53,9 @@ const EditProfile = () => {
               <DateTimePickerComponent
                 label="Date of Birth"
                 value={new Date(profileData.dateOfBirth)}
-                onChange={handleInputChange}
+                onChange={(date) => handleInputChange('dateOfBirth', date)}
                 isOnlyDate={true}
                 inputStyle={styles.inputStyle}
-                // showOnlyDate={true}
                 error={errors.dateOfBirth}
               />
             </View>

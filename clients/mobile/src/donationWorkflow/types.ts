@@ -1,11 +1,12 @@
 import { DonationDTO } from '../../../../commons/dto/DonationDTO'
 
-export type StatusType = 'ACCEPTED' | 'IGNORE' | 'PENDING'
+export type StatusType = 'ACCEPTED' | 'IGNORE' | 'PENDING' | 'CANCELLED'
 
 export const STATUS: Record<string, StatusType> = {
   ACCEPTED: 'ACCEPTED',
   IGNORE: 'IGNORE',
-  PENDING: 'PENDING'
+  PENDING: 'PENDING',
+  CANCELLED: 'CANCELLED'
 }
 
 export type DonationScreenParams = Pick<

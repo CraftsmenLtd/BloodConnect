@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, Image, ImageStyle, Linking, Alert } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, Image, ImageStyle } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
@@ -8,7 +8,9 @@ import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPo
 import { UrgencyLevel } from '../../donationWorkflow/types'
 import BloodImage from '../../../assets/images/bloodtype.png'
 import StatusBadge from './StatusBadge'
+import Badge from '../badge'
 import GenericModal from '../modal'
+import { openMapLocation } from '../../utility/mapUtils'
 
 export interface PostCardDisplayOptions {
   showContactNumber?: boolean;
@@ -113,10 +115,6 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
 
     return `${timeStr}, ${day} ${month} ${year}`
   }
-  const OpenLocation = ({ location }: { location: string }) => {
-    const url = `https://www.google.com/maps?q=${encodeURIComponent(location)}`
-    Linking.openURL(url).catch(() => { Alert.alert('Error', 'Failed to open the map. Please try again.') })
-  }
 
   const getDropdownStyle = useCallback((): ViewStyle => ({
     ...styles.dropdownContainer,
@@ -132,70 +130,72 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
               <Text style={styles.userName}>{post.patientName}</Text>
               <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
             </View>
-            {showStatus && <StatusBadge status={post.status} />}
-            {showOptions &&
-            <View style={styles.menuContainer}>
-              <View ref={iconRef} collapsable={false}>
-                <TouchableOpacity
-                  onPress={handleToggleDropdown}
-                  style={styles.iconContainer}
-                >
-                  <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.grey} />
-                </TouchableOpacity>
-              </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {showStatus && <StatusBadge status={post.status} />}
+              {showOptions &&
+              <View style={styles.menuContainer}>
+                <View ref={iconRef} collapsable={false}>
+                  <TouchableOpacity
+                    onPress={handleToggleDropdown}
+                    style={styles.iconContainer}
+                  >
+                    <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.grey} />
+                  </TouchableOpacity>
+                </View>
 
-              <Modal
-                visible={showDropdown}
-                transparent
-                animationType="none"
-                onRequestClose={handleCloseDropdown}
-              >
-                <TouchableWithoutFeedback onPress={handleCloseDropdown}>
-                  <View style={styles.modalOverlay}>
-                    <TouchableWithoutFeedback>
-                      <View style={getDropdownStyle()}>
-                        <TouchableOpacity
-                          onPress={handleUpdate}
-                          style={styles.dropdownItem}
-                        >
-                          <Text style={styles.dropdownText}>Update</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={openModal}
-                          style={styles.dropdownItem}
-                        >
-                          <Text style={styles.dropdownText}>Cancel</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </TouchableWithoutFeedback>
-                  </View>
-                </TouchableWithoutFeedback>
-              </Modal>
-              <GenericModal
-                visible={isModalOpen}
-                title="Confirmation"
-                message="Are you sure you want to cancel?"
-                buttons={[
-                  {
-                    onPress: closeModal,
-                    style: {
-                      backgroundColor: theme.colors.greyBG,
-                      color: theme.colors.textPrimary
+                <Modal
+                  visible={showDropdown}
+                  transparent
+                  animationType="none"
+                  onRequestClose={handleCloseDropdown}
+                >
+                  <TouchableWithoutFeedback onPress={handleCloseDropdown}>
+                    <View style={styles.modalOverlay}>
+                      <TouchableWithoutFeedback>
+                        <View style={getDropdownStyle()}>
+                          <TouchableOpacity
+                            onPress={handleUpdate}
+                            style={styles.dropdownItem}
+                          >
+                            <Text style={styles.dropdownText}>Update</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={openModal}
+                            style={styles.dropdownItem}
+                          >
+                            <Text style={styles.dropdownText}>Cancel</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </Modal>
+                <GenericModal
+                  visible={isModalOpen}
+                  title="Confirmation"
+                  message="Are you sure you want to cancel?"
+                  buttons={[
+                    {
+                      onPress: closeModal,
+                      style: {
+                        backgroundColor: theme.colors.greyBG,
+                        color: theme.colors.textPrimary
+                      },
+                      text: 'Close'
                     },
-                    text: 'Close'
-                  },
-                  {
-                    onPress: handleCancel,
-                    style: {
-                      backgroundColor: theme.colors.primary
-                    },
-                    text: 'OK',
-                    loading: isLoading
-                  }
-                ]}
-                onClose={closeModal}
-              />
-            </View>}
+                    {
+                      onPress: handleCancel,
+                      style: {
+                        backgroundColor: theme.colors.primary
+                      },
+                      text: 'OK',
+                      loading: isLoading
+                    }
+                  ]}
+                  onClose={closeModal}
+                />
+              </View>}
+            </View>
           </View>
         }
         <View style={styles.bloodInfoWrapper}>
@@ -208,10 +208,12 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
               </View>
             </View>
             {post.urgencyLevel === UrgencyLevel.URGENT && (
-              <View style={styles.urgentBadge}>
-                <Ionicons name="warning-outline" size={14} color={theme.colors.black} />
-                <Text style={styles.urgentText}>URGENT</Text>
-              </View>
+                <Badge
+                    text="URGENT"
+                    containerStyle={styles.urgentBadge}
+                    textStyle={styles.urgentText}
+                    iconName='triangle-exclamation'
+                />
             )}
           </View>
 
@@ -222,7 +224,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                   <Ionicons name="location-outline" size={16} color={theme.colors.grey} />
                   <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
                 </View>
-                <TouchableOpacity onPress={() => { OpenLocation({ location: post.location }) }}>
+                <TouchableOpacity onPress={() => { openMapLocation({ location: post.location }) }}>
                 <Text style={[styles.description, styles.link]}>{post.location}</Text>
                 </TouchableOpacity>
               </View>
@@ -416,8 +418,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   donationInfoPlaceholder: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
-    marginLeft: 4
+    color: theme.colors.textSecondary
   },
   descriptionContainer: {
     padding: 8,
