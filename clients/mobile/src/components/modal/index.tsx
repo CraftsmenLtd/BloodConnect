@@ -152,7 +152,7 @@ const GenericModal: React.FC<GenericModalProps> = ({
 const createStyles = (theme: Theme) => StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: theme.colors.black + '80',
+    backgroundColor: theme.colors.blackFaded,
     justifyContent: 'center',
     alignItems: 'center'
   },
