@@ -14,9 +14,6 @@ const BottomNavigation = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerStyle: {
-          height: 104
-        },
         headerTitleAlign: 'center',
         headerTitleStyle: {
           fontSize: 20

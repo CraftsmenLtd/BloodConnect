@@ -14,6 +14,7 @@ interface Theme {
     darkGrey: string;
     charcoalGray: string;
     black: string;
+    blackFaded: string;
     greyBG: string;
     redFaded: string;
     goldenYellow: string;

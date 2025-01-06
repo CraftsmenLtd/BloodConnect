@@ -42,15 +42,6 @@ export default function Navigator() {
   return (
     <Stack.Navigator
       initialRouteName={getInitialRoute()}
-      screenOptions={{
-        headerStyle: {
-          height: 75
-        },
-        headerTitleAlign: 'center',
-        headerTitleStyle: {
-          fontSize: 20
-        }
-      }}
     >
       {filteredRoutes.map(({ name, component, options }) => (
         <Stack.Screen key={name} name={name} component={component} options={options} />
