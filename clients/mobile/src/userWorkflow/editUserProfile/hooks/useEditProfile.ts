@@ -5,40 +5,26 @@ import {
   validateRequired, validateWeight,
   ValidationRule
 } from '../../../utility/validator'
-import { RouteProp, useRoute } from '@react-navigation/native'
+import { useRoute } from '@react-navigation/native'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { initializeState } from '../../../utility/stateUtils'
 import { Alert } from 'react-native'
 import { useUserProfile } from '../../context/UserProfileContext'
 import useFetchData from '../../../setup/clients/useFetchData'
 import { updateUserProfile } from '../../services/userProfileService'
+import { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
+import { EditProfileData } from '../../userProfile/UI/Profile'
 
 type ProfileFields = keyof Omit<ProfileData, 'location'>
 
-interface ProfileData {
-  phone: string;
+type ProfileData = {
+  [K in keyof EditProfileData as K extends string ? (string extends K ? never : K) : never]: EditProfileData[K];
+} & {
   weight: string | undefined;
-  height: string;
-  dateOfBirth: string;
-  name: string;
-  gender: string;
-  location: string;
 }
 
 type ProfileDataErrors = {
   [key in ProfileFields]?: string | null;
-}
-
-interface RouteParams {
-  userDetails: {
-    phoneNumbers: string[];
-    name: string;
-    dateOfBirth: string;
-    weight: string;
-    height: string;
-    gender: string;
-    location: string;
-  };
 }
 
 const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRule[]> = {
@@ -52,13 +38,19 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
 
 export const useEditProfile = (): any => {
   const { fetchUserProfile } = useUserProfile()
-  const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>()
+  const route = useRoute<EditProfileRouteProp>()
   const fetchClient = useFetchClient()
   const { userDetails } = route.params
 
-  const [profileData, setProfileData] = useState({
-    ...userDetails,
-    phone: userDetails.phoneNumbers[0]
+  const [profileData, setProfileData] = useState(() => {
+    if (!Array.isArray(userDetails.phoneNumbers) || userDetails.phoneNumbers.length === 0) {
+      throw new Error('userDetails.phoneNumbers must contain at least one value')
+    }
+
+    return {
+      ...userDetails,
+      phone: userDetails.phoneNumbers[0]
+    }
   })
   const [errors, setErrors] = useState<ProfileDataErrors>(
     initializeState<ProfileDataErrors>(Object.keys(validationRules) as ProfileFields[], null)

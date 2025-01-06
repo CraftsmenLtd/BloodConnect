@@ -27,8 +27,6 @@ export const useProfile = (): { userDetails: UserProfileDetails } => {
   }
 
   const calculateAge = (dateOfBirth: string): number => {
-    if (dateOfBirth === null) return 0
-
     const birthDate = new Date(dateOfBirth)
     const today = new Date()
     const age = today.getFullYear() - birthDate.getFullYear()
