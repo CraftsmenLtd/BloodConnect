@@ -2,6 +2,7 @@ import { HttpClient } from './HttpClient'
 import { FetchClientError } from './FetchClientError'
 import StorageService from '../../utility/storageService'
 import authService from '../../authentication/services/authService'
+import { LoggerService } from './LoggerService'
 
 export type FetchResponse<T> = T & { status: number }
 
@@ -9,10 +10,12 @@ export class FetchClient implements HttpClient {
   private idToken: string | null = null
   private readonly baseURL: string
   private readonly logoutUser?: () => Promise<void>
+  private readonly logger: LoggerService
 
   constructor(baseURL: string, logoutUser?: () => Promise<void>) {
     this.baseURL = baseURL
     this.logoutUser = logoutUser
+    this.logger = new LoggerService(baseURL)
     void this.loadIdToken()
   }
 
@@ -65,6 +68,7 @@ export class FetchClient implements HttpClient {
       const responseData = await response.json() as T
       return { ...responseData, status: response.status }
     } catch (error) {
+      void this.logger.logError(error, await this.setupRequestHeaders(headers))
       const status = error instanceof FetchClientError ? error.status : 500
       const message = error instanceof Error ? error.message : 'An unknown error occurred'
       throw new FetchClientError(message, status)
