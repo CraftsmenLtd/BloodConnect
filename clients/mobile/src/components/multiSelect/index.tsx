@@ -98,6 +98,8 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   const [filteredOptions, setFilteredOptions] = useState(options)
   const [dropdownTop, setDropdownTop] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [keyboardHeight, setKeyboardHeight] = useState(0)
+  const [windowHeight, setWindowHeight] = useState(Dimensions.get('window').height)
   const inputRef = useRef<View>(null)
   const searchInputRef = useRef<TextInput>(null)
 
@@ -167,23 +169,48 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      measureInputPosition
+      (event) => {
+        setKeyboardHeight(event.endCoordinates.height)
+      }
     )
     const keyboardDidHideListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      measureInputPosition
+      () => {
+        setKeyboardHeight(0) // Reset keyboard height
+      }
     )
+
+    const updateWindowHeight = () => {
+      setWindowHeight(Dimensions.get('window').height)
+    }
+
+    const dimensionsListener = Dimensions.addEventListener('change', updateWindowHeight)
 
     return () => {
       keyboardDidShowListener.remove()
       keyboardDidHideListener.remove()
+      dimensionsListener.remove()
     }
-  }, [measureInputPosition])
+  }, [])
+
+  const modalHeight = useMemo(() => {
+    const availableSpace = windowHeight - dropdownTop - keyboardHeight
+    const maxHeight = 200
+    return Math.min(availableSpace, maxHeight)
+  }, [dropdownTop, keyboardHeight, windowHeight])
+
+  const modalTop = useMemo(() => {
+    const availableSpace = windowHeight - dropdownTop
+    if (keyboardHeight > availableSpace) {
+      return dropdownTop - keyboardHeight
+    }
+    return dropdownTop
+  }, [dropdownTop, keyboardHeight, windowHeight])
 
   const dropdownContent = useMemo(() => {
     return (
       <TouchableWithoutFeedback onPress={() => {}}>
-        <View style={styles.dropdown}>
+        <View style={[styles.dropdown, { maxHeight: modalHeight }]}>
           {enableSearch && (
             <View style={styles.searchContainer}>
               <Ionicons name="search" size={20} color={theme.colors.textSecondary} style={styles.searchIcon} />
@@ -199,7 +226,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
             </View>
           )}
           {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
-          <ScrollView>
+          <ScrollView style={{ maxHeight: modalHeight - 100 }}>
             {filteredOptions.map((item) => (
               <TouchableOpacity
                 key={item.value}
@@ -216,7 +243,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         </View>
       </TouchableWithoutFeedback>
     )
-  }, [enableSearch, searchText, isLoading, filteredOptions, selectedValues, handleSelect, handleSearch, isVisible])
+  }, [enableSearch, searchText, isLoading, filteredOptions, selectedValues, handleSelect, handleSearch, isVisible, modalHeight])
 
   return (
     <View style={styles.container}>
@@ -263,7 +290,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
           onPress={toggleDropdown}
           activeOpacity={1}
         >
-          <View style={[styles.dropdownContainer, { top: dropdownTop }]}>
+          <View style={[styles.dropdownContainer, { top: modalTop }]}>
             {dropdownContent}
           </View>
         </TouchableOpacity>
@@ -332,7 +359,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   dropdown: {
     width: '100%',
-    maxHeight: 200,
     backgroundColor: theme.colors.white,
     borderRadius: 8,
     padding: 10,
