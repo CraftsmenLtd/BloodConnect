@@ -1,23 +1,24 @@
 import React, { useState } from 'react'
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native'
+import { Text, TouchableOpacity, View, StyleSheet, StyleProp, ViewStyle } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { formattedDate } from '../../utility/formatting'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 interface DateTimePickerComponentProps {
-  name: string;
   label: string;
   value: Date | null;
   onChange: (date: Date) => void;
   error?: string | null;
   isRequired?: boolean;
   isOnlyDate: boolean;
+  inputStyle?: StyleProp<ViewStyle>;
 }
 
 const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
-  name, label, value, onChange, error, isOnlyDate, isRequired = false
+  label, value, onChange, error, isOnlyDate, isRequired = false, inputStyle
 }) => {
   const styles = createStyles(useTheme())
   const [isPickingTime, setIsPickingTime] = useState<boolean>(false)
@@ -66,7 +67,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
         {label}
         {isRequired && <Text style={styles.asterisk}>*</Text>}
       </Text>
-      <TouchableOpacity onPress={() => { setShowDatePicker(true) }} style={styles.datePicker}>
+      <TouchableOpacity onPress={() => { setShowDatePicker(true) }} style={[styles.datePicker, inputStyle]}>
       <Text>
         {value !== null
           ? formattedDate(value, isOnlyDate)
@@ -74,6 +75,11 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
             ? 'Select Date'
             : 'Select Date & Time'}
       </Text>
+      <MaterialCommunityIcons
+          name="calendar-range"
+          size={24}
+          style={styles.iconStyle}
+        />
       </TouchableOpacity>
       {showDatePicker && (
         <DateTimePicker
@@ -94,9 +100,15 @@ export default DateTimePickerComponent
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   ...commonStyles(theme),
   datePicker: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     borderWidth: 1,
     borderColor: theme.colors.extraLightGray,
     padding: 12,
     borderRadius: 4
+  },
+  iconStyle: {
+    color: theme.colors.primary
   }
 })

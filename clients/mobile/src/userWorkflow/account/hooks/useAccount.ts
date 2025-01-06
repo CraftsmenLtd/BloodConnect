@@ -7,17 +7,25 @@ import { Cache } from 'aws-amplify/utils'
 import { SCREENS } from '../../../setup/constant/screens'
 import { FetchResponse } from '../../../setup/clients/FetchClient'
 import { AccountScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
-import { UserResponseData } from '../../../../../../commons/dto/UserDTO'
+import { LocationDTO, UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
 import storageService from '../../../utility/storageService'
 import { TOKEN } from '../../../setup/constant/token'
 
-interface User {
-  name: string;
+export interface User extends
+  Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'> {
   location: string;
 }
 
+export interface UserResponseData {
+  success: boolean;
+  data: {
+    preferredDonationLocations: Array<Omit<LocationDTO, 'userId' | 'locationId' | 'geohash' | 'createdAt'>>;
+    message: string;
+  } & Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'>;
+}
+
 interface UseAccountReturnType {
-  userData: User | null;
+  userProfileData: User | null;
   loading: boolean;
   error: string | null;
   handleSignOut: () => Promise<void>;
@@ -27,7 +35,7 @@ export const useAccount = (): UseAccountReturnType => {
   const auth = useAuth()
   const fetchClient = useFetchClient()
   const navigation = useNavigation<AccountScreenNavigationProp>()
-  const [userData, setUserData] = useState<User | null>(null)
+  const [userProfileData, setUserProfileData] = useState<User | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -57,15 +65,12 @@ export const useAccount = (): UseAccountReturnType => {
         throw new Error('Could not fetch user data')
       }
 
-      const { name, preferredDonationLocations } = response.data
+      const { preferredDonationLocations, ...userData } = response.data
 
       if (preferredDonationLocations.length > 0) {
         const { city = '', area = '' } = preferredDonationLocations[0]
         const location = `${city}, ${area}`
-        setUserData({ name, location })
-      } else {
-        const location = ''
-        setUserData({ name, location })
+        setUserProfileData({ ...userData, location })
       }
     } catch (err) {
       setError('An unknown error occurred')
@@ -78,5 +83,5 @@ export const useAccount = (): UseAccountReturnType => {
     void fetchUserData()
   }, [])
 
-  return { userData, loading, error, handleSignOut }
+  return { userProfileData, loading, error, handleSignOut }
 }

@@ -14,6 +14,7 @@ const darkTheme: Theme = {
     black: '#212121',
     blackFaded: '#21212180',
     greyBG: '#F5F5F5',
+    gradientBackground: '#fbeee6',
     redFaded: '#FFA6A6',
     goldenYellow: '#FFD64D',
     goldenSun: '#FFB300',

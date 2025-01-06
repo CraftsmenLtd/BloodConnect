@@ -14,7 +14,6 @@ const useFetchData = <DataFetchType>(
   const [data, setData] = useState<DataFetchType | null>(null)
   const [error, setError] = useState<string | null>(null)
   const dataFetchFunctionRef = useRef(dataFetchFunction)
-
   const getErrorMessage = (error: unknown): string => {
     if (errorMessage !== undefined) return errorMessage
     if (parseError !== undefined) {

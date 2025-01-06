@@ -21,6 +21,7 @@ interface Theme {
     goldenSun: string;
     peachCream: string;
     darkAmber: string;
+    gradientBackground: string;
   };
   typography: {
     fontSize: number;

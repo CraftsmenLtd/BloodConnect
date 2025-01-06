@@ -59,7 +59,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: 'gray'
   },
   optionsSection: {
-    borderTopWidth: 4,
     borderColor: theme.colors.extraLightGray
   },
   moreSection: {

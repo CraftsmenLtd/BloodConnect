@@ -148,7 +148,17 @@ const AddPersonalInfo = () => {
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              name='dateOfBirth'
+              isOnlyDate={true}
+              label="Last Donation Date"
+              value={new Date(personalInfo.lastDonationDate)}
+              onChange={(date) => handleInputChange('lastDonationDate', date)}
+              isRequired={true}
+              error={errors.lastDonationDate}
+            />
+          </View>
+
+          <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
+            <DateTimePickerComponent
               isOnlyDate={true}
               label="Date of Birth"
               value={new Date(personalInfo.dateOfBirth)}
@@ -160,18 +170,6 @@ const AddPersonalInfo = () => {
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              name='lastDonationDate'
-              isOnlyDate={true}
-              label="Last Donation Date"
-              value={personalInfo.lastDonationDate !== null ? new Date(personalInfo.lastDonationDate) : null}
-              onChange={(date) => handleInputChange('lastDonationDate', date)}
-              error={errors.lastDonationDate}
-            />
-          </View>
-
-          <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
-            <DateTimePickerComponent
-              name='lastVaccinatedDate'
               isOnlyDate={true}
               label="Last Vaccinated Date"
               value={personalInfo.lastVaccinatedDate !== null ? new Date(personalInfo.lastVaccinatedDate) : null}
