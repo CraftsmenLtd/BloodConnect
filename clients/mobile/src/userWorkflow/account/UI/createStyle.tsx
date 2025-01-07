@@ -63,8 +63,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   moreSection: {
     borderTopWidth: 4,
-    borderColor: theme.colors.extraLightGray,
-    marginTop: 20
+    borderColor: theme.colors.extraLightGray
   },
   headingStyle: {
     alignItems: 'center',

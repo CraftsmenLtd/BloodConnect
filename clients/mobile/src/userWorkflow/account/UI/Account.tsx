@@ -35,32 +35,32 @@ export const Account = () => {
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionItem}>
+        {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="bloodtype" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Donor Information</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity style={styles.optionItem}>
+        {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="notifications-none" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Notifications</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <View style={styles.moreSection}>
         <Text style={styles.moreText}>More</Text>
-        <TouchableOpacity style={styles.optionItem}>
+        {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="star-border" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Rate & Review</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity style={styles.optionItem}>
+        {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="help-outline" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Help</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity style={styles.optionItem} onPress={() => { void handleSignOut() }}>
           <MaterialIcons name="logout" size={24} style={styles.iconStyle} />
