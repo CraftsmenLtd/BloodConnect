@@ -155,6 +155,12 @@ run-command-%:
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
 	           make $* NPM_TEST_ARGS=$(NPM_TEST_ARGS) NPM_ARGS=$(NPM_ARGS)
 
+devcontainer:
+	docker rm -f $(DOCKER_DEV_CONTAINER_NAME)
+	docker run --rm -itd --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
+	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
+			   /bin/bash	           
+
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 

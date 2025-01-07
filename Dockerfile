@@ -11,13 +11,13 @@ RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip a
     --no-install-recommends
 
 COPY docs/requirements.txt /tmp
+ARG CHECKOV_VERSION
 RUN pip3 install -r /tmp/requirements.txt --break-system-packages && \
     pip3 install terraform-local checkov==${CHECKOV_VERSION} --break-system-packages && \
     rm /tmp/requirements.txt
 
 # Install Binary tools
 ARG NODE_MAJOR
-ARG CHECKOV_VERSION
 ARG TERRAFORM_VERSION
 RUN curl https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscliv2.zip && \
     unzip /tmp/awscliv2.zip -d /tmp && \
