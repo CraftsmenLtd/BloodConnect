@@ -1,12 +1,22 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, Image, ImageStyle } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  TouchableWithoutFeedback,
+  Dimensions,
+  ViewStyle,
+  StyleProp,
+  ImageStyle
+} from 'react-native'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { Button } from '../button/Button'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import { UrgencyLevel } from '../../donationWorkflow/types'
-import BloodImage from '../../../assets/images/bloodtype.png'
 import StatusBadge from './StatusBadge'
 import Badge from '../badge'
 import GenericModal from '../modal'
@@ -201,7 +211,11 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         <View style={styles.bloodInfoWrapper}>
           <View style={styles.bloodInfo}>
             <View style={styles.bloodRow}>
-            <Image source={BloodImage} style={styles.bloodImage as StyleProp<ImageStyle>} />
+            <MaterialIcons
+                name='bloodtype'
+                style={styles.bloodImage as StyleProp<ImageStyle>}
+                size={32}
+                />
               <View style={styles.bloodText}>
                 <Text style={styles.lookingForText}>Looking for</Text>
                 <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} (ve) blood</Text>
@@ -324,7 +338,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   bloodImage: {
     width: 28,
-    height: 28
+    height: 28,
+    color: theme.colors.bloodRed
   },
   dropdownContainer: {
     position: 'absolute',
