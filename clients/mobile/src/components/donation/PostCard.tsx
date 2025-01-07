@@ -1,5 +1,16 @@
 import React, { useState, useCallback, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Dimensions, ViewStyle, StyleProp, ImageStyle } from 'react-native'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  TouchableWithoutFeedback,
+  Dimensions,
+  ViewStyle,
+  StyleProp,
+  ImageStyle
+} from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
