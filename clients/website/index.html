@@ -1,14 +1,548 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="no-js" lang="zxx">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BloodConnect</title>
-  <meta name="title" content="BloodConnect"/>
-  <meta name="description" content="Welcome to BloodConnect. BloodConnect is an open-source platform aimed at improving the blood donation process by facilitating efficient and effective communication between donors and blood seekers"/>
-  <link rel="shortcut icon" href="images/logo/favicon.png" type="image/x-icon">
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>BloodConnect - An Open Source Blood Donation App</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shorBtcut icon" type="image/x-icon" href="img/logo/fav.jpg" />
+
+  <link rel="stylesheet" href="css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="css/fancybox.css"/>
+  <link rel="stylesheet" href="css/default.css"/>
+  <link rel="stylesheet" href="css/swiper.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/responsive.css"/>
 </head>
+
 <body>
-  <h1>BloodConnect</h1>
+  <header class="header-area">
+    <div id="header-sticky" class="menu-area">
+      <div class="container">
+        <div class="second-menu">
+          <div class="row align-items-center">
+            <div class="col-xl-2 col-lg-2">
+              <div class="logo">
+                <a href="index.html"><img src="img/logo/logo.png" alt="logo" /></a>
+              </div>
+            </div>
+            <div class="col-xl-8 col-lg-9">
+              <div class="responsive"><i class="far fa-bars"></i></div>
+              <div class="main-menu text-right text-xl-right">
+                <nav id="mobile-menu">
+                  <ul>
+                    <li><a href="#parallax">Home</a></li>
+                    <li><a href="#about-us">About Us</a></li>
+                    <li><a href="#key-features">Features</a></li>
+                    <li><a href="#screen">Screenshot</a></li>
+                    <li><a href="https://craftsmenltd.github.io/BloodConnect/" target="_blank">Documentation</a></li>
+                    <li><a href="#call-to-section">Contact</a></li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+            <div class="col-xl-2 text-right d-none d-xl-block">
+              <div class="header-btn second-header-btn">
+                <a href="https://expo.dev/accounts/mdmahinuzzaman/projects/bloodconnect/builds/dc7eaf6a-8ddf-4943-8f12-c6c4136983e3"
+                  target="_blank" class="btn">
+                  <img src="img/icon/google-play-icon.png" class="nav-download-icon mr-2" alt="google-play-icon" />
+                  <span class="text text-left">Download From <strong>GOOGLE PLAY</strong></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="parallax" class="slider-area slider-bg2 second-slider-bg d-flex fix"
+      style="background-image: url(img/background/hero-bg.png); background-position: right 0; background-repeat: no-repeat; background-size: 65%">
+      <div class="slider-shape ss-one layer" data-depth="0.10">
+        <img src="img/shape/bloodconnect-hero-shape.png" alt="shape" />
+      </div>
+
+      <div class="slider-shape ss-eight layer" data-depth="0.50"></div>
+
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-lg-6">
+            <div class="slider-content second-slider-content left-center">
+              <h2>Save Lives with <span>BloodConnect</span></h2>
+              <p>
+                Join the movement to make blood donation seamless. Connect, donate, and save lives—all from the
+                convenience of your mobile device.
+              </p>
+              <div class="choose-btn mt-30 d-md-flex">
+                <a href="#" class="download-app" target="_blank">
+                  <span class="icon"><img src="img/icon/google-play-icon.png" alt="google-play-icon" /></span> <span
+                    class="text"> Get It On <strong>GOOGLE PLAY</strong></span></a>
+                <a href="https://github.com/CraftsmenLtd/BloodConnect" class="g-btn" data-animation="fadeInUp"
+                  data-delay=".8s" target="_blank">
+                  <span class="icon"><img src="img/icon/github-logo.png" alt="gitHub-icon" /></span> <span class="text">
+                    Contribute on <strong>GitHub</strong></span></a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 text-right">
+            <img src="img/background/hero-main.png" alt="shape" class="s-img img-fluid" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="about-section bg-color-secondary" id="about-us">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <div class="img-box">
+              <img src="img/background/video-section-img1.png" class="img-fluid rounded-circle" alt="about-us image" />
+              <a class="play-vdo" href="https://www.youtube.com/watch?v=exqaJaEJExQ" data-fancybox="video">
+                <i class="fas fa-play"></i>
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="text-box">
+              <div class="header-text mb-4">
+                <h5>About Us</h5>
+                <h3 class="text-color-primary">BloodConnect: Revolutionizing Blood Donation Worldwide</h3>
+              </div>
+              <p class="text-justify">
+                BloodConnect is an open-source life-saving platform bridging the gap between blood donors and those in need. With our
+                easy-to-use app, individuals can locate and connect with nearby donors in real time, ensuring critical
+                needs are
+                met quickly and efficiently.
+              </p>
+              <p class="text-justify">Our mission is to make blood donation accessible to everyone by leveraging
+                advanced technology and community engagement. Join a growing network of heroes dedicated to saving lives and making a meaningful difference, one drop at a time.</p>
+              <div class="choose-btn mt-30 d-md-flex">
+                <a href="#" class="download-app" target="_blank">
+                  <span class="icon"><img src="img/icon/google-play-icon.png" alt="google-play-icon" /></span> <span class="text">Get It On <strong>GOOGLE PLAY</strong>
+                  </span>
+                </a>
+                <a href="https://github.com/CraftsmenLtd/BloodConnect" class="g-btn" data-animation="fadeInUp"
+                  data-delay=".8s" target="_blank">
+                  <span class="icon"><img src="img/icon/github-logo.png" alt="gitHub-icon" /></span> <span class="text">View It on <strong>GitHub</strong></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="key-features" class="key-features pt-100 pb-100">
+      <div class="container">
+        <div class="row align-items-center justify-content-center">
+          <div class="col-xl-8 col-lg-10 text-md-center mb-15">
+            <h2 class="text-color-primary text-center">Explore Our Special Features</h2>
+            <p class="mb-lg-4 text-center">
+              Explore BloodConnect’s advanced functionalities designed to simplify blood donation, ensure donor privacy, and save lives faster than ever.
+            </p>
+          </div>
+        </div>
+        <div class="app-services-block">
+          <div class="app-services-inner">
+            <div class="app-services-point">
+              <img src="img/icon/f-icon1.png" alt="icon">
+              <h5 class="title">Smart Donor Matching</h5>
+              <p>Connect with donors in seconds through our smart matching algorithm based on blood type and location.
+              </p>
+            </div>
+            <div class="app-services-point">
+              <img src="img/icon/f-icon3.png" alt="icon">
+              <h5 class="title">Real Time Notifications</h5>
+              <p>Stay informed with instant alerts about donation requests, matches, and updates in your area.</p>
+            </div>
+            <div class="app-services-point">
+              <img src="img/icon/f-icon2.png" alt="icon">
+              <h5 class="title">Location Based Services</h5>
+              <p>Find nearby compatible donors quickly, with real-time distance tracking and availability updates.</p>
+            </div>
+          </div>
+          <div class="app-services-inner middle-img">
+            <img src="img/background/feature-middle.png" alt="iphone-img">
+          </div>
+          <div class="app-services-inner">
+            <div class="app-services-point">
+              <img src="img/icon/f-icon2.png" alt="icon">
+              <h5 class="title">Security & Privacy</h5>
+              <p>Your sensitive information is protected with highly encryption and strict privacy controls.</p>
+            </div>
+            <div class="app-services-point">
+              <img src="img/icon/f-icon1.png" alt="icon">
+              <h5 class="title">Secure Communication</h5>
+              <p>Communication through our platform is highly secured maintaining complete confidentiality of personal
+                information.</p>
+            </div>
+            <div class="app-services-point">
+              <img src="img/icon/f-icon3.png" alt="icon">
+              <h5 class="title">Donation Management</h5>
+              <p>Monitor your donation journey, receive timely reminders, and earn recognition for your life-saving
+                contributions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-app-work" class="app-work bg-color-secondary pt-100 pb-100 p-relative">
+      <div class="container">
+        <div class="row align-items-center justify-content-center">
+          <div class="col-xl-8 col-lg-10 text-center mb-15">
+            <h2 class="text-color-primary">How Does BloodConnect Works?</h2>
+            <p>See how BloodConnect makes blood donation easy and efficient, from registration to successful donation
+              completion.</p>
+          </div>
+        </div>
+        <div class="row align-items-center">
+          <div class="col-xl-6">
+            <div class="choose-wrap">
+              <div class="app-work-content mt-20">
+                <ul>
+                  <li>
+                    <div class="icon">
+                      <img src="img/icon/app-work-auth-icon.png" />
+                    </div>
+                    <div class="text">
+                      <h4>Sign Up & Set Profile</h4>
+                      <p>Create an account and input your blood group, preferred locations, and preferences to enable
+                        tailored connections.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="icon dd"><img src="img/icon/app-work-search.png" /></div>
+                    <div class="text">
+                      <h4>Search or Request Blood</h4>
+                      <p>Search for donors nearby or create an urgent blood request, detailing the type and quantity
+                        needed.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="icon"><img src="img/icon/app-work-connect.png" /></div>
+                    <div class="text">
+                      <h4>Connect with Donors</h4>
+                      <p>Receive prioritized donor recommendations based on location and availability, ensuring rapid
+                        and reliable connections.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="icon"><img src="img/icon/app-work-complete.png" /></div>
+                    <div class="text">
+                      <h4>Complete the Donation</h4>
+                      <p>Communicate securely via the platform, finalize arrangements, and ensure a smooth donation
+                        process while maintaining privacy.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-6">
+            <img src="img/background/how-app-work.png" alt="app-work-img" class="img img-how-app-work" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen" class="screen-area services-bg services-two pt-100 pb-70"
+      style="background-image: url(img/shape/header-sape4.png); background-position: right center; background-size: auto; background-repeat: no-repeat">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-xl-8 col-lg-10">
+            <div class="section-title text-center pl-40 pr-40 mb-50">
+              <h2>Our App ScreenShots</h2>
+              <p>Take a visual tour of our BloodConnect where every drop of blood makes a difference through our
+                user-friendly interface</p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="swiper-container">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide"><img src="img/gallery/2-getting_started.png" alt="slide 2" /></div>
+              <div class="swiper-slide"><img src="img/gallery/3-login_screen.png" alt="slide 3" /></div>
+              <div class="swiper-slide"><img src="img/gallery/4-create_account.png" alt="slide 4" /></div>
+              <div class="swiper-slide"><img src="img/gallery/5-set_password.png" alt="slide 5" /></div>
+              <div class="swiper-slide"><img src="img/gallery/6-personal_info.png" alt="slide 6" /></div>
+              <div class="swiper-slide"><img src="img/gallery/7-recent_request_screen.png" alt="slide 7" /></div>
+              <div class="swiper-slide"><img src="img/gallery/9-accept_request_screen.png" alt="slide 9" /></div>
+              <div class="swiper-slide"><img src="img/gallery/10-request_accepted_screen.png" alt="slide 10" /></div>
+              <div class="swiper-slide"><img src="img/gallery/11-my_post_screen.png" alt="slide 11" /></div>
+              <div class="swiper-slide"><img src="img/gallery/12-post_details_screen.png" alt="slide 12" /></div>
+              <div class="swiper-slide"><img src="img/gallery/13-query_screen.png" alt="slide 13" /></div>
+              <div class="swiper-slide"><img src="img/gallery/14-responses_screen.png" alt="slide 14" /></div>
+              <div class="swiper-slide"><img src="img/gallery/16-query_screen.png" alt="slide 16" /></div>
+              <div class="swiper-slide"><img src="img/gallery/17-donors_list_screen.png" alt="slide 17" /></div>
+              <div class="swiper-slide"><img src="img/gallery/18-donors_list_screen.png" alt="slide 18" /></div>
+              <div class="swiper-slide"><img src="img/gallery/19-account_screen.png" alt="slide 19" /></div>
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="faq-area pb-100 pt-100 bg-color-secondary"
+      style="background-image: url(img/shape/header-sape6.png); background-position: right center; background-size: auto; background-repeat: no-repeat">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-xl-7 col-lg-10">
+            <div class="section-title text-center pl-40 pr-40 mb-45">
+              <h2>Frequently Asked Questions</h2>
+              <p>Get answers to the most frequently asked questions about our platform, donation process, and how we're making blood donation easier.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-wrap">
+          <div class="accordion" id="accordionExample">
+            <div class="row">
+              <div class="col-md-6 mb-2">
+                <div class="card">
+                  <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                      <button class="faq-btn" type="button" data-toggle="collapse" data-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">
+                        How do I register as a blood donor?
+                      </button>
+                    </h2>
+                  </div>
+                  <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                    data-parent="#accordionExample">
+                    <div class="card-body">
+                      Simply download the BloodConnect app, sign up with your details, and complete your registration. Once registered, you can start donating blood when needed.
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                      <button class="faq-btn collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo"
+                        aria-expanded="false" aria-controls="collapseTwo">
+                        Is my personal information secure?
+                      </button>
+                    </h2>
+                  </div>
+                  <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                      Yes, BloodConnect takes privacy seriously. We use industry-standard encryption to protect your personal data, ensuring that only authorized parties have access to your information.
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="headingThree">
+                    <h2 class="mb-0">
+                      <button class="faq-btn collapsed" type="button" data-toggle="collapse"
+                        data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        How quickly can I find a donor?
+                      </button>
+                    </h2>
+                  </div>
+                  <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                    data-parent="#accordionExample">
+                    <div class="card-body">
+                      BloodConnect prioritizes geographical proximity and urgency. By matching donors based on location and availability, we ensure rapid connections for emergency situations.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-2 mt-2">
+                <div class="card">
+                  <div class="card-header" id="headingFive">
+                    <h2 class="mb-0">
+                      <button class="faq-btn collapsed" type="button" data-toggle="collapse" data-target="#collapseFive"
+                        aria-expanded="false" aria-controls="collapseFive">
+                        How can I contribute to the project?
+                      </button>
+                    </h2>
+                  </div>
+                  <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+                    <div class="card-body">
+                      You can contribute by joining our open-source community on <a
+                        href="https://github.com/CraftsmenLtd/BloodConnect" target="_blank">BloodConnect GitHub
+                        Repository</a>. Whether you're a developer, designer, or researcher, we welcome contributions to improve and expand the platform.
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="headingSix">
+                    <h2 class="mb-0">
+                      <button class="faq-btn collapsed" type="button" data-toggle="collapse" data-target="#collapseSix"
+                        aria-expanded="false" aria-controls="collapseSix">
+                        How do I track my donation history?
+                      </button>
+                    </h2>
+                  </div>
+                  <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
+                    <div class="card-body">
+                      BloodConnect automatically tracks your donation history. You can view past donations and receive reminders for your next donation, helping maintain a healthy and regular donation schedule.
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="headingFour">
+                    <h2 class="mb-0">
+                      <button class="faq-btn collapsed" type="button" data-toggle="collapse" data-target="#collapseFour"
+                        aria-expanded="false" aria-controls="collapseFour">
+                        Can hospitals and blood banks use the platform?
+                      </button>
+                    </h2>
+                  </div>
+                  <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                    <div class="card-body">
+                      It will be available on next release, Hospitals and blood banks can integrate with BloodConnect to manage donor lists, track blood availability, and connect with local donors to meet urgent needs.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="call-to-section" class="call-to-section">
+      <div class="container">
+        <div class="box">
+          <div class="row align-items-center justify-content-between">
+            <div class="col-md-6">
+              <h2>Get In Touch</h2>
+              <p>We’d love to hear from you! Whether you have a question, feedback, or want to learn more about
+                BloodConnect, feel free to reach out.</p>
+            </div>
+            <div class="col-md-6 ">
+              <a href="mailto:bloodconnect@craftsmensoftware.com?subject=Hey BloodConnect Team! I wanna talk to you.&body=Hello BloodConnect Team!, Please do response if you are free."
+                target="_blank" title="Email" class="btn send-message-btn">
+                <i class="fas fa-paper-plane pr-2"></i>Send Message
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer-bg footer-p pt-60">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col-xl-3 col-lg-3 col-sm-6">
+            <div class="footer-widget mb-30">
+              <div class="footer-logo logo mt-15 mb-15">
+                <a href="#"><img src="img/logo/logo.png" alt="logo" /></a>
+              </div>
+              <div class="footer-text mb-20">
+                <p>
+                  BloodConnect is an open-source innovative platform designed to streamline blood donation and connect donors with those in need. We focus on providing efficient, secure, and easy-to-use services for saving lives.
+                </p>
+              </div>
+              <div class="footer-social">
+                <a href="https://github.com/CraftsmenLtd/BloodConnect" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="mailto:bloodconnect@craftsmensoftware.com?subject=Hey BloodConnect Team! I wanna talk to you.&body=Hello BloodConnect Team!, Please do response if you are free." target="_blank" title="Email"><i class="fas fa-envelope"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-sm-6">
+            <div class="footer-widget mb-30">
+              <div class="f-widget-title">
+                <h5>Qick Links</h5>
+              </div>
+              <div class="footer-link">
+                <ul>
+                  <li><a href="#about-us">About Us</a></li>
+                  <li><a href="#key-features">Key Features</a></li>
+                  <li><a href="#faq">FAQ</a></li>
+                  <li><a href="#screen">Screenshots</a></li>
+                  <li><a href="#how-app-work">How does work</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-sm-6">
+            <div class="footer-widget mb-30">
+              <div class="f-widget-title">
+                <h5>Legal Documents</h5>
+              </div>
+              <div class="footer-link">
+                <ul>
+                  <li><a href="https://craftsmenltd.github.io/BloodConnect/legal/PrivacyPolicy.html"
+                      target="_blank">Privacy Policy</a></li>
+                  <li><a href="https://craftsmenltd.github.io/BloodConnect/legal/TermsOfService.html"
+                      target="_blank">Terms of Service</a></li>
+                  <li><a href="https://craftsmenltd.github.io/BloodConnect" target="_blank">Documentation</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-sm-6">
+            <div class="footer-widget mb-30">
+              <div class="f-widget-title">
+                <h5>Contact Us</h5>
+              </div>
+              <div class="footer-link">
+                <div class="f-contact">
+                  <ul>
+                    <li>
+                      <i class="far fa-envelope"></i>
+                      <span>
+                        <a href="mailto:bloodconnect@craftsmensoftware.com?subject=Hey BloodConnect Team! I wanna talk to you.&body=Hello BloodConnect Team!, Please do response if you are free."
+                          target="_blank" title="Email">bloodconnect@craftsmensoftware.com</a>
+                    </li>
+                  </ul>
+                  <div class="header-btn second-header-btn">
+                    <a href="https://expo.dev/accounts/mdmahinuzzaman/projects/bloodconnect/builds/dc7eaf6a-8ddf-4943-8f12-c6c4136983e3"
+                      target="_blank" class="btn">
+                      <img src="img/icon/google-play-icon.png" class="nav-download-icon mr-2" alt="google-play-icon" />
+                      <span class="text text-left">Download From <strong>GOOGLE PLAY</strong></span>
+                    </a>
+
+                    <a href="https://github.com/CraftsmenLtd/BloodConnect" target="_blank" class="btn mt-3">
+                      <img src="img/icon/github-logo-white.png" class="nav-download-icon mr-2" alt="google-play-icon" />
+                      <span class="text text-left">Contribute On <strong>GITHUB</strong></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="copyright-wrap text-center">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="copyright-text">
+              <p>&copy;
+                <script>document.write(new Date().getFullYear());</script> <a href="https://bloodconnect.net/"
+                  target="_blank">BloodConnect</a>. <a href="https://github.com/CraftsmenLtd/BloodConnect"
+                  target="_blank">Open Source Project</a>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <script src="js/jquery-1.12.4.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/fontawesomepro.js"></script>
+  <script src="js/one-page-nav-min.js"></script>
+  <script src="js/parallax.min.js"></script>
+  <script src="js/jquery.scrollUp.min.js"></script>
+  <script src="js/swiper.min.js"></script>
+  <script src="js/fancybox.umd.js"></script>
+  <script src="js/main.js"></script>
 </body>
+
 </html>
