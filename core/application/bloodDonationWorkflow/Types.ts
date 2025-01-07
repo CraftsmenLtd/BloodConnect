@@ -13,6 +13,7 @@ export interface BloodDonationAttributes {
   donationDateTime: string;
   contactNumber: string;
   patientName?: string;
+  seekerName?: string;
   transportationInfo?: string;
   shortDescription?: string;
 }

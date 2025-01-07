@@ -49,7 +49,7 @@ export class BloodDonationService {
 
     const response: DonationDTO = await bloodDonationRepository
       .create({
-        id: generateUniqueID(),
+        requestPostId: generateUniqueID(),
         ...donationAttributes,
         status: DonationStatus.PENDING,
         geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
@@ -67,7 +67,7 @@ export class BloodDonationService {
       })
 
     return {
-      requestPostId: response.id as string,
+      requestPostId: response.requestPostId,
       createdAt: response.createdAt
     }
   }
@@ -158,7 +158,7 @@ export class BloodDonationService {
     const updateData: Partial<DonationDTO> = {
       ...restAttributes,
       seekerId,
-      id: requestPostId,
+      requestPostId,
       createdAt
     }
 
@@ -203,7 +203,7 @@ export class BloodDonationService {
     const updateData: Partial<DonationDTO> = {
       ...item,
       seekerId,
-      id: requestPostId,
+      requestPostId,
       createdAt,
       status
     }
