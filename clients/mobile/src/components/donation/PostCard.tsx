@@ -6,7 +6,6 @@ import { Theme } from '../../setup/theme'
 import { Button } from '../button/Button'
 import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import { UrgencyLevel } from '../../donationWorkflow/types'
-// import BloodImage from '../../../assets/images/bloodtype.png'
 import StatusBadge from './StatusBadge'
 import Badge from '../badge'
 import GenericModal from '../modal'
@@ -201,7 +200,6 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         <View style={styles.bloodInfoWrapper}>
           <View style={styles.bloodInfo}>
             <View style={styles.bloodRow}>
-            {/* <Image source={BloodImage} style={styles.bloodImage as StyleProp<ImageStyle>} /> */}
             <MaterialIcons
                 name='bloodtype'
                 style={styles.bloodImage as StyleProp<ImageStyle>}
