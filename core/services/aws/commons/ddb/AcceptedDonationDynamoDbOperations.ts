@@ -40,7 +40,7 @@ export default class AcceptedDonationDynamoDbOperations<
       }
     }
 
-    if (primaryIndex.sortKey != null) {
+    if (primaryIndex.sortKey !== undefined) {
       query.sortKeyCondition = {
         attributeName: primaryIndex.sortKey,
         operator: QueryConditionOperator.BEGINS_WITH,

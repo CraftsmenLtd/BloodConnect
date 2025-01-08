@@ -13,6 +13,7 @@ export interface BloodDonationAttributes {
   donationDateTime: string;
   contactNumber: string;
   patientName?: string;
+  seekerName?: string;
   transportationInfo?: string;
   shortDescription?: string;
 }
@@ -108,4 +109,15 @@ export interface DonationRecordAttributes {
   location: string;
   donationDateTime: string;
   createdAt?: string;
+}
+
+export type GetDonationRequestAttributes = {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+}
+
+export type BloodDonationResponseAttributes = {
+  requestPostId: string;
+  createdAt: string;
 }

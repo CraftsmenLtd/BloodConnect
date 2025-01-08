@@ -11,8 +11,13 @@ import {
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { CREATE_DONATION_REQUEST_SUCCESS, UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { UserService } from '../../../application/userWorkflow/UserService'
+import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
 
 const bloodDonationService = new BloodDonationService()
+const userService = new UserService()
 
 async function createBloodDonationLambda(
   event: BloodDonationAttributes & HttpLoggerAttributes
@@ -24,8 +29,14 @@ async function createBloodDonationLambda(
   )
 
   try {
-    const bloodDonationAttributes = {
+    const userProfile = await userService.getUser(
+      event.seekerId,
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
+    )
+
+    const bloodDonationAttributes: BloodDonationAttributes = {
       seekerId: event.seekerId,
+      seekerName: userProfile.name,
       patientName: event.patientName,
       requestedBloodGroup: event.requestedBloodGroup,
       bloodQuantity: event.bloodQuantity,
@@ -41,22 +52,24 @@ async function createBloodDonationLambda(
     }
     const response = await bloodDonationService.createBloodDonation(
       bloodDonationAttributes,
-      new DynamoDbTableOperations<
-      DonationDTO,
-      DonationFields,
-      BloodDonationModel
-      >(new BloodDonationModel()),
+      new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(
+        new BloodDonationModel()
+      ),
       new BloodDonationModel()
     )
-    return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
+    return generateApiGatewayResponse(
+      {
+        success: true,
+        message: CREATE_DONATION_REQUEST_SUCCESS,
+        data: response
+      },
+      HTTP_CODES.CREATED
+    )
   } catch (error) {
     httpLogger.error(error)
-    const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred'
+    const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     const errorCode =
-      error instanceof BloodDonationOperationError
-        ? error.errorCode
-        : HTTP_CODES.ERROR
+      error instanceof BloodDonationOperationError ? error.errorCode : HTTP_CODES.ERROR
     return generateApiGatewayResponse(`Error: ${errorMessage}`, errorCode)
   }
 }

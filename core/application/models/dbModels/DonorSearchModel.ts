@@ -1,16 +1,25 @@
 import { DonorSearchDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
-import { DbModelDtoAdapter, HasTimeLog, NosqlModel, IndexDefinitions, DbIndex, IndexType } from './DbModelDefinitions'
+import {
+  DbModelDtoAdapter,
+  HasTimeLog,
+  NosqlModel,
+  IndexDefinitions,
+  DbIndex,
+  IndexType
+} from './DbModelDefinitions'
 
 export const DONOR_SEARCH_PK_PREFIX = 'DONOR_SEARCH'
 export const DONOR_SEARCH_LSISK_PREFIX = 'STATUS'
 
-export type DonorSearchFields = Omit<DonorSearchDTO, 'id' | 'seekerId'> & HasTimeLog & {
+export type DonorSearchFields = Omit<DonorSearchDTO, 'requestPostId' | 'seekerId'> &
+HasTimeLog & {
   PK: `${typeof DONOR_SEARCH_PK_PREFIX}#${string}`;
   SK: `${typeof DONOR_SEARCH_PK_PREFIX}#${string}#${string}`;
   LSI1SK: `${typeof DONOR_SEARCH_LSISK_PREFIX}#${string}#${string}`;
 }
 
-export class DonorSearchModel implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, DonorSearchFields> {
+export class DonorSearchModel
+implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, DonorSearchFields> {
   getIndexDefinitions(): IndexDefinitions<DonorSearchFields> {
     return {}
   }
@@ -24,12 +33,12 @@ export class DonorSearchModel implements NosqlModel<DonorSearchFields>, DbModelD
   }
 
   fromDto(donationDto: DonorSearchDTO): DonorSearchFields {
-    const { seekerId, id, ...remainingDonationData } = donationDto
+    const { seekerId, requestPostId, ...remainingDonationData } = donationDto
     const postCreationDate = remainingDonationData.createdAt ?? new Date().toISOString()
     return {
       PK: `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
-      SK: `${DONOR_SEARCH_PK_PREFIX}#${postCreationDate}#${id}`,
-      LSI1SK: `${DONOR_SEARCH_LSISK_PREFIX}#${DonationStatus.PENDING}#${id}`,
+      SK: `${DONOR_SEARCH_PK_PREFIX}#${postCreationDate}#${requestPostId}`,
+      LSI1SK: `${DONOR_SEARCH_LSISK_PREFIX}#${DonationStatus.PENDING}#${requestPostId}`,
       ...remainingDonationData,
       createdAt: postCreationDate
     }
@@ -37,6 +46,11 @@ export class DonorSearchModel implements NosqlModel<DonorSearchFields>, DbModelD
 
   toDto(dbFields: DonorSearchFields): DonorSearchDTO {
     const { PK, SK, LSI1SK, createdAt, ...remainingDonorSearchFields } = dbFields
-    return { ...remainingDonorSearchFields, id: SK.replace(`${DONOR_SEARCH_PK_PREFIX}#${createdAt}#`, ''), seekerId: PK.replace(`${DONOR_SEARCH_PK_PREFIX}#`, ''), createdAt }
+    return {
+      ...remainingDonorSearchFields,
+      requestPostId: SK.replace(`${DONOR_SEARCH_PK_PREFIX}#${createdAt}#`, ''),
+      seekerId: PK.replace(`${DONOR_SEARCH_PK_PREFIX}#`, ''),
+      createdAt
+    }
   }
 }

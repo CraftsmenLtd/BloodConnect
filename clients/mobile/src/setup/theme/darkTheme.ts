@@ -2,6 +2,7 @@ import { Theme } from './index'
 const darkTheme: Theme = {
   colors: {
     primary: '#FF4D4D',
+    bloodRed: '#E32323',
     secondary: '#2ecc71',
     white: '#ffffff',
     textPrimary: '#090A0A',
@@ -11,8 +12,10 @@ const darkTheme: Theme = {
     lightGrey: '#CCCCCC',
     darkGrey: '#616161',
     charcoalGray: '#202325',
-    black: 'black',
+    black: '#212121',
+    blackFaded: '#21212180',
     greyBG: '#F5F5F5',
+    gradientBackground: '#fbeee6',
     redFaded: '#FFA6A6',
     goldenYellow: '#FFD64D',
     goldenSun: '#FFB300',

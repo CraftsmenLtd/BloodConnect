@@ -5,6 +5,7 @@ export enum SCREENS {
   OTP = 'OTP',
   FORGOT_PASSWORD = 'ForgotPassword',
   PROFILE = 'Profile',
+  EDIT_PROFILE = 'EditProfile',
   WELCOME = 'Welcome',
   DONATION = 'Donation',
   DONATION_POSTS = 'DonationPosts',
@@ -14,6 +15,10 @@ export enum SCREENS {
   HOME = 'Home',
   POSTS = 'Posts',
   MY_ACTIVITY = 'My Activity',
-  BLOOD_REQUEST_PREVIEW = 'ResponseDonationRequest',
-  DONAR_RESPONSE = 'DonorResponse'
+  BLOOD_REQUEST_PREVIEW = 'BloodRequestPreview',
+  DETAIL_POST = 'DetailPost',
+  DONOR_PROFILE = 'DonorProfile',
+  DONOR_RESPONSE = 'DonorResponse',
+  REQUEST_STATUS = 'RequestStatus',
+  DONOR_CONFIRMATION = 'DonorConfirmation'
 }

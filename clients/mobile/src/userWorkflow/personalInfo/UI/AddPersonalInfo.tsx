@@ -11,12 +11,12 @@ import { Input } from '../../../components/inputElement/Input'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
 import RadioButton from '../../../components/inputElement/Radio'
-import SearchMultiSelect from '../../../components/inputElement/SearchMultiSelect'
 import { LocationService } from '../../../LocationService/LocationService'
 import Warning from '../../../components/warning'
 import { WARNINGS } from '../../../setup/constant/consts'
 import LinkText from '../../../components/text/LinkText'
 import { POLICY_URLS } from '../../../setup/constant/urls'
+import MultiSelect from '../../../components/multiSelect'
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -34,14 +34,11 @@ const AddPersonalInfo = () => {
     loading,
     errorMessage,
     setErrorMessage,
-    isVisible,
-    setIsVisible,
     isSSO
   } = useAddPersonalInfo()
 
   return (
-    <TouchableWithoutFeedback onPress={() => { setIsVisible('') }}>
-      <View style={styles.container}>
+    <TouchableWithoutFeedback>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
@@ -50,7 +47,7 @@ const AddPersonalInfo = () => {
             <Dropdown
               label='Blood Group'
               isRequired={true}
-              placeholder='Select blood group'
+              placeholder='Select Blood Group'
               options={bloodGroupOptions}
               name='bloodGroup'
               selectedValue={personalInfo.bloodGroup}
@@ -71,10 +68,10 @@ const AddPersonalInfo = () => {
                 isRequired={true}
                 error={errors.phoneNumber}
               />
-                <Warning
-                  text={WARNINGS.PHONE_NUMBER_VISIBLE}
-                  showWarning={Boolean(personalInfo.phoneNumber?.trim())}
-                />
+              <Warning
+                text={WARNINGS.PHONE_NUMBER_VISIBLE}
+                showWarning={Boolean(personalInfo.phoneNumber?.trim())}
+              />
             </View>
           )}
 
@@ -82,7 +79,7 @@ const AddPersonalInfo = () => {
             <Dropdown
               label='Preferred District for Donating Blood'
               isRequired={true}
-              placeholder='Select city'
+              placeholder='Select City'
               options={districts}
               name='city'
               selectedValue={personalInfo.city}
@@ -92,18 +89,21 @@ const AddPersonalInfo = () => {
           </View>
 
           <View style={styles.fieldSpacing}>
-            <SearchMultiSelect
-              name="locations"
-              label="Search Preferred Location"
-              isVisible={isVisible}
-              setIsVisible={setIsVisible}
-              onChange={handleInputChange}
-              editable={personalInfo.city.length > 0}
-              error={errors.locations}
-              multiSelect={true}
+            <MultiSelect
+              name='locations'
+              label="Select Preferred Location"
+              options={[]}
+              selectedValues={personalInfo.locations}
+              onSelect={handleInputChange}
+              placeholder="Select Preferred Location"
               isRequired={true}
-              fetchOptions={async(searchText) => locationService.preferredLocationAutocomplete(searchText, personalInfo.city)}
-              extraInfo='Add minimum 1 area.'
+              enableSearch={true}
+              fetchOptions={
+                async(searchText) =>
+                  locationService.preferredLocationAutocomplete(searchText, personalInfo.city)
+              }
+              minRequiredLabel='Add minimum 1 area.'
+              editable={personalInfo.city.length > 0}
             />
           </View>
 
@@ -148,19 +148,6 @@ const AddPersonalInfo = () => {
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              name='lastDonationDate'
-              isOnlyDate={true}
-              label="Last Donation Date"
-              value={new Date(personalInfo.lastDonationDate)}
-              onChange={(date) => handleInputChange('lastDonationDate', date)}
-              isRequired={true}
-              error={errors.lastDonationDate}
-            />
-          </View>
-
-          <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
-            <DateTimePickerComponent
-              name='dateOfBirth'
               isOnlyDate={true}
               label="Date of Birth"
               value={new Date(personalInfo.dateOfBirth)}
@@ -169,15 +156,23 @@ const AddPersonalInfo = () => {
               error={errors.dateOfBirth}
             />
           </View>
+          
+          <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
+            <DateTimePickerComponent
+              isOnlyDate={true}
+              label="Last Donation Date"
+              value={personalInfo.lastDonationDate !== null ? new Date(personalInfo.lastDonationDate) : null}
+              onChange={(date) => handleInputChange('lastDonationDate', date)}
+              error={errors.lastDonationDate}
+            />
+          </View>
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              name='lastVaccinatedDate'
               isOnlyDate={true}
               label="Last Vaccinated Date"
-              value={new Date(personalInfo.lastVaccinatedDate)}
+              value={personalInfo.lastVaccinatedDate !== null ? new Date(personalInfo.lastVaccinatedDate) : null}
               onChange={(date) => handleInputChange('lastVaccinatedDate', date)}
-              isRequired={true}
               error={errors.lastVaccinatedDate}
             />
           </View>
@@ -237,19 +232,15 @@ const AddPersonalInfo = () => {
             />
           </View>
         </ScrollView>
-      </View>
     </TouchableWithoutFeedback>
   )
 }
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.white
-  },
   scrollContent: {
     padding: 16,
-    paddingBottom: 32
+    paddingBottom: 32,
+    backgroundColor: theme.colors.white
   },
   fieldSpacing: {
     marginBottom: 7
@@ -266,13 +257,15 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   termsText: {
     fontSize: theme.typography.fontSize,
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
+    textAlign: 'left',
+    paddingHorizontal: 10
   },
   errorMessage: {
     color: 'red',
     textAlign: 'center',
     padding: 8,
-    backgroundColor: '#FFF3F3',
+    backgroundColor: theme.colors.greyBG,
     borderRadius: 6
   },
   buttonContainer: {

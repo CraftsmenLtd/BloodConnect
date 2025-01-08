@@ -1,17 +1,39 @@
 import { HttpClient } from '../../setup/clients/HttpClient'
+import { ApiResponse } from '../../setup/clients/response'
 
-export interface DonationResponse {
-  success?: boolean;
-  message?: string;
-  status?: number;
+export type preferredDonationLocations = { area: string; city: string }
+
+export interface DonorProfile {
+  phoneNumbers?: string[];
+  donorName?: string;
+  bloodGroup?: string;
+  age?: number;
+  height?: number;
+  weight?: number;
+  gender?: string;
+  preferredDonationLocations?: preferredDonationLocations[];
 }
 
-export const addPersonalInfoHandler = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+export const addPersonalInfoHandler = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<ApiResponse> => {
   try {
-    const response = await httpClient.patch<DonationResponse>('/users', payload)
+    const response = await httpClient.patch<ApiResponse>('/users', payload)
     return {
       message: response.message,
       status: response.status
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
+    throw new Error(errorMessage)
+  }
+}
+
+export const getDonorProfile = async(donorId: string, httpClient: HttpClient): Promise<ApiResponse<DonorProfile>> => {
+  try {
+    const response = await httpClient.get<ApiResponse<DonorProfile>>(`/donors/${donorId}`, {})
+    return {
+      message: response.message,
+      status: response.status,
+      data: response.data
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'

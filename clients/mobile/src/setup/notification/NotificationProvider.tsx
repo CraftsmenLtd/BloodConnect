@@ -8,10 +8,13 @@ import { NotificationData } from './NotificationData'
 import { RootStackParamList } from '../navigation/navigationTypes'
 import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
+import { LOCAL_NOTIFICATION_TYPE } from '../constant/consts'
 
 const SCREEN_FOR_NOTIFICATION: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
-  bloodRequestPost: { screen: SCREENS.BLOOD_REQUEST_PREVIEW },
-  donorAcceptRequest: { screen: SCREENS.DONAR_RESPONSE, getParams: (data) => ({ notificationData: data }) }
+  BLOOD_REQ_POST: { screen: SCREENS.BLOOD_REQUEST_PREVIEW, getParams: (data) => ({ notificationData: data }) },
+  REQ_ACCEPTED: { screen: SCREENS.DONOR_RESPONSE, getParams: (data) => ({ notificationData: data }) },
+  [LOCAL_NOTIFICATION_TYPE.REQUEST_STATUS]: { screen: SCREENS.REQUEST_STATUS, getParams: (data) => ({ ...data }) },
+  [LOCAL_NOTIFICATION_TYPE.REMINDER]: { screen: SCREENS.MY_ACTIVITY, getParams: (data) => ({ ...data }) }
 }
 
 export const initialNotificationState: NotificationContextType = {
@@ -28,6 +31,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
     const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
       if (isNotificationValid(response)) {
         const data = parseJsonData(response.notification.request.content.data.payload)
+        const identifier = response.notification.request.identifier
+        void storageService.storeItem(LOCAL_STORAGE_KEYS.LAST_PROCESSED_NOTIFICATION_KEY, identifier)
         setNotificationData(data as NotificationData)
         handleNotificationNavigation(response)
       }
@@ -72,10 +77,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
 
   const handleNotificationNavigation = (response: Notifications.NotificationResponse | null) => {
     if (response === null) return
-
     const { type } = response.notification.request.content.data
     const mapping = SCREEN_FOR_NOTIFICATION[type]
-
     if (mapping !== undefined) {
       const { screen, getParams } = mapping
       const params = getParams !== undefined

@@ -7,12 +7,12 @@ export type UserAttributes = {
   phoneNumbers: string[];
 }
 
-export interface UpdateUserAttributes extends UserAttributes {
+export interface CreateUserAttributes extends UserAttributes {
   userId: string;
   name: string;
   bloodGroup: BloodGroup;
   lastDonationDate: string;
-  height: number;
+  height: string;
   weight: number;
   gender: Gender;
   dateOfBirth: string;
@@ -23,4 +23,22 @@ export interface UpdateUserAttributes extends UserAttributes {
   NIDFront: string;
   NIDBack: string;
   lastVaccinatedDate: string;
+}
+
+export interface UpdateUserAttributes extends UserAttributes {
+  userId: string;
+  name: string;
+  bloodGroup: BloodGroup;
+  lastDonationDate?: string;
+  height: string;
+  weight: number;
+  gender: Gender;
+  dateOfBirth: string;
+  age: number;
+  city: string;
+  preferredDonationLocations: LocationDTO[];
+  availableForDonation: AvailableForDonation;
+  NIDFront: string;
+  NIDBack: string;
+  lastVaccinatedDate?: string;
 }

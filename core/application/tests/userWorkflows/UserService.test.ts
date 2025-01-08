@@ -14,21 +14,24 @@ import {
   LocationDTO
 } from '../../../../commons/dto/UserDTO'
 import { UpdateUserAttributes } from '../../userWorkflow/Types'
-import LocationModel from '../../models/dbModels/LocationModel'
+import LocationRepository from '../../../application/models/policies/repositories/LocationRepository'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflow/userMessages')
-
+const locationMockRepository = {
+  ...mockRepository,
+  queryUserLocations: jest.fn(),
+  deleteUserLocations: jest.fn()
+}
 describe('UserService Tests', () => {
   const userService = new UserService()
   const userRepository = mockRepository as jest.Mocked<Repository<UserDTO>>
   const userDetailsRepository = mockRepository as jest.Mocked<
   Repository<UserDetailsDTO>
   >
-  const locationRepository = mockRepository as jest.Mocked<
-  Repository<LocationDTO>
+  const locationRepository = locationMockRepository as jest.Mocked<
+  LocationRepository<LocationDTO>
   >
-  const locationModel = new LocationModel()
 
   const mockUserAttributes = {
     email: 'ebrahim@example.com',
@@ -68,7 +71,7 @@ describe('UserService Tests', () => {
     mockRepository.create.mockRejectedValue(originalError)
     await expect(
       userService.createNewUser(mockUserAttributes, mockRepository)
-    ).rejects.toThrow(new Error(errorMessage))
+    ).rejects.toThrow(new Error('Failed to create new user. Error: Database error'))
     expect(mockRepository.create).toHaveBeenCalledTimes(1)
   })
 
@@ -108,7 +111,7 @@ describe('UserService Tests', () => {
       phoneNumbers: ['1234567890'],
       bloodGroup: 'A+',
       lastDonationDate: '2023-06-01',
-      height: 170,
+      height: '5.10',
       weight: 65,
       availableForDonation: 'yes',
       gender: 'male',
@@ -121,14 +124,12 @@ describe('UserService Tests', () => {
 
     userRepository.update.mockResolvedValue(mockUserWithStringId)
 
-    const result = await userService.updateUser(
+    await userService.updateUser(
       mockUpdateAttributes as unknown as UpdateUserAttributes,
       userDetailsRepository,
-      locationRepository,
-      locationModel
+      locationRepository
     )
 
-    expect(result).toBe('Updated your Profile info')
     expect(userRepository.update).toHaveBeenCalledWith(
       expect.objectContaining({
         ...mockResponse,

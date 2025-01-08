@@ -14,12 +14,15 @@ interface Theme {
     darkGrey: string;
     charcoalGray: string;
     black: string;
+    blackFaded: string;
     greyBG: string;
     redFaded: string;
     goldenYellow: string;
     goldenSun: string;
     peachCream: string;
     darkAmber: string;
+    gradientBackground: string;
+    bloodRed: string;
   };
   typography: {
     fontSize: number;

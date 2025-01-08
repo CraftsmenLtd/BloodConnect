@@ -33,7 +33,7 @@ export const donationAttributesMock: BloodDonationAttributes = {
 }
 
 export const donationDtoMock: DonationDTO = {
-  id: 'req123',
+  requestPostId: 'req123',
   seekerId: 'user456',
   requestedBloodGroup: 'A+',
   bloodQuantity: 2,
@@ -53,7 +53,7 @@ export const donationFieldsMock: DonationFields = {
   PK: `${BLOOD_REQUEST_PK_PREFIX}#user456`,
   SK: `${BLOOD_REQUEST_PK_PREFIX}#${currentDate}#req123`,
   GSI1PK: `CITY#Dhaka#STATUS#${DonationStatus.PENDING}`,
-  GSI1SK: `BG#A+#${currentDate}`,
+  GSI1SK: `${currentDate}#BG#A+`,
   LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#req123`,
   requestedBloodGroup: 'A+',
   bloodQuantity: 2,
@@ -92,7 +92,7 @@ export const donorRoutingAttributesMock: DonorRoutingAttributes = {
 }
 
 export const mockDonationDTO: DonationDTO = {
-  id: 'req123',
+  requestPostId: 'req123',
   seekerId: 'seeker123',
   status: DonationStatus.PENDING,
   patientName: 'John Doe',
@@ -110,7 +110,7 @@ export const mockDonationDTO: DonationDTO = {
 }
 
 export const mockDonorSearchDTO: DonorSearchDTO = {
-  id: 'req123',
+  requestPostId: 'req123',
   seekerId: 'seeker123',
   status: DonationStatus.PENDING,
   patientName: 'John Doe',

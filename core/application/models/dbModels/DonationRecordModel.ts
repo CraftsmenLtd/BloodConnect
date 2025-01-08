@@ -10,7 +10,7 @@ import {
 
 export const DONATION_RECORD_PK_PREFIX = 'DONATION'
 
-export type DonationRecordFields = Omit<DonationRecordDTO, 'id' | 'donorId'> &
+export type DonationRecordFields = Omit<DonationRecordDTO, 'requestPostId' | 'donorId'> &
 HasTimeLog & {
   PK: `${typeof DONATION_RECORD_PK_PREFIX}#${string}`;
   SK: `${typeof DONATION_RECORD_PK_PREFIX}#${string}`;
@@ -33,11 +33,11 @@ implements
   }
 
   fromDto(DonationRecordDTO: DonationRecordDTO): DonationRecordFields {
-    const { donorId, id, ...remainingDonationRecordData } = DonationRecordDTO
+    const { donorId, requestPostId, ...remainingDonationRecordData } = DonationRecordDTO
     const postCreationDate = remainingDonationRecordData.createdAt ?? new Date().toISOString()
     return {
       PK: `${DONATION_RECORD_PK_PREFIX}#${donorId}`,
-      SK: `${DONATION_RECORD_PK_PREFIX}#${id}`,
+      SK: `${DONATION_RECORD_PK_PREFIX}#${requestPostId}`,
       ...remainingDonationRecordData,
       createdAt: postCreationDate
     }
@@ -47,8 +47,8 @@ implements
     const { PK, SK, createdAt, ...remainingDonationRecordFields } = dbFields
     return {
       ...remainingDonationRecordFields,
-      id: SK.replace(`${DONATION_RECORD_PK_PREFIX}#`, ''),
       donorId: PK.replace(`${DONATION_RECORD_PK_PREFIX}#`, ''),
+      requestPostId: SK.replace(`${DONATION_RECORD_PK_PREFIX}#`, ''),
       createdAt
     }
   }

@@ -13,6 +13,7 @@ import {
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const bloodDonationService = new BloodDonationService()
 
@@ -39,7 +40,7 @@ async function cancelBloodDonation(
   } catch (error) {
     httpLogger.error(error)
     const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred'
+      error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     const errorCode =
       error instanceof BloodDonationOperationError
         ? error.errorCode

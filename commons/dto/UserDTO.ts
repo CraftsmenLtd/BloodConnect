@@ -12,8 +12,8 @@ export type AvailableForDonation = 'yes' | 'no'
 
 export interface UserDetailsDTO extends UserDTO {
   bloodGroup: BloodGroup;
-  lastDonationDate: string;
-  height: number;
+  lastDonationDate?: string;
+  height: string;
   weight: number;
   gender: Gender;
   dateOfBirth: string;
@@ -22,19 +22,11 @@ export interface UserDetailsDTO extends UserDTO {
   availableForDonation: AvailableForDonation;
   NIDFront: string;
   NIDBack: string;
-  lastVaccinatedDate: string;
+  lastVaccinatedDate?: string;
   createdAt: string;
   updatedAt?: string;
   deviceToken?: string;
   snsEndpointArn?: string;
-}
-
-export interface UserResponseData {
-  success: boolean;
-  data: {
-    preferredDonationLocations: Array<Omit<LocationDTO, 'userId' | 'locationId' | 'geohash' | 'createdAt'>>;
-    message: string;
-  } & Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'>;
 }
 
 export interface LocationDTO {

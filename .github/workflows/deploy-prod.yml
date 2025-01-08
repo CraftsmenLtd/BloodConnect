@@ -24,6 +24,9 @@ jobs:
       - name: Get Tag and Master Commit Hashes
         id: check_hashes
         run: |
+          git fetch --all
+          echo ${{github.ref_name}}
+
           # Get the commit hash associated with the tag
           COMMIT_HASH_TAG=$(git show-ref --tags -d | grep ${GITHUB_REF#refs/tags/} | awk '{print $1}')
 

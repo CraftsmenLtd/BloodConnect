@@ -28,9 +28,9 @@ export interface PersonalInfo {
   height: string;
   weight: string;
   gender: string;
-  lastDonationDate: Date;
+  lastDonationDate: null | Date;
   dateOfBirth: Date;
-  lastVaccinatedDate: Date;
+  lastVaccinatedDate: null | Date;
   city: string;
   locations: string[];
   availableForDonation: string;
@@ -69,12 +69,12 @@ export const useAddPersonalInfo = (): any => {
       city: [validateRequired],
       locations: [validateRequired],
       bloodGroup: [validateRequired],
-      lastDonationDate: [validateRequired, validatePastOrTodayDate],
+      lastDonationDate: [validatePastOrTodayDate],
       height: [validateRequired, validateHeight],
       weight: [validateRequired, validateWeight],
       gender: [validateRequired],
       dateOfBirth: [validateRequired, validateDateOfBirth],
-      lastVaccinatedDate: [validateRequired, validatePastOrTodayDate],
+      lastVaccinatedDate: [validatePastOrTodayDate],
       acceptPolicy: [validateRequired]
     }
     if (isSSO) {
@@ -89,9 +89,9 @@ export const useAddPersonalInfo = (): any => {
     height: '',
     weight: '',
     gender: '',
-    lastDonationDate: new Date(new Date().setMonth(new Date().getMonth() - 6)),
+    lastDonationDate: null,
     dateOfBirth: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
-    lastVaccinatedDate: new Date(new Date().setMonth(new Date().getMonth() - 6)),
+    lastVaccinatedDate: null,
     city: '',
     locations: [],
     availableForDonation: 'yes',
@@ -159,8 +159,8 @@ export const useAddPersonalInfo = (): any => {
   const handleSubmit = async(): Promise<void> => {
     try {
       setLoading(true)
-      const { locations, city, dateOfBirth, lastDonationDate, lastVaccinatedDate, phoneNumber, ...rest } = personalInfo
-      const preferredDonationLocations = await formatLocations(locations, city)
+      const { locations, dateOfBirth, lastDonationDate, lastVaccinatedDate, phoneNumber, ...rest } = personalInfo
+      const preferredDonationLocations = await formatLocations(locations, personalInfo.city)
 
       if (preferredDonationLocations.length === 0) {
         setErrorMessage('No valid locations were found. Please verify your input.')
@@ -171,14 +171,13 @@ export const useAddPersonalInfo = (): any => {
       const finalData = {
         ...rest,
         dateOfBirth: dateOfBirth.toISOString().substring(0, 10),
-        lastDonationDate: lastDonationDate.toISOString().substring(0, 10),
-        lastVaccinatedDate: lastVaccinatedDate.toISOString().substring(0, 10),
-        height: formatToTwoDecimalPlaces(personalInfo.height),
+        ...(lastDonationDate !== null && { lastDonationDate: lastDonationDate.toISOString().substring(0, 10) }),
+        ...(lastVaccinatedDate !== null && { lastVaccinatedDate: lastVaccinatedDate.toISOString().substring(0, 10) }),
+        height: formatToTwoDecimalPlaces(personalInfo.height).toString(),
         weight: formatToTwoDecimalPlaces(personalInfo.weight),
         preferredDonationLocations,
-        ...(isSSO && (phoneNumber != null) ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {})
+        ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {})
       }
-
       const response = await addPersonalInfoHandler(finalData, fetchClient)
       if (response.status === 200) {
         await fetchUserProfile()

@@ -7,8 +7,12 @@ import { BloodDonationAttributes } from '../../../../application/bloodDonationWo
 import { donationAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 import BloodDonationOperationError from '../../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
+import { CREATE_DONATION_REQUEST_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
+import { UserService } from '../../../../application/userWorkflow/UserService'
+import { mockUserDetailsWithStringId } from '../../../../application/tests/mocks/mockUserData'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
+jest.mock('../../../../application/userWorkflow/UserService')
 jest.mock('../../commons/lambda/ApiGateway')
 jest.mock('../../commons/httpLogger/HttpLogger', () => ({
   createHTTPLogger: jest.fn(() => ({
@@ -20,6 +24,7 @@ jest.mock('../../commons/httpLogger/HttpLogger', () => ({
 }))
 
 const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
+const mockUserService = UserService as jest.MockedClass<typeof UserService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('createBloodDonationLambda', () => {
@@ -31,9 +36,14 @@ describe('createBloodDonationLambda', () => {
   })
 
   it('should return a successful response when blood donation is created', async() => {
-    const mockResponse = 'Blood donation created successfully'
+    const mockResponse = CREATE_DONATION_REQUEST_SUCCESS
 
-    mockBloodDonationService.prototype.createBloodDonation.mockResolvedValue(mockResponse)
+    mockUserService.prototype.getUser.mockResolvedValue(mockUserDetailsWithStringId)
+
+    mockBloodDonationService.prototype.createBloodDonation.mockResolvedValue({
+      requestPostId: expect.any(String),
+      createdAt: expect.any(String)
+    })
     mockGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
       body: JSON.stringify({ message: mockResponse })
@@ -46,13 +56,24 @@ describe('createBloodDonationLambda', () => {
       body: JSON.stringify({ message: mockResponse })
     })
     expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith(
-      { ...mockEvent },
+      {
+        ...mockEvent,
+        seekerName: mockUserDetailsWithStringId.name,
+        shortDescription: undefined
+      },
       expect.anything(),
       expect.any(Object)
     )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
-      { message: mockResponse },
-      HTTP_CODES.OK
+      {
+        success: true,
+        data: {
+          createdAt: expect.any(String),
+          requestPostId: expect.any(String)
+        },
+        message: mockResponse
+      },
+      HTTP_CODES.CREATED
     )
   })
 

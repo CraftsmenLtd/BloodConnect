@@ -36,7 +36,7 @@ const CreateBloodRequest = () => {
   } = useBloodRequest()
 
   return (
-    <TouchableWithoutFeedback onPress={() => { setIsVisible('') }}>
+    <TouchableWithoutFeedback>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
@@ -80,7 +80,6 @@ const CreateBloodRequest = () => {
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              name={DONATION_DATE_TIME_INPUT_NAME}
               label="Time and Date"
               value={new Date(bloodRequestData.donationDateTime)}
               onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}

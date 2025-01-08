@@ -50,6 +50,9 @@
     "/donations": {
       "$ref": "./../paths/donations/donations.json"
     },
+    "/donations/{requestPostId}/{createdAt}": {
+      "$ref": "./../paths/donations/donation.json"
+    },
     "/donations/posts/{city}": {
       "$ref": "./../paths/donations/posts.json"
     },
@@ -64,6 +67,9 @@
     },
     "/notification/register": {
       "$ref": "./../paths/notification/register.json"
+    },
+    "/logger": {
+      "$ref": "./../paths/logger/logger.json"
     }
   },
   "components": {

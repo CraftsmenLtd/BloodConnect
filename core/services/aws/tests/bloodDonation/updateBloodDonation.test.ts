@@ -29,7 +29,7 @@ describe('updateBloodDonationLambda', () => {
   })
 
   it('should return a successful response when blood donation is updated', async() => {
-    const mockResponse = 'Blood donation updated successfully'
+    const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
     mockBloodDonationService.prototype.updateBloodDonation.mockResolvedValue(mockResponse)
     mockNotificationService.prototype.updateBloodDonationNotifications.mockResolvedValue()
     mockGenerateApiGatewayResponse.mockReturnValue({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
@@ -38,7 +38,11 @@ describe('updateBloodDonationLambda', () => {
 
     expect(result).toEqual({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
     expect(mockBloodDonationService.prototype.updateBloodDonation).toHaveBeenCalledWith({ ...mockEvent }, expect.anything())
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith({ message: mockResponse }, HTTP_CODES.OK)
+    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith({
+      message: 'We have updated your request and will let you know once there is an update.',
+      success: true,
+      data: mockResponse
+    }, HTTP_CODES.OK)
   })
 
   it('should return an error response when an error is thrown', async() => {
@@ -53,7 +57,7 @@ describe('updateBloodDonationLambda', () => {
   })
 
   it('should filter out undefined values from update attributes', async() => {
-    const mockResponse = 'Blood donation updated successfully'
+    const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
     const eventWithUndefined: UpdateBloodDonationAttributes = {
       ...mockEvent,
       bloodQuantity: undefined,
@@ -74,7 +78,7 @@ describe('updateBloodDonationLambda', () => {
   })
 
   it('should filter out empty string values from update attributes', async() => {
-    const mockResponse = 'Blood donation updated successfully'
+    const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
     const eventWithEmptyStrings: UpdateBloodDonationAttributes = {
       ...mockEvent,
       patientName: '',
@@ -109,7 +113,7 @@ describe('updateBloodDonationLambda', () => {
   })
 
   it('should handle mixed valid and invalid update attributes', async() => {
-    const mockResponse = 'Blood donation updated successfully'
+    const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
 
     const mixedEvent: UpdateBloodDonationAttributes = {
       ...mockEvent,
@@ -140,7 +144,7 @@ describe('updateBloodDonationLambda', () => {
   })
 
   it('should preserve required attributes while filtering invalid ones', async() => {
-    const mockResponse = 'Blood donation updated successfully'
+    const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
 
     const eventWithExtra: UpdateBloodDonationAttributes & Record<string, unknown> = {
       ...mockEvent,
@@ -166,7 +170,7 @@ describe('updateBloodDonationLambda', () => {
   })
 
   it('should handle allowed keys with valid values', async() => {
-    const mockResponse = 'Blood donation updated successfully'
+    const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
 
     const eventWithAllowedKeys: UpdateBloodDonationAttributes = {
       ...mockEvent,
