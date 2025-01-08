@@ -20,9 +20,7 @@
         "bloodGroup": "$item.bloodGroup.S",
         "lastDonationDate": "$item.lastDonationDate.S",
         "city": "$item.city.S",
-        #if($item.height && $item.height.S != "")
-          "height": $item.height.S,
-        #end
+        "height": "$item.height.S",
         #if($item.weight && $item.weight.S != "")
           "weight": $item.weight.S,
         #end
