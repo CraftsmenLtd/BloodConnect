@@ -73,8 +73,14 @@ async function insertDonationRecord(event:
     const geohash = event[0].geohash
     const city = event[0].city
     const requestedBloodGroup = event[0].requestedBloodGroup
+    const signOfRequestedBloodGroup = requestedBloodGroup.slice(-1) as "+" | "-"
+    const bloodGroupCharacter = requestedBloodGroup.slice(0, -1)
+    const mapOfSigns = {
+      "+": "positive",
+      "-": "negetive"
+    }
 
-    const potentialFileName = `${city}-${requestedBloodGroup}.csv`
+    const potentialFileName = `${city}-${bloodGroupCharacter}-${mapOfSigns[signOfRequestedBloodGroup]}.txt`
     const fileContent = `${geohash}\n`
     try {
       const existingFile = await client.send(new HeadObjectCommand({ Bucket: bucketName, Key: potentialFileName }))
