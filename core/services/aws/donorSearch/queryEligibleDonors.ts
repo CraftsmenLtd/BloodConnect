@@ -72,9 +72,16 @@ async function queryEligibleDonors(
       await getUpdatedNeighborGeohashes(seekerId, createdAt, requestPostId, seekerGeohash)
 
     if (currentNeighborSearchLevel > Number(process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL)) {
+      const closestDonors = await getClosestDonorsAcrossAll(
+        city,
+        requestedBloodGroup,
+        seekerGeohash,
+        seekerId,
+        totalDonorsToNotify
+      )
       return {
         action: 'EnoughDonorsFound',
-        eligibleDonors
+        eligibleDonors: revertEligibleDonorsToArray(closestDonors)
       }
     }
 
@@ -267,4 +274,45 @@ function transformEligibleDonorsToObject(
     accumulator[userId] = donorInfo
     return accumulator
   }, {})
+}
+
+async function getClosestDonorsAcrossAll(
+  city: string,
+  requestedBloodGroup: string,
+  seekerGeohash: string,
+  seekerId: string,
+  totalDonorsToNotify: number
+): Promise<Record<string, EligibleDonorInfo>> {
+  const allDonors = await donorSearchService.queryGeohash(
+    city,
+    requestedBloodGroup,
+    '',
+    new GeohashDynamoDbOperations<LocationDTO, LocationFields, LocationModel>(new LocationModel())
+  )
+  const newFoundEligibleDonors = allDonors.reduce<Record<string, EligibleDonorInfo>>(
+    (accumulator, donor) => {
+      const donorDistance = getDistanceBetweenGeohashes(seekerGeohash, donor.geohash)
+
+      if (
+        donor.userId !== seekerId &&
+        (accumulator[donor.userId] === undefined ||
+          accumulator[donor.userId].distance > donorDistance)
+      ) {
+        accumulator[donor.userId] = {
+          locationId: donor.locationId,
+          distance: donorDistance
+        }
+      }
+      return accumulator
+    },
+    {}
+  )
+  const closestDonors = Object.entries(newFoundEligibleDonors)
+    .sort(([, a], [, b]) => a.distance - b.distance)
+    .slice(0, totalDonorsToNotify)
+    .reduce<Record<string, EligibleDonorInfo>>((result, [key, value]) => {
+    result[key] = value
+    return result
+  }, {})
+  return closestDonors
 }
