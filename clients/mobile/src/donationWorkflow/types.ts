@@ -14,6 +14,7 @@ export const STATUS: Record<string, StatusType> = {
 
 export type DonationScreenParams = Pick<
 DonationDTO,
+| 'seekerName'
 | 'patientName'
 | 'requestedBloodGroup'
 | 'location'
