@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
-import { fetchUserProfileFromApi, UserProfile } from '../services/userProfileService'
+import { fetchUserProfileFromApi, UserProfile } from '../services/userProfileServices'
 import { ProfileError } from '../../utility/errors'
 import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
@@ -17,7 +17,7 @@ const defaultProfile: UserProfile = {
   name: '',
   lastDonationDate: '',
   city: '',
-  height: 0,
+  height: '0',
   weight: 0,
   gender: '',
   dateOfBirth: '',
@@ -48,7 +48,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       name: profile.name ?? '',
       city: profile.city ?? '',
       lastDonationDate: profile.lastDonationDate ?? '',
-      height: profile.height ?? 0,
+      height: profile.height ?? '0',
       weight: profile.weight ?? 0,
       gender: profile.gender ?? '',
       dateOfBirth: profile.dateOfBirth ?? '',

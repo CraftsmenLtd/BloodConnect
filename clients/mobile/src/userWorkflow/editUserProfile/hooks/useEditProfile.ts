@@ -11,7 +11,7 @@ import { initializeState } from '../../../utility/stateUtils'
 import { Alert } from 'react-native'
 import { useUserProfile } from '../../context/UserProfileContext'
 import useFetchData from '../../../setup/clients/useFetchData'
-import { updateUserProfile } from '../../services/userProfileService'
+import { updateUserProfile } from '../../services/userProfileServices'
 import { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
 import { EditProfileData } from '../../userProfile/UI/Profile'
 

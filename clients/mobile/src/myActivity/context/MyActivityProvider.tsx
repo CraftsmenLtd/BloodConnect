@@ -5,7 +5,7 @@ import { DonationData, extractErrorMessage, formatDonations } from '../../donati
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import useFetchData from '../../setup/clients/useFetchData'
 import storageService from '../../utility/storageService'
-import { UserProfile } from '../../userWorkflow/services/userProfileService'
+import { UserProfile } from '../../userWorkflow/services/userProfileServices'
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
 import { useAuth } from '../../authentication/context/useAuth'
 
