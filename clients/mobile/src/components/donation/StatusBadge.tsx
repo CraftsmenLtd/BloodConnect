@@ -62,7 +62,7 @@ const getStatusStyles = (status: StatusType, theme: Theme): StatusStyles => {
     case STATUS.COMPLETED:
       return {
         container: { backgroundColor: theme.colors.primary },
-        text: { color: theme.colors.textPrimary }
+        text: { color: theme.colors.white }
       }
     default:
       return {
