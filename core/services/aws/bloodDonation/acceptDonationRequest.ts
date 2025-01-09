@@ -72,13 +72,6 @@ async function acceptDonationRequest(
       throw new Error('You already donated.')
     }
 
-    if (acceptanceRecord !== null && status === acceptanceRecord.status) {
-      return generateApiGatewayResponse(
-        { message: 'Donation request was accepted earlier.' },
-        HTTP_CODES.OK
-      )
-    }
-
     const userProfile = await userService.getUser(
       donorId,
       new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
