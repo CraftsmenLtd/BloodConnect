@@ -11,6 +11,14 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "androidNavigationBar": {
+      "visible": true
+    },
+    "androidStatusBar": {
+      "backgroundColor": "#FF4D4D",
+      "translucent": false,
+      "visible": true
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "net.bloodconnect.app",

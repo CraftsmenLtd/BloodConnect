@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler'
-import { LogBox } from 'react-native'
+import { LogBox, StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native'
 import { ThemeProvider } from './src/setup/theme/context/ThemeContext'
@@ -43,6 +43,8 @@ export default function App() {
             <UserProfileProvider>
               <MyActivityProvider>
                 <ThemeProvider>
+                  {/* TODO: need to use themes' primary color but it's not working. */}
+                  <StatusBar hidden={false} backgroundColor='#FF4D4D' />
                   <Navigator />
                 </ThemeProvider>
               </MyActivityProvider>
