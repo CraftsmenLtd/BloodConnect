@@ -14,7 +14,7 @@ const RequestStatusScreen = () => {
   const ViewToRender = () =>
     <View style={styles.container}>
       <View>
-        <Text style={styles.responseText}>Did the blood managed for this request?</Text>
+        <Text style={styles.responseText}>Was the blood managed for this request?</Text>
         <PostCard post={bloodRequest} showButton={false} showDescription showHeader={false} showPostUpdatedOption={false} />
       </View>
 
