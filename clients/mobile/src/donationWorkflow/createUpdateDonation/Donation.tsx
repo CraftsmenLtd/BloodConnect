@@ -80,7 +80,7 @@ const CreateBloodRequest = () => {
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              label="Time and Date"
+              label="Donation Time and Date"
               value={new Date(bloodRequestData.donationDateTime)}
               onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}
               error={errors.donationDateTime}

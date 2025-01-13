@@ -40,6 +40,7 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
 
   const fetchMyResponsesCallback = async() => {
     const response = await fetchMyResponses({}, fetchClient)
+    // console.log('response', response)
     if (response.data !== undefined && response.data.length > 0) {
       return formatDonations(response.data)
     }

@@ -218,7 +218,9 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                 />
               <View style={styles.bloodText}>
                 <Text style={styles.lookingForText}>Looking for</Text>
-                <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} (ve) blood</Text>
+                <Text style={styles.bloodAmount}>
+                  {post.bloodQuantity} {post.requestedBloodGroup} (ve) blood
+                </Text>
               </View>
             </View>
             {post.urgencyLevel === UrgencyLevel.URGENT && (
@@ -285,7 +287,9 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
             <View>
               <Text style={styles.donationInfoPlaceholder}>Number of Donors</Text>
-              <Text style={styles.bloodAmount}>{post.acceptedDonors.length} donors accepted your request</Text>
+              <Text style={styles.bloodAmount}>
+                {post.acceptedDonors.length} donors accepted your request
+              </Text>
             </View>
           </View>
         </>}

@@ -10,6 +10,7 @@ import { LOCAL_NOTIFICATION_TYPE, REMINDER_NOTIFICATION_BODY, REMINDER_NOTIFICAT
 import { replaceTemplatePlaceholders } from '../../../../utility/formatting'
 import { extractErrorMessage } from '../../../donationHelpers'
 import { useMyActivityContext } from '../../../../myActivity/context/useMyActivityContext'
+import { updateMyResponses } from '../../../donationService'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -18,12 +19,14 @@ interface AcceptRequestParams {
   status: string;
 }
 
+interface IgnoreRequestParams extends AcceptRequestParams {}
+
 interface useResponseDonationRequestReturnType {
   bloodRequest: any;
   isLoading: boolean;
   error: string | null;
   handleAcceptRequest: () => Promise<void>;
-  handleIgnore: () => void;
+  handleIgnore: () => Promise<void>;
   formatDateTime: (dateTime: string) => string;
   isRequestAccepted: boolean;
 }
@@ -103,8 +106,25 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     }
   }
 
-  const handleIgnore = (): void => {
-    navigation.navigate(SCREENS.POSTS)
+  const handleIgnore = async(): Promise<void> => {
+    if (bloodRequest === null) return
+
+    setIsLoading(true)
+    setError(null)
+    const isString = (value: unknown): value is string => typeof value === 'string'
+    const requestPayload: Partial<IgnoreRequestParams> = {
+      requestPostId: isString(bloodRequest.requestPostId) ? bloodRequest.requestPostId : '',
+      seekerId: isString(bloodRequest.seekerId) ? bloodRequest.seekerId : '',
+      createdAt: isString(bloodRequest.createdAt) ? bloodRequest.createdAt : '',
+      status: STATUS.IGNORE
+    }
+    const response = await updateMyResponses(requestPayload, fetchClient)
+
+    if (response.status === 200) {
+      navigation.navigate(SCREENS.POSTS)
+    } else {
+      throw new Error('Could not complete ignore response')
+    }
   }
 
   return {
