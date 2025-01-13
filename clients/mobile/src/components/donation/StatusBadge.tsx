@@ -29,12 +29,12 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
 const getStatusStyles = (status: StatusType, theme: Theme): StatusStyles => {
   switch (status.toUpperCase()) {
-    case STATUS.APPROVED:
+    case STATUS.ACCEPTED:
       return {
         container: { backgroundColor: theme.colors.secondary },
         text: { color: theme.colors.white }
       }
-    case STATUS.IGNORE:
+    case STATUS.IGNORED:
       return {
         container: { backgroundColor: theme.colors.redFaded },
         text: { color: theme.colors.white }
@@ -48,6 +48,21 @@ const getStatusStyles = (status: StatusType, theme: Theme): StatusStyles => {
       return {
         container: { backgroundColor: theme.colors.darkAmber },
         text: { color: theme.colors.textPrimary }
+      }
+    case STATUS.EXPIRED:
+      return {
+        container: { backgroundColor: theme.colors.extraLightGray },
+        text: { color: theme.colors.textPrimary }
+      }
+    case STATUS.MANAGED:
+      return {
+        container: { backgroundColor: theme.colors.secondary },
+        text: { color: theme.colors.textPrimary }
+      }
+    case STATUS.COMPLETED:
+      return {
+        container: { backgroundColor: theme.colors.primary },
+        text: { color: theme.colors.white }
       }
     default:
       return {

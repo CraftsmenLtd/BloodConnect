@@ -52,7 +52,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     const donationTime = new Date(donationDateTime)
 
     REMINDING_HOURS_BEFORE_DONATION.forEach((hoursBefore) => {
-      const reminderTime = new Date(donationTime.getTime() - hoursBefore * 60 * 1000)
+      const reminderTime = new Date(donationTime.getTime() - hoursBefore * 60 * 60 * 1000)
       const content = {
         title: hoursBefore === 1
           ? REMINDER_NOTIFICATION_TITLE.FINAL
