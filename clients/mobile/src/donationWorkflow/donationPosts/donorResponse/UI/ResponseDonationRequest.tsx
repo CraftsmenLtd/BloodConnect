@@ -107,14 +107,14 @@ const ResponseDonationRequest = () => {
               <View style={styles.contactRow}>
                 <View>
                   <Text style={styles.label}>Contact Number</Text>
-                  {isRequestAccepted
+                  {isRequestAlreadyAccepted
                     ? <Text style={styles.phoneNumber}>
                       {bloodRequest.contactNumber ?? 'Contact Not Shared'}
                     </Text>
                     : <Text style={styles.hiddenNumber}>{`${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`}</Text>
                   }
                 </View>
-                {isRequestAccepted && (
+                {isRequestAlreadyAccepted && (
                   <TouchableOpacity
                     style={styles.callButton}
                     onPress={() => {
