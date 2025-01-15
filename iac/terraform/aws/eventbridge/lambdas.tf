@@ -4,7 +4,7 @@ locals {
       name      = "monitor-donation-request-lambda"
       handler   = "monitorDonationRequest.default"
       zip_path  = "monitorDonationRequest.zip"
-      statement = local.policies.common_policies,
+      statement = local.policies.common_policies
 
       env_variables = {
         AWS_REGION          = data.aws_region.current.name
