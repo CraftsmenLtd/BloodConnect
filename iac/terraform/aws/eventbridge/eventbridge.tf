@@ -91,3 +91,47 @@ resource "aws_pipes_pipe" "donation_accept_pipe" {
 
   depends_on = [null_resource.check_dynamodb_stream]
 }
+
+resource "aws_pipes_pipe" "donation_request_monitoring_pipe" {
+  name     = "${var.environment}-donation-request-monitoring-pipe"
+  role_arn = aws_iam_role.eventbridge_pipe_role.arn
+  source   = var.dynamodb_table_stream_arn
+  target   = module.lambda.lambda_arn
+
+  source_parameters {
+    dynamodb_stream_parameters {
+      starting_position = "LATEST"
+      batch_size        = 5
+    }
+
+    filter_criteria {
+      filter {
+        pattern = jsonencode({
+          "eventName" : ["INSERT"],
+          "dynamodb" : {
+            "NewImage" : {
+              "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
+              "SK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] }
+            }
+          }
+        })
+      }
+    }
+  }
+
+  target_parameters {
+    input_template = jsonencode({
+      requestedBloodGroup = "<$.dynamodb.NewImage.requestedBloodGroup.S>",
+      city                = "<$.dynamodb.NewImage.city.S>",
+      geohash             = "<$.dynamodb.NewImage.geohash.S>",
+    })
+  }
+
+  log_configuration {
+    include_execution_data = ["ALL"]
+    level                  = "INFO"
+    cloudwatch_logs_log_destination {
+      log_group_arn = aws_cloudwatch_log_group.donation_request_monitoring_pipe_log_group.arn
+    }
+  }
+}
