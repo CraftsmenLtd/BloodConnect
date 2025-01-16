@@ -32,7 +32,7 @@ const createNewFile = async(fileName: string, geohash: string): Promise<void> =>
     }))
 }
 
-const appendGeohasToFileLargerThan5MB = async(fileName: string, fileContent: string, fileSize: number): Promise<void> => {
+const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: string, fileSize: number): Promise<void> => {
   const createMultipartUploadResponse = await client.send(
     new CreateMultipartUploadCommand({
       Bucket: bucketName,
@@ -84,7 +84,7 @@ const appendGeohasToFileLargerThan5MB = async(fileName: string, fileContent: str
   )
 }
 
-const appendGeohasToFileSmallerThan5MB = async(fileName: string, fileContent: string): Promise<void> => {
+const appendGeohashToFileSmallerThan5MB = async(fileName: string, fileContent: string): Promise<void> => {
   const existingFileResponse = await client.send(
     new GetObjectCommand({
       Bucket: bucketName,
@@ -165,12 +165,12 @@ context: Context): Promise<void> {
         const isFileGreaterThan5MB = fileSize > 5 * 1024 * 1024
         if (isFileGreaterThan5MB) {
           serviceLogger.debug('appending to file larger than 5MB')
-          await appendGeohasToFileLargerThan5MB(potentialFileName, fileContent, fileSize)
+          await appendGeohashToFileLargerThan5MB(potentialFileName, fileContent, fileSize)
           return
         }
 
         serviceLogger.debug('appending to file smaller than 5mb')
-        await appendGeohasToFileSmallerThan5MB(potentialFileName, fileContent)
+        await appendGeohashToFileSmallerThan5MB(potentialFileName, fileContent)
       } catch (error) {
         if (error instanceof NotFound) {
           serviceLogger.debug('creating new file')
