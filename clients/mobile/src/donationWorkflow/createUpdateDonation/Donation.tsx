@@ -154,7 +154,7 @@ const CreateBloodRequest = () => {
               placeholder="Write a short description"
               label='Short Description of the Problem'
               value={bloodRequestData.shortDescription}
-              error={null}
+              error={errors.shortDescription}
               onChangeText={handleInputChange}
               maxLength={200}
             />
