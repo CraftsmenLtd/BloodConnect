@@ -7,7 +7,7 @@ import { Input } from '../../components/inputElement/Input'
 import { Button } from '../../components/button/Button'
 import Warning from '../../components/warning'
 import { WARNINGS } from '../../setup/constant/consts'
-import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodRequest'
+import { DONATION_DATE_TIME_INPUT_NAME, SHORT_DESCRIPTION_MAX_LENGTH, useBloodRequest } from './useBloodRequest'
 import { bloodBagOptions, bloodGroupOptions, transportationOptions } from './donationOption'
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -156,7 +156,7 @@ const CreateBloodRequest = () => {
               value={bloodRequestData.shortDescription}
               error={errors.shortDescription}
               onChangeText={handleInputChange}
-              maxLength={200}
+              maxLength={SHORT_DESCRIPTION_MAX_LENGTH}
             />
           </View>
 

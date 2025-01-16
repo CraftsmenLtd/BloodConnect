@@ -15,6 +15,8 @@ import { LOCAL_NOTIFICATION_TYPE } from '../../setup/constant/consts'
 import { cancelNotificationById, fetchScheduledNotifications, scheduleNotification } from '../../setup/notification/scheduleNotification'
 import { NotificationRequest } from 'expo-notifications'
 
+export const SHORT_DESCRIPTION_MAX_LENGTH = 200
+
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
 export const DONATION_DATE_TIME_INPUT_NAME = 'donationDateTime'

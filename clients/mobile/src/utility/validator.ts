@@ -1,3 +1,4 @@
+import { SHORT_DESCRIPTION_MAX_LENGTH } from '../donationWorkflow/createUpdateDonation/useBloodRequest'
 import { ACCOUNT_CREATION_MINIMUM_AGE } from '../setup/constant/consts'
 
 interface PasswordPolicy {
@@ -141,8 +142,6 @@ export const validateWeight = (weight: string): string | null => {
 }
 
 const validateShortDescription = (value: string): string | null => {
-  const maxLength = 200
-
   const tests = [
     {
       test: !value.includes('\n'),
@@ -153,8 +152,8 @@ const validateShortDescription = (value: string): string | null => {
       error: 'Short description contains invalid special characters.'
     },
     {
-      test: value.length <= maxLength,
-      error: 'Short description must not exceed 200 characters.'
+      test: value.length > SHORT_DESCRIPTION_MAX_LENGTH,
+      error: `Short description must not exceed ${SHORT_DESCRIPTION_MAX_LENGTH} characters.`
     }
   ]
 
