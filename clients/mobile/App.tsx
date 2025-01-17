@@ -14,6 +14,8 @@ import { RootStackParamList } from './src/setup/navigation/navigationTypes'
 import Constants from 'expo-constants'
 import { MyActivityProvider } from './src/myActivity/context/MyActivityProvider'
 import useBackPressHandler from './src/hooks/useBackPressHandler'
+import { I18nextProvider, useTranslation } from 'react-i18next'
+import i18n from './src/setup/language/i18n'
 
 const { APP_ENV } = Constants.expoConfig?.extra ?? {}
 
@@ -32,10 +34,12 @@ Notifications.setNotificationHandler({
 })
 
 export default function App() {
+  useTranslation()
   useBackPressHandler()
   const navigationRef = useNavigationContainerRef<RootStackParamList>()
 
   return (
+    <I18nextProvider i18n={i18n} >
     <SafeAreaProvider>
       <NavigationContainer ref={navigationRef}>
         <NotificationProvider navigationRef={navigationRef}>
@@ -53,5 +57,6 @@ export default function App() {
         </NotificationProvider>
       </NavigationContainer>
     </SafeAreaProvider>
+    </I18nextProvider>
   )
 }

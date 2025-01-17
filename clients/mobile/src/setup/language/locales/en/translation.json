@@ -1,0 +1,10 @@
+{
+  "common": {
+    "createAccount": "Create account",
+    "logIn": "Log in"
+  },
+  "home": {
+    "title": "A common platform for blood donor and seeker",
+    "subtitle": "Blood searching and blood donating is now easier with BloodConnect app"
+  }
+}
