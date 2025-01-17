@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 import ToggleTabs from '../../../components/tab/ToggleTabs'
 import { DetailPostRouteProp, DetailPostScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
@@ -26,8 +26,12 @@ const DETAIL_POST_TAB_CONFIG: TabConfig = {
 const Detail = ({ navigation, route }: DetailProps) => {
   const styles = createStyles(useTheme())
   const { cancelPost, cancelPostError, isLoading, showToast, toastAnimationFinished } = useMyActivity()
-  const { data, tab } = route.params
+  const { data, tab, useAsDetailsPage = false } = route.params
   const [currentTab, setCurrentTab] = useState(tab ?? DETAIL_POST_TAB_CONFIG.initialTab)
+
+  useEffect(() => {
+    navigation.setOptions({ headerTitle: useAsDetailsPage ? 'Detail' : 'My Post' })
+  }, [useAsDetailsPage])
 
   const handlePressDonor = (donorId: string) => {
     navigation.navigate(SCREENS.DONOR_PROFILE, { donorId })
@@ -50,41 +54,45 @@ const Detail = ({ navigation, route }: DetailProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.tabHeader, currentTab === DETAIL_POST_TAB_CONFIG.initialTab ? { marginBottom: -18.5 } : {}]}>
-        <ToggleTabs
-          tabs={DETAIL_POST_TAB_CONFIG.tabs}
-          onTabPress={handleTabPress}
-          initialActiveTab={tab}
-        />
-      </View>
+      {!useAsDetailsPage &&
+        <View style={[styles.tabHeader, currentTab === DETAIL_POST_TAB_CONFIG.initialTab ? { marginBottom: -18.5 } : {}]}>
+          <ToggleTabs
+            tabs={DETAIL_POST_TAB_CONFIG.tabs}
+            onTabPress={handleTabPress}
+            initialActiveTab={tab}
+          />
+        </View>}
+
       {currentTab === DETAIL_POST_TAB_CONFIG.initialTab
-        ? <View style={styles.postCardContainer}>
-            <PostCard
-              post={data}
-              showContactNumber
-              showDescription
-              showPatientName
-              showTransportInfo
-              showButton={false}
-              showStatus={true}
-              updateHandler={updatePost}
-              cancelHandler={cancelPost}
-              isLoading={isLoading}
+        ? <View style={[styles.postCardContainer, { marginTop: useAsDetailsPage ? 2 : 20 }]}>
+          <PostCard
+            post={data}
+            showContactNumber
+            showDescription
+            showPatientName
+            showTransportInfo
+            showOptions={!useAsDetailsPage}
+            showButton={false}
+            showStatus={true}
+            updateHandler={updatePost}
+            cancelHandler={cancelPost}
+            isLoading={isLoading}
+          />
+          {cancelPostError !== '' && <Text style={styles.errorMessage}>{cancelPostError}</Text>}
+          {showToast != null && (
+            <Toast
+              message={showToast?.message}
+              type={showToast?.type}
+              toastAnimationFinished={toastAnimationFinished}
             />
-            {cancelPostError !== '' && (
-                <Text style={styles.errorMessage}>{cancelPostError}</Text>
-            )}
-              {showToast != null && (
-                <Toast
-                  message={showToast?.message}
-                  type={showToast?.type}
-                  toastAnimationFinished={toastAnimationFinished}
-                />
-              )}
+          )}
+          {!useAsDetailsPage &&
             <View style={styles.buttonContainer}>
               <Button text="Complete Request" onPress={handleCompleteRequest} />
             </View>
-          </View>
+          }
+
+        </View>
         : <DonorResponses acceptedDonors={data.acceptedDonors} handlePressDonor={handlePressDonor} />
       }
     </View>
@@ -105,7 +113,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderTopWidth: 1
   },
   postCardContainer: {
-    marginTop: 20,
     flex: 1,
     backgroundColor: theme.colors.white
   },
