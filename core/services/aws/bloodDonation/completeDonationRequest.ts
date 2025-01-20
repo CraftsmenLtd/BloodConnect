@@ -33,7 +33,7 @@ import DonationRecordOperationError from '../../../application/bloodDonationWork
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 import { UserService } from '../../../application/userWorkflow/UserService'
 import { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
-import { AvailableForDonation, UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import LocationModel from '../../../application/models/dbModels/LocationModel'
 import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
@@ -104,7 +104,7 @@ async function completeDonationRequest(
       )
 
       const userAttributes = {
-        availableForDonation: 'no' as AvailableForDonation
+        lastDonationDate: new Date().toISOString()
       }
       await userService.UpdateUserAttributes(
         donorId,

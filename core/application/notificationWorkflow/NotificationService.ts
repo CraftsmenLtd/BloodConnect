@@ -61,7 +61,7 @@ export class NotificationService {
     notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
   ): Promise<void> {
     try {
-      const { userId, type, payload } = notificationAttributes
+      const { userId, type, status, payload } = notificationAttributes
       if (
         payload !== undefined &&
         [NotificationType.BLOOD_REQ_POST, NotificationType.REQ_ACCEPTED].includes(type)
@@ -75,7 +75,7 @@ export class NotificationService {
         if (existingItem === null) {
           await notificationRepository.create({
             ...notificationAttributes,
-            status: AcceptDonationStatus.PENDING,
+            status: status ?? AcceptDonationStatus.PENDING,
             id: notificationAttributes.payload.requestPostId,
             createdAt: new Date().toISOString()
           })

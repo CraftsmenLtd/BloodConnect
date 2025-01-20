@@ -55,7 +55,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     const donationTime = new Date(donationDateTime)
 
     REMINDING_HOURS_BEFORE_DONATION.forEach((hoursBefore) => {
-      const reminderTime = new Date(donationTime.getTime() - hoursBefore * 60 * 1000)
+      const reminderTime = new Date(donationTime.getTime() - hoursBefore * 60 * 60 * 1000)
       const content = {
         title: hoursBefore === 1
           ? REMINDER_NOTIFICATION_TITLE.FINAL
@@ -119,6 +119,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
       status: STATUS.IGNORE
     }
     const response = await updateMyResponses(requestPayload, fetchClient)
+    console.log('requestPayload: ', requestPayload, '## response: ', response)
 
     if (response.status === 200) {
       navigation.navigate(SCREENS.POSTS)

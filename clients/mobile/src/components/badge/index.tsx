@@ -77,7 +77,7 @@ const Badge: React.FC<BadgeProps> = ({
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   badge: {
     paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',

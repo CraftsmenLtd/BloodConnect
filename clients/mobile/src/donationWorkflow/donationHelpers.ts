@@ -53,7 +53,8 @@ export const formatDonations = (requests: BloodDonationRecord[], name?: string):
   return requests.map(request => ({
     requestPostId: request.requestPostId ?? '',
     seekerId: request.seekerId ?? '',
-    patientName: name ?? request.patientName ?? '',
+    seekerName: request.seekerName ?? name ?? '',
+    patientName: request.patientName ?? name ?? '',
     requestedBloodGroup: request.requestedBloodGroup ?? '',
     bloodQuantity: formatBloodQuantity(request.bloodQuantity),
     urgencyLevel: request.urgencyLevel ?? '',

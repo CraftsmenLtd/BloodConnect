@@ -9,6 +9,7 @@
         #set($isFirstPost = false)
         {
           "requestPostId": "$item.SK.S.split('#')[2]",
+          "seekerName": "$item.seekerName.S",
           "patientName": "$item.patientName.S",
           "requestedBloodGroup": "$item.requestedBloodGroup.S",
           "bloodQuantity": "$item.bloodQuantity.N",

@@ -79,3 +79,6 @@ upload-env:
 		fi; \
 	done < $(ENV_FILE)
 	@echo "All environment variables uploaded."
+
+delete-all-env:
+	eas env:list $(BUILD_PROFILE) --format short --scope project | awk -F= 'NR>2 {print $$1}' | xargs -I {} eas env:delete $(BUILD_PROFILE) --variable-name {} --variable-environment $(BUILD_PROFILE) --scope project --non-interactive

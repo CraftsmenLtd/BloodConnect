@@ -7,7 +7,6 @@ import { cancelDonation } from '../donationWorkflow/donationService'
 import { useFetchClient } from '../setup/clients/useFetchClient'
 import { extractErrorMessage } from '../donationWorkflow/donationHelpers'
 import { TabConfig } from './types'
-import { useUserProfile } from '../userWorkflow/context/UserProfileContext'
 import useToast from '../components/toast/useToast'
 import { useMyActivityContext } from './context/useMyActivityContext'
 
@@ -22,7 +21,6 @@ export interface DonationData extends Omit<BloodDonationRecord, 'reqPostId' | 'l
 
 export const useMyActivity = (): any => {
   const fetchClient = useFetchClient()
-  const { userProfile } = useUserProfile()
   const { fetchDonationPosts, getMyResponses } = useMyActivityContext()
   const { showToastMessage, showToast, toastAnimationFinished } = useToast()
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
@@ -37,7 +35,7 @@ export const useMyActivity = (): any => {
   }
 
   const detailHandler = (donationData: DonationData): void => {
-    navigation.navigate(SCREENS.DETAIL_POST, { data: { ...donationData, patientName: userProfile.name } })
+    navigation.navigate(SCREENS.DETAIL_POST, { data: { ...donationData } })
   }
 
   const cancelPost = async(donationData: DonationData): Promise<void> => {

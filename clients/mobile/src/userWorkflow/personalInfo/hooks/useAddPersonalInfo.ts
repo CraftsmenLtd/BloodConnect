@@ -173,7 +173,7 @@ export const useAddPersonalInfo = (): any => {
         dateOfBirth: dateOfBirth.toISOString().substring(0, 10),
         ...(lastDonationDate !== null && { lastDonationDate: lastDonationDate.toISOString().substring(0, 10) }),
         ...(lastVaccinatedDate !== null && { lastVaccinatedDate: lastVaccinatedDate.toISOString().substring(0, 10) }),
-        height: formatToTwoDecimalPlaces(personalInfo.height).toString(),
+        height: personalInfo.height,
         weight: formatToTwoDecimalPlaces(personalInfo.weight),
         preferredDonationLocations,
         ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {})

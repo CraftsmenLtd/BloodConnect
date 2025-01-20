@@ -24,8 +24,8 @@ const Profile: React.FC = () => {
   const { userDetails } = useProfile()
   const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
-  const renderDetailRow = (label: string, value: string = ''): JSX.Element => (
-    <View style={styles.row}>
+  const renderDetailRow = (label: string, value: string = '', isLast: boolean = false): JSX.Element => (
+    <View style={[styles.row, isLast && styles.lastRow]}>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.value}>{value}</Text>
     </View>
@@ -66,7 +66,7 @@ const Profile: React.FC = () => {
           {renderDetailRow('Weight (kg)', userDetails.weight !== undefined ? userDetails.weight.toString() : '')}
           {renderDetailRow('Height (feet)', userDetails.height !== undefined ? userDetails.height.toString() : '')}
           {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined && userDetails.phoneNumbers.length > 0 ? userDetails.phoneNumbers[0] : '')}
-          {renderDetailRow('Gender', userDetails.gender)}
+          {renderDetailRow('Gender', userDetails.gender, true)}
         </View>
       </ScrollView>
 

@@ -161,9 +161,9 @@ const ResponseDonationRequest = () => {
       </ScrollView>
 
       {error !== null && <Text style={styles.error}>{error}</Text>}
-{/* . && !(isRequestAccepted || (Boolean(isRequestAlreadyAccepted)))  */}
+
       <View style={styles.buttonContainer}>
-        {isLoading !== 'accept' &&
+        {!isLoading && !(isRequestAccepted || (Boolean(isRequestAlreadyAccepted))) &&
         <Button
           text="Ignore"
           buttonStyle={styles.ignoreButton}
@@ -171,17 +171,15 @@ const ResponseDonationRequest = () => {
           onPress={() => {
             void handleIgnore()
           }} />}
-          {isLoading !== 'ignore' &&
-          <Button
+        <Button
           text={isRequestAccepted || (Boolean(isRequestAlreadyAccepted)) ? 'Request Accepted' : 'Accept Request'}
-          loading={isLoading === 'accept'}
+          loading={isLoading}
           disabled={isRequestAccepted || isRequestAlreadyAccepted}
           buttonStyle={styles.acceptButton}
           textStyle={styles.acceptButtonText}
           onPress={() => {
             void handleAcceptRequest()
-          }} />}
-
+          }} />
       </View>
     </SafeAreaView>
   )
