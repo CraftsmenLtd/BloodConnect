@@ -5,7 +5,7 @@
 import { Config } from 'jest'
 
 const config: Config = {
-  maxWorkers: '50%',
+  maxWorkers: '60%',
   globals: {
     'ts-jest': {
       isolatedModules: false
