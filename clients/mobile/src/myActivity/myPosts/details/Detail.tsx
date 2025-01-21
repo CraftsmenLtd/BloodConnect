@@ -12,6 +12,7 @@ import { Theme } from '../../../setup/theme'
 import { useMyActivity } from '../../useMyActivity'
 import Toast from '../../../components/toast'
 import Button from '../../../components/button/Button'
+import { STATUS } from '../../../donationWorkflow/types'
 
 interface DetailProps {
   navigation: DetailPostScreenNavigationProp;
@@ -59,32 +60,32 @@ const Detail = ({ navigation, route }: DetailProps) => {
       </View>
       {currentTab === DETAIL_POST_TAB_CONFIG.initialTab
         ? <View style={styles.postCardContainer}>
-            <PostCard
-              post={data}
-              showContactNumber
-              showDescription
-              showPatientName
-              showTransportInfo
-              showButton={false}
-              showStatus={true}
-              updateHandler={updatePost}
-              cancelHandler={cancelPost}
-              isLoading={isLoading}
+          <PostCard
+            post={data}
+            showContactNumber
+            showDescription
+            showPatientName
+            showTransportInfo
+            showButton={false}
+            showStatus={true}
+            updateHandler={updatePost}
+            cancelHandler={cancelPost}
+            isLoading={isLoading}
+          />
+          {cancelPostError !== '' && <Text style={styles.errorMessage}>{cancelPostError}</Text>}
+          {showToast != null && (
+            <Toast
+              message={showToast?.message}
+              type={showToast?.type}
+              toastAnimationFinished={toastAnimationFinished}
             />
-            {cancelPostError !== '' && (
-                <Text style={styles.errorMessage}>{cancelPostError}</Text>
-            )}
-              {showToast != null && (
-                <Toast
-                  message={showToast?.message}
-                  type={showToast?.type}
-                  toastAnimationFinished={toastAnimationFinished}
-                />
-              )}
+          )}
+          {data.status !== STATUS.CANCELLED && data.status !== STATUS.COMPLETED &&
             <View style={styles.buttonContainer}>
               <Button text="Complete Request" onPress={handleCompleteRequest} />
             </View>
-          </View>
+          }
+        </View>
         : <DonorResponses acceptedDonors={data.acceptedDonors} handlePressDonor={handlePressDonor} />
       }
     </View>
@@ -111,7 +112,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 2,
     left: 20,
     right: 20
   },

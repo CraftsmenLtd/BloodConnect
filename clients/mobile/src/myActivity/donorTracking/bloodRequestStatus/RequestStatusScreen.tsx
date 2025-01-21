@@ -6,10 +6,11 @@ import useRequestStatus from './useRequestStatus'
 import Button from '../../../components/button/Button'
 import { Theme } from '../../../setup/theme'
 import StateAwareRenderer from '../../../components/StateAwareRenderer'
+import { commonStyles } from '../../../components/inputElement/commonStyles'
 
 const RequestStatusScreen = () => {
   const styles = createStyles(useTheme())
-  const { bloodRequest, notYetHandler, yesManagedHandler, loading, error } = useRequestStatus()
+  const { bloodRequest, notYetHandler, yesManagedHandler, loading, error, completeDonationError, completeDonationLoading } = useRequestStatus()
 
   const ViewToRender = () =>
     <View style={styles.container}>
@@ -17,6 +18,8 @@ const RequestStatusScreen = () => {
         <Text style={styles.responseText}>Was the blood managed for this request?</Text>
         <PostCard post={bloodRequest} showButton={false} showDescription showHeader={false} showPostUpdatedOption={false} />
       </View>
+      <View>
+      <Text style={[styles.error, { textAlign: 'center', paddingBottom: 12 }]}>{completeDonationError}</Text>
 
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
@@ -27,17 +30,21 @@ const RequestStatusScreen = () => {
             onPress={notYetHandler} />
         </View>
         <View style={styles.buttonWrapper}>
-          <Button text="Yes, managed" onPress={yesManagedHandler} />
+          <Button text="Yes, managed" onPress={yesManagedHandler} disabled={completeDonationLoading} loading={completeDonationLoading} />
         </View>
       </View>
+      </View>
+
     </View>
 
   return <StateAwareRenderer loading={loading} errorMessage={error} data={bloodRequest} ViewComponent={ViewToRender} />
 }
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
+  ...commonStyles(theme),
   container: {
     flex: 1,
+    marginTop: 1,
     paddingTop: 20,
     justifyContent: 'space-between',
     backgroundColor: theme.colors.white
@@ -63,7 +70,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     justifyContent: 'center',
     paddingHorizontal: 12,
     paddingTop: 8,
-    backgroundColor: theme.colors.lightGrey
+    backgroundColor: theme.colors.extraLightGray
   },
   buttonWrapper: {
     flex: 1
