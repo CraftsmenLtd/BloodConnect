@@ -5,20 +5,20 @@ import { replaceTemplatePlaceholders } from '../utils/formatString'
 export function getEmailVerificationMessage(userName: string, securityCode: string): GenericMessage {
   return {
     title: EMAIL_VERIFICATION_TITLE,
-    content: replaceTemplatePlaceholders(EMAIL_VERIFICATION_CONTENT, userName, securityCode)
+    content: replaceTemplatePlaceholders(EMAIL_VERIFICATION_CONTENT, userName, securityCode, new Date().getFullYear().toString())
   }
 }
 
 export function getPasswordResetVerificationMessage(userName: string, securityCode: string): GenericMessage {
   return {
     title: PASSWORD_RESET_TITLE,
-    content: replaceTemplatePlaceholders(PASSWORD_RESET_CONTENT, userName, securityCode)
+    content: replaceTemplatePlaceholders(PASSWORD_RESET_CONTENT, userName, securityCode, new Date().getFullYear().toString())
   }
 }
 
 export function getAppUserWelcomeMailMessage(userName: string): GenericMessage {
   return {
     title: APP_USER_WELCOME_MAIL_TITLE,
-    content: replaceTemplatePlaceholders(APP_USER_WELCOME_MAIL_CONTENT, userName)
+    content: replaceTemplatePlaceholders(APP_USER_WELCOME_MAIL_CONTENT, userName, new Date().getFullYear().toString())
   }
 }
