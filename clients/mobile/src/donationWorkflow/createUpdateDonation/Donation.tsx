@@ -100,6 +100,7 @@ const CreateBloodRequest = () => {
               selectedValue={bloodRequestData.city}
               onChange={handleInputChange}
               error={errors.city}
+              allowSearch={true}
             />
           </View>
 
