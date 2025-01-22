@@ -1,4 +1,5 @@
 import { ACCOUNT_CREATION_MINIMUM_AGE } from '../setup/constant/consts'
+import { formattedDate } from './formatting'
 
 interface PasswordPolicy {
   minimum_length: number;
@@ -75,6 +76,29 @@ export const validateDonationDateTime = (donationDateTime: string): string | nul
   const minAllowedDate = new Date(now.getTime() + 5 * 60 * 1000)
   if (donationDate < minAllowedDate) {
     return 'Donation date & time must be at least 5 minutes ahead.'
+  }
+
+  return null
+}
+
+export const validateDonationDateTimeWithin24Hours = (donationDateTime: string): string | null => {
+  const now = new Date()
+  const donationDate = new Date(donationDateTime)
+
+  const maxAllowedDate = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+
+  const endOfNextDay = new Date(now)
+  endOfNextDay.setDate(endOfNextDay.getDate() + 1)
+  endOfNextDay.setHours(23, 59, 59, 999)
+
+  const actualMaxAllowedDate = maxAllowedDate < endOfNextDay ? endOfNextDay : maxAllowedDate
+
+  if (donationDate < now) {
+    return 'Donation date & time cannot be in the past.'
+  }
+
+  if (donationDate > actualMaxAllowedDate) {
+    return `Donation date & time must be before ${formattedDate(actualMaxAllowedDate)}.`
   }
 
   return null
