@@ -1,3 +1,4 @@
+import { SHORT_DESCRIPTION_MAX_LENGTH } from '../donationWorkflow/createUpdateDonation/useBloodRequest'
 import { ACCOUNT_CREATION_MINIMUM_AGE } from '../setup/constant/consts'
 
 interface PasswordPolicy {
@@ -140,6 +141,27 @@ export const validateWeight = (weight: string): string | null => {
   return null
 }
 
+const validateShortDescription = (value: string): string | null => {
+  const tests = [
+    {
+      test: !value.includes('\n'),
+      error: 'Short description must not contain newline characters.'
+    },
+    {
+      test: /^[a-zA-Z0-9 .,!?-]*$/.test(value),
+      error: 'Short description contains invalid special characters.'
+    },
+    {
+      test: value.length > SHORT_DESCRIPTION_MAX_LENGTH,
+      error: `Short description must not exceed ${SHORT_DESCRIPTION_MAX_LENGTH} characters.`
+    }
+  ]
+
+  const error = tests.find(({ test }) => !test)?.error
+
+  return error ?? null
+}
+
 export type ValidationRule = (value: string) => string | null
 
 export const validateInput = (value: string, rules: ValidationRule[]): string | null => {
@@ -153,6 +175,7 @@ export const validateInput = (value: string, rules: ValidationRule[]): string | 
 }
 
 export {
+  validateShortDescription,
   validateAndReturnRequiredFieldError as validateRequired,
   validateEmailAndGetErrorMessage as validateEmail,
   validatePhoneNumberAndGetErrorMessage as validatePhoneNumber,
