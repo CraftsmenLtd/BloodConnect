@@ -244,7 +244,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
           </View>
           {post.urgencyLevel === UrgencyLevel.URGENT && (
             <Badge
-              text="URGENT"
+              text={post.urgencyLevel.toUpperCase()}
               containerStyle={styles.urgentBadge}
               textStyle={styles.urgentText}
               iconName='triangle-exclamation'
