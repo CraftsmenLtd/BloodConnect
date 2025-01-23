@@ -48,7 +48,7 @@ const CreateBloodRequest = () => {
             onPress={handleInputChange}
             label="Urgency"
             isRequired={true}
-            extraInfo='Select "urgent" if the blood is needed on the same day'
+            extraInfo='Select "urgent" if the blood is needed within 24 hours.'
           />
 
           <View style={styles.fieldSpacing}>

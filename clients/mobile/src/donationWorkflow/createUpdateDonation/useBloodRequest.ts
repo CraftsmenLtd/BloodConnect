@@ -1,6 +1,15 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import Constants from 'expo-constants'
-import { validateInput, validateRequired, ValidationRule, validatePhoneNumber, validateDateTime, validateDonationDateTime, validateShortDescription } from '../../utility/validator'
+import {
+  validateInput,
+  validateRequired,
+  ValidationRule,
+  validatePhoneNumber,
+  validateDateTime,
+  validateDonationDateTime,
+  validateShortDescription,
+  validateDonationDateTimeWithin24Hours
+} from '../../utility/validator'
 import { initializeState } from '../../utility/stateUtils'
 import { LocationService } from '../../LocationService/LocationService'
 import { createDonation, DonationCreateUpdateResponse, updateDonation } from '../donationService'
@@ -14,6 +23,7 @@ import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import { LOCAL_NOTIFICATION_TYPE } from '../../setup/constant/consts'
 import { cancelNotificationById, fetchScheduledNotifications, scheduleNotification } from '../../setup/notification/scheduleNotification'
 import { NotificationRequest } from 'expo-notifications'
+import { UrgencyLevel } from '../types'
 
 export const SHORT_DESCRIPTION_MAX_LENGTH = 200
 
@@ -94,6 +104,16 @@ export const useBloodRequest = (): any => {
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     if (name === DONATION_DATE_TIME_INPUT_NAME) {
       onDateChange(value)
+      if (bloodRequestData.urgencyLevel === UrgencyLevel.URGENT) {
+        const validationError = validateDonationDateTimeWithin24Hours(value)
+        if (validationError !== null) {
+          setErrors(prevErrors => ({
+            ...prevErrors,
+            [DONATION_DATE_TIME_INPUT_NAME]: validationError
+          }))
+          return
+        }
+      }
       return
     }
     setBloodRequestData(prevState => ({
@@ -222,6 +242,15 @@ export const useBloodRequest = (): any => {
         setErrorMessage(validateDonationDate)
         return
       }
+
+      if (bloodRequestData.urgencyLevel === UrgencyLevel.URGENT) {
+        const validationError = validateDonationDateTimeWithin24Hours(bloodRequestData.donationDateTime.toString())
+        if (validationError !== null) {
+          setErrorMessage(validationError)
+          return
+        }
+      }
+
       const response = isUpdating
         ? await updateBloodDonationRequest()
         : await createBloodDonationRequest()
