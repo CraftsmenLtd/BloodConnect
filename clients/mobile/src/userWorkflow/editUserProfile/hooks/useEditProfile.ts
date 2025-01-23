@@ -11,7 +11,7 @@ import { initializeState } from '../../../utility/stateUtils'
 import { Alert } from 'react-native'
 import { useUserProfile } from '../../context/UserProfileContext'
 import useFetchData from '../../../setup/clients/useFetchData'
-import { updateUserProfile } from '../../services/userProfileServices'
+import { updateUserProfile } from '../../services/userProfileService'
 import { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
 import { EditProfileData } from '../../userProfile/UI/Profile'
 
@@ -57,7 +57,7 @@ export const useEditProfile = (): any => {
   )
 
   const [executeUpdateProfile, loading, , updateError] = useFetchData(
-    async(payload: Partial<ProfileData>) => {
+    async (payload: Partial<ProfileData>) => {
       const response = await updateUserProfile(payload, fetchClient)
 
       if (response.status !== 200) {
@@ -87,7 +87,7 @@ export const useEditProfile = (): any => {
     })
   }
 
-  const handleSave = async(): Promise<void> => {
+  const handleSave = async (): Promise<void> => {
     const newErrors: Record<string, string | null> = {}
     const validationFields = Object.keys(validationRules) as ProfileFields[]
     validationFields.forEach(field => {

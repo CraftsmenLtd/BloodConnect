@@ -19,8 +19,6 @@ interface AcceptRequestParams {
   status: string;
 }
 
-interface IgnoreRequestParams extends AcceptRequestParams {}
-
 interface useResponseDonationRequestReturnType {
   bloodRequest: any;
   isLoading: boolean;
@@ -107,24 +105,34 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
   }
 
   const handleIgnore = async(): Promise<void> => {
-    if (bloodRequest === null) return
-
     setIsLoading(true)
     setError(null)
-    const isString = (value: unknown): value is string => typeof value === 'string'
-    const requestPayload: Partial<IgnoreRequestParams> = {
-      requestPostId: isString(bloodRequest.requestPostId) ? bloodRequest.requestPostId : '',
-      seekerId: isString(bloodRequest.seekerId) ? bloodRequest.seekerId : '',
-      createdAt: isString(bloodRequest.createdAt) ? bloodRequest.createdAt : '',
+
+    if (bloodRequest === null || bloodRequest.requestPostId === undefined || bloodRequest.seekerId === undefined || bloodRequest.createdAt === undefined) {
+      setIsLoading(false)
+      setError('Request incomplete.Appropriate data not found.')
+      return
+    }
+    const { requestPostId, seekerId, createdAt } = bloodRequest
+
+    const requestPayload = {
+      requestPostId,
+      seekerId,
+      createdAt,
       status: STATUS.IGNORE
     }
-    const response = await updateMyResponses(requestPayload, fetchClient)
-    console.log('requestPayload: ', requestPayload, '## response: ', response)
 
-    if (response.status === 200) {
-      navigation.navigate(SCREENS.POSTS)
-    } else {
-      throw new Error('Could not complete ignore response')
+    try {
+      const response = await updateMyResponses(requestPayload, fetchClient)
+      if (response.status === 200) {
+        navigation.navigate(SCREENS.POSTS)
+      } else {
+        throw new Error('Could not complete ignore response')
+      }
+    } catch (error) {
+      setError('Something went wrong')
+    } finally {
+      setIsLoading(false)
     }
   }
 

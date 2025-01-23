@@ -100,7 +100,7 @@ const SearchMultiSelect = ({ name, label, isVisible, setIsVisible, error, onChan
       <View style={{ position: 'relative' }}>
         <View style={styles.dropdown}>
           <TextInput
-            placeholder='Search Preferred hospital/health care'
+            placeholder='Search Preferred Hospital/Health care CentreSearch Preferred Hospital/Health care'
             value={value}
             editable={editable}
             onChangeText={handleInputChange}

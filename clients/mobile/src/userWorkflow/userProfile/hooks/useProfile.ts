@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useUserProfile } from '../../context/UserProfileContext'
-import { UserProfile } from '../../services/userProfileServices'
+import { UserProfile } from '../../services/userProfileService'
 
 export interface DonationLocation {
   area: string;

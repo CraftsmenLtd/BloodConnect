@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
-import { fetchUserProfileFromApi, UserProfile } from '../services/userProfileServices'
+import { fetchUserProfileFromApi, UserProfile } from '../services/userProfileService'
 import { ProfileError } from '../../utility/errors'
 import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
@@ -33,7 +33,7 @@ const UserProfileContext = createContext<UserProfileContextData | undefined>({
   userProfile: defaultProfile,
   loading: true,
   error: '',
-  fetchUserProfile: async() => {}
+  fetchUserProfile: async() => { }
 })
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

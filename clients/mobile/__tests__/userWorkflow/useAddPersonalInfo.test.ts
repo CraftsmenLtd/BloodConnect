@@ -1,7 +1,7 @@
 import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useAddPersonalInfo } from '../../src/userWorkflow/personalInfo/hooks/useAddPersonalInfo'
-import { updateUserProfile } from '../../src/userWorkflow/services/userProfileServices'
+import { updateUserProfile } from '../../src/userWorkflow/services/userProfileService'
 import { SCREENS } from '../../src/setup/constant/screens'
 
 const mockFetchUserProfile = jest.fn()
@@ -11,7 +11,7 @@ jest.mock('aws-amplify/auth', () => ({
   getCurrentUser: jest.fn().mockResolvedValue({ username: 'test-user' })
 }))
 
-jest.mock('../../src/userWorkflow/services/userProfileServices', () => ({
+jest.mock('../../src/userWorkflow/services/userProfileService', () => ({
   updateUserProfile: jest.fn()
 }))
 
