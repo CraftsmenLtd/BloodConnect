@@ -4,7 +4,7 @@ DEPLOYMENT_ENVIRONMENT?=localstack
 LOCALSTACK_AUTH_TOKEN?=localstack-auth-token
 RUNNER_IMAGE_NAME?=dev-image
 DOCKER_SOCK_MOUNT?=-v /var/run/docker.sock:/var/run/docker.sock
-DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.7.3" \
+DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.10.4" \
                          --build-arg="NODE_MAJOR=20" \
                          --build-arg="CHECKOV_VERSION=3.1.40"
 DOCKER_RUN_MOUNT_OPTIONS:=-v $(PWD):/app -w /app

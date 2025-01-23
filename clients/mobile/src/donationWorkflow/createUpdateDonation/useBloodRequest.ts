@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import Constants from 'expo-constants'
-import { validateInput, validateRequired, ValidationRule, validatePhoneNumber, validateDateTime, validateDonationDateTime } from '../../utility/validator'
+import { validateInput, validateRequired, ValidationRule, validatePhoneNumber, validateDateTime, validateDonationDateTime, validateShortDescription } from '../../utility/validator'
 import { initializeState } from '../../utility/stateUtils'
 import { LocationService } from '../../LocationService/LocationService'
 import { createDonation, DonationCreateUpdateResponse, updateDonation } from '../donationService'
@@ -14,6 +14,8 @@ import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import { LOCAL_NOTIFICATION_TYPE } from '../../setup/constant/consts'
 import { cancelNotificationById, fetchScheduledNotifications, scheduleNotification } from '../../setup/notification/scheduleNotification'
 import { NotificationRequest } from 'expo-notifications'
+
+export const SHORT_DESCRIPTION_MAX_LENGTH = 200
 
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
@@ -33,7 +35,7 @@ export interface BloodRequestData {
   city: string;
 }
 
-interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'shortDescription' | 'transportationInfo'> { }
+interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'transportationInfo'> { }
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
   city: [validateRequired],
@@ -42,7 +44,8 @@ const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = 
   bloodQuantity: [validateRequired],
   donationDateTime: [validateRequired, validateDateTime],
   location: [validateRequired],
-  contactNumber: [validateRequired, validatePhoneNumber]
+  contactNumber: [validateRequired, validatePhoneNumber],
+  shortDescription: [validateShortDescription]
 }
 
 export const useBloodRequest = (): any => {
@@ -126,9 +129,10 @@ export const useBloodRequest = (): any => {
 
   const isButtonDisabled = useMemo(() => {
     const hasErrors = !Object.values(errors).every(error => error === null)
-
     const requiredFieldsFilled = Object.keys(validationRules).every((key: string) => {
       const value = bloodRequestData[key as CredentialKeys]
+      const isRequired = validationRules[key as keyof BloodRequestDataErrors].includes(validateRequired)
+      if (!isRequired) return true
       if (typeof value === 'string') {
         return value.trim() !== ''
       } else if (value instanceof Date) {
@@ -136,7 +140,6 @@ export const useBloodRequest = (): any => {
       }
       return false
     })
-
     return hasErrors || !requiredFieldsFilled
   }, [errors, bloodRequestData])
 

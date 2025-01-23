@@ -6,10 +6,12 @@ import { Theme } from '../../../setup/theme'
 import { Button } from '../../../components/button/Button'
 import { DonorItem } from '../../myPosts/donorResponses/DonorResponses'
 import StateAwareRenderer from '../../../components/StateAwareRenderer'
+import useCompleteDonation from '../useCompleteDonation'
 
 const DonorConfirmationScreen = () => {
   const styles = createStyles(useTheme())
-  const { donors, selectDonorHandler, selectedDonor, executeFunction, loading, error } = useDonorConfirmation()
+  const { donors, selectDonorHandler, selectedDonor, requestPostId, createdAt } = useDonorConfirmation()
+  const { executeFunction, loading, error } = useCompleteDonation()
 
   const ViewToRender = () =>
     <View style={styles.container}>
@@ -28,11 +30,11 @@ const DonorConfirmationScreen = () => {
 
       <View style={styles.footerContainer}>
         {error !== null && <Text style={styles.errorText}>{error}</Text>}
-        <Button text="Confirm" onPress={() => executeFunction(selectedDonor)} loading={loading} disabled={loading} />
+        <Button text="Confirm" onPress={() => { void executeFunction(selectedDonor, requestPostId, createdAt) }} loading={loading} disabled={loading} />
       </View>
     </View>
 
-  return <StateAwareRenderer errorMessage={error} data={donors} ViewComponent={ViewToRender} showEmptyMessageForEmptyArray={true} />
+  return <StateAwareRenderer errorMessage={error} data={donors} ViewComponent={ViewToRender} />
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
