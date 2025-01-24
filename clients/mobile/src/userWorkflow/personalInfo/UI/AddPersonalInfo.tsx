@@ -1,6 +1,5 @@
-import React, { useRef } from 'react'
 import Constants from 'expo-constants'
-import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native'
+import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import Dropdown from '../../../components/inputElement/Dropdown'
 import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
@@ -37,23 +36,10 @@ const AddPersonalInfo = () => {
     isSSO
   } = useAddPersonalInfo()
 
-  const scrollViewRef = useRef<ScrollView>(null)
-
-  const scrollToTop = (scrollTo: number) => {
-    if (scrollViewRef.current !== null) {
-      console.log('CALL', scrollTo)
-      scrollViewRef.current.scrollTo({ y: scrollTo, animated: false })
-      // scrollViewRef.current.
-    }
-  }
-
   return (
-        <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
-    <TouchableWithoutFeedback>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
-          ref={scrollViewRef}
         >
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <Dropdown
@@ -148,7 +134,6 @@ const AddPersonalInfo = () => {
               placeholder="Select Preferred Location"
               isRequired={true}
               enableSearch={true}
-              scrollToTop={scrollToTop}
               fetchOptions={
                 async(searchText) =>
                   locationService.preferredLocationAutocomplete(searchText, personalInfo.city)
@@ -244,8 +229,6 @@ const AddPersonalInfo = () => {
             />
           </View>
         </ScrollView>
-    </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
   )
 }
 

@@ -8,8 +8,7 @@ import {
   ScrollView,
   Dimensions,
   TextInput,
-  ActivityIndicator,
-  Keyboard
+  ActivityIndicator
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { Theme } from '../../setup/theme'
@@ -34,7 +33,6 @@ interface MultiSelectProps {
   fetchOptions?: (searchText: string) => Promise<Option[]>;
   editable?: boolean;
   error?: string | null;
-  scrollToTop?: (scrollTo: number) => void;
 }
 
 /**
@@ -89,19 +87,16 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   enableSearch = false,
   fetchOptions,
   editable = true,
-  error,
-  scrollToTop
+  error
 }) => {
   const theme = useTheme()
   const styles = createStyles(theme)
   const [isVisible, setIsVisible] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredOptions, setFilteredOptions] = useState(options)
-  const [dropdownTop, setDropdownTop] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<View>(null)
   const searchInputRef = useRef<TextInput>(null)
-  const spaceBelowRef = useRef<number | null>(null)
 
   useEffect(() => {
     if (enableSearch && (fetchOptions != null) && (searchText.trim() !== '')) {
@@ -127,45 +122,9 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
     }
   }, [searchText])
 
-  const measureInputPosition = async() => {
-    return new Promise((resolve) => {
-      inputRef.current?.measureInWindow((x, y, width, height) => {
-        const screenHeight = Dimensions.get('window').height
-        const spaceBelow = screenHeight - (y + height)
-        spaceBelowRef.current = spaceBelow
-        resolve()
-      })
-    })
-  }
-
-  const toggleDropdown = async() => {
+  const toggleDropdown = () => {
     setIsVisible((prev) => !prev)
-    await measureInputPosition()
-
-    const spaceBelow = spaceBelowRef.current
-    const desiredSpace = 200
-
-    const showListener = Keyboard.addListener('keyboardDidShow', (event) => {
-      const keyboardHeight = event.endCoordinates.height
-      console.log('Calculated space from keyboard:', spaceBelow, (desiredSpace + event.endCoordinates.height))
-      spaceBelowRef.current = spaceBelow
-
-      if ((spaceBelow + 2) < (desiredSpace + event.endCoordinates.height)) {
-        console.log('Inside if')
-        scrollToTop(Math.abs(keyboardHeight - spaceBelow) + desiredSpace)
-
-        inputRef.current?.measureInWindow((x, y, width, height) => {
-          const screenHeight = Dimensions.get('window').height
-          spaceBelowRef.current = screenHeight - (y + height)
-          setDropdownTop(y + height)
-        })
-      }
-    })
-
-    setTimeout(() => {
-      searchInputRef.current?.focus()
-    }, 200)
-
+    setTimeout(() => { searchInputRef.current?.focus() }, 200)
     setSearchText('')
     setFilteredOptions(options)
   }
@@ -263,13 +222,13 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
           }
         </View>
 
-      <Modal transparent={true} visible={isVisible} onRequestClose={toggleDropdown}>
+      <Modal transparent visible={isVisible} onRequestClose={toggleDropdown}>
         <TouchableOpacity
           style={styles.backdrop}
           onPress={toggleDropdown}
           activeOpacity={1}
         >
-          <View style={[styles.dropdownContainer, { top: dropdownTop }]}>
+          <View style={[styles.dropdownContainer, { top: 10 }]}>
             {dropdownContent}
           </View>
         </TouchableOpacity>
@@ -329,17 +288,18 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   backdrop: {
     flex: 1,
-    backgroundColor: 'transparent'
+    backgroundColor: theme.colors.blackFaded,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   dropdownContainer: {
-    // opacity: 0,
     position: 'absolute',
     width,
     paddingHorizontal: 16
   },
   dropdown: {
     width: '100%',
-    maxHeight: 200,
+    maxHeight: 400,
     backgroundColor: theme.colors.white,
     borderRadius: 8,
     padding: 10,
