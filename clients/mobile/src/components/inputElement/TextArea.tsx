@@ -28,8 +28,10 @@ export const TextArea = ({ name, label, value, placeholder, onChangeText, maxLen
         multiline
         maxLength={maxLength}
       />
-      <Text style={styles.charCount}>{value.length}/{maxLength}</Text>
-      {error !== null && <Text style={styles.error}>{error}</Text>}
+      <View style={[styles.charCountContainer, { justifyContent: error !== null ? 'space-between' : 'flex-end' }]}>
+        {error !== null && <Text style={[styles.error, { flexShrink: 1 }]}>{error}</Text>}
+        <Text style={styles.charCount}>{value.length}/{maxLength}</Text>
+      </View>
     </View>
   )
 }
@@ -46,6 +48,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     padding: 10,
     height: 100,
     textAlignVertical: 'top'
+  },
+  charCountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   charCount: {
     textAlign: 'right',
