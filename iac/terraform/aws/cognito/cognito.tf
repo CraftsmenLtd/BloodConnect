@@ -123,8 +123,8 @@ resource "aws_cognito_identity_provider" "facebook" {
 resource "aws_cognito_user_pool_domain" "set_custom_domain_prod" {
   count = local.productionEnvironment
 
-  domain          = local.cognito_domain_name
-  user_pool_id    = aws_cognito_user_pool.user_pool.id
+  domain       = local.cognito_domain_name
+  user_pool_id = aws_cognito_user_pool.user_pool.id
 }
 
 resource "aws_cognito_user_pool_domain" "set_custom_domain" {

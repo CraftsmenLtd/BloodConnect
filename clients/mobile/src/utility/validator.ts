@@ -1,4 +1,6 @@
+import { SHORT_DESCRIPTION_MAX_LENGTH } from '../donationWorkflow/createUpdateDonation/useBloodRequest'
 import { ACCOUNT_CREATION_MINIMUM_AGE } from '../setup/constant/consts'
+import { formattedDate } from './formatting'
 
 interface PasswordPolicy {
   minimum_length: number;
@@ -80,6 +82,29 @@ export const validateDonationDateTime = (donationDateTime: string): string | nul
   return null
 }
 
+export const validateDonationDateTimeWithin24Hours = (donationDateTime: string): string | null => {
+  const now = new Date()
+  const donationDate = new Date(donationDateTime)
+
+  const maxAllowedDate = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+
+  const endOfNextDay = new Date(now)
+  endOfNextDay.setDate(endOfNextDay.getDate() + 1)
+  endOfNextDay.setHours(23, 59, 59, 999)
+
+  const actualMaxAllowedDate = maxAllowedDate < endOfNextDay ? endOfNextDay : maxAllowedDate
+
+  if (donationDate < now) {
+    return 'Donation date & time cannot be in the past.'
+  }
+
+  if (donationDate > actualMaxAllowedDate) {
+    return `Donation date & time must be before ${formattedDate(actualMaxAllowedDate)}.`
+  }
+
+  return null
+}
+
 export const validatePastOrTodayDate = (date: string): string | null => {
   const today = new Date()
   const inputDate = new Date(date)
@@ -140,6 +165,27 @@ export const validateWeight = (weight: string): string | null => {
   return null
 }
 
+const validateShortDescription = (value: string): string | null => {
+  const tests = [
+    {
+      test: !value.includes('\n'),
+      error: 'Short description must not contain newline characters.'
+    },
+    {
+      test: /^[a-zA-Z0-9 .,!?-]*$/.test(value),
+      error: 'Short description contains invalid special characters.'
+    },
+    {
+      test: value.length > SHORT_DESCRIPTION_MAX_LENGTH,
+      error: `Short description must not exceed ${SHORT_DESCRIPTION_MAX_LENGTH} characters.`
+    }
+  ]
+
+  const error = tests.find(({ test }) => !test)?.error
+
+  return error ?? null
+}
+
 export type ValidationRule = (value: string) => string | null
 
 export const validateInput = (value: string, rules: ValidationRule[]): string | null => {
@@ -153,6 +199,7 @@ export const validateInput = (value: string, rules: ValidationRule[]): string | 
 }
 
 export {
+  validateShortDescription,
   validateAndReturnRequiredFieldError as validateRequired,
   validateEmailAndGetErrorMessage as validateEmail,
   validatePhoneNumberAndGetErrorMessage as validatePhoneNumber,
