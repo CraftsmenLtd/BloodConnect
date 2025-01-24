@@ -33,6 +33,7 @@ export type RootStackParamList = {
   [SCREENS.ACCOUNT]: undefined;
   [SCREENS.REQUEST_STATUS]: { requestPostId: string; createdAt: string };
   [SCREENS.DONOR_CONFIRMATION]: { requestPostId: string; donors: DonorItem[]; createdAt: string };
+  [SCREENS.NO_INTERNET]: undefined;
 }
 
 export type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.WELCOME>
@@ -56,6 +57,7 @@ export type OtpScreenNavigationProp = StackNavigationProp<RootStackParamList, SC
 export type AddPersonalInfoNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.ADD_PERSONAL_INFO>
 export type RequestStatusNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.REQUEST_STATUS>
 export type DonorConfirmationNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONOR_CONFIRMATION>
+export type NoInternetNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.NO_INTERNET>
 
 export type OtpScreenRouteProp = RouteProp<RootStackParamList, SCREENS.OTP>
 export type SetPasswordRouteProp = RouteProp<RootStackParamList, SCREENS.SET_PASSWORD>
@@ -68,3 +70,4 @@ export type DonorResponseRouteProp = RouteProp<RootStackParamList, SCREENS.DONOR
 export type DonorProfileRouteProp = RouteProp<RootStackParamList, SCREENS.DONOR_PROFILE>
 export type RequestStatusRouteProp = RouteProp<RootStackParamList, SCREENS.REQUEST_STATUS>
 export type DonorConfirmationRouteProp = RouteProp<RootStackParamList, SCREENS.DONOR_CONFIRMATION>
+export type NoInternetRouteProp = RouteProp<RootStackParamList, SCREENS.NO_INTERNET>
