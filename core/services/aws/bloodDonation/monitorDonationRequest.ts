@@ -115,18 +115,18 @@ type GroupedByCityAndRequestedBloodGroup = {
 }
 
 const formatEvent = (event: Event[]): GroupedByCityAndRequestedBloodGroup[] => event.reduce((
-  previousValue: GroupedByCityAndRequestedBloodGroup[], currrentValue) => {
+  previousValue: GroupedByCityAndRequestedBloodGroup[], currentValue) => {
   const existingGroup = previousValue.find(
-    (value) => value.requestedBloodGroup === currrentValue.requestedBloodGroup &&
-    value.city === currrentValue.city)
+    (value) => value.requestedBloodGroup === currentValue.requestedBloodGroup &&
+    value.city === currentValue.city)
 
   if (existingGroup !== null && existingGroup !== undefined) {
-    existingGroup.geohashes = `${existingGroup.geohashes}\n${currrentValue.geohash}`
+    existingGroup.geohashes = `${existingGroup.geohashes}\n${currentValue.geohash}`
   } else {
     previousValue.push({
-      city: currrentValue.city,
-      requestedBloodGroup: currrentValue.requestedBloodGroup,
-      geohashes: currrentValue.geohash
+      city: currentValue.city,
+      requestedBloodGroup: currentValue.requestedBloodGroup,
+      geohashes: currentValue.geohash
     })
   }
   return previousValue
@@ -145,7 +145,7 @@ context: Context): Promise<void> {
       const bloodGroupCharacter = requestedBloodGroup.slice(0, -1)
       const mapOfSigns = {
         '+': 'positive',
-        '-': 'negetive'
+        '-': 'negative'
       }
 
       const potentialFileName = `${city}-${bloodGroupCharacter}-${mapOfSigns[signOfRequestedBloodGroup]}.txt`
