@@ -1,10 +1,10 @@
 locals {
   lambda_options = {
     monitor-donation-request = {
-      name      = "monitor-donation-request-lambda"
+      name      = "monitor-donation-request"
       handler   = "monitorDonationRequest.default"
       zip_path  = "monitorDonationRequest.zip"
-      statement = local.policies.common_policies
+      statement = concat(local.policies.common_policies, local.policies.s3_policy)
 
       env_variables = {
         MAX_GEOHASH_LENGTH  = var.max_geohash_length

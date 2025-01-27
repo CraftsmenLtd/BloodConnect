@@ -16,8 +16,8 @@ resource "aws_s3_bucket_policy" "monitor_donation_request" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid       = "PublicReadGetObject"
-        Effect    = "Allow"
+        Sid    = "PublicReadGetObject"
+        Effect = "Allow"
         #checkov:skip=CKV_AWS_70: "Ensure S3 bucket does not allow an action with any Principal"
         Principal = "*"
         Action    = "s3:GetObject"
@@ -25,4 +25,13 @@ resource "aws_s3_bucket_policy" "monitor_donation_request" {
       }
     ]
   })
+}
+
+resource "aws_s3_bucket_public_access_block" "monitor_donation_public_access_block" {
+  bucket = aws_s3_bucket.monitor_donation_request.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }

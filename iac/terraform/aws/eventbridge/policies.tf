@@ -18,16 +18,12 @@ locals {
       {
         sid = "S3Policy"
         actions = [
-          "s3:HeadObject",
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject",
-          "s3:CreateMultipartUpload",
-          "s3:UploadPart",
-          "s3:UploadPartCopy",
-          "s3:CompleteMultipartUpload"
+          "s3:*"
         ]
-        resources = [aws_s3_bucket.monitor_donation_request.id]
+        resources = [
+          "${aws_s3_bucket.monitor_donation_request.arn}",
+          "${aws_s3_bucket.monitor_donation_request.arn}/*"
+        ]
       }
     ]
   }
