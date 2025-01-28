@@ -21,9 +21,10 @@ interface DropdownComponentProps {
   selectedValue: string;
   error?: string | null;
   readonly?: boolean;
+  allowSearch?: boolean;
 }
 
-const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, selectedValue, placeholder, isRequired, onChange, error = '', readonly = false }) => {
+const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, selectedValue, placeholder, isRequired, onChange, error = '', readonly = false, allowSearch = false }) => {
   const styles = createStyles(useTheme())
 
   const renderItem = (item: Option) => (
@@ -55,6 +56,8 @@ const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, sele
         renderItem={(item: Option) => renderItem(item)}
         disable={readonly}
         activeColor={readonly ? 'transparent' : '#F8F8F8'}
+        search={allowSearch}
+        searchPlaceholder='Type to Search...'
       />
       {error !== null && <Text style={styles.error}>{error}</Text>}
     </View>

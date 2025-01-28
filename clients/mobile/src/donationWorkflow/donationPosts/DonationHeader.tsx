@@ -56,7 +56,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   button: {
     backgroundColor: theme.colors.primary,
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
     borderRadius: 25
   },
   buttonText: {

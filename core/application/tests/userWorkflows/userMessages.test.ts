@@ -17,6 +17,7 @@ import { replaceTemplatePlaceholders } from '../../utils/formatString'
 describe('User Message Functions', () => {
   const userName = 'Ebrahim'
   const securityCode = '123456'
+  const currentYear = new Date().getFullYear().toString()
 
   test('should generate email verification message', () => {
     const expectedMessage: GenericMessage = {
@@ -24,7 +25,8 @@ describe('User Message Functions', () => {
       content: replaceTemplatePlaceholders(
         EMAIL_VERIFICATION_CONTENT,
         userName,
-        securityCode
+        securityCode,
+        currentYear
       )
     }
 
@@ -41,7 +43,8 @@ describe('User Message Functions', () => {
       content: replaceTemplatePlaceholders(
         PASSWORD_RESET_CONTENT,
         userName,
-        securityCode
+        securityCode,
+        currentYear
       )
     }
 
@@ -57,7 +60,8 @@ describe('User Message Functions', () => {
       title: APP_USER_WELCOME_MAIL_TITLE,
       content: replaceTemplatePlaceholders(
         APP_USER_WELCOME_MAIL_CONTENT,
-        userName
+        userName,
+        currentYear
       )
     }
 

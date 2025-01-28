@@ -26,11 +26,12 @@ const DETAIL_POST_TAB_CONFIG: TabConfig = {
 const Detail = ({ navigation, route }: DetailProps) => {
   const styles = createStyles(useTheme())
   const { cancelPost, cancelPostError, isLoading, showToast, toastAnimationFinished } = useMyActivity()
-  const { data, tab, useAsDetailsPage = false } = route.params
+  const { data, tab, useAsDetailsPage } = route.params
   const [currentTab, setCurrentTab] = useState(tab ?? DETAIL_POST_TAB_CONFIG.initialTab)
+  const isDetailsPage = useAsDetailsPage !== undefined && useAsDetailsPage
 
   useEffect(() => {
-    navigation.setOptions({ headerTitle: useAsDetailsPage ? 'Detail' : 'My Post' })
+    navigation.setOptions({ headerTitle: isDetailsPage ? 'Detail' : 'My Post' })
   }, [useAsDetailsPage])
 
   const handlePressDonor = (donorId: string) => {
@@ -54,7 +55,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
 
   return (
     <View style={styles.container}>
-      {!useAsDetailsPage &&
+      {!isDetailsPage &&
         <View style={[styles.tabHeader, currentTab === DETAIL_POST_TAB_CONFIG.initialTab ? { marginBottom: -18.5 } : {}]}>
           <ToggleTabs
             tabs={DETAIL_POST_TAB_CONFIG.tabs}
@@ -64,14 +65,14 @@ const Detail = ({ navigation, route }: DetailProps) => {
         </View>}
 
       {currentTab === DETAIL_POST_TAB_CONFIG.initialTab
-        ? <View style={[styles.postCardContainer, { marginTop: useAsDetailsPage ? 2 : 20 }]}>
+        ? <View style={[styles.postCardContainer, { marginTop: isDetailsPage ? 2 : 20 }]}>
           <PostCard
             post={data}
             showContactNumber
             showDescription
             showPatientName
             showTransportInfo
-            showOptions={!useAsDetailsPage}
+            showOptions={!isDetailsPage}
             showButton={false}
             showStatus={true}
             updateHandler={updatePost}
@@ -86,12 +87,11 @@ const Detail = ({ navigation, route }: DetailProps) => {
               toastAnimationFinished={toastAnimationFinished}
             />
           )}
-          {!useAsDetailsPage &&
+          {!isDetailsPage &&
             <View style={styles.buttonContainer}>
               <Button text="Complete Request" onPress={handleCompleteRequest} />
             </View>
           }
-
         </View>
         : <DonorResponses acceptedDonors={data.acceptedDonors} handlePressDonor={handlePressDonor} />
       }
@@ -118,7 +118,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 2,
     left: 20,
     right: 20
   },
