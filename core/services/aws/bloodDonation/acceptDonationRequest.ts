@@ -72,19 +72,24 @@ async function acceptDonationRequest(
       throw new Error('You already donated.')
     }
 
-    const userProfile = await userService.getUser(
+    const donorProfile = await userService.getUser(
       donorId,
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
+    )
+
+    const seekerProfile = await userService.getUser(
+      seekerId,
       new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
     )
     const donationPost = await getDonationRequest(seekerId, requestPostId, createdAt)
 
-    if (userProfile.bloodGroup !== donationPost.requestedBloodGroup) {
+    if (donorProfile.bloodGroup !== donationPost.requestedBloodGroup) {
       throw new Error('Your blood group doesn\'t match with the request blood group')
     }
 
     if (acceptanceRecord === null) {
       if (status === AcceptDonationStatus.ACCEPTED) {
-        await createAcceptanceRecord(donorId, seekerId, createdAt, requestPostId, userProfile)
+        await createAcceptanceRecord(donorId, seekerId, createdAt, requestPostId, donorProfile)
         await sendNotificationToSeeker(
           seekerId,
           requestPostId,
@@ -92,7 +97,7 @@ async function acceptDonationRequest(
           donorId,
           createdAt,
           status,
-          userProfile
+          donorProfile
         )
       }
     } else {
@@ -116,7 +121,7 @@ async function acceptDonationRequest(
           donorId,
           createdAt,
           status,
-          userProfile
+          donorProfile
         )
       }
     }
@@ -128,7 +133,7 @@ async function acceptDonationRequest(
       createdAt,
       status,
       donationPost,
-      userProfile
+      seekerProfile
     )
 
     return generateApiGatewayResponse(
@@ -171,7 +176,7 @@ async function createAcceptanceRecord(
   seekerId: string,
   createdAt: string,
   requestPostId: string,
-  userProfile: UserDetailsDTO
+  donorProfile: UserDetailsDTO
 ): Promise<void> {
   const acceptDonationRequestAttributes: AcceptDonationRequestAttributes = {
     donorId,
@@ -179,8 +184,8 @@ async function createAcceptanceRecord(
     createdAt,
     requestPostId,
     status: AcceptDonationStatus.ACCEPTED,
-    donorName: userProfile?.name,
-    phoneNumbers: userProfile?.phoneNumbers
+    donorName: donorProfile?.name,
+    phoneNumbers: donorProfile?.phoneNumbers
   }
 
   await acceptDonationService.createAcceptanceRecord(
@@ -200,7 +205,7 @@ async function sendNotificationToSeeker(
   donorId: string,
   createdAt: string,
   status: AcceptDonationStatus,
-  userProfile: UserDetailsDTO
+  donorProfile: UserDetailsDTO
 ): Promise<void> {
   const acceptedDonors = await acceptDonationService.getAcceptedDonorList(
     seekerId,
@@ -226,8 +231,8 @@ async function sendNotificationToSeeker(
       seekerId,
       createdAt,
       requestPostId,
-      donorName: userProfile?.name,
-      phoneNumbers: userProfile?.phoneNumbers,
+      donorName: donorProfile?.name,
+      phoneNumbers: donorProfile?.phoneNumbers,
       requestedBloodGroup: donationPost.requestedBloodGroup,
       urgencyLevel: donationPost.urgencyLevel,
       location: donationPost.location,
@@ -247,7 +252,7 @@ async function updateDonationNotification(
   createdAt: string,
   status: AcceptDonationStatus,
   donationPost: DonationDTO,
-  userProfile: UserDetailsDTO
+  seekerProfile: UserDetailsDTO
 ): Promise<void> {
   const existingNotification = await notificationService.getBloodDonationNotification(
     donorId,
@@ -274,7 +279,7 @@ async function updateDonationNotification(
           contactNumber: donationPost.contactNumber,
           donationDateTime: donationPost.donationDateTime,
           patientName: donationPost.patientName as string,
-          seekerName: userProfile.name,
+          seekerName: seekerProfile.name,
           location: donationPost.location,
           shortDescription: donationPost.shortDescription as string,
           transportationInfo: donationPost.transportationInfo as string
