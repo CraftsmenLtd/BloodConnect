@@ -79,7 +79,7 @@ describe('LocationModel Tests', () => {
         locationId: 'location1',
         city: 'CityA',
         bloodGroup: 'A+' as BloodGroup,
-        availableForDonation: false,
+        availableForDonation: true,
         geohash: 'gcpuv',
         area: 'Banani',
         createdAt: '2023-10-01T00:00:00.000Z',
