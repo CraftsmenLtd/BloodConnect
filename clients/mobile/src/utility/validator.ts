@@ -1,5 +1,4 @@
-import { SHORT_DESCRIPTION_MAX_LENGTH } from '../donationWorkflow/createUpdateDonation/useBloodRequest'
-import { ACCOUNT_CREATION_MINIMUM_AGE } from '../setup/constant/consts'
+import { ACCOUNT_CREATION_MINIMUM_AGE, SHORT_DESCRIPTION_MAX_LENGTH } from '../setup/constant/consts'
 import { formattedDate } from './formatting'
 
 interface PasswordPolicy {
