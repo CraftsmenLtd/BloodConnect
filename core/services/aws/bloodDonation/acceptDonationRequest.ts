@@ -127,7 +127,8 @@ async function acceptDonationRequest(
       seekerId,
       createdAt,
       status,
-      donationPost
+      donationPost,
+      userProfile
     )
 
     return generateApiGatewayResponse(
@@ -245,7 +246,8 @@ async function updateDonationNotification(
   seekerId: string,
   createdAt: string,
   status: AcceptDonationStatus,
-  donationPost: DonationDTO
+  donationPost: DonationDTO,
+  userProfile: UserDetailsDTO
 ): Promise<void> {
   const existingNotification = await notificationService.getBloodDonationNotification(
     donorId,
@@ -272,6 +274,7 @@ async function updateDonationNotification(
           contactNumber: donationPost.contactNumber,
           donationDateTime: donationPost.donationDateTime,
           patientName: donationPost.patientName as string,
+          seekerName: userProfile.name,
           location: donationPost.location,
           shortDescription: donationPost.shortDescription as string,
           transportationInfo: donationPost.transportationInfo as string
