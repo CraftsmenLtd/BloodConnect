@@ -38,6 +38,10 @@ export const useMyActivity = (): any => {
     navigation.navigate(SCREENS.DETAIL_POST, { data: { ...donationData } })
   }
 
+  const myResponsesDetailHandler = (data: DonationData): void => {
+    navigation.navigate(SCREENS.DETAIL_POST, { data: { ...data }, useAsDetailsPage: true })
+  }
+
   const cancelPost = async(donationData: DonationData): Promise<void> => {
     setIsLoading(true)
     const payload = {
@@ -78,6 +82,7 @@ export const useMyActivity = (): any => {
     handleTabPress,
     updatePost,
     detailHandler,
+    myResponsesDetailHandler,
     cancelPost,
     cancelPostError,
     isLoading,
