@@ -163,7 +163,7 @@ const ResponseDonationRequest = () => {
       {error !== null && <Text style={styles.error}>{error}</Text>}
 
       <View style={styles.buttonContainer}>
-        {!isLoading && !(isRequestAccepted || (Boolean(isRequestAlreadyAccepted))) &&
+        {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
         <Button
           text="Ignore"
           buttonStyle={styles.ignoreButton}
@@ -172,7 +172,7 @@ const ResponseDonationRequest = () => {
             void handleIgnore()
           }} />}
         <Button
-          text={isRequestAccepted || (Boolean(isRequestAlreadyAccepted)) ? 'Request Accepted' : 'Accept Request'}
+          text={isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 'Accept Request'}
           loading={isLoading}
           disabled={isRequestAccepted || isRequestAlreadyAccepted}
           buttonStyle={styles.acceptButton}
