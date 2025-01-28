@@ -156,7 +156,7 @@ const AddPersonalInfo = () => {
               error={errors.dateOfBirth}
             />
           </View>
-          
+
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
               isOnlyDate={true}
@@ -265,7 +265,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: 'red',
     textAlign: 'center',
     padding: 8,
-    backgroundColor: theme.colors.greyBG,
     borderRadius: 6
   },
   buttonContainer: {

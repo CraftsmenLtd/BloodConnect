@@ -100,7 +100,7 @@ export const fetchMyResponses = async(payload: Record<string, unknown>, httpClie
 
 export const updateMyResponses = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
-    const response = await httpClient.get<DonationResponse>('/donations/responses', payload)
+    const response = await httpClient.patch<DonationResponse>('/donations/responses', payload)
     return {
       data: response.data,
       status: response.status
