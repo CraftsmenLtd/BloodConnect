@@ -87,6 +87,25 @@ const AddPersonalInfo = () => {
           </View>
 
           <View style={styles.fieldSpacing}>
+            <MultiSelect
+              name='locations'
+              label="Select Preferred Location"
+              options={[]}
+              selectedValues={personalInfo.locations}
+              onSelect={handleInputChange}
+              placeholder="Select Preferred Location"
+              isRequired={true}
+              enableSearch={true}
+              fetchOptions={
+                async(searchText) =>
+                  locationService.preferredLocationAutocomplete(searchText, personalInfo.city)
+              }
+              minRequiredLabel='Add minimum 1 area.'
+              editable={personalInfo.city.length > 0}
+            />
+          </View>
+
+          <View style={styles.fieldSpacing}>
             <Dropdown
               label='Gender'
               isRequired={true}
@@ -122,24 +141,6 @@ const AddPersonalInfo = () => {
               keyboardType="numeric"
               isRequired={true}
               error={errors.weight}
-            />
-          </View>
-          <View style={styles.fieldSpacing}>
-            <MultiSelect
-              name='locations'
-              label="Select Preferred Location"
-              options={[]}
-              selectedValues={personalInfo.locations}
-              onSelect={handleInputChange}
-              placeholder="Select Preferred Location"
-              isRequired={true}
-              enableSearch={true}
-              fetchOptions={
-                async(searchText) =>
-                  locationService.preferredLocationAutocomplete(searchText, personalInfo.city)
-              }
-              minRequiredLabel='Add minimum 1 area.'
-              editable={personalInfo.city.length > 0}
             />
           </View>
 
