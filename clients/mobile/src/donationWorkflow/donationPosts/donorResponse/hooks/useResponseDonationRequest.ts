@@ -76,7 +76,9 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
   }
 
   const [handleAcceptRequest, isAcceptLoading, , acceptError] = useFetchData(async(): Promise<void> => {
-    if (bloodRequest === null) return
+    if (bloodRequest === null) {
+      throw new Error('Missing some required data. Please try again')
+    }
 
     if (userProfile.bloodGroup !== bloodRequest.requestedBloodGroup) {
       ToastAndroid.showWithGravity('Blood group doesn\'t match', ToastAndroid.SHORT, ToastAndroid.CENTER)
