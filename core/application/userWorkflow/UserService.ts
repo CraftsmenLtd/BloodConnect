@@ -1,22 +1,17 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import UserOperationError from './UserOperationError'
-import {
-  AvailableForDonation,
-  LocationDTO,
-  UserDetailsDTO,
-  UserDTO
-} from '../../../commons/dto/UserDTO'
+import { LocationDTO, UserDetailsDTO, UserDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { GenericMessage } from '../../../commons/dto/MessageDTO'
 import {
+  getAppUserWelcomeMailMessage,
   getEmailVerificationMessage,
-  getPasswordResetVerificationMessage,
-  getAppUserWelcomeMailMessage
+  getPasswordResetVerificationMessage
 } from './userMessages'
 import Repository from '../models/policies/repositories/Repository'
-import { UserAttributes, UpdateUserAttributes, CreateUserAttributes } from './Types'
+import { CreateUserAttributes, UpdateUserAttributes, UserAttributes } from './Types'
 import { generateGeohash } from '../utils/geohash'
-import { differenceInYears, differenceInMonths } from 'date-fns'
+import { differenceInMonths, differenceInYears } from 'date-fns'
 import { BloodGroup } from '../../../commons/dto/DonationDTO'
 import LocationRepository from '../models/policies/repositories/LocationRepository'
 
@@ -114,8 +109,8 @@ export class UserService {
 
   private checkLastDonationDate(
     lastDonationDate: string | undefined,
-    availableForDonation: AvailableForDonation
-  ): AvailableForDonation {
+    availableForDonation: boolean
+  ): boolean {
     if (lastDonationDate !== undefined && lastDonationDate !== '') {
       const donationDate = new Date(lastDonationDate)
       const currentDate = new Date()
@@ -123,8 +118,6 @@ export class UserService {
       if (!isNaN(donationDate.getTime())) {
         const donationMonths = differenceInMonths(currentDate, donationDate)
         return donationMonths > Number(process.env.MIN_MONTHS_BETWEEN_DONATIONS)
-          ? availableForDonation
-          : 'no'
       }
     }
     return availableForDonation
@@ -136,8 +129,7 @@ export class UserService {
       const currentDate = new Date()
 
       if (!isNaN(birthDate.getTime())) {
-        const age = differenceInYears(currentDate, birthDate)
-        return age
+        return differenceInYears(currentDate, birthDate)
       }
     }
   }
@@ -165,7 +157,7 @@ export class UserService {
           longitude: location.longitude,
           geohash: generateGeohash(location.latitude, location.longitude),
           bloodGroup: userAttributes.bloodGroup as BloodGroup,
-          availableForDonation: userAttributes.availableForDonation as AvailableForDonation,
+          availableForDonation: userAttributes.availableForDonation === true,
           lastVaccinatedDate: `${userAttributes.lastVaccinatedDate}`,
           createdAt: new Date().toISOString()
         }
