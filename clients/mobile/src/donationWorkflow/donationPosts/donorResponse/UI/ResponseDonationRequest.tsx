@@ -46,7 +46,7 @@ const ResponseDonationRequest = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.card}>
           <Text style={styles.header}>Blood Request</Text>
-          <Text style={styles.name}>{bloodRequest.patientName ?? 'Patient Name'}</Text>
+          <Text style={styles.name}>{bloodRequest.seekerName ?? 'Seeker Name'}</Text>
           <Text style={styles.subText}>Posted on {
             bloodRequest?.donationDateTime !== null &&
             bloodRequest?.donationDateTime !== undefined
