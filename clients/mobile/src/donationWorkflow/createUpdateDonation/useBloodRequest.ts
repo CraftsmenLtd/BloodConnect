@@ -25,8 +25,6 @@ import { cancelNotificationById, fetchScheduledNotifications, scheduleNotificati
 import { NotificationRequest } from 'expo-notifications'
 import { UrgencyLevel } from '../types'
 
-export const SHORT_DESCRIPTION_MAX_LENGTH = 200
-
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
 export const DONATION_DATE_TIME_INPUT_NAME = 'donationDateTime'

@@ -1,4 +1,3 @@
-import React from 'react'
 import Constants from 'expo-constants'
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Linking } from 'react-native'
 import Dropdown from '../../../components/inputElement/Dropdown'
