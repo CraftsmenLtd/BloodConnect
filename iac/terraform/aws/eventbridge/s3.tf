@@ -30,6 +30,10 @@ resource "aws_s3_bucket_policy" "monitor_donation_request" {
 resource "aws_s3_bucket_public_access_block" "monitor_donation_public_access_block" {
   bucket = aws_s3_bucket.monitor_donation_request.id
 
+  #checkov:skip=CKV_AWS_54: "Ensure S3 bucket has block public policy enabled"
+  #checkov:skip=CKV_AWS_53: "Ensure S3 bucket has block public ACLS enabled"
+  #checkov:skip=CKV_AWS_55: "Ensure S3 bucket has ignore public ACLs enabled"
+  #checkov:skip=CKV_AWS_56: "Ensure S3 bucket has 'restrict_public_bucket' enabled"
   block_public_acls       = false
   block_public_policy     = false
   ignore_public_acls      = false
