@@ -1,6 +1,7 @@
 {
   "name": "BloodConnect",
   "image": "dev-image",
+  "postCreateCommand": "apt install -y openssh-client",
   "customizations": {
     "vscode": {
       "extensions": [
