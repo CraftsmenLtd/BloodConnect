@@ -14,7 +14,7 @@ export interface UserProfile extends Partial<Omit<UserDetailsDTO, 'createdAt' | 
   city: string;
   bloodGroup: string;
   gender: string;
-  availableForDonation: string;
+  availableForDonation: boolean;
 }
 
 interface APIResponse {
