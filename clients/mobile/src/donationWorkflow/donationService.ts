@@ -98,6 +98,19 @@ export const fetchMyResponses = async(payload: Record<string, unknown>, httpClie
   }
 }
 
+export const updateMyResponses = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+  try {
+    const response = await httpClient.patch<DonationResponse>('/donations/responses', payload)
+    return {
+      data: response.data,
+      status: response.status
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
+    throw new Error(errorMessage)
+  }
+}
+
 export const cancelDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.patch<DonationResponse>('/donations/cancel', payload)

@@ -31,6 +31,8 @@ export function formatErrorMessage(error: unknown): string {
         return 'Please check your input and try again.'
       case 'network error':
         return 'Please check your internet connection.'
+      case 'network request failed':
+        return 'Please check your internet connection.'
       case 'timeout':
         return 'Request timed out, please try again later.'
       case 'error: you\'ve reached today\'s limit of 10 requests. please try tomorrow.':

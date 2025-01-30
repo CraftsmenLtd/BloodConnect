@@ -137,7 +137,7 @@ async function acceptDonationRequest(
     )
 
     return generateApiGatewayResponse(
-      { message: 'Donation request accepted successfully.' },
+      { message: `Donation request ${status} successfully.` },
       HTTP_CODES.OK
     )
   } catch (error) {

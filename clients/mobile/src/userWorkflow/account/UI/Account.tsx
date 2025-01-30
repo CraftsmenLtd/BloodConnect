@@ -49,7 +49,7 @@ export const Account = () => {
       </View>
 
       <View style={styles.moreSection}>
-        <Text style={styles.moreText}>More</Text>
+        {/* <Text style={styles.moreText}>More</Text> */}
         {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="star-border" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Rate & Review</Text>

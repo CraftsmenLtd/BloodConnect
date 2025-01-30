@@ -2,15 +2,23 @@ import { HttpClient } from '../../setup/clients/HttpClient'
 import { ProfileError } from '../../utility/errors'
 import { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
 
-interface UserPreferedLocation {
+interface UserPreferredLocation {
   area: string;
   city: string;
   latitude: number;
   longitude: number;
 }
 
-export interface UserProfile extends Partial<Omit<UserDetailsDTO, 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn' | 'bloodGroup' | 'gender' | 'availableForDonation'>> {
-  preferredDonationLocations?: UserPreferedLocation[];
+export interface UserProfile extends
+  Partial<Omit<UserDetailsDTO,
+  'createdAt'
+  | 'updatedAt'
+  | 'deviceToken'
+  | 'snsEndpointArn'
+  | 'bloodGroup'
+  | 'gender'
+  | 'availableForDonation'>> {
+  preferredDonationLocations?: UserPreferredLocation[];
   city: string;
   bloodGroup: string;
   gender: string;
@@ -40,18 +48,16 @@ export const fetchUserProfileFromApi = async(httpClient: HttpClient): Promise<AP
   }
 }
 
-export const updateUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<APIResponse> => {
+export const updateUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
+Promise<APIResponse> => {
   try {
     const response = await httpClient.patch<APIResponse>('/users', payload)
     return {
-      data: response.data,
+      message: response.message,
       status: response.status
     }
   } catch (error) {
-    if (error instanceof ProfileError) {
-      throw error
-    }
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-    throw new ProfileError(errorMessage)
+    throw new Error(errorMessage)
   }
 }

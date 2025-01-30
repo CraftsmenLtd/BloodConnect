@@ -65,7 +65,9 @@ const ResponseDonationRequest = () => {
                 />
                 <View style={styles.requestText}>
                   <Text style={styles.primaryCaption}>Looking for</Text>
-                  <Text style={styles.highlightedText}>{bloodRequest.bloodQuantity ?? 0} {bloodRequest.requestedBloodGroup}(ve) blood</Text>
+                  <Text style={styles.highlightedText}>
+                    {bloodRequest.bloodQuantity ?? 0} {bloodRequest.requestedBloodGroup}(ve) blood
+                  </Text>
                 </View>
               </View>
               {bloodRequest.urgencyLevel === 'urgent' && (
@@ -111,7 +113,9 @@ const ResponseDonationRequest = () => {
                     ? <Text style={styles.phoneNumber}>
                       {bloodRequest.contactNumber ?? 'Contact Not Shared'}
                     </Text>
-                    : <Text style={styles.hiddenNumber}>{`${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`}</Text>
+                    : <Text style={styles.hiddenNumber}>
+                      {`${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`}
+                      </Text>
                   }
                 </View>
                 {isRequestAlreadyAccepted && (
@@ -159,8 +163,23 @@ const ResponseDonationRequest = () => {
       {error !== null && <Text style={styles.error}>{error}</Text>}
 
       <View style={styles.buttonContainer}>
-        {!isLoading && !(isRequestAccepted || (Boolean(isRequestAlreadyAccepted))) && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
-        <Button text={isRequestAccepted || (Boolean(isRequestAlreadyAccepted)) ? 'Request Accepted' : 'Accept Request'} loading={isLoading} disabled={isRequestAccepted || isRequestAlreadyAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
+        {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
+        <Button
+          text="Ignore"
+          buttonStyle={styles.ignoreButton}
+          textStyle={{ color: theme.colors.black }}
+          onPress={() => {
+            void handleIgnore()
+          }} />}
+        <Button
+          text={isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 'Accept Request'}
+          loading={isLoading}
+          disabled={isRequestAccepted || isRequestAlreadyAccepted}
+          buttonStyle={styles.acceptButton}
+          textStyle={styles.acceptButtonText}
+          onPress={() => {
+            void handleAcceptRequest()
+          }} />
       </View>
     </SafeAreaView>
   )

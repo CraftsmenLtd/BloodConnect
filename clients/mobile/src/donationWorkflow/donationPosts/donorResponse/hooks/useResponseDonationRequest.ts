@@ -6,10 +6,19 @@ import { formatDateTime } from '../../../../utility/formatTimeAndDate'
 import { PostScreenNavigationProp, RequestPreviewRouteProp } from '../../../../setup/navigation/navigationTypes'
 import { STATUS } from '../../../types'
 import { scheduleNotification } from '../../../../setup/notification/scheduleNotification'
-import { LOCAL_NOTIFICATION_TYPE, REMINDER_NOTIFICATION_BODY, REMINDER_NOTIFICATION_TITLE, REMINDING_HOURS_BEFORE_DONATION } from '../../../../setup/constant/consts'
+import {
+  LOCAL_NOTIFICATION_TYPE,
+  REMINDER_NOTIFICATION_BODY,
+  REMINDER_NOTIFICATION_TITLE,
+  REMINDING_HOURS_BEFORE_DONATION
+} from '../../../../setup/constant/consts'
 import { replaceTemplatePlaceholders } from '../../../../utility/formatting'
 import { extractErrorMessage } from '../../../donationHelpers'
 import { useMyActivityContext } from '../../../../myActivity/context/useMyActivityContext'
+import { updateMyResponses } from '../../../donationService'
+import { useUserProfile } from '../../../../userWorkflow/context/UserProfileContext'
+import { ToastAndroid } from 'react-native'
+import useFetchData from '../../../../setup/clients/useFetchData'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -23,7 +32,7 @@ interface useResponseDonationRequestReturnType {
   isLoading: boolean;
   error: string | null;
   handleAcceptRequest: () => Promise<void>;
-  handleIgnore: () => void;
+  handleIgnore: () => Promise<void>;
   formatDateTime: (dateTime: string) => string;
   isRequestAccepted: boolean;
 }
@@ -34,12 +43,12 @@ interface FetchResponse {
 }
 
 export const useResponseDonationRequest = (): useResponseDonationRequestReturnType => {
+  const { userProfile } = useUserProfile()
   const navigation = useNavigation<PostScreenNavigationProp>()
   const { getMyResponses } = useMyActivityContext()
   const { notificationData: bloodRequest } = useRoute<RequestPreviewRouteProp>().params
+
   const [isRequestAccepted, setIsRequestAccepted] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const fetchClient = useFetchClient()
 
   useEffect(() => {
@@ -66,11 +75,15 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     })
   }
 
-  const handleAcceptRequest = async(): Promise<void> => {
-    if (bloodRequest === null) return
+  const [handleAcceptRequest, isAcceptLoading, , acceptError] = useFetchData(async(): Promise<void> => {
+    if (bloodRequest === null) {
+      throw new Error('Missing some required data. Please try again')
+    }
 
-    setIsLoading(true)
-    setError(null)
+    if (userProfile.bloodGroup !== bloodRequest.requestedBloodGroup) {
+      ToastAndroid.showWithGravity('Blood group doesn\'t match', ToastAndroid.SHORT, ToastAndroid.CENTER)
+      return
+    }
     const isString = (value: unknown): value is string => typeof value === 'string'
     const requestPayload: AcceptRequestParams = {
       requestPostId: isString(bloodRequest.requestPostId) ? bloodRequest.requestPostId : '',
@@ -97,21 +110,45 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
       setIsRequestAccepted(true)
     } catch (error) {
       const errorMessage = extractErrorMessage(error)
-      setError(errorMessage)
-    } finally {
-      setIsLoading(false)
+      throw new Error(errorMessage)
     }
-  }
+  })
 
-  const handleIgnore = (): void => {
-    navigation.navigate(SCREENS.POSTS)
-  }
+  const [handleIgnore, isIgnoreLoading, , ignoreError] = useFetchData(async() => {
+    if (
+      bloodRequest === null ||
+      ['requestPostId', 'seekerId', 'createdAt', 'requestedBloodGroup'].some(
+        (key) => bloodRequest[key] === undefined
+      )
+    ) {
+      throw new Error('Request incomplete.Appropriate data not found.')
+    }
+
+    if (userProfile.bloodGroup !== bloodRequest.requestedBloodGroup) {
+      navigation.navigate(SCREENS.POSTS)
+      return
+    }
+    const { requestPostId, seekerId, createdAt } = bloodRequest
+
+    const requestPayload = {
+      requestPostId,
+      seekerId,
+      createdAt,
+      status: STATUS.IGNORED
+    }
+    const response = await updateMyResponses(requestPayload, fetchClient)
+    if (response.status === 200) {
+      navigation.navigate(SCREENS.POSTS)
+    } else {
+      throw new Error('Could not complete ignore response')
+    }
+  })
 
   return {
     isRequestAccepted,
-    isLoading,
+    isLoading: isAcceptLoading || isIgnoreLoading,
     bloodRequest,
-    error,
+    error: acceptError ?? ignoreError,
     handleAcceptRequest,
     handleIgnore,
     formatDateTime
