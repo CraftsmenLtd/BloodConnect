@@ -4,17 +4,19 @@ import { Theme } from '../../../setup/theme'
 import { Button } from '../../../components/button/Button'
 import { useOtp } from '../hooks/useOtp'
 import LinkWithText from '../../../components/button/LinkWithText'
+import { useTranslation } from 'react-i18next'
 
 const OTP = () => {
+  const { t } = useTranslation()
   const styles = createStyles(useTheme())
   const { otp, error, inputRefs, handleOtpChange, handleSubmit, email, loading, isButtonDisabled, resendOtpHandler, isDisabled, countdown } = useOtp()
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Enter authentication code</Text>
+      <Text style={styles.title}>{t('otp.enterAuthenticationCode')}</Text>
       <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>Enter the 6-digit code sent to your</Text>
-        <Text style={[styles.subtitle, styles.subtitleEmail]}> Email ({email})</Text>
+        <Text style={styles.subtitle}>{t('otp.enter6DigitCodeSent')}</Text>
+        <Text style={[styles.subtitle, styles.subtitleEmail]}> {t('common.email')} ({email})</Text>
       </View>
       <View style={styles.otpContainer}>
         {otp.map((digit: string, index: number) => (
@@ -35,13 +37,13 @@ const OTP = () => {
       </View>
       {error !== '' && <Text style={styles.error}>{error}</Text>}
       <LinkWithText
-        staticText="Didn’t get the code?"
-        linkText={isDisabled === true ? ` Resend OTP in ${countdown}s` : ' Resend OTP'}
+        staticText={t('otp.didntGetCode')}
+        linkText={isDisabled === true ? ` Resend OTP in ${countdown}s` : ` ${t('otp.resendOtp')}`}
         onPress={resendOtpHandler}
         isDisabled={isDisabled}
         countdown={countdown}
       />
-      <Button text='Submit' onPress={handleSubmit} disabled={isButtonDisabled} loading={loading} />
+      <Button text={t('common.submit')} onPress={handleSubmit} disabled={isButtonDisabled} loading={loading} />
     </View>
   )
 }

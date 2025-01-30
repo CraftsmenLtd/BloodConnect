@@ -6,8 +6,10 @@ import { Button } from '../../../components/button/Button'
 import { PASSWORD_INPUT_NAME, useSetPassword } from '../hooks/useSetPassword'
 import AuthLayout from '../../AuthLayout'
 import { PasswordInput } from '../../../components/inputElement/PasswordInput'
+import { useTranslation } from 'react-i18next'
 
 export default function SetPassword(): JSX.Element {
+  const { t } = useTranslation()
   const styles = createStyles(useTheme())
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false)
@@ -18,7 +20,7 @@ export default function SetPassword(): JSX.Element {
     <AuthLayout>
       <PasswordInput
         name={PASSWORD_INPUT_NAME}
-        label="New Password"
+        label={`${t('common.new')} ${t('common.password')}`}
         value={newPassword.password}
         onChangeText={handleInputChange}
         isVisible={isPasswordVisible}
@@ -28,7 +30,7 @@ export default function SetPassword(): JSX.Element {
 
       <PasswordInput
         name="confirmPassword"
-        label="Confirm Password"
+        label={t('common.confirmPassword')}
         value={newPassword.confirmPassword}
         onChangeText={handleInputChange}
         isVisible={isConfirmPasswordVisible}
@@ -37,7 +39,7 @@ export default function SetPassword(): JSX.Element {
       />
 
       {error !== '' && <Text style={styles.error}>{error}</Text>}
-      <Button text="Set Password" onPress={handleSetPassword} disabled={isButtonDisabled} loading={loading} />
+      <Button text={t('common.setPassword')} onPress={handleSetPassword} disabled={isButtonDisabled} loading={loading} />
     </AuthLayout>
   )
 }

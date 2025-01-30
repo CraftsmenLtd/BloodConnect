@@ -1,10 +1,48 @@
 {
   "common": {
     "createAccount": "Create account",
-    "logIn": "Log in"
+    "logIn": "Log in",
+    "register": "Register",
+    "submit": "Submit",
+    "forgotPassword": "Forgot Password?",
+    "orText": "Or",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithFacebook": "Continue with Facebook",
+    "noAccount": "Don't have an account? ",
+    "continue": "Continue",
+    "namePlaceholder": "Enter your name",
+    "alreadyHaveAccount": "Already have an account? Login",
+    "new": "new",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "setPassword": "Set Password",
+    "name": "Name",
+    "email": "Email",
+    "phoneNumber": "Phone Number"
+  },
+  "otp": {
+    "enterAuthenticationCode": "Enter authentication code",
+    "enter6DigitCodeSent": "Enter the 6-digit code sent to your",
+    "didntGetCode": "Didn't get the code?",
+    "resendOtp": "Resend OTP",
+    "resendOtpIn": "Resend OTP in ${countdown}s"
   },
   "home": {
     "title": "A common platform for blood donor and seeker",
     "subtitle": "Blood searching and blood donating is now easier with BloodConnect app"
+  },
+  "error": {
+    "userNotConfirmed": "User is not confirmed. Please verify your email.",
+    "invalidEmailOrPassword": "Invalid Email or Password.",
+    "accountNotConfirmed": "Your account is not confirmed. Please confirm your account first.",
+    "networkError": "Network error. Check your connection.",
+    "accountAlreadyExists": "Account already exists.",
+    "weakPassword": "Weak password. Use a stronger one.",
+    "invalidInput": "Invalid input. Check your details.",
+    "tooManyRequests": "Too many requests. Try again later.",
+    "invalidOtpCode": "Invalid OTP code. Please try again.",
+    "otpCodeExpired": "OTP code has expired. Request a new one.",
+    "noAccountFound": "No account found with this email.",
+    "somethingWentWrong": "Something went wrong."
   }
 }

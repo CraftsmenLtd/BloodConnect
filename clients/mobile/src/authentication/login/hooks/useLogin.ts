@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigation, CommonActions } from '@react-navigation/native'
 import { validateRequired, ValidationRule } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
@@ -23,6 +24,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
 }
 
 export const useLogin = (): any => {
+  const { t } = useTranslation()
   const fetchClient = useFetchClient()
   const { setIsAuthenticated } = useAuth()
   const [loginLoading, setLoginLoading] = useState(false)
@@ -57,11 +59,11 @@ export const useLogin = (): any => {
           })
         )
       } else {
-        setLoginError('User is not confirmed. Please verify your email.')
+        setLoginError(t('error.userNotConfirmed'))
         setLoginLoading(false)
       }
     } catch (error) {
-      setLoginError('Invalid Email or Password.')
+      setLoginError(t('error.invalidEmailOrPassword'))
     } finally {
       setLoginLoading(false)
     }

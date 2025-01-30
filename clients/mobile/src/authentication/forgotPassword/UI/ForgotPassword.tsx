@@ -5,8 +5,10 @@ import { Button } from '../../../components/button/Button'
 import AuthLayout from '../../AuthLayout'
 import { Input } from '../../../components/inputElement/Input'
 import { useForgotPassword } from '../hooks/useForgotPassword'
+import { useTranslation } from 'react-i18next'
 
 export default function ForgotPassword(): JSX.Element {
+  const { t } = useTranslation()
   const styles = createStyles(useTheme())
   const { credentials, handleInputChange, errors, isButtonDisabled, handleForgotPassword, error, loading } = useForgotPassword()
 
@@ -14,7 +16,7 @@ export default function ForgotPassword(): JSX.Element {
     <AuthLayout>
       <Input
         name="email"
-        label="Email"
+        label={t('common.email')}
         value={credentials.email}
         onChangeText={handleInputChange}
         placeholder="example@gmail.com"
@@ -25,7 +27,7 @@ export default function ForgotPassword(): JSX.Element {
         {error !== '' && <Text style={styles.error}>{error}</Text>}
       </View>
       <View style={{ marginTop: 15 }}>
-        <Button text="Continue" onPress={handleForgotPassword} disabled={isButtonDisabled} loading={loading} />
+        <Button text={t('common.continue')} onPress={handleForgotPassword} disabled={isButtonDisabled} loading={loading} />
       </View>
     </AuthLayout>
   )
