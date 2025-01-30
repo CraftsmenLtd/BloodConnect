@@ -22,7 +22,7 @@ export interface UserProfile extends
   city: string;
   bloodGroup: string;
   gender: string;
-  availableForDonation: string;
+  availableForDonation: boolean;
 }
 
 interface APIResponse {

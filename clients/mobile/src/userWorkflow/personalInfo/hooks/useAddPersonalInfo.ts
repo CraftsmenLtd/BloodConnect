@@ -176,7 +176,8 @@ export const useAddPersonalInfo = (): any => {
         height: personalInfo.height,
         weight: formatToTwoDecimalPlaces(personalInfo.weight),
         preferredDonationLocations,
-        ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {})
+        ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {}),
+        availableForDonation: rest.availableForDonation === 'yes'
       }
       const response = await updateUserProfile(finalData, fetchClient)
       if (response.status === 200) {
