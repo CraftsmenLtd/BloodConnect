@@ -136,16 +136,11 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
       createdAt,
       status: STATUS.IGNORED
     }
-
-    try {
-      const response = await updateMyResponses(requestPayload, fetchClient)
-      if (response.status === 200) {
-        navigation.navigate(SCREENS.POSTS)
-      } else {
-        throw new Error('Could not complete ignore response')
-      }
-    } catch (error) {
-      throw new Error('Something went wrong')
+    const response = await updateMyResponses(requestPayload, fetchClient)
+    if (response.status === 200) {
+      navigation.navigate(SCREENS.POSTS)
+    } else {
+      throw new Error('Could not complete ignore response')
     }
   })
 
