@@ -200,7 +200,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         style={styles.inputContainer}
         activeOpacity={1}
       >
-        <View style={styles.selectedValuesContainer}>
+        <View style={styles.input}>
           <Text style={styles.placeholder}>{placeholder}</Text>
         </View>
         <Ionicons name={isVisible ? 'chevron-up' : 'chevron-down'} size={14} color={theme.colors.textSecondary} />
@@ -208,7 +208,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
 
       {(minRequiredLabel != null) && <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>}
       {error !== null && <Text style={styles.error}>{error}</Text>}
-      <View style={{ gap: 4, flexDirection: 'row', flexWrap: 'wrap' }}>
+      <View style={styles.selectedItemContainer}>
           {
             selectedValues.map((value) =>
               <View key={value} style={styles.selectedItem}>
@@ -262,12 +262,17 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: 16,
     color: theme.colors.grey
   },
-  selectedValuesContainer: {
+  input: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     flex: 1,
     gap: 5,
     paddingVertical: 3
+  },
+  selectedItemContainer: {
+    gap: 4,
+    flexDirection: 'row',
+    flexWrap: 'wrap'
   },
   selectedItem: {
     flexDirection: 'row',
