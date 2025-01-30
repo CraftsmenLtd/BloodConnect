@@ -33,7 +33,7 @@ const UserProfileContext = createContext<UserProfileContextData | undefined>({
   userProfile: defaultProfile,
   loading: true,
   error: '',
-  fetchUserProfile: async() => {}
+  fetchUserProfile: async() => { }
 })
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

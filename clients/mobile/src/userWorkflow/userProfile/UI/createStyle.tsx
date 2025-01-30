@@ -21,6 +21,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderColor: theme.colors.lightGrey,
     padding: 10
   },
+  lastRow: {
+    borderBottomWidth: 0
+  },
   label: {
     fontSize: 14,
     color: theme.colors.textSecondary,

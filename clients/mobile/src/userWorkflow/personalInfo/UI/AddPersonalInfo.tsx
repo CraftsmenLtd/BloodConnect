@@ -274,7 +274,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: 'red',
     textAlign: 'center',
     padding: 8,
-    backgroundColor: theme.colors.greyBG,
     borderRadius: 6
   },
   buttonContainer: {
