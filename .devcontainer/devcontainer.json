@@ -6,7 +6,9 @@
       "extensions": [
         "ms-python.python",
         "dbaeumer.vscode-eslint",
-        "hashicorp.terraform"
+        "hashicorp.terraform",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker"
       ]
     }
   }
