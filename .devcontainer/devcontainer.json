@@ -1,13 +1,16 @@
 {
-    "name": "BloodConnect",
-    "image": "dev-image",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-python.python",
-                "dbaeumer.vscode-eslint",
-                "hashicorp.terraform"
-            ]
-        }
+  "name": "BloodConnect",
+  "image": "dev-image",
+  "postCreateCommand": "apt install -y openssh-client",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "dbaeumer.vscode-eslint",
+        "hashicorp.terraform",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker"
+      ]
     }
+  }
 }
