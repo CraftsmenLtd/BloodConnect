@@ -167,11 +167,11 @@ export const validateWeight = (weight: string): string | null => {
 const validateShortDescription = (value: string): string | null => {
   const tests = [
     {
-      test: !value.includes('\n'),
+      test: value.includes('\n'),
       error: 'Short description must not contain newline characters.'
     },
     {
-      test: /^[a-zA-Z0-9 .,!?-]*$/.test(value),
+      test: !/^[a-zA-Z0-9 .,!?-]*$/.test(value),
       error: 'Short description contains invalid special characters.'
     },
     {
@@ -180,7 +180,7 @@ const validateShortDescription = (value: string): string | null => {
     }
   ]
 
-  const error = tests.find(({ test }) => !test)?.error
+  const error = tests.find(({ test }) => test)?.error
 
   return error ?? null
 }
