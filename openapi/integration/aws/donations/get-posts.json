@@ -13,7 +13,7 @@
         "method.response.header.Access-Control-Allow-Methods": "'GET'",
         "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
         "method.response.header.Access-Control-Allow-Origin": "'*'",
-        "method.response.header.Cache-Control": "'max-age=300'"
+        "method.response.header.Cache-Control": "'max-age=60'"
       },
       "responseTemplates": {
         "application/json": "#importVtl donations/vtl/responseTemplates/get-posts.vtl"
