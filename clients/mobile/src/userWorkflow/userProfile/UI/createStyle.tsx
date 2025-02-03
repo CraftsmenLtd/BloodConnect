@@ -52,6 +52,18 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold'
+  },
+  selectedItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.greyBG,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginRight: 5
+  },
+  selectedItemText: {
+    marginRight: 5
   }
 })
 

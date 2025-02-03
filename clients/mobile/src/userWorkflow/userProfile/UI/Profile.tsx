@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, ScrollView } from 'react-native'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
+import { formattedDate } from '../../../utility/formatting'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
 import { useProfile } from '../hooks/useProfile'
@@ -41,7 +42,9 @@ const Profile: React.FC = () => {
         weight: userDetails.weight?.toString() ?? '',
         height: userDetails.height?.toString() ?? '',
         dateOfBirth: userDetails.dateOfBirth ?? '',
-        name: userDetails.name ?? ''
+        name: userDetails.name ?? '',
+        lastDonationDate: userDetails.lastDonationDate ?? '',
+        preferredDonationLocations: userDetails.preferredDonationLocations ?? []
       }
     })
   }
@@ -61,12 +64,25 @@ const Profile: React.FC = () => {
       >
         <View style={styles.card}>
           {renderDetailRow('Name', userDetails.name ?? '')}
-          {renderDetailRow('Date of Birth', userDetails.dateOfBirth ?? '')}
+          {renderDetailRow('Date of Birth', formattedDate(userDetails.dateOfBirth ?? '', true))}
           {renderDetailRow('Age', userDetails.age.toString())}
           {renderDetailRow('Weight (kg)', userDetails.weight !== undefined ? userDetails.weight.toString() : '')}
           {renderDetailRow('Height (feet)', userDetails.height !== undefined ? userDetails.height.toString() : '')}
           {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined && userDetails.phoneNumbers.length > 0 ? userDetails.phoneNumbers[0] : '')}
-          {renderDetailRow('Gender', userDetails.gender, true)}
+          {renderDetailRow('Gender', userDetails.gender)}
+          {renderDetailRow('Last Donation Date', formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
+          <View style={[styles.row, styles.lastRow]}>
+            <Text style={styles.label}>{'Locations'}</Text>
+            {userDetails?.preferredDonationLocations?.map(location => {
+              return (
+                <View key={location.area} style={styles.selectedItem}>
+                  <Text style={styles.selectedItemText}>
+                    {location.area}
+                  </Text>
+                </View>
+              )
+            })}
+          </View>
         </View>
       </ScrollView>
 
