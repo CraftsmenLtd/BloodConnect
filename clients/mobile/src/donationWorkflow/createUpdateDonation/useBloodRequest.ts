@@ -28,6 +28,7 @@ import { UrgencyLevel } from '../types'
 const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
 export const DONATION_DATE_TIME_INPUT_NAME = 'donationDateTime'
+export const DONATION_URGENCY_LEVEL = 'urgencyLevel'
 type CredentialKeys = keyof BloodRequestData
 
 export interface BloodRequestData {
@@ -100,24 +101,36 @@ export const useBloodRequest = (): any => {
     handleInputValidation(DONATION_DATE_TIME_INPUT_NAME, currentDate.toISOString())
   }
   const handleInputChange = (name: CredentialKeys, value: string): void => {
+    const updateErrors = (error: string | null): void => {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [DONATION_DATE_TIME_INPUT_NAME]: error ?? ''
+      }))
+    }
+
     if (name === DONATION_DATE_TIME_INPUT_NAME) {
       onDateChange(value)
       if (bloodRequestData.urgencyLevel === UrgencyLevel.URGENT) {
-        const validationError = validateDonationDateTimeWithin24Hours(value)
-        if (validationError !== null) {
-          setErrors(prevErrors => ({
-            ...prevErrors,
-            [DONATION_DATE_TIME_INPUT_NAME]: validationError
-          }))
-          return
-        }
+        updateErrors(validateDonationDateTimeWithin24Hours(value))
       }
       return
     }
+
+    if (name === DONATION_URGENCY_LEVEL) {
+      if (value === UrgencyLevel.REGULAR) {
+        if (bloodRequestData.donationDateTime !== null) {
+          updateErrors(null)
+        }
+      } else {
+        updateErrors(validateDonationDateTimeWithin24Hours(bloodRequestData.donationDateTime.toString()))
+      }
+    }
+
     setBloodRequestData(prevState => ({
       ...prevState,
       [name]: value
     }))
+
     if (name in validationRules) {
       handleInputValidation(name as keyof BloodRequestDataErrors, value)
     }

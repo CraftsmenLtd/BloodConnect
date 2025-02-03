@@ -93,10 +93,6 @@ export const validateDonationDateTimeWithin24Hours = (donationDateTime: string):
 
   const actualMaxAllowedDate = maxAllowedDate < endOfNextDay ? endOfNextDay : maxAllowedDate
 
-  if (donationDate < now) {
-    return 'Donation date & time cannot be in the past.'
-  }
-
   if (donationDate > actualMaxAllowedDate) {
     return `Donation date & time must be before ${formattedDate(actualMaxAllowedDate)}.`
   }
