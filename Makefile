@@ -1,3 +1,5 @@
+include makefiles/terraform.mk
+
 # Environment Variables
 LOCALSTACK_VERSION?=4.0.2
 DEPLOYMENT_ENVIRONMENT?=localstack
@@ -13,6 +15,7 @@ AWS_REGION?=$(AWS_DEFAULT_REGION)
 AWS_ACCESS_KEY_ID?=aws-access-key-id
 AWS_SECRET_ACCESS_KEY?=aws-secret-access-key
 AWS_SESSION_TOKEN?=aws-session-token
+BRANCH_NAME=$(shell git rev-parse --abbrev-ref HEAD | tr '[:upper:]' '[:lower:]')
 
 # Docker Environment Variables
 TF_VARS=$(shell env | grep '^TF_VAR_' | awk '{print "-e", $$1}')
@@ -78,37 +81,6 @@ localstack-start:
 	docker rm -f $(DOCKER_LOCALSTACK_CONTAINER_NAME)
 	docker run --rm --privileged --name $(DOCKER_LOCALSTACK_CONTAINER_NAME) -itd -e LOCALSTACK_AUTH_TOKEN=$(LOCALSTACK_AUTH_TOKEN) -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack-pro:$(LOCALSTACK_VERSION)
 
-# Terraform Commands
-tf-init:
-	$(TF_RUNNER) -chdir=$(TF_DIR) init -input=false $(TF_BACKEND_CONFIG)
-
-tf-plan-apply:
-	touch $(TF_DIR)/openapi.json
-	$(TF_RUNNER) -chdir=$(TF_DIR) plan -input=false -out=tf-apply.out
-
-tf-plan-destroy:
-	touch $(TF_DIR)/openapi.json
-	$(TF_RUNNER) -chdir=$(TF_DIR) plan -input=false -out=tf-destroy.out --destroy
-
-tf-apply:
-	$(TF_RUNNER) -chdir=$(TF_DIR) apply -input=false tf-apply.out
-
-tf-destroy:
-	$(TF_RUNNER) -chdir=$(TF_DIR) apply -input=false tf-destroy.out
-
-tf-fmt:
-	$(TF_RUNNER) -chdir=iac/terraform fmt -recursive
-	$(TF_RUNNER) -chdir=deployment fmt -recursive
-
-tf-validate: tf-init
-	$(TF_RUNNER) -chdir=$(TF_DIR) validate
-
-tf-security: tf-init
-	checkov --directory $(TF_DIR) $(TF_CHECKOV_SKIP)
-
-tf-output-%:
-	$(TF_RUNNER) -chdir=$(TF_DIR) output -raw $*
-
 
 # Nodejs
 install-node-packages:
@@ -159,7 +131,7 @@ devcontainer:
 	docker rm -f $(DOCKER_DEV_CONTAINER_NAME)
 	docker run --rm -itd --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
-			   /bin/bash	           
+			   /bin/bash
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
@@ -180,36 +152,14 @@ start-mobile:
 			$(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) \
 			$(RUNNER_IMAGE_NAME) npm run start --prefix clients/mobile
 
-# Deploy branch locally
-clean-terraform-deployment-files:
-	rm -rf deployment/aws/terraform/.terraform \
-		deployment/aws/terraform/.terraform.lock.hcl \
-		deployment/aws/terraform/errored.tfstate \
-		deployment/aws/terraform/openapi.json \
-		deployment/aws/terraform/tf-apply.out
 
-deploy-branch-%:
-	make run-command-tf-$* \
-	DEPLOYMENT_ENVIRONMENT=dev \
-	TF_BACKEND_BUCKET_NAME=$(AWS_DEV_TERRAFORM_STATES_BUCKET_NAME) \
-	TF_BACKEND_BUCKET_KEY=dev/$(branch).tfstate \
-	TF_BACKEND_BUCKET_REGION=$(AWS_REGION) \
-	AWS_REGION=$(AWS_REGION) \
-	TF_VAR_aws_environment=$(branch) \
-	TF_VAR_bloodconnect_domain=$(AWS_DEV_DOMAIN_NAME) \
-	TF_VAR_firebase_token_s3_url=$(AWS_DEV_FIREBASE_TOKEN_URL) \
-	TF_VAR_google_client_id=$(AWS_DEV_GOOGLE_CLIENT_ID) \
-	TF_VAR_google_client_secret=$(AWS_DEV_GOOGLE_CLIENT_SECRET) \
-	TF_VAR_facebook_client_id=$(AWS_DEV_FACEBOOK_CLIENT_ID) \
-	TF_VAR_facebook_client_secret=$(AWS_DEV_FACEBOOK_CLIENT_SECRET)
+aws-init: clean-terraform-files tf-run-init
 
-deploy-aws-init: clean-terraform-deployment-files
-	make deploy-branch-init branch=$(branch)
+aws-apply: package-all tf-run-plan-apply tf-run-apply
 
-deploy-aws-apply: run-command-package-all
-	make deploy-branch-plan-apply branch=$(branch)
-	make deploy-branch-apply branch=$(branch)
+aws-destroy: tf-run-plan-destroy tf-run-destroy
 
-deploy-aws-destroy:
-	make deploy-branch-plan-destroy branch=$(branch)
-	make deploy-branch-destroy branch=$(branch)
+# Deploy Locally
+deploy-branch-locally: run-command-aws-init run-command-aws-apply
+
+destroy-branch-locally: run-command-aws-destroy
