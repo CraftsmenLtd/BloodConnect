@@ -17,6 +17,7 @@ export interface EditProfileData {
   dateOfBirth: string;
   name: string;
   gender: string;
+  lastDonationDate: string;
   [key: string]: any;
 }
 
