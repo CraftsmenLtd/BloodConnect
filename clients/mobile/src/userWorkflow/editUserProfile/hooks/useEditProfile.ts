@@ -34,7 +34,9 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   height: [validateRequired, validateHeight],
   gender: [validateRequired],
   phone: [validateRequired, validatePhoneNumber],
-  lastDonationDate: []
+  lastDonationDate: [],
+  city: [],
+  locations: []
 }
 
 export const useEditProfile = (): any => {

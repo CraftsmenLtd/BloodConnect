@@ -18,6 +18,8 @@ export interface EditProfileData {
   name: string;
   gender: string;
   lastDonationDate: string;
+  city: string;
+  locations: string[];
   [key: string]: any;
 }
 
@@ -45,7 +47,9 @@ const Profile: React.FC = () => {
         dateOfBirth: userDetails.dateOfBirth ?? '',
         name: userDetails.name ?? '',
         lastDonationDate: userDetails.lastDonationDate ?? '',
-        preferredDonationLocations: userDetails.preferredDonationLocations ?? []
+        locations: userDetails?.preferredDonationLocations?.map(location => {
+          return location.area
+        }) ?? []
       }
     })
   }
