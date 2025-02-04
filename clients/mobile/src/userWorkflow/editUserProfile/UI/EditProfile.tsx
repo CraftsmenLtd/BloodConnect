@@ -124,37 +124,37 @@ const EditProfile = () => {
               />
             </View>
 
-            <View style={styles.fieldSpacing}>
-              <Dropdown
-                label='Preferred District for Donating Blood'
-                isRequired={true}
-                placeholder='Select City'
-                options={districts}
-                name='city'
-                selectedValue={profileData.city}
-                onChange={handleInputChange}
-                error={errors.city}
-              />
-            </View>
+            {/* <View style={styles.fieldSpacing}> */}
+            {/*  <Dropdown */}
+            {/*    label='Preferred District for Donating Blood' */}
+            {/*    isRequired={true} */}
+            {/*    placeholder='Select City' */}
+            {/*    options={districts} */}
+            {/*    name='city' */}
+            {/*    selectedValue={profileData.city} */}
+            {/*    onChange={handleInputChange} */}
+            {/*    error={errors.city} */}
+            {/*  /> */}
+            {/* </View> */}
 
-            <View style={styles.fieldSpacing}>
-              <MultiSelect
-                name='locations'
-                label="Select Preferred Location"
-                options={[]}
-                selectedValues={profileData.preferredDonationLocations}
-                onSelect={handleInputChange}
-                placeholder="Select Preferred Location"
-                isRequired={true}
-                enableSearch={true}
-                fetchOptions={
-                  async(searchText) =>
-                    locationService.preferredLocationAutocomplete(searchText, profileData.city)
-                }
-                minRequiredLabel='Add minimum 1 area.'
-                editable={profileData.city.length > 0}
-              />
-            </View>
+            {/* <View style={styles.fieldSpacing}> */}
+            {/*  <MultiSelect */}
+            {/*    name='locations' */}
+            {/*    label="Select Preferred Location" */}
+            {/*    options={[]} */}
+            {/*    selectedValues={profileData?.preferredDonationLocations?.map((location: { area: any }) => { return location.area })} */}
+            {/*    onSelect={handleInputChange} */}
+            {/*    placeholder="Select Preferred Location" */}
+            {/*    isRequired={true} */}
+            {/*    enableSearch={true} */}
+            {/*    fetchOptions={ */}
+            {/*      async(searchText) => */}
+            {/*        locationService.preferredLocationAutocomplete(searchText, profileData.city) */}
+            {/*    } */}
+            {/*    minRequiredLabel='Add minimum 1 area.' */}
+            {/*    editable={profileData.city.length > 0} */}
+            {/*  /> */}
+            {/* </View> */}
 
             <View style={styles.inputFieldStyle}>
               <DateTimePickerComponent

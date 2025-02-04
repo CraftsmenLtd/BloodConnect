@@ -60,7 +60,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    marginRight: 5
+    marginRight: 5,
+    marginBottom: 6
   },
   selectedItemText: {
     marginRight: 5
