@@ -1,0 +1,74 @@
+{
+  "get": {
+    "operationId": "GetPlaceAutoComplete",
+    "description": "Get Auto Complete Suggestion For A Place",
+    "tags": [
+      "bloodconnect-maps"
+    ],
+    "parameters": [
+      {
+        "name": "input",
+        "in": "query",
+        "required": true,
+        "description": "The name of the place",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "types",
+        "in": "query",
+        "required": true,
+        "description": "The types of the place",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "200 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {}
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/maps/get-place-auto-complete.json"
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
+  },
+  "options": {
+    "parameters": [
+      {
+        "name": "donorId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "$ref": "./../cors-options.json"
+  }
+}

@@ -68,6 +68,12 @@
     "/notification/register": {
       "$ref": "./../paths/notification/register.json"
     },
+    "/maps/place/autocomplete/json": {
+      "$ref": "./../paths/maps/get-place-auto-complete.json"
+    },
+    "/maps/geocode/json": {
+      "$ref": "./../paths/maps/get-geo-code.json"
+    },
     "/logger": {
       "$ref": "./../paths/logger/logger.json"
     }
