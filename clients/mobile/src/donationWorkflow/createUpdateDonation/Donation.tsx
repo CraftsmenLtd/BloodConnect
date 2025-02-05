@@ -17,9 +17,9 @@ import { LocationService } from '../../LocationService/LocationService'
 import { districts } from '../../userWorkflow/personalInfo/options'
 import Dropdown from '../../components/inputElement/Dropdown'
 
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
-const locationService = new LocationService(GOOGLE_MAP_API)
+const locationService = new LocationService(API_BASE_URL)
 
 const CreateBloodRequest = () => {
   const styles = createStyles(useTheme())
