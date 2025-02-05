@@ -60,10 +60,20 @@
   },
   "options": {
     "parameters": [
-      {
-        "name": "donorId",
-        "in": "path",
+            {
+        "name": "input",
+        "in": "query",
         "required": true,
+        "description": "The name of the place",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "types",
+        "in": "query",
+        "required": true,
+        "description": "The types of the place",
         "schema": {
           "type": "string"
         }
