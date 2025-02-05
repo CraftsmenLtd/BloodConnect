@@ -4,7 +4,7 @@ import {
   GeocodeResponse,
   PlaceAutocompleteRequest,
   PlaceAutocompleteResponse
-} from '../dto/googleMaps'
+} from '../dto/Maps'
 
 export interface MapsProvider {
   getPlaceAutocomplete(params: PlaceAutocompleteRequest): Promise<APIResponse<PlaceAutocompleteResponse>>;
