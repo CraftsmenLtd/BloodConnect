@@ -1,23 +1,12 @@
 import { APIGatewayProxyResult } from 'aws-lambda'
-import { z } from 'zod'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { MapsService } from '../../../application/maps/MapsService'
-import { PlaceAutocompleteRequest } from '../../../application/maps/dto/googleMaps'
+import { MapsHandler } from '../../../application/maps/MapsHandler'
+import { PlaceAutocompleteRequest } from '../../../application/maps/dto/Maps'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 
-const placeAutocompleteSchema = z.object({
-  input: z.string().min(1),
-  sessiontoken: z.string().optional(),
-  components: z.string().optional(),
-  location: z.string().optional(),
-  radius: z.number().positive().optional(),
-  types: z.string().optional(),
-  language: z.string().optional()
-})
-
-const mapsService = new MapsService()
+const mapsHandler = new MapsHandler()
 
 async function placeAutocomplete(
   event: PlaceAutocompleteRequest & HttpLoggerAttributes
@@ -29,9 +18,9 @@ async function placeAutocomplete(
   )
 
   try {
-    const validatedParams = placeAutocompleteSchema.parse(event)
-
-    const result = await mapsService.getPlaceAutocomplete(validatedParams)
+    const result = await mapsHandler.getPlaceAutocomplete({
+      ...event as PlaceAutocompleteRequest
+    })
 
     return generateApiGatewayResponse(
       {

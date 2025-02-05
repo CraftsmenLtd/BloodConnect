@@ -1,25 +1,12 @@
 import { APIGatewayProxyResult } from 'aws-lambda'
-import { z } from 'zod'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { MapsService } from '../../../application/maps/MapsService'
-import { GeocodeRequest } from '../../../application/maps/dto/googleMaps'
+import { MapsHandler } from '../../../application/maps/MapsHandler'
+import { GeocodeRequest } from '../../../application/maps/dto/Maps'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 
-const geocodeSchema = z.object({
-  address: z.string().optional(),
-  latlng: z.string().optional(),
-  place_id: z.string().optional(),
-  language: z.string().optional(),
-  region: z.string().optional()
-}).refine(data => (
-  data?.address === null || data?.latlng === null || data?.place_id === null
-), {
-  message: 'At least one of address, latlng, or place_id must be provided'
-})
-
-const mapsService = new MapsService()
+const mapsHandler = new MapsHandler()
 
 async function geocode(
   event: GeocodeRequest & HttpLoggerAttributes
@@ -31,9 +18,9 @@ async function geocode(
   )
 
   try {
-    const validatedParams = geocodeSchema.parse(event)
-
-    const result = await mapsService.getGeocode(validatedParams)
+    const result = await mapsHandler.getGeocode({
+      ...event as GeocodeRequest
+    })
 
     return generateApiGatewayResponse(
       {
