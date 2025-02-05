@@ -3,7 +3,8 @@ variable "environment" {
   description = "Deployment environment"
 }
 
-variable "google_map_api_key" {
+variable "google_maps_api_key" {
   type        = string
   description = "google maps api key"
+  sensitive = true
 }

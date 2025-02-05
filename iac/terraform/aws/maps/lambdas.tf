@@ -7,7 +7,7 @@ locals {
       statement                  = local.policies.common_policies
       invocation_arn_placeholder = "GET_PLACE_AUTO_COMPLETE_INVOCATION_ARN"
       env_variables = {
-        GOOGLE_MAP_API_KEY = var.google_map_api_key
+        GOOGLE_MAPS_API_KEY = var.google_maps_api_key
       }
     },
     geocode = {
@@ -17,7 +17,7 @@ locals {
       statement = local.policies.common_policies,
       invocation_arn_placeholder = "GET_GEO_CODE_INVOCATION_ARN"
       env_variables = {
-        GOOGLE_MAP_API_KEY = var.google_map_api_key
+        GOOGLE_MAPS_API_KEY = var.google_maps_api_key
       }
     }
   }
