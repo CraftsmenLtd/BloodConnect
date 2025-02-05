@@ -2,7 +2,7 @@ import { APIGatewayProxyResult } from 'aws-lambda'
 import { z } from 'zod'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { config, GoogleMapsService } from '../../../application/maps/GoogleMapsService'
+import { MapsService } from '../../../application/maps/MapsService'
 import { GeocodeRequest } from '../../../application/maps/dto/googleMaps'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
@@ -19,7 +19,7 @@ const geocodeSchema = z.object({
   message: 'At least one of address, latlng, or place_id must be provided'
 })
 
-const googleMapsService = new GoogleMapsService()
+const mapsService = new MapsService()
 
 async function geocode(
   event: GeocodeRequest & HttpLoggerAttributes
@@ -31,12 +31,9 @@ async function geocode(
   )
 
   try {
-    if (config.GOOGLE_MAPS_API_KEY === '') {
-      throw new Error('GOOGLE_MAPS_API_KEY is required')
-    }
     const validatedParams = geocodeSchema.parse(event)
 
-    const result = await googleMapsService.getGeocode(validatedParams)
+    const result = await mapsService.getGeocode(validatedParams)
 
     return generateApiGatewayResponse(
       {

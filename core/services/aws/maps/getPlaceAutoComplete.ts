@@ -2,7 +2,7 @@ import { APIGatewayProxyResult } from 'aws-lambda'
 import { z } from 'zod'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { config, GoogleMapsService } from '../../../application/maps/GoogleMapsService'
+import { MapsService } from '../../../application/maps/MapsService'
 import { PlaceAutocompleteRequest } from '../../../application/maps/dto/googleMaps'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
@@ -17,7 +17,7 @@ const placeAutocompleteSchema = z.object({
   language: z.string().optional()
 })
 
-const googleMapsService = new GoogleMapsService()
+const mapsService = new MapsService()
 
 async function placeAutocomplete(
   event: PlaceAutocompleteRequest & HttpLoggerAttributes
@@ -29,13 +29,9 @@ async function placeAutocomplete(
   )
 
   try {
-    if (config.GOOGLE_MAPS_API_KEY === '') {
-      throw new Error('GOOGLE_MAPS_API_KEY is required')
-    }
-
     const validatedParams = placeAutocompleteSchema.parse(event)
 
-    const result = await googleMapsService.getPlaceAutocomplete(validatedParams)
+    const result = await mapsService.getPlaceAutocomplete(validatedParams)
 
     return generateApiGatewayResponse(
       {

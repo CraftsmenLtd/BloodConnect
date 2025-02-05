@@ -1,11 +1,12 @@
 import axios from 'axios'
 import {
-  PlaceAutocompleteRequest,
-  GeocodeRequest,
   APIResponse,
-  PlaceAutocompleteResponse,
-  GeocodeResponse
-} from './dto/googleMaps'
+  GeocodeRequest,
+  GeocodeResponse,
+  PlaceAutocompleteRequest,
+  PlaceAutocompleteResponse
+} from '../dto/googleMaps'
+import { MapsProvider } from '../interface/Maps-provider'
 
 export const config = {
   GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY ?? '',
@@ -13,7 +14,7 @@ export const config = {
   GOOGLE_MAPS_BASE_URL: 'https://maps.googleapis.com/maps/api'
 }
 
-export class GoogleMapsService {
+export class GoogleMapProvider implements MapsProvider {
   private readonly baseUrl: string
   private readonly apiKey: string
   private readonly country: string = ''
@@ -24,8 +25,16 @@ export class GoogleMapsService {
     this.country = config.COUNTRY
   }
 
+  private validateAPIKey(): void {
+    if (this.apiKey === '') {
+      throw new Error('GOOGLE_MAPS_API_KEY is required')
+    }
+  }
+
   async getPlaceAutocomplete(params: PlaceAutocompleteRequest): Promise<APIResponse<PlaceAutocompleteResponse>> {
     try {
+      this.validateAPIKey()
+
       const response = await axios.get(`${this.baseUrl}/place/autocomplete/json`, {
         params: {
           ...params,
@@ -45,6 +54,8 @@ export class GoogleMapsService {
 
   async getGeocode(params: GeocodeRequest): Promise<APIResponse<GeocodeResponse>> {
     try {
+      this.validateAPIKey()
+
       const response = await axios.get(`${this.baseUrl}/geocode/json`, {
         params: {
           ...params,
@@ -61,7 +72,7 @@ export class GoogleMapsService {
     }
   }
 
-  private handleError(error: unknown): APIResponse<never> {
+  handleError(error: unknown): APIResponse<never> {
     const axiosError = error as { response?: { data?: { error_message?: string; status?: string } }; message?: string }
     return {
       success: false,
