@@ -23,11 +23,7 @@ async function geocode(
     })
 
     return generateApiGatewayResponse(
-      {
-        success: true,
-        data: result,
-        message: 'Geo code retrieved successfully'
-      },
+      result.data ?? { results: [], status: 'OK' },
       HTTP_CODES.OK
     )
   } catch (error) {

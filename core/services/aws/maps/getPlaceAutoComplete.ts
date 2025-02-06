@@ -23,11 +23,7 @@ async function placeAutocomplete(
     })
 
     return generateApiGatewayResponse(
-      {
-        success: true,
-        data: result,
-        message: 'Geo code retrieved successfully'
-      },
+      result.data ?? { predictions: [], status: 'OK' },
       HTTP_CODES.OK
     )
   } catch (error) {
