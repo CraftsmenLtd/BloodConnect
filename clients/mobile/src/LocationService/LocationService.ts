@@ -1,7 +1,7 @@
 import Constants from 'expo-constants'
 import { FetchClient } from '../setup/clients/FetchClient'
 import { stringToNumber } from '../utility/stringParser'
-const { APP_NAME, APP_VERSION, LOCATION_SERVICE_EMAIL, GOOGLE_MAP_API_KEY, COUNTRY } = Constants.expoConfig?.extra ?? {}
+const { APP_NAME, APP_VERSION, LOCATION_SERVICE_EMAIL } = Constants.expoConfig?.extra ?? {}
 
 export interface Coordinates {
   lat: string;
@@ -77,12 +77,12 @@ export class LocationService {
 
   async preferredLocationAutocomplete(location: string, city: string): Promise<Array<{ label: string; value: string }>> {
     try {
-      const response = await this.httpClient.get<{ predictions: Prediction[] }>('/place/autocomplete/json', {
-        input: location,
-        types: 'geocode',
-        components: `country:${COUNTRY}`,
-        key: GOOGLE_MAP_API_KEY
-      })
+      const response = await this.httpClient.get<{ predictions: Prediction[] }>(
+        '/maps/place/autocomplete/json', {
+          input: location,
+          types: 'geocode'
+        }
+      )
 
       return this.filterAndFormatPredictions(response.predictions, ['neighborhood', 'political'])
     } catch (error) {
@@ -92,9 +92,8 @@ export class LocationService {
 
   async getLatLon(location: string): Promise<{ latitude: number; longitude: number }> {
     try {
-      const response = await this.httpClient.get<GeocodeResponse>('/geocode/json', {
-        address: location,
-        key: GOOGLE_MAP_API_KEY
+      const response = await this.httpClient.get<GeocodeResponse>('/maps/geocode/json', {
+        address: location
       })
 
       if (response.results.length > 0) {
@@ -109,12 +108,11 @@ export class LocationService {
 
   async healthLocationAutocomplete(location: string): Promise<Array<{ label: string; value: string }>> {
     try {
-      const response = await this.httpClient.get<{ predictions: Prediction[] }>('/place/autocomplete/json', {
-        input: location,
-        types: 'establishment',
-        components: `country:${COUNTRY}`,
-        key: GOOGLE_MAP_API_KEY
-      })
+      const response = await this.httpClient.get<{ predictions: Prediction[] }>(
+        '/maps/place/autocomplete/json', {
+          input: location,
+          types: 'establishment'
+        })
 
       return this.filterAndFormatPredictions(response.predictions, ['hospital', 'health', 'pharmacy', 'clinic'])
     } catch (error) {

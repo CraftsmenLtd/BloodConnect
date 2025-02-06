@@ -75,6 +75,12 @@ module "notification" {
   donor_search_state_machine_arn = module.donor_search.donor_search_state_machine_arn
 }
 
+module "maps" {
+  source                  = "./maps"
+  environment             = var.environment
+  google_maps_api_key      = var.google_maps_api_key
+}
+
 module "logger" {
   source      = "./logger"
   environment = var.environment
