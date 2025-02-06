@@ -26,6 +26,7 @@ const EditProfile = () => {
     profileData,
     errors,
     handleInputChange,
+    loading,
     isButtonDisabled,
     handleSave
   } = useEditProfile()
@@ -181,6 +182,7 @@ const EditProfile = () => {
           <View style={styles.buttonContainer}>
             <Button
               text="Save"
+              loading={loading}
               onPress={handleSave}
               disabled={isButtonDisabled}
             />

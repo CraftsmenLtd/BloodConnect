@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text, ScrollView } from 'react-native'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
-import { formattedDate } from '../../../utility/formatting'
+import { formattedDate, LocationData } from '../../../utility/formatting'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
 import { useProfile } from '../hooks/useProfile'
@@ -19,6 +19,7 @@ export interface EditProfileData {
   gender: string;
   lastDonationDate: string;
   city: string;
+  preferredDonationLocations: LocationData[];
   locations: string[];
   [key: string]: any;
 }
@@ -47,6 +48,7 @@ const Profile: React.FC = () => {
         dateOfBirth: userDetails.dateOfBirth ?? '',
         name: userDetails.name ?? '',
         lastDonationDate: userDetails.lastDonationDate ?? '',
+        preferredDonationLocations: userDetails.preferredDonationLocations ?? [],
         locations: userDetails?.preferredDonationLocations?.map(location => {
           return location.area
         }) ?? []
