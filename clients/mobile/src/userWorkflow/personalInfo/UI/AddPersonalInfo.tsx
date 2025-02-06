@@ -16,9 +16,9 @@ import { WARNINGS } from '../../../setup/constant/consts'
 import { POLICY_URLS } from '../../../setup/constant/urls'
 import MultiSelect from '../../../components/multiSelect'
 
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
-const locationService = new LocationService(GOOGLE_MAP_API)
+const locationService = new LocationService(API_BASE_URL)
 
 const AddPersonalInfo = () => {
   const theme = useTheme()

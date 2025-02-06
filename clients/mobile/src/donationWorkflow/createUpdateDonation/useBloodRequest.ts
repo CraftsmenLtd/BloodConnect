@@ -25,7 +25,7 @@ import { cancelNotificationById, fetchScheduledNotifications, scheduleNotificati
 import { NotificationRequest } from 'expo-notifications'
 import { UrgencyLevel } from '../types'
 
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 export const DONATION_DATE_TIME_INPUT_NAME = 'donationDateTime'
 export const DONATION_URGENCY_LEVEL = 'urgencyLevel'
@@ -180,7 +180,7 @@ export const useBloodRequest = (): any => {
 
   const createBloodDonationRequest = async(): Promise<DonationCreateUpdateResponse> => {
     const { bloodQuantity, ...rest } = bloodRequestData
-    const locationService = new LocationService(GOOGLE_MAP_API)
+    const locationService = new LocationService(API_BASE_URL)
     const coordinates = await locationService.getLatLon(rest.location)
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
