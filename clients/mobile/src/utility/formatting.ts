@@ -1,3 +1,12 @@
+import { LocationService } from '../LocationService/LocationService'
+
+export interface LocationData {
+  area: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+}
+
 export const formattedDate = (date: string | Date, showOnlyDate = false): string => {
   const dte = new Date(date)
 
@@ -66,4 +75,23 @@ export const replaceTemplatePlaceholders = (template: string, ...values: string[
   return template.replace(/{(\d+)}/g, (_match, index) => {
     return typeof values[index] !== 'undefined' ? values[index] : ''
   })
+}
+
+export const formatLocations = async(locations: string[], city: string, mapAPI: string): Promise<LocationData[]> => {
+  const locationService = new LocationService(mapAPI)
+
+  const formattedLocations = await Promise.all(
+    locations.map(async(area) =>
+      locationService.getLatLon(area)
+        .then((location) => {
+          if (location !== null) {
+            const { latitude, longitude } = location
+            return { area, city, latitude, longitude }
+          }
+        })
+        .catch(() => { return null })
+    )
+  )
+
+  return formattedLocations.filter((location) => location !== null && location !== undefined)
 }

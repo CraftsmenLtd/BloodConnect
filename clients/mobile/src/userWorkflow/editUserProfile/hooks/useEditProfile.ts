@@ -14,6 +14,9 @@ import useFetchData from '../../../setup/clients/useFetchData'
 import { updateUserProfile } from '../../services/userProfileService'
 import { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
 import { EditProfileData } from '../../userProfile/UI/Profile'
+import Constants from 'expo-constants'
+import { formatLocations } from '../../../utility/formatting'
+const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
 
 type ProfileFields = keyof Omit<ProfileData, 'location'>
 
@@ -33,7 +36,11 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   weight: [validateRequired, validateWeight],
   height: [validateRequired, validateHeight],
   gender: [validateRequired],
-  phone: [validateRequired, validatePhoneNumber]
+  phone: [validateRequired, validatePhoneNumber],
+  preferredDonationLocations: [validateRequired],
+  lastDonationDate: [],
+  city: [],
+  locations: []
 }
 
 export const useEditProfile = (): any => {
@@ -105,11 +112,21 @@ export const useEditProfile = (): any => {
 
     const { phone, ...rest } = profileData
     userDetails.phoneNumbers[0] = phone
+    const filteredLocations = rest.locations.filter(
+      (location) => !rest.preferredDonationLocations.some((preferred) => preferred.area === location)
+    )
+    const updatedPreferredDonationLocations = rest.preferredDonationLocations.filter(
+      (preferred) => rest.locations.includes(preferred.area)
+    )
 
     try {
       const requestPayload = {
         ...rest,
-        weight: parseFloat(profileData.weight)
+        weight: parseFloat(profileData.weight),
+        preferredDonationLocations: [
+          ...updatedPreferredDonationLocations,
+          ...await formatLocations(filteredLocations, rest.city, GOOGLE_MAP_API)
+        ]
       }
 
       await executeUpdateProfile(requestPayload)
