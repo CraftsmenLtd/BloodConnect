@@ -15,18 +15,18 @@ const geocodeSchema = z.object({
   language: z.string().optional(),
   region: z.string().optional()
 }).refine(data => (
-  data?.address === null || data?.latlng === null || data?.place_id === null
+  data?.address ?? data?.latlng ?? data?.place_id
 ), {
   message: 'At least one of address, latlng, or place_id must be provided'
 })
 
 const placeAutocompleteSchema = z.object({
   input: z.string().min(1),
+  types: z.enum(['geocode', 'establishment']),
   sessiontoken: z.string().optional(),
   components: z.string().optional(),
   location: z.string().optional(),
   radius: z.number().positive().optional(),
-  types: z.string().optional(),
   language: z.string().optional()
 })
 
