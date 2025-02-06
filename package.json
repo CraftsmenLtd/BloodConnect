@@ -29,8 +29,6 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "axios": "^1.7.9",
-    "pino": "^9.5.0",
-    "zod": "^3.24.1"
+    "pino": "^9.5.0"
   }
 }
