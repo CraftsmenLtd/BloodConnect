@@ -9,3 +9,4 @@ This section contains the legal documents for BloodConnect.
 
    TermsOfService
    PrivacyPolicy
+   DataDeletionInstruction
