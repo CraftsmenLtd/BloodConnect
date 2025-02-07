@@ -141,7 +141,7 @@ As you've noticed; we prefix commands with `run-command-` keyword; this lets us 
 
 You can however run these commands locally too. But that would mean you're expected to configure your machine to match what the docker image does.
 
-Deploying into Personal  Development Environment
+Deploying into Personal Development Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 You might want to deploy your code into aws to have a fully fledged environment. There are couple of ways you can achieve this. The simplest way would be to make a git commit.
 
@@ -164,6 +164,15 @@ Don't forget to use the destroy-branch pipeline after use.
     --role-session-name <a random session name> \
     --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
     --output text))
+
+If you want to use dev containers, you will need to export the environment variables as a file
+.. code-block:: bash
+    printf "AWS_ACCESS_KEY_ID=%s\nAWS_SECRET_ACCESS_KEY=%s\nAWS_SESSION_TOKEN=%s" \
+    $(aws sts assume-role \
+    --role-arn arn:aws:iam::<bloodconnect aws account id>:role/GitHubActionsAndDevRole \
+    --role-session-name <a random session name> \
+    --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
+    --output text) > .devcontainer/devcontainer.env
 
 Note: The above role is maintained in this repo: https://github.com/CraftsmenLtd/Bloodconnect-oidc
 You can now start creating the command, there are a few variables that terraform needs. You can export them as environment variables or you can pass them as arguments to the make command.

@@ -1,8 +1,10 @@
 include makefiles/terraform.mk
 
+# Makefile flags
+MAKEFLAGS+=--no-print-directory
+
 # Environment Variables
 LOCALSTACK_VERSION?=4.0.2
-DEPLOYMENT_ENVIRONMENT?=localstack
 LOCALSTACK_AUTH_TOKEN?=localstack-auth-token
 RUNNER_IMAGE_NAME?=dev-image
 DOCKER_SOCK_MOUNT?=-v /var/run/docker.sock:/var/run/docker.sock
@@ -15,12 +17,13 @@ AWS_REGION?=$(AWS_DEFAULT_REGION)
 AWS_ACCESS_KEY_ID?=aws-access-key-id
 AWS_SECRET_ACCESS_KEY?=aws-secret-access-key
 AWS_SESSION_TOKEN?=aws-session-token
-BRANCH_NAME=$(shell git rev-parse --abbrev-ref HEAD | tr '[:upper:]' '[:lower:]')
-
+DEPLOYMENT_ENVIRONMENT_GROUP?=localstack
+DEPLOYMENT_ENVIRONMENT=$(shell git rev-parse --abbrev-ref HEAD | tr '[:upper:]' '[:lower:]')
 # Docker Environment Variables
 TF_VARS=$(shell env | grep '^TF_VAR_' | awk '{print "-e", $$1}')
 DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
             -e DEPLOYMENT_ENVIRONMENT \
+            -e DEPLOYMENT_ENVIRONMENT_GROUP \
             -e AWS_SECRET_ACCESS_KEY \
             -e AWS_SESSION_TOKEN \
             -e AWS_DEFAULT_REGION \
@@ -63,7 +66,7 @@ bundle-openapi:
 # Depending on the deployment environment, we choose the appropriate Terraform command and directory.
 # If using LocalStack, the 'tflocal' command is used to run Terraform commands within LocalStack,
 # and the Terraform directory is set to 'deployment/localstack/terraform'.
-ifeq ($(DEPLOYMENT_ENVIRONMENT),localstack)
+ifeq ($(DEPLOYMENT_ENVIRONMENT_GROUP),localstack)
     TF_RUNNER := tflocal
     TF_DIR := deployment/localstack/terraform
 else
@@ -127,18 +130,6 @@ run-command-%:
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
 	           make $* NPM_TEST_ARGS=$(NPM_TEST_ARGS) NPM_ARGS=$(NPM_ARGS)
 
-devcontainer:
-	docker rm -f $(DOCKER_DEV_CONTAINER_NAME)
-	docker run --rm -itd --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
-	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
-			   /bin/bash
-
-# Dev commands
-start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
-
-run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
-         run-command-tf-plan-apply run-command-tf-apply
-
 
 # Swagger UI
 swagger-ui:
@@ -153,13 +144,15 @@ start-mobile:
 			$(RUNNER_IMAGE_NAME) npm run start --prefix clients/mobile
 
 
-aws-init: clean-terraform-files tf-run-init
+# Deploy Dev Branch from Local Machine
+LOCAL_DEV_DEPLOYMENT_CONFIG=TF_BACKEND_BUCKET_REGION=$(AWS_REGION) DEPLOYMENT_ENVIRONMENT_GROUP=dev TF_BACKEND_BUCKET_KEY=dev/$(DEPLOYMENT_ENVIRONMENT).tfstate
+deploy-dev-branch:
+	$(MAKE) clean-terraform-files $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 
-aws-apply: package-all tf-run-plan-apply tf-run-apply
+# Dev commands
+start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
-aws-destroy: tf-run-plan-destroy tf-run-destroy
-
-# Deploy Locally
-deploy-branch-locally: run-command-aws-init run-command-aws-apply
-
-destroy-branch-locally: run-command-aws-destroy
+run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
+         run-command-tf-plan-apply run-command-tf-apply
