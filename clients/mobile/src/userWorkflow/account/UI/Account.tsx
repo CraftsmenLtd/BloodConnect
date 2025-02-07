@@ -46,6 +46,12 @@ export const Account = () => {
           <Text style={styles.optionText}>Notifications</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity> */}
+
+        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.ABOUT) }}>
+          <MaterialIcons name="info-outline" size={24} style={styles.iconStyle} />
+          <Text style={styles.optionText}>About</Text>
+          <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.moreSection}>
