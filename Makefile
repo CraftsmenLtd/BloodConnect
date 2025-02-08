@@ -8,9 +8,6 @@ LOCALSTACK_VERSION?=4.0.2
 LOCALSTACK_AUTH_TOKEN?=localstack-auth-token
 RUNNER_IMAGE_NAME?=dev-image
 DOCKER_SOCK_MOUNT?=-v /var/run/docker.sock:/var/run/docker.sock
-DOCKER_BUILD_EXTRA_ARGS?=--build-arg="TERRAFORM_VERSION=1.10.4" \
-                         --build-arg="NODE_MAJOR=20" \
-                         --build-arg="CHECKOV_VERSION=3.1.40"
 DOCKER_RUN_MOUNT_OPTIONS:=-v $(PWD):/app -w /app
 AWS_DEFAULT_REGION?=ap-south-1
 AWS_REGION?=$(AWS_DEFAULT_REGION)
@@ -122,7 +119,7 @@ lint-fix: lint-code-fix
 
 # Docker dev environment
 build-runner-image:
-	docker build -t $(RUNNER_IMAGE_NAME) $(DOCKER_BUILD_EXTRA_ARGS) .
+	docker build -t $(RUNNER_IMAGE_NAME) .
 
 run-command-%:
 	docker rm -f $(DOCKER_DEV_CONTAINER_NAME)
