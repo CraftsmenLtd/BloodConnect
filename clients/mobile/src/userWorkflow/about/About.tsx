@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, Image, StyleSheet } from 'react-native'
 import dayjs from 'dayjs'
+import { Theme } from '../../setup/theme'
+import { useTheme } from '../../setup/theme/hooks/useTheme'
 
 const currentYear = dayjs().year()
 
 const AboutPage: React.FC = () => {
+  const styles = createStyles(useTheme())
   const [displayedText, setDisplayedText] = useState<string>('')
 
   const fullText = 'Tries to improve the blood donation process through connecting donors, blood banks and existing organizations who are assisting finding donors in times of need, by providing a platform.'
@@ -43,15 +46,14 @@ const AboutPage: React.FC = () => {
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#FFF'
+    backgroundColor: theme.colors.white
   },
-
   logoTitleContainer: {
     position: 'absolute',
     top: 80,
@@ -61,15 +63,15 @@ const styles = StyleSheet.create({
   logo: {
     width: 100,
     height: 100,
-    backgroundColor: '#FF4D4D'
+    backgroundColor: theme.colors.primary,
+    borderRadius: 20
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FF4D4D',
+    color: theme.colors.primary,
     marginTop: 10
   },
-
   fixedDescriptionContainer: {
     position: 'absolute',
     top: 320,
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 20,
     textAlign: 'justify',
-    color: '#333'
+    color: theme.colors.textSecondary
   },
   footer: {
     position: 'absolute',
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.colors.darkGrey,
     marginHorizontal: 5
   },
   companyLogo: {
