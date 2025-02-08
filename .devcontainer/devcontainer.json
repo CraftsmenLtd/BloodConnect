@@ -1,6 +1,12 @@
 {
   "name": "BloodConnect",
-  "image": "dev-image",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "options": [
+      "-t",
+      "dev-image"
+    ]
+  },
   "postCreateCommand": "apt install -y openssh-client less",
   "runArgs": [
     "--env-file",

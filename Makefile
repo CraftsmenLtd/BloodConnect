@@ -18,7 +18,7 @@ AWS_ACCESS_KEY_ID?=aws-access-key-id
 AWS_SECRET_ACCESS_KEY?=aws-secret-access-key
 AWS_SESSION_TOKEN?=aws-session-token
 DEPLOYMENT_ENVIRONMENT_GROUP?=localstack
-DEPLOYMENT_ENVIRONMENT=$(shell git rev-parse --abbrev-ref HEAD | tr '[:upper:]' '[:lower:]')
+DEPLOYMENT_ENVIRONMENT=?$(shell git rev-parse --abbrev-ref HEAD | tr '[:upper:]' '[:lower:]')
 # Docker Environment Variables
 TF_VARS=$(shell env | grep '^TF_VAR_' | awk '{print "-e", $$1}')
 DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
