@@ -52,7 +52,7 @@ jobs:
   aws-terraform-env:
     name: Aws Environment Terraform
     runs-on: ${{ vars.RUNNER_OS }}
-    environment: ${{ inputs.github_environment }}
+    environment: ${{ inputs.deployment_environment_group }}
     env:
       RUNNER_IMAGE_NAME: ${{ inputs.docker_image }}
       DEPLOYMENT_ENVIRONMENT: ${{ inputs.deployment_environment }}
