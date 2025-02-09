@@ -83,11 +83,13 @@ Read more about dev containers `here <https://code.visualstudio.com/docs/devcont
  .. warning::
 
     Dev containers and localstack are still not working together. Therefore commands make docker calls in order to setup localstack will not work. For example `localstack-start` will not work from the dev containers cli.
+
 Make sure you have `ms-vscode-remote.remote-containers` installed on your vscode.
 
  .. warning::
 
     This guide assumes you will use dev containers to deploy a branch into aws.
+
 Before starting a dev container, you must ensure your aws access is prepared such that dev container can have secure access to it. Assuming access for bloodconnect works from your cli; run the following command to create an env file from the project root.
 
  .. code-block:: bash
