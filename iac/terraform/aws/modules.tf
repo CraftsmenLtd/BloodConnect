@@ -63,16 +63,15 @@ module "eventbridge" {
   source                            = "./eventbridge"
   environment                       = var.environment
   dynamodb_table_stream_arn         = module.database.dynamodb_table_stream_arn
-  donor_search_queue_arn            = module.donor_search.donor_search_queue_arn
+  donation_request_queue_arn        = module.donor_search.donation_request_queue_arn
   donation_status_manager_queue_arn = module.donor_search.donation_status_manager_queue_arn
 }
 
 module "notification" {
-  source                         = "./notification"
-  environment                    = var.environment
-  dynamodb_table_arn             = module.database.dynamodb_table_arn
-  firebase_token_s3_url          = var.firebase_token_s3_url
-  donor_search_state_machine_arn = module.donor_search.donor_search_state_machine_arn
+  source                = "./notification"
+  environment           = var.environment
+  dynamodb_table_arn    = module.database.dynamodb_table_arn
+  firebase_token_s3_url = var.firebase_token_s3_url
 }
 
 module "logger" {
