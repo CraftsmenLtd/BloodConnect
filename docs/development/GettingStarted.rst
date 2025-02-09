@@ -47,15 +47,22 @@ First Time Install
 ~~~~~~~~~~~~~~~~~~
 Firstly familiarize yourself with terminologies in this project. There are a few to keep in mind.
 
-+-----------+----------+-------------+---------+
-| Concept   | Keyword  | Description | Example |
-+===========+==========+=============+=========+
-| Deployment Environment Group | DEPLOYMENT_ENVIRONMENT_GROUP | this denotes the type of environment you will be deploying to in our infrastructure which allows you to access all resources related to that environment group for example github secrets | `localstack|dev|stage|prod` |
-+-----------+----------+-------------+---------+
-| Deployment Environment | DEPLOYMENT_ENVIRONMENT | this denotes the name of the environment that your deployment will be associated with | `branch-name|ticket-name|your-name|stage|prod` |
-+-----------+----------+-------------+---------+
-| Branch Deployment | Branch Name | used as DEPLOYMENT_ENVIRONMENT along with DEPLOYMENT_ENVIRONMENT_GROUP set to dev to deploy a standalone app | `branch-name` |
-+-----------+----------+-------------+---------+
++------------------------------+------------------------------+-----------------------------------------------------+------------------------------------------------+
+| Concept                      | Keyword                      | Description                                         | Example                                        |
++==============================+==============================+=====================================================+================================================+
+| Deployment Environment Group | DEPLOYMENT_ENVIRONMENT_GROUP | This denotes the type of environment you will be    | `localstack|dev|stage|prod`                    |
+|                              |                              | deploying to in our infrastructure, allowing access |                                                |
+|                              |                              | to all resources related to that environment group, |                                                |
+|                              |                              | e.g., GitHub secrets.                               |                                                |
++------------------------------+------------------------------+-----------------------------------------------------+------------------------------------------------+
+| Deployment Environment       | DEPLOYMENT_ENVIRONMENT       | This denotes the name of the environment that your  | `branch-name|ticket-name|your-name|stage|prod` |
+|                              |                              | deployment will be associated with.                 |                                                |
++------------------------------+------------------------------+-----------------------------------------------------+------------------------------------------------+
+| Branch Deployment            | Branch Name                  | Used as DEPLOYMENT_ENVIRONMENT along with           | `branch-name`                                  |
+|                              |                              | DEPLOYMENT_ENVIRONMENT_GROUP set to `dev` to deploy |                                                |
+|                              |                              | a standalone app.                                   |                                                |
++------------------------------+------------------------------+-----------------------------------------------------+------------------------------------------------+
+
 
 The project expects you to use localstack and docker as a development environment. You can choose one of two ways to start developing.
 - Dev Container: This is where you're not expected to require any setup beyond aws access in your terminal and docker along with make.
@@ -97,7 +104,8 @@ Before starting a dev container, you must ensure your aws access is prepared suc
 
 This will create a simple `.env` file with required aws environment variables. You might want to add any additional variables required by terraform here as well. Some might already have defaults set in our makefile. Examples of variable you might want to set:
 
- .. code-block:: env
+ .. code-block:: bash
+
     TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-states
     TF_VAR_bloodconnect_domain=bloodconnect.net
 
@@ -179,7 +187,7 @@ If you want to deploy into aws with this method, you can still run:
 
 Pipeline
 ^^^^^^^^
-The hassle free deployment strategy. Go onto github actions `<here> https://github.com/CraftsmenLtd/BloodConnect/actions/workflows/deploy-branch.yml`_. And do the following:
+The hassle free deployment strategy. Go onto github actions `<here https://github.com/CraftsmenLtd/BloodConnect/actions/workflows/deploy-branch.yml>`_. And do the following:
 
  .. image:: ../assets/images/branch-deploy.png
     :width: 600
