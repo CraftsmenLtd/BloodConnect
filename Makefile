@@ -147,6 +147,9 @@ deploy-dev-branch:
 	$(MAKE) clean-terraform-files $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 	$(MAKE) tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) tf-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+
+prep-dev: install-node-packages build-node-all package-all
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev

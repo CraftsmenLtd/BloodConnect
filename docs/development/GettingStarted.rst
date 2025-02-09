@@ -45,128 +45,46 @@ Pre-requisites
 
 First Time Install
 ~~~~~~~~~~~~~~~~~~
-Make sure your docker is up and running. Ensure you don't have any containers named `localstack-main` running as well.
-Run the following command to get everything up and running.
+Firstly familiarize yourself with terminologies in this project. There are a few to keep in mind.
 
-.. code-block:: bash
++-----------+----------+-------------+---------+
+| Concept   | Keyword  | Description | Example |
++===========+==========+=============+=========+
+| Deployment Environment Group | DEPLOYMENT_ENVIRONMENT_GROUP | this denotes the type of environment you will be deploying to in our infrastructure which allows you to access all resources related to that environment group for example github secrets | `localstack|dev|stage|prod` |
++-----------+----------+-------------+---------+
+| Deployment Environment | DEPLOYMENT_ENVIRONMENT | this denotes the name of the environment that your deployment will be associated with | `branch-name|ticket-name|your-name|stage|prod` |
++-----------+----------+-------------+---------+
+| Branch Deployment | Branch Name | used as DEPLOYMENT_ENVIRONMENT along with DEPLOYMENT_ENVIRONMENT_GROUP set to dev to deploy a standalone app | `branch-name` |
++-----------+----------+-------------+---------+
 
-    make start-dev
-
-This will
-
-- build an image named `dev-image`
-- Install all necessary node packages
-- Build the node applications
-- Package the node applications
-- Initialize Terraform for Localstack
-- Plan the current Terraform code for Localstack
-- Deploy the current Terraform code for Localstack
-
-You should hopefully see some terraform output variables being spat at you if everything goes well. Localstack will emulate aws locally, feel free to hit the api urls if you want.
-
-
-Regular Development
-~~~~~~~~~~~~~~~~~~~
-When you make changes to the code base and want to run things to test; you can always just run the 
- .. code-block:: bash
-
-    make run-dev
-
-But a more efficient way might be to pick and choose what needs doing,
-
-- Install New node modules
-
- .. code-block:: bash
-
-    make run-command-install-node-packages
+The project expects you to use localstack and docker as a development environment. You can choose one of two ways to start developing.
+- Dev Container: This is where you're not expected to require any setup beyond aws access in your terminal and docker along with make.
+- Container: You are not expected to have any binaries for writing code, compiling code or packaging code but you will need binaries to get lint support and other integration with your IDE of choice.
+- Pipeline: This is the easiest yet the most time consuming process because here you will have to commit your code and run the branch deploy pipeline.
+- Native: This is where you will have to setup all necessary binaries related to the project. We will not go into the details of this.
 
 
-- Lint
+ .. warning::
 
- .. code-block:: bash
+    Check out into a new branch please
 
-    make run-command-lint  # To run all project lints
-    make run-command-lint-code  # To run only code lints
-    make run-command-tf-validate  # To validate/lint terraform code
-    make run-command-tf-fmt  # To format terraform code
 
-- Type Check
+Dev Container
+^^^^^^^^^^^^^
+Read more about dev containers `here <https://code.visualstudio.com/docs/devcontainers/containers>`_.
+
+ .. warning::
+
+    Dev containers and localstack are still not working together. Therefore commands make docker calls in order to setup localstack will not work. For example `localstack-start` will not work from the dev containers cli.
+Make sure you have `ms-vscode-remote.remote-containers` installed on your vscode.
+
+ .. warning::
+
+    This guide assumes you will use dev containers to deploy a branch into aws.
+Before starting a dev container, you must ensure your aws access is prepared such that dev container can have secure access to it. Assuming access for bloodconnect works from your cli; run the following command to create an env file from the project root.
 
  .. code-block:: bash
 
-    make run-command-type-check  # To run all project type checks with Typescript
-
-- Unit Tests
-
- .. code-block:: bash
-
-    make run-command-test  # Run all unittests
-    make run-command-test EXTRA_ARGS="'-- <path_to_test_file>'"  # specific test file
-    make run-command-test  EXTRA_ARGS="'-- <path_to_test_file> -t <describe_text_in_test>'"  # specific test segment
-
-- Build Code
-  The generated files are placed inside `core/services/<cloud_provider>/.build`.
-
- .. code-block:: bash
-
-    make run-command-build-node-all  # build all services and keep files in `.build` directory.
-    make run-command-build-node-service --name=<service_name>: specific service.
-
-- Package Code
-
- .. code-block:: bash
-
-    make run-command-package-all  # build all and creates zip files for all services to be deployed to cloud in `.build/zips`.
-    make run-command-package-service --name=<service_name>  # build all and creates zip files for a particular services to be deployed to cloud in `.build/zips`.
-
-- Plan Localstack Terraform Deployment
-
- .. code-block:: bash
-
-    make run-command-tf-plan-apply
-
-- Deploy Localstack Terraform
-
- .. code-block:: bash
-
-    make run-command-tf-apply
-
-As you've noticed; we prefix commands with `run-command-` keyword; this lets us execute command inside our locally available dev docker image thus saving you the hassle of having to manage:
-
- - Terraform
- - Nodejs
- - Python
- - Localstack
- - AWS
-
-You can however run these commands locally too. But that would mean you're expected to configure your machine to match what the docker image does.
-
-Deploying into Personal Development Environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-You might want to deploy your code into aws to have a fully fledged environment. There are couple of ways you can achieve this. The simplest way would be to make a git commit.
-
-- Git Commit
-
-.. image:: ../assets/images/branch-deploy.png
-   :width: 600
-
-Here you can manually trigger the branch-deploy pipeline that will deploy your changes described at `deployment/aws/terraform/variables.tf <https://github.com/CraftsmenLtd/BloodConnect/tree/master/deployment/aws/terraform/variables.tf>`_.
-Don't forget to use the destroy-branch pipeline after use.
-
-- From Local Environment
-  This needs a bit of setup. Firstly you will have to assume the deployment role that github action assumes.
-
-.. code-block:: bash
-
-    export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
-    $(aws sts assume-role \
-    --role-arn arn:aws:iam::<bloodconnect aws account id>:role/GitHubActionsAndDevRole \
-    --role-session-name <a random session name> \
-    --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
-    --output text))
-
-If you want to use dev containers, you will need to export the environment variables as a file
-.. code-block:: bash
     printf "AWS_ACCESS_KEY_ID=%s\nAWS_SECRET_ACCESS_KEY=%s\nAWS_SESSION_TOKEN=%s" \
     $(aws sts assume-role \
     --role-arn arn:aws:iam::<bloodconnect aws account id>:role/GitHubActionsAndDevRole \
@@ -174,143 +92,96 @@ If you want to use dev containers, you will need to export the environment varia
     --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
     --output text) > .devcontainer/devcontainer.env
 
-Note: The above role is maintained in this repo: https://github.com/CraftsmenLtd/Bloodconnect-oidc
-You can now start creating the command, there are a few variables that terraform needs. You can export them as environment variables or you can pass them as arguments to the make command.
+ .. warning::
+    The above role is maintained in this repo: https://github.com/CraftsmenLtd/Bloodconnect-oidc
 
-.. code-block:: bash
+This will create a simple `.env` file with required aws environment variables. You might want to add any additional variables required by terraform here as well. Some might already have defaults set in our makefile. Examples of variable you might want to set:
 
-    make run-command-tf-init VARIABLE_NAME=value
+ .. code-block:: env
+    TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-states
+    TF_VAR_bloodconnect_domain=bloodconnect.net
 
-Or
+Now that that is done; you can follow the screenshots below to start dev containers.
+Click on the remote window icon on the bottom left of your vscode window.
 
-.. code-block:: bash
+ .. image:: ../assets/images/remote-dev.png
+    :width: 600
 
-    VARIABLE_NAME=value make run-command-tf-init
+Now from the options select Reopen in Container.
 
-The table below explains the variables that needs to be passed
+ .. image:: ../assets/images/remote-dev-2.png
+    :width: 600
 
-.. list-table:: Required variables for aws deployment
-    :header-rows: 1
+On first setup it might take awhile since it will build the image.
+You may be asked to approve github fingerprint setup, please select yes so that you can use git from dev containers.
 
-    *   - Variable Name
-        - Variable Description
-        - Value
-        - Default
-    *   - DEPLOYMENT_ENVIRONMENT
-        - This variable dictates if the makefile should use localstack or aws. If you're deploying into aws, your value here must match your branch name.
-        - sakib-branch
-        - localstack
-    *   - TF_BACKEND_BUCKET_NAME
-        - This sets up the bucket name terraform will use to store state
-        - terraform-bloodconnect-ci-dev
-        -
-    *   - TF_BACKEND_BUCKET_KEY
-        - This sets up the state file name terraform will use, the value should be dev/<your branch name>
-        - dev/sakib-branch
-        -
-    *   - TF_BACKEND_BUCKET_REGION
-        - This sets up the bucket region name terraform will use, the value should be ap-south-1
-        - ap-south-1
-        -
-    *   - AWS_REGION
-        - This sets up the aws region to use, the value should be ap-south-1
-        - ap-south-1
-        -
-    *   - TF_VAR_<the_variable_name>
-        - This is a crucial value, this dictates everything that gets passed into terraform as defined `deployment/aws/terraform/variables.tf <https://github.com/CraftsmenLtd/BloodConnect/tree/master/deployment/aws/terraform/variables.tf>`_.
-        - sakib-branch
-        -
+ .. image:: ../assets/images/remote-dev-3.png
+    :width: 600
 
-With all that lets make an example command. The following command will initiate terraform.
+Now you are ready to run commands. Keep in mind that you are inside the dev container; meaning you can run almost all commands in our makefile except for those that need docker cli. Another thing to be aware of is that you can not run commands with the `run-command` prefix as you are already inside the container.
 
-.. code-block:: bash
+Prepare your code for deployment.
 
-    make run-command-tf-init \
-    DEPLOYMENT_ENVIRONMENT=sakib-branch \
-    TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
-    TF_BACKEND_BUCKET_REGION=ap-south-1 \
-    AWS_REGION=ap-south-1 \
-    TF_VARS="-var='aws_environment=sakib-branch'"
+ .. code-block:: bash
 
-Or
+    make prep-dev
 
-.. code-block:: bash
+This will install all packages, build all node lambdas and zip them for deployment. You can run this every time you've made changes and you want to deploy. Next you need to do the actual deployment.
 
-    DEPLOYMENT_ENVIRONMENT=sakib-branch \
-    TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
-    TF_BACKEND_BUCKET_REGION=ap-south-1 \
-    AWS_REGION=ap-south-1 \
-    TF_VAR_aws_environment=sakib-branch \
-    make run-command-tf-init
+ .. code-block:: bash
 
-Now lets plan to apply this.
+    make deploy-dev-branch
 
-.. code-block:: bash
+And thats it. You will have all the bells and whistle of your IDE without having to mess around with any binaries.
 
-    DEPLOYMENT_ENVIRONMENT=sakib-branch \
-    TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
-    TF_BACKEND_BUCKET_REGION=ap-south-1 \
-    AWS_REGION=ap-south-1 \
-    TF_VAR_aws_environment=sakib-branch \
-    make run-command-tf-plan-apply
+ .. warning::
 
-And applying this.
+    If your aws credentials expire, you'll need to update the `.devcontainer/devcontainer.env` file with the new credentials and rebuild container. This option is available in the bottom left corner of your IDE.
 
-.. code-block:: bash
+Container
+^^^^^^^^^
+This works very similar to how the previous setup works and our pipelines work the same way except for a few differences.
 
-    DEPLOYMENT_ENVIRONMENT=sakib-branch \
-    TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
-    TF_BACKEND_BUCKET_REGION=ap-south-1 \
-    AWS_REGION=ap-south-1 \
-    TF_VAR_aws_environment=sakib-branch \
-    make run-command-tf-apply
+All commands except `start-dev` and `run-dev` must be prefixed with `run-command`. `run-command` essentially executes the make target inside our prebuilt development container.
 
+Assuming you have aws access and localstack access, go ahead and run
 
-And planning to destroy this.
+ .. code-block:: bash
 
-.. code-block:: bash
+    export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
+    $(aws sts assume-role \
+    --role-arn arn:aws:iam::<bloodconnect aws account id>:role/GitHubActionsAndDevRole \
+    --role-session-name <a random session name> \
+    --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
+    --output text))
+    
+    export LOCALSTACK_AUTH_TOKEN=<your localstack auth token>
 
-    DEPLOYMENT_ENVIRONMENT=sakib-branch \
-    TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
-    TF_BACKEND_BUCKET_REGION=ap-south-1 \
-    AWS_REGION=ap-south-1 \
-    TF_VAR_aws_environment=sakib-branch \
-    make run-command-tf-plan-destroy
+This will export the aws variables into your environment. 
 
-And finally destroying this.
+ .. code-block:: bash
+    
+    make start-dev
 
-.. code-block:: bash
+Which will do everything required in order to get a fully working localstack deployment running. Every time you want to check your changes, you can just run
 
-    DEPLOYMENT_ENVIRONMENT=sakib-branch \
-    TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-ci-dev \
-    TF_BACKEND_BUCKET_KEY=dev/sakib-branch.tfstate \
-    TF_BACKEND_BUCKET_REGION=ap-south-1 \
-    AWS_REGION=ap-south-1 \
-    TF_VAR_aws_environment=sakib-branch \
-    make run-command-tf-destroy
+ .. code-block:: bash
+    
+    make run-dev
 
-If you don't want to be using such a long command you can always export the stuff that are static to you. For example, 
+If you want to run a specific command from the makefile; use the `run-command` prefix. Note that this doesn't apply to `prep-dev`, `start-dev` `localstack-start` or `run-dev`.
 
-.. code-block:: bash
+If you want to deploy into aws with this method, you can still run:
 
-    export DEPLOYMENT_ENVIRONMENT=sakib-branch
+ .. code-block:: bash
 
-Now we don't need to be passing that every time. Ofcourse this means if you want to test in it localstack you will have to unset,
+    make deploy-dev-branch
 
-.. code-block:: bash
+Pipeline
+^^^^^^^^
+The hassle free deployment strategy. Go onto github actions `<here> https://github.com/CraftsmenLtd/BloodConnect/actions/workflows/deploy-branch.yml`_. And do the following:
 
-    unset DEPLOYMENT_ENVIRONMENT
+ .. image:: ../assets/images/branch-deploy.png
+    :width: 600
 
-After branch deployment you can run swagger locally to test API's.
-Command for running swagger UI locally
-
-.. code-block:: bash
-
-    make swagger-ui email=<email> password=<password> branch=<branch_name>
-
-here, `branch` = deployed branch name (ex. feature-branch, stage or prod)
+Thats all for now. Have fun.
