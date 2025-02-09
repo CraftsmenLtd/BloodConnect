@@ -115,7 +115,7 @@ Now that that is done; you can follow the screenshots below to start dev contain
 Click on the remote window icon on the bottom left of your vscode window.
 
  .. image:: ../assets/images/remote-dev.png
-    :width: 600
+    :height: 80
 
 Now from the options select Reopen in Container.
 
