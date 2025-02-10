@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 import ToggleTabs from '../../../components/tab/ToggleTabs'
+import { STATUS } from '../../../donationWorkflow/types'
 import { DetailPostRouteProp, DetailPostScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import PostCard from '../../../components/donation/PostCard'
 import { SCREENS } from '../../../setup/constant/screens'
@@ -89,7 +90,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
           )}
           {!isDetailsPage &&
             <View style={styles.buttonContainer}>
-              <Button text="Complete Request" onPress={handleCompleteRequest} />
+              <Button text="Complete Request" disabled={data.status === STATUS.COMPLETED} onPress={handleCompleteRequest} />
             </View>
           }
         </View>
