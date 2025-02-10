@@ -234,6 +234,7 @@ async function sendNotificationToSeeker(
       donorName: donorProfile?.name,
       phoneNumbers: donorProfile?.phoneNumbers,
       requestedBloodGroup: donationPost.requestedBloodGroup,
+      bloodQuantity: donationPost.bloodQuantity,
       urgencyLevel: donationPost.urgencyLevel,
       location: donationPost.location,
       donationDateTime: donationPost.donationDateTime,

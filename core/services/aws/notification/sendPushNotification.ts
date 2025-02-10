@@ -154,6 +154,7 @@ async function createNotification(body: NotificationAttributes): Promise<boolean
         donorName: body.payload.donorName as string,
         phoneNumbers: body.payload.phoneNumbers as string[],
         requestedBloodGroup: body.payload.requestedBloodGroup as string,
+        bloodQuantity: body.payload.bloodQuantity as number,
         urgencyLevel: body.payload.urgencyLevel as string,
         donationDateTime: body.payload.donationDateTime as string,
         location: body.payload.location as string,
