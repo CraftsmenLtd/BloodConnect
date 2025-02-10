@@ -12,6 +12,7 @@ import {
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
+import { formatBloodQuantity } from '../../../donationHelpers'
 import createStyles from './createStyles'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
 import React from 'react'
@@ -66,7 +67,7 @@ const ResponseDonationRequest = () => {
                 <View style={styles.requestText}>
                   <Text style={styles.primaryCaption}>Looking for</Text>
                   <Text style={styles.highlightedText}>
-                    {bloodRequest.bloodQuantity ?? 0} {bloodRequest.requestedBloodGroup}(ve) blood
+                    {formatBloodQuantity(bloodRequest.bloodQuantity) ?? 0} {bloodRequest.requestedBloodGroup}(ve) blood
                   </Text>
                 </View>
               </View>

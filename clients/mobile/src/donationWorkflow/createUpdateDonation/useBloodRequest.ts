@@ -44,7 +44,7 @@ export interface BloodRequestData {
   city: string;
 }
 
-interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'transportationInfo'> { }
+interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'transportationInfo' | 'donationDateTime'> { donationDateTime: string | null }
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
   city: [validateRequired],
@@ -104,7 +104,7 @@ export const useBloodRequest = (): any => {
     const updateErrors = (error: string | null): void => {
       setErrors(prevErrors => ({
         ...prevErrors,
-        [DONATION_DATE_TIME_INPUT_NAME]: error ?? ''
+        [DONATION_DATE_TIME_INPUT_NAME]: error ?? null
       }))
     }
 

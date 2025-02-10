@@ -77,7 +77,7 @@ const Profile: React.FC = () => {
           {renderDetailRow('Height (feet)', userDetails.height !== undefined ? userDetails.height.toString() : '')}
           {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined && userDetails.phoneNumbers.length > 0 ? userDetails.phoneNumbers[0] : '')}
           {renderDetailRow('Gender', userDetails.gender)}
-          {renderDetailRow('Last Donation Date', formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
+          {userDetails?.lastDonationDate !== '' && renderDetailRow('Last Donation Date', formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
           <View style={[styles.row, styles.lastRow]}>
             <Text style={styles.label}>{'Locations'}</Text>
             {userDetails?.preferredDonationLocations?.map(location => {
