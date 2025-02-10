@@ -65,6 +65,7 @@ Firstly familiarize yourself with terminologies in this project. There are a few
 
 
 The project expects you to use localstack and docker as a development environment. You can choose one of two ways to start developing.
+
 - Dev Container: This is where you're not expected to require any setup beyond aws access in your terminal and docker along with make.
 - Container: You are not expected to have any binaries for writing code, compiling code or packaging code but you will need binaries to get lint support and other integration with your IDE of choice.
 - Pipeline: This is the easiest yet the most time consuming process because here you will have to commit your code and run the branch deploy pipeline.
