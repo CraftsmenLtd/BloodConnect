@@ -65,6 +65,7 @@ module "eventbridge" {
   dynamodb_table_stream_arn         = module.database.dynamodb_table_stream_arn
   donor_search_queue_arn            = module.donor_search.donor_search_queue_arn
   donation_status_manager_queue_arn = module.donor_search.donation_status_manager_queue_arn
+  dynamodb_table_arn                = module.database.dynamodb_table_arn
 }
 
 module "notification" {
