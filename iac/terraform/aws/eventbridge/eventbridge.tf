@@ -1,3 +1,12 @@
+resource "null_resource" "check_dynamodb_stream" {
+  depends_on = [var.dynamodb_table_stream_arn]
+
+  provisioner "local-exec" {
+    when    = create
+    command = "aws dynamodb wait table-exists --table-name ${var.dynamodb_table_arn}"
+  }
+}
+
 resource "aws_pipes_pipe" "donation_request_pipe" {
   name     = "${var.environment}-donation-request-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
@@ -36,6 +45,8 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
       log_group_arn = aws_cloudwatch_log_group.donation_request_pipe_log_group.arn
     }
   }
+
+  depends_on = [null_resource.check_dynamodb_stream]
 }
 
 
@@ -77,4 +88,6 @@ resource "aws_pipes_pipe" "donation_accept_pipe" {
       log_group_arn = aws_cloudwatch_log_group.donation_accept_pipe_log_group.arn
     }
   }
+
+  depends_on = [null_resource.check_dynamodb_stream]
 }
