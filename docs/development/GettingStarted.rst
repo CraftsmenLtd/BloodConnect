@@ -9,20 +9,20 @@ Git Setup
 
  .. code-block:: bash
 
-    git clone git@github.com:CraftsmenLtd/BloodConnect.git
+   git clone git@github.com:CraftsmenLtd/BloodConnect.git
 
 - Open the project in terminal/IDE.
 - Execute to change the git hooks to `.githooks` directory.
 
  .. code-block:: bash
 
-    git config core.hooksPath .githooks
+   git config core.hooksPath .githooks
 
 - Make the directory executable
 
  .. code-block:: bash
 
-    chmod +x .githooks/*
+   chmod +x .githooks/*
 
 
 Pre-requisites
@@ -33,7 +33,7 @@ Pre-requisites
 
      .. code-block:: bash
 
-        brew install make gnu
+      brew install make gnu
 
     * Linux
       Use whatever your package manager (apt, dnf, pacman, yum) is to install the packages.
@@ -41,7 +41,7 @@ Pre-requisites
 
      .. code-block:: bash
 
-        apt install make gnu
+      apt install make gnu
 
 First Time Install
 ~~~~~~~~~~~~~~~~~~
@@ -74,7 +74,7 @@ The project expects you to use localstack and docker as a development environmen
 
  .. warning::
 
-    Check out into a new branch please
+   Check out into a new branch please
 
 
 Dev Container
@@ -83,27 +83,36 @@ Read more about dev containers `here <https://code.visualstudio.com/docs/devcont
 
  .. warning::
 
-    Dev containers and localstack are still not working together. Therefore commands make docker calls in order to setup localstack will not work. For example `localstack-start` will not work from the dev containers cli.
+   Dev containers and localstack are still not working together. Therefore commands make docker calls in order to setup localstack will not work. For example `localstack-start` will not work from the dev containers cli.
 
 Make sure you have `ms-vscode-remote.remote-containers` installed on your vscode.
 
  .. warning::
 
-    This guide assumes you will use dev containers to deploy a branch into aws.
+   This guide assumes you will use dev containers to deploy a branch into aws.
 
 Before starting a dev container, you must ensure your aws access is prepared such that dev container can have secure access to it. Assuming access for bloodconnect works from your cli; run the following command to create an env file from the project root.
 
  .. code-block:: bash
 
-    printf "AWS_ACCESS_KEY_ID=%s\nAWS_SECRET_ACCESS_KEY=%s\nAWS_SESSION_TOKEN=%s" \
-    $(aws sts assume-role \
-    --role-arn arn:aws:iam::<bloodconnect aws account id>:role/GitHubActionsAndDevRole \
-    --role-session-name <a random session name> \
-    --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
-    --output text) > .devcontainer/devcontainer.env
+   aws sts assume-role \
+   --role-arn arn:aws:iam::211125655549:role/GitHubActionsAndDevRole \
+   --role-session-name SAKIB \
+   --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
+   --output text | \
+   awk '{ 
+      printf "AWS_ACCESS_KEY_ID=%s\n", $1; 
+      printf "AWS_SECRET_ACCESS_KEY=%s\n", $2; 
+      printf "AWS_SESSION_TOKEN=%s\n", $3; 
+   }' | \
+   while read -r line; do 
+      varname=$(echo "$line" | cut -d= -f1)
+      value=$(echo "$line" | cut -d= -f2-)
+      sed -i "s|^${varname}=.*|${varname}=${value}|" .devcontainer/.env
+   done
 
  .. warning::
-    The above role is maintained in this repo: https://github.com/CraftsmenLtd/Bloodconnect-oidc
+   The above role is maintained in this repo: https://github.com/CraftsmenLtd/Bloodconnect-oidc
 
 This will create a simple `.env` file with required aws environment variables. You might want to add any additional variables required by terraform here as well. Some might already have defaults set in our makefile. Examples of variable you might want to set:
 
@@ -135,19 +144,19 @@ Prepare your code for deployment.
 
  .. code-block:: bash
 
-    make prep-dev
+   make prep-dev
 
 This will install all packages, build all node lambdas and zip them for deployment. You can run this every time you've made changes and you want to deploy. Next you need to do the actual deployment.
 
  .. code-block:: bash
 
-    make deploy-dev-branch
+   make deploy-dev-branch
 
 And thats it. You will have all the bells and whistle of your IDE without having to mess around with any binaries.
 
  .. warning::
 
-    If your aws credentials expire, you'll need to update the `.devcontainer/devcontainer.env` file with the new credentials and rebuild container. This option is available in the bottom left corner of your IDE.
+   If your aws credentials expire, you'll need to update the `.devcontainer/.env` file with the new credentials. You can chose to rebuild the container if you want the environment variables available in your container bash terminal. You can also just keep using the make file as is since on every run of the makefile, we import the `.devcontainer/.env` file.
 
 Container
 ^^^^^^^^^
@@ -159,26 +168,26 @@ Assuming you have aws access and localstack access, go ahead and run
 
  .. code-block:: bash
 
-    export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
-    $(aws sts assume-role \
-    --role-arn arn:aws:iam::<bloodconnect aws account id>:role/GitHubActionsAndDevRole \
-    --role-session-name <a random session name> \
-    --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
-    --output text))
-    
-    export LOCALSTACK_AUTH_TOKEN=<your localstack auth token>
+   export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
+   $(aws sts assume-role \
+   --role-arn arn:aws:iam::<bloodconnect aws account id>:role/GitHubActionsAndDevRole \
+   --role-session-name <a random session name> \
+   --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
+   --output text))
+   
+   export LOCALSTACK_AUTH_TOKEN=<your localstack auth token>
 
 This will export the aws variables into your environment. 
 
  .. code-block:: bash
     
-    make start-dev
+   make start-dev
 
 Which will do everything required in order to get a fully working localstack deployment running. Every time you want to check your changes, you can just run
 
  .. code-block:: bash
-    
-    make run-dev
+
+   make run-dev
 
 If you want to run a specific command from the makefile; use the `run-command` prefix. Note that this doesn't apply to `prep-dev`, `start-dev` `localstack-start` or `run-dev`.
 
@@ -186,7 +195,7 @@ If you want to deploy into aws with this method, you can still run:
 
  .. code-block:: bash
 
-    make deploy-dev-branch
+   make deploy-dev-branch
 
 Pipeline
 ^^^^^^^^

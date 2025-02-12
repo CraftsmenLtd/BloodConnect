@@ -6,7 +6,8 @@ resource "aws_s3_bucket" "monitor_donation_request" {
   #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
   #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
   #checkov:skip=CKV2_AWS_6: "Ensure that S3 bucket has a Public Access block"
-  bucket = "${var.environment}-monitor-donation-request-bucket"
+  bucket        = "${var.environment}-monitor-donation-request-bucket"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_policy" "monitor_donation_request" {

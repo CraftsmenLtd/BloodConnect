@@ -1,3 +1,9 @@
+# Auto import env file
+ifneq ("$(wildcard .devcontainer/.env)","")
+  include .devcontainer/.env
+  export
+endif
+
 include makefiles/terraform.mk
 
 # Makefile flags
@@ -142,12 +148,22 @@ start-mobile:
 
 
 # Deploy Dev Branch from Local Machine
-LOCAL_DEV_DEPLOYMENT_CONFIG=TF_BACKEND_BUCKET_REGION=$(AWS_REGION) DEPLOYMENT_ENVIRONMENT_GROUP=dev TF_BACKEND_BUCKET_KEY=dev/$(DEPLOYMENT_ENVIRONMENT).tfstate
+LOCAL_DEV_DEPLOYMENT_CONFIG=TF_BACKEND_BUCKET_REGION=$(AWS_REGION) \
+	DEPLOYMENT_ENVIRONMENT_GROUP=dev \
+	TF_BACKEND_BUCKET_KEY=dev/$(DEPLOYMENT_ENVIRONMENT).tfstate \
+	TF_VAR_aws_environment=$(DEPLOYMENT_ENVIRONMENT) \
+	AWS_REGION=$(AWS_REGION)
 deploy-dev-branch:
-	$(MAKE) clean-terraform-files $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) clean-terraform-files
 	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 	$(MAKE) tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 	$(MAKE) tf-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+
+destroy-dev-branch:
+	$(MAKE) clean-terraform-files
+	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) tf-plan-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) tf-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 
 prep-dev: install-node-packages build-node-all package-all
 

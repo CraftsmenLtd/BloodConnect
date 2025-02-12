@@ -10,7 +10,7 @@
   "postCreateCommand": "apt install -y openssh-client less",
   "runArgs": [
     "--env-file",
-    ".devcontainer/devcontainer.env",
+    ".devcontainer/.env",
     "--name",
     "bloodconnect-dev",
     "--rm"
