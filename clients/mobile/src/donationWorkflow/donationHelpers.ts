@@ -56,7 +56,7 @@ export const formatDonations = (requests: BloodDonationRecord[], name?: string):
     seekerName: request.seekerName ?? name ?? '',
     patientName: request.patientName ?? name ?? '',
     requestedBloodGroup: request.requestedBloodGroup ?? '',
-    bloodQuantity: formatBloodQuantity(request.bloodQuantity),
+    bloodQuantity: request.bloodQuantity,
     urgencyLevel: request.urgencyLevel ?? '',
     location: request.location ?? '',
     donationDateTime: request.donationDateTime ?? new Date().toISOString(),

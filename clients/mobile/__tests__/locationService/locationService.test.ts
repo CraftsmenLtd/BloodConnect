@@ -8,7 +8,7 @@ const mockHttpClient = {
 }
 
 describe('LocationService', () => {
-  const locationService = new LocationService()
+  const locationService = new LocationService('https://gw-example.bloodconnect.net/api')
   const mockFetchClient = FetchClient as jest.Mocked<typeof FetchClient>
 
   afterEach(() => {

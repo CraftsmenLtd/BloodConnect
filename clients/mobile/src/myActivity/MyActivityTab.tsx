@@ -25,6 +25,7 @@ const MyActivityTab = () => {
     handleTabPress,
     updatePost,
     detailHandler,
+    myResponsesDetailHandler,
     cancelPost,
     refreshing,
     handleRefresh,
@@ -76,8 +77,8 @@ const MyActivityTab = () => {
             loading={myResponsesLoading}
             errorMessage={myResponsesError}
             emptyDataMessage="You haven't responded to any of the posts. Pull to refresh."
-            detailHandler={detailHandler}
-            displayOptions={{ showOptions: false, showButton: false, showStatus: true }}
+            detailHandler={myResponsesDetailHandler}
+            displayOptions={{ showOptions: false, showButton: true, showStatus: true }}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}

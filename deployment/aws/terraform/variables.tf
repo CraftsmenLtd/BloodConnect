@@ -34,3 +34,9 @@ variable "firebase_token_s3_url" {
   description = "S3 URL for Android Firebase token file"
   type        = string
 }
+
+variable "google_maps_api_key" {
+  description = "google maps api key"
+  type        = string
+  sensitive   = true
+}

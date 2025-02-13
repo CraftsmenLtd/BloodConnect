@@ -6,8 +6,8 @@ import { TextArea } from '../../components/inputElement/TextArea'
 import { Input } from '../../components/inputElement/Input'
 import { Button } from '../../components/button/Button'
 import Warning from '../../components/warning'
-import { WARNINGS } from '../../setup/constant/consts'
-import { DONATION_DATE_TIME_INPUT_NAME, SHORT_DESCRIPTION_MAX_LENGTH, useBloodRequest } from './useBloodRequest'
+import { SHORT_DESCRIPTION_MAX_LENGTH, WARNINGS } from '../../setup/constant/consts'
+import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodRequest'
 import { bloodBagOptions, bloodGroupOptions, transportationOptions } from './donationOption'
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -17,9 +17,9 @@ import { LocationService } from '../../LocationService/LocationService'
 import { districts } from '../../userWorkflow/personalInfo/options'
 import Dropdown from '../../components/inputElement/Dropdown'
 
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
-const locationService = new LocationService(GOOGLE_MAP_API)
+const locationService = new LocationService(API_BASE_URL)
 
 const CreateBloodRequest = () => {
   const styles = createStyles(useTheme())
@@ -80,7 +80,7 @@ const CreateBloodRequest = () => {
 
           <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
             <DateTimePickerComponent
-              label="Time and Date"
+              label="Donation Date and Time"
               value={new Date(bloodRequestData.donationDateTime)}
               onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}
               error={errors.donationDateTime}

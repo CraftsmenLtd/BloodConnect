@@ -8,7 +8,6 @@ export type UserDTO = DTO & HasIdentifier & {
 }
 
 export type Gender = 'male' | 'female' | 'other'
-export type AvailableForDonation = 'yes' | 'no'
 
 export interface UserDetailsDTO extends UserDTO {
   bloodGroup: BloodGroup;
@@ -19,7 +18,7 @@ export interface UserDetailsDTO extends UserDTO {
   dateOfBirth: string;
   age: number;
   city: string;
-  availableForDonation: AvailableForDonation;
+  availableForDonation: boolean;
   NIDFront: string;
   NIDBack: string;
   lastVaccinatedDate?: string;
@@ -39,6 +38,6 @@ export interface LocationDTO {
   geohash: string;
   createdAt: string;
   bloodGroup: BloodGroup;
-  availableForDonation: AvailableForDonation;
+  availableForDonation: boolean;
   lastVaccinatedDate: string;
 }

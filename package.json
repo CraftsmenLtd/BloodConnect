@@ -9,7 +9,7 @@
   },
   "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "type-check": "tsc --skipLibCheck",
     "lint": "eslint ."
   },

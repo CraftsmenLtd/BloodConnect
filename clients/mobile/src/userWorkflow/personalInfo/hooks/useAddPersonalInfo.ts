@@ -1,18 +1,27 @@
 import { useMemo, useState, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { useNavigation } from '@react-navigation/native'
-import { validateRequired, ValidationRule, validateInput, validateDateOfBirth, validatePastOrTodayDate, validateHeight, validateWeight, validatePhoneNumber } from '../../../utility/validator'
+import {
+  validateRequired,
+  ValidationRule,
+  validateInput,
+  validateDateOfBirth,
+  validatePastOrTodayDate,
+  validateHeight,
+  validateWeight,
+  validatePhoneNumber
+} from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
-import { addPersonalInfoHandler } from '../../services/userServices'
+import { updateUserProfile } from '../../services/userProfileService'
 import { LocationService } from '../../../LocationService/LocationService'
 import { formatErrorMessage, formatToTwoDecimalPlaces, formatPhoneNumber } from '../../../utility/formatting'
-import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
+import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
 
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type PersonalInfoKeys = keyof PersonalInfo
 
@@ -139,7 +148,7 @@ export const useAddPersonalInfo = (): any => {
   }, [personalInfo, errors, isSSO])
 
   async function formatLocations(locations: string[], city: string): Promise<LocationData[]> {
-    const locationService = new LocationService(GOOGLE_MAP_API)
+    const locationService = new LocationService(API_BASE_URL)
 
     const formattedLocations = await Promise.all(
       locations.map(async(area) =>
@@ -176,9 +185,10 @@ export const useAddPersonalInfo = (): any => {
         height: personalInfo.height,
         weight: formatToTwoDecimalPlaces(personalInfo.weight),
         preferredDonationLocations,
-        ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {})
+        ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {}),
+        availableForDonation: rest.availableForDonation === 'yes'
       }
-      const response = await addPersonalInfoHandler(finalData, fetchClient)
+      const response = await updateUserProfile(finalData, fetchClient)
       if (response.status === 200) {
         await fetchUserProfile()
         navigation.navigate(SCREENS.BOTTOM_TABS)

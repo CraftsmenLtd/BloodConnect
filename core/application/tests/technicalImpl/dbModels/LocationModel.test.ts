@@ -17,7 +17,7 @@ describe('LocationModel Tests', () => {
         userId: 'user1',
         locationId: 'location1',
         bloodGroup: 'A+',
-        availableForDonation: 'yes',
+        availableForDonation: true,
         geohash: 'gcpuv',
         createdAt: '2023-10-01T00:00:00.000Z',
         lastVaccinatedDate: '2023-10-01T00:00:00.000Z'
@@ -28,7 +28,7 @@ describe('LocationModel Tests', () => {
       expect(result).toEqual({
         PK: 'USER#user1',
         SK: 'LOCATION#location1',
-        GSI1PK: 'CITY#Dhaka#BG#A+#DONATIONSTATUS#yes',
+        GSI1PK: 'CITY#Dhaka#BG#A+#DONATIONSTATUS#true',
         GSI1SK: 'gcpuv',
         createdAt: expect.any(String),
         area: 'Banani',
@@ -47,7 +47,7 @@ describe('LocationModel Tests', () => {
         userId: 'user1',
         locationId: 'location1',
         bloodGroup: 'A+',
-        availableForDonation: 'yes',
+        availableForDonation: true,
         geohash: 'gcpuv',
         createdAt: '2023-10-01T00:00:00.000Z',
         lastVaccinatedDate: '2023-10-01T00:00:00.000Z'
@@ -63,7 +63,7 @@ describe('LocationModel Tests', () => {
       const dbFields: LocationFields = {
         PK: 'USER#user1',
         SK: 'LOCATION#location1',
-        GSI1PK: 'CITY#CityA#BG#A+#DONATIONSTATUS#yes',
+        GSI1PK: 'CITY#CityA#BG#A+#DONATIONSTATUS#true',
         GSI1SK: 'gcpuv',
         createdAt: '2023-10-01T00:00:00.000Z',
         area: 'Banani',
@@ -79,7 +79,7 @@ describe('LocationModel Tests', () => {
         locationId: 'location1',
         city: 'CityA',
         bloodGroup: 'A+' as BloodGroup,
-        availableForDonation: 'yes',
+        availableForDonation: true,
         geohash: 'gcpuv',
         area: 'Banani',
         createdAt: '2023-10-01T00:00:00.000Z',

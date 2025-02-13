@@ -21,7 +21,7 @@ const defaultProfile: UserProfile = {
   weight: 0,
   gender: '',
   dateOfBirth: '',
-  availableForDonation: '',
+  availableForDonation: false,
   lastVaccinatedDate: '',
   NIDFront: '',
   NIDBack: '',
@@ -33,7 +33,7 @@ const UserProfileContext = createContext<UserProfileContextData | undefined>({
   userProfile: defaultProfile,
   loading: true,
   error: '',
-  fetchUserProfile: async() => {}
+  fetchUserProfile: async() => { }
 })
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -52,7 +52,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       weight: profile.weight ?? 0,
       gender: profile.gender ?? '',
       dateOfBirth: profile.dateOfBirth ?? '',
-      availableForDonation: profile.availableForDonation ?? '',
+      availableForDonation: profile.availableForDonation,
       lastVaccinatedDate: profile.lastVaccinatedDate ?? '',
       NIDFront: profile.NIDFront ?? '',
       NIDBack: profile.NIDBack ?? '',
