@@ -1,0 +1,7 @@
+{
+  "userId": "$context.authorizer.claims['custom:userId']",
+  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "apiGwRequestId": "$context.requestId",
+  "input": "$input.params('input')",
+  "types": "$input.params('types')"
+}

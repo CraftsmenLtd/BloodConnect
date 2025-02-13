@@ -1,5 +1,4 @@
-import { SHORT_DESCRIPTION_MAX_LENGTH } from '../donationWorkflow/createUpdateDonation/useBloodRequest'
-import { ACCOUNT_CREATION_MINIMUM_AGE } from '../setup/constant/consts'
+import { ACCOUNT_CREATION_MINIMUM_AGE, SHORT_DESCRIPTION_MAX_LENGTH } from '../setup/constant/consts'
 import { formattedDate } from './formatting'
 
 interface PasswordPolicy {
@@ -94,10 +93,6 @@ export const validateDonationDateTimeWithin24Hours = (donationDateTime: string):
 
   const actualMaxAllowedDate = maxAllowedDate < endOfNextDay ? endOfNextDay : maxAllowedDate
 
-  if (donationDate < now) {
-    return 'Donation date & time cannot be in the past.'
-  }
-
   if (donationDate > actualMaxAllowedDate) {
     return `Donation date & time must be before ${formattedDate(actualMaxAllowedDate)}.`
   }
@@ -168,11 +163,11 @@ export const validateWeight = (weight: string): string | null => {
 const validateShortDescription = (value: string): string | null => {
   const tests = [
     {
-      test: !value.includes('\n'),
+      test: value.includes('\n'),
       error: 'Short description must not contain newline characters.'
     },
     {
-      test: /^[a-zA-Z0-9 .,!?-]*$/.test(value),
+      test: !/^[a-zA-Z0-9 .,!?-]*$/.test(value),
       error: 'Short description contains invalid special characters.'
     },
     {
@@ -181,7 +176,7 @@ const validateShortDescription = (value: string): string | null => {
     }
   ]
 
-  const error = tests.find(({ test }) => !test)?.error
+  const error = tests.find(({ test }) => test)?.error
 
   return error ?? null
 }

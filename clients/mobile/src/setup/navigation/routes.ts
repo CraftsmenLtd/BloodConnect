@@ -1,6 +1,7 @@
 import Register from '../../authentication/register/UI/Register'
 import OTP from '../../authentication/otp/UI/OTP'
 import Login from '../../authentication/login/UI/Login'
+import AboutPage from '../../userWorkflow/about/About'
 import { SCREENS } from '../constant/screens'
 import Welcome from '../../welcome/WelcomeScreen'
 import SetPassword from '../../authentication/setPassword/UI/SetPassword'
@@ -125,6 +126,12 @@ export const routes = [
     name: SCREENS.DONOR_CONFIRMATION,
     component: DonorConfirmationScreen,
     options: { headerShown: true, headerTitle: '' },
+    protected: true
+  },
+  {
+    name: SCREENS.ABOUT,
+    component: AboutPage,
+    options: { headerShown: true, headerTitle: 'About' },
     protected: true
   }
 ]

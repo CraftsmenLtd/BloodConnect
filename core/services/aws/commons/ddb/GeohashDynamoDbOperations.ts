@@ -29,7 +29,7 @@ export default class GeohashDynamoDbOperations<
       partitionKeyCondition: {
         attributeName: gsiIndex.partitionKey,
         operator: QueryConditionOperator.EQUALS,
-        attributeValue: `CITY#${city}#BG#${requestedBloodGroup}#DONATIONSTATUS#yes`
+        attributeValue: `CITY#${city}#BG#${requestedBloodGroup}#DONATIONSTATUS#true`
       },
       options: {
         exclusiveStartKey: lastEvaluatedKey

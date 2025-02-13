@@ -14,19 +14,6 @@ export interface DonorProfile {
   preferredDonationLocations?: preferredDonationLocations[];
 }
 
-export const addPersonalInfoHandler = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<ApiResponse> => {
-  try {
-    const response = await httpClient.patch<ApiResponse>('/users', payload)
-    return {
-      message: response.message,
-      status: response.status
-    }
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
-    throw new Error(errorMessage)
-  }
-}
-
 export const getDonorProfile = async(donorId: string, httpClient: HttpClient): Promise<ApiResponse<DonorProfile>> => {
   try {
     const response = await httpClient.get<ApiResponse<DonorProfile>>(`/donors/${donorId}`, {})

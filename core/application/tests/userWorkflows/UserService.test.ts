@@ -113,7 +113,7 @@ describe('UserService Tests', () => {
       lastDonationDate: '2023-06-01',
       height: '5.10',
       weight: 65,
-      availableForDonation: 'yes',
+      availableForDonation: true,
       gender: 'male',
       NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
       NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',

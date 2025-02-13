@@ -9,8 +9,6 @@ type EnvVars = {
   API_BASE_URL: string;
   APP_NAME: string;
   APP_VERSION: string;
-  GOOGLE_MAP_API_KEY: string;
-  GOOGLE_MAP_API: string;
   APP_ENV: string;
   COUNTRY: string;
 }
@@ -35,8 +33,6 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     API_BASE_URL: process.env.API_BASE_URL,
     APP_NAME: process.env.APP_NAME,
     APP_VERSION: process.env.APP_VERSION,
-    GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
-    GOOGLE_MAP_API: process.env.GOOGLE_MAP_API,
     APP_ENV: process.env.APP_ENV ?? 'preview',
     COUNTRY: process.env.COUNTRY
   }

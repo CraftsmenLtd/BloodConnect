@@ -73,11 +73,7 @@
         }
       },
       "availableForDonation": {
-        "type": "string",
-        "enum": [
-          "yes",
-          "no"
-        ]
+        "type": "boolean"
       },
       "NIDFront": {
         "type": "string"
@@ -115,7 +111,7 @@
           "longitude": 90.4043
         }
       ],
-      "availableForDonation": "yes",
+      "availableForDonation": true,
       "NIDFront": "https://cdn.bloodconnect.net/nid/1a2b3c4d5e-front.jpg",
       "NIDBack": "https://cdn.bloodconnect.net/nid/1a2b3c4d5e-back.jpg",
       "lastVaccinatedDate": "2023-03-01"
