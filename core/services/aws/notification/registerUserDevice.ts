@@ -13,7 +13,7 @@ import { SnsRegistrationAttributes } from '../../../application/notificationWork
 import {
   createHTTPLogger,
   HttpLoggerAttributes
-} from '../commons/httpLogger/HttpLogger'
+} from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const notificationService = new NotificationService()

@@ -12,7 +12,7 @@ import {
   BloodDonationModel,
   DonationFields
 } from '../../../application/models/dbModels/BloodDonationModel'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
 import {

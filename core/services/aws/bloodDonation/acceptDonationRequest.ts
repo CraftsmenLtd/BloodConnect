@@ -35,7 +35,7 @@ import DonationNotificationModel, {
 } from '../../../application/models/dbModels/DonationNotificationModel'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
 import { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const bloodDonationService = new BloodDonationService()

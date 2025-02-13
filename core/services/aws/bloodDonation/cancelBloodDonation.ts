@@ -12,7 +12,7 @@ import {
 } from '../../../application/models/dbModels/BloodDonationModel'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const bloodDonationService = new BloodDonationService()

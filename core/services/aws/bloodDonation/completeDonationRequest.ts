@@ -30,7 +30,7 @@ import DonationNotificationModel, {
 } from '../../../application/models/dbModels/DonationNotificationModel'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
 import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { UserService } from '../../../application/userWorkflow/UserService'
 import { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
 import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
