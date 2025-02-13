@@ -229,8 +229,8 @@ export class NotificationService {
     notificationAttributes: NotificationAttributes | DonationNotificationAttributes,
     queueModel: QueueModel
   ): Promise<void> {
-    await queueModel.queue(notificationAttributes).catch(() => {
-      throw new Error('Failed to send notification.')
+    await queueModel.queue(notificationAttributes, process.env.NOTIFICATION_QUEUE_URL ?? '').catch((error) => {
+      throw new Error('Failed to send notification.' + error)
     })
   }
 }
