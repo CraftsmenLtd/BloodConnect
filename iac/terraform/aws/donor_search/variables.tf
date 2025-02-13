@@ -8,12 +8,6 @@ variable "dynamodb_table_arn" {
   description = "ARN of the DynamoDB table"
 }
 
-variable "donor_search_max_retry_count" {
-  type        = string
-  description = "donor search maximum retry count"
-  default     = 10
-}
-
 variable "api_gateway_id" {
   description = "ID of the API Gateway"
   type        = string
