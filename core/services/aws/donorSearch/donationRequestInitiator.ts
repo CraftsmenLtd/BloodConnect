@@ -99,7 +99,8 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
         await donorSearchService.updateDonorSearchRecord(
           {
             ...donorSearchAttributes,
-            status: shouldRestartSearch ? DonorSearchStatus.PENDING : donorSearchRecord.status
+            status: shouldRestartSearch ? DonorSearchStatus.PENDING : donorSearchRecord.status,
+            notifiedEligibleDonors: donorSearchRecord.notifiedEligibleDonors
           },
           new DynamoDbTableOperations<DonorSearchDTO, DonorSearchFields, DonorSearchModel>(
             new DonorSearchModel()

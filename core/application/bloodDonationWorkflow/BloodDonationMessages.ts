@@ -5,7 +5,10 @@ export function getBloodRequestMessage(
   bloodGroup: string,
   shortDescription: string | undefined
 ): string {
-  const urgent = urgencyLevel === UrgencyLevel.URGENT ? 'Urgent ' : ''
   const description = shortDescription !== undefined ? `| ${shortDescription}` : ''
-  return `${urgent}${bloodGroup} blood needed ${description}`.trim()
+  if (urgencyLevel === UrgencyLevel.URGENT) {
+    return `Urgent ${bloodGroup} blood needed ${description}`.trim()
+  } else {
+    return `${bloodGroup} blood needed ${description}`.trim()
+  }
 }
