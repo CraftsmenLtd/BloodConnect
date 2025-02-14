@@ -91,9 +91,9 @@ async function createNotification(body: NotificationAttributes): Promise<boolean
       body.payload.requestPostId as string,
       NotificationType.BLOOD_REQ_POST,
       new NotificationDynamoDbOperations<
-        BloodDonationNotificationDTO,
-        BloodDonationNotificationFields,
-        DonationNotificationModel
+      BloodDonationNotificationDTO,
+      BloodDonationNotificationFields,
+      DonationNotificationModel
       >(new DonationNotificationModel())
     )
     if (existingNotification !== null) {
@@ -127,9 +127,9 @@ async function createNotification(body: NotificationAttributes): Promise<boolean
     await notificationService.createBloodDonationNotification(
       notificationData,
       new NotificationDynamoDbOperations<
-        BloodDonationNotificationDTO,
-        BloodDonationNotificationFields,
-        DonationNotificationModel
+      BloodDonationNotificationDTO,
+      BloodDonationNotificationFields,
+      DonationNotificationModel
       >(new DonationNotificationModel())
     )
   } else if (body.type === NotificationType.REQ_ACCEPTED) {
@@ -138,9 +138,9 @@ async function createNotification(body: NotificationAttributes): Promise<boolean
       body.payload.requestPostId as string,
       NotificationType.REQ_ACCEPTED,
       new NotificationDynamoDbOperations<
-        BloodDonationNotificationDTO,
-        BloodDonationNotificationFields,
-        DonationNotificationModel
+      BloodDonationNotificationDTO,
+      BloodDonationNotificationFields,
+      DonationNotificationModel
       >(new DonationNotificationModel())
     )
     if (existingNotification !== null) {
@@ -171,9 +171,9 @@ async function createNotification(body: NotificationAttributes): Promise<boolean
     await notificationService.createBloodDonationNotification(
       notificationData,
       new NotificationDynamoDbOperations<
-        BloodDonationNotificationDTO,
-        BloodDonationNotificationFields,
-        DonationNotificationModel
+      BloodDonationNotificationDTO,
+      BloodDonationNotificationFields,
+      DonationNotificationModel
       >(new DonationNotificationModel())
     )
   } else {

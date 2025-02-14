@@ -8,4 +8,5 @@ locals {
   max_geohashes_per_processing_batch      = 1024
   donor_search_max_retry_count            = 10
   donor_search_max_reinstated_retry_count = 3
+  donor_search_queue_min_delay_seconds    = 300
 }

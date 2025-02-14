@@ -38,6 +38,7 @@ locals {
         CACHE_GEOHASH_PREFIX_LENGTH             = local.cache_geohash_prefix_length
         NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH   = local.neighbor_search_geohash_prefix_length
         MAX_GEOHASHES_PER_PROCESSING_BATCH      = local.max_geohashes_per_processing_batch
+        DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS    = local.donor_search_queue_min_delay_seconds
       }
     },
     donation-status-manager = {

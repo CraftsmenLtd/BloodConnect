@@ -167,10 +167,11 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       await donorSearchService.enqueueDonorSearchRequest(
         newDonorSearchQueueAttributes,
         new SQSOperations(),
-        120
+        Number(process.env.DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS)
       )
       return
     }
+
     const hasDonorSearchMaxRetryReached =
       retryCount >= Number(process.env.DONOR_SEARCH_MAX_RETRY_COUNT)
 
@@ -239,7 +240,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       await donorSearchService.enqueueDonorSearchRequest(
         newDonorSearchQueueAttributes,
         new SQSOperations(),
-        120
+        Number(process.env.DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS)
       )
     } else {
       await donorSearchService.updateDonorSearchRecord(
