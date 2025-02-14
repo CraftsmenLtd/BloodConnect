@@ -110,10 +110,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     const remainingBagsNeeded = await getRemainingBagsNeeded(seekerId, requestPostId, bloodQuantity)
 
     if (remainingBagsNeeded <= 0) {
-      serviceLogger.info(
-        { seekerId, requestPostId },
-        'Sufficient donors have accepted the request, terminating process'
-      )
+      serviceLogger.info('Sufficient donors have accepted the request, terminating process')
       return
     }
 
