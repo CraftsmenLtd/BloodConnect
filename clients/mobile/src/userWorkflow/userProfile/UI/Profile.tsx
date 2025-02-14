@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, ScrollView } from 'react-native'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
+import { formattedDate, LocationData } from '../../../utility/formatting'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
 import { useProfile } from '../hooks/useProfile'
@@ -16,6 +17,10 @@ export interface EditProfileData {
   dateOfBirth: string;
   name: string;
   gender: string;
+  lastDonationDate: string;
+  city: string;
+  preferredDonationLocations: LocationData[];
+  locations: string[];
   [key: string]: any;
 }
 
@@ -24,8 +29,8 @@ const Profile: React.FC = () => {
   const { userDetails } = useProfile()
   const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
-  const renderDetailRow = (label: string, value: string = ''): JSX.Element => (
-    <View style={styles.row}>
+  const renderDetailRow = (label: string, value: string = '', isLast: boolean = false): JSX.Element => (
+    <View style={[styles.row, isLast && styles.lastRow]}>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.value}>{value}</Text>
     </View>
@@ -41,7 +46,12 @@ const Profile: React.FC = () => {
         weight: userDetails.weight?.toString() ?? '',
         height: userDetails.height?.toString() ?? '',
         dateOfBirth: userDetails.dateOfBirth ?? '',
-        name: userDetails.name ?? ''
+        name: userDetails.name ?? '',
+        lastDonationDate: userDetails.lastDonationDate ?? '',
+        preferredDonationLocations: userDetails.preferredDonationLocations ?? [],
+        locations: userDetails?.preferredDonationLocations?.map(location => {
+          return location.area
+        }) ?? []
       }
     })
   }
@@ -61,12 +71,25 @@ const Profile: React.FC = () => {
       >
         <View style={styles.card}>
           {renderDetailRow('Name', userDetails.name ?? '')}
-          {renderDetailRow('Date of Birth', userDetails.dateOfBirth ?? '')}
+          {renderDetailRow('Date of Birth', formattedDate(userDetails.dateOfBirth ?? '', true))}
           {renderDetailRow('Age', userDetails.age.toString())}
           {renderDetailRow('Weight (kg)', userDetails.weight !== undefined ? userDetails.weight.toString() : '')}
           {renderDetailRow('Height (feet)', userDetails.height !== undefined ? userDetails.height.toString() : '')}
           {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined && userDetails.phoneNumbers.length > 0 ? userDetails.phoneNumbers[0] : '')}
           {renderDetailRow('Gender', userDetails.gender)}
+          {userDetails?.lastDonationDate !== '' && renderDetailRow('Last Donation Date', formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
+          <View style={[styles.row, styles.lastRow]}>
+            <Text style={styles.label}>{'Locations'}</Text>
+            {userDetails?.preferredDonationLocations?.map(location => {
+              return (
+                <View key={location.area} style={styles.selectedItem}>
+                  <Text style={styles.selectedItemText}>
+                    {location.area}
+                  </Text>
+                </View>
+              )
+            })}
+          </View>
         </View>
       </ScrollView>
 

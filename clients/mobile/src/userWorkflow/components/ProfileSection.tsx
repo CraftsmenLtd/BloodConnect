@@ -123,7 +123,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontWeight: 'bold'
   },
   profileLocationSection: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   profileLocation: {
     fontSize: 14,

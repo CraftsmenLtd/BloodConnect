@@ -26,7 +26,11 @@
         #end
         "gender": "$item.gender.S",
         "dateOfBirth": "$item.dateOfBirth.S",
-        "availableForDonation": "$item.availableForDonation.S",
+        #if($item.availableForDonation && $item.availableForDonation.BOOL == true)
+          "availableForDonation": $item.availableForDonation.BOOL,
+        #else
+          "availableForDonation": false,
+        #end
         "NIDFront": "$item.NIDFront.S",
         "NIDBack": "$item.NIDBack.S",
         "lastVaccinatedDate": "$item.lastVaccinatedDate.S",

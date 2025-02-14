@@ -12,6 +12,7 @@ import {
   ImageStyle
 } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { formatBloodQuantity } from '../../donationWorkflow/donationHelpers'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { Theme } from '../../setup/theme'
 import { Button } from '../button/Button'
@@ -239,7 +240,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             />
             <View style={styles.bloodText}>
               <Text style={styles.lookingForText}>Looking for</Text>
-              <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} (ve) blood</Text>
+              <Text style={styles.bloodAmount}>{formatBloodQuantity(post.bloodQuantity)} {post.requestedBloodGroup} (ve) blood</Text>
             </View>
           </View>
           {post.urgencyLevel === UrgencyLevel.URGENT && (

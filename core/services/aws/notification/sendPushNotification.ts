@@ -60,26 +60,43 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
       new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
     )
     userDeviceToSnsEndpointMap.set(userId, userSnsEndpointArn)
-    await createNotification(body)
-    await notificationService.publishNotification(
-      body,
-      userSnsEndpointArn,
-      new SNSOperations()
-    )
+    const newNotificationCreated = await createNotification(body)
+    if (newNotificationCreated) {
+      await notificationService.publishNotification(
+        body,
+        userSnsEndpointArn,
+        new SNSOperations()
+      )
+    }
   } else {
-    await createNotification(body)
-    await notificationService.publishNotification(
-      body,
-      cachedUserSnsEndpointArn,
-      new SNSOperations()
-    )
+    const newNotificationCreated = await createNotification(body)
+    if (newNotificationCreated) {
+      await notificationService.publishNotification(
+        body,
+        cachedUserSnsEndpointArn,
+        new SNSOperations()
+      )
+    }
   }
 }
 
 export default sendPushNotification
 
-async function createNotification(body: NotificationAttributes): Promise<void> {
+async function createNotification(body: NotificationAttributes): Promise<boolean> {
   if (body.type === NotificationType.BLOOD_REQ_POST) {
+    const existingNotification = await notificationService.getBloodDonationNotification(
+      body.userId,
+      body.payload.requestPostId as string,
+      NotificationType.BLOOD_REQ_POST,
+      new NotificationDynamoDbOperations<
+      BloodDonationNotificationDTO,
+      BloodDonationNotificationFields,
+      DonationNotificationModel
+      >(new DonationNotificationModel())
+    )
+    if (existingNotification !== null) {
+      return false
+    }
     const notificationData: DonationNotificationAttributes = {
       type: body.type,
       payload: {
@@ -114,6 +131,19 @@ async function createNotification(body: NotificationAttributes): Promise<void> {
       >(new DonationNotificationModel())
     )
   } else if (body.type === NotificationType.REQ_ACCEPTED) {
+    const existingNotification = await notificationService.getBloodDonationNotification(
+      body.userId,
+      body.payload.requestPostId as string,
+      NotificationType.REQ_ACCEPTED,
+      new NotificationDynamoDbOperations<
+      BloodDonationNotificationDTO,
+      BloodDonationNotificationFields,
+      DonationNotificationModel
+      >(new DonationNotificationModel())
+    )
+    if (existingNotification !== null) {
+      return false
+    }
     const notificationData: DonationNotificationAttributes = {
       type: body.type,
       payload: {
@@ -124,6 +154,7 @@ async function createNotification(body: NotificationAttributes): Promise<void> {
         donorName: body.payload.donorName as string,
         phoneNumbers: body.payload.phoneNumbers as string[],
         requestedBloodGroup: body.payload.requestedBloodGroup as string,
+        bloodQuantity: body.payload.bloodQuantity as number,
         urgencyLevel: body.payload.urgencyLevel as string,
         donationDateTime: body.payload.donationDateTime as string,
         location: body.payload.location as string,
@@ -151,4 +182,5 @@ async function createNotification(body: NotificationAttributes): Promise<void> {
       )
     )
   }
+  return true
 }

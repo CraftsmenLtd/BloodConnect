@@ -5,6 +5,14 @@
 import { Config } from 'jest'
 
 const config: Config = {
+  maxWorkers: '60%',
+  globals: {
+    'ts-jest': {
+      isolatedModules: false
+    }
+  },
+  cache: true,
+  cacheDirectory: '/tmp/jest_cache',
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
@@ -22,7 +30,8 @@ const config: Config = {
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
-    '.build'
+    '.build',
+    '/clients/mobile/node_modules/'
   ],
   projects: ['<rootDir>/core/application', '<rootDir>/core/services/aws', '<rootDir>/clients/mobile']
 }

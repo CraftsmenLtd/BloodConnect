@@ -38,9 +38,6 @@ export const TextArea = ({ name, label, value, placeholder, onChangeText, maxLen
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   ...commonStyles(theme),
-  container: {
-    // backgroundColor: 'red'
-  },
   textArea: {
     borderWidth: 1,
     borderColor: theme.colors.extraLightGray,

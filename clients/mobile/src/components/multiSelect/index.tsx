@@ -8,10 +8,7 @@ import {
   ScrollView,
   Dimensions,
   TextInput,
-  ActivityIndicator,
-  Keyboard,
-  Platform,
-  TouchableWithoutFeedback
+  ActivityIndicator
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { Theme } from '../../setup/theme'
@@ -77,6 +74,7 @@ interface MultiSelectProps {
  *
  * @returns {React.FC} A multi-select dropdown component.
  */
+
 const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   name,
   options,
@@ -96,7 +94,6 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   const [isVisible, setIsVisible] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [filteredOptions, setFilteredOptions] = useState(options)
-  const [dropdownTop, setDropdownTop] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const inputRef = useRef<View>(null)
   const searchInputRef = useRef<TextInput>(null)
@@ -125,27 +122,14 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
     }
   }, [searchText])
 
-  const measureInputPosition = useCallback(() => {
-    inputRef.current?.measureInWindow((x, y, width, height) => {
-      setDropdownTop(y + height)
-    })
-  }, [])
-
-  const toggleDropdown = useCallback(() => {
-    if (!isVisible) {
-      measureInputPosition()
-      if (enableSearch && (searchInputRef.current !== null)) {
-        searchInputRef.current.focus()
-      }
-    }
-    setIsVisible(!isVisible)
+  const toggleDropdown = () => {
+    setIsVisible((prev) => !prev)
+    setTimeout(() => { searchInputRef.current?.focus() }, 200)
     setSearchText('')
     setFilteredOptions(options)
-  }, [isVisible, options, measureInputPosition, enableSearch])
+  }
 
-  const handleSearch = useCallback((text: string) => {
-    setSearchText(text)
-  }, [])
+  const handleSearch = (text: string) => { setSearchText(text) }
 
   const handleSelect = useCallback((item: Option) => {
     const isSelected = selectedValues.includes(item.value)
@@ -164,57 +148,41 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
     onSelect(name, updatedValues)
   }, [selectedValues, onSelect, name])
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      measureInputPosition
-    )
-    const keyboardDidHideListener = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      measureInputPosition
-    )
-
-    return () => {
-      keyboardDidShowListener.remove()
-      keyboardDidHideListener.remove()
-    }
-  }, [measureInputPosition])
-
   const dropdownContent = useMemo(() => {
     return (
-      <TouchableWithoutFeedback onPress={() => {}}>
-        <View style={styles.dropdown}>
-          {enableSearch && (
+      <View style={styles.dropdown}>
+        {enableSearch && (
             <View style={styles.searchContainer}>
-              <Ionicons name="search" size={20} color={theme.colors.textSecondary} style={styles.searchIcon} />
-              <TextInput
-                ref={searchInputRef}
-                style={styles.searchInput}
-                placeholder="Search..."
-                value={searchText}
-                onChangeText={handleSearch}
-                editable={editable}
-                autoFocus={isVisible && enableSearch}
-              />
-            </View>
-          )}
-          {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
-          <ScrollView>
-            {filteredOptions.map((item) => (
-              <TouchableOpacity
-                key={item.value}
-                style={styles.option}
-                onPress={() => { handleSelect(item) }}
-              >
-                <Text style={styles.optionText}>{item.label}</Text>
-                {selectedValues.includes(item.value) && (
-                  <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
-                )}
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      </TouchableWithoutFeedback>
+            <Ionicons name="search" size={20} color={theme.colors.textSecondary} style={styles.searchIcon} />
+            <TextInput
+              ref={searchInputRef}
+              style={styles.searchInput}
+              placeholder="Search..."
+              value={searchText}
+              onChangeText={handleSearch}
+              editable={editable}
+            />
+            <TouchableOpacity onPress={() => { setSearchText('') }}>
+            <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+            </TouchableOpacity>
+          </View>
+        )}
+        {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
+        <ScrollView>
+          {filteredOptions.map((item) => (
+            <TouchableOpacity
+              key={item.value}
+              style={styles.option}
+              onPress={() => { handleSelect(item) }}
+            >
+              <Text style={styles.optionText}>{item.label}</Text>
+              {selectedValues.includes(item.value) && (
+                <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+              )}
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
     )
   }, [enableSearch, searchText, isLoading, filteredOptions, selectedValues, handleSelect, handleSearch, isVisible])
 
@@ -230,40 +198,37 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         ref={inputRef}
         onPress={toggleDropdown}
         style={styles.inputContainer}
+        activeOpacity={1}
       >
-        <View style={styles.selectedValuesContainer}>
-          {selectedValues.length === 0
-            ? (
-              <Text style={styles.placeholder}>{placeholder}</Text>
-              )
-            : (
-                selectedValues.map((value) => {
-                  return (
-                    <View key={value} style={styles.selectedItem}>
-                      <Text style={styles.selectedItemText}>
-                        {value}
-                      </Text>
-                      <TouchableOpacity onPress={() => { removeSelectedValue(value) }}>
-                        <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
-                      </TouchableOpacity>
-                    </View>
-                  )
-                })
-              )}
+        <View style={styles.input}>
+          <Text style={styles.placeholder}>{placeholder}</Text>
         </View>
         <Ionicons name={isVisible ? 'chevron-up' : 'chevron-down'} size={14} color={theme.colors.textSecondary} />
       </TouchableOpacity>
 
       {(minRequiredLabel != null) && <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>}
       {error !== null && <Text style={styles.error}>{error}</Text>}
+      <View style={styles.selectedItemContainer}>
+          {
+            selectedValues.map((value) =>
+              <View key={value} style={styles.selectedItem}>
+                <Text style={styles.selectedItemText}>
+                  {value}
+                </Text>
+                <TouchableOpacity onPress={() => { removeSelectedValue(value) }}>
+                  <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+                </TouchableOpacity>
+              </View>)
+          }
+        </View>
 
-      <Modal transparent={true} visible={isVisible} onRequestClose={toggleDropdown}>
+      <Modal transparent visible={isVisible} onRequestClose={toggleDropdown}>
         <TouchableOpacity
           style={styles.backdrop}
           onPress={toggleDropdown}
           activeOpacity={1}
         >
-          <View style={[styles.dropdownContainer, { top: dropdownTop }]}>
+          <View style={[styles.dropdownContainer, { top: 10 }]}>
             {dropdownContent}
           </View>
         </TouchableOpacity>
@@ -297,12 +262,17 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: 16,
     color: theme.colors.grey
   },
-  selectedValuesContainer: {
+  input: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     flex: 1,
     gap: 5,
     paddingVertical: 3
+  },
+  selectedItemContainer: {
+    gap: 4,
+    flexDirection: 'row',
+    flexWrap: 'wrap'
   },
   selectedItem: {
     flexDirection: 'row',
@@ -323,7 +293,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   backdrop: {
     flex: 1,
-    backgroundColor: 'transparent'
+    backgroundColor: theme.colors.blackFaded,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   dropdownContainer: {
     position: 'absolute',
@@ -332,7 +304,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   dropdown: {
     width: '100%',
-    maxHeight: 200,
+    maxHeight: 400,
     backgroundColor: theme.colors.white,
     borderRadius: 8,
     padding: 10,
