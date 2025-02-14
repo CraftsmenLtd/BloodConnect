@@ -7,7 +7,7 @@ import { LocationDTO } from '../../../commons/dto/UserDTO'
 import GeohashRepository from '../models/policies/repositories/GeohashRepository'
 import { QueueModel } from '../models/queue/QueueModel'
 
-const DONOR_SEARCH_QUEUE_URL = process.env.DONOR_SEARCH_QUEUE_URL
+const DONOR_SEARCH_QUEUE_URL = process.env.DONOR_SEARCH_QUEUE_URL as string
 
 export class DonorSearchService {
   async enqueueDonorSearchRequest(
@@ -15,13 +15,11 @@ export class DonorSearchService {
     queueModel: QueueModel,
     delayPeriod?: number
   ): Promise<void> {
-    if (DONOR_SEARCH_QUEUE_URL !== undefined) {
-      await queueModel.queue(
-        donorSearchQueueAttributes,
-        DONOR_SEARCH_QUEUE_URL,
-        delayPeriod
-      )
-    }
+    await queueModel.queue(
+      donorSearchQueueAttributes,
+      DONOR_SEARCH_QUEUE_URL,
+      delayPeriod
+    )
   }
 
   async updateVisibilityTimeout(
@@ -29,13 +27,11 @@ export class DonorSearchService {
     visibilityTimeout: number,
     queueModel: QueueModel
   ): Promise<void> {
-    if (DONOR_SEARCH_QUEUE_URL !== undefined) {
-      await queueModel.updateVisibilityTimeout(
-        receiptHandle,
-        DONOR_SEARCH_QUEUE_URL,
-        visibilityTimeout
-      )
-    }
+    await queueModel.updateVisibilityTimeout(
+      receiptHandle,
+      DONOR_SEARCH_QUEUE_URL,
+      visibilityTimeout
+    )
   }
 
   async getDonorSearchRecord(
