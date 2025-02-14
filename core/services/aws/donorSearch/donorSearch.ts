@@ -78,11 +78,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
   })
 
   try {
-    serviceLogger.info({
-      seekerId,
-      requestPostId,
-      createdAt
-    }, 'Starting donor search process')
+    serviceLogger.info('Starting donor search process')
 
     const donorSearchRecord = await donorSearchService.getDonorSearchRecord(
       seekerId,
