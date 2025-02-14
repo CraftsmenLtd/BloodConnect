@@ -4,7 +4,7 @@ import {
   DonorSearchAttributes,
   DonorSearchQueueAttributes
 } from '../../../application/bloodDonationWorkflow/Types'
-import { DonorSearchDTO, DonorSearchStatus } from '../../../../commons/dto/DonationDTO'
+import { DonorSearchDTO, DonorSearchStatus, DynamoDBEventName } from '../../../../commons/dto/DonationDTO'
 import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
@@ -82,7 +82,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
       )
 
       const shouldRestartSearch =
-        body.eventName === 'MODIFY' &&
+        body.eventName === DynamoDBEventName.MODIFY &&
         donorSearchRecord !== null &&
         donorSearchRecord.status === DonorSearchStatus.COMPLETED
 

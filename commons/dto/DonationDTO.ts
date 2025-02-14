@@ -67,6 +67,11 @@ export type DonorSearchDTO = DTO & {
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 
+export enum DynamoDBEventName {
+  INSERT = 'INSERT',
+  MODIFY = 'MODIFY'
+}
+
 export enum AcceptDonationStatus {
   PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',
