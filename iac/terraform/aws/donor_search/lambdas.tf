@@ -37,7 +37,7 @@ locals {
         MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL       = local.max_geohash_neighbor_search_level
         CACHE_GEOHASH_PREFIX_LENGTH             = local.cache_geohash_prefix_length
         NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH   = local.neighbor_search_geohash_prefix_length
-        MAX_GEOHASHES_PER_PROCESSING_BATCH      = local.max_geohashes_per_processing_batch
+        MAX_GEOHASHES_PER_EXECUTION             = local.max_geohashes_per_execution
         DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS    = local.donor_search_queue_min_delay_seconds
       }
     },

@@ -1,6 +1,6 @@
 import { UrgencyType } from '../../../commons/dto/DonationDTO'
 
-const EXTRA_DONORS_TO_NOTIFY: Record<UrgencyType, number> = { urgent: 1, regular: 1 }
+const EXTRA_DONORS_TO_NOTIFY: Record<UrgencyType, number> = { urgent: 2, regular: 1 }
 const MIN_DELAY_PERIOD: Record<UrgencyType, { minutes: number; hours: number }> = {
   urgent: { minutes: 5, hours: 1 },
   regular: { minutes: 7, hours: 1.2 }
@@ -23,7 +23,7 @@ export function calculateRemainingBagsNeeded(
   return Math.max(0, bloodQuantity - donorsFoundCount)
 }
 
-export function calculateTotalDonorsToNotify(
+export function calculateTotalDonorsToFind(
   remainingBagsNeeded: number,
   urgencyLevel: UrgencyType
 ): number {

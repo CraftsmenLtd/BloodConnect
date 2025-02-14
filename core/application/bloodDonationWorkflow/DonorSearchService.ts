@@ -111,7 +111,7 @@ export class DonorSearchService {
     currentGeohashes: string[] = []
   ): { updatedGeohashesToProcess: string[]; updatedNeighborSearchLevel: number } => {
     if (
-      currentGeohashes.length >= Number(process.env.MAX_GEOHASHES_PER_PROCESSING_BATCH) ||
+      currentGeohashes.length >= Number(process.env.MAX_GEOHASHES_PER_EXECUTION) ||
       neighborLevel >= Number(process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL)
     ) {
       return {

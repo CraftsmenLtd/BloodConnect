@@ -17,7 +17,6 @@ import {
 } from '../../../application/models/dbModels/DonorSearchModel'
 import SQSOperations from '../commons/sqs/SQSOperations'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
-import { Logger } from 'core/application/models/logger/Logger'
 import {
   DonorSearchIntentionalError,
   DonorSearchOperationalError
@@ -31,7 +30,7 @@ import {
 import {
   calculateDelayPeriod,
   calculateRemainingBagsNeeded,
-  calculateTotalDonorsToNotify
+  calculateTotalDonorsToFind
 } from 'core/application/utils/calculateDonorsToNotify'
 import {
   DonorInfo,
@@ -46,6 +45,7 @@ import { NotificationService } from 'core/application/notificationWorkflow/Notif
 import { DonationNotificationAttributes } from 'core/application/notificationWorkflow/Types'
 import { getBloodRequestMessage } from 'core/application/bloodDonationWorkflow/BloodDonationMessages'
 import { NotificationType } from 'commons/dto/NotificationDTO'
+import { MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from 'commons/libs/constants/NoMagicNumbers'
 
 const acceptDonationService = new AcceptDonationService()
 const donorSearchService = new DonorSearchService()
@@ -65,11 +65,12 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     requestPostId,
     createdAt,
     targetedExecutionTime,
-    potentialDonorsLeftToNotify,
+    remainingDonorsToFind,
     currentNeighborSearchLevel,
     remainingGeohashesToProcess,
     retryCount,
-    reinstatedRetryCount
+    reinstatedRetryCount,
+    notifiedEligibleDonors
   } = donorSearchQueueAttributes
 
   const serviceLogger = createServiceLogger(donorSearchQueueAttributes.seekerId, {
@@ -78,8 +79,6 @@ async function donorSearch(event: SQSEvent): Promise<void> {
   })
 
   try {
-    serviceLogger.info('Starting donor search process')
-
     const donorSearchRecord = await donorSearchService.getDonorSearchRecord(
       seekerId,
       requestPostId,
@@ -89,35 +88,28 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       )
     )
     if (donorSearchRecord == null) {
-      serviceLogger.info(
-        { seekerId, requestPostId },
-        'No donor search record found, terminating process'
-      )
+      serviceLogger.info('terminating process as no search record found')
       return
     }
 
     const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, city, geohash } =
       donorSearchRecord
 
-    const notifiedEligibleDonors =
-      Object.keys(donorSearchQueueAttributes.notifiedEligibleDonors).length > 0
-        ? donorSearchQueueAttributes.notifiedEligibleDonors
-        : donorSearchRecord.notifiedEligibleDonors
-
     serviceLogger.info('Checking targeted execution time')
-    await CheckTargetedExecutionTime(targetedExecutionTime, record.receiptHandle, serviceLogger)
+
+    await handleVisibilityTimeout(targetedExecutionTime, record.receiptHandle)
 
     const remainingBagsNeeded = await getRemainingBagsNeeded(seekerId, requestPostId, bloodQuantity)
 
-    if (remainingBagsNeeded <= 0) {
-      serviceLogger.info('Sufficient donors have accepted the request, terminating process')
+    if (remainingBagsNeeded === 0) {
+      serviceLogger.info('terminating process as sufficient donors have accepted the request')
       return
     }
 
-    const totalDonorsToNotify =
-      potentialDonorsLeftToNotify !== undefined && potentialDonorsLeftToNotify > 0
-        ? potentialDonorsLeftToNotify
-        : calculateTotalDonorsToNotify(remainingBagsNeeded, urgencyLevel)
+    const totalDonorsToFind =
+      remainingDonorsToFind !== undefined && remainingDonorsToFind > 0
+        ? remainingDonorsToFind
+        : calculateTotalDonorsToFind(remainingBagsNeeded, urgencyLevel)
 
     const { eligibleDonors, updatedNeighborSearchLevel, geohashesForNextIteration } =
       await queryEligibleDonors(
@@ -125,7 +117,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
         requestedBloodGroup,
         city,
         geohash,
-        totalDonorsToNotify,
+        totalDonorsToFind,
         currentNeighborSearchLevel,
         remainingGeohashesToProcess,
         notifiedEligibleDonors
@@ -137,7 +129,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       updatedNeighborSearchLevel >= Number(process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL) &&
       geohashesForNextIteration.length === 0
 
-    const haveTargetDonorsNotified = Object.keys(eligibleDonors).length >= totalDonorsToNotify
+    const haveTargetDonorsNotified = Object.keys(eligibleDonors).length >= totalDonorsToFind
 
     const newNotifiedEligibleDonors = { ...notifiedEligibleDonors, ...eligibleDonors }
 
@@ -146,7 +138,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
         {
           retryCount,
           reinstatedRetryCount,
-          remainingDonorsToNotify: totalDonorsToNotify - Object.keys(eligibleDonors).length
+          remainingDonorsToNotify: totalDonorsToFind - Object.keys(eligibleDonors).length
         },
         'Continuing donor search process'
       )
@@ -157,7 +149,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
         notifiedEligibleDonors: newNotifiedEligibleDonors,
         currentNeighborSearchLevel: updatedNeighborSearchLevel,
         remainingGeohashesToProcess: geohashesForNextIteration,
-        potentialDonorsLeftToNotify: totalDonorsToNotify - Object.keys(eligibleDonors).length,
+        remainingDonorsToFind: totalDonorsToFind - Object.keys(eligibleDonors).length,
         retryCount,
         reinstatedRetryCount
       }
@@ -188,7 +180,6 @@ async function donorSearch(event: SQSEvent): Promise<void> {
         notifiedEligibleDonors: newNotifiedEligibleDonors,
         currentNeighborSearchLevel: updatedNeighborSearchLevel,
         remainingGeohashesToProcess: geohashesForNextIteration,
-        potentialDonorsLeftToNotify: 0,
         retryCount: retryCount + 1,
         reinstatedRetryCount
       }
@@ -230,7 +221,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
         ],
         retryCount: 0,
         reinstatedRetryCount: reinstatedRetryCount + 1,
-        potentialDonorsLeftToNotify: 0,
+        remainingDonorsToFind: 0,
         targetedExecutionTime: Math.floor(Date.now() / 1000) + reinstatedDelayPeriod
       }
 
@@ -305,23 +296,22 @@ async function sendRequestNotification(
   }
 }
 
-async function CheckTargetedExecutionTime(
+async function handleVisibilityTimeout(
   targetedExecutionTime: number | undefined,
-  receiptHandle: string,
-  serviceLogger: Logger
+  receiptHandle: string
 ): Promise<void> {
   const currentUnixTime = Math.floor(Date.now() / 1000)
-
   if (targetedExecutionTime !== undefined && targetedExecutionTime > currentUnixTime) {
-    const visibilityTimeout = Math.min(targetedExecutionTime - currentUnixTime, 43200)
-
+    const visibilityTimeout = Math.min(
+      targetedExecutionTime - currentUnixTime,
+      MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS
+    )
     await donorSearchService.updateVisibilityTimeout(
       receiptHandle,
       visibilityTimeout,
       new SQSOperations()
     )
-    serviceLogger.info(`Updated message visibility timeout to ${visibilityTimeout} seconds`)
-    throw new DonorSearchIntentionalError('Error for updating message visibility timeout')
+    throw new DonorSearchIntentionalError(`updated visibility timeout to ${visibilityTimeout}`)
   }
 }
 
@@ -334,9 +324,9 @@ async function getRemainingBagsNeeded(
     seekerId,
     requestPostId,
     new AcceptedDonationDynamoDbOperations<
-    AcceptedDonationDTO,
-    AcceptedDonationFields,
-    AcceptDonationRequestModel
+      AcceptedDonationDTO,
+      AcceptedDonationFields,
+      AcceptDonationRequestModel
     >(new AcceptDonationRequestModel())
   )
   return calculateRemainingBagsNeeded(bloodQuantity, acceptedDonors.length)
@@ -347,15 +337,15 @@ async function queryEligibleDonors(
   requestedBloodGroup: string,
   city: string,
   geohash: string,
-  totalDonorsToNotify: number,
+  totalDonorsToFind: number,
   currentNeighborSearchLevel: number,
   remainingGeohashesToProcess: string[],
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>
 ): Promise<{
-    eligibleDonors: Record<string, EligibleDonorInfo>;
-    updatedNeighborSearchLevel: number;
-    geohashesForNextIteration: string[];
-  }> {
+  eligibleDonors: Record<string, EligibleDonorInfo>
+  updatedNeighborSearchLevel: number
+  geohashesForNextIteration: string[]
+}> {
   const { updatedGeohashesToProcess, updatedNeighborSearchLevel } =
     donorSearchService.getNeighborGeohashes(
       geohash.slice(0, Number(process.env.NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH)),
@@ -369,7 +359,7 @@ async function queryEligibleDonors(
     city,
     geohash,
     updatedGeohashesToProcess,
-    totalDonorsToNotify,
+    totalDonorsToFind,
     notifiedEligibleDonors
   )
   const geohashesForNextIteration = updatedGeohashesToProcess.slice(processedGeohashCount)
@@ -387,18 +377,18 @@ async function getNewDonorsInNeighborGeohash(
   city: string,
   seekerGeohash: string,
   geohashesToProcess: string[],
-  totalDonorsToNotify: number,
+  totalDonorsToFind: number,
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>,
   processedGeohashCount: number = 0,
   eligibleDonors: Record<string, EligibleDonorInfo> = {}
 ): Promise<{
-    updatedEligibleDonors: Record<string, EligibleDonorInfo>;
-    processedGeohashCount: number;
-  }> {
+  updatedEligibleDonors: Record<string, EligibleDonorInfo>
+  processedGeohashCount: number
+}> {
   if (
     geohashesToProcess.length === 0 ||
-    processedGeohashCount >= Number(process.env.MAX_GEOHASHES_PER_PROCESSING_BATCH) ||
-    Object.keys(eligibleDonors).length >= totalDonorsToNotify
+    processedGeohashCount >= Number(process.env.MAX_GEOHASHES_PER_EXECUTION) ||
+    Object.keys(eligibleDonors).length >= totalDonorsToFind
   ) {
     return { updatedEligibleDonors: eligibleDonors, processedGeohashCount }
   }
@@ -409,11 +399,14 @@ async function getNewDonorsInNeighborGeohash(
   const updatedEligibleDonors = donors.reduce<Record<string, EligibleDonorInfo>>(
     (donorAccumulator, donor) => {
       const donorDistance = getDistanceBetweenGeohashes(seekerGeohash, geohashToProcess)
+
+      const isDonorTheSeeker = donor.userId === seekerId
+      const isNearestDonorLocation = donorAccumulator[donor.userId].distance > donorDistance
+      const isAlreadyNotified = notifiedEligibleDonors[donor.userId] !== undefined
       if (
-        donor.userId !== seekerId &&
-        (donorAccumulator[donor.userId] === undefined ||
-          donorAccumulator[donor.userId].distance < donorDistance) &&
-        notifiedEligibleDonors[donor.userId] === undefined
+        !isDonorTheSeeker &&
+        (donorAccumulator[donor.userId] === undefined || isNearestDonorLocation) &&
+        !isAlreadyNotified
       ) {
         donorAccumulator[donor.userId] = {
           locationId: donor.locationId,
@@ -431,7 +424,7 @@ async function getNewDonorsInNeighborGeohash(
     city,
     seekerGeohash,
     geohashesToProcess.slice(1),
-    totalDonorsToNotify,
+    totalDonorsToFind,
     notifiedEligibleDonors,
     processedGeohashCount + 1,
     updatedEligibleDonors

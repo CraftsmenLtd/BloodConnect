@@ -69,7 +69,7 @@ export interface DonorSearchQueueAttributes {
   requestPostId: string;
   createdAt: string;
   targetedExecutionTime?: number;
-  potentialDonorsLeftToNotify?: number;
+  remainingDonorsToFind?: number;
   currentNeighborSearchLevel: number;
   remainingGeohashesToProcess: string[];
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
