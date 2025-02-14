@@ -94,13 +94,6 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
             new DonorSearchModel()
           )
         )
-
-        serviceLogger.info('Starting donor search request')
-        await donorSearchService.enqueueDonorSearchRequest(
-          donorSearchQueueAttributes,
-          new SQSOperations()
-        )
-        return
       } else {
         serviceLogger.info('updating donor search record')
         await donorSearchService.updateDonorSearchRecord(
@@ -115,15 +108,14 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
       }
 
       if (shouldRestartSearch) {
-        serviceLogger.info('Restarting donor search request')
-        await donorSearchService.enqueueDonorSearchRequest(
-          {
-            ...donorSearchQueueAttributes,
-            notifiedEligibleDonors: donorSearchRecord.notifiedEligibleDonors
-          },
-          new SQSOperations()
-        )
+        donorSearchQueueAttributes.notifiedEligibleDonors = donorSearchRecord.notifiedEligibleDonors
       }
+
+      serviceLogger.info('Starting donor search request')
+      await donorSearchService.enqueueDonorSearchRequest(
+        donorSearchQueueAttributes,
+        new SQSOperations()
+      )
     } catch (error) {
       serviceLogger.error(error instanceof DonorSearchIntentionalError ? error.message : error)
       throw error
