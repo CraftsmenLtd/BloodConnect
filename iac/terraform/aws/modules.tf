@@ -65,6 +65,7 @@ module "eventbridge" {
   dynamodb_table_stream_arn         = module.database.dynamodb_table_stream_arn
   donation_request_queue_arn        = module.donor_search.donation_request_queue_arn
   donation_status_manager_queue_arn = module.donor_search.donation_status_manager_queue_arn
+  dynamodb_table_arn                = module.database.dynamodb_table_arn
 }
 
 module "notification" {
@@ -72,6 +73,12 @@ module "notification" {
   environment           = var.environment
   dynamodb_table_arn    = module.database.dynamodb_table_arn
   firebase_token_s3_url = var.firebase_token_s3_url
+}
+
+module "maps" {
+  source                  = "./maps"
+  environment             = var.environment
+  google_maps_api_key      = var.google_maps_api_key
 }
 
 module "logger" {

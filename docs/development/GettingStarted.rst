@@ -296,3 +296,12 @@ Now we don't need to be passing that every time. Ofcourse this means if you want
 .. code-block:: bash
 
     unset DEPLOYMENT_ENVIRONMENT
+
+After branch deployment you can run swagger locally to test API's.
+Command for running swagger UI locally
+
+.. code-block:: bash
+
+    make swagger-ui email=<email> password=<password> branch=<branch_name>
+
+here, `branch` = deployed branch name (ex. feature-branch, stage or prod)

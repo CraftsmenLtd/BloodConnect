@@ -1,5 +1,5 @@
 import { BloodGroup } from '../../../../commons/dto/DonationDTO'
-import { LocationDTO, AvailableForDonation } from '../../../../commons/dto/UserDTO'
+import { LocationDTO } from '../../../../commons/dto/UserDTO'
 import { DbIndex, DbModelDtoAdapter, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
 export type LocationFields = Omit<LocationDTO, 'userId' | 'locationId' | 'city' | 'bloodGroup' | 'availableForDonation' | 'geohash'> & {
@@ -48,22 +48,22 @@ export default class LocationModel implements NosqlModel<LocationFields>, DbMode
     const locationId = SK.replace('LOCATION#', '')
 
     const gsiMatch = GSI1PK.match(/^CITY#(.+)#BG#(.+)#DONATIONSTATUS#(.+)$/)
-    if (gsiMatch !== null) {
-      const [, city, bloodGroupStr, donationStatus] = gsiMatch
-      const bloodGroup: BloodGroup = bloodGroupStr as BloodGroup
-      const availableForDonation: AvailableForDonation = donationStatus === 'yes' ? 'yes' : 'no'
-
-      return {
-        userId,
-        locationId,
-        city,
-        bloodGroup,
-        availableForDonation,
-        geohash: GSI1SK ?? '',
-        ...remainingFields
-      }
-    } else {
+    if (gsiMatch === null) {
       throw new Error('GSI1PK format is invalid.')
+    }
+
+    const [, city, bloodGroupStr, donationStatus] = gsiMatch
+    const bloodGroup: BloodGroup = bloodGroupStr as BloodGroup
+    const availableForDonation: boolean = donationStatus === 'true'
+
+    return {
+      userId,
+      locationId,
+      city,
+      bloodGroup,
+      availableForDonation,
+      geohash: GSI1SK ?? '',
+      ...remainingFields
     }
   }
 }

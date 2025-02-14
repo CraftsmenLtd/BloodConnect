@@ -17,6 +17,9 @@ async function updateUserLambda(
   const httpLogger = createHTTPLogger(event.userId, event.apiGwRequestId, event.cloudFrontRequestId)
   try {
     const userService = new UserService()
+    if (typeof event.availableForDonation === 'string') {
+      event.availableForDonation = (event.availableForDonation === 'true')
+    }
     const userAttributes = {
       userId: event.userId,
       ...Object.fromEntries(

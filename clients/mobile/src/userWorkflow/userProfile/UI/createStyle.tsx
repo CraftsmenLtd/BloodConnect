@@ -21,6 +21,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderColor: theme.colors.lightGrey,
     padding: 10
   },
+  lastRow: {
+    borderBottomWidth: 0
+  },
   label: {
     fontSize: 14,
     color: theme.colors.textSecondary,
@@ -49,6 +52,19 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold'
+  },
+  selectedItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.greyBG,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginRight: 5,
+    marginBottom: 6
+  },
+  selectedItemText: {
+    marginRight: 5
   }
 })
 

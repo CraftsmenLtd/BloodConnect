@@ -1,7 +1,7 @@
 import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useAddPersonalInfo } from '../../src/userWorkflow/personalInfo/hooks/useAddPersonalInfo'
-import { addPersonalInfoHandler } from '../../src/userWorkflow/services/userServices'
+import { updateUserProfile } from '../../src/userWorkflow/services/userProfileService'
 import { SCREENS } from '../../src/setup/constant/screens'
 
 const mockFetchUserProfile = jest.fn()
@@ -11,8 +11,8 @@ jest.mock('aws-amplify/auth', () => ({
   getCurrentUser: jest.fn().mockResolvedValue({ username: 'test-user' })
 }))
 
-jest.mock('../../src/userWorkflow/services/userServices', () => ({
-  addPersonalInfoHandler: jest.fn()
+jest.mock('../../src/userWorkflow/services/userProfileService', () => ({
+  updateUserProfile: jest.fn()
 }))
 
 jest.mock('../../src/LocationService/LocationService', () => ({
@@ -126,7 +126,7 @@ describe('useAddPersonalInfo Hook', () => {
 
   test('should submit data and navigate on successful submission', async() => {
     mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 });
-    (addPersonalInfoHandler as jest.Mock).mockResolvedValue({ status: 200 })
+    (updateUserProfile as jest.Mock).mockResolvedValue({ status: 200 })
 
     const { result } = renderHook(() => useAddPersonalInfo())
 
@@ -140,7 +140,7 @@ describe('useAddPersonalInfo Hook', () => {
       await result.current.handleSubmit()
     })
 
-    expect(addPersonalInfoHandler).toHaveBeenCalled()
+    expect(updateUserProfile).toHaveBeenCalled()
     expect(mockFetchUserProfile).toHaveBeenCalled()
     expect(mockedNavigate).toHaveBeenCalledWith(SCREENS.BOTTOM_TABS)
   })
@@ -154,7 +154,7 @@ describe('useAddPersonalInfo Hook', () => {
       Object.entries(validPersonalInfo).forEach(([key, value]) => {
         result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
       });
-      (addPersonalInfoHandler as jest.Mock).mockRejectedValue(new Error(errorMessage))
+      (updateUserProfile as jest.Mock).mockRejectedValue(new Error(errorMessage))
     })
 
     await act(async() => {

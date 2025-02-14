@@ -32,7 +32,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10
+    paddingVertical: 10
   },
   checkboxContainer: {
     marginRight: 10

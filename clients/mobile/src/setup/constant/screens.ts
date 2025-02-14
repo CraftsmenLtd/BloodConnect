@@ -20,5 +20,6 @@ export enum SCREENS {
   DONOR_PROFILE = 'DonorProfile',
   DONOR_RESPONSE = 'DonorResponse',
   REQUEST_STATUS = 'RequestStatus',
-  DONOR_CONFIRMATION = 'DonorConfirmation'
+  DONOR_CONFIRMATION = 'DonorConfirmation',
+  ABOUT = 'About'
 }
