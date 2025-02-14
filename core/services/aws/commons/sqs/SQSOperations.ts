@@ -20,13 +20,13 @@ export default class SQSOperations implements QueueModel {
   async updateVisibilityTimeout(
     receiptHandle: string,
     queueUrl: string,
-    VisibilityTimeout: number
+    visibilityTimeout: number
   ): Promise<void> {
     await this.client.send(
       new ChangeMessageVisibilityCommand({
         QueueUrl: queueUrl,
         ReceiptHandle: receiptHandle,
-        VisibilityTimeout: Number(VisibilityTimeout)
+        VisibilityTimeout: Number(visibilityTimeout)
       })
     )
   }
