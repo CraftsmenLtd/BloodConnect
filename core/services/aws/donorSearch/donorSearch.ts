@@ -95,7 +95,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, city, geohash } =
       donorSearchRecord
 
-    serviceLogger.info('Checking targeted execution time')
+    serviceLogger.info('checking targeted execution time')
 
     await handleVisibilityTimeout(targetedExecutionTime, record.receiptHandle)
 
