@@ -26,14 +26,14 @@ export class DonorSearchService {
 
   async updateVisibilityTimeout(
     receiptHandle: string,
-    VisibilityTimeout: number,
+    visibilityTimeout: number,
     queueModel: QueueModel
   ): Promise<void> {
     if (DONOR_SEARCH_QUEUE_URL !== undefined) {
       await queueModel.updateVisibilityTimeout(
         receiptHandle,
         DONOR_SEARCH_QUEUE_URL,
-        VisibilityTimeout
+        visibilityTimeout
       )
     }
   }

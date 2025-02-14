@@ -8,7 +8,7 @@ export function getBloodRequestMessage(
   const description = shortDescription !== undefined ? `| ${shortDescription}` : ''
   if (urgencyLevel === UrgencyLevel.URGENT) {
     return `Urgent ${bloodGroup} blood needed ${description}`.trim()
-  } else {
-    return `${bloodGroup} blood needed ${description}`.trim()
   }
+
+  return `${bloodGroup} blood needed ${description}`.trim()
 }
