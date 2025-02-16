@@ -48,9 +48,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
   const { userId } = body
   const serviceLogger = createServiceLogger(userId)
   try {
-    if (body.type === undefined) {
-      body.type = NotificationType.COMMON
-    }
+    body.type = body.type ?? NotificationType.COMMON
 
     const cachedUserSnsEndpointArn = userDeviceToSnsEndpointMap.get(userId)
     if (cachedUserSnsEndpointArn === undefined) {

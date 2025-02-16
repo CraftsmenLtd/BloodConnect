@@ -230,7 +230,7 @@ export class NotificationService {
     queueModel: QueueModel
   ): Promise<void> {
     await queueModel.queue(notificationAttributes, process.env.NOTIFICATION_QUEUE_URL as string).catch((error) => {
-      throw new Error('Failed to send notification.' + error)
+      throw new Error(`Failed to send notification: ${error}`)
     })
   }
 }

@@ -4,7 +4,7 @@ import {
   DonorSearchAttributes,
   DonorSearchQueueAttributes
 } from '../../../application/bloodDonationWorkflow/Types'
-import { DonorSearchDTO, DonorSearchStatus, DynamoDBEventName } from '../../../../commons/dto/DonationDTO'
+import { DonorSearchDTO, DonorSearchStatus } from '../../../../commons/dto/DonationDTO'
 import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
@@ -17,6 +17,11 @@ import { UserService } from '../../../application/userWorkflow/UserService'
 import SQSOperations from '../commons/sqs/SQSOperations'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import { DonorSearchIntentionalError } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
+
+export enum DynamoDBEventName {
+  INSERT = 'INSERT',
+  MODIFY = 'MODIFY'
+}
 
 const donorSearchService = new DonorSearchService()
 const userService = new UserService()

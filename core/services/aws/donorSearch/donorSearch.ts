@@ -130,32 +130,35 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       updatedNeighborSearchLevel >= Number(process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL) &&
       geohashesForNextIteration.length === 0
 
-    const haveTargetDonorsBeenNotified = Object.keys(eligibleDonors).length >= totalDonorsToFind
+    const currentEligibleDonorsCount = Object.keys(eligibleDonors).length
+    const haveTargetDonorsBeenNotified = currentEligibleDonorsCount >= totalDonorsToFind
 
-    const newNotifiedEligibleDonors = { ...notifiedEligibleDonors, ...eligibleDonors }
+    const updatedNotifiedEligibleDonors = { ...notifiedEligibleDonors, ...eligibleDonors }
+    const updatedNotifiedEligibleDonorsCount = Object.keys(updatedNotifiedEligibleDonors).length
 
     if (!hasMaxGeohashLevelReached && !haveTargetDonorsBeenNotified) {
       serviceLogger.info(
         {
-          retryCount,
-          reinstatedRetryCount,
-          remainingDonorsToNotify: totalDonorsToFind - Object.keys(eligibleDonors).length
+          notifiedEligibleDonorsCount: updatedNotifiedEligibleDonorsCount,
+          currentNeighborSearchLevel: updatedNeighborSearchLevel,
+          remainingGeohashesToProcessCount: geohashesForNextIteration.length,
+          remainingDonorsToFind: totalDonorsToFind - currentEligibleDonorsCount
         },
-        'continuing donor search process'
+        'enqueuing donor search to find remaining donors'
       )
-      const newDonorSearchQueueAttributes = {
-        seekerId,
-        requestPostId,
-        createdAt,
-        notifiedEligibleDonors: newNotifiedEligibleDonors,
-        currentNeighborSearchLevel: updatedNeighborSearchLevel,
-        remainingGeohashesToProcess: geohashesForNextIteration,
-        remainingDonorsToFind: totalDonorsToFind - Object.keys(eligibleDonors).length,
-        retryCount,
-        reinstatedRetryCount
-      }
+
       await donorSearchService.enqueueDonorSearchRequest(
-        newDonorSearchQueueAttributes,
+        {
+          seekerId,
+          requestPostId,
+          createdAt,
+          notifiedEligibleDonors: updatedNotifiedEligibleDonors,
+          currentNeighborSearchLevel: updatedNeighborSearchLevel,
+          remainingGeohashesToProcess: geohashesForNextIteration,
+          remainingDonorsToFind: totalDonorsToFind - currentEligibleDonorsCount,
+          retryCount,
+          reinstatedRetryCount
+        },
         new SQSOperations(),
         Number(process.env.DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS)
       )
@@ -166,29 +169,35 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       retryCount >= Number(process.env.DONOR_SEARCH_MAX_RETRY_COUNT)
 
     if (!hasDonorSearchMaxRetryReached && !hasMaxGeohashLevelReached) {
-      const delayPeriod = calculateDelayPeriod(remainingBagsNeeded, donationDateTime, urgencyLevel)
+      const retryDelayPeriod = calculateDelayPeriod(
+        remainingBagsNeeded,
+        donationDateTime,
+        urgencyLevel
+      )
       serviceLogger.info(
         {
+          notifiedEligibleDonorsCount: updatedNotifiedEligibleDonorsCount,
+          currentNeighborSearchLevel: updatedNeighborSearchLevel,
+          remainingGeohashesToProcessCount: geohashesForNextIteration.length,
           retryCount: retryCount + 1,
-          delayPeriod
+          retryDelayPeriod
         },
-        'enqueuing retry request'
+        'enqueuing next retry request'
       )
-      const newDonorSearchQueueAttributes = {
-        seekerId,
-        requestPostId,
-        createdAt,
-        notifiedEligibleDonors: newNotifiedEligibleDonors,
-        currentNeighborSearchLevel: updatedNeighborSearchLevel,
-        remainingGeohashesToProcess: geohashesForNextIteration,
-        retryCount: retryCount + 1,
-        reinstatedRetryCount
-      }
 
       await donorSearchService.enqueueDonorSearchRequest(
-        newDonorSearchQueueAttributes,
+        {
+          seekerId,
+          requestPostId,
+          createdAt,
+          notifiedEligibleDonors: updatedNotifiedEligibleDonors,
+          currentNeighborSearchLevel: updatedNeighborSearchLevel,
+          remainingGeohashesToProcess: geohashesForNextIteration,
+          retryCount: retryCount + 1,
+          reinstatedRetryCount
+        },
         new SQSOperations(),
-        delayPeriod
+        retryDelayPeriod
       )
       return
     }
@@ -206,38 +215,41 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       )
       serviceLogger.info(
         {
+          notifiedEligibleDonorsCount: updatedNotifiedEligibleDonorsCount,
+          currentNeighborSearchLevel: updatedNeighborSearchLevel,
+          remainingGeohashesToProcessCount: geohashesForNextIteration.length,
           reinstatedRetryCount: reinstatedRetryCount + 1,
           reinstatedDelayPeriod
         },
-        'enqueuing reinstated retry request'
+        'enqueuing next reinstated retry request'
       )
-      const newDonorSearchQueueAttributes = {
-        seekerId,
-        requestPostId,
-        createdAt,
-        notifiedEligibleDonors: newNotifiedEligibleDonors,
-        currentNeighborSearchLevel: 0,
-        remainingGeohashesToProcess: [
-          geohash.slice(0, Number(process.env.NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH))
-        ],
-        retryCount: 0,
-        reinstatedRetryCount: reinstatedRetryCount + 1,
-        remainingDonorsToFind: 0,
-        targetedExecutionTime: Math.floor(Date.now() / 1000) + reinstatedDelayPeriod
-      }
 
       await donorSearchService.enqueueDonorSearchRequest(
-        newDonorSearchQueueAttributes,
+        {
+          seekerId,
+          requestPostId,
+          createdAt,
+          notifiedEligibleDonors: updatedNotifiedEligibleDonors,
+          currentNeighborSearchLevel: 0,
+          remainingGeohashesToProcess: [
+            geohash.slice(0, Number(process.env.NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH))
+          ],
+          retryCount: 0,
+          reinstatedRetryCount: reinstatedRetryCount + 1,
+          remainingDonorsToFind: 0,
+          targetedExecutionTime: Math.floor(Date.now() / 1000) + reinstatedDelayPeriod
+        },
         new SQSOperations(),
         Number(process.env.DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS)
       )
     } else {
+      serviceLogger.info('updating donor search record')
       await donorSearchService.updateDonorSearchRecord(
         {
           seekerId,
           requestPostId,
           createdAt,
-          notifiedEligibleDonors: newNotifiedEligibleDonors,
+          notifiedEligibleDonors: updatedNotifiedEligibleDonors,
           status: DonorSearchStatus.COMPLETED
         },
         new DynamoDbTableOperations<DonorSearchDTO, DonorSearchFields, DonorSearchModel>(
@@ -246,14 +258,11 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       )
     }
   } catch (error) {
-    if (
-      error instanceof DonorSearchIntentionalError ||
-      error instanceof DonorSearchOperationalError
-    ) {
-      serviceLogger.error(error.message)
-    } else {
-      serviceLogger.error(error)
-    }
+    serviceLogger.error(
+      error instanceof DonorSearchIntentionalError || error instanceof DonorSearchOperationalError
+        ? error.message
+        : error
+    )
     throw error
   }
 }
@@ -270,8 +279,7 @@ async function sendRequestNotification(
       title: 'Blood Request',
       body: getBloodRequestMessage(
         donorSearchAttributes.urgencyLevel,
-        donorSearchAttributes.requestedBloodGroup,
-        donorSearchAttributes.shortDescription as string
+        donorSearchAttributes.requestedBloodGroup
       ),
       type: NotificationType.BLOOD_REQ_POST,
       status: AcceptDonationStatus.PENDING,

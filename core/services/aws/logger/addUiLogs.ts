@@ -10,8 +10,8 @@ export type LoggerAttributes = {
 async function addLoggerLambda(
   event: LoggerAttributes & ServiceLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
-  const LambdaLogger = createServiceLogger(event.userId)
-  LambdaLogger.info(event.log)
+  const lambdaLogger = createServiceLogger(event.userId)
+  lambdaLogger.info(event.log)
   return generateApiGatewayResponse(
     { message: 'Log added successfully', success: true },
     HTTP_CODES.OK
