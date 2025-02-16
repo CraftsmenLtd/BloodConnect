@@ -117,7 +117,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
         donorSearchQueueAttributes.notifiedEligibleDonors = donorSearchRecord.notifiedEligibleDonors
       }
 
-      serviceLogger.info('Starting donor search request')
+      serviceLogger.info('starting donor search request')
       await donorSearchService.enqueueDonorSearchRequest(
         donorSearchQueueAttributes,
         new SQSOperations()
