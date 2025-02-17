@@ -6,7 +6,7 @@ locals {
   cache_geohash_prefix_length                   = 6
   neighbor_search_geohash_prefix_length         = 7
   max_geohashes_per_execution                   = 1024
-  donor_search_max_initiating_retry_count       = 3
+  donor_search_max_initiating_retry_count       = 5
   donor_search_queue_min_delay_seconds          = 300
   donor_search_queue_visibility_timeout_seconds = 240
 }
