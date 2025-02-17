@@ -27,7 +27,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHubActions
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+          aws-region: ap-south-1
 
       - name: Fetch Cognito Details
         run: |
