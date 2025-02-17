@@ -60,9 +60,17 @@ jobs:
         run: |
           cd clients/mobile
           touch .env
-          echo "API_URL=TEST URL" >> .env
-          echo "USER_POOL_ID=user-pool id" >> .env
+          echo "API_URL=TEST_URL" >> .env
+          echo "USER_POOL_ID=user-pool-id" >> .env
           echo "CLIENT_ID=client-id" >> .env
+          echo "AWS_USER_POOL_ID=your_aws_user_pool_id" >> .env
+          echo "AWS_USER_POOL_CLIENT_ID=your_aws_user_pool_client_id" >> .env
+          echo "AWS_COGNITO_DOMAIN=your_aws_cognito_domain" >> .env
+          echo "EAS_PROJECT_ID=your_eas_project_id" >> .env
+          echo "API_BASE_URL=your_api_base_url" >> .env
+          echo "APP_NAME=your_app_name" >> .env
+          echo "APP_VERSION=your_app_version" >> .env
+          echo "COUNTRY=your_country" >> .env
 
       - name: Set Up Environment
         run: cd clients/mobile && make setup-env
