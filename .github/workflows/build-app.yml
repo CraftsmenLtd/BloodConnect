@@ -66,7 +66,6 @@ jobs:
 
       - name: Set Up Environment
         run: cd clients/mobile && make setup-env
-        shell: bash
   
       - name: Setup Expo and EAS
         uses: expo/expo-github-action@v8
@@ -75,4 +74,5 @@ jobs:
           token: '9cC7lgYtP-ycBKfiDVE9Snmmu_mBL40bed9cwDaY'
 
       - name: Upload Environment Variables to Expo
-        run: cd clients/mobile && make upload-env BUILD_PROFILE=production    
+        run: cd clients/mobile && make upload-env BUILD_PROFILE=production
+        shell: bash
