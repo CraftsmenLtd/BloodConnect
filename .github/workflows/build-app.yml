@@ -22,8 +22,16 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install jq
-        run: sudo apt-get install -y jq  # Required for JSON parsing
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq make
+          npm install -g expo-cli eas-cli
+          cd clients/mobile
+          npm install
+
+      # - name: Install jq
+      #   run: sudo apt-get install -y jq  # Required for JSON parsing
 
       - name: 🔑 Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -47,3 +55,20 @@ jobs:
           echo "USER_POOL_ID=$USER_POOL_ID"
           echo "CLIENT_ID=$CLIENT_ID"
           echo "API_GATEWAY_URL=$API_GATEWAY_URL"
+      
+      - name: Create .env file
+        run: |
+          cd clients/mobile
+          touch .env
+          echo "API_URL=TEST URL" >> .env
+          echo "USER_POOL_ID=user-pool id" >> .env
+          echo "CLIENT_ID=client-id" >> .env
+
+      - name: Set Up Environment
+        run: cd clients/mobile && make setup-env
+  
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: '9cC7lgYtP-ycBKfiDVE9Snmmu_mBL40bed9cwDaY'
