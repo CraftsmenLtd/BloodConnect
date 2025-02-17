@@ -38,7 +38,7 @@ jobs:
           USER_POOL_ID=$(aws cognito-idp list-user-pools --max-results 20 | jq -r '.UserPools[] | select(.Name=="stage-user-pool") | .Id')
 
           # Fetch specific Cognito Client ID
-          CLIENT_ID=$(aws cognito-idp list-user-pool-clients --user-pool-id $USER_POOL_ID --max-results 20 | jq -r '.UserPoolClients[] | select(.ClientName=="stage-user-pool-client") | .ClientId')
+          CLIENT_ID=$(aws cognito-idp list-user-pool-clients --user-pool-id $USER_POOL_ID --max-results 20 | jq -r '.UserPoolClients[] | select(.ClientName=="stage-app-pool-client") | .ClientId')
 
           # Fetch specific API Gateway ID
           API_ID=$(aws apigateway get-rest-apis | jq -r '.items[] | select(.name=="stage-api") | .id')
