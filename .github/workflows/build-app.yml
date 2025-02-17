@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
