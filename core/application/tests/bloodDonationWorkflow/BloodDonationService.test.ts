@@ -46,7 +46,6 @@ describe('BloodDonationService', () => {
     (generateGeohash as jest.Mock).mockReturnValue('geohash123');
     (validateInputWithRules as jest.Mock).mockReturnValue(null)
     jest.spyOn(mockModel, 'getPrimaryIndex').mockReturnValue({ partitionKey: 'PK', sortKey: 'SK' })
-    process.env.DONOR_SEARCH_MAX_RETRY_COUNT = '5'
   })
 
   afterEach(() => {

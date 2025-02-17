@@ -8,7 +8,7 @@ import {
   QueryConditionOperator,
   QueryInput
 } from '../../../../application/models/policies/repositories/QueryTypes'
-import { NOTIFICATION_PK_PREFIX } from 'core/application/models/dbModels/NotificationModel'
+import { NOTIFICATION_PK_PREFIX } from '../../../../application/models/dbModels/NotificationModel'
 
 export default class NotificationDynamoDbOperations<
   Dto extends DTO,

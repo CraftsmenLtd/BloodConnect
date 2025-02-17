@@ -44,9 +44,14 @@ import { getDistanceBetweenGeohashes } from '../../../application/utils/geohash'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
 import { getBloodRequestMessage } from '../../../application/bloodDonationWorkflow/BloodDonationMessages'
-import { BloodDonationNotificationDTO, NotificationType } from '../../../../commons/dto/NotificationDTO'
+import {
+  BloodDonationNotificationDTO,
+  NotificationType
+} from '../../../../commons/dto/NotificationDTO'
 import { MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from '../../../../commons/libs/constants/NoMagicNumbers'
-import DonationNotificationModel, { BloodDonationNotificationFields } from '../../../application/models/dbModels/DonationNotificationModel'
+import DonationNotificationModel, {
+  BloodDonationNotificationFields
+} from '../../../application/models/dbModels/DonationNotificationModel'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
 
 const acceptDonationService = new AcceptDonationService()
@@ -109,7 +114,8 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       return
     }
 
-    const rejectedDonorsCount: number = initiationCount === 0 ? 0 : (await getRejectedDonorsCount(requestPostId))
+    const rejectedDonorsCount: number =
+      initiationCount === 0 ? 0 : await getRejectedDonorsCount(requestPostId)
 
     const totalDonorsToFind =
       remainingDonorsToFind !== undefined && remainingDonorsToFind > 0
@@ -129,7 +135,9 @@ async function donorSearch(event: SQSEvent): Promise<void> {
         notifiedEligibleDonors
       )
 
-    serviceLogger.info(`sending notification for donation request to ${Object.keys(eligibleDonors).length} donors`)
+    serviceLogger.info(
+      `sending notification for donation request to ${Object.keys(eligibleDonors).length} donors`
+    )
     await sendRequestNotification(donorSearchRecord, eligibleDonors)
 
     const hasMaxGeohashLevelReached =
@@ -141,11 +149,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     const updatedNotifiedEligibleDonors = { ...notifiedEligibleDonors, ...eligibleDonors }
 
     if (!hasMaxGeohashLevelReached && nextRemainingDonorsToFind > 0) {
-      const delayPeriod = calculateDelayPeriod(
-        remainingBagsNeeded,
-        donationDateTime,
-        urgencyLevel
-      )
+      const delayPeriod = calculateDelayPeriod(remainingBagsNeeded, donationDateTime, urgencyLevel)
       serviceLogger.info(
         {
           currentNeighborSearchLevel: updatedNeighborSearchLevel,
