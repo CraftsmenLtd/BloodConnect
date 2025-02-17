@@ -66,6 +66,7 @@ jobs:
 
       - name: Set Up Environment
         run: cd clients/mobile && make setup-env
+        shell: bash
   
       - name: Setup Expo and EAS
         uses: expo/expo-github-action@v8
