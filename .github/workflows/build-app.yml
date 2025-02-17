@@ -66,7 +66,7 @@ jobs:
           echo "AWS_USER_POOL_ID=your_aws_user_pool_id" >> .env
           echo "AWS_USER_POOL_CLIENT_ID=your_aws_user_pool_client_id" >> .env
           echo "AWS_COGNITO_DOMAIN=your_aws_cognito_domain" >> .env
-          echo "EAS_PROJECT_ID=your_eas_project_id" >> .env
+          echo "EAS_PROJECT_ID=a0b97362-72f9-428f-a2da-d16445c6193b" >> .env
           echo "API_BASE_URL=your_api_base_url" >> .env
           echo "APP_NAME=your_app_name" >> .env
           echo "APP_VERSION=your_app_version" >> .env
