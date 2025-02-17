@@ -2,6 +2,7 @@
 ENV_FILE=.env
 APP_NAME=net.bloodconnect.app
 EAS_CONFIG=eas.json
+SHELL := /bin/bash
 
 # Default build profile (can be overridden via CLI)
 BUILD_PROFILE ?= development
