@@ -1,20 +1,38 @@
-import { UrgencyType } from '../../../commons/dto/DonationDTO'
+type UrgencyType = 'urgent' | 'regular'
+type TimeUnit = 'minutes' | 'hours'
+type DelayRange = { min: number; max: number }
+type TimeUnitDelays = Record<TimeUnit, DelayRange>
+type DelayPeriodConfig = Record<UrgencyType, TimeUnitDelays>
 
-const EXTRA_DONORS_TO_NOTIFY: Record<UrgencyType, number> = { urgent: 2, regular: 1 }
-const MIN_DELAY_PERIOD: Record<UrgencyType, { minutes: number; hours: number }> = {
-  urgent: { minutes: 5, hours: 1 },
-  regular: { minutes: 7, hours: 1.2 }
+const DELAY_PERIOD: DelayPeriodConfig = {
+  urgent: {
+    minutes: {
+      min: 5,
+      max: 10
+    },
+    hours: {
+      min: 0.6,
+      max: 1
+    }
+  },
+  regular: {
+    minutes: {
+      min: 7,
+      max: 15
+    },
+    hours: {
+      min: 1,
+      max: 2
+    }
+  }
 }
 
-const MAX_DELAY_PERIOD: Record<UrgencyType, { minutes: number; hours: number }> = {
-  urgent: { minutes: 10, hours: 1.5 },
-  regular: { minutes: 15, hours: 4 }
-}
-
-const DELAY_WEIGHT = {
+const DELAY_WEIGHT: Record<UrgencyType, Record<TimeUnit, number>> = {
   urgent: { minutes: 1, hours: 0.1 },
   regular: { minutes: 1.5, hours: 0.2 }
 }
+
+const EXTRA_DONORS_TO_NOTIFY: Record<UrgencyType, number> = { urgent: 2, regular: 1 }
 
 export function calculateRemainingBagsNeeded(
   bloodQuantity: number,
@@ -25,9 +43,10 @@ export function calculateRemainingBagsNeeded(
 
 export function calculateTotalDonorsToFind(
   remainingBagsNeeded: number,
+  rejectedDonorsCount: number,
   urgencyLevel: UrgencyType
 ): number {
-  return remainingBagsNeeded === 0 ? 0 : remainingBagsNeeded + EXTRA_DONORS_TO_NOTIFY[urgencyLevel]
+  return remainingBagsNeeded === 0 ? 0 : remainingBagsNeeded + rejectedDonorsCount + EXTRA_DONORS_TO_NOTIFY[urgencyLevel]
 }
 
 export function calculateDelayPeriod(
@@ -42,14 +61,12 @@ export function calculateDelayPeriod(
     0,
     (donationDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60)
   )
-
-  const minDelay = isReinstatedRetry
-    ? MIN_DELAY_PERIOD[urgencyLevel].hours
-    : MIN_DELAY_PERIOD[urgencyLevel].minutes
-
-  const maxDelay = isReinstatedRetry
-    ? MAX_DELAY_PERIOD[urgencyLevel].hours
-    : MAX_DELAY_PERIOD[urgencyLevel].minutes
+  const minDelay: number = isReinstatedRetry
+    ? DELAY_PERIOD[urgencyLevel].hours.min
+    : DELAY_PERIOD[urgencyLevel].minutes.min
+  const maxDelay: number = isReinstatedRetry
+    ? DELAY_PERIOD[urgencyLevel].hours.max
+    : DELAY_PERIOD[urgencyLevel].minutes.max
 
   const weight = DELAY_WEIGHT[urgencyLevel][isReinstatedRetry ? 'hours' : 'minutes']
 

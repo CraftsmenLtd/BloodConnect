@@ -50,7 +50,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
         createdAt,
         status: DonorSearchStatus.PENDING,
         requestedBloodGroup: body.requestedBloodGroup,
-        bloodQuantity: body.bloodQuantity,
+        bloodQuantity: Number(body.bloodQuantity),
         urgencyLevel: body.urgencyLevel,
         city: body.city,
         location: body.location,
@@ -73,8 +73,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
           body.geohash.slice(0, Number(process.env.NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH))
         ],
         notifiedEligibleDonors: {},
-        retryCount: 0,
-        reinstatedRetryCount: 0
+        initiationCount: 0
       }
 
       const donorSearchRecord = await donorSearchService.getDonorSearchRecord(
@@ -92,7 +91,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
         donorSearchRecord.status === DonorSearchStatus.COMPLETED
 
       if (donorSearchRecord === null) {
-        serviceLogger.info('inserting donor search record')
+        serviceLogger.info('inserting donor search record for new donation request')
         await donorSearchService.createDonorSearchRecord(
           donorSearchAttributes,
           new DynamoDbTableOperations<DonorSearchDTO, DonorSearchFields, DonorSearchModel>(
@@ -100,7 +99,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
           )
         )
       } else {
-        serviceLogger.info('updating donor search record')
+        serviceLogger.info('updating donor search record for updated donation request')
         await donorSearchService.updateDonorSearchRecord(
           {
             ...donorSearchAttributes,

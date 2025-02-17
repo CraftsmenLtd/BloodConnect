@@ -73,8 +73,7 @@ export interface DonorSearchQueueAttributes {
   currentNeighborSearchLevel: number;
   remainingGeohashesToProcess: string[];
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
-  retryCount: number;
-  reinstatedRetryCount: number;
+  initiationCount: number;
 }
 
 export interface AcceptDonationRequestAttributes {

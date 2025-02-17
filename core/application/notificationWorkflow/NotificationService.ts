@@ -89,6 +89,16 @@ export class NotificationService {
     }
   }
 
+  async getRejectedDonorList(
+    requestPostId: string,
+    notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
+  ): Promise<BloodDonationNotificationDTO[]> {
+    return await notificationRepository.queryBloodDonationNotifications(
+      requestPostId,
+      AcceptDonationStatus.IGNORED
+    )
+  }
+
   async updateBloodDonationNotifications(
     requestPostId: string,
     notificationPayload: Partial<DonationRequestPayloadAttributes>,

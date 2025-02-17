@@ -13,6 +13,7 @@ module "donor_search_queue" {
   enable_lambda_event_source = true
   lambda_function_arn        = module.donor_router_lambda["donor-search"].lambda_arn
   batch_size                 = 1
+  visibility_timeout_seconds = local.donor_search_queue_visibility_timeout_seconds
 }
 
 module "donation_status_manager_queue" {
