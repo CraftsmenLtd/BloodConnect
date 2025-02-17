@@ -6,6 +6,9 @@ on:
       - build-pipeline
   workflow_dispatch:
 
+permissions:
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
