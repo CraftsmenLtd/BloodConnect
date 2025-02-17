@@ -33,7 +33,7 @@ const config: Config = {
     '.build',
     '/clients/mobile/node_modules/'
   ],
-  projects: ['<rootDir>/core/application', '<rootDir>/core/services/aws', '<rootDir>/clients/mobile']
+  projects: ['<rootDir>/core/application', '<rootDir>/core/services/aws', '<rootDir>/core/services/maps', '<rootDir>/clients/mobile']
 }
 
 export default config
