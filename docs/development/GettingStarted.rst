@@ -96,8 +96,8 @@ Before starting a dev container, you must ensure your aws access is prepared suc
  .. code-block:: bash
 
    aws sts assume-role \
-   --role-arn arn:aws:iam::<bloodconnect account id>:role/GitHubActionsAndDevRole \
-   --role-session-name <session nname> \
+   --role-arn arn:aws:iam::<bloodconnect aws account id>:role/GitHubActionsAndDevRole \
+   --role-session-name <a random session name> \
    --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
    --output text | \
    awk '{ 
@@ -108,6 +108,11 @@ Before starting a dev container, you must ensure your aws access is prepared suc
    while read -r line; do 
       varname=$(echo "$line" | cut -d= -f1)
       value=$(echo "$line" | cut -d= -f2-)
+      if grep -q "^${varname}=" .devcontainer/.env; then
+         sed -i "s|^${varname}=.*|${varname}=${value}|" .devcontainer/.env
+      else
+         echo "${varname}=${value}" >> .devcontainer/.env
+      fi
       sed -i "s|^${varname}=.*|${varname}=${value}|" .devcontainer/.env
    done
 
