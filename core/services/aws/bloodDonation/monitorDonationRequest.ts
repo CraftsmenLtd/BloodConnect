@@ -14,16 +14,14 @@ import {
 } from '@aws-sdk/client-s3'
 import { createServiceLogger } from '../commons/serviceLogger/ServiceLogger'
 import { Context } from 'aws-lambda'
+import { Config, ConfigType } from 'commons/libs/config/config'
+import { Logger } from 'core/application/models/logger/Logger'
 
 const client = new S3Client({ region: process.env.AWS_REGION })
-const maxGeoHashLength = Number(process.env.MAX_GEOHASH_LENGTH)
-const bucketName = process.env.BUCKET_NAME
-const maxEstimatedGeohashSizeInBytes = maxGeoHashLength + 1
-const maxGeohashToStoreInFile = Number(process.env.MAX_GEOHASH_STORAGE)
 
-const countGeohashesInFile = (fileSize: number): number => fileSize / maxEstimatedGeohashSizeInBytes
-const deleteExpiredFile = async(fileName: string): Promise<void> => { await client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: fileName })) }
-const createNewFile = async(fileName: string, geohash: string): Promise<void> => {
+const countGeohashesInFile = (fileSize: number, maxEstimatedGeohashSizeInBytes: number): number => fileSize / maxEstimatedGeohashSizeInBytes
+const deleteExpiredFile = async (bucketName: string, fileName: string): Promise<void> => { await client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: fileName })) }
+const createNewFile = async (bucketName: string, fileName: string, geohash: string): Promise<void> => {
   await client.send(
     new PutObjectCommand({
       Bucket: bucketName,
@@ -32,7 +30,7 @@ const createNewFile = async(fileName: string, geohash: string): Promise<void> =>
     }))
 }
 
-const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: string, fileSize: number): Promise<void> => {
+const appendGeohashToFileLargerThan5MB = async (bucketName: string, fileName: string, fileContent: string, fileSize: number): Promise<void> => {
   const createMultipartUploadResponse = await client.send(
     new CreateMultipartUploadCommand({
       Bucket: bucketName,
@@ -61,7 +59,7 @@ const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: st
     })
   )
 
-  const parts = await Promise.all([uploadExistingFilePromise, uploadNewPartPromise].map(async(promise, index) => {
+  const parts = await Promise.all([uploadExistingFilePromise, uploadNewPartPromise].map(async (promise, index) => {
     const response = await promise
     const isExistingPart = index === 0
     return {
@@ -84,7 +82,7 @@ const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: st
   )
 }
 
-const appendGeohashToFileSmallerThan5MB = async(fileName: string, fileContent: string): Promise<void> => {
+const appendGeohashToFileSmallerThan5MB = async (bucketName: string, fileName: string, fileContent: string): Promise<void> => {
   const existingFileResponse = await client.send(
     new GetObjectCommand({
       Bucket: bucketName,
@@ -118,7 +116,7 @@ const formatEvent = (event: Event[]): GroupedByCityAndRequestedBloodGroup[] => e
   previousValue: GroupedByCityAndRequestedBloodGroup[], currentValue) => {
   const existingGroup = previousValue.find(
     (value) => value.requestedBloodGroup === currentValue.requestedBloodGroup &&
-    value.city === currentValue.city)
+      value.city === currentValue.city)
 
   if (existingGroup !== null && existingGroup !== undefined) {
     existingGroup.geohashes = `${existingGroup.geohashes}\n${currentValue.geohash}`
@@ -132,10 +130,12 @@ const formatEvent = (event: Event[]): GroupedByCityAndRequestedBloodGroup[] => e
   return previousValue
 }, [])
 
-async function monitorDonationRequest(event:
-Event[],
-context: Context): Promise<void> {
-  const serviceLogger = createServiceLogger(context.awsRequestId)
+export async function monitorDonationRequest(event: Event[], logger: Logger, config: ConfigType): Promise<void> {
+  const maxGeoHashLength = config.maxGeohashLength
+  const bucketName = config.bucketName
+  const maxEstimatedGeohashSizeInBytes = maxGeoHashLength + 1
+  const maxGeohashToStoreInFile = config.maxGeohashStorage
+
   try {
     for (const formattedEvent of formatEvent(event)) {
       const fileContent = formattedEvent.geohashes
@@ -151,39 +151,45 @@ context: Context): Promise<void> {
       const potentialFileName = `${city}-${bloodGroupCharacter}-${mapOfSigns[signOfRequestedBloodGroup]}.txt`
       try {
         const existingFile = await client.send(new HeadObjectCommand({ Bucket: bucketName, Key: potentialFileName }))
-        serviceLogger.debug('found existing file')
+        logger.debug('found existing file')
         const fileSize = existingFile.ContentLength as number
-        const currentNumberOfGeohashes = countGeohashesInFile(fileSize)
+        const currentNumberOfGeohashes = countGeohashesInFile(fileSize, maxEstimatedGeohashSizeInBytes)
         if (currentNumberOfGeohashes > maxGeohashToStoreInFile) {
-          serviceLogger.debug('deleting expired size')
-          await deleteExpiredFile(potentialFileName)
-          serviceLogger.debug('creating new file')
-          await createNewFile(potentialFileName, fileContent)
+          logger.debug('deleting expired size')
+          await deleteExpiredFile(bucketName, potentialFileName)
+          logger.debug('creating new file')
+          await createNewFile(bucketName, potentialFileName, fileContent)
           return
         }
 
         const isFileGreaterThan5MB = fileSize > 5 * 1024 * 1024
         if (isFileGreaterThan5MB) {
-          serviceLogger.debug('appending to file larger than 5MB')
-          await appendGeohashToFileLargerThan5MB(potentialFileName, fileContent, fileSize)
+          logger.debug('appending to file larger than 5MB')
+          await appendGeohashToFileLargerThan5MB(bucketName, potentialFileName, fileContent, fileSize)
           return
         }
 
-        serviceLogger.debug('appending to file smaller than 5mb')
-        await appendGeohashToFileSmallerThan5MB(potentialFileName, fileContent)
+        logger.debug('appending to file smaller than 5mb')
+        await appendGeohashToFileSmallerThan5MB(bucketName, potentialFileName, fileContent)
       } catch (error) {
         if (error instanceof NotFound) {
-          serviceLogger.debug('creating new file')
-          await createNewFile(potentialFileName, fileContent)
+          logger.debug('creating new file')
+          await createNewFile(bucketName, potentialFileName, fileContent)
           return
         }
         throw error
       }
     }
   } catch (error) {
-    serviceLogger.error(error)
+    logger.error(error)
     throw error
   }
 }
 
-export default monitorDonationRequest
+const config = new Config()
+
+export default async function monitorDonationRequestLambda(event: Event[], context: Context): Promise<void> {
+  const serviceLogger = createServiceLogger(context.awsRequestId)
+
+  return monitorDonationRequest(event, serviceLogger, config.getConfig())
+}
