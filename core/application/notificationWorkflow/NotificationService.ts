@@ -89,7 +89,7 @@ export class NotificationService {
     }
   }
 
-  async getRejectedDonorList(
+  async getIgnoredDonorList(
     requestPostId: string,
     notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
   ): Promise<BloodDonationNotificationDTO[]> {

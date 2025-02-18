@@ -77,6 +77,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     } else {
       serviceLogger.error(error)
     }
+    throw error
   }
 }
 

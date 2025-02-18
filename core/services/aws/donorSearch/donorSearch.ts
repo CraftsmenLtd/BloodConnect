@@ -438,7 +438,7 @@ async function getDonorsFromCache(
 }
 
 async function getRejectedDonorsCount(requestPostId: string): Promise<number> {
-  const rejectedDonors = await notificationService.getRejectedDonorList(
+  const rejectedDonors = await notificationService.getIgnoredDonorList(
     requestPostId,
     new NotificationDynamoDbOperations<
     BloodDonationNotificationDTO,
