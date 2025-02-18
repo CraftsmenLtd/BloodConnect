@@ -96,8 +96,8 @@ Before starting a dev container, you must ensure your aws access is prepared suc
  .. code-block:: bash
 
    aws sts assume-role \
-   --role-arn arn:aws:iam::211125655549:role/GitHubActionsAndDevRole \
-   --role-session-name SAKIB \
+   --role-arn arn:aws:iam::<bloodconnect account id>:role/GitHubActionsAndDevRole \
+   --role-session-name <session nname> \
    --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
    --output text | \
    awk '{ 
