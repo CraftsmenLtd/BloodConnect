@@ -52,7 +52,7 @@ configure:
 # Build the APK with the specified profile
 build:
 	@echo "Building the APK with profile: $(BUILD_PROFILE)..."
-	eas build --profile $(BUILD_PROFILE) --platform android
+	eas build --profile $(BUILD_PROFILE) --platform android --local
 
 # Clean up local build artifacts
 clean:

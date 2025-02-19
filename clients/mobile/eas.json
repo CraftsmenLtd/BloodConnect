@@ -9,16 +9,52 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "COUNTRY": "BD",
+        "APP_VERSION": "1.0.0",
+        "APP_ENV": "development",
+        "APP_NAME": "net.bloodconnect.app",
+        "EAS_PROJECT_ID": "7e66e92f-832a-4b19-9327-f8ec0caa293f",
+        "API_BASE_URL": "https://stage.bloodconnect.net/api",
+        "AWS_USER_POOL_ID": "ap-south-1_EROdioPAM",
+        "AWS_USER_POOL_CLIENT_ID": "4i39cck90f0sv07at8hgdmvllf",
+        "AWS_COGNITO_DOMAIN": "bloodconnect-stage.auth.ap-south-1.amazoncognito.com"
       }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "COUNTRY": "BD",
+        "APP_VERSION": "1.0.0",
+        "APP_ENV": "development",
+        "APP_NAME": "net.bloodconnect.app",
+        "EAS_PROJECT_ID": "7e66e92f-832a-4b19-9327-f8ec0caa293f",
+        "API_BASE_URL": "https://stage.bloodconnect.net/api",
+        "AWS_USER_POOL_ID": "ap-south-1_EROdioPAM",
+        "AWS_USER_POOL_CLIENT_ID": "4i39cck90f0sv07at8hgdmvllf",
+        "AWS_COGNITO_DOMAIN": "bloodconnect-stage.auth.ap-south-1.amazoncognito.com"
       }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": false,
+      "env": {
+        "COUNTRY": "BD",
+        "APP_VERSION": "1.0.0",
+        "APP_ENV": "development",
+        "APP_NAME": "net.bloodconnect.app",
+        "EAS_PROJECT_ID": "7e66e92f-832a-4b19-9327-f8ec0caa293f",
+        "API_BASE_URL": "https://stage.bloodconnect.net/api",
+        "AWS_USER_POOL_ID": "ap-south-1_EROdioPAM",
+        "AWS_USER_POOL_CLIENT_ID": "4i39cck90f0sv07at8hgdmvllf",
+        "AWS_COGNITO_DOMAIN": "bloodconnect-stage.auth.ap-south-1.amazoncognito.com"
+      },
+      "android": {
+        "gradleCommand": ":app:assembleRelease -Pandroid.enableProguard=false"
+      }
     }
   },
   "submit": {
