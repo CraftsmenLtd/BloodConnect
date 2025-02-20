@@ -86,7 +86,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
   })
 
   try {
-    serviceLogger.info(`checking targeted execution time ${targetedExecutionTime}`)
+    serviceLogger.info(`checking targeted execution time${targetedExecutionTime === undefined ? ` ${targetedExecutionTime}` : ''}`)
     await handleVisibilityTimeout(targetedExecutionTime, record.receiptHandle)
 
     const donorSearchRecord = await donorSearchService.getDonorSearchRecord(
@@ -149,12 +149,12 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     const updatedNotifiedEligibleDonors = { ...notifiedEligibleDonors, ...eligibleDonors }
 
     if (!hasMaxGeohashLevelReached && nextRemainingDonorsToFind > 0) {
-      const delayPeriod = calculateDelayPeriod(remainingBagsNeeded, donationDateTime, urgencyLevel)
       serviceLogger.info(
         {
           currentNeighborSearchLevel: updatedNeighborSearchLevel,
           remainingGeohashesToProcessCount: geohashesForNextIteration.length,
-          remainingDonorsToFind: nextRemainingDonorsToFind
+          remainingDonorsToFind: nextRemainingDonorsToFind,
+          delayPeriod: Number(process.env.DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS)
         },
         `continuing donor search to find remaining ${nextRemainingDonorsToFind} donors`
       )
@@ -171,7 +171,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
           initiationCount
         },
         new SQSOperations(),
-        delayPeriod
+        Number(process.env.DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS)
       )
       return
     }
@@ -245,7 +245,7 @@ async function sendRequestNotification(
   donorSearchAttributes: DonorSearchDTO,
   eligibleDonors: Record<string, EligibleDonorInfo>
 ): Promise<void> {
-  for (const [donorId, { locationId, distance }] of Object.entries(eligibleDonors)) {
+  for (const donorId in eligibleDonors) {
     const notificationAttributes: DonationNotificationAttributes = {
       userId: donorId,
       title: 'Blood Request',
@@ -260,8 +260,8 @@ async function sendRequestNotification(
         seekerId: donorSearchAttributes.seekerId,
         requestPostId: donorSearchAttributes.requestPostId,
         createdAt: donorSearchAttributes.createdAt,
-        locationId,
-        distance,
+        locationId: eligibleDonors[donorId].locationId,
+        distance: eligibleDonors[donorId].distance,
         seekerName: donorSearchAttributes.seekerName,
         patientName: donorSearchAttributes.patientName,
         requestedBloodGroup: donorSearchAttributes.requestedBloodGroup,
