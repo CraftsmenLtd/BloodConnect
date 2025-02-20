@@ -76,9 +76,9 @@ module "notification" {
 }
 
 module "maps" {
-  source                  = "./maps"
-  environment             = var.environment
-  google_maps_api_key      = var.google_maps_api_key
+  source              = "./maps"
+  environment         = var.environment
+  google_maps_api_key = var.google_maps_api_key
 }
 
 module "logger" {

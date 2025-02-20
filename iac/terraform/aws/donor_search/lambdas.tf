@@ -25,10 +25,10 @@ locals {
         local.policies.sqs_policy
       )
       memory_size = 1024
+      timeout     = local.donor_search_queue_visibility_timeout_seconds - 60
       env_variables = {
         DYNAMODB_TABLE_NAME                     = split("/", var.dynamodb_table_arn)[1]
-        DONOR_SEARCH_MAX_RETRY_COUNT            = local.donor_search_max_retry_count
-        DONOR_SEARCH_MAX_REINSTATED_RETRY_COUNT = local.donor_search_max_reinstated_retry_count
+        DONOR_SEARCH_MAX_INITIATING_RETRY_COUNT = local.donor_search_max_initiating_retry_count
         DONOR_SEARCH_QUEUE_URL                  = module.donor_search_queue.queue_url
         NOTIFICATION_QUEUE_URL                  = var.push_notification_queue.url
         MAX_GEOHASH_CACHE_ENTRIES_COUNT         = local.max_geohash_cache_entries_count
@@ -37,7 +37,8 @@ locals {
         MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL       = local.max_geohash_neighbor_search_level
         CACHE_GEOHASH_PREFIX_LENGTH             = local.cache_geohash_prefix_length
         NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH   = local.neighbor_search_geohash_prefix_length
-        MAX_GEOHASHES_PER_PROCESSING_BATCH      = local.max_geohashes_per_processing_batch
+        MAX_GEOHASHES_PER_EXECUTION             = local.max_geohashes_per_execution
+        DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS    = local.donor_search_queue_min_delay_seconds
       }
     },
     donation-status-manager = {

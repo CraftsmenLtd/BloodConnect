@@ -3,7 +3,7 @@ import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiRes
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import { MapsHandler } from '../../../application/maps/MapsHandler'
 import { GeocodeRequest } from '../../../application/maps/dto/Maps'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 
 const mapsHandler = new MapsHandler()
