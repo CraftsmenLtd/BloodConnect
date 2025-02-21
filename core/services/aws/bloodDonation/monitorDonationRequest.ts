@@ -14,7 +14,7 @@ import {
 } from '@aws-sdk/client-s3'
 import { createServiceLogger } from '../commons/serviceLogger/ServiceLogger'
 import { Context } from 'aws-lambda'
-import { Config, ConfigType } from 'commons/libs/config/config'
+import { Config } from 'commons/libs/config/config'
 import { Logger } from 'core/application/models/logger/Logger'
 
 const client = new S3Client({ region: process.env.AWS_REGION })
@@ -112,6 +112,12 @@ type GroupedByCityAndRequestedBloodGroup = {
   geohashes: string;
 }
 
+type ExpectedConfig = {
+  maxGeohashLength: number;
+  bucketName: string;
+  maxGeohashStorage: number;
+}
+
 const formatEvent = (event: Event[]): GroupedByCityAndRequestedBloodGroup[] => event.reduce((
   previousValue: GroupedByCityAndRequestedBloodGroup[], currentValue) => {
   const existingGroup = previousValue.find(
@@ -130,7 +136,7 @@ const formatEvent = (event: Event[]): GroupedByCityAndRequestedBloodGroup[] => e
   return previousValue
 }, [])
 
-export async function monitorDonationRequest(event: Event[], logger: Logger, config: ConfigType): Promise<void> {
+export async function monitorDonationRequest(event: Event[], logger: Logger, config: ExpectedConfig): Promise<void> {
   const maxGeoHashLength = config.maxGeohashLength
   const bucketName = config.bucketName
   const maxEstimatedGeohashSizeInBytes = maxGeoHashLength + 1
@@ -186,7 +192,7 @@ export async function monitorDonationRequest(event: Event[], logger: Logger, con
   }
 }
 
-const config = new Config()
+const config = new Config<ExpectedConfig>()
 
 export default async function monitorDonationRequestLambda(event: Event[], context: Context): Promise<void> {
   const serviceLogger = createServiceLogger(context.awsRequestId)
