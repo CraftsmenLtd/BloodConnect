@@ -1,11 +1,7 @@
-data "aws_dynamodb_table" "dynamodb_table" {
-  name = var.dynamodb_table_arn
-}
-
 resource "aws_pipes_pipe" "donation_request_pipe" {
   name     = "${var.environment}-donation-request-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
-  source   = data.aws_dynamodb_table.dynamodb_table.stream_arn
+  source   = var.dynamodb_table_stream_arn
   target   = var.donor_search_queue_arn
 
   source_parameters {
@@ -57,13 +53,15 @@ EOF
       log_group_arn = aws_cloudwatch_log_group.donation_request_pipe_log_group.arn
     }
   }
+
+  depends_on = [aws_iam_role_policy.eventbridge_pipe_policy]
 }
 
 
 resource "aws_pipes_pipe" "donation_accept_pipe" {
   name     = "${var.environment}-donation-accept-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
-  source   = data.aws_dynamodb_table.dynamodb_table.stream_arn
+  source   = var.dynamodb_table_stream_arn
   target   = var.donation_status_manager_queue_arn
 
   source_parameters {
@@ -104,6 +102,8 @@ EOF
       log_group_arn = aws_cloudwatch_log_group.donation_accept_pipe_log_group.arn
     }
   }
+
+  depends_on = [aws_iam_role_policy.eventbridge_pipe_policy]
 }
 
 resource "aws_pipes_pipe" "donation_request_monitoring_pipe" {
@@ -150,4 +150,6 @@ EOF
       log_group_arn = aws_cloudwatch_log_group.donation_request_monitoring_pipe_log_group.arn
     }
   }
+
+  depends_on = [aws_iam_role_policy.eventbridge_pipe_policy]
 }

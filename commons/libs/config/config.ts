@@ -1,28 +1,30 @@
+type AllConfig = {
+  passwordMinimumLength: number;
+  logLevel: string;
+  maxRetryCount: number;
+  donorSearchQueueArn: string;
+  maxGeohashPerProcessingBatch: number;
+  googleMapsApiKey: string;
+  country: string;
+  minMonthsBetweenDonations: number;
+  maxGeohashLength: number;
+  bucketName: string;
+  maxGeohashStorage: number;
+  dynamodbTableName: string;
+  emailSender: string;
+  platformArnApns: string;
+  platformArnFcm: string;
+  notificationQueueUrl: string;
+  maxGeohashCacheEntriesCount: string;
+  maxGeohashCacheMbSize: string;
+  maxGeohashCacheTimeoutMinutes: string;
+  maxGeohashNeighborSearchLevel: string;
+  neighborSearchGeohashPrefixLength: string;
+  cacheGeohashPrefixLength: string;
+}
+
 export class Config<T> {
-  private config: {
-    passwordMinimumLength: number;
-    logLevel: string;
-    maxRetryCount: number;
-    donorSearchQueueArn: string;
-    maxGeohashPerProcessingBatch: number;
-    googleMapsApiKey: string;
-    country: string;
-    minMonthsBetweenDonations: number;
-    maxGeohashLength: number;
-    bucketName: string;
-    maxGeohashStorage: number;
-    dynamodbTableName: string;
-    emailSender: string;
-    platformArnApns: string;
-    platformArnFcm: string;
-    notificationQueueUrl: string;
-    maxGeohashCacheEntriesCount: string;
-    maxGeohashCacheMbSize: string;
-    maxGeohashCacheTimeoutMinutes: string;
-    maxGeohashNeighborSearchLevel: string;
-    neighborSearchGeohashPrefixLength: string;
-    cacheGeohashPrefixLength: string;
-  }
+  private config: AllConfig
 
   constructor() {
     this.config = {
