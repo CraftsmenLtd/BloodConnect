@@ -23,7 +23,9 @@ type AllConfig = {
   cacheGeohashPrefixLength: string;
 }
 
-export class Config<T> {
+type ConfigSubset<T> = { [K in keyof T]: K extends keyof AllConfig ? AllConfig[K] : never }
+
+export class Config<T extends ConfigSubset<T>> {
   private config: AllConfig
 
   constructor() {
@@ -53,8 +55,8 @@ export class Config<T> {
     }
   }
 
-  getConfig(): T {
-    return this.config as T
+  getConfig(): ConfigSubset<T> {
+    return this.config as ConfigSubset<T>
   }
 
   overrideConfig(newConfig: T): void {
