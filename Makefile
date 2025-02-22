@@ -154,6 +154,7 @@ LOCAL_DEV_DEPLOYMENT_CONFIG=TF_BACKEND_BUCKET_REGION=$(AWS_REGION) \
 	TF_VAR_aws_environment=$(DEPLOYMENT_ENVIRONMENT) \
 	AWS_REGION=$(AWS_REGION)
 deploy-dev-branch:
+	$(MAKE) package-all
 	$(MAKE) clean-terraform-files
 	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 	$(MAKE) tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
