@@ -192,7 +192,11 @@ export async function monitorDonationRequest(event: Event[], logger: Logger, con
   }
 }
 
-const config = new Config<ExpectedConfig>()
+const config = new Config<{
+  maxGeohashLength: number;
+  bucketName: string;
+  maxGeohashStorage: number;
+}>()
 
 export default async function monitorDonationRequestLambda(event: Event[], context: Context): Promise<void> {
   const serviceLogger = createServiceLogger(context.awsRequestId)
