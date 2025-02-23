@@ -88,6 +88,7 @@
     "dist/",
     "node_modules/",
     "docs/",
+    "clients/website/",
     "iac/"
   ]
 }
