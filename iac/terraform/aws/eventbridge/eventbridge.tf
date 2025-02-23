@@ -35,7 +35,24 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   }
 
   target_parameters {
-    input_template = "{ \"eventName\": \"<$.eventName>\", \"PK\": \"<$.dynamodb.NewImage.PK.S>\", \"SK\": \"<$.dynamodb.NewImage.SK.S>\", \"requestedBloodGroup\": \"<$.dynamodb.NewImage.requestedBloodGroup.S>\", \"bloodQuantity\": \"<$.dynamodb.NewImage.bloodQuantity.N>\", \"city\": \"<$.dynamodb.NewImage.city.S>\", \"urgencyLevel\": \"<$.dynamodb.NewImage.urgencyLevel.S>\", \"createdAt\": \"<$.dynamodb.NewImage.createdAt.S>\", \"geohash\": \"<$.dynamodb.NewImage.geohash.S>\", \"location\": \"<$.dynamodb.NewImage.location.S>\", \"donationDateTime\": \"<$.dynamodb.NewImage.donationDateTime.S>\", \"patientName\": \"<$.dynamodb.NewImage.patientName.S>\", \"contactNumber\": \"<$.dynamodb.NewImage.contactNumber.S>\", \"shortDescription\": \"<$.dynamodb.NewImage.shortDescription.S>\", \"transportationInfo\": \"<$.dynamodb.NewImage.transportationInfo.S>\"}"
+    input_template = <<EOF
+{
+  "PK": "<$.dynamodb.NewImage.PK.S>",
+  "SK": "<$.dynamodb.NewImage.SK.S>",
+  "requestedBloodGroup": "<$.dynamodb.NewImage.requestedBloodGroup.S>",
+  "bloodQuantity": "<$.dynamodb.NewImage.bloodQuantity.N>",
+  "city": "<$.dynamodb.NewImage.city.S>",
+  "urgencyLevel": "<$.dynamodb.NewImage.urgencyLevel.S>",
+  "createdAt": "<$.dynamodb.NewImage.createdAt.S>",
+  "geohash": "<$.dynamodb.NewImage.geohash.S>",
+  "location": "<$.dynamodb.NewImage.location.S>",
+  "donationDateTime": "<$.dynamodb.NewImage.donationDateTime.S>",
+  "patientName": "<$.dynamodb.NewImage.patientName.S>",
+  "contactNumber": "<$.dynamodb.NewImage.contactNumber.S>",
+  "shortDescription": "<$.dynamodb.NewImage.shortDescription.S>",
+  "transportationInfo": "<$.dynamodb.NewImage.transportationInfo.S>"
+}
+EOF
   }
 
   log_configuration {
@@ -78,7 +95,13 @@ resource "aws_pipes_pipe" "donation_accept_pipe" {
   }
 
   target_parameters {
-    input_template = "{\n \"PK\": \"<$.dynamodb.NewImage.PK.S>\",\n \"SK\": \"<$.dynamodb.NewImage.SK.S>\"\n,\n \"createdAt\": \"<$.dynamodb.NewImage.createdAt.S>\"\n}"
+    input_template = <<EOF
+{
+  "PK": "<$.dynamodb.NewImage.PK.S>",
+  "SK": "<$.dynamodb.NewImage.SK.S>",
+  "createdAt": "<$.dynamodb.NewImage.createdAt.S>"
+}
+EOF
   }
 
   log_configuration {
@@ -90,4 +113,50 @@ resource "aws_pipes_pipe" "donation_accept_pipe" {
   }
 
   depends_on = [null_resource.check_dynamodb_stream]
+}
+
+resource "aws_pipes_pipe" "donation_request_monitoring_pipe" {
+  name     = "${var.environment}-donation-request-monitoring-pipe"
+  role_arn = aws_iam_role.eventbridge_pipe_role.arn
+  source   = var.dynamodb_table_stream_arn
+  target   = module.lambda.lambda_arn
+
+  source_parameters {
+    dynamodb_stream_parameters {
+      starting_position = "LATEST"
+      batch_size        = 5
+    }
+
+    filter_criteria {
+      filter {
+        pattern = jsonencode({
+          "eventName" : ["INSERT"],
+          "dynamodb" : {
+            "NewImage" : {
+              "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
+              "SK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] }
+            }
+          }
+        })
+      }
+    }
+  }
+
+  target_parameters {
+    input_template = <<EOF
+{
+  "requestedBloodGroup": "<$.dynamodb.NewImage.requestedBloodGroup.S>",
+  "city": "<$.dynamodb.NewImage.city.S>",
+  "geohash": "<$.dynamodb.NewImage.geohash.S>"
+}
+EOF
+  }
+
+  log_configuration {
+    include_execution_data = ["ALL"]
+    level                  = "INFO"
+    cloudwatch_logs_log_destination {
+      log_group_arn = aws_cloudwatch_log_group.donation_request_monitoring_pipe_log_group.arn
+    }
+  }
 }
