@@ -6,9 +6,7 @@ on:
   push:
     branches:
       - master
-    paths:
-      - docs/**
-      - openapi/**
+      - fix-docs-deploy
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -32,6 +30,9 @@ jobs:
 
       - name: Install Dot Binary
         run: sudo apt-get install -y graphviz
+
+      - name: Install Dot Binary
+        run: pip install setuptools
 
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
