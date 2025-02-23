@@ -5,9 +5,10 @@ import {
   GeocodeResponse,
   PlaceAutocompleteRequest,
   PlaceAutocompleteResponse
-} from '../dto/Maps'
-import { MapsProvider } from '../interfaces/MapsProvider'
+} from '../../../application/maps/dto/Maps'
+import { MapsProvider } from '../../../application/models/maps/MapsProvider'
 
+// TODO: Move this to config module
 export const config = {
   GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY ?? '',
   COUNTRY: process.env.COUNTRY ?? 'BD',
@@ -19,9 +20,9 @@ export class GoogleMapsProvider implements MapsProvider {
   private readonly apiKey: string
   private readonly country: string = ''
 
-  constructor() {
+  constructor(apiKey?: string) {
     this.baseUrl = config.GOOGLE_MAPS_BASE_URL
-    this.apiKey = config.GOOGLE_MAPS_API_KEY
+    this.apiKey = apiKey ?? config.GOOGLE_MAPS_API_KEY
     this.country = config.COUNTRY
     this.validateAPIKey()
   }

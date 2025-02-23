@@ -5,8 +5,8 @@ import {
   APIResponse,
   PlaceAutocompleteResponse,
   GeocodeResponse
-} from './dto/Maps'
-import { MapsService } from './MapsService'
+} from '../../application/maps/dto/Maps'
+import { MapsService } from '../../application/maps/MapsService'
 
 const geocodeSchema = z.object({
   address: z.string().optional(),
@@ -33,8 +33,8 @@ const placeAutocompleteSchema = z.object({
 export class MapsHandler {
   private readonly mapsService: MapsService
 
-  constructor() {
-    this.mapsService = new MapsService()
+  constructor(mapsService: MapsService) {
+    this.mapsService = mapsService
   }
 
   async getPlaceAutocomplete(params: PlaceAutocompleteRequest): Promise<APIResponse<PlaceAutocompleteResponse>> {
