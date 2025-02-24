@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "log_store_policy_document" {
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
-      values   = [aws_cloudformation_stack.cdn.outputs["CloudFrontArn"]]
+      values   = [aws_cloudfront_distribution.cdn.arn]
     }
   }
 }
