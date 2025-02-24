@@ -8,6 +8,7 @@ import {
   QueryConditionOperator,
   QueryInput
 } from '../../../../application/models/policies/repositories/QueryTypes'
+import { NOTIFICATION_PK_PREFIX } from '../../../../application/models/dbModels/NotificationModel'
 
 export default class NotificationDynamoDbOperations<
   Dto extends DTO,
@@ -15,8 +16,9 @@ export default class NotificationDynamoDbOperations<
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
 > extends DynamoDbTableOperations<Dto, DbFields, ModelAdapter> {
   async queryBloodDonationNotifications(
-    requestPostId: string
-  ): Promise<Dto[] | null> {
+    requestPostId: string,
+    status?: string
+  ): Promise<Dto[]> {
     const gsiIndex = this.modelAdapter.getIndex('GSI', 'GSI1')
     if (gsiIndex === undefined) {
       throw new Error('Index not found.')
@@ -27,6 +29,14 @@ export default class NotificationDynamoDbOperations<
         attributeName: gsiIndex.partitionKey,
         operator: QueryConditionOperator.EQUALS,
         attributeValue: requestPostId
+      }
+    }
+
+    if (gsiIndex.sortKey !== undefined && status !== undefined) {
+      query.sortKeyCondition = {
+        attributeName: gsiIndex.sortKey,
+        operator: QueryConditionOperator.BEGINS_WITH,
+        attributeValue: `${NOTIFICATION_PK_PREFIX}#${status}`
       }
     }
 
@@ -42,7 +52,7 @@ export default class NotificationDynamoDbOperations<
     requestPostId: string,
     type: string
   ): Promise<Dto | null> {
-    const item = await super.getItem(`NOTIFICATION#${userId}`, `${type}#${requestPostId}`)
+    const item = await super.getItem(`${NOTIFICATION_PK_PREFIX}#${userId}`, `${type}#${requestPostId}`)
     return item
   }
 }

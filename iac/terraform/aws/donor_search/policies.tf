@@ -19,8 +19,8 @@ locals {
         sid = "DynamodbPolicy"
         actions = [
           "dynamodb:PutItem",
-          "dynamodb:GetItem",
           "dynamodb:UpdateItem",
+          "dynamodb:GetItem",
           "dynamodb:Query"
         ]
         resources = [
@@ -34,14 +34,17 @@ locals {
       {
         sid = "SqsPolicy"
         actions = [
+          "sqs:SendMessage",
           "sqs:ReceiveMessage",
           "sqs:DeleteMessage",
+          "sqs:ChangeMessageVisibility",
           "sqs:GetQueueAttributes"
         ]
         resources = [
-          aws_sqs_queue.donor_search_queue.arn,
-          aws_sqs_queue.donor_search_retry_queue.arn,
-          aws_sqs_queue.donation_status_manager_queue.arn
+          module.donation_request_queue.queue_arn,
+          module.donor_search_queue.queue_arn,
+          module.donation_status_manager_queue.queue_arn,
+          var.push_notification_queue.arn
         ]
       }
     ]

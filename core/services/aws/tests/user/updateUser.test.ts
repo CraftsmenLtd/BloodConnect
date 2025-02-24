@@ -5,14 +5,14 @@ import { APIGatewayProxyResult } from 'aws-lambda'
 import DynamoDbTableOperations from '../../commons/ddb/DynamoDbTableOperations'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import updateUserLambda from '../../user/updateUser'
-import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
+import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 import LocationDynamoDbOperations from '../../commons/ddb/LocationDynamoDbOperations'
 import { UPDATE_PROFILE_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
 jest.mock('../../../../application/userWorkflow/UserService')
 jest.mock('../../commons/ddb/DynamoDbTableOperations')
 jest.mock('../../commons/lambda/ApiGateway')
-jest.mock('../../commons/httpLogger/HttpLogger', () => ({
+jest.mock('../../commons/logger/HttpLogger', () => ({
   createHTTPLogger: jest.fn(() => ({
     error: jest.fn(),
     info: jest.fn(),

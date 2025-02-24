@@ -6,7 +6,7 @@ import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import { BloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
 import { donationAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 import BloodDonationOperationError from '../../../../application/bloodDonationWorkflow/BloodDonationOperationError'
-import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
+import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 import { CREATE_DONATION_REQUEST_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
 import { UserService } from '../../../../application/userWorkflow/UserService'
 import { mockUserDetailsWithStringId } from '../../../../application/tests/mocks/mockUserData'
@@ -14,7 +14,7 @@ import { mockUserDetailsWithStringId } from '../../../../application/tests/mocks
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/userWorkflow/UserService')
 jest.mock('../../commons/lambda/ApiGateway')
-jest.mock('../../commons/httpLogger/HttpLogger', () => ({
+jest.mock('../../commons/logger/HttpLogger', () => ({
   createHTTPLogger: jest.fn(() => ({
     error: jest.fn(),
     info: jest.fn(),

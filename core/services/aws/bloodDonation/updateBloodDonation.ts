@@ -16,7 +16,7 @@ import { DonationRequestPayloadAttributes } from '../../../application/notificat
 import DonationNotificationModel, {
   BloodDonationNotificationFields
 } from '../../..//application/models/dbModels/DonationNotificationModel'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE, UPDATE_DONATION_REQUEST_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [

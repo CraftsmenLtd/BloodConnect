@@ -13,7 +13,7 @@ variable "dynamodb_table_arn" {
   description = "ARN of the DynamoDB table"
 }
 
-variable "donor_search_queue_arn" {
+variable "donation_request_queue_arn" {
   type        = string
   description = "ARN of the donor search SQS queue"
 }

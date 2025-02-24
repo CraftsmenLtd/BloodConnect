@@ -37,9 +37,20 @@ export type DonationDTO = DTO & {
   createdAt: string;
 }
 
+export enum DonorSearchStatus {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED'
+}
+
+export type EligibleDonorInfo = {
+  distance: number;
+  locationId: string;
+}
+
 export type DonorSearchDTO = DTO & {
-  requestPostId: string;
   seekerId: string;
+  requestPostId: string;
+  createdAt: string;
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
@@ -47,15 +58,13 @@ export type DonorSearchDTO = DTO & {
   location: string;
   geohash: string;
   donationDateTime: string;
-  status: DonationStatus;
+  status: DonorSearchStatus;
   contactNumber: string;
   patientName?: string;
+  seekerName: string;
   transportationInfo?: string;
   shortDescription?: string;
-  createdAt: string;
-  retryCount: number;
-  currentNeighborSearchLevel?: number;
-  remainingGeohashesToProcess?: string[];
+  notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 
 export enum AcceptDonationStatus {

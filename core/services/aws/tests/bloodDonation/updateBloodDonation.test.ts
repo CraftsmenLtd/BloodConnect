@@ -5,12 +5,12 @@ import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import { mockEvent } from '../cannedData/updateBloodDonationLambdaEvent'
 import { UpdateBloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
 import { NotificationService } from '../../../../application/notificationWorkflow/NotificationService'
-import { HttpLoggerAttributes } from '../../commons/httpLogger/HttpLogger'
+import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/notificationWorkflow/NotificationService')
 jest.mock('../../commons/lambda/ApiGateway')
-jest.mock('../../commons/httpLogger/HttpLogger', () => ({
+jest.mock('../../commons/logger/HttpLogger', () => ({
   createHTTPLogger: jest.fn(() => ({
     error: jest.fn(),
     info: jest.fn(),
