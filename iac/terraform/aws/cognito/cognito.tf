@@ -120,9 +120,10 @@ resource "aws_cognito_identity_provider" "facebook" {
   }
 }
 
-resource "aws_cognito_user_pool_domain" "set_custom_domain" {
-  domain       = local.cognito_domain_name
-  user_pool_id = aws_cognito_user_pool.user_pool.id
+resource "aws_cognito_user_pool_domain" "custom_domain" {
+  domain          = local.cognito_domain_name
+  user_pool_id    = aws_cognito_user_pool.user_pool.id
+  certificate_arn = var.acm_certificate_arn
 }
 
 resource "aws_cognito_user_pool_client" "app_pool_client" {
@@ -132,8 +133,8 @@ resource "aws_cognito_user_pool_client" "app_pool_client" {
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes                 = ["openid", "email", "profile"]
   allowed_oauth_flows                  = ["code"]
-  callback_urls                        = ["bloodconnect://callback"]
-  logout_urls                          = ["bloodconnect://signout"]
+  callback_urls                        = ["https://${local.cognito_domain_name}/callback"]
+  logout_urls                          = ["https://${local.cognito_domain_name}/signout"]
   supported_identity_providers         = ["COGNITO", "Google", "Facebook"]
   explicit_auth_flows                  = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
 
