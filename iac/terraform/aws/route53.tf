@@ -23,7 +23,7 @@ resource "aws_route53_record" "cognito_custom_domain" {
   type    = "A"
   alias {
     evaluate_target_health = false
-    name    = module.cognito.aws_cognito_custom_domain_cloudfront_distribution
-    zone_id = module.cognito.aws_cognito_custom_domain_cloudfront_distribution_zone_id
+    name                   = module.cognito.aws_cognito_custom_domain_cloudfront_distribution
+    zone_id                = module.cognito.aws_cognito_custom_domain_cloudfront_distribution_zone_id
   }
 }
