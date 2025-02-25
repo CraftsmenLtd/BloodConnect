@@ -34,11 +34,10 @@ const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(
 const notificationService = new NotificationService()
 const userService = new UserService()
 
-async function sendPushNotification(event: SQSEvent): Promise<{ status: string }> {
+async function sendPushNotification(event: SQSEvent): Promise<void> {
   for (const record of event.Records) {
     await processSQSRecord(record)
   }
-  return { status: 'Success' }
 }
 
 async function processSQSRecord(record: SQSRecord): Promise<void> {

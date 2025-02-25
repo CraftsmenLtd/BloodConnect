@@ -1,7 +1,7 @@
 module "donation_request_queue" {
   source                     = "./../sqs"
   environment                = var.environment
-  queue_name                 = "donation-request-queue"
+  queue_name                 = "donation-request"
   enable_lambda_event_source = true
   lambda_function_arn        = module.donor_search_lambda["donation-request-initiator"].lambda_arn
 }
@@ -9,7 +9,7 @@ module "donation_request_queue" {
 module "donor_search_queue" {
   source                     = "./../sqs"
   environment                = var.environment
-  queue_name                 = "donor-search-queue"
+  queue_name                 = "donor-search"
   enable_lambda_event_source = true
   lambda_function_arn        = module.donor_search_lambda["donor-search"].lambda_arn
   batch_size                 = 1
