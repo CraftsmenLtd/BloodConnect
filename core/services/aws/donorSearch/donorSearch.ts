@@ -105,7 +105,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, city, geohash } =
       donorSearchRecord
     const remainingBagsNeeded =
-      initiationCount === 0
+      initiationCount === 1
         ? bloodQuantity
         : await getRemainingBagsNeeded(seekerId, requestPostId, bloodQuantity)
 
@@ -115,7 +115,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     }
 
     const rejectedDonorsCount: number =
-      initiationCount === 0 ? 0 : await getRejectedDonorsCount(requestPostId)
+      initiationCount === 1 ? 0 : await getRejectedDonorsCount(requestPostId)
 
     const totalDonorsToFind =
       remainingDonorsToFind !== undefined && remainingDonorsToFind > 0
@@ -155,7 +155,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
           currentNeighborSearchLevel: updatedNeighborSearchLevel,
           remainingGeohashesToProcessCount: geohashesForNextIteration.length,
           remainingDonorsToFind: nextRemainingDonorsToFind,
-          delayPeriod: delayPeriod
+          delayPeriod
         },
         `continuing donor search to find remaining ${nextRemainingDonorsToFind} donors`
       )

@@ -28,8 +28,8 @@ const DELAY_PERIOD: DelayPeriodConfig = {
 }
 
 const DELAY_WEIGHT: Record<UrgencyType, Record<TimeUnit, number>> = {
-  urgent: { minutes: 1, hours: 0.1 },
-  regular: { minutes: 1.5, hours: 0.2 }
+  urgent: { minutes: 0.5, hours: 0.1 },
+  regular: { minutes: 1, hours: 0.2 }
 }
 
 const EXTRA_DONORS_TO_NOTIFY: Record<UrgencyType, number> = { urgent: 2, regular: 1 }

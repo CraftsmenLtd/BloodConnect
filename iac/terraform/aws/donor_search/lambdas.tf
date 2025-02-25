@@ -56,3 +56,8 @@ locals {
     }
   }
 }
+
+resource "aws_lambda_function_recursion_config" "donor_search_recursion_config" {
+  function_name  = module.donor_search_lambda["donor-search"].lambda_function_name
+  recursive_loop = "Allow"
+}

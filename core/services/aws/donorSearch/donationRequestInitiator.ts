@@ -73,7 +73,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
           body.geohash.slice(0, Number(process.env.NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH))
         ],
         notifiedEligibleDonors: {},
-        initiationCount: 0
+        initiationCount: 1
       }
 
       const donorSearchRecord = await donorSearchService.getDonorSearchRecord(
