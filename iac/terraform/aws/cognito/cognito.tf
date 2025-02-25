@@ -133,8 +133,8 @@ resource "aws_cognito_user_pool_client" "app_pool_client" {
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_scopes                 = ["openid", "email", "profile"]
   allowed_oauth_flows                  = ["code"]
-  callback_urls                        = ["https://${local.cognito_domain_name}/callback"]
-  logout_urls                          = ["https://${local.cognito_domain_name}/signout"]
+  callback_urls                        = ["bloodconnect://callback"]
+  logout_urls                          = ["bloodconnect://signout"]
   supported_identity_providers         = ["COGNITO", "Google", "Facebook"]
   explicit_auth_flows                  = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
 
