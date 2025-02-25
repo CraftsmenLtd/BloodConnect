@@ -120,8 +120,14 @@ resource "aws_cognito_identity_provider" "facebook" {
   }
 }
 
-resource "aws_cognito_user_pool_domain" "set_custom_domain" {
-  domain       = local.cognito_domain_name
+resource "aws_cognito_user_pool_domain" "custom_domain" {
+  domain          = local.cognito_domain_name
+  user_pool_id    = aws_cognito_user_pool.user_pool.id
+  certificate_arn = var.acm_certificate_arn
+}
+
+resource "aws_cognito_user_pool_domain" "cognito_domain" {
+  domain       = local.cognito_old_domain_name
   user_pool_id = aws_cognito_user_pool.user_pool.id
 }
 

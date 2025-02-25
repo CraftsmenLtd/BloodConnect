@@ -79,10 +79,3 @@ Check out the [emoji key](https://allcontributors.org/docs/en/emoji-key) for con
 ## Get Involved
 
 Want to contribute? The source code is available under [Apache 2.0](./LICENSE) License. Please go through our [Developer Docs](https://craftsmenltd.github.io/BloodConnect) for more details.
-
-<br/>
-
-Opensource supported by    
-<a href="https://jb.gg/OpenSourceSupport">
-  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" alt="JetBrains" width="100"/>
-</a>
