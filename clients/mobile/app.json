@@ -11,13 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "androidNavigationBar": {
-      "visible": true
-    },
     "androidStatusBar": {
       "backgroundColor": "#FF4D4D",
-      "translucent": false,
-      "visible": true
+      "translucent": false
     },
     "ios": {
       "supportsTablet": true,
@@ -65,6 +61,14 @@
           "icon": "./assets/notification-icon.png",
           "color": "#9e000f",
           "defaultChannel": "default"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 29
+          }
         }
       ]
     ]
