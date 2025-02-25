@@ -91,7 +91,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
         donorSearchRecord.status === DonorSearchStatus.COMPLETED
 
       if (donorSearchRecord === null) {
-        serviceLogger.info('inserting donor search record for new donation request')
+        serviceLogger.info('inserting donor search record')
         await donorSearchService.createDonorSearchRecord(
           donorSearchAttributes,
           new DynamoDbTableOperations<DonorSearchDTO, DonorSearchFields, DonorSearchModel>(
@@ -99,7 +99,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
           )
         )
       } else {
-        serviceLogger.info('updating donor search record for updated donation request')
+        serviceLogger.info('updating donor search record')
         await donorSearchService.updateDonorSearchRecord(
           {
             ...donorSearchAttributes,
