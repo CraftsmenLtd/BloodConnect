@@ -22,6 +22,6 @@ jobs:
     uses: ./.github/workflows/app-build.yml
     with:
       build_type: preview
-      mobile_branch: ${{ github.event.inputs.mobile_branch }}
-      backend_branch: ${{ github.event.inputs.backend_branch }}
+      mobile_branch: ${{ github.event.inputs.mobile_branch || 'master' }}
+      backend_branch: ${{ github.event.inputs.backend_branch || 'stage' }}
     secrets: inherit
