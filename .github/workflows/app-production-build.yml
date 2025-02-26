@@ -1,4 +1,4 @@
-name: Mobile App Production Build
+name: 📱🌏 Mobile App Production Build
 
 on:
   workflow_dispatch:

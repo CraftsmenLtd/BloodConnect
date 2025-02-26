@@ -1,4 +1,4 @@
-name: Mobile App Preview Build
+name: 📱 Mobile App Preview Build
 
 on:
   push:
