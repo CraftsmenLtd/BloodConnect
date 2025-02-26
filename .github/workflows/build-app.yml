@@ -39,7 +39,7 @@ jobs:
 
       - name: Fetch Cognito and API Gateway Details
         run: |
-          BRANCH_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9]//g')
+          BRANCH_NAME=$(echo "build-pipeline" | sed 's/[^a-zA-Z0-9-]//g')
           echo "Branch Name: $BRANCH_NAME"
 
           # Fetch Cognito User Pool ID
