@@ -1,4 +1,4 @@
-name: Build React Native App with Expo
+name: Build App
 
 on:
   workflow_call:

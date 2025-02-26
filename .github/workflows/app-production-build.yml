@@ -1,4 +1,4 @@
-name: Production Build
+name: Mobile App Production Build
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/build-app.yml
+    uses: ./.github/workflows/app-build.yml
     with:
       build_type: production
       mobile_branch: ${{ github.event.inputs.mobile_branch }}

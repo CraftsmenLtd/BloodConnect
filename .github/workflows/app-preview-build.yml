@@ -1,6 +1,9 @@
-name: Preview Build
+name: Mobile App Preview Build
 
 on:
+  push:
+    branches:
+      - build-pipeline
   workflow_dispatch:
     inputs:
       backend_branch:
@@ -16,7 +19,7 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/build-app.yml
+    uses: ./.github/workflows/app-build.yml
     with:
       build_type: preview
       mobile_branch: ${{ github.event.inputs.mobile_branch }}
