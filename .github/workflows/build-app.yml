@@ -52,9 +52,9 @@ jobs:
           API_ID=$(aws apigateway get-rest-apis | jq -r --arg name "${BRANCH_NAME}-api" '.items[] | select(.name==$name) | .id')
           API_GATEWAY_URL="https://${API_ID}.execute-api.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/api"
 
-          echo $USER_POOL_ID
-          echo $CLIENT_ID
-          echo $API_GATEWAY_URL
+          echo "USER_POOL_ID=$USER_POOL_ID" >> $GITHUB_ENV
+          echo "CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
+          echo "API_GATEWAY_URL=$API_GATEWAY_URL" >> $GITHUB_ENV
 
       - name: Create .env file
         run: |
