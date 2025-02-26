@@ -70,7 +70,9 @@
             "minSdkVersion": 29
           }
         }
-      ]
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics"
     ]
   }
 }
