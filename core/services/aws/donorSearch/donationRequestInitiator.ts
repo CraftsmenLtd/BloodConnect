@@ -99,7 +99,7 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
           )
         )
       } else {
-        serviceLogger.info('updating donor search record')
+        serviceLogger.info('updating donor search record because the donation request has been updated')
         await donorSearchService.updateDonorSearchRecord(
           {
             ...donorSearchAttributes,
