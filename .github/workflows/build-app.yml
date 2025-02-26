@@ -60,9 +60,6 @@ jobs:
         run: |
           cd clients/mobile
           touch .env
-          echo "API_URL=$API_GATEWAY_URL" >> .env
-          echo "USER_POOL_ID=$USER_POOL_ID" >> .env
-          echo "CLIENT_ID=$CLIENT_ID" >> .env
           echo "AWS_USER_POOL_ID=$USER_POOL_ID" >> .env
           echo "AWS_USER_POOL_CLIENT_ID=$CLIENT_ID" >> .env
           echo "AWS_COGNITO_DOMAIN=your_aws_cognito_domain" >> .env
