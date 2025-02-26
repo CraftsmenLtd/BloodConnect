@@ -1,6 +1,7 @@
 name: 📱 Mobile App Preview Build
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       backend_branch:
