@@ -2,6 +2,8 @@ name: 📱 Mobile App Preview Build
 
 on:
   push:
+    branches:
+      - build-pipeline
   workflow_dispatch:
     inputs:
       backend_branch:
