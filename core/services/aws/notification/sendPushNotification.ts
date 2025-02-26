@@ -24,7 +24,8 @@ import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbO
 import DonationNotificationModel, {
   BloodDonationNotificationFields
 } from '../../../application/models/dbModels/DonationNotificationModel'
-import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { createServiceLogger } from '../commons/logger/ServiceLogger'
+import NotificationOperationError from 'core/application/notificationWorkflow/NotificationOperationError'
 
 const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(
   MAX_LOCAL_CACHE_SIZE_COUNT
@@ -33,14 +34,9 @@ const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(
 const notificationService = new NotificationService()
 const userService = new UserService()
 
-async function sendPushNotification(event: SQSEvent): Promise<{ status: string }> {
-  try {
-    for (const record of event.Records) {
-      await processSQSRecord(record)
-    }
-    return { status: 'Success' }
-  } catch (error) {
-    throw error instanceof Error ? error : new Error(UNKNOWN_ERROR_MESSAGE)
+async function sendPushNotification(event: SQSEvent): Promise<void> {
+  for (const record of event.Records) {
+    await processSQSRecord(record)
   }
 }
 
@@ -49,34 +45,38 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
     typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
   const { userId } = body
-  if (body.type === undefined) {
-    body.type = NotificationType.COMMON
-  }
+  const serviceLogger = createServiceLogger(userId)
+  try {
+    body.type = body.type ?? NotificationType.COMMON
 
-  const cachedUserSnsEndpointArn = userDeviceToSnsEndpointMap.get(userId)
-  if (cachedUserSnsEndpointArn === undefined) {
-    const userSnsEndpointArn = await userService.getDeviceSnsEndpointArn(
-      userId,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
-    )
-    userDeviceToSnsEndpointMap.set(userId, userSnsEndpointArn)
-    const newNotificationCreated = await createNotification(body)
-    if (newNotificationCreated) {
-      await notificationService.publishNotification(
-        body,
-        userSnsEndpointArn,
-        new SNSOperations()
+    const cachedUserSnsEndpointArn = userDeviceToSnsEndpointMap.get(userId)
+    if (cachedUserSnsEndpointArn === undefined) {
+      const userSnsEndpointArn = await userService.getDeviceSnsEndpointArn(
+        userId,
+        new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
       )
+      userDeviceToSnsEndpointMap.set(userId, userSnsEndpointArn)
+      const newNotificationCreated = await createNotification(body)
+      if (newNotificationCreated) {
+        await notificationService.publishNotification(body, userSnsEndpointArn, new SNSOperations())
+      }
+    } else {
+      const newNotificationCreated = await createNotification(body)
+      if (newNotificationCreated) {
+        await notificationService.publishNotification(
+          body,
+          cachedUserSnsEndpointArn,
+          new SNSOperations()
+        )
+      }
     }
-  } else {
-    const newNotificationCreated = await createNotification(body)
-    if (newNotificationCreated) {
-      await notificationService.publishNotification(
-        body,
-        cachedUserSnsEndpointArn,
-        new SNSOperations()
-      )
+  } catch (error) {
+    if (error instanceof NotificationOperationError) {
+      serviceLogger.error(error.message)
+    } else {
+      serviceLogger.error(error)
     }
+    throw error
   }
 }
 

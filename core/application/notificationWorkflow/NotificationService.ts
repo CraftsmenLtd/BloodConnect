@@ -89,6 +89,16 @@ export class NotificationService {
     }
   }
 
+  async getIgnoredDonorList(
+    requestPostId: string,
+    notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
+  ): Promise<BloodDonationNotificationDTO[]> {
+    return await notificationRepository.queryBloodDonationNotifications(
+      requestPostId,
+      AcceptDonationStatus.IGNORED
+    )
+  }
+
   async updateBloodDonationNotifications(
     requestPostId: string,
     notificationPayload: Partial<DonationRequestPayloadAttributes>,
@@ -229,8 +239,6 @@ export class NotificationService {
     notificationAttributes: NotificationAttributes | DonationNotificationAttributes,
     queueModel: QueueModel
   ): Promise<void> {
-    await queueModel.queue(notificationAttributes).catch(() => {
-      throw new Error('Failed to send notification.')
-    })
+    await queueModel.queue(notificationAttributes, process.env.NOTIFICATION_QUEUE_URL as string)
   }
 }

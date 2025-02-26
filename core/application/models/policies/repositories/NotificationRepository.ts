@@ -6,8 +6,9 @@ export default interface NotificationRepository<
   DbFields extends Record<string, unknown> = Record<string, unknown>
 > extends Repository<T, DbFields> {
   queryBloodDonationNotifications(
-    requestPostId: string
-  ): Promise<T[] | null>;
+    requestPostId: string,
+    status?: string
+  ): Promise<T[]>;
 
   getBloodDonationNotification(
     userId: string,

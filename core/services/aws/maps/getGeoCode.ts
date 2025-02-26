@@ -5,7 +5,7 @@ import { MapsHandler } from '../../maps/MapsHandler'
 import { GeocodeRequest } from '../../../application/maps/dto/Maps'
 import { MapsService } from '../../../application/maps/MapsService'
 import { GoogleMapsProvider } from '../../maps/providers/GoogleMaps'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
+import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 
 const googleMapsProvider = new GoogleMapsProvider()

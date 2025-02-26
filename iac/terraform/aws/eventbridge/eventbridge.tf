@@ -2,12 +2,12 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   name     = "${var.environment}-donation-request-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
   source   = var.dynamodb_table_stream_arn
-  target   = var.donor_search_queue_arn
+  target   = var.donation_request_queue_arn
 
   source_parameters {
     dynamodb_stream_parameters {
       starting_position = "LATEST"
-      batch_size        = 1
+      batch_size        = 5
     }
 
     filter_criteria {
