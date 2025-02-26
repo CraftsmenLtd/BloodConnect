@@ -1,9 +1,20 @@
 name: Build React Native App with Expo
 
 on:
-  push:
-    branches:
-      - build-pipeline
+  workflow_call:
+    inputs:
+      build_type:
+        required: true
+        type: string
+      backend_branch:
+        type: string
+        default: stage
+        required: false
+      mobile_branch:
+        required: false
+        default: 'master'
+        type: string
+
   workflow_dispatch:
 
 permissions:
@@ -39,7 +50,7 @@ jobs:
 
       - name: Fetch Cognito and API Gateway Details
         run: |
-          BRANCH_NAME=$(echo "build-pipeline" | sed 's/[^a-zA-Z0-9-]//g')
+          BRANCH_NAME=$(echo "${{ inputs.backend_branch }}" | sed 's/[^a-zA-Z0-9-]//g')
           echo "Branch Name: $BRANCH_NAME"
 
           # Fetch Cognito User Pool ID
@@ -81,5 +92,5 @@ jobs:
       - name: Upload Environment Variables to Expo
         run: |
           cd clients/mobile
-          make upload-env BUILD_PROFILE=production
+          make upload-env BUILD_PROFILE=${{ inputs.build_type }}
         shell: bash
