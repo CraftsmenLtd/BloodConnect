@@ -24,3 +24,4 @@ jobs:
       build_type: preview
       mobile_branch: ${{ github.event.inputs.mobile_branch }}
       backend_branch: ${{ github.event.inputs.backend_branch }}
+    secrets: inherit
