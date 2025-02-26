@@ -1,6 +1,9 @@
-name: 📱 Mobile App Preview Build
+name: 📱 Mobile Preview Build
 
 on:
+  push:
+    branches:
+      - build-pipeline
   workflow_dispatch:
 
 jobs:
