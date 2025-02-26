@@ -30,9 +30,6 @@ jobs:
           cd clients/mobile
           npm install
 
-      # - name: Install jq
-      #   run: sudo apt-get install -y jq  # Required for JSON parsing
-
       - name: 🔑 Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -40,34 +37,37 @@ jobs:
           role-session-name: GitHubActions
           aws-region: ap-south-1
 
-      - name: Fetch Cognito Details
+      - name: Fetch Cognito and API Gateway Details
         run: |
-          # Fetch specific Cognito User Pool ID
-          USER_POOL_ID=$(aws cognito-idp list-user-pools --max-results 20 | jq -r '.UserPools[] | select(.Name=="stage-user-pool") | .Id')
+          BRANCH_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9]//g')
+          echo "Branch Name: $BRANCH_NAME"
 
-          # Fetch specific Cognito Client ID
-          CLIENT_ID=$(aws cognito-idp list-user-pool-clients --user-pool-id $USER_POOL_ID --max-results 20 | jq -r '.UserPoolClients[] | select(.ClientName=="stage-app-pool-client") | .ClientId')
+          # Fetch Cognito User Pool ID
+          USER_POOL_ID=$(aws cognito-idp list-user-pools --max-results 20 | jq -r --arg name "${BRANCH_NAME}-user-pool" '.UserPools[] | select(.Name==$name) | .Id')
 
-          # Fetch specific API Gateway ID
-          API_ID=$(aws apigateway get-rest-apis | jq -r '.items[] | select(.name=="stage-api") | .id')
-          API_GATEWAY_URL="https://${API_ID}.execute-api.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/prod"
+          # Fetch Cognito Client ID
+          CLIENT_ID=$(aws cognito-idp list-user-pool-clients --user-pool-id $USER_POOL_ID --max-results 20 | jq -r --arg name "${BRANCH_NAME}-app-pool-client" '.UserPoolClients[] | select(.ClientName==$name) | .ClientId')
 
-          echo "USER_POOL_ID=$USER_POOL_ID"
-          echo "CLIENT_ID=$CLIENT_ID"
-          echo "API_GATEWAY_URL=$API_GATEWAY_URL"
-      
+          # Fetch API Gateway ID
+          API_ID=$(aws apigateway get-rest-apis | jq -r --arg name "${BRANCH_NAME}-api" '.items[] | select(.name==$name) | .id')
+          API_GATEWAY_URL="https://${API_ID}.execute-api.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/api"
+
+          echo "USER_POOL_ID=$USER_POOL_ID" >> $GITHUB_ENV
+          echo "CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
+          echo "API_GATEWAY_URL=$API_GATEWAY_URL" >> $GITHUB_ENV
+
       - name: Create .env file
         run: |
           cd clients/mobile
           touch .env
-          echo "API_URL=TEST_URL" >> .env
-          echo "USER_POOL_ID=user-pool-id" >> .env
-          echo "CLIENT_ID=client-id" >> .env
-          echo "AWS_USER_POOL_ID=your_aws_user_pool_id" >> .env
-          echo "AWS_USER_POOL_CLIENT_ID=your_aws_user_pool_client_id" >> .env
+          echo "API_URL=$API_GATEWAY_URL" >> .env
+          echo "USER_POOL_ID=$USER_POOL_ID" >> .env
+          echo "CLIENT_ID=$CLIENT_ID" >> .env
+          echo "AWS_USER_POOL_ID=$USER_POOL_ID" >> .env
+          echo "AWS_USER_POOL_CLIENT_ID=$CLIENT_ID" >> .env
           echo "AWS_COGNITO_DOMAIN=your_aws_cognito_domain" >> .env
           echo "EAS_PROJECT_ID=a0b97362-72f9-428f-a2da-d16445c6193b" >> .env
-          echo "API_BASE_URL=your_api_base_url" >> .env
+          echo "API_BASE_URL=$API_GATEWAY_URL" >> .env
           echo "APP_NAME=your_app_name" >> .env
           echo "APP_VERSION=your_app_version" >> .env
           echo "COUNTRY=your_country" >> .env
