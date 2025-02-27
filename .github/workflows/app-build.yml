@@ -60,9 +60,8 @@ jobs:
           CLIENT_ID=$(aws cognito-idp list-user-pool-clients --user-pool-id $USER_POOL_ID --max-results 20 | jq -r --arg name "${BRANCH_NAME}-app-pool-client" '.UserPoolClients[] | select(.ClientName==$name) | .ClientId')
 
           # Fetch Cognito Custom Domain
-          COGNITO_DOMAIN=$(aws cognito-idp describe-user-pool --user-pool-id $USER_POOL_ID | jq -r '.UserPool')
-          echo $COGNITO_DOMAIN
-          echo "COGNITO_DOMAIN: $COGNITO_DOMAIN.Domain"
+          COGNITO_DOMAIN=$(aws cognito-idp describe-user-pool --user-pool-id $USER_POOL_ID | jq -r '.UserPool.CustomDomain')
+          echo "COGNITO_DOMAIN: $COGNITO_DOMAIN"
 
           # Fetch API Gateway ID
           API_ID=$(aws apigateway get-rest-apis | jq -r --arg name "${BRANCH_NAME}-api" '.items[] | select(.name==$name) | .id')
