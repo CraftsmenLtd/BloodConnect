@@ -78,8 +78,12 @@ jobs:
           echo $API_BASE_URL
 
           # Fetch CloudFront Distribution Domain based on branch name
-          CLOUDFRONT_DOMAIN=$(aws cloudfront list-distributions | jq -r --arg branch "$BRANCH_NAME" '.DistributionList.Items[] | select(.Aliases.Items[] | contains($branch)) | .DomainName')
-          echo $CLOUDFRONT_DOMAIN
+          echo "Fetching CloudFront distributions..."
+          CLOUDFRONT_RESPONSE=$(aws cloudfront list-distributions)
+          echo "CloudFront Raw Response: $CLOUDFRONT_RESPONSE"  # Debugging output
+
+          CLOUDFRONT_DOMAIN=$(echo "$CLOUDFRONT_RESPONSE" | jq -r --arg branch "$BRANCH_NAME" '.DistributionList.Items[] | select(.Aliases.Items[] | contains($branch)) | .DomainName' 2>/dev/null || echo "")
+          echo "CLOUDFRONT_DOMAIN: $CLOUDFRONT_DOMAIN"
 
           echo "USER_POOL_ID=$USER_POOL_ID" >> $GITHUB_ENV
           echo "CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
