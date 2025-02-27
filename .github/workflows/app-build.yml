@@ -59,9 +59,27 @@ jobs:
           # Fetch Cognito Client ID
           CLIENT_ID=$(aws cognito-idp list-user-pool-clients --user-pool-id $USER_POOL_ID --max-results 20 | jq -r --arg name "${BRANCH_NAME}-app-pool-client" '.UserPoolClients[] | select(.ClientName==$name) | .ClientId')
 
+          # Fetch Cognito Custom Domain
+          COGNITO_DOMAIN=$(aws cognito-idp describe-user-pool --user-pool-id $USER_POOL_ID | jq -r '.UserPool.Domain')
+          echo $COGNITO_DOMAIN
+
           # Fetch API Gateway ID
           API_ID=$(aws apigateway get-rest-apis | jq -r --arg name "${BRANCH_NAME}-api" '.items[] | select(.name==$name) | .id')
           API_GATEWAY_URL="https://${API_ID}.execute-api.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/api"
+
+          # Set API_BASE_URL based on branch
+          if [ "${{ inputs.backend_branch }}" = "production" ]; then
+            API_BASE_URL="bloodconnect.net"
+          elif [ "${{ inputs.backend_branch }}" = "master" ]; then
+            API_BASE_URL="stage.bloodconnect.net"
+          else
+            API_BASE_URL="${BRANCH_NAME}.bloodconnect.net"
+          fi
+          echo $API_BASE_URL
+
+          # Fetch CloudFront Distribution Domain based on branch name
+          CLOUDFRONT_DOMAIN=$(aws cloudfront list-distributions | jq -r --arg branch "$BRANCH_NAME" '.DistributionList.Items[] | select(.Aliases.Items[] | contains($branch)) | .DomainName')
+          echo $CLOUDFRONT_DOMAIN
 
           echo "USER_POOL_ID=$USER_POOL_ID" >> $GITHUB_ENV
           echo "CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
@@ -76,9 +94,9 @@ jobs:
           echo "AWS_COGNITO_DOMAIN=your_aws_cognito_domain" >> .env
           echo "EAS_PROJECT_ID=a0b97362-72f9-428f-a2da-d16445c6193b" >> .env
           echo "API_BASE_URL=$API_GATEWAY_URL" >> .env
-          echo "APP_NAME=your_app_name" >> .env
-          echo "APP_VERSION=your_app_version" >> .env
-          echo "COUNTRY=your_country" >> .env
+          echo "APP_NAME=net.bloodconnect.app" >> .env
+          echo "APP_VERSION=1.0.0" >> .env
+          echo "COUNTRY=BD" >> .env
 
       - name: Set Up Environment
         run: cd clients/mobile && make setup-env
