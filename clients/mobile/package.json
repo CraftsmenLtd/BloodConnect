@@ -26,6 +26,7 @@
     "@react-navigation/stack": "^6.4.1",
     "aws-amplify": "^6.6.3",
     "expo": "~51.0.39",
+    "expo-build-properties": "^0.13.2",
     "expo-constants": "^16.0.2",
     "expo-dev-client": "~4.0.29",
     "expo-device": "~6.0.2",
