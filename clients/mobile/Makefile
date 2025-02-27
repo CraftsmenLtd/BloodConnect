@@ -55,23 +55,27 @@ fetch-aws-details:
 		echo "Setting API_BASE_URL for branch $$SANITIZED_BRANCH..."; \
 		API_BASE_URL="https://$$SANITIZED_BRANCH.bloodconnect.net"; \
 	fi; \
-	echo "USER_POOL_ID=$$USER_POOL_ID"; \
-	echo "CLIENT_ID=$$CLIENT_ID"; \
-	echo "COGNITO_DOMAIN=$$COGNITO_DOMAIN"; \
-	echo "API_GATEWAY_URL=$$API_GATEWAY_URL"; \
-	echo "API_BASE_URL=$$API_BASE_URL"; \
-	$(file >$(ENV_FILE).tmp,USER_POOL_ID=$$USER_POOL_ID\nCLIENT_ID=$$CLIENT_ID\nCOGNITO_DOMAIN=$$COGNITO_DOMAIN\nAPI_GATEWAY_URL=$$API_GATEWAY_URL\nAPI_BASE_URL=$$API_BASE_URL)
+	echo "USER_POOL_ID=$$USER_POOL_ID" > $(ENV_FILE).tmp; \
+	echo "CLIENT_ID=$$CLIENT_ID" >> $(ENV_FILE).tmp; \
+	echo "COGNITO_DOMAIN=$$COGNITO_DOMAIN" >> $(ENV_FILE).tmp; \
+	echo "API_GATEWAY_URL=$$API_GATEWAY_URL" >> $(ENV_FILE).tmp; \
+	echo "API_BASE_URL=$$API_BASE_URL" >> $(ENV_FILE).tmp
 
 # Create .env file
 create-env: fetch-aws-details
 	@echo "Creating $(ENV_FILE)..."
-	@cat $(ENV_FILE).tmp > $(ENV_FILE); \
-	rm -f $(ENV_FILE).tmp; \
+	@if [ -f $(ENV_FILE).tmp ]; then \
+		cat $(ENV_FILE).tmp > $(ENV_FILE); \
+		rm -f $(ENV_FILE).tmp; \
+	else \
+		echo "Temporary file $(ENV_FILE).tmp not found!"; \
+		exit 1; \
+	fi; \
 	echo "EAS_PROJECT_ID=a0b97362-72f9-428f-a2da-d16445c6193b" >> $(ENV_FILE); \
-	echo "AWS_USER_POOL_ID=$(shell cat $(ENV_FILE) | grep USER_POOL_ID | cut -d= -f2)" >> $(ENV_FILE); \
-	echo "AWS_USER_POOL_CLIENT_ID=$(shell cat $(ENV_FILE) | grep CLIENT_ID | cut -d= -f2)" >> $(ENV_FILE); \
-	echo "AWS_COGNITO_DOMAIN=$(shell cat $(ENV_FILE) | grep COGNITO_DOMAIN | cut -d= -f2)" >> $(ENV_FILE); \
-	echo "API_BASE_URL=$(shell cat $(ENV_FILE) | grep API_BASE_URL | cut -d= -f2)" >> $(ENV_FILE); \
+	echo "AWS_USER_POOL_ID=$$(grep USER_POOL_ID $(ENV_FILE) | cut -d= -f2)" >> $(ENV_FILE); \
+	echo "AWS_USER_POOL_CLIENT_ID=$$(grep CLIENT_ID $(ENV_FILE) | cut -d= -f2)" >> $(ENV_FILE); \
+	echo "AWS_COGNITO_DOMAIN=$$(grep COGNITO_DOMAIN $(ENV_FILE) | cut -d= -f2)" >> $(ENV_FILE); \
+	echo "API_BASE_URL=$$(grep API_BASE_URL $(ENV_FILE) | cut -d= -f2)" >> $(ENV_FILE); \
 	echo "APP_NAME=$(APP_NAME)" >> $(ENV_FILE); \
 	echo "APP_VERSION=1.0.0" >> $(ENV_FILE); \
 	echo "COUNTRY=BD" >> $(ENV_FILE)
@@ -93,7 +97,7 @@ build:
 # Clean up local build artifacts
 clean:
 	@echo "Cleaning up build artifacts..."
-	rm -rf build .expo
+	rm -rf build .expo $(ENV_FILE) $(ENV_FILE).tmp
 	@echo "Clean up complete."
 
 # Upload .env variables to Expo environment
