@@ -14,7 +14,6 @@ on:
         required: false
         default: 'master'
         type: string
-
   workflow_dispatch:
 
 permissions:
@@ -24,6 +23,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    defaults:
+      run:
+        working-directory: clients/mobile
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,13 +34,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
+          cache-dependency-path: clients/mobile/package.json
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
           sudo apt-get install -y jq make
-          npm install -g expo-cli eas-cli
-          cd clients/mobile
           npm install
 
       - name: 🔑 Configure AWS Credentials
@@ -46,66 +47,16 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHubActions
-          aws-region: ap-south-1
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Fetch Cognito and API Gateway Details
-        run: |
-          BRANCH_NAME=$(echo "${{ inputs.backend_branch }}" | sed 's/[^a-zA-Z0-9-]//g')
-          echo "Branch Name: $BRANCH_NAME"
-
-          # Fetch Cognito User Pool ID
-          USER_POOL_ID=$(aws cognito-idp list-user-pools --max-results 20 | jq -r --arg name "${BRANCH_NAME}-user-pool" '.UserPools[] | select(.Name==$name) | .Id')
-
-          # Fetch Cognito Client ID
-          CLIENT_ID=$(aws cognito-idp list-user-pool-clients --user-pool-id $USER_POOL_ID --max-results 20 | jq -r --arg name "${BRANCH_NAME}-app-pool-client" '.UserPoolClients[] | select(.ClientName==$name) | .ClientId')
-
-          # Fetch Cognito Custom Domain
-          COGNITO_DOMAIN=$(aws cognito-idp describe-user-pool --user-pool-id $USER_POOL_ID | jq -r '.UserPool.CustomDomain')
-          echo "COGNITO_DOMAIN: $COGNITO_DOMAIN"
-
-          # Fetch API Gateway ID
-          API_ID=$(aws apigateway get-rest-apis | jq -r --arg name "${BRANCH_NAME}-api" '.items[] | select(.name==$name) | .id')
-          API_GATEWAY_URL="https://${API_ID}.execute-api.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/api"
-
-          # Set API_BASE_URL based on branch
-          if [ "${{ inputs.backend_branch }}" = "production" ]; then
-            API_BASE_URL="https://bloodconnect.net"
-          elif [ "${{ inputs.backend_branch }}" = "master" ]; then
-            API_BASE_URL="https://stage.bloodconnect.net"
-          else
-            API_BASE_URL="https://${BRANCH_NAME}.bloodconnect.net"
-          fi
-          echo $API_BASE_URL
-
-          echo "USER_POOL_ID=$USER_POOL_ID" >> $GITHUB_ENV
-          echo "CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
-          echo "COGNITO_DOMAIN=$COGNITO_DOMAIN" >> $GITHUB_ENV
-          echo "API_BASE_URL=$API_BASE_URL" >> $GITHUB_ENV
-
-      - name: Create .env file
-        run: |
-          cd clients/mobile
-          touch .env
-          echo "AWS_USER_POOL_ID=$USER_POOL_ID" >> .env
-          echo "AWS_USER_POOL_CLIENT_ID=$CLIENT_ID" >> .env
-          echo "AWS_COGNITO_DOMAIN=$COGNITO_DOMAIN" >> .env
-          echo "EAS_PROJECT_ID=a0b97362-72f9-428f-a2da-d16445c6193b" >> .env
-          echo "API_BASE_URL=$API_BASE_URL" >> .env
-          echo "APP_NAME=net.bloodconnect.app" >> .env
-          echo "APP_VERSION=1.0.0" >> .env
-          echo "COUNTRY=BD" >> .env
-
-      - name: Set Up Environment
-        run: cd clients/mobile && make setup-env
-  
       - name: Setup Expo and EAS
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: '9cC7lgYtP-ycBKfiDVE9Snmmu_mBL40bed9cwDaY'
 
-      - name: Upload Environment Variables to Expo
+      - name: Build Environment and Upload to Expo
         run: |
-          cd clients/mobile
+          make create-env BRANCH_NAME=${{ inputs.backend_branch }}
+          make setup-env
           make upload-env BUILD_PROFILE=${{ inputs.build_type }}
-        shell: bash
