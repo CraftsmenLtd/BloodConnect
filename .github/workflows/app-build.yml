@@ -60,8 +60,9 @@ jobs:
           CLIENT_ID=$(aws cognito-idp list-user-pool-clients --user-pool-id $USER_POOL_ID --max-results 20 | jq -r --arg name "${BRANCH_NAME}-app-pool-client" '.UserPoolClients[] | select(.ClientName==$name) | .ClientId')
 
           # Fetch Cognito Custom Domain
-          COGNITO_DOMAIN=$(aws cognito-idp describe-user-pool --user-pool-id $USER_POOL_ID | jq -r '.UserPool.Domain')
+          COGNITO_DOMAIN=$(aws cognito-idp describe-user-pool --user-pool-id $USER_POOL_ID | jq -r '.UserPool')
           echo $COGNITO_DOMAIN
+          echo "COGNITO_DOMAIN: $COGNITO_DOMAIN.Domain"
 
           # Fetch API Gateway ID
           API_ID=$(aws apigateway get-rest-apis | jq -r --arg name "${BRANCH_NAME}-api" '.items[] | select(.name==$name) | .id')
@@ -69,11 +70,11 @@ jobs:
 
           # Set API_BASE_URL based on branch
           if [ "${{ inputs.backend_branch }}" = "production" ]; then
-            API_BASE_URL="bloodconnect.net"
+            API_BASE_URL="https://bloodconnect.net"
           elif [ "${{ inputs.backend_branch }}" = "master" ]; then
-            API_BASE_URL="stage.bloodconnect.net"
+            API_BASE_URL="https://stage.bloodconnect.net"
           else
-            API_BASE_URL="${BRANCH_NAME}.bloodconnect.net"
+            API_BASE_URL="https://${BRANCH_NAME}.bloodconnect.net"
           fi
           echo $API_BASE_URL
 
