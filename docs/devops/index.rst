@@ -11,4 +11,3 @@ This is dev ops homepage for infrastructure as code, CI/CD pipelines, docs relea
    IaC
    Pipelines
    LambdaOpenapiIntegration
-   AWSDeploymentLocally

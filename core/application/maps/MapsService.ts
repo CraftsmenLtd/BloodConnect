@@ -5,14 +5,13 @@ import {
   PlaceAutocompleteResponse,
   GeocodeResponse
 } from './dto/Maps'
-import { MapsProvider } from './interfaces/MapsProvider'
-import { GoogleMapsProvider } from './providers/GoogleMaps'
+import { MapsProvider } from '../models/maps/MapsProvider'
 
 export class MapsService {
   private readonly mapsProvider: MapsProvider
 
-  constructor() {
-    this.mapsProvider = new GoogleMapsProvider()
+  constructor(mapsProvider: MapsProvider) {
+    this.mapsProvider = mapsProvider
   }
 
   async getPlaceAutocomplete(params: PlaceAutocompleteRequest): Promise<APIResponse<PlaceAutocompleteResponse>> {

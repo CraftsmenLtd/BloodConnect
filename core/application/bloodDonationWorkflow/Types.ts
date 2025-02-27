@@ -1,5 +1,11 @@
 import { ValidationRule, validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
-import { AcceptDonationStatus, BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
+import {
+  AcceptDonationStatus,
+  BloodGroup,
+  DonorSearchStatus,
+  EligibleDonorInfo,
+  UrgencyType
+} from '../../../commons/dto/DonationDTO'
 
 export interface BloodDonationAttributes {
   seekerId: string;
@@ -38,10 +44,11 @@ export interface UpdateBloodDonationAttributes {
   shortDescription?: string;
 }
 
-export interface DonorRoutingAttributes {
+export interface DonorSearchAttributes {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
+  status: DonorSearchStatus;
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
@@ -51,35 +58,22 @@ export interface DonorRoutingAttributes {
   donationDateTime: string;
   contactNumber: string;
   patientName: string;
-  transportationInfo: string;
-  shortDescription: string;
-}
-
-export interface StepFunctionInput {
-  seekerId: string;
-  requestPostId: string;
-  createdAt: string;
-  donationDateTime: string;
-  requestedBloodGroup: BloodGroup;
-  bloodQuantity: number;
-  urgencyLevel: UrgencyType;
-  geohash: string;
-  city: string;
   seekerName: string;
-  patientName: string;
-  location: string;
-  contactNumber: string;
   transportationInfo: string;
   shortDescription: string;
-  message: string;
-  retryCount: number;
+  notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 
-export interface StepFunctionExecutionAttributes {
-  executionArn: string;
-  status: string;
-  startDate: string;
-  input: StepFunctionInput;
+export interface DonorSearchQueueAttributes {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+  targetedExecutionTime?: number;
+  remainingDonorsToFind?: number;
+  currentNeighborSearchLevel: number;
+  remainingGeohashesToProcess: string[];
+  notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
+  initiationCount: number;
 }
 
 export interface AcceptDonationRequestAttributes {

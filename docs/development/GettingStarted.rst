@@ -85,7 +85,7 @@ Read more about dev containers `here <https://code.visualstudio.com/docs/devcont
 
    Dev containers and localstack are still not working together. Therefore commands make docker calls in order to setup localstack will not work. For example `localstack-start` will not work from the dev containers cli.
 
-Make sure you have `ms-vscode-remote.remote-containers` installed on your vscode.
+Make sure you have `Dev Containers (ms-vscode-remote.remote-containers) <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>`_ installed on your vscode.
 
  .. warning::
 
@@ -123,8 +123,14 @@ This will create a simple `.env` file with required aws environment variables. Y
 
  .. code-block:: bash
 
-    TF_BACKEND_BUCKET_NAME=terraform-bloodconnect-states
-    TF_VAR_bloodconnect_domain=bloodconnect.net
+    TF_BACKEND_BUCKET_NAME
+    TF_VAR_bloodconnect_domain
+    TF_VAR_google_client_id
+    TF_VAR_google_client_secret
+    TF_VAR_facebook_client_id
+    TF_VAR_facebook_client_secret
+    TF_VAR_firebase_token_s3_url
+    TF_VAR_google_maps_api_key
 
 Now that that is done; you can follow the screenshots below to start dev containers.
 Click on the remote window icon on the bottom left of your vscode window.

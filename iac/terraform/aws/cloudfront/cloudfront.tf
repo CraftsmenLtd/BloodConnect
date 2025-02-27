@@ -7,7 +7,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   aliases             = [var.bloodconnect_environment_domain]
   enabled             = true
   is_ipv6_enabled     = false
-  comment             = "CloudFront distribution for front-end site"
+  comment             = "CloudFront distribution"
   default_root_object = "index.html"
   price_class         = "PriceClass_100"
   wait_for_deployment = var.environment == module.environments.PRODUCTION ? true : false
