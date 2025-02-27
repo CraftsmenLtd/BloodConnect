@@ -77,17 +77,10 @@ jobs:
           fi
           echo $API_BASE_URL
 
-          # Fetch CloudFront Distribution Domain based on branch name
-          echo "Fetching CloudFront distributions..."
-          CLOUDFRONT_RESPONSE=$(aws cloudfront list-distributions)
-          # echo "CloudFront Raw Response: $CLOUDFRONT_RESPONSE"  # Debugging output
-
-          CLOUDFRONT_DOMAIN=$(echo "$CLOUDFRONT_RESPONSE" | jq -r --arg branch "$BRANCH_NAME" '.DistributionList.Items[] | select(.Aliases.Items[] | contains($branch)) | .DomainName' 2>/dev/null || echo "")
-          echo "CLOUDFRONT_DOMAIN: $CLOUDFRONT_DOMAIN"
-
           echo "USER_POOL_ID=$USER_POOL_ID" >> $GITHUB_ENV
           echo "CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
-          echo "API_GATEWAY_URL=$API_GATEWAY_URL" >> $GITHUB_ENV
+          echo "COGNITO_DOMAIN=$COGNITO_DOMAIN" >> $GITHUB_ENV
+          echo "API_BASE_URL=$API_BASE_URL" >> $GITHUB_ENV
 
       - name: Create .env file
         run: |
@@ -95,9 +88,9 @@ jobs:
           touch .env
           echo "AWS_USER_POOL_ID=$USER_POOL_ID" >> .env
           echo "AWS_USER_POOL_CLIENT_ID=$CLIENT_ID" >> .env
-          echo "AWS_COGNITO_DOMAIN=your_aws_cognito_domain" >> .env
+          echo "AWS_COGNITO_DOMAIN=$COGNITO_DOMAIN" >> .env
           echo "EAS_PROJECT_ID=a0b97362-72f9-428f-a2da-d16445c6193b" >> .env
-          echo "API_BASE_URL=$API_GATEWAY_URL" >> .env
+          echo "API_BASE_URL=$API_BASE_URL" >> .env
           echo "APP_NAME=net.bloodconnect.app" >> .env
           echo "APP_VERSION=1.0.0" >> .env
           echo "COUNTRY=BD" >> .env
