@@ -39,16 +39,16 @@ login:
 # Fetch AWS Cognito and API Gateway details
 fetch-aws-details:
 	@echo "Fetching AWS details for branch: $(BRANCH_NAME)..."
-	@SANITIZED_BRANCH=$(echo "${BRANCH_NAME}" | sed 's/[^a-zA-Z0-9-]//g' | awk '{print tolower($0)}'); \
+	@if [ -z "$(BRANCH_NAME)" ]; then echo "Error: BRANCH_NAME is not set"; exit 1; fi; \
+	SANITIZED_BRANCH=$$(echo "$(BRANCH_NAME)" | sed 's/[^a-zA-Z0-9-]//g' | awk '{print tolower($$0)}'); \
 	echo "SANITIZED_BRANCH: $$SANITIZED_BRANCH"; \
-	ALL_USER_POOL=$$(aws cognito-idp list-user-pools --max-results 20 | jq -r '.UserPools[] | {Name, Id}') \
-	echo "ALL_USER_POOL: $$ALL_USER_POOL" \
+	ALL_USER_POOL=$$(aws cognito-idp list-user-pools --max-results 20 | jq -r '.UserPools[] | {Name, Id}'); \
+	echo "ALL_USER_POOL: $$ALL_USER_POOL"; \
 	USER_POOL_ID=$$(aws cognito-idp list-user-pools --max-results 20 | jq -r --arg name "$${SANITIZED_BRANCH}-user-pool" '.UserPools[] | select(.Name == $$name) | .Id'); \
-	echo "USER_POOL_ID: $$USER_POOL_ID" \
+	if [ -z "$$USER_POOL_ID" ]; then echo "Error: No User Pool found for $$SANITIZED_BRANCH-user-pool"; exit 1; fi; \
+	echo "USER_POOL_ID: $$USER_POOL_ID"
 	CLIENT_ID=$$(aws cognito-idp list-user-pool-clients --user-pool-id "$$USER_POOL_ID" --max-results 20 | jq -r --arg name "$$SANITIZED_BRANCH-app-pool-client" '.UserPoolClients[] | select(.ClientName==$$name) | .ClientId'); \
 	COGNITO_DOMAIN=$$(aws cognito-idp describe-user-pool --user-pool-id "$$USER_POOL_ID" | jq -r '.UserPool.CustomDomain'); \
-	# API_ID=$$(aws apigateway get-rest-apis | jq -r --arg name "$$SANITIZED_BRANCH-api" '.items[] | select(.name==$$name) | .id'); \
-	# API_GATEWAY_URL="https://$$API_ID.execute-api.ap-south-1.amazonaws.com/api"; \
 	if [ "$(BRANCH_NAME)" = "production" ]; then \
 		echo "Setting API_BASE_URL for production..."; \
 		API_BASE_URL="https://bloodconnect.net"; \
