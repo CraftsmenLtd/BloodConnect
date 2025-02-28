@@ -85,3 +85,9 @@ module "logger" {
   source      = "./logger"
   environment = var.environment
 }
+
+module "dashboard" {
+  source                   = "./dashboard"
+  environment              = var.environment
+  donor_search_lambda_name = module.donor_search.donor_search_lambda_name
+}
