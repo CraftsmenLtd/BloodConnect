@@ -39,12 +39,12 @@ login:
 # Fetch AWS Cognito and API Gateway details
 fetch-aws-details:
 	@echo "Fetching AWS details for branch: $(BRANCH_NAME)..."
-	@SANITIZED_BRANCH=$$(echo "$(BRANCH_NAME)" | sed 's/[^a-zA-Z0-9-]//g'); \
+	@SANITIZED_BRANCH=$(echo "${BRANCH_NAME}" | sed 's/[^a-zA-Z0-9-]//g' | awk '{print tolower($0)}') \
 	USER_POOL_ID=$$(aws cognito-idp list-user-pools --max-results 20 | jq -r --arg name "$$SANITIZED_BRANCH-user-pool" '.UserPools[] | select(.Name==$$name) | .Id'); \
 	CLIENT_ID=$$(aws cognito-idp list-user-pool-clients --user-pool-id "$$USER_POOL_ID" --max-results 20 | jq -r --arg name "$$SANITIZED_BRANCH-app-pool-client" '.UserPoolClients[] | select(.ClientName==$$name) | .ClientId'); \
 	COGNITO_DOMAIN=$$(aws cognito-idp describe-user-pool --user-pool-id "$$USER_POOL_ID" | jq -r '.UserPool.CustomDomain'); \
-	API_ID=$$(aws apigateway get-rest-apis | jq -r --arg name "$$SANITIZED_BRANCH-api" '.items[] | select(.name==$$name) | .id'); \
-	API_GATEWAY_URL="https://$$API_ID.execute-api.ap-south-1.amazonaws.com/api"; \
+	# API_ID=$$(aws apigateway get-rest-apis | jq -r --arg name "$$SANITIZED_BRANCH-api" '.items[] | select(.name==$$name) | .id'); \
+	# API_GATEWAY_URL="https://$$API_ID.execute-api.ap-south-1.amazonaws.com/api"; \
 	if [ "$(BRANCH_NAME)" = "production" ]; then \
 		echo "Setting API_BASE_URL for production..."; \
 		API_BASE_URL="https://bloodconnect.net"; \
@@ -58,7 +58,7 @@ fetch-aws-details:
 	echo "USER_POOL_ID=$$USER_POOL_ID" > $(ENV_FILE).tmp; \
 	echo "CLIENT_ID=$$CLIENT_ID" >> $(ENV_FILE).tmp; \
 	echo "COGNITO_DOMAIN=$$COGNITO_DOMAIN" >> $(ENV_FILE).tmp; \
-	echo "API_GATEWAY_URL=$$API_GATEWAY_URL" >> $(ENV_FILE).tmp; \
+	# echo "API_GATEWAY_URL=$$API_GATEWAY_URL" >> $(ENV_FILE).tmp; \
 	echo "API_BASE_URL=$$API_BASE_URL" >> $(ENV_FILE).tmp
 
 # Create .env file
