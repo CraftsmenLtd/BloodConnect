@@ -42,12 +42,13 @@ fetch-aws-details:
 	@if [ -z "$(BRANCH_NAME)" ]; then echo "Error: BRANCH_NAME is not set"; exit 1; fi; \
 	SANITIZED_BRANCH=$$(echo "$(BRANCH_NAME)" | sed 's/[^a-zA-Z0-9-]//g' | awk '{print tolower($$0)}'); \
 	echo "SANITIZED_BRANCH: $$SANITIZED_BRANCH"; \
-	ALL_USER_POOL=$$(aws cognito-idp list-user-pools --max-results 20 | jq -r '.UserPools[] | {Name, Id}'); \
-	echo "ALL_USER_POOL: $$ALL_USER_POOL"; \
 	USER_POOL_ID=$$(aws cognito-idp list-user-pools --max-results 20 | jq -r --arg name "$${SANITIZED_BRANCH}-user-pool" '.UserPools[] | select(.Name == $$name) | .Id'); \
 	if [ -z "$$USER_POOL_ID" ]; then echo "Error: No User Pool found for $$SANITIZED_BRANCH-user-pool"; exit 1; fi; \
-	echo "USER_POOL_ID: $$USER_POOL_ID"
+	echo "USER_POOL_ID: $$USER_POOL_ID"; \
+	# ALL_CLIENTS=$$(aws cognito-idp list-user-pool-clients --user-pool-id "$$USER_POOL_ID" --max-results 20 | jq -r '.UserPoolClients[]'); \
+	# echo "ALL_CLIENTS: $$ALL_CLIENTS" \
 	CLIENT_ID=$$(aws cognito-idp list-user-pool-clients --user-pool-id "$$USER_POOL_ID" --max-results 20 | jq -r --arg name "$$SANITIZED_BRANCH-app-pool-client" '.UserPoolClients[] | select(.ClientName==$$name) | .ClientId'); \
+	echo "CLIENT_ID: $$CLIENT_ID"; \
 	COGNITO_DOMAIN=$$(aws cognito-idp describe-user-pool --user-pool-id "$$USER_POOL_ID" | jq -r '.UserPool.CustomDomain'); \
 	if [ "$(BRANCH_NAME)" = "production" ]; then \
 		echo "Setting API_BASE_URL for production..."; \
@@ -62,7 +63,6 @@ fetch-aws-details:
 	echo "USER_POOL_ID=$$USER_POOL_ID" > $(ENV_FILE).tmp; \
 	echo "CLIENT_ID=$$CLIENT_ID" >> $(ENV_FILE).tmp; \
 	echo "COGNITO_DOMAIN=$$COGNITO_DOMAIN" >> $(ENV_FILE).tmp; \
-	# echo "API_GATEWAY_URL=$$API_GATEWAY_URL" >> $(ENV_FILE).tmp; \
 	echo "API_BASE_URL=$$API_BASE_URL" >> $(ENV_FILE).tmp
 
 # Create .env file
