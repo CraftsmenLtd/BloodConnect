@@ -40,8 +40,8 @@ login:
 fetch-aws-details:
 	@echo "Fetching AWS details for branch: $(BRANCH_NAME)..."
 	@SANITIZED_BRANCH=$(echo "${BRANCH_NAME}" | sed 's/[^a-zA-Z0-9-]//g' | awk '{print tolower($0)}') \
-	USER_POOL_ID=$$(aws cognito-idp list-user-pools --max-results 20 | jq -r --arg name "$$SANITIZED_BRANCH-user-pool" '.UserPools[] | select(.Name==$$name) | .Id'); \
-	echo "USER_POOL_ID: $$USER_POOL_ID"
+	USER_POOL_ID=$$(aws cognito-idp list-user-pools --max-results 20 | jq -r '.UserPools[]'); \
+	echo "USER_POOL_ID: $$USER_POOL_ID" \
 	CLIENT_ID=$$(aws cognito-idp list-user-pool-clients --user-pool-id "$$USER_POOL_ID" --max-results 20 | jq -r --arg name "$$SANITIZED_BRANCH-app-pool-client" '.UserPoolClients[] | select(.ClientName==$$name) | .ClientId'); \
 	COGNITO_DOMAIN=$$(aws cognito-idp describe-user-pool --user-pool-id "$$USER_POOL_ID" | jq -r '.UserPool.CustomDomain'); \
 	# API_ID=$$(aws apigateway get-rest-apis | jq -r --arg name "$$SANITIZED_BRANCH-api" '.items[] | select(.name==$$name) | .id'); \
