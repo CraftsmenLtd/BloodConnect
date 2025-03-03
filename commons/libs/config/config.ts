@@ -8,7 +8,7 @@ type AllConfig = {
   country: string;
   minMonthsBetweenDonations: number;
   maxGeohashLength: number;
-  bucketName: string;
+  monitorDonationBucketName: string;
   maxGeohashStorage: number;
   dynamodbTableName: string;
   emailSender: string;
@@ -39,7 +39,7 @@ export class Config<T extends ConfigSubset<T>> {
       country: process.env.COUNTRY ?? 'BD',
       minMonthsBetweenDonations: Number(process.env.MIN_MONTHS_BETWEEN_DONATIONS),
       maxGeohashLength: Number(process.env.MAX_GEOHASH_LENGTH),
-      bucketName: process.env.BUCKET_NAME as string,
+      monitorDonationBucketName: process.env.MONITOR_DONATION_BUCKET_NAME as string,
       maxGeohashStorage: Number(process.env.MAX_GEOHASH_STORAGE),
       dynamodbTableName: process.env.DYNAMODB_TABLE_NAME as string,
       emailSender: process.env.EMAIL_SENDER as string,

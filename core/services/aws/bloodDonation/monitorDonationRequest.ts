@@ -114,7 +114,7 @@ type GroupedByCityAndRequestedBloodGroup = {
 
 type ExpectedConfig = {
   maxGeohashLength: number;
-  bucketName: string;
+  monitorDonationBucketName: string;
   maxGeohashStorage: number;
 }
 
@@ -138,7 +138,7 @@ const formatEvent = (event: Event[]): GroupedByCityAndRequestedBloodGroup[] => e
 
 export async function monitorDonationRequest(event: Event[], logger: Logger, config: ExpectedConfig): Promise<void> {
   const maxGeoHashLength = config.maxGeohashLength
-  const bucketName = config.bucketName
+  const bucketName = config.monitorDonationBucketName
   const maxEstimatedGeohashSizeInBytes = maxGeoHashLength + 1
   const maxGeohashToStoreInFile = config.maxGeohashStorage
 
@@ -194,7 +194,7 @@ export async function monitorDonationRequest(event: Event[], logger: Logger, con
 
 const config = new Config<{
   maxGeohashLength: number;
-  bucketName: string;
+  monitorDonationBucketName: string;
   maxGeohashStorage: number;
 }>()
 
