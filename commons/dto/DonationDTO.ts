@@ -22,6 +22,7 @@ export type DonationDTO = DTO & {
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: 'regular' | 'urgent';
+  countryCode: string;
   city: string;
   location: string;
   latitude: number;
@@ -54,6 +55,7 @@ export type DonorSearchDTO = DTO & {
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
+  countryCode: string;
   city: string;
   location: string;
   geohash: string;

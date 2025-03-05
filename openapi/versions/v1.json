@@ -53,7 +53,7 @@
     "/donations/{requestPostId}/{createdAt}": {
       "$ref": "./../paths/donations/donation.json"
     },
-    "/donations/posts/{city}": {
+    "/donations/posts/{countryCode}/{city}": {
       "$ref": "./../paths/donations/posts.json"
     },
     "/donations/cancel": {

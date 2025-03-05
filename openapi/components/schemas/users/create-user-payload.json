@@ -9,6 +9,7 @@
       "weight",
       "gender",
       "dateOfBirth",
+      "countryCode",
       "city",
       "preferredDonationLocations",
       "availableForDonation"
@@ -47,6 +48,9 @@
       "dateOfBirth": {
         "type": "string",
         "format": "date"
+      },
+      "countryCode": {
+        "type": "string"
       },
       "city": {
         "type": "string"
@@ -98,6 +102,7 @@
       "weight": 70,
       "gender": "male",
       "dateOfBirth": "1990-05-15",
+      "countryCode": "BD",
       "city": "Dhaka",
       "preferredDonationLocations": [
         {

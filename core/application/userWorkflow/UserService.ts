@@ -152,6 +152,7 @@ export class UserService {
           userId: `${userId}`,
           locationId: generateUniqueID(),
           area: location.area,
+          countryCode: `${userAttributes.countryCode}`,
           city: `${userAttributes.city}`,
           latitude: location.latitude,
           longitude: location.longitude,
