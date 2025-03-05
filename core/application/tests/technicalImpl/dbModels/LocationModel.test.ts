@@ -79,6 +79,7 @@ describe('LocationModel Tests', () => {
       expect(result).toEqual({
         userId: 'user1',
         locationId: 'location1',
+        countryCode: 'BD',
         city: 'CityA',
         bloodGroup: 'A+' as BloodGroup,
         availableForDonation: true,

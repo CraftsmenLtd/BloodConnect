@@ -52,7 +52,7 @@ export const donationDtoMock: DonationDTO = {
 export const donationFieldsMock: DonationFields = {
   PK: `${BLOOD_REQUEST_PK_PREFIX}#user456`,
   SK: `${BLOOD_REQUEST_PK_PREFIX}#${currentDate}#req123`,
-  GSI1PK: `LOCATION#Dhaka#STATUS#${DonationStatus.PENDING}`,
+  GSI1PK: `LOCATION#BD-Dhaka#STATUS#${DonationStatus.PENDING}`,
   GSI1SK: `${currentDate}#BG#A+`,
   LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#req123`,
   requestedBloodGroup: 'A+',
