@@ -7,14 +7,6 @@
     ],
     "parameters": [
       {
-        "name": "countryCode",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      {
         "name": "city",
         "in": "path",
         "required": true,
@@ -71,14 +63,6 @@
   },
   "options": {
     "parameters": [
-      {
-        "name": "countryCode",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
       {
         "name": "city",
         "in": "path",
