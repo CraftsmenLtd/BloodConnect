@@ -4,16 +4,24 @@
 
 #if($validCountryCodes.contains($countryCode))
 {
+  "success": true,
+  "message": "Available in your country",
+  "data":
+  {
     "available": true,
-    "message": "Available in your country",
     "countryCode": "$countryCode",
     "countryName": "$countryName"
+  }
 }
 #else
 {
+  "success": true,
+  "message": "Service not available in your country.",
+  "data":
+  {
     "available": false,
-    "message": "Service not available in your country.",
     "countryCode": "$countryCode",
     "countryName": "$countryName"
+  }
 }
 #end
