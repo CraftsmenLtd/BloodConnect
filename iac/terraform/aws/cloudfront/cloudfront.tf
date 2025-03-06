@@ -89,7 +89,11 @@ resource "aws_cloudfront_distribution" "cdn" {
       cookies {
         forward = "all"
       }
-      headers = ["Authorization"]
+      headers = [
+        "Authorization",
+        "CloudFront-Viewer-Country",
+        "CloudFront-Viewer-Country-Name"
+      ]
     }
   }
 

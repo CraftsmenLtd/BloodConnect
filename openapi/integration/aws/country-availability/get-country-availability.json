@@ -1,0 +1,20 @@
+{
+  "type": "mock",
+  "requestTemplates": {
+      "application/json": "{\"statusCode\":200}"
+  },
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'GET'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#importVtl country-availability/vtl/responseTemplates/get-country-availability.vtl"
+      }
+    }
+  },
+  "passthroughBehavior": "never"
+}
