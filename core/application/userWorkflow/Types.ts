@@ -15,6 +15,7 @@ export interface BaseUserAttributes extends UserAttributes {
   gender: Gender;
   dateOfBirth: string;
   age: number;
+  countryCode: string;
   city: string;
   preferredDonationLocations: LocationDTO[];
   availableForDonation: boolean;
@@ -23,8 +24,8 @@ export interface BaseUserAttributes extends UserAttributes {
 }
 
 export interface CreateUserAttributes extends BaseUserAttributes {
-  lastDonationDate: string;
-  lastVaccinatedDate: string;
+  lastDonationDate?: string;
+  lastVaccinatedDate?: string;
 }
 
 export interface UpdateUserAttributes extends BaseUserAttributes {

@@ -15,7 +15,7 @@ export type DonationFields = Omit<DonationDTO, 'requestPostId' | 'seekerId'> &
 HasTimeLog & {
   PK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}`;
   SK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}#${string}`;
-  GSI1PK?: `CITY#${string}#STATUS#${string}`;
+  GSI1PK?: `LOCATION#${string}#STATUS#${string}`;
   GSI1SK?: `${string}#BG#${string}`;
   LSI1SK?: `${typeof BLOOD_REQUEST_LSI1SK_PREFIX}#${string}#${string}`;
 }
@@ -52,7 +52,7 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
     }
 
     if (remainingDonationData.city !== undefined && remainingDonationData.status !== undefined) {
-      data.GSI1PK = `CITY#${remainingDonationData.city}#STATUS#${remainingDonationData.status}`
+      data.GSI1PK = `LOCATION#${remainingDonationData.countryCode}-${remainingDonationData.city}#STATUS#${remainingDonationData.status}`
     }
     if ((remainingDonationData.requestedBloodGroup as BloodGroup) !== undefined) {
       data.GSI1SK = `${createdAt}#BG#${remainingDonationData.requestedBloodGroup}`

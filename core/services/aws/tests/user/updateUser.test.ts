@@ -8,6 +8,8 @@ import updateUserLambda from '../../user/updateUser'
 import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 import LocationDynamoDbOperations from '../../commons/ddb/LocationDynamoDbOperations'
 import { UPDATE_PROFILE_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
+import { BloodGroup } from 'commons/dto/DonationDTO'
+import { Gender } from 'commons/dto/UserDTO'
 
 jest.mock('../../../../application/userWorkflow/UserService')
 jest.mock('../../commons/ddb/DynamoDbTableOperations')
@@ -39,18 +41,29 @@ describe('updateUserLambda', () => {
       name: 'Updated Ebrahim',
       dateOfBirth: '1990-01-01',
       phoneNumbers: ['1234567890'],
-      bloodGroup: 'A+',
+      bloodGroup: 'A+' as BloodGroup,
       lastDonationDate: '2023-08-01',
       height: '5.10',
       weight: 65,
       availableForDonation: true,
-      gender: 'male',
+      gender: 'male' as Gender,
       NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
       NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
-      lastVaccinatedDate: '2023-05-01'
+      lastVaccinatedDate: '2023-05-01',
+      countryCode: 'BD',
+      city: 'Dhaka',
+      email: 'example@gmail.com',
+      age: 34
     }
 
+    const mockResponseEvent = {
+      ...mockEvent,
+      id: '12345',
+      createdAt: expect.any(String)
+    }
     const mockResponse = UPDATE_PROFILE_SUCCESS
+
+    mockedUserService.prototype.getUser.mockResolvedValue(mockResponseEvent)
     mockedUserService.prototype.updateUser.mockResolvedValue()
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,

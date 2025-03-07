@@ -2,8 +2,6 @@
   "CreateUserRequestModel": {
     "type": "object",
     "required": [
-      "phoneNumbers",
-      "name",
       "bloodGroup",
       "height",
       "weight",
@@ -19,9 +17,6 @@
         "items": {
           "$ref": "./../common-schemas.json#/PhoneNumberEnum"
         }
-      },
-      "name": {
-        "type": "string"
       },
       "bloodGroup": {
         "$ref": "./../common-schemas.json#/BloodGroupEnum"
@@ -91,7 +86,6 @@
         "+8801834567890",
         "+8801755567822"
       ],
-      "name": "John Doe",
       "bloodGroup": "O-",
       "lastDonationDate": "2023-09-15",
       "height": "5.10",

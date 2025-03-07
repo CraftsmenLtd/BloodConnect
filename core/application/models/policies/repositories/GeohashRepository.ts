@@ -6,6 +6,7 @@ export default interface GeohashRepository<
   DbFields extends Record<string, unknown> = Record<string, unknown>
 > extends Repository<T, DbFields> {
   queryGeohash(
+    countryCode: string,
     city: string,
     requestedBloodGroup: string,
     geohash: string,

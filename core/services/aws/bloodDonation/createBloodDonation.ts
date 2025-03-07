@@ -41,6 +41,7 @@ async function createBloodDonationLambda(
       requestedBloodGroup: event.requestedBloodGroup,
       bloodQuantity: event.bloodQuantity,
       urgencyLevel: event.urgencyLevel,
+      countryCode: userProfile.countryCode,
       city: event.city,
       location: event.location,
       latitude: event.latitude,
