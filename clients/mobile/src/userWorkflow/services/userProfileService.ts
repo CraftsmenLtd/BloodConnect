@@ -48,6 +48,20 @@ export const fetchUserProfileFromApi = async(httpClient: HttpClient): Promise<AP
   }
 }
 
+export const createUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
+Promise<APIResponse> => {
+  try {
+    const response = await httpClient.post<APIResponse>('/users', payload)
+    return {
+      message: response.message,
+      status: response.status
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    throw new Error(errorMessage)
+  }
+}
+
 export const updateUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
 Promise<APIResponse> => {
   try {
