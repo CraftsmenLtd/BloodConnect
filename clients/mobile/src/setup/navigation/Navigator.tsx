@@ -4,7 +4,7 @@ import { routes } from './routes'
 import { SCREENS } from '../constant/screens'
 import { useAuth } from '../../authentication/context/useAuth'
 import Loader from '../../components/loaders/loader'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet } from 'react-native'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import useFetchData from '../clients/useFetchData'
 import { countryAvailability } from './services'
@@ -51,8 +51,12 @@ export default function Navigator() {
   if (!isAllowed) {
     return (
       <View style={styles.container}>
+        <View style={styles.logoTitleContainer}>
+          <Image source={require('../../../assets/icon.png')} style={styles.logo} />
+          <Text style={styles.title}>BloodConnect</Text>
+        </View>
         <Text style={styles.comingSoonText}>
-          We are coming soon to your country! Stay tuned.
+          The app is not available in your country yet. We appreciate your patience as we work to launch it in more locations soon.
         </Text>
       </View>
     )
@@ -81,7 +85,7 @@ export default function Navigator() {
   )
 }
 
-const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -89,8 +93,28 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   comingSoonText: {
     fontSize: 20,
+    padding: 10,
+    lineHeight: 30,
     fontWeight: 'bold',
     color: theme.colors.black,
     textAlign: 'center'
-  }
+  },
+  logoTitleContainer: {
+    position: 'absolute',
+    top: 80,
+    alignItems: 'center',
+    zIndex: 1
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    backgroundColor: theme.colors.primary,
+    borderRadius: 20
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: theme.colors.primary,
+    marginTop: 10
+  },
 })
