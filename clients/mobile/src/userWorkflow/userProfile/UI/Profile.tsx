@@ -24,7 +24,7 @@ export interface EditProfileData {
   [key: string]: any;
 }
 
-const Profile: React.FC = () => {
+const Profile = () => {
   const styles = createStyles(useTheme())
   const { userDetails } = useProfile()
   const navigation = useNavigation<EditProfileScreenNavigationProp>()

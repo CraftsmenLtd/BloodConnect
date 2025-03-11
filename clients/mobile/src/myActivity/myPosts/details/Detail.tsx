@@ -13,10 +13,10 @@ import { Theme } from '../../../setup/theme'
 import { useMyActivity } from '../../useMyActivity'
 import Toast from '../../../components/toast'
 import Button from '../../../components/button/Button'
+import { useRoute } from '@react-navigation/native'
 
 interface DetailProps {
   navigation: DetailPostScreenNavigationProp;
-  route: DetailPostRouteProp;
 }
 
 const DETAIL_POST_TAB_CONFIG: TabConfig = {
@@ -24,10 +24,10 @@ const DETAIL_POST_TAB_CONFIG: TabConfig = {
   initialTab: 'Detail'
 }
 
-const Detail = ({ navigation, route }: DetailProps) => {
+const Detail = ({ navigation }: DetailProps) => {
   const styles = createStyles(useTheme())
   const { cancelPost, cancelPostError, isLoading, showToast, toastAnimationFinished } = useMyActivity()
-  const { data, tab, useAsDetailsPage } = route.params
+  const { data, tab, useAsDetailsPage } = useRoute<DetailPostRouteProp>().params
   const [currentTab, setCurrentTab] = useState(tab ?? DETAIL_POST_TAB_CONFIG.initialTab)
   const isDetailsPage = useAsDetailsPage !== undefined && useAsDetailsPage
 

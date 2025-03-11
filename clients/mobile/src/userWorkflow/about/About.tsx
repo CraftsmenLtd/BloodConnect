@@ -6,7 +6,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 
 const currentYear = dayjs().year()
 
-const AboutPage: React.FC = () => {
+const AboutPage = () => {
   const styles = createStyles(useTheme())
   const [displayedText, setDisplayedText] = useState<string>('')
 
