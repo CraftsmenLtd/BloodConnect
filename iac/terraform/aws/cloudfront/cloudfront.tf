@@ -89,7 +89,11 @@ resource "aws_cloudfront_distribution" "cdn" {
       cookies {
         forward = "all"
       }
-      headers = ["Authorization"]
+      headers = [
+        "Authorization",
+        "CloudFront-Viewer-Country",
+        "CloudFront-Viewer-Country-Name"
+      ]
     }
   }
 
@@ -101,8 +105,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   restrictions {
     geo_restriction {
-      restriction_type = "whitelist"
-      locations        = ["BD"]
+      restriction_type = "none"
     }
   }
 }

@@ -20,8 +20,13 @@ async function updateUserLambda(
     if (typeof event.availableForDonation === 'string') {
       event.availableForDonation = (event.availableForDonation === 'true')
     }
+    const userProfile = await userService.getUser(
+      event.userId,
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
+    )
     const userAttributes = {
       userId: event.userId,
+      countryCode: userProfile.countryCode,
       ...Object.fromEntries(
         Object.entries(event).filter(([_, value]) => value !== undefined && value !== '')
       )

@@ -76,7 +76,7 @@ describe('BloodDonationModel', () => {
       const result = bloodDonationModel.toDto(fields)
 
       expect(result).toEqual({
-        GSI1PK: `CITY#${donationDtoMock.city}#STATUS#${DonationStatus.PENDING}`,
+        GSI1PK: `LOCATION#${donationDtoMock.countryCode}-${donationDtoMock.city}#STATUS#${DonationStatus.PENDING}`,
         GSI1SK: `${donationFieldsMock.createdAt}#BG#${donationDtoMock.requestedBloodGroup}`,
         ...donationDtoMock,
         requestPostId: donationDtoMock.requestPostId,
