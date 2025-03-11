@@ -5,7 +5,9 @@ ifneq ("$(wildcard .env)","")
 endif
 
 # Default build profile (can be overridden via CLI)
-BUILD_PROFILE ?= development
+BUILD_PROFILE?=development
+EAS_CONFIG=eas.json
+
 
 # Define default targets
 .PHONY: help install-deps login setup-env configure build clean
