@@ -4,7 +4,7 @@ ifneq ("$(wildcard .devcontainer/.env)","")
   export
 endif
 
-include makefiles/terraform.mk
+include deployment/aws/terraform/Makefile
 
 # Makefile flags
 MAKEFLAGS+=--no-print-directory
@@ -154,17 +154,17 @@ LOCAL_DEV_DEPLOYMENT_CONFIG=TF_BACKEND_BUCKET_REGION=$(AWS_REGION) \
 	TF_VAR_aws_environment=$(DEPLOYMENT_ENVIRONMENT) \
 	AWS_REGION=$(AWS_REGION)
 deploy-dev-branch:
-	$(MAKE) package-all
-	$(MAKE) clean-terraform-files
-	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) -s package-all
+	$(MAKE) -s clean-terraform-files
+	$(MAKE) -s tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) -s tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) -s tf-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 
 destroy-dev-branch:
-	$(MAKE) clean-terraform-files
-	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-plan-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) -s clean-terraform-files
+	$(MAKE) -s tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) -s tf-plan-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) -s tf-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 
 prep-dev: install-node-packages build-node-all package-all
 
@@ -173,3 +173,15 @@ start-dev: build-runner-image localstack-start run-command-install-node-packages
 
 run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
          run-command-tf-plan-apply run-command-tf-apply
+
+EXPO_APP_VERSION?=1.0.0
+EXPO_COUNTRY?=BD
+prepare-mobile-env:
+	@echo APP_NAME=net.bloodconnect.app > clients/mobile/.env
+	@echo EAS_PROJECT_ID=$(EXPO_EAS_PROJECT_ID) >> clients/mobile/.env
+	@echo APP_VERSION=$(EXPO_APP_VERSION) >> clients/mobile/.env
+	@echo COUNTRY=$(EXPO_COUNTRY) >> clients/mobile/.env
+	@echo AWS_USER_POOL_CLIENT_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_client_id) >> clients/mobile/.env
+	@echo AWS_USER_POOL_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_id) >> clients/mobile/.env
+	@echo API_BASE_URL=$(shell $(MAKE) -s tf-output-aws_api_domain_url) >> clients/mobile/.env
+	@echo AWS_COGNITO_DOMAIN=$(shell $(MAKE) -s tf-output-aws_cognito_custom_domain_name) >> clients/mobile/.env
