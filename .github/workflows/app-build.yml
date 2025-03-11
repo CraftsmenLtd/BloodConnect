@@ -1,0 +1,61 @@
+name: Build App
+
+on:
+  workflow_call:
+    inputs:
+      build_type:
+        required: true
+        type: string
+      backend_branch:
+        type: string
+        default: stage
+        required: false
+      mobile_branch:
+        required: false
+        default: 'master'
+        type: string
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    defaults:
+      run:
+        working-directory: clients/mobile
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: clients/mobile/package.json
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y jq make
+          npm install
+
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+
+      - name: Build Environment and Upload to Expo
+        run: |
+          make create-env BRANCH_NAME=${{ inputs.backend_branch }}
+          make setup-env
+          make upload-env BUILD_PROFILE=${{ inputs.build_type }}

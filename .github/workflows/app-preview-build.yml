@@ -1,0 +1,27 @@
+name: 📱 Mobile App Preview Build
+
+on:
+  push:
+    branches:
+      - build-pipeline
+  workflow_dispatch:
+    inputs:
+      backend_branch:
+        description: 'Branch for the backend'
+        required: false
+        default: 'stage'
+        type: string
+      mobile_branch:
+        description: 'Branch for the mobile app'
+        required: false
+        default: 'master'
+        type: string
+
+jobs:
+  build:
+    uses: ./.github/workflows/app-build.yml
+    with:
+      build_type: preview
+      mobile_branch: ${{ github.event.inputs.mobile_branch || 'master' }}
+      backend_branch: ${{ github.event.inputs.backend_branch || 'stage' }}
+    secrets: inherit
