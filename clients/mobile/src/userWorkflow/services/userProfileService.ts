@@ -19,6 +19,7 @@ export interface UserProfile extends
   | 'gender'
   | 'availableForDonation'>> {
   preferredDonationLocations?: UserPreferredLocation[];
+  userId: string;
   city: string;
   bloodGroup: string;
   gender: string;
