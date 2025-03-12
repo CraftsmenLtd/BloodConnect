@@ -11,6 +11,10 @@ on:
         description: "Defines the Deployment Environment Group for secrets"
         required: true
         type: string
+      build_profile:
+        description: "Defines the Build Profile For EXPO"
+        required: true
+        type: string
 
 permissions:
   contents: read
