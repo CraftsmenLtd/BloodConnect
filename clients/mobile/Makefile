@@ -1,10 +1,14 @@
 # Auto import env file
 ifneq ("$(findstring mobile/, $(shell pwd))", "")
-  include .env
-  export
+  ifneq ("$(wildcard .env)", "")
+    include .env
+    export
+  endif
 else
-  include clients/mobile/.env
-  export
+  ifneq ("$(wildcard clients/mobile/.env)", "")
+    include clients/mobile/.env
+    export
+  endif
 endif
 
 
