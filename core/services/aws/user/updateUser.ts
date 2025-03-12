@@ -27,7 +27,7 @@ async function updateUserLambda(
       ...Object.fromEntries(
         Object.entries(event).filter(([_, value]) => value !== undefined && value !== '')
       ),
-      availableForDonation: event.availableForDonation === true ? event.availableForDonation : `${event.availableForDonation}` === "true"
+      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation
     }
 
     await userService.updateUser(

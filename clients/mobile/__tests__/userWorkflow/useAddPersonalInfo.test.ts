@@ -150,7 +150,7 @@ describe('useAddPersonalInfo Hook', () => {
     mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 })
     const errorMessage = 'network error';
     (createUserProfile as jest.Mock).mockRejectedValue(new Error(errorMessage))
-    
+
     const { result } = renderHook(() => useAddPersonalInfo())
 
     await act(async() => {

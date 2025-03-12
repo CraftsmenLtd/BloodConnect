@@ -89,14 +89,14 @@ describe('AuthService', () => {
       (fetchAuthSession as jest.Mock).mockResolvedValue({})
 
       const result = await fetchSession()
-      expect(result).toEqual({"accessToken": undefined, "idToken": undefined})
+      expect(result).toEqual({ accessToken: undefined, idToken: undefined })
     })
 
     test('should throw an error if access token or ID token is missing', async() => {
       (fetchAuthSession as jest.Mock).mockResolvedValue({ tokens: {} })
 
       const result = await fetchSession()
-      expect(result).toEqual({"accessToken": undefined, "idToken": undefined})
+      expect(result).toEqual({ accessToken: undefined, idToken: undefined })
     })
 
     test('should throw an error if fetching session fails', async() => {

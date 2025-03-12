@@ -144,7 +144,7 @@ export const useEditProfile = (): any => {
     () => Object.values(errors).some((error) => error),
     [errors]
   )
-  const requiredFields = Object.keys(validationRules).filter(key => !['lastDonationDate'].includes(key));
+  const requiredFields = Object.keys(validationRules).filter(key => !['lastDonationDate'].includes(key))
 
   const areRequiredFieldsFilled = useMemo(
     () =>
