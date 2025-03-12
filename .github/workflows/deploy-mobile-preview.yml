@@ -1,7 +1,7 @@
 name: 👀 Mobile Preview Deployment
 
 on:
-  workflow_dispatch:
+  push:
 
 concurrency:
   group: ${{ github.ref }}
