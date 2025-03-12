@@ -1,7 +1,7 @@
 import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useAddPersonalInfo } from '../../src/userWorkflow/personalInfo/hooks/useAddPersonalInfo'
-import { updateUserProfile } from '../../src/userWorkflow/services/userProfileService'
+import { createUserProfile } from '../../src/userWorkflow/services/userProfileService'
 import { SCREENS } from '../../src/setup/constant/screens'
 
 const mockFetchUserProfile = jest.fn()
@@ -12,7 +12,7 @@ jest.mock('aws-amplify/auth', () => ({
 }))
 
 jest.mock('../../src/userWorkflow/services/userProfileService', () => ({
-  updateUserProfile: jest.fn()
+  createUserProfile: jest.fn()
 }))
 
 jest.mock('../../src/LocationService/LocationService', () => ({
@@ -42,6 +42,7 @@ jest.mock('expo-constants', () => ({
   default: {
     expoConfig: {
       extra: {
+        API_BASE_URL: 'https://mock-api-url.com',
         GOOGLE_MAP_API: 'mock-api-key'
       }
     }
@@ -126,7 +127,7 @@ describe('useAddPersonalInfo Hook', () => {
 
   test('should submit data and navigate on successful submission', async() => {
     mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 });
-    (updateUserProfile as jest.Mock).mockResolvedValue({ status: 200 })
+    (createUserProfile as jest.Mock).mockResolvedValue({ status: 201 })
 
     const { result } = renderHook(() => useAddPersonalInfo())
 
@@ -140,21 +141,22 @@ describe('useAddPersonalInfo Hook', () => {
       await result.current.handleSubmit()
     })
 
-    expect(updateUserProfile).toHaveBeenCalled()
+    expect(createUserProfile).toHaveBeenCalled()
     expect(mockFetchUserProfile).toHaveBeenCalled()
     expect(mockedNavigate).toHaveBeenCalledWith(SCREENS.BOTTOM_TABS)
   })
 
   test('should set errorMessage on failed submission', async() => {
     mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 })
-    const errorMessage = 'network error'
+    const errorMessage = 'network error';
+    (createUserProfile as jest.Mock).mockRejectedValue(new Error(errorMessage))
+    
     const { result } = renderHook(() => useAddPersonalInfo())
 
     await act(async() => {
       Object.entries(validPersonalInfo).forEach(([key, value]) => {
         result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
-      });
-      (updateUserProfile as jest.Mock).mockRejectedValue(new Error(errorMessage))
+      })
     })
 
     await act(async() => {

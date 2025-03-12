@@ -180,7 +180,7 @@ const CreateBloodRequest = () => {
 
           <View style={styles.buttonContainer}>
             <Button
-              text={isUpdating === true ? 'Update Post' : 'Post Now'}
+              text={isUpdating === true ? 'Update Request' : 'Request Now'}
               onPress={handlePostNow}
               disabled={isButtonDisabled}
               loading={loading}
