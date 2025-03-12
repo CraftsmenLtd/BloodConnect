@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import {
   validateDateOfBirth,
-  validateHeight, validateInput, validatePhoneNumber,
+  validateHeight, validateInput, validatePastOrTodayDate, validatePhoneNumber,
   validateRequired, validateWeight,
   ValidationRule
 } from '../../../utility/validator'
@@ -38,7 +38,7 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   gender: [validateRequired],
   phone: [validateRequired, validatePhoneNumber],
   preferredDonationLocations: [validateRequired],
-  lastDonationDate: [],
+  lastDonationDate: [validatePastOrTodayDate],
   city: [],
   locations: []
 }
@@ -144,10 +144,11 @@ export const useEditProfile = (): any => {
     () => Object.values(errors).some((error) => error),
     [errors]
   )
+  const requiredFields = Object.keys(validationRules).filter(key => !['lastDonationDate'].includes(key));
 
   const areRequiredFieldsFilled = useMemo(
     () =>
-      Object.keys(validationRules).every((key) => {
+      requiredFields.every((key) => {
         const value = profileData[key as keyof ProfileData]
         return value !== null && value !== undefined && value.toString().trim() !== ''
       }),
