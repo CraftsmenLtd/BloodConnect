@@ -119,18 +119,20 @@ Before starting a dev container, you must ensure your aws access is prepared suc
  .. warning::
    The above role is maintained in this repo: https://github.com/CraftsmenLtd/Bloodconnect-oidc
 
-This will create a simple `.env` file with required aws environment variables. You might want to add any additional variables required by terraform here as well. Some might already have defaults set in our makefile. Examples of variable you might want to set:
+This will create a simple `.env` file with required aws environment variables. You might want to add any additional variables required for development here as well. Some might already have defaults set in our makefile. Examples of variable you might want to set:
 
- .. code-block:: bash
+.. include:: ../.devcontainer/.env.example
+   :literal:
 
-    TF_BACKEND_BUCKET_NAME
-    TF_VAR_bloodconnect_domain
-    TF_VAR_google_client_id
-    TF_VAR_google_client_secret
-    TF_VAR_facebook_client_id
-    TF_VAR_facebook_client_secret
-    TF_VAR_firebase_token_s3_url
-    TF_VAR_google_maps_api_key
+To set variables for terraform; use the deployment/aws/terraform/.env file. Example variables:
+
+.. include:: ../deployment/aws/terraform/.env.example
+   :literal:
+
+To set variables for mobile development; use the clients/mobile/.env file. Example variables:
+
+.. include:: ../clients/mobile/.env.example
+   :literal:
 
 Now that that is done; you can follow the screenshots below to start dev containers.
 Click on the remote window icon on the bottom left of your vscode window.

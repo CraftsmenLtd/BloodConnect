@@ -1,3 +1,12 @@
+# Auto import env file
+ifneq ("$(wildcard deployment/aws/terraform/.env)","")
+  include deployment/aws/terraform/.env
+  export
+else
+  include .env
+  export
+endif
+
 # Terraform Commands
 tf-init:
 	$(TF_RUNNER) -chdir=$(TF_DIR) init -input=false $(TF_BACKEND_CONFIG)
