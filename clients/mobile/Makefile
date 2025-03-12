@@ -10,15 +10,14 @@ endif
 
 # Default build profile (can be overridden via CLI)
 BUILD_PROFILE?=development
-EAS_CONFIG=eas.json
 
-install-node-packages:
+install-native-packages:
 	@npm install -g expo-cli eas-cli
 	@npm install
 
 # Build the APK with the specified profile
 build-android:
-	@eas build --profile $(BUILD_PROFILE) --platform android
+	@eas build --profile $(BUILD_PROFILE) --platform android --non-interactive --no-wait
 
 clean:
 	@rm -rf build .expo

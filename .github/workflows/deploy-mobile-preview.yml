@@ -25,3 +25,30 @@ jobs:
         run: echo "DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')" >> $GITHUB_OUTPUT
     outputs:
       deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
+
+  build-push-docker-image:
+    name: 🐳 Build and Push Docker Image
+    uses: ./.github/workflows/docker-image.yml
+    secrets: inherit
+
+  init-infra:
+    name: 🚀 Init Infrastructure
+    secrets: inherit
+    needs: [setup-environment, build-push-docker-image]
+    uses: ./.github/workflows/aws-terraform.yml
+    with:
+      docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      deployment_environment_group: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+      deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
+      aws_region: ap-south-1
+  
+  launch-mobile-build:
+    name: 🚀 Launch mobile Build
+    secrets: inherit
+    needs: [init-infra]
+    uses: ./.github/workflows/eas-mobile.yml
+    with:
+      docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      deployment_environment_group: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+      build_profile: preview
+  
