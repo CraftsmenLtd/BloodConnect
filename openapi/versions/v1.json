@@ -76,6 +76,9 @@
     },
     "/logger": {
       "$ref": "./../paths/logger/logger.json"
+    },
+    "/country-availability": {
+      "$ref": "./../paths/country-availability/country-availability.json"
     }
   },
   "components": {
