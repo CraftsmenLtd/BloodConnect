@@ -5,6 +5,7 @@ ifneq ("$(wildcard .devcontainer/.env)","")
 endif
 
 include deployment/aws/terraform/Makefile
+include clients/mobile/Makefile
 
 # Makefile flags
 MAKEFLAGS+=--no-print-directory
@@ -174,13 +175,7 @@ start-dev: build-runner-image localstack-start run-command-install-node-packages
 run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
          run-command-tf-plan-apply run-command-tf-apply
 
-EXPO_APP_VERSION?=1.0.0
-EXPO_COUNTRY?=BD
 prepare-mobile-env:
-	@echo APP_NAME=net.bloodconnect.app > clients/mobile/.env
-	@echo EAS_PROJECT_ID=$(EXPO_EAS_PROJECT_ID) >> clients/mobile/.env
-	@echo APP_VERSION=$(EXPO_APP_VERSION) >> clients/mobile/.env
-	@echo COUNTRY=$(EXPO_COUNTRY) >> clients/mobile/.env
 	@echo AWS_USER_POOL_CLIENT_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_client_id) >> clients/mobile/.env
 	@echo AWS_USER_POOL_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_id) >> clients/mobile/.env
 	@echo API_BASE_URL=$(shell $(MAKE) -s tf-output-aws_api_domain_url) >> clients/mobile/.env
