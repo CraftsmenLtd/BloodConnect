@@ -36,11 +36,6 @@ DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
             -e TF_BACKEND_BUCKET_REGION \
             -e TF_BACKEND_BUCKET_KEY $(TF_VARS)
 
-# Terraform Backend Configuration
-TF_BACKEND_CONFIG=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" \
-                  --backend-config="key=$(TF_BACKEND_BUCKET_KEY)" \
-                  --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
-
 # Checkov Skip Rules
 # CKV_AWS_117 - Ensure that AWS Lambda function is configured inside a VPC
 # CKV_AWS_50  - X-ray tracing is enabled for Lambda
@@ -149,23 +144,18 @@ start-mobile:
 
 
 # Deploy Dev Branch from Local Machine
-LOCAL_DEV_DEPLOYMENT_CONFIG=TF_BACKEND_BUCKET_REGION=$(AWS_REGION) \
-	DEPLOYMENT_ENVIRONMENT_GROUP=dev \
-	TF_BACKEND_BUCKET_KEY=dev/$(DEPLOYMENT_ENVIRONMENT).tfstate \
-	TF_VAR_aws_environment=$(DEPLOYMENT_ENVIRONMENT) \
-	AWS_REGION=$(AWS_REGION)
 deploy-dev-branch:
 	$(MAKE) -s package-all
 	$(MAKE) -s clean-terraform-files
-	$(MAKE) -s tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) -s tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) -s tf-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) -s tf-init
+	$(MAKE) -s tf-plan-apply
+	$(MAKE) -s tf-apply
 
 destroy-dev-branch:
 	$(MAKE) -s clean-terraform-files
-	$(MAKE) -s tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) -s tf-plan-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) -s tf-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) -s tf-init
+	$(MAKE) -s tf-plan-destroy
+	$(MAKE) -s tf-destroy
 
 prep-dev: install-node-packages build-node-all package-all
 
