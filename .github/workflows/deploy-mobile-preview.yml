@@ -30,25 +30,58 @@ jobs:
     name: 🐳 Build and Push Docker Image
     uses: ./.github/workflows/docker-image.yml
     secrets: inherit
-
-  init-infra:
-    name: 🚀 Init Infrastructure
+  
+  fetch-env-file:
+    name: 🚀 Prepare Env
     secrets: inherit
     needs: [setup-environment, build-push-docker-image]
-    uses: ./.github/workflows/aws-terraform.yml
-    with:
-      docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
-      deployment_environment_group: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
-      deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
-      aws_region: ap-south-1
-  
-  prepare-env-file:
-    name: 🚀 Prepare Env File
-    secrets: inherit
-    needs: [init-infra]
+    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    runs-on: ${{ vars.RUNNER_OS }}
+    env:
+      RUNNER_IMAGE_NAME: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
+      DEPLOYMENT_ENVIRONMENT_GROUP: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+      DEPLOYMENT_ENVIRONMENT: ${{ needs.setup-environment.outputs.deployment_environment }}
+      TF_BACKEND_BUCKET_NAME: ${{ vars.TERRAFORM_BACKEND_BUCKET_NAME }}
+      TF_BACKEND_BUCKET_KEY: ${{ format('{0}/{1}.tfstate', vars.ENVIRONMENT_GITHUB_DEV, needs.setup-environment.outputs.deployment_environment) }}
+      TF_BACKEND_BUCKET_REGION: ap-south-1
+      AWS_REGION: ap-south-1
+
     steps:
-      - name: 📦 generate Mobile Env File
+      - name: 📥 Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: 🔐 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Initiate Terraform
+        run: make run-command-tf-init
+
+      - name: 📦 Generate Mobile Env File
         run: make run-command-prepare-mobile-env
+      
+      - name: 🗂️ Parse Mobile Env file Into Github Env
+        run: |
+          echo "env_vars<<EOF" >> $GITHUB_OUTPUT
+          cat path/to/generated-env-file.env >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        id: set_mobile_env
+    outputs:
+      aws_user_pool_client_id: ${{ steps.set_mobile_env.outputs.AWS_USER_POOL_CLIENT_ID }}
+      aws_user_pool_id: ${{ steps.set_mobile_env.outputs.AWS_USER_POOL_ID }}
+      ap_base_url: ${{ steps.set_mobile_env.outputs.API_BASE_URL }}
+      aws_cognito_domain: ${{ steps.set_mobile_env.outputs.AWS_COGNITO_DOMAIN }}
+
   
   launch-mobile-build:
     name: 🚀 Launch mobile Build
@@ -58,5 +91,10 @@ jobs:
     with:
       docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       deployment_environment_group: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+      deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
       build_profile: preview
-  
+      aws_user_pool_client_id: ${{ needs.fetch-env-file.outputs.aws_user_pool_client_id }}
+      aws_user_pool_id: ${{ needs.fetch-env-file.outputs.aws_user_pool_id }}
+      ap_base_url: ${{ needs.fetch-env-file.outputs.ap_base_url }}
+      aws_cognito_domain: ${{ needs.fetch-env-file.outputs.aws_cognito_domain }}
+      country: BD

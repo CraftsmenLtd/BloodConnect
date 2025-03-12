@@ -43,7 +43,7 @@ tf-security: tf-init
 	checkov --directory $(TF_DIR) $(TF_CHECKOV_SKIP)
 
 tf-output-%:
-	$(TF_RUNNER) -chdir=$(TF_DIR) output -raw $*
+	$(TF_RUNNER) -chdir=$(TF_DIR) output $*
 
 clean-terraform-files:
 	rm -rf deployment/aws/terraform/.terraform \

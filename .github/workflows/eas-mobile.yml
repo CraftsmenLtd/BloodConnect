@@ -7,6 +7,10 @@ on:
         description: "The runner image to be used"
         required: true
         type: string
+      deployment_environment:
+        description: "Defines the Deployment Environment for branch"
+        required: true
+        type: string
       deployment_environment_group:
         description: "Defines the Deployment Environment Group for secrets"
         required: true
