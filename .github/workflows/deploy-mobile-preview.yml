@@ -42,10 +42,18 @@ jobs:
       deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
       aws_region: ap-south-1
   
+  prepare-env-file:
+    name: 🚀 Prepare Env File
+    secrets: inherit
+    needs: [init-infra]
+    steps:
+      - name: 📦 generate Mobile Env File
+        run: make run-command-prepare-mobile-env
+  
   launch-mobile-build:
     name: 🚀 Launch mobile Build
     secrets: inherit
-    needs: [init-infra]
+    needs: [prepare-env-file]
     uses: ./.github/workflows/eas-mobile.yml
     with:
       docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
