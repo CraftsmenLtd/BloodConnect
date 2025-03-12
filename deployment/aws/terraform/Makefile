@@ -2,9 +2,6 @@
 ifneq ("$(wildcard deployment/aws/terraform/.env)","")
   include deployment/aws/terraform/.env
   export
-else
-  include .env
-  export
 endif
 
 # Terraform Backend Configuration
