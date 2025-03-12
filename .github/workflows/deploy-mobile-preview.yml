@@ -30,7 +30,6 @@ jobs:
   
   fetch-env-file:
     name: 🚀 Prepare Env
-    secrets: inherit
     needs: [setup-environment, build-push-docker-image]
     environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
     runs-on: ${{ vars.RUNNER_OS }}
