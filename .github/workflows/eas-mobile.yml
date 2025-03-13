@@ -89,7 +89,7 @@ jobs:
         run: make run-command-install-native-packages
 
       - name: 📤 Upload Environment Variables
-        run: cd client/mobile && make upload-env
+        run: cd clients/mobile && make upload-env
       
       - name: ⏳ Start Expo Build Job
-        run: cd client/mobile && make build-android
+        run: cd clients/mobile && make build-android
