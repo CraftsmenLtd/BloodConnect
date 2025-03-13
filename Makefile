@@ -34,7 +34,19 @@ DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
             -e AWS_REGION \
             -e TF_BACKEND_BUCKET_NAME \
             -e TF_BACKEND_BUCKET_REGION \
-            -e TF_BACKEND_BUCKET_KEY $(TF_VARS)
+            -e TF_BACKEND_BUCKET_KEY \
+            $(TF_VARS) \
+            -e EXPO_TOKEN \
+            -e BUILD_PROFILE \
+            -e EAS_PROJECT_ID \
+            -e APP_VERSION \
+            -e APP_NAME \
+            -e COUNTRY \
+            -e AWS_USER_POOL_CLIENT_ID \
+            -e AWS_USER_POOL_ID \
+            -e API_BASE_URL \
+            -e AWS_COGNITO_DOMAIN
+
 
 # Checkov Skip Rules
 # CKV_AWS_117 - Ensure that AWS Lambda function is configured inside a VPC
