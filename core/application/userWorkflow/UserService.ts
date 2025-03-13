@@ -111,7 +111,7 @@ export class UserService {
     lastDonationDate: string | undefined,
     availableForDonation: boolean
   ): boolean {
-    if (lastDonationDate !== undefined && lastDonationDate !== '') {
+    if (availableForDonation && lastDonationDate !== undefined && lastDonationDate !== '') {
       const donationDate = new Date(lastDonationDate)
       const currentDate = new Date()
 
