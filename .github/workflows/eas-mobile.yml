@@ -84,10 +84,10 @@ jobs:
         run: make run-command-install-native-packages
 
       - name: 🔰 Init Eas
-        run: make run-command-upload-env
+        run: make run-command-eas-init
 
       - name: 📤 Upload Environment Variables
-        run: make run-command-eas-init
+        run: make run-command-upload-env
       
       - name: ⏳ Start Expo Build Job
         run: make run-command-build-android
