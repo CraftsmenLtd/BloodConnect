@@ -83,8 +83,11 @@ jobs:
       - name: 📦 Install React Native Modules
         run: make run-command-install-native-packages
 
-      - name: 📤 Upload environment variables
+      - name: 🔰 Init Eas
         run: make run-command-upload-env
+
+      - name: 📤 Upload Environment Variables
+        run: make run-command-eas-init
       
-      - name: ⏳ Start expo build job
+      - name: ⏳ Start Expo Build Job
         run: make run-command-build-android

@@ -26,6 +26,9 @@ build-android:
 clean:
 	@rm -rf build .expo
 
+eas-init:
+	@$(EAS) build
+
 upload-env:
 	@$(EAS) env:create --environment $(BUILD_PROFILE) --name APP_NAME --value $(APP_NAME) --type string --visibility plaintext --force --scope project --non-interactive
 	@$(EAS) env:create --environment $(BUILD_PROFILE) --name EAS_PROJECT_ID --value $(EAS_PROJECT_ID) --type string --visibility plaintext --force --scope project --non-interactive
