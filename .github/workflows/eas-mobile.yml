@@ -79,7 +79,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+      - run: echo $RUNNER_IMAGE_NAME
       - name: 📦 Install React Native Modules
         run: make run-command-install-native-packages
 
