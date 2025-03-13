@@ -79,6 +79,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Build Binaries
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
 
       - name: 📦 Install React Native Modules
         run: make run-command-install-native-packages
