@@ -83,9 +83,6 @@ jobs:
       - name: 📦 Install React Native Modules
         run: make run-command-install-native-packages
 
-      - name: 🔰 Init Eas
-        run: make run-command-eas-init
-
       - name: 📤 Upload Environment Variables
         run: make run-command-upload-env
       
