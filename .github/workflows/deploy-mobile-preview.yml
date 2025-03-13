@@ -1,9 +1,6 @@
 name: 📱👀 Mobile Preview Deployment
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
 
 concurrency:
