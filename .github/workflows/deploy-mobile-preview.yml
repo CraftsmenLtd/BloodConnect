@@ -91,6 +91,6 @@ jobs:
       build_profile: preview
       aws_user_pool_client_id: ${{ needs.fetch-env-file.outputs.aws_user_pool_client_id }}
       aws_user_pool_id: ${{ needs.fetch-env-file.outputs.aws_user_pool_id }}
-      ap_base_url: ${{ needs.fetch-env-file.outputs.ap_base_url }}
+      api_base_url: ${{ needs.fetch-env-file.outputs.ap_base_url }}
       aws_cognito_domain: ${{ needs.fetch-env-file.outputs.aws_cognito_domain }}
       country: BD

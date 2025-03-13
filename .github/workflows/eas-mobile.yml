@@ -27,8 +27,8 @@ on:
         description: "Defines aws_user_pool_id For EXPO"
         required: true
         type: string
-      ap_base_url:
-        description: "Defines ap_base_url For EXPO"
+      api_base_url:
+        description: "Defines api_base_url For EXPO"
         required: true
         type: string
       aws_cognito_domain:
