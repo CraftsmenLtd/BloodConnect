@@ -1,14 +1,12 @@
 # Auto import env file
-ifneq ("$(findstring mobile/, $(shell pwd))", "")
-  ifneq ("$(wildcard .env)", "")
-    include .env
-    export
-  endif
-else
-  ifneq ("$(wildcard clients/mobile/.env)", "")
-    include clients/mobile/.env
-    export
-  endif
+ENV_FILE:=.env
+ifneq ("$(findstring clients/mobile/, $(shell pwd))", "")
+  ENV_FILE:=clients/mobile/.env
+endif
+
+ifneq ("$(wildcard $(ENV_FILE))", "")
+  include $(ENV_FILE)
+  export
 endif
 
 
@@ -17,7 +15,7 @@ BUILD_PROFILE?=development
 
 install-native-packages:
 	@npm install -g expo-cli eas-cli
-	@npm install
+	@npm install --prefix $(dir $(ENV_FILE))
 
 # Build the APK with the specified profile
 build-android:
