@@ -10,7 +10,7 @@ ifneq ("$(wildcard $(ENV_FILE))", "")
 endif
 
 DIR:=$(dir $(ENV_FILE))
-EAS:=$(DIR)/node_modules/eas-cli/bin/run
+EAS:=cd $(DIR) && ./node_modules/eas-cli/bin/run
 
 # Default build profile (can be overridden via CLI)
 BUILD_PROFILE?=development
@@ -25,9 +25,6 @@ build-android:
 
 clean:
 	@rm -rf build .expo
-
-eas-init:
-	@$(EAS) build
 
 upload-env:
 	@$(EAS) env:create --environment $(BUILD_PROFILE) --name APP_NAME --value $(APP_NAME) --type string --visibility plaintext --force --scope project --non-interactive
