@@ -89,7 +89,7 @@ jobs:
         run: make run-command-install-native-packages
 
       - name: 📤 Upload Environment Variables
-        run: make run-command-upload-env
+        run: make upload-env
       
       - name: ⏳ Start Expo Build Job
-        run: make run-command-build-android
+        run: make build-android
