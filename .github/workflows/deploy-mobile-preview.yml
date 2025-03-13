@@ -68,10 +68,9 @@ jobs:
       
       - name: 🗂️ Parse Mobile Env file Into Github Env
         run: |
-          ls
-          echo "env_vars<<EOF" >> $GITHUB_OUTPUT
-          cat clients/mobile/.env >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          while IFS= read -r line; do
+            echo "$line" >> $GITHUB_OUTPUT
+          done < clients/mobile/.env
         id: set_mobile_env
     outputs:
       aws_user_pool_client_id: ${{ steps.set_mobile_env.outputs.AWS_USER_POOL_CLIENT_ID }}
