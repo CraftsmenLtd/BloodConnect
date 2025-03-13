@@ -58,7 +58,7 @@ jobs:
     environment: ${{ inputs.deployment_environment_group }}
     env:
       RUNNER_IMAGE_NAME: ${{ inputs.docker_image }}
-      EXPO_TOKEN: ${{ secrets.EXPO_SECRETS }}
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       BUILD_PROFILE: ${{ inputs.build_profile }}
       EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
       APP_NAME: net.bloodconnect-${{ inputs.deployment_environment }}.app
