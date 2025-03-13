@@ -71,6 +71,7 @@ jobs:
       
       - name: 🗂️ Parse Mobile Env file Into Github Env
         run: |
+          ls
           echo "env_vars<<EOF" >> $GITHUB_OUTPUT
           cat clients/mobile/.env >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
