@@ -21,7 +21,7 @@ const DonationPosts = () => {
       <Header
         profileImageUri={COMMON_URLS.PROFILE_AVATAR}
         title="Blood needed?"
-        buttonLabel="Create Post"
+        buttonLabel="Create Request"
         onButtonPress={createPost}
       />
       <Posts

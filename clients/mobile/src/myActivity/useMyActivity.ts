@@ -11,8 +11,8 @@ import useToast from '../components/toast/useToast'
 import { useMyActivityContext } from './context/useMyActivityContext'
 
 export const MY_ACTIVITY_TAB_CONFIG: TabConfig = {
-  tabs: ['My Posts', 'My Responses'],
-  initialTab: 'My Posts'
+  tabs: ['My Requests', 'My Responses'],
+  initialTab: 'My Requests'
 }
 
 export interface DonationData extends Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> {

@@ -5,6 +5,8 @@ import authService from '../../authentication/services/authService'
 
 export type FetchResponse<T> = T & { status: number }
 
+const HTTP_UNAUTHORIZED = 401
+
 export class FetchClient implements HttpClient {
   private idToken: string | null = null
   private readonly baseURL: string
@@ -22,15 +24,8 @@ export class FetchClient implements HttpClient {
 
   public async setupRequestHeaders(headers: Record<string, string>): Promise<Record<string, string>> {
     const requestHeaders: Record<string, string> = { 'Content-Type': 'application/json', ...headers }
-    try {
-      const { idToken } = await authService.fetchSession()
-      requestHeaders.Authorization = `Bearer ${idToken}`
-    } catch (error) {
-      if (this.logoutUser !== undefined) {
-        await this.logoutUser()
-      }
-      throw new Error('Failed to refresh session')
-    }
+    const { idToken } = await authService.fetchSession()
+    requestHeaders.Authorization = `Bearer ${idToken}`
     return requestHeaders
   }
 
@@ -65,6 +60,9 @@ export class FetchClient implements HttpClient {
       const responseData = await response.json() as T
       return { ...responseData, status: response.status }
     } catch (error) {
+      if (this.logoutUser !== undefined && error.status === HTTP_UNAUTHORIZED) {
+        await this.logoutUser()
+      }
       const status = error instanceof FetchClientError ? error.status : 500
       const message = error instanceof Error ? error.message : 'An unknown error occurred'
       throw new FetchClientError(message, status)

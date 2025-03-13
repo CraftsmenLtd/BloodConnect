@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const loadTokens = async() => {
     const tokens = await authService.loadTokens()
-    if (tokens.storedAccessToken !== null && tokens.storedIdToken !== null) {
+    if (tokens.storedAccessToken !== undefined && tokens.storedIdToken !== undefined) {
       const { storedAccessToken, storedIdToken } = tokens
       const payload = authService.decodeAccessToken(storedAccessToken)
       if (payload.exp !== undefined && payload.exp > Math.floor(Date.now() / 1000)) {
