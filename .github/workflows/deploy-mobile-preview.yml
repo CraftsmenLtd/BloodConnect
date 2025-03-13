@@ -83,7 +83,7 @@ jobs:
 
   
   launch-mobile-build:
-    name: 🚀 Launch mobile Build
+    name: 🚀 Launch Mobile Build
     secrets: inherit
     needs: [setup-environment, build-push-docker-image, fetch-env-file]
     uses: ./.github/workflows/eas-mobile.yml
