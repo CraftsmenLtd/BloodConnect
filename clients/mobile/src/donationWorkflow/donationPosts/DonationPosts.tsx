@@ -27,7 +27,7 @@ const DonationPosts = () => {
       <Posts
         errorMessage={errorMessage}
         loading={loading}
-        emptyDataMessage='No donation posts available. Pull to refresh.'
+        emptyDataMessage='No donation requests available. Pull to refresh.'
         donationPosts={donationPosts}
         detailHandler={viewDetailsHandler}
         displayOptions={{ showOptions: false, showPostUpdatedOption: false }}
