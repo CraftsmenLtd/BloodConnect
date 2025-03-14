@@ -111,7 +111,7 @@ export class UserService {
     lastDonationDate: string | undefined,
     availableForDonation: boolean
   ): boolean {
-    if (lastDonationDate !== undefined && lastDonationDate !== '') {
+    if (availableForDonation && lastDonationDate !== undefined && lastDonationDate !== '') {
       const donationDate = new Date(lastDonationDate)
       const currentDate = new Date()
 
@@ -152,7 +152,8 @@ export class UserService {
           userId: `${userId}`,
           locationId: generateUniqueID(),
           area: location.area,
-          city: `${userAttributes.city}`,
+          countryCode: userAttributes.countryCode as string,
+          city: userAttributes.city,
           latitude: location.latitude,
           longitude: location.longitude,
           geohash: generateGeohash(location.latitude, location.longitude),

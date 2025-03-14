@@ -32,7 +32,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
   const isDetailsPage = useAsDetailsPage !== undefined && useAsDetailsPage
 
   useEffect(() => {
-    navigation.setOptions({ headerTitle: isDetailsPage ? 'Detail' : 'My Post' })
+    navigation.setOptions({ headerTitle: isDetailsPage ? 'Detail' : 'My Requests' })
   }, [useAsDetailsPage])
 
   const handlePressDonor = (donorId: string) => {

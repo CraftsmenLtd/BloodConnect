@@ -19,6 +19,7 @@ export interface UserProfile extends
   | 'gender'
   | 'availableForDonation'>> {
   preferredDonationLocations?: UserPreferredLocation[];
+  userId: string;
   city: string;
   bloodGroup: string;
   gender: string;
@@ -45,6 +46,20 @@ export const fetchUserProfileFromApi = async(httpClient: HttpClient): Promise<AP
     }
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
     throw new ProfileError(errorMessage)
+  }
+}
+
+export const createUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
+Promise<APIResponse> => {
+  try {
+    const response = await httpClient.post<APIResponse>('/users', payload)
+    return {
+      message: response.message,
+      status: response.status
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    throw new Error(errorMessage)
   }
 }
 

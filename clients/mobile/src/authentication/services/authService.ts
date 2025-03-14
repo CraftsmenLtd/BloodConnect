@@ -32,8 +32,8 @@ export interface UserRegistrationCredentials {
 }
 
 interface FetchSessionResponse {
-  accessToken: string;
-  idToken: string;
+  accessToken: string | undefined;
+  idToken: string | undefined;
 }
 
 export const decodeAccessToken = (token: string | null): JwtPayload => {
@@ -44,23 +44,10 @@ export const decodeAccessToken = (token: string | null): JwtPayload => {
   return payload
 }
 
-export const loadTokens = async(): Promise<{ storedAccessToken: string | null; storedIdToken: string | null }> => {
+export const loadTokens = async(): Promise<{ storedAccessToken: string | undefined; storedIdToken: string | undefined }> => {
   try {
-    const storedAccessToken = await StorageService.getItem<string>(TOKEN.ACCESS_TOKEN)
-    const storedIdToken = await StorageService.getItem<string>(TOKEN.ID_TOKEN)
-    if (storedIdToken === null) {
-      const session = await fetchSession()
-      return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
-    }
-
-    const payload = decodeAccessToken(storedIdToken)
-
-    if (payload.exp !== undefined && payload.exp < Math.floor(Date.now() / 1000)) {
-      const session = await fetchSession()
-      return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
-    } else {
-      return { storedAccessToken, storedIdToken }
-    }
+    const session = await fetchSession()
+    return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
   } catch (error) {
     throw new Error('Failed to load tokes.')
   }
@@ -115,18 +102,11 @@ export const fetchSession = async(): Promise<FetchSessionResponse> => {
   try {
     const session: AuthSession = await fetchAuthSession()
     if (session?.tokens === undefined) {
-      throw new Error('Session or tokens are undefined')
+      return { accessToken: undefined, idToken: undefined }
     }
 
     const accessToken = session.tokens.accessToken?.toString()
     const idToken = session.tokens.idToken?.toString()
-
-    if (accessToken === undefined || idToken === undefined) {
-      throw new Error('Access token or ID token is missing')
-    }
-
-    await StorageService.storeItem<string>(TOKEN.ACCESS_TOKEN, accessToken)
-    await StorageService.storeItem<string>(TOKEN.ID_TOKEN, idToken)
     return { accessToken, idToken }
   } catch (error) {
     throw new Error('Failed to fetch session')

@@ -102,7 +102,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       return
     }
 
-    const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, city, geohash } =
+    const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, countryCode, city, geohash } =
       donorSearchRecord
     const remainingBagsNeeded =
       initiationCount === 1
@@ -127,6 +127,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       await queryEligibleDonors(
         seekerId,
         requestedBloodGroup,
+        countryCode,
         city,
         geohash,
         totalDonorsToFind,
@@ -318,6 +319,7 @@ async function getRemainingBagsNeeded(
 async function queryEligibleDonors(
   seekerId: string,
   requestedBloodGroup: string,
+  countryCode: string,
   city: string,
   geohash: string,
   totalDonorsToFind: number,
@@ -339,6 +341,7 @@ async function queryEligibleDonors(
   const { updatedEligibleDonors, processedGeohashCount } = await getNewDonorsInNeighborGeohash(
     seekerId,
     requestedBloodGroup,
+    countryCode,
     city,
     geohash,
     updatedGeohashesToProcess,
@@ -356,6 +359,7 @@ async function queryEligibleDonors(
 async function getNewDonorsInNeighborGeohash(
   seekerId: string,
   requestedBloodGroup: string,
+  countryCode: string,
   city: string,
   seekerGeohash: string,
   geohashesToProcess: string[],
@@ -376,7 +380,7 @@ async function getNewDonorsInNeighborGeohash(
   }
 
   const geohashToProcess = geohashesToProcess[0]
-  const donors = await getDonorsFromCache(geohashToProcess, city, requestedBloodGroup)
+  const donors = await getDonorsFromCache(geohashToProcess, countryCode, city, requestedBloodGroup)
 
   const updatedEligibleDonors = donors.reduce<Record<string, EligibleDonorInfo>>(
     (donorAccumulator, donor) => {
@@ -402,6 +406,7 @@ async function getNewDonorsInNeighborGeohash(
   return getNewDonorsInNeighborGeohash(
     seekerId,
     requestedBloodGroup,
+    countryCode,
     city,
     seekerGeohash,
     geohashesToProcess.slice(1),
@@ -414,6 +419,7 @@ async function getNewDonorsInNeighborGeohash(
 
 async function getDonorsFromCache(
   geohashToProcess: string,
+  countryCode: string,
   city: string,
   requestedBloodGroup: string
 ): Promise<DonorInfo[]> {
@@ -421,11 +427,12 @@ async function getDonorsFromCache(
     0,
     Number(process.env.CACHE_GEOHASH_PREFIX_LENGTH)
   )
-  const cacheKey = `${city}-${requestedBloodGroup}-${geohashCachePrefix}`
+  const cacheKey = `${countryCode}-${city}-${requestedBloodGroup}-${geohashCachePrefix}`
   const cachedGroupedGeohash = GEOHASH_CACHE.get(cacheKey) as GeohashDonorMap
 
   if (cachedGroupedGeohash === undefined) {
     const queriedDonors = await donorSearchService.queryGeohash(
+      countryCode,
       city,
       requestedBloodGroup,
       geohashCachePrefix,

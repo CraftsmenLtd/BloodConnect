@@ -35,6 +35,9 @@ jobs:
 
       - name: Install Redoc
         run: npm install -g @redocly/cli@latest
+      
+      - name: Install dependencies
+        run: pip install --upgrade pip setuptools
 
       - name: Combine OpenAPI specs
         run: redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json --config openapi/configs/redocly.yaml

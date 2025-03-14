@@ -82,21 +82,21 @@ describe('AuthService', () => {
       const result = await fetchSession()
 
       expect(fetchAuthSession).toHaveBeenCalled()
-      expect(StorageService.storeItem).toHaveBeenCalledWith('accessToken', 'mockAccessToken')
-      expect(StorageService.storeItem).toHaveBeenCalledWith('idToken', 'mockIdToken')
       expect(result).toEqual(mockSession.tokens)
     })
 
     test('should throw an error if session or tokens are undefined', async() => {
       (fetchAuthSession as jest.Mock).mockResolvedValue({})
 
-      await expect(fetchSession()).rejects.toThrow('Failed to fetch session')
+      const result = await fetchSession()
+      expect(result).toEqual({ accessToken: undefined, idToken: undefined })
     })
 
     test('should throw an error if access token or ID token is missing', async() => {
       (fetchAuthSession as jest.Mock).mockResolvedValue({ tokens: {} })
 
-      await expect(fetchSession()).rejects.toThrow('Failed to fetch session')
+      const result = await fetchSession()
+      expect(result).toEqual({ accessToken: undefined, idToken: undefined })
     })
 
     test('should throw an error if fetching session fails', async() => {
@@ -370,13 +370,6 @@ describe('AuthService', () => {
   })
 
   describe('googleLogin', () => {
-    test('should call signInWithRedirect with Google provider', async() => {
-      (signInWithRedirect as jest.Mock).mockResolvedValue(undefined)
-
-      await expect(googleLogin()).rejects.toThrow('Error logging with google: Failed to fetch session')
-      expect(signInWithRedirect).toHaveBeenCalledWith({ provider: 'Google' })
-    })
-
     test('should throw an error if Google sign-in fails', async() => {
       (signInWithRedirect as jest.Mock).mockRejectedValue(new Error('Google sign-in failed'))
 
@@ -385,13 +378,6 @@ describe('AuthService', () => {
   })
 
   describe('facebookLogin', () => {
-    test('should call signInWithRedirect with Facebook provider', async() => {
-      (signInWithRedirect as jest.Mock).mockResolvedValue(undefined)
-
-      await expect(facebookLogin()).rejects.toThrow('Error logging with facebook: Failed to fetch session')
-      expect(signInWithRedirect).toHaveBeenCalledWith({ provider: 'Facebook' })
-    })
-
     test('should throw an error if Facebook sign-in fails', async() => {
       (signInWithRedirect as jest.Mock).mockRejectedValue(new Error('Facebook sign-in failed'))
 

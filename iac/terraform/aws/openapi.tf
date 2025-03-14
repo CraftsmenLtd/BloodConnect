@@ -19,6 +19,7 @@ data "template_file" "openapi_definition" {
     DYNAMODB_TABLE_NAME       = split("/", module.database.dynamodb_table_arn)[1]
     USER_POOL_ARN             = module.cognito.user_pool_arn
     API_GATEWAY_DYNAMODB_ROLE = aws_iam_role.api_gw_role.arn
+    VALID_COUNTRY_CODES       = local.valid_country_codes
     },
     local.all_lambda_invoke_arns
   )

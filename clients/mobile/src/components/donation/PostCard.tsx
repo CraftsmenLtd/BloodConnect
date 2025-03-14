@@ -302,7 +302,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         }
       </View>
       {Array.isArray(post.acceptedDonors) && post.acceptedDonors.length > 0 && showPostUpdatedOption && <>
-        <Text style={styles.bloodAmount}>Post Update</Text>
+        <Text style={styles.bloodAmount}>Request Update</Text>
         <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
           <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
           <View>

@@ -1,0 +1,27 @@
+#set($validCountryCodes = ${VALID_COUNTRY_CODES})
+#set($countryCode = $input.params().header.get('CloudFront-Viewer-Country'))
+#set($countryName = $input.params().header.get('CloudFront-Viewer-Country-Name'))
+
+#if($validCountryCodes.contains($countryCode))
+{
+  "success": true,
+  "message": "Available in your country",
+  "data":
+  {
+    "available": true,
+    "countryCode": "$countryCode",
+    "countryName": "$countryName"
+  }
+}
+#else
+{
+  "success": true,
+  "message": "Service not available in your country.",
+  "data":
+  {
+    "available": false,
+    "countryCode": "$countryCode",
+    "countryName": "$countryName"
+  }
+}
+#end
