@@ -16,27 +16,41 @@ import {
   BloodDonationAttributes,
   validationRules,
   UpdateBloodDonationAttributes,
-  BloodDonationResponseAttributes
+  BloodDonationResponseAttributes,
+  BloodDonationEventAttributes
 } from './Types'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
 import BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
+import { UserService } from '../userWorkflow/UserService'
+import { UserDetailsDTO } from 'commons/dto/UserDTO'
 
 export class BloodDonationService {
   async createBloodDonation(
-    donationAttributes: BloodDonationAttributes,
+    donationEventAttributes: BloodDonationEventAttributes,
     bloodDonationRepository: Repository<DonationDTO, DonationFields>,
-    model: BloodDonationModel
+    model: BloodDonationModel,
+    userService: UserService,
+    userRepository: Repository<UserDetailsDTO>
   ): Promise<BloodDonationResponseAttributes> {
+    const userProfile = await userService.getUser(
+      donationEventAttributes.seekerId,
+      userRepository
+    )
+    const bloodDonationAttributes: BloodDonationAttributes = {
+      ...donationEventAttributes,
+      seekerName: userProfile.name,
+      countryCode: userProfile.countryCode
+    }
     await this.checkDailyRequestThrottling(
-      donationAttributes.seekerId,
+      bloodDonationAttributes.seekerId,
       bloodDonationRepository,
       model
     )
 
     const validationResponse = validateInputWithRules(
       {
-        bloodQuantity: donationAttributes.bloodQuantity,
-        donationDateTime: donationAttributes.donationDateTime
+        bloodQuantity: bloodDonationAttributes.bloodQuantity,
+        donationDateTime: bloodDonationAttributes.donationDateTime
       },
       validationRules
     )
@@ -50,10 +64,10 @@ export class BloodDonationService {
     const response: DonationDTO = await bloodDonationRepository
       .create({
         requestPostId: generateUniqueID(),
-        ...donationAttributes,
+        ...bloodDonationAttributes,
         status: DonationStatus.PENDING,
-        geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
-        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString(),
+        geohash: generateGeohash(bloodDonationAttributes.latitude, bloodDonationAttributes.longitude),
+        donationDateTime: new Date(bloodDonationAttributes.donationDateTime).toISOString(),
         createdAt: new Date().toISOString()
       })
       .catch((error) => {

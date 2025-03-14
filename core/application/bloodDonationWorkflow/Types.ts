@@ -7,6 +7,22 @@ import {
   UrgencyType
 } from '../../../commons/dto/DonationDTO'
 
+export interface BloodDonationEventAttributes {
+  seekerId: string;
+  requestedBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyType;
+  city: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  donationDateTime: string;
+  contactNumber: string;
+  patientName?: string;
+  transportationInfo?: string;
+  shortDescription?: string;
+}
+
 export interface BloodDonationAttributes {
   seekerId: string;
   requestedBloodGroup: BloodGroup;
