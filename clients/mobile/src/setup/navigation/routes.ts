@@ -89,7 +89,7 @@ export const routes = [
   {
     name: SCREENS.DETAIL_POST,
     component: Detail,
-    options: { headerShown: true, headerTitle: 'My Post' },
+    options: { headerShown: true, headerTitle: 'My Requests' },
     protected: true
   },
   {

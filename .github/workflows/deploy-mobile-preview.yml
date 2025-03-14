@@ -1,4 +1,4 @@
-name: 👀 Mobile Preview Deployment
+name: 📱👀 Mobile Preview Deployment
 
 on:
   workflow_dispatch:

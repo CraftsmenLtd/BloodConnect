@@ -15,7 +15,7 @@ import { initializeState } from '../../../utility/stateUtils'
 import { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
-import { updateUserProfile } from '../../services/userProfileService'
+import { createUserProfile } from '../../services/userProfileService'
 import { LocationService } from '../../../LocationService/LocationService'
 import { formatErrorMessage, formatToTwoDecimalPlaces, formatPhoneNumber } from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
@@ -188,8 +188,9 @@ export const useAddPersonalInfo = (): any => {
         ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {}),
         availableForDonation: rest.availableForDonation === 'yes'
       }
-      const response = await updateUserProfile(finalData, fetchClient)
-      if (response.status === 200) {
+
+      const response = await createUserProfile(finalData, fetchClient)
+      if (response.status === 201) {
         await fetchUserProfile()
         navigation.navigate(SCREENS.BOTTOM_TABS)
       }

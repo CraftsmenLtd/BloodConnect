@@ -50,7 +50,7 @@ const MyActivityTab = () => {
               updatePost={updatePost}
               errorMessage={errorMessage}
               detailHandler={detailHandler}
-              emptyDataMessage="No posts found."
+              emptyDataMessage="No requests found."
               displayOptions={{
                 showStatus: true
               }}

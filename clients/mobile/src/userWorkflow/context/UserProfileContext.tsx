@@ -14,6 +14,7 @@ interface UserProfileContextData {
 
 const defaultProfile: UserProfile = {
   bloodGroup: '',
+  userId: '',
   name: '',
   lastDonationDate: '',
   city: '',
@@ -45,6 +46,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
   function formatUserProfile(profile: UserProfile): UserProfile {
     return {
       bloodGroup: profile.bloodGroup ?? '',
+      userId: profile.userId ?? '',
       name: profile.name ?? '',
       city: profile.city ?? '',
       lastDonationDate: profile.lastDonationDate ?? '',

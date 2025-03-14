@@ -29,6 +29,7 @@ interface AcceptRequestParams {
 
 interface useResponseDonationRequestReturnType {
   bloodRequest: any;
+  userId: string;
   isLoading: boolean;
   error: string | null;
   handleAcceptRequest: () => Promise<void>;
@@ -148,6 +149,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     isRequestAccepted,
     isLoading: isAcceptLoading || isIgnoreLoading,
     bloodRequest,
+    userId: userProfile.userId,
     error: acceptError ?? ignoreError,
     handleAcceptRequest,
     handleIgnore,

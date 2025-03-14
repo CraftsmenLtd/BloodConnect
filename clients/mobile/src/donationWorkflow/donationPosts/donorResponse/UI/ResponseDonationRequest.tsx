@@ -26,6 +26,7 @@ const ResponseDonationRequest = () => {
   const { myResponses } = useMyActivityContext()
   const {
     bloodRequest,
+    userId,
     error,
     isLoading,
     handleAcceptRequest,
@@ -162,26 +163,27 @@ const ResponseDonationRequest = () => {
       </ScrollView>
 
       {error !== null && <Text style={styles.error}>{error}</Text>}
-
-      <View style={styles.buttonContainer}>
-        {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
-        <Button
-          text="Ignore"
-          buttonStyle={styles.ignoreButton}
-          textStyle={{ color: theme.colors.black }}
-          onPress={() => {
-            void handleIgnore()
-          }} />}
-        <Button
-          text={isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 'Accept Request'}
-          loading={isLoading}
-          disabled={isRequestAccepted || isRequestAlreadyAccepted}
-          buttonStyle={styles.acceptButton}
-          textStyle={styles.acceptButtonText}
-          onPress={() => {
-            void handleAcceptRequest()
-          }} />
-      </View>
+      {userId !== bloodRequest.seekerId &&
+        <View style={styles.buttonContainer}>
+          {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
+            <Button
+              text="Ignore"
+              buttonStyle={styles.ignoreButton}
+              textStyle={{ color: theme.colors.black }}
+              onPress={() => {
+                void handleIgnore()
+              }} />}
+          <Button
+            text={isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 'Accept Request'}
+            loading={isLoading}
+            disabled={isRequestAccepted || isRequestAlreadyAccepted}
+            buttonStyle={styles.acceptButton}
+            textStyle={styles.acceptButtonText}
+            onPress={() => {
+              void handleAcceptRequest()
+            }} />
+        </View>
+      }
     </SafeAreaView>
   )
 }

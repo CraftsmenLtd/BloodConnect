@@ -16,6 +16,7 @@
             "$phone.S"#if($foreach.hasNext),#end
           #end
         ],
+        "userId": "$item.PK.S.split('#')[1]",
         "name": "$item.name.S",
         "bloodGroup": "$item.bloodGroup.S",
         "lastDonationDate": "$item.lastDonationDate.S",

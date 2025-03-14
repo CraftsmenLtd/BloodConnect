@@ -21,13 +21,13 @@ const DonationPosts = () => {
       <Header
         profileImageUri={COMMON_URLS.PROFILE_AVATAR}
         title="Blood needed?"
-        buttonLabel="Create Post"
+        buttonLabel="Create Request"
         onButtonPress={createPost}
       />
       <Posts
         errorMessage={errorMessage}
         loading={loading}
-        emptyDataMessage='No donation posts available. Pull to refresh.'
+        emptyDataMessage='No donation requests available. Pull to refresh.'
         donationPosts={donationPosts}
         detailHandler={viewDetailsHandler}
         displayOptions={{ showOptions: false, showPostUpdatedOption: false }}

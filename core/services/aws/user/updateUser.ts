@@ -17,9 +17,6 @@ async function updateUserLambda(
   const httpLogger = createHTTPLogger(event.userId, event.apiGwRequestId, event.cloudFrontRequestId)
   try {
     const userService = new UserService()
-    if (typeof event.availableForDonation === 'string') {
-      event.availableForDonation = (event.availableForDonation === 'true')
-    }
     const userProfile = await userService.getUser(
       event.userId,
       new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
@@ -29,7 +26,8 @@ async function updateUserLambda(
       countryCode: userProfile.countryCode,
       ...Object.fromEntries(
         Object.entries(event).filter(([_, value]) => value !== undefined && value !== '')
-      )
+      ),
+      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation
     }
 
     await userService.updateUser(

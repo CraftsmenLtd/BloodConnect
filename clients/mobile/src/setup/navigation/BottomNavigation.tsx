@@ -22,7 +22,7 @@ const BottomNavigation = () => {
       }}
     >
       <Tab.Screen name={SCREENS.POSTS} component={DonationPosts} options={{
-        headerTitle: 'Posts',
+        headerTitle: 'Requests',
         headerShown: true,
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="document-text-outline" color={color} size={size} />
