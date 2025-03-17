@@ -60,7 +60,7 @@ jobs:
     uses: ./.github/workflows/aws-terraform.yml
     with:
       docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
-      deployment_environment_group: ${{ vars.ENVIRONMENT_GITHUB_PRODUCTION }}
-      deployment_environment: ${{ vars.ENVIRONMENT_GITHUB_PRODUCTION }}
+      deployment_environment_group: ${{ vars.PRODUCTION_GITHUB_ENVIRONMENT_GROUP }}
+      deployment_environment: ${{ vars.PRODUCTION_GITHUB_ENVIRONMENT_GROUP }}
       aws_region: ap-south-1
       tf_action: apply
