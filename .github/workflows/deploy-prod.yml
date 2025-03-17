@@ -18,7 +18,7 @@ jobs:
     name: Check Tag Hash Against Master Branch Hash
     runs-on: ${{ vars.RUNNER_OS }}
     steps:
-      - name: Checkout Repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
       - name: Get Tag and Master Commit Hashes

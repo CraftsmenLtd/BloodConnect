@@ -92,7 +92,18 @@ jobs:
       - name: 📦 Install React Native Modules
         run: make run-command-install-native-packages
 
-      - name: 📤 Upload Environment Variables
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: 📥 Copy Google Service File from S3
+        run: |
+          aws s3 cp ${{ secrets.FIREBASE_GOOGLE_SERVICE_FILE_S3_URL }} clients/mobile/
+
+      - name: 📤 Upload Environment Variables to Expo
         run: cd clients/mobile && make upload-env
       
       - name: ⏳ Start Expo Build Job
