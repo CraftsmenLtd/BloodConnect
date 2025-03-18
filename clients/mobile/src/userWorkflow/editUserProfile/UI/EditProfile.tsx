@@ -16,9 +16,9 @@ import Warning from '../../../components/warning'
 import { WARNINGS } from '../../../setup/constant/consts'
 import { useEditProfile } from '../hooks/useEditProfile'
 
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
-const locationService = new LocationService(GOOGLE_MAP_API)
+const locationService = new LocationService(API_BASE_URL)
 
 const EditProfile = () => {
   const styles = createStyles(useTheme())
