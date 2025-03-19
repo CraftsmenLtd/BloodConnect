@@ -35,6 +35,10 @@ on:
         description: "Defines aws_cognito_domain For EXPO"
         required: true
         type: string
+      encoded_google_services_file:
+        description: "Defines B64 encoded google services file"
+        required: true
+        type: string
       country:
         description: "Defines country For EXPO"
         required: true
@@ -95,9 +99,8 @@ jobs:
           role-session-name: GitHubActions
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: 📥 Copy Google Service File from S3
-        run: |
-          aws s3 cp ${{ secrets.FIREBASE_GOOGLE_SERVICE_FILE_S3_URL }} clients/mobile/
+      - name: 📥 Decode Google Service File from Input
+        run: base64 --decode <<< ${{ inputs.encoded_google_services_file }} > clients/mobile/google-services.json
 
       - name: 📤 Upload Environment Variables to Expo
         run: cd clients/mobile && make upload-env

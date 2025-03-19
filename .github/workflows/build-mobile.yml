@@ -1,4 +1,4 @@
-name: 📱👀 Mobile Preview Deployment
+name: 📱👀 Mobile Deployment
 
 on:
   workflow_dispatch:
@@ -11,6 +11,14 @@ on:
         options:
           - 'dev'
           - 'stage'
+          - 'production'
+      build_selection:
+        description: 'Select Expo Build Type'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - 'preview'
           - 'production'
 
 concurrency:
@@ -31,11 +39,10 @@ jobs:
         id: set_deployment_env
         run: |
           if [[ "${{ github.event.inputs.environment_group_selection }}" == "${{ vars.DEV_GITHUB_ENVIRONMENT_GROUP }}" ]]; then
-            DEPLOYMENT_ENVIRONMENT=$(echo "${{ github.ref }}" | sed -E 's#refs/heads/(.*)#\1#' | awk '{print tolower($0)}')
+            echo "DEPLOYMENT_ENVIRONMENT=${GITHUB_REF#refs/heads/}" | tr '[:upper:]' '[:lower:]' >> "$GITHUB_OUTPUT"
           else
-            DEPLOYMENT_ENVIRONMENT="${{ github.event.inputs.environment_group_selection }}"
+            echo "DEPLOYMENT_ENVIRONMENT=${{ github.event.inputs.environment_group_selection }}" >> "$GITHUB_OUTPUT"
           fi
-          echo "DEPLOYMENT_ENVIRONMENT=$DEPLOYMENT_ENVIRONMENT" >> $GITHUB_OUTPUT
     outputs:
       deployment_environment: ${{ steps.set_deployment_env.outputs.deployment_environment }}
 
@@ -81,6 +88,13 @@ jobs:
       - name: 📦 Generate Mobile Env File
         run: make run-command-prepare-mobile-env
 
+      - name: 🔄 Fetch Google Service File From aws
+        run: make run-command-fetch-google-service-file
+
+      - name: Base64 Encode Google Service File and Save to Output
+        run: echo "ENCODED_GOOGLE_SERVICE_FILE=$(base64 -w 0 clients/mobile/google-services.json)" >> $GITHUB_OUTPUT
+        id: encode_google_service
+
       - name: 🗂️ Parse Mobile Env file Into Github Env
         run: |
           while IFS= read -r line; do
@@ -92,6 +106,7 @@ jobs:
       aws_user_pool_id: ${{ steps.set_mobile_env.outputs.AWS_USER_POOL_ID }}
       ap_base_url: ${{ steps.set_mobile_env.outputs.API_BASE_URL }}
       aws_cognito_domain: ${{ steps.set_mobile_env.outputs.AWS_COGNITO_DOMAIN }}
+      encoded_google_services_file: ${{ steps.encode_google_service.outputs.ENCODED_GOOGLE_SERVICE_FILE }}
 
   launch-mobile-build:
     name: 🚀 Launch Mobile Build
@@ -102,9 +117,10 @@ jobs:
       docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       deployment_environment_group: ${{ github.event.inputs.environment_group_selection }}
       deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
-      build_profile: preview
+      build_profile: ${{ github.event.inputs.environment_group_selection }}
       aws_user_pool_client_id: ${{ needs.fetch-env-file.outputs.aws_user_pool_client_id }}
       aws_user_pool_id: ${{ needs.fetch-env-file.outputs.aws_user_pool_id }}
       api_base_url: ${{ needs.fetch-env-file.outputs.ap_base_url }}
       aws_cognito_domain: ${{ needs.fetch-env-file.outputs.aws_cognito_domain }}
+      encoded_google_services_file: ${{ needs.fetch-env-file.outputs.encoded_google_services_file }}
       country: BD
