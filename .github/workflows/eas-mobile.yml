@@ -1,0 +1,109 @@
+name: EXPO Eas
+
+on:
+  workflow_call:
+    inputs:
+      docker_image:
+        description: "The runner image to be used"
+        required: true
+        type: string
+      deployment_environment:
+        description: "Defines the Deployment Environment for branch"
+        required: true
+        type: string
+      deployment_environment_group:
+        description: "Defines the Deployment Environment Group for secrets"
+        required: true
+        type: string
+      build_profile:
+        description: "Defines the Build Profile For EXPO"
+        required: true
+        type: string
+      aws_user_pool_client_id:
+        description: "Defines aws_user_pool_client_id For EXPO"
+        required: true
+        type: string
+      aws_user_pool_id:
+        description: "Defines aws_user_pool_id For EXPO"
+        required: true
+        type: string
+      api_base_url:
+        description: "Defines api_base_url For EXPO"
+        required: true
+        type: string
+      aws_cognito_domain:
+        description: "Defines aws_cognito_domain For EXPO"
+        required: true
+        type: string
+      encoded_google_services_file:
+        description: "Defines B64 encoded google services file"
+        required: true
+        type: string
+      country:
+        description: "Defines country For EXPO"
+        required: true
+        type: string
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+jobs:
+  expo-eas:
+    name: 📱 EXPO Eas
+    runs-on: ${{ vars.RUNNER_OS }}
+    environment: ${{ inputs.deployment_environment_group }}
+    env:
+      RUNNER_IMAGE_NAME: ${{ inputs.docker_image }}
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      BUILD_PROFILE: ${{ inputs.build_profile }}
+      EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+      APP_NAME: net.bloodconnect-${{ inputs.deployment_environment }}.app
+      APP_VERSION: 1.0.0
+      COUNTRY: ${{ inputs.country }}
+      AWS_USER_POOL_CLIENT_ID: ${{ inputs.aws_user_pool_client_id }}
+      AWS_USER_POOL_ID: ${{ inputs.aws_user_pool_id }}
+      API_BASE_URL: ${{ inputs.api_base_url }}
+      AWS_COGNITO_DOMAIN: ${{ inputs.aws_cognito_domain }}
+
+    steps:
+      - name: 📥 Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: 🔐 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: ⚙️ Setup Build Binaries
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+
+      - name: 📦 Install React Native Modules
+        run: make run-command-install-native-packages
+
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: 📥 Decode Google Service File from Input
+        run: base64 --decode <<< ${{ inputs.encoded_google_services_file }} > clients/mobile/google-services.json
+
+      - name: 📤 Upload Environment Variables to Expo
+        run: cd clients/mobile && make upload-env
+      
+      - name: ⏳ Start Expo Build Job
+        run: cd clients/mobile && make build-android
