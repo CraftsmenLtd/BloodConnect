@@ -182,3 +182,6 @@ prepare-mobile-env:
 	@echo AWS_USER_POOL_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_id) >> clients/mobile/.env
 	@echo API_BASE_URL=$(shell $(MAKE) -s tf-output-aws_api_domain_url) >> clients/mobile/.env
 	@echo AWS_COGNITO_DOMAIN=$(shell $(MAKE) -s tf-output-aws_cognito_custom_domain_name) >> clients/mobile/.env
+
+fetch-google-service:
+	aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/google-services.json clients/mobile/
