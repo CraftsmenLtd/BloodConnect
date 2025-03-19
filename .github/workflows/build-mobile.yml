@@ -117,7 +117,7 @@ jobs:
       docker_image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
       deployment_environment_group: ${{ github.event.inputs.environment_group_selection }}
       deployment_environment: ${{ needs.setup-environment.outputs.deployment_environment }}
-      build_profile: ${{ github.event.inputs.environment_group_selection }}
+      build_profile: ${{ github.event.inputs.build_selection }}
       aws_user_pool_client_id: ${{ needs.fetch-env-file.outputs.aws_user_pool_client_id }}
       aws_user_pool_id: ${{ needs.fetch-env-file.outputs.aws_user_pool_id }}
       api_base_url: ${{ needs.fetch-env-file.outputs.ap_base_url }}
