@@ -16,7 +16,7 @@ import { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
 import { EditProfileData } from '../../userProfile/UI/Profile'
 import Constants from 'expo-constants'
 import { formatLocations } from '../../../utility/formatting'
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type ProfileFields = keyof Omit<ProfileData, 'location'>
 
@@ -125,7 +125,7 @@ export const useEditProfile = (): any => {
         weight: parseFloat(profileData.weight),
         preferredDonationLocations: [
           ...updatedPreferredDonationLocations,
-          ...await formatLocations(filteredLocations, rest.city, GOOGLE_MAP_API)
+          ...await formatLocations(filteredLocations, rest.city, API_BASE_URL)
         ]
       }
 
