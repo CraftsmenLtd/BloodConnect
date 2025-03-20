@@ -22,6 +22,8 @@ const DonationPosts = () => {
     viewDetailsHandler,
     refreshing,
     handleRefresh,
+    bloodGroup,
+    isFilteredByBloodGroup,
     filterWithBloodGroup
   } = useDonationPosts()
 
@@ -32,7 +34,10 @@ const DonationPosts = () => {
         title="Blood needed?"
         buttonLabel="Create Request"
         onButtonPress={createPost}
+        handleRefresh={handleRefresh}
         onFilterButtonPress={filterWithBloodGroup}
+        bloodGroup={bloodGroup}
+        isFilteredByBloodGroup={isFilteredByBloodGroup}
       />
       <Posts
         errorMessage={errorMessage}
