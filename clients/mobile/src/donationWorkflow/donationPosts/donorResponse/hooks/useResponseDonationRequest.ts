@@ -19,6 +19,7 @@ import { updateMyResponses } from '../../../donationService'
 import { useUserProfile } from '../../../../userWorkflow/context/UserProfileContext'
 import { ToastAndroid } from 'react-native'
 import useFetchData from '../../../../setup/clients/useFetchData'
+import { UserProfile } from '../../../../userWorkflow/services/userProfileService'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -29,7 +30,7 @@ interface AcceptRequestParams {
 
 interface useResponseDonationRequestReturnType {
   bloodRequest: any;
-  userId: string;
+  userProfile: UserProfile;
   isLoading: boolean;
   error: string | null;
   handleAcceptRequest: () => Promise<void>;
@@ -149,7 +150,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     isRequestAccepted,
     isLoading: isAcceptLoading || isIgnoreLoading,
     bloodRequest,
-    userId: userProfile.userId,
+    userProfile,
     error: acceptError ?? ignoreError,
     handleAcceptRequest,
     handleIgnore,

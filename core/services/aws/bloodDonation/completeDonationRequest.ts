@@ -104,7 +104,8 @@ async function completeDonationRequest(
       )
 
       const userAttributes = {
-        lastDonationDate: new Date().toISOString()
+        lastDonationDate: new Date().toISOString(),
+        availableForDonation: false
       }
       await userService.UpdateUserAttributes(
         donorId,
