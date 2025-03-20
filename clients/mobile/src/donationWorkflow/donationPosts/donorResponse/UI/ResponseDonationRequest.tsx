@@ -26,7 +26,7 @@ const ResponseDonationRequest = () => {
   const { myResponses } = useMyActivityContext()
   const {
     bloodRequest,
-    userId,
+    userProfile,
     error,
     isLoading,
     handleAcceptRequest,
@@ -163,7 +163,7 @@ const ResponseDonationRequest = () => {
       </ScrollView>
 
       {error !== null && <Text style={styles.error}>{error}</Text>}
-      {userId !== bloodRequest.seekerId &&
+      {userProfile.userId !== bloodRequest.seekerId && userProfile.bloodGroup === bloodRequest.requestedBloodGroup &&
         <View style={styles.buttonContainer}>
           {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
             <Button
