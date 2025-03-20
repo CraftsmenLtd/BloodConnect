@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ profileImageUri, title, buttonLabel, on
           <Text style={styles.buttonText}>{'All'}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.filterButton, isFilteredByBloodGroup ? styles.filterSelected : styles.filterNotSelected]} onPress={onFilterButtonPress}>
-          <Text style={styles.buttonText}>{'Filter by '+ bloodGroup}</Text>
+          <Text style={styles.buttonText}>{'Filter by ' + bloodGroup}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -92,7 +92,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 25,
-    marginRight:10
+    marginRight: 10
   },
   filterSelected: {
     backgroundColor: theme.colors.primary
