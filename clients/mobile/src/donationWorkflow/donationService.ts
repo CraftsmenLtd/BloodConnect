@@ -37,7 +37,7 @@ export const fetchDonationPublicPosts = async(city: string, httpClient: HttpClie
   try {
     const response = await httpClient.get<DonationResponse>(
       `/donations/posts/${city}`,
-      { bloodGroup: (bloodGroup !== '' ? bloodGroup: "") }
+      { bloodGroup: (bloodGroup !== '' ? bloodGroup : '') }
     )
     return {
       data: response.data,

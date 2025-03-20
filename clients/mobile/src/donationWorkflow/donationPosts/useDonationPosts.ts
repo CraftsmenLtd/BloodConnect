@@ -44,7 +44,7 @@ export const useDonationPosts = (): any => {
     }
   }
 
-  const refreshPosts = async (): Promise<void> => {
+  const refreshPosts = async(): Promise<void> => {
     setIsFilteredByBloodGroup(false)
     setRefreshing(true)
     await fetchPosts()
@@ -55,7 +55,7 @@ export const useDonationPosts = (): any => {
     navigation.navigate(SCREENS.DONATION, { data: null, isUpdating: false })
   }
 
-  const filterWithBloodGroup = async (): Promise<void> => {
+  const filterWithBloodGroup = async(): Promise<void> => {
     setLoading(true)
     setIsFilteredByBloodGroup(true)
     try {
