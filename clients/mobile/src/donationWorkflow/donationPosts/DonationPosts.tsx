@@ -14,7 +14,16 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
 const DonationPosts = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
-  const { errorMessage, createPost, donationPosts, loading, viewDetailsHandler, refreshing, handleRefresh } = useDonationPosts()
+  const {
+    errorMessage,
+    createPost,
+    donationPosts,
+    loading,
+    viewDetailsHandler,
+    refreshing,
+    handleRefresh,
+    filterWithBloodGroup
+  } = useDonationPosts()
 
   return (
     <View style={styles.container}>
@@ -23,6 +32,7 @@ const DonationPosts = () => {
         title="Blood needed?"
         buttonLabel="Create Request"
         onButtonPress={createPost}
+        onFilterButtonPress={filterWithBloodGroup}
       />
       <Posts
         errorMessage={errorMessage}

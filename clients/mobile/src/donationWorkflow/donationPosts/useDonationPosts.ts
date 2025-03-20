@@ -23,8 +23,8 @@ export const useDonationPosts = (): any => {
 
   useEffect(() => { void fetchPosts() }, [])
 
-  const fetchDonations = async(): Promise<void> => {
-    const response = await fetchDonationPublicPosts(userProfile.city, fetchClient)
+  const fetchDonations = async(filterByBloodGroup: string = ''): Promise<void> => {
+    const response = await fetchDonationPublicPosts(userProfile.city, fetchClient, filterByBloodGroup)
     if (response.data !== undefined && response.data.length > 0) {
       const formattedDonations = formatDonations(response.data)
       setDonationPosts(formattedDonations)
@@ -53,6 +53,18 @@ export const useDonationPosts = (): any => {
     navigation.navigate(SCREENS.DONATION, { data: null, isUpdating: false })
   }
 
+  const filterWithBloodGroup = async(bloodGroup: string = userProfile.bloodGroup): Promise<void> => {
+    setLoading(true)
+    try {
+      await fetchDonations(bloodGroup)
+    } catch (error) {
+      setErrorMessage(extractErrorMessage(error))
+    } finally {
+      setRefreshing(false)
+      setLoading(false)
+    }
+  }
+
   const viewDetailsHandler = (donationData: DonationData): void => {
     navigation.navigate(SCREENS.BLOOD_REQUEST_PREVIEW, { notificationData: donationData })
   }
@@ -64,6 +76,7 @@ export const useDonationPosts = (): any => {
     loading,
     viewDetailsHandler,
     handleRefresh: refreshPosts,
-    refreshing
+    refreshing,
+    filterWithBloodGroup
   }
 }

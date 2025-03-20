@@ -1,3 +1,4 @@
+import { MaterialIcons } from '@expo/vector-icons'
 import React from 'react'
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
 import { Theme } from '../../setup/theme'
@@ -8,10 +9,12 @@ type HeaderProps = {
   title: string;
   buttonLabel: string;
   onButtonPress: () => void;
+  onFilterButtonPress: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ profileImageUri, title, buttonLabel, onButtonPress }) => {
-  const styles = createStyles(useTheme())
+const Header: React.FC<HeaderProps> = ({ profileImageUri, title, buttonLabel, onButtonPress, onFilterButtonPress }) => {
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   return (
     <View style={styles.header}>
@@ -21,6 +24,13 @@ const Header: React.FC<HeaderProps> = ({ profileImageUri, title, buttonLabel, on
       </View>
       <TouchableOpacity style={styles.button} onPress={onButtonPress}>
         <Text style={styles.buttonText}>{buttonLabel}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={onFilterButtonPress}>
+        <MaterialIcons
+          name={'filter'}
+          size={15}
+          color={theme.colors.lightGrey}
+        />
       </TouchableOpacity>
     </View>
   )
