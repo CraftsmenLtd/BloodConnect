@@ -1,4 +1,5 @@
 #set($inputRoot = $input.path('$'))
+#set($isFirstIter = true)
 {
   "success": true,
   "data": [
@@ -12,6 +13,8 @@
         ) 
         || $input.params('bloodGroup') == ""
       ))
+        #if(!$isFirstIter),#end
+        #set($isFirstIter = false)
         {
           "seekerId": "$item.PK.S.split('#')[1]",
           "requestPostId": "$item.SK.S.split('#')[2]",
@@ -31,7 +34,6 @@
           "longitude": $item.longitude.N,
           "latitude": $item.latitude.N
         }
-        #if($foreach.hasNext),#end
       #end
     #end
   ],

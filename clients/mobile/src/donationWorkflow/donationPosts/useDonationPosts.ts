@@ -20,12 +20,13 @@ export const useDonationPosts = (): any => {
   const [loading, setLoading] = useState<boolean>(true)
   const [refreshing, setRefreshing] = useState(false)
   const { userProfile } = useUserProfile()
+  const [isFilteredByBloodGroup, setIsFilteredByBloodGroup] = useState(false)
 
   useEffect(() => { void fetchPosts() }, [])
 
-  const fetchDonations = async(): Promise<void> => {
-    const response = await fetchDonationPublicPosts(userProfile.city, fetchClient)
-    if (response.data !== undefined && response.data.length > 0) {
+  const fetchDonations = async(bloodGroup: string = ''): Promise<void> => {
+    const response = await fetchDonationPublicPosts(userProfile.city, fetchClient, bloodGroup)
+    if (response.data !== undefined) {
       const formattedDonations = formatDonations(response.data)
       setDonationPosts(formattedDonations)
     }
@@ -44,6 +45,7 @@ export const useDonationPosts = (): any => {
   }
 
   const refreshPosts = async(): Promise<void> => {
+    setIsFilteredByBloodGroup(false)
     setRefreshing(true)
     await fetchPosts()
     setRefreshing(false)
@@ -51,6 +53,19 @@ export const useDonationPosts = (): any => {
 
   const createPost = (): void => {
     navigation.navigate(SCREENS.DONATION, { data: null, isUpdating: false })
+  }
+
+  const filterWithBloodGroup = async(): Promise<void> => {
+    setLoading(true)
+    setIsFilteredByBloodGroup(true)
+    try {
+      await fetchDonations(userProfile.bloodGroup)
+    } catch (error) {
+      setErrorMessage(extractErrorMessage(error))
+    } finally {
+      setRefreshing(false)
+      setLoading(false)
+    }
   }
 
   const viewDetailsHandler = (donationData: DonationData): void => {
@@ -64,6 +79,9 @@ export const useDonationPosts = (): any => {
     loading,
     viewDetailsHandler,
     handleRefresh: refreshPosts,
-    refreshing
+    refreshing,
+    bloodGroup: userProfile.bloodGroup,
+    isFilteredByBloodGroup,
+    filterWithBloodGroup
   }
 }
