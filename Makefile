@@ -157,11 +157,11 @@ start-mobile:
 
 # Deploy Dev Branch from Local Machine
 deploy-dev-branch:
-	$(MAKE) -s package-all
-	$(MAKE) -s clean-terraform-files
-	$(MAKE) -s tf-init
-	$(MAKE) -s tf-plan-apply
-	$(MAKE) -s tf-apply
+	$(MAKE) build-node-all
+	$(MAKE) clean-terraform-files
+	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) tf-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
 
 destroy-dev-branch:
 	$(MAKE) -s clean-terraform-files
