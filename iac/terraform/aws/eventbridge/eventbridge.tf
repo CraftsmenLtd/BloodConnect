@@ -138,7 +138,6 @@ resource "aws_pipes_pipe" "donation_request_monitoring_pipe" {
     input_template = <<EOF
 {
   "requestedBloodGroup": "<$.dynamodb.NewImage.requestedBloodGroup.S>",
-  "city": "<$.dynamodb.NewImage.city.S>",
   "geohash": "<$.dynamodb.NewImage.geohash.S>"
 }
 EOF
