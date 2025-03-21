@@ -160,3 +160,86 @@ resource "aws_cognito_user_group" "organization_group" {
   name         = "organization"
   description  = "Organization user group"
 }
+
+resource "aws_cognito_user_group" "maintainers_user_group" {
+  user_pool_id = aws_cognito_user_pool.user_pool.id
+  name         = "maintainer"
+  description  = "Organization user group"
+}
+
+resource "aws_cognito_user_pool_client" "monitoring_pool_client" {
+  name                                 = "${var.environment}-monitoring-pool-client"
+  user_pool_id                         = aws_cognito_user_pool.user_pool.id
+  generate_secret                      = false
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_scopes                 = ["openid", "email", "profile"]
+  allowed_oauth_flows                  = ["code"]
+  explicit_auth_flows                  = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
+  supported_identity_providers         = ["COGNITO", "Google", "Facebook"]
+  callback_urls                        = ["https://${var.bloodconnect_domain}/${var.monitoring_site_path}/index.html"]
+  logout_urls                          = ["https://${var.bloodconnect_domain}/${var.monitoring_site_path}/index.html"]
+
+  depends_on = [
+    aws_cognito_identity_provider.google,
+    aws_cognito_identity_provider.facebook
+  ]
+}
+
+resource "aws_cognito_identity_pool" "maintainers" {
+  identity_pool_name               = "${var.environment}-maintainers-id-pool"
+  allow_unauthenticated_identities = false
+  allow_classic_flow               = false
+
+  cognito_identity_providers {
+    client_id               = aws_cognito_user_pool_client.monitoring_pool_client.id
+    provider_name           = aws_cognito_user_pool.user_pool.endpoint
+    server_side_token_check = true
+  }
+}
+
+resource "aws_iam_role" "maintainers_role" {
+  name = "${var.environment}-maintainers-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = "cognito-identity.amazonaws.com"
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "cognito-identity.amazonaws.com:aud" = aws_cognito_identity_pool.maintainers.id
+          }
+
+          "ForAnyValue:StringLike" = {
+            "cognito-identity.amazonaws.com:amr" : "authenticated"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_cognito_identity_pool_roles_attachment" "identity_pool_roles" {
+  identity_pool_id = aws_cognito_identity_pool.maintainers.id
+
+  role_mapping {
+    identity_provider         = "cognito-idp.${data.aws_region.current.name}.amazonaws.com/${aws_cognito_user_pool.user_pool.id}:${aws_cognito_user_pool_client.monitoring_pool_client.id}"
+    ambiguous_role_resolution = "Deny"
+    type                      = "Rules"
+
+    mapping_rule {
+      claim      = "cognito:groups"
+      match_type = "Contains"
+      role_arn   = aws_iam_role.maintainers_role.arn
+      value      = aws_cognito_user_group.maintainers_user_group.name
+    }
+  }
+
+  roles = {
+    authenticated = aws_iam_role.maintainers_role.arn
+  }
+}

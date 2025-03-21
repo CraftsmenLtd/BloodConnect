@@ -11,7 +11,7 @@
     "build-all": "npm run clear-build-dir && npm run build --name=** --out_dir=.build",
     "build-service": "npm run clear-build-dir && npm run build --out_dir=.build/${npm_config_name}/lambdas",
     "recreate-zip-dir": "rm -rf .build/zips && mkdir .build/zips",
-    "package": "lambdaJs=$(npm run -s find-lambdas --root_path=.build/${npm_config_name} --filetype=js) && npm run recreate-zip-dir && for file in $lambdaJs; do zip -j \"${file%.*}.zip\" \"$file\"; mv \"${file%.*}.zip\" .build/zips/; done",
+    "package": "lambdaJs=$(npm run -s find-lambdas --root_path=.build/${npm_config_name} --filetype=js) && npm run recreate-zip-dir && for file in $lambdaJs; do zip -0 -D -X -j \"${file%.*}.zip\" \"$file\"; mv \"${file%.*}.zip\" .build/zips/; done",
     "package-all": "npm run build-all && npm run package --name=**",
     "package-service": "npm run build-service && npm run package"
   },

@@ -12,7 +12,6 @@ resource "aws_cloudfront_distribution" "cdn" {
   price_class         = "PriceClass_100"
   wait_for_deployment = var.environment == module.environments.PRODUCTION ? true : false
 
-  # S3 Primary Origin (Static Site)
   origin {
     domain_name = var.static_site_bucket.bucket_regional_domain_name
     origin_id   = var.cloudfront_distribution_origin_id
@@ -22,6 +21,15 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
+  # S3 Primary Origin (Monitoring Site)
+  origin {
+    domain_name = var.monitoring_site_bucket.bucket_regional_domain_name
+    origin_id   = var.monitoring_site_origin_id
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.s3_monitoring_bucket_oai.cloudfront_access_identity_path
+    }
+  }
   # S3 Failover Origin
   origin {
     domain_name = var.failover_bucket.bucket_regional_domain_name
@@ -97,6 +105,25 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
+  ordered_cache_behavior {
+    path_pattern           = "/${var.monitoring_site_path}/*"
+    allowed_methods        = ["GET", "OPTIONS", "HEAD"]
+    cached_methods         = ["GET", "OPTIONS", "HEAD"]
+    target_origin_id       = var.monitoring_site_origin_id
+    viewer_protocol_policy = "redirect-to-https"
+
+    forwarded_values {
+      query_string = true
+      cookies {
+        forward = "all"
+      }
+      headers = [
+        "Authorization"
+      ]
+    }
+  }
+
+
   viewer_certificate {
     acm_certificate_arn      = var.acm_certificate_arn
     ssl_support_method       = "sni-only"
@@ -112,4 +139,8 @@ resource "aws_cloudfront_distribution" "cdn" {
 
 resource "aws_cloudfront_origin_access_identity" "s3_static_bucket_oai" {
   comment = "OAI for S3 Static Site"
+}
+
+resource "aws_cloudfront_origin_access_identity" "s3_monitoring_bucket_oai" {
+  comment = "OAI for S3 Monitoring Site"
 }

@@ -17,6 +17,26 @@ variable "static_site_bucket" {
   })
 }
 
+variable "monitoring_site_bucket" {
+  description = "S3 bucket for the monitoring site hosting"
+  type = object({
+    id                          = string
+    arn                         = string
+    bucket_regional_domain_name = string
+    website_endpoint            = string
+  })
+}
+
+variable "monitoring_site_path" {
+  type        = string
+  description = "path to server monitoring site on"
+}
+
+variable "monitoring_site_origin_id" {
+  type    = string
+  default = "MonitoringSiteOrigin"
+}
+
 variable "failover_bucket" {
   description = "S3 bucket for the failover in CloudFront"
   type = object({
