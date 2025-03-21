@@ -13,7 +13,8 @@
     ".devcontainer/.env",
     "--name",
     "bloodconnect-dev",
-    "--rm"
+    "--rm",
+    "--network=host"
   ],
   "customizations": {
     "vscode": {

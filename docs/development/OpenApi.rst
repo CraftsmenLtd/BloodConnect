@@ -10,18 +10,56 @@ OpenAPI Specs
 
    Check out the open api specs <a href="../openapi/api.html">HERE</a>. <br><br><br>
 
-API Client
-~~~~~~~~~~
-`Bruno <https://www.usebruno.com>`_, A `opensource <https://github.com/usebruno/bruno>`_ api client is selected to use for testing APIs. Bruno has desktop clients for Windows, Linux and macOS.
-Bruno uses `Bru Markup language <https://docs.usebruno.com/bru-lang/overview>`_ which is very simple and json-like texts. But mostly it is not necessary to add them manually. Here is the guideline how it will be used:
+API Client(Swagger UI)
+~~~~~~~~~~~~~~~~~~~~~~
+Swagger UI has been integrated to automate API testing for branch or environment deployments. This allows testing the API endpoints with authentication.
 
-* `Download <https://www.usebruno.com/downloads>`_ and install bruno client on your local machine. Note that there are also portable versions available.
-* On your development branch, add proper OpenAPI specs in `<Project Root>/openapi` directory.
-* Open `<Project Root>/openapi/bruno` collection in your bruno desktop client.
-* Add your endpoint(s) from bruno client. Please use proper environment variables in url, header, body and query param.
-* Add proper `scripting <https://docs.usebruno.com/scripting/getting-started>`_ with your request like save resource id to environment variable.
-* Use bruno's `secret <https://docs.usebruno.com/secrets-management/overview>`_ for sensitive information like password and tokens.
-* Test your endpoint with localstack and/or test server.
-* Save request to bruno's collection.
-* Now you can see some updated/created files in `<Project Root>/openapi/bruno` directory.
-* Git commit them and include them to your PR.
+Running Swagger UI
+==================
+To start Swagger UI with authentication, use the following command:
+
+.. code-block:: sh
+
+   make swagger-ui email=<email> password=<password> branch=<branch_name>
+
+Parameters
+----------
+- ``branch`` - The deployed branch name or ``stage`` or ``production``.
+- ``email`` - The email address for authentication.
+- ``password`` - The password for authentication.
+
+How It Works
+============
+1. The script creates a user in the Cognito User Pool using the provided email and password.
+2. It retrieves the **IdToken** after successful authentication.
+3. Swagger UI is configured with the necessary authentication token and API url.
+4. Swagger UI launches, allowing interaction with the API endpoints.
+
+Accessing Swagger UI
+====================
+Once Swagger UI is running, open a web browser and go to:
+
+.. code-block:: text
+
+   http://localhost:8080/
+
+From there, you can use the Swagger UI interface to test the API endpoints.
+
+Example Usage
+=============
+To test APIs on a deployed branch ``feature-xyz``, run:
+
+.. code-block:: sh
+
+   make swagger-ui email=user@example.com password=SecurePass123 branch=feature-xyz
+
+For the stage environment:
+
+.. code-block:: sh
+
+   make swagger-ui email=admin@example.com password=ProdPass123 branch=stage
+
+Notes
+=====
+- The authentication token is valid for a limited period; rerun the command if it expires.
+- API Gateway updates must be correctly deployed for the specified branch or environment.
