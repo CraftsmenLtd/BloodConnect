@@ -57,7 +57,6 @@ resource "null_resource" "vite_build" {
   provisioner "local-exec" {
     command     = "npm run build"
     working_dir = local.client_path
-    when        = create
 
     environment = {
       VITE_AWS_S3_BUCKET           = aws_s3_bucket.monitoring_site.id
