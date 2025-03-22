@@ -21,7 +21,9 @@ Amplify.configure({
 function App() {
 
   return (
-    <Authenticator socialProviders={['google']}>
+    <Authenticator
+      socialProviders={['google']}
+      hideSignUp>
       <Router>
         <Routes>
           <Route path="/" element={<GeohashMap />} />

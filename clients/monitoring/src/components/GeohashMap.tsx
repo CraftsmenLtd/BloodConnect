@@ -3,9 +3,10 @@ import { useSearchParams } from "react-router-dom"
 import mapboxgl, { LngLat } from "mapbox-gl"
 import geoHash from "ngeohash"
 import "mapbox-gl/dist/mapbox-gl.css"
-import { fetchAuthSession } from "aws-amplify/auth"
 import { useAuthenticator } from "@aws-amplify/ui-react"
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
+import { useAws } from "../hooks/useAws"
+import { bloodTypeColors, bloodTypes } from "../constants/constants"
 
 const GeoHashMap = () => {
   const mapContainerRef = useRef<HTMLDivElement>()
@@ -14,6 +15,7 @@ const GeoHashMap = () => {
   const [searchParams] = useSearchParams()
   const refreshIntervalSeconds = searchParams.get("refresh") || 60
   const [geoHashCount] = useState(0)
+  const awsCredentials = useAws()
 
   const { signOut } = useAuthenticator((context) => [context.user])
   const centerMarker = new mapboxgl.Marker({ color: "orange" })
@@ -21,24 +23,36 @@ const GeoHashMap = () => {
 
   const drawGeoHashPopUps = useCallback(
     (geoHashes: { color: string; geoHashes: string[]; id: string }[]) => {
-      const geoHashMap = new Map<string, { color: string; count: number; lat: number; lng: number }>()
+      const geoHashMap = new Map<string, {
+        color: string;
+        count: number;
+        lat: number;
+        lng: number,
+        bloodType: typeof bloodTypes[number]
+      }>()
 
-      geoHashes.forEach(({ geoHashes, color }) => {
+      geoHashes.forEach(({ geoHashes, color }, index) => {
         geoHashes.forEach((hash) => {
           const { latitude, longitude } = geoHash.decode(hash)
           const key = `${hash}-${color}`
 
           if (!geoHashMap.has(key)) {
-            geoHashMap.set(key, { color, count: 0, lat: latitude, lng: longitude })
+            geoHashMap.set(key, {
+              color,
+              count: 0,
+              lat: latitude,
+              lng: longitude,
+              bloodType: bloodTypes[index]
+            })
           }
 
           geoHashMap.get(key)!.count += 1
         })
       })
 
-      geoHashMap.forEach(({ color, count, lat, lng }) => {
+      geoHashMap.forEach(({ color, count, lat, lng, bloodType }) => {
         new mapboxgl.Popup({ closeOnClick: false, closeButton: false })
-          .setHTML(`<strong style="color: ${color}">${count}</strong>`)
+          .setHTML(`<strong style="color: ${color}">${bloodType}: ${count}</strong>`)
           .setLngLat([lng, lat])
           .addTo(mapRef.current!)
       })
@@ -46,10 +60,8 @@ const GeoHashMap = () => {
     []
   )
 
-
   const getDataFromAws = async (prefix: string) => {
-    const session = await fetchAuthSession()
-    const { accessKeyId, secretAccessKey, sessionToken } = session.credentials!
+    const { accessKeyId, secretAccessKey, sessionToken } = awsCredentials!
     const s3Client = new S3Client({
       region: import.meta.env.VITE_AWS_S3_REGION,
       credentials: {
@@ -58,10 +70,6 @@ const GeoHashMap = () => {
         sessionToken,
       },
     })
-
-    const bloodTypes = [
-      "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"
-    ]
 
     return Promise.all(bloodTypes.map(async (type) => s3Client.send(new GetObjectCommand({
       Bucket: import.meta.env.VITE_AWS_S3_BUCKET,
@@ -74,16 +82,7 @@ const GeoHashMap = () => {
   const refreshMap = useCallback(async () => {
     if (!mapRef.current) return
     document.querySelectorAll('.mapboxgl-popup').forEach((popup) => popup.remove())
-    const bloodTypeColors = [
-      "#E57373",
-      "#FF8A65",
-      "#81C784",
-      "#4CAF50",
-      "#64B5F6",
-      "#2196F3",
-      "#FFEB3B",
-      "#FF9800"
-    ]
+
     const center = mapRef.current.getCenter()
     centerMarker.setLngLat(center).addTo(mapRef.current)
     getDataFromAws(getPrefix(center)).then((data) => {
@@ -122,14 +121,22 @@ const GeoHashMap = () => {
     })
     mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right')
 
-    mapRef.current.on("move", () => {
+    const setCenterMarker = () => {
       centerMarker.setLngLat(mapRef.current!.getCenter()!).addTo(mapRef.current!)
-    })
+    }
+
+    mapRef.current.on("move", setCenterMarker)
     mapRef.current.on("moveend", moveHandler)
     mapRef.current.on("load", refreshMap)
+
+    return () => {
+      mapRef.current?.off("move", setCenterMarker)
+      mapRef.current?.off("moveend", moveHandler)
+      mapRef.current?.off("load", refreshMap)
+      mapRef.current?.remove()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
 
   useEffect(() => {
     if (refreshIntervalSeconds) {
@@ -145,7 +152,6 @@ const GeoHashMap = () => {
         }
       }
     }
-
   }, [refreshIntervalSeconds, refreshMap])
 
   return (

@@ -159,9 +159,9 @@ start-mobile:
 deploy-dev-branch:
 	$(MAKE) build-node-all
 	$(MAKE) clean-terraform-files
-	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) tf-init
+	$(MAKE) tf-plan-apply
+	$(MAKE) tf-apply
 
 destroy-dev-branch:
 	$(MAKE) -s clean-terraform-files
@@ -174,7 +174,7 @@ prep-dev: install-node-packages build-node-all package-all
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
-run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
+run-dev: run-command-build-node-all run-command-tf-init \
          run-command-tf-plan-apply run-command-tf-apply
 
 prepare-mobile-env:
