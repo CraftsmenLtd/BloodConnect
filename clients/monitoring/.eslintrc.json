@@ -13,9 +13,7 @@
     "postcss.config.js"
   ],
   "plugins": [
-    "react",
-    "@typescript-eslint",
-    "prettier"
+    "react"
   ],
   "rules": {
     "react/function-component-definition": "off",

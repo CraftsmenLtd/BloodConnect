@@ -34,16 +34,13 @@ resource "aws_s3_bucket_public_access_block" "monitoring_site_public_access_bloc
 
 locals {
   client_path = "${path.module}/../../../../clients/monitoring"
+  dist_path   = "${local.client_path}/dist"
 
   content_type_map = {
     "js"   = "application/javascript"
     "html" = "text/html"
     "css"  = "text/css"
   }
-
-}
-locals {
-  dist_path = "${local.client_path}/dist"
 }
 
 resource "null_resource" "vite_build" {
