@@ -41,3 +41,13 @@ variable "cognito_app_client_id" {
   type        = string
   description = "id for app authentication"
 }
+
+variable "cognito_identity_pool_id" {
+  type        = string
+  description = "id for app authentication"
+}
+
+variable "maintainers_role" {
+  type        = string
+  description = "role name to attach s3 access policies for maintainers"
+}

@@ -11,10 +11,14 @@ locals {
         BUCKET_NAME               = aws_s3_bucket.monitoring_site.id
         MAX_GEOHASH_STORAGE       = var.max_geohash_storage
         MAX_GEOHASH_PREFIX_LENGTH = var.max_geohash_prefix_length
-        BUCKET_PATH_PREFIX        = "${var.site_path}/data"
+        BUCKET_PATH_PREFIX        = local.monitor_donation_request_s3_path_prefix
       }
     }
   }
+}
+
+locals {
+  monitor_donation_request_s3_path_prefix = "data"
 }
 
 module "lambda" {

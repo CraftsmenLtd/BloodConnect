@@ -9,26 +9,24 @@ Amplify.configure({
     Cognito: {
       userPoolId: import.meta.env.VITE_AWS_USER_POOL_ID,
       userPoolClientId: import.meta.env.VITE_AWS_USER_POOL_CLIENT_ID,
+      identityPoolId: import.meta.env.VITE_AWS_IDENTITY_POOL_ID,
       groups: [{ maintainers: { precedence: 1 } }],
       loginWith: {
         username: true,
-        email: true,
       },
     }
-  },
+  }
 })
 
 function App() {
 
   return (
     <Authenticator socialProviders={['google']}>
-      {({ signOut }) => (
-        <Router>
-          <Routes>
-            <Route path="/" element={<GeohashMap signOut={signOut} />} />
-          </Routes>
-        </Router>
-      )}
+      <Router>
+        <Routes>
+          <Route path="/" element={<GeohashMap />} />
+        </Routes>
+      </Router>
     </Authenticator>
   )
 }

@@ -22,7 +22,7 @@ locals {
         ]
         resources = [
           aws_s3_bucket.monitoring_site.arn,
-          "${aws_s3_bucket.monitoring_site.arn}/${var.site_path}/data/*"
+          "${aws_s3_bucket.monitoring_site.arn}/${local.monitor_donation_request_s3_path_prefix}/*"
         ]
       }
     ]
