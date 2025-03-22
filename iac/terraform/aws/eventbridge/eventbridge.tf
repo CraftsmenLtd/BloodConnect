@@ -111,7 +111,7 @@ resource "aws_pipes_pipe" "donation_request_monitoring_pipe" {
   name     = "${var.environment}-donation-request-monitoring-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
   source   = var.dynamodb_table_stream_arn
-  target   = module.lambda.lambda_arn
+  target   = var.monitor_donation_request_lambda_arn
 
   source_parameters {
     dynamodb_stream_parameters {

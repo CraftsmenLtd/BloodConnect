@@ -21,6 +21,7 @@ const maxGeoHashPrefixLength = Number(process.env.MAX_GEOHASH_PREFIX_LENGTH)
 const bucketName = process.env.BUCKET_NAME
 const maxEstimatedGeohashSizeInBytes = maxGeoHashLength + 1
 const maxGeohashToStoreInFile = Number(process.env.MAX_GEOHASH_STORAGE)
+const bucketPathPrefix = process.env.BUCKET_PATH_PREFIX as string
 
 const countGeohashesInFile = (fileSize: number): number => fileSize / maxEstimatedGeohashSizeInBytes
 const deleteExpiredFile = async(fileName: string): Promise<void> => { await client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: fileName })) }
@@ -125,7 +126,7 @@ async function monitorDonationRequest(event: Event[], context: Context): Promise
   const serviceLogger = createServiceLogger(context.awsRequestId)
   try {
     for (const [key, fileContent] of formatEvent(event)) {
-      const potentialFileName = `${key}.txt`
+      const potentialFileName = `${bucketPathPrefix}/${key}.txt`
       try {
         const existingFile = await client.send(new HeadObjectCommand({ Bucket: bucketName, Key: potentialFileName }))
         serviceLogger.debug('found existing file')
