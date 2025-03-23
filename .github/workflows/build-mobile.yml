@@ -89,7 +89,7 @@ jobs:
         run: make run-command-prepare-mobile-env
 
       - name: 🔄 Fetch Google Service File From aws
-        run: make run-command-fetch-google-service-file
+        run: make run-command-fetch-google-service-file BuildProfile="${{ env.DEPLOYMENT_ENVIRONMENT_GROUP }}"
 
       - name: Base64 Encode Google Service File and Save to Output
         run: echo "ENCODED_GOOGLE_SERVICE_FILE=$(base64 -w 0 clients/mobile/google-services.json)" >> $GITHUB_OUTPUT

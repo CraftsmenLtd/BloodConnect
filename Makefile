@@ -184,4 +184,4 @@ prepare-mobile-env:
 	@echo AWS_COGNITO_DOMAIN=$(shell $(MAKE) -s tf-output-aws_cognito_custom_domain_name) >> clients/mobile/.env
 
 fetch-google-service-file:
-	aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/google-services.json clients/mobile/
+	aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/$(BuildProfile)/google-services.json clients/mobile/
