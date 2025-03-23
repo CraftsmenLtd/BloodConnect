@@ -6,7 +6,7 @@ endif
 
 # Terraform Backend Configuration
 TF_BACKEND_CONFIG=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" \
-                  --backend-config="key=dev/$(DEPLOYMENT_ENVIRONMENT).tfstate" \
+                  --backend-config="key=$(DEPLOYMENT_ENVIRONMENT_GROUP)/$(DEPLOYMENT_ENVIRONMENT).tfstate" \
                   --backend-config="region=$(AWS_REGION)"
 
 TF_VAR_aws_environment?=$(DEPLOYMENT_ENVIRONMENT)
