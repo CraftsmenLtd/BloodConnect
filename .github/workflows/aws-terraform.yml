@@ -17,7 +17,6 @@ on:
         type: string
       tf_action:
         description: "Terraform action to perform"
-        required: true
         type: string
       tf_backend_bucket_name:
         description: "Terraform backend bucket name. If empty, will default to 'TERRAFORM_BACKEND_BUCKET_NAME' from repository variables."
@@ -70,6 +69,7 @@ jobs:
       TF_VAR_facebook_client_secret: ${{ secrets.FACEBOOK_CLIENT_SECRET  }}
       TF_VAR_firebase_token_s3_url: ${{ secrets.FIREBASE_TOKEN_S3_URL }}
       TF_VAR_google_maps_api_key: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+    
     steps:
       - name: 📥 Checkout Branch
         uses: actions/checkout@v4
@@ -99,6 +99,8 @@ jobs:
 
       - name: 🗓️ Terraform Plan ${{ inputs.tf_action }}
         run: make run-command-tf-plan-${{ inputs.tf_action }}
+        if: ${{ inputs.tf_action && inputs.tf_action != '' }}
 
       - name: 🚀 Terraform ${{ inputs.tf_action }}
         run: make run-command-tf-${{ inputs.tf_action }}
+        if: ${{ inputs.tf_action && inputs.tf_action != '' }}

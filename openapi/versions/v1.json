@@ -33,7 +33,7 @@
   },
   "servers": [
     {
-      "url": "https://BRANCH_NAME.bloodconnect.net/api"
+      "url": "https://BRANCH_NAMEbloodconnect.net/api"
     },
     {
       "url": "https://API_GATEWAY_ID.execute-api.ap-south-1.amazonaws.com/api",
