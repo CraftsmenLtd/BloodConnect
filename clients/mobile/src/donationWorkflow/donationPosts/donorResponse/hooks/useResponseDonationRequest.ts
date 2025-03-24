@@ -3,7 +3,7 @@ import { useFetchClient } from '../../../../setup/clients/useFetchClient'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../../../setup/constant/screens'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
-import { PostScreenNavigationProp, RequestPreviewRouteProp } from '../../../../setup/navigation/navigationTypes'
+import type { PostScreenNavigationProp, RequestPreviewRouteProp } from '../../../../setup/navigation/navigationTypes'
 import { STATUS } from '../../../types'
 import { scheduleNotification } from '../../../../setup/notification/scheduleNotification'
 import {
@@ -19,7 +19,7 @@ import { updateMyResponses } from '../../../donationService'
 import { useUserProfile } from '../../../../userWorkflow/context/UserProfileContext'
 import { ToastAndroid } from 'react-native'
 import useFetchData from '../../../../setup/clients/useFetchData'
-import { UserProfile } from '../../../../userWorkflow/services/userProfileService'
+import type { UserProfile } from '../../../../userWorkflow/services/userProfileService'
 
 interface AcceptRequestParams {
   requestPostId: string;
@@ -29,7 +29,7 @@ interface AcceptRequestParams {
 }
 
 interface useResponseDonationRequestReturnType {
-  bloodRequest: any;
+  bloodRequest: unknown;
   userProfile: UserProfile;
   isLoading: boolean;
   error: string | null;
@@ -71,13 +71,13 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
         body: hoursBefore === 1
           ? REMINDER_NOTIFICATION_BODY.FINAL
           : replaceTemplatePlaceholders(REMINDER_NOTIFICATION_BODY.DEFAULT, hoursBefore.toString()),
-        data: { payload: { }, type: LOCAL_NOTIFICATION_TYPE.REMINDER }
+        data: { payload: {}, type: LOCAL_NOTIFICATION_TYPE.REMINDER }
       }
       void scheduleNotification({ date: reminderTime }, content)
     })
   }
 
-  const [handleAcceptRequest, isAcceptLoading, , acceptError] = useFetchData(async(): Promise<void> => {
+  const [handleAcceptRequest, isAcceptLoading, , acceptError] = useFetchData(async (): Promise<void> => {
     if (bloodRequest === null) {
       throw new Error('Missing some required data. Please try again')
     }
@@ -102,8 +102,8 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
 
       if (bloodRequest === null ||
         !(bloodRequest.donationDateTime instanceof Date ||
-        typeof bloodRequest.donationDateTime === 'string' ||
-        typeof bloodRequest.donationDateTime === 'number')) {
+          typeof bloodRequest.donationDateTime === 'string' ||
+          typeof bloodRequest.donationDateTime === 'number')) {
         return
       }
 
@@ -116,7 +116,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     }
   })
 
-  const [handleIgnore, isIgnoreLoading, , ignoreError] = useFetchData(async() => {
+  const [handleIgnore, isIgnoreLoading, , ignoreError] = useFetchData(async () => {
     if (
       bloodRequest === null ||
       ['requestPostId', 'seekerId', 'createdAt', 'requestedBloodGroup'].some(

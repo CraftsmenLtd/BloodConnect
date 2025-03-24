@@ -1,11 +1,12 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, ImageStyle, StyleProp } from 'react-native'
+import type { ImageStyle, StyleProp } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import useDonorProfile from './useDonorProfile'
-import { preferredDonationLocations } from '../../userWorkflow/services/userServices'
+import type { preferredDonationLocations } from '../../userWorkflow/services/userServices'
 import { COMMON_URLS } from '../../setup/constant/commonUrls'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import StateAwareRenderer from '../../components/StateAwareRenderer'
 
 const DonorProfile = () => {

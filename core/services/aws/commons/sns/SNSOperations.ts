@@ -5,8 +5,8 @@ import {
   SetEndpointAttributesCommand,
   SNS
 } from '@aws-sdk/client-sns'
-import { SNSModel } from '../../../../application/models/sns/SNSModel'
-import {
+import type { SNSModel } from '../../../../application/models/sns/SNSModel'
+import type {
   NotificationAttributes,
   SnsRegistrationAttributes
 } from '../../../../application/notificationWorkflow/Types'
@@ -17,11 +17,11 @@ const PLATFORM_ARN_FCM = process.env.PLATFORM_ARN_FCM
 export default class SNSOperations implements SNSModel {
   private readonly client: SNS
 
-  constructor() {
+  constructor () {
     this.client = new SNS({ region: process.env.AWS_REGION })
   }
 
-  async publish(message: NotificationAttributes, snsEndpointArn: string): Promise<void> {
+  async publish (message: NotificationAttributes, snsEndpointArn: string): Promise<void> {
     try {
       const messagePayload = {
         notification: {
@@ -49,7 +49,7 @@ export default class SNSOperations implements SNSModel {
     }
   }
 
-  async createPlatformEndpoint(
+  async createPlatformEndpoint (
     attributes: SnsRegistrationAttributes
   ): Promise<{ snsEndpointArn: string }> {
     const { userId, deviceToken, platform } = attributes
@@ -79,7 +79,7 @@ export default class SNSOperations implements SNSModel {
     }
   }
 
-  async getEndpointAttributes(
+  async getEndpointAttributes (
     existingArn: string
   ): Promise<Record<string, string>> {
     try {
@@ -93,7 +93,7 @@ export default class SNSOperations implements SNSModel {
     }
   }
 
-  async setEndpointAttributes(
+  async setEndpointAttributes (
     existingArn: string,
     attributes: SnsRegistrationAttributes
   ): Promise<void> {

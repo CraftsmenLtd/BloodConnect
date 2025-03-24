@@ -22,7 +22,24 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "skipLibCheck": true
   },
-  "include": ["commons", "core", "clients", "babel.config.js", "jest.config.ts", "jest.env.ts"],
-  "exclude": ["node_modules/**/*", "dist/", ".idea", ".vscode", ".github", "coverage", ".build", "clients/web/tailwind.config.js"]
+  "include": [
+    "commons",
+    "core",
+    "clients",
+    "babel.config.js",
+    "jest.config.ts",
+    "jest.env.ts"
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    "dist/",
+    ".idea",
+    ".vscode",
+    ".github",
+    "coverage",
+    ".build",
+    "clients/organization/tailwind.config.js"
+  ]
 }

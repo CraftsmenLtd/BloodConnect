@@ -1,6 +1,7 @@
 import React from 'react'
-import { Text, StyleSheet, StyleProp, TextStyle, Linking } from 'react-native'
-import { Theme } from '../../setup/theme'
+import type { StyleProp, TextStyle} from 'react-native';
+import { Text, StyleSheet, Linking } from 'react-native'
+import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
 interface LinkTextProps {
@@ -20,7 +21,7 @@ export const LinkText: React.FC<LinkTextProps> = ({
   const styles = createStyles(theme)
 
   const handlePress = React.useCallback(() => {
-    void (async() => {
+    void (async () => {
       try {
         const supported = await Linking.canOpenURL(url)
         if (supported) {

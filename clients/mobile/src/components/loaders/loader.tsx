@@ -5,7 +5,7 @@ import { loaderHOC } from './loaderHOC'
 interface LoaderProps {
   size?: 'small' | 'large';
   color?: string;
-  theme?: any;
+  theme?: unknown;
 }
 
 const Loader: React.FC<LoaderProps> = ({ size = 'large', color, theme }) => {

@@ -1,4 +1,4 @@
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 import { StyleSheet } from 'react-native'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({

@@ -1,4 +1,9 @@
 import React, { useState, useCallback, useRef } from 'react'
+import type {
+  ViewStyle,
+  StyleProp,
+  ImageStyle
+} from 'react-native';
 import {
   View,
   Text,
@@ -6,17 +11,14 @@ import {
   StyleSheet,
   Modal,
   TouchableWithoutFeedback,
-  Dimensions,
-  ViewStyle,
-  StyleProp,
-  ImageStyle
+  Dimensions
 } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { formatBloodQuantity } from '../../donationWorkflow/donationHelpers'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { Button } from '../button/Button'
-import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
+import type { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import { STATUS, UrgencyLevel } from '../../donationWorkflow/types'
 import StatusBadge from './StatusBadge'
 import Badge from '../badge'

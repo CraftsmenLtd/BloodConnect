@@ -1,6 +1,6 @@
 import { UrgencyLevel } from '../../../commons/dto/DonationDTO'
 
-export function getBloodRequestMessage(
+export function getBloodRequestMessage (
   urgencyLevel: string,
   bloodGroup: string,
   description: string | undefined

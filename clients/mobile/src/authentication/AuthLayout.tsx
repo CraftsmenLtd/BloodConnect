@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
-import { Theme } from '../setup/theme'
+import type { ReactNode } from 'react'
+import type { Theme } from '../setup/theme'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, StyleSheet } from 'react-native'

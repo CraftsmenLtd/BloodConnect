@@ -11,7 +11,7 @@ import {
   ActivityIndicator
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { commonStyles } from '../inputElement/commonStyles'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 

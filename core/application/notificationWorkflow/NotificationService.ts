@@ -1,28 +1,29 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
-import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
-import {
+import type { UserDetailsDTO } from '../../../commons/dto/UserDTO'
+import type {
   BloodDonationNotificationDTO,
-  NotificationDTO,
+  NotificationDTO} from '../../../commons/dto/NotificationDTO';
+import {
   NotificationStatus,
   NotificationType
 } from '../../../commons/dto/NotificationDTO'
 import NotificationOperationError from './NotificationOperationError'
-import {
+import type {
   DonationNotificationAttributes,
   DonationRequestPayloadAttributes,
   NotificationAttributes,
   SnsRegistrationAttributes,
   StoreNotificationEndPoint
 } from './Types'
-import Repository from '../models/policies/repositories/Repository'
-import { SNSModel } from '../../application/models/sns/SNSModel'
+import type Repository from '../models/policies/repositories/Repository'
+import type { SNSModel } from '../../application/models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
-import { QueueModel } from '../models/queue/QueueModel'
-import NotificationRepository from '../models/policies/repositories/NotificationRepository'
+import type { QueueModel } from '../models/queue/QueueModel'
+import type NotificationRepository from '../models/policies/repositories/NotificationRepository'
 import { AcceptDonationStatus } from '../../../commons/dto/DonationDTO'
 
 export class NotificationService {
-  async publishNotification(
+  async publishNotification (
     notificationAttributes: NotificationAttributes,
     userSnsEndpointArn: string,
     snsModel: SNSModel
@@ -37,7 +38,7 @@ export class NotificationService {
     }
   }
 
-  async createNotification(
+  async createNotification (
     notificationAttributes: NotificationAttributes,
     notificationRepository: NotificationRepository<NotificationDTO>
   ): Promise<void> {
@@ -56,7 +57,7 @@ export class NotificationService {
     }
   }
 
-  async createBloodDonationNotification(
+  async createBloodDonationNotification (
     notificationAttributes: DonationNotificationAttributes,
     notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
   ): Promise<void> {
@@ -89,17 +90,17 @@ export class NotificationService {
     }
   }
 
-  async getIgnoredDonorList(
+  async getIgnoredDonorList (
     requestPostId: string,
     notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
   ): Promise<BloodDonationNotificationDTO[]> {
-    return await notificationRepository.queryBloodDonationNotifications(
+    return notificationRepository.queryBloodDonationNotifications(
       requestPostId,
       AcceptDonationStatus.IGNORED
     )
   }
 
-  async updateBloodDonationNotifications(
+  async updateBloodDonationNotifications (
     requestPostId: string,
     notificationPayload: Partial<DonationRequestPayloadAttributes>,
     notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
@@ -134,7 +135,7 @@ export class NotificationService {
     }
   }
 
-  async updateBloodDonationNotificationStatus(
+  async updateBloodDonationNotificationStatus (
     donorId: string,
     requestPostId: string,
     type: NotificationType,
@@ -150,7 +151,7 @@ export class NotificationService {
     await notificationRepository.update(updatedNotification)
   }
 
-  async getBloodDonationNotification(
+  async getBloodDonationNotification (
     donorId: string,
     requestPostId: string,
     type: NotificationType,
@@ -164,7 +165,7 @@ export class NotificationService {
     return existingItem
   }
 
-  async storeDevice(
+  async storeDevice (
     registrationAttributes: SnsRegistrationAttributes,
     userRepository: Repository<UserDetailsDTO>,
     snsModel: SNSModel
@@ -208,7 +209,7 @@ export class NotificationService {
     }
   }
 
-  private async handleExistingSnsEndpoint(
+  private async handleExistingSnsEndpoint (
     snsModel: SNSModel,
     existingArn: string,
     userRepository: Repository<UserDetailsDTO>,
@@ -235,7 +236,7 @@ export class NotificationService {
     return 'Device registration successful with existing endpoint.'
   }
 
-  async sendNotification(
+  async sendNotification (
     notificationAttributes: NotificationAttributes | DonationNotificationAttributes,
     queueModel: QueueModel
   ): Promise<void> {

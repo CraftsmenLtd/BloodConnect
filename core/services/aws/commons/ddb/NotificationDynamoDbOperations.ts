@@ -1,12 +1,14 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
-import { DTO } from '../../../../../commons/dto/DTOCommon'
-import {
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type {
   NosqlModel,
   DbModelDtoAdapter
 } from '../../../../application/models/dbModels/DbModelDefinitions'
-import {
-  QueryConditionOperator,
+import type {
   QueryInput
+} from '../../../../application/models/policies/repositories/QueryTypes';
+import {
+  QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 import { NOTIFICATION_PK_PREFIX } from '../../../../application/models/dbModels/NotificationModel'
 
@@ -15,7 +17,7 @@ export default class NotificationDynamoDbOperations<
   DbFields extends Record<string, unknown>,
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
 > extends DynamoDbTableOperations<Dto, DbFields, ModelAdapter> {
-  async queryBloodDonationNotifications(
+  async queryBloodDonationNotifications (
     requestPostId: string,
     status?: string
   ): Promise<Dto[]> {
@@ -47,7 +49,7 @@ export default class NotificationDynamoDbOperations<
     return queryResult.items
   }
 
-  async getBloodDonationNotification(
+  async getBloodDonationNotification (
     userId: string,
     requestPostId: string,
     type: string

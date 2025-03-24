@@ -1,4 +1,4 @@
-import { LocationDTO } from 'commons/dto/UserDTO'
+import type { LocationDTO } from 'commons/dto/UserDTO'
 
 export type DonorInfo = {
   userId: string;
@@ -14,7 +14,7 @@ export class GeohashCacheManager<K, V> {
   private readonly cacheTimeoutMinutes: number
   private currentByteSize: number
 
-  constructor(maxEntries: number, maxMBSize: number, cacheTimeoutMinutes: number) {
+  constructor (maxEntries: number, maxMBSize: number, cacheTimeoutMinutes: number) {
     if (
       !Number.isInteger(maxEntries) ||
       !Number.isInteger(maxMBSize) ||
@@ -30,11 +30,11 @@ export class GeohashCacheManager<K, V> {
     this.currentByteSize = 0
   }
 
-  private calculateByteSize(value: any): number {
+  private calculateByteSize (value: unknown): number {
     return new TextEncoder().encode(JSON.stringify(value)).length
   }
 
-  set(key: K, data: V): void {
+  set (key: K, data: V): void {
     const dataByteSize = this.calculateByteSize(data)
 
     while (
@@ -57,7 +57,7 @@ export class GeohashCacheManager<K, V> {
     this.currentByteSize += dataByteSize
   }
 
-  get(key: K): V | undefined {
+  get (key: K): V | undefined {
     const entry = this.cache.get(key)
     const currentTime = Date.now()
 
@@ -75,7 +75,7 @@ export class GeohashCacheManager<K, V> {
   }
 }
 
-export function updateGroupedGeohashCache(
+export function updateGroupedGeohashCache (
   geohashCacheManager: GeohashCacheManager<string, GeohashDonorMap>,
   queriedDonors: LocationDTO[],
   cacheKey: string
@@ -84,7 +84,7 @@ export function updateGroupedGeohashCache(
   geohashCacheManager.set(cacheKey, donorMap)
 }
 
-function groupDonorsByGeohash(queriedDonors: LocationDTO[]): GeohashDonorMap {
+function groupDonorsByGeohash (queriedDonors: LocationDTO[]): GeohashDonorMap {
   return queriedDonors.reduce<GeohashDonorMap>((groups, donor) => {
     const donorGeohash = donor.geohash.slice(
       0,

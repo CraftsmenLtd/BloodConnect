@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigation, CommonActions } from '@react-navigation/native'
-import { validateRequired, ValidationRule } from '../../../utility/validator'
+import type { ValidationRule } from '../../../utility/validator';
+import { validateRequired } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
-import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { loginUser } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
@@ -22,7 +23,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
   password: [validateRequired]
 }
 
-export const useLogin = (): any => {
+export const useLogin = (): unknown => {
   const fetchClient = useFetchClient()
   const { setIsAuthenticated } = useAuth()
   const [loginLoading, setLoginLoading] = useState(false)
@@ -43,7 +44,7 @@ export const useLogin = (): any => {
     }))
   }
 
-  const handleLogin = async(): Promise<void> => {
+  const handleLogin = async (): Promise<void> => {
     try {
       setLoginLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)

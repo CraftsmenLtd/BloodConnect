@@ -1,10 +1,10 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
-import { InputProps } from './types'
+import type { Theme } from '../../setup/theme'
+import type { InputProps } from './types'
 import { commonStyles } from './commonStyles'
-import { Dispatch, SetStateAction } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
 interface PasswordInputProps extends Omit<InputProps, 'placeholder'> {
   isVisible: boolean;

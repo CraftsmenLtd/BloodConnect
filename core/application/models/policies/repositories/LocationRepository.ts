@@ -1,6 +1,6 @@
-import { LocationDTO } from '../../../../../commons/dto/UserDTO'
-import { DTO } from '../../../../../commons/dto/DTOCommon'
-import Repository from './Repository'
+import type { LocationDTO } from '../../../../../commons/dto/UserDTO'
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type Repository from './Repository'
 
 export default interface LocationRepository<
   T extends DTO,

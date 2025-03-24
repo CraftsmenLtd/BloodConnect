@@ -1,5 +1,5 @@
-import { HttpClient } from '../clients/HttpClient'
-import { ApiResponse } from '../clients/response'
+import type { HttpClient } from '../clients/HttpClient'
+import type { ApiResponse } from '../clients/response'
 
 interface CountryAvailabilityData {
   available: boolean;
@@ -7,7 +7,7 @@ interface CountryAvailabilityData {
   countryName: string;
 }
 
-export const countryAvailability = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<ApiResponse<CountryAvailabilityData>> => {
+export const countryAvailability = async (payload: Record<string, unknown>, httpClient: HttpClient): Promise<ApiResponse<CountryAvailabilityData>> => {
   try {
     const response = await httpClient.get<ApiResponse<CountryAvailabilityData>>('/country-availability', payload)
     return {

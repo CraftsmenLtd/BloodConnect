@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { validateRequired, validateEmail, validatePhoneNumber, ValidationRule, validateInput } from '../../../utility/validator'
+import type { ValidationRule} from '../../../utility/validator';
+import { validateRequired, validateEmail, validatePhoneNumber, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
-import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import { formatPhoneNumber } from '../../../utility/formatting'
 import { useSocialAuth } from '../../socialAuth/hooks/useSocialAuth'
@@ -15,7 +16,7 @@ export interface RegisterCredential {
   phoneNumber: string;
 }
 
-interface RegisterErrors extends RegisterCredential { }
+type RegisterErrors = RegisterCredential
 
 const validationRules: Record<CredentialKeys, ValidationRule[]> = {
   name: [validateRequired],
@@ -23,7 +24,7 @@ const validationRules: Record<CredentialKeys, ValidationRule[]> = {
   phoneNumber: [validateRequired, validatePhoneNumber]
 }
 
-export const useRegister = (): any => {
+export const useRegister = (): unknown => {
   const navigation = useNavigation<RegisterScreenNavigationProp>()
   const [registerCredential, setRegisterCredential] = useState<RegisterCredential>(
     initializeState<RegisterCredential>(Object.keys(validationRules) as Array<keyof RegisterCredential>, '')
@@ -57,7 +58,7 @@ export const useRegister = (): any => {
     )
   }, [registerCredential, errors])
 
-  const handleRegister = async(): Promise<void> => {
+  const handleRegister = async (): Promise<void> => {
     navigation.navigate(SCREENS.SET_PASSWORD, {
       routeParams: {
         ...registerCredential,

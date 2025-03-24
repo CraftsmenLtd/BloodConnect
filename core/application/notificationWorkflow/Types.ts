@@ -1,6 +1,6 @@
-import { AcceptDonationStatus, AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
-import { NotificationType, NotificationStatus } from '../../../commons/dto/NotificationDTO'
-import { UserDTO } from '../../../commons/dto/UserDTO'
+import type { AcceptDonationStatus, AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
+import type { NotificationType, NotificationStatus } from '../../../commons/dto/NotificationDTO'
+import type { UserDTO } from '../../../commons/dto/UserDTO'
 
 export interface NotificationAttributes {
   userId: string;

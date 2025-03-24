@@ -1,5 +1,5 @@
-import { DonationRecordDTO } from '../../../../commons/dto/DonationDTO'
-import {
+import type { DonationRecordDTO } from '../../../../commons/dto/DonationDTO'
+import type {
   DbModelDtoAdapter,
   HasTimeLog,
   NosqlModel,
@@ -20,19 +20,19 @@ export class DonationRecordModel
 implements
     NosqlModel<DonationRecordFields>,
     DbModelDtoAdapter<DonationRecordDTO, DonationRecordFields> {
-  getIndexDefinitions(): IndexDefinitions<DonationRecordFields> {
+  getIndexDefinitions (): IndexDefinitions<DonationRecordFields> {
     return {}
   }
 
-  getPrimaryIndex(): DbIndex<DonationRecordFields> {
+  getPrimaryIndex (): DbIndex<DonationRecordFields> {
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex(indexType: IndexType, indexName: string): DbIndex<DonationRecordFields> | undefined {
+  getIndex (indexType: IndexType, indexName: string): DbIndex<DonationRecordFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(DonationRecordDTO: DonationRecordDTO): DonationRecordFields {
+  fromDto (DonationRecordDTO: DonationRecordDTO): DonationRecordFields {
     const { donorId, requestPostId, ...remainingDonationRecordData } = DonationRecordDTO
     const postCreationDate = remainingDonationRecordData.createdAt ?? new Date().toISOString()
     return {
@@ -43,7 +43,7 @@ implements
     }
   }
 
-  toDto(dbFields: DonationRecordFields): DonationRecordDTO {
+  toDto (dbFields: DonationRecordFields): DonationRecordDTO {
     const { PK, SK, createdAt, ...remainingDonationRecordFields } = dbFields
     return {
       ...remainingDonationRecordFields,

@@ -1,17 +1,19 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
-import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
-import { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
+import type { UserFields } from '../../../application/models/dbModels/UserModel';
+import UserModel from '../../../application/models/dbModels/UserModel'
+import type { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
 import LocationModel from '../../../application/models/dbModels/LocationModel'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE, UPDATE_PROFILE_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
 import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
 
-async function updateUserLambda(
+async function updateUserLambda (
   event: UpdateUserAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(event.userId, event.apiGwRequestId, event.cloudFrontRequestId)

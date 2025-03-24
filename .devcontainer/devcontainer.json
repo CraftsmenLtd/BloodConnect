@@ -7,7 +7,9 @@
       "dev-image"
     ]
   },
-  "postCreateCommand": "apt install -y openssh-client less",
+  "postCreateCommand": {
+    "apt": "apt install -y openssh-client less"
+  },
   "runArgs": [
     "--env-file",
     ".devcontainer/.env",

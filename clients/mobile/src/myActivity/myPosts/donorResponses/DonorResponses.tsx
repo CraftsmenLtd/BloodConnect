@@ -1,8 +1,9 @@
 import React from 'react'
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet, ImageStyle, StyleProp } from 'react-native'
+import type { ImageStyle, StyleProp } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import { COMMON_URLS } from '../../../setup/constant/commonUrls'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 
 export interface DonorItem {
   donorId: string;

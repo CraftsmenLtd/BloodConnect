@@ -1,3 +1,6 @@
+import type {
+  UploadPartCopyCommandOutput,
+  UploadPartCommandOutput} from '@aws-sdk/client-s3';
 import {
   S3Client,
   HeadObjectCommand,
@@ -8,12 +11,10 @@ import {
   DeleteObjectCommand,
   NotFound,
   UploadPartCopyCommand,
-  UploadPartCopyCommandOutput,
-  UploadPartCommandOutput,
   GetObjectCommand
 } from '@aws-sdk/client-s3'
 import { createServiceLogger } from '../commons/serviceLogger/ServiceLogger'
-import { Context } from 'aws-lambda'
+import type { Context } from 'aws-lambda'
 
 const client = new S3Client({ region: process.env.AWS_REGION })
 const maxGeoHashLength = Number(process.env.MAX_GEOHASH_LENGTH)
@@ -24,8 +25,8 @@ const maxGeohashToStoreInFile = Number(process.env.MAX_GEOHASH_STORAGE)
 const bucketPathPrefix = process.env.BUCKET_PATH_PREFIX as string
 
 const countGeohashesInFile = (fileSize: number): number => fileSize / maxEstimatedGeohashSizeInBytes
-const deleteExpiredFile = async(fileName: string): Promise<void> => { await client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: fileName })) }
-const createNewFile = async(fileName: string, geohash: string): Promise<void> => {
+const deleteExpiredFile = async (fileName: string): Promise<void> => { await client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: fileName })) }
+const createNewFile = async (fileName: string, geohash: string): Promise<void> => {
   await client.send(
     new PutObjectCommand({
       Bucket: bucketName,
@@ -34,7 +35,7 @@ const createNewFile = async(fileName: string, geohash: string): Promise<void> =>
     }))
 }
 
-const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: string, fileSize: number): Promise<void> => {
+const appendGeohashToFileLargerThan5MB = async (fileName: string, fileContent: string, fileSize: number): Promise<void> => {
   const createMultipartUploadResponse = await client.send(
     new CreateMultipartUploadCommand({
       Bucket: bucketName,
@@ -63,7 +64,7 @@ const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: st
     })
   )
 
-  const parts = await Promise.all([uploadExistingFilePromise, uploadNewPartPromise].map(async(promise, index) => {
+  const parts = await Promise.all([uploadExistingFilePromise, uploadNewPartPromise].map(async (promise, index) => {
     const response = await promise
     const isExistingPart = index === 0
     return {
@@ -86,7 +87,7 @@ const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: st
   )
 }
 
-const appendGeohashToFileSmallerThan5MB = async(fileName: string, fileContent: string): Promise<void> => {
+const appendGeohashToFileSmallerThan5MB = async (fileName: string, fileContent: string): Promise<void> => {
   const existingFileResponse = await client.send(
     new GetObjectCommand({
       Bucket: bucketName,
@@ -122,7 +123,7 @@ const formatEvent = (event: Event[]): Map<string, string> => event.reduce((
   return previousValue
 }, new Map())
 
-async function monitorDonationRequest(event: Event[], context: Context): Promise<void> {
+async function monitorDonationRequest (event: Event[], context: Context): Promise<void> {
   const serviceLogger = createServiceLogger(context.awsRequestId)
   try {
     for (const [key, fileContent] of formatEvent(event)) {

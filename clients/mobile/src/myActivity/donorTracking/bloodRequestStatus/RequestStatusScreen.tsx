@@ -4,7 +4,7 @@ import PostCard from '../../../components/donation/PostCard'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import useRequestStatus from './useRequestStatus'
 import Button from '../../../components/button/Button'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 import StateAwareRenderer from '../../../components/StateAwareRenderer'
 import { commonStyles } from '../../../components/inputElement/commonStyles'
 

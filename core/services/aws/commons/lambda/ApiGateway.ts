@@ -1,6 +1,6 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 
-export default function generateApiGatewayResponse(
+export default function generateApiGatewayResponse (
   body: string | object,
   statusCode: number,
   headers?: APIGatewayProxyResult['headers']

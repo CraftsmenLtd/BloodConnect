@@ -1,15 +1,16 @@
+import type { AuthSession} from 'aws-amplify/auth';
+import { fetchAuthSession } from 'aws-amplify/auth'
+import { useEffect, useState } from 'react'
 
-import { AuthSession, fetchAuthSession } from "aws-amplify/auth"
-import { useEffect, useState } from "react"
+export const useAws = (): AuthSession['credentials'] | undefined => {
+  const [state, setState] = useState<AuthSession['credentials']>()
 
-export const useAws = () => {
-    const [state, setState] = useState<AuthSession>()
+  useEffect(() => {
+    fetchAuthSession().then((session) => {
+      setState(session.credentials)
+    // eslint-disable-next-line no-console
+    }).catch(console.error)
+  }, [])
 
-    useEffect(() => {
-        fetchAuthSession().then((session) => {
-            setState(session)
-        })
-    }, [])
-
-    return state?.credentials
+  return state
 }

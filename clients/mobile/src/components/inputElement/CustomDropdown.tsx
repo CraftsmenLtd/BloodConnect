@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Dimensions, ScrollView } from 'react-native'
-import { InputProps } from './types'
+import type { InputProps } from './types'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 
 interface DropdownProps extends InputProps {

@@ -159,15 +159,15 @@ start-mobile:
 deploy-dev-branch:
 	$(MAKE) build-node-all
 	$(MAKE) clean-terraform-files
-	$(MAKE) tf-init
-	$(MAKE) tf-plan-apply
-	$(MAKE) tf-apply
+	$(MAKE) tf-init DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) tf-plan-apply DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) tf-apply DEPLOYMENT_ENVIRONMENT_GROUP=dev
 
 destroy-dev-branch:
 	$(MAKE) -s clean-terraform-files
-	$(MAKE) -s tf-init
-	$(MAKE) -s tf-plan-destroy
-	$(MAKE) -s tf-destroy
+	$(MAKE) -s tf-init DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) -s tf-plan-destroy DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) -s tf-destroy DEPLOYMENT_ENVIRONMENT_GROUP=dev
 
 prep-dev: install-node-packages build-node-all package-all
 
@@ -185,3 +185,6 @@ prepare-mobile-env:
 
 fetch-google-service-file:
 	@aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/$(BUILD_PROFILE)/google-services.json clients/mobile/
+
+run-app:
+	cd clients/monitoring && npm run dev

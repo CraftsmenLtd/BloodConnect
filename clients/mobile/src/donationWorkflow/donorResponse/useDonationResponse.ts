@@ -1,9 +1,9 @@
 import { useRoute, useNavigation } from '@react-navigation/native'
-import { StackNavigationProp } from '@react-navigation/stack'
+import type { StackNavigationProp } from '@react-navigation/stack'
 import { SCREENS } from '../../setup/constant/screens'
-import { DonorResponseRouteProp, RootStackParamList } from '../../setup/navigation/navigationTypes'
+import type { DonorResponseRouteProp, RootStackParamList } from '../../setup/navigation/navigationTypes'
 
-export const useDonationResponse = (): any => {
+export const useDonationResponse = (): unknown => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, SCREENS.DONOR_RESPONSE>>()
   const route = useRoute<DonorResponseRouteProp>()
 
