@@ -90,7 +90,14 @@ const Detail = ({ navigation, route }: DetailProps) => {
           )}
           {!isDetailsPage &&
             <View style={styles.buttonContainer}>
-              <Button text="Complete Request" disabled={data.status === STATUS.COMPLETED} onPress={handleCompleteRequest} />
+              <Button
+                text="Complete Request"
+                disabled={
+                  data.status === STATUS.COMPLETED ||
+                  data.status === STATUS.CANCELLED ||
+                  data.status === STATUS.EXPIRED
+                }
+                onPress={handleCompleteRequest} />
             </View>
           }
         </View>
