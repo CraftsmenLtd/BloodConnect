@@ -2,7 +2,7 @@ import { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import { BloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import { BloodDonationAttributes, BloodDonationEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { DonationDTO } from '../../../../commons/dto/DonationDTO'
 import {
   BloodDonationModel,
@@ -11,37 +11,37 @@ import {
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
-import { CREATE_DONATION_REQUEST_SUCCESS, UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import {
+  CREATE_DONATION_REQUEST_SUCCESS,
+  UNKNOWN_ERROR_MESSAGE
+} from '../../../../commons/libs/constants/ApiResponseMessages'
 import { UserService } from '../../../application/userWorkflow/UserService'
 import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
+import { Config } from 'commons/libs/config/config'
+import { Logger } from 'core/application/models/logger/Logger'
+import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
 const bloodDonationService = new BloodDonationService()
 const userService = new UserService()
 
-async function createBloodDonationLambda(
-  event: BloodDonationAttributes & HttpLoggerAttributes
+type ExpectedConfig = {
+  dynamodbTableName: string;
+  awsRegion: string;
+}
+
+async function createBloodDonation(
+  event: BloodDonationEventAttributes,
+  httpLogger: Logger,
+  config: ExpectedConfig
 ): Promise<APIGatewayProxyResult> {
-  const httpLogger = createHTTPLogger(
-    event.seekerId,
-    event.apiGwRequestId,
-    event.cloudFrontRequestId
-  )
-
   try {
-    const userProfile = await userService.getUser(
-      event.seekerId,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
-    )
-
-    const bloodDonationAttributes: BloodDonationAttributes = {
+    const bloodDonationAttributes: BloodDonationEventAttributes = {
       seekerId: event.seekerId,
-      seekerName: userProfile.name,
       patientName: event.patientName,
       requestedBloodGroup: event.requestedBloodGroup,
       bloodQuantity: event.bloodQuantity,
       urgencyLevel: event.urgencyLevel,
-      countryCode: userProfile.countryCode,
       city: event.city,
       location: event.location,
       latitude: event.latitude,
@@ -51,12 +51,15 @@ async function createBloodDonationLambda(
       contactNumber: event.contactNumber,
       transportationInfo: event.transportationInfo
     }
+    httpLogger.info('creating donation request')
     const response = await bloodDonationService.createBloodDonation(
       bloodDonationAttributes,
-      new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(
-        new BloodDonationModel()
+      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
+        new BloodDonationModel(), config.dynamodbTableName, config.awsRegion
       ),
-      new BloodDonationModel()
+      new BloodDonationModel(),
+      userService,
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel(), config.dynamodbTableName, config.awsRegion)
     )
     return generateApiGatewayResponse(
       {
@@ -75,4 +78,15 @@ async function createBloodDonationLambda(
   }
 }
 
-export default createBloodDonationLambda
+const config = new Config<ExpectedConfig>()
+
+export default async function createBloodDonationLambda(
+  event: BloodDonationAttributes & HttpLoggerAttributes
+): Promise<APIGatewayProxyResult> {
+  const httpLogger = createHTTPLogger(
+    event.seekerId,
+    event.apiGwRequestId,
+    event.cloudFrontRequestId
+  )
+  return createBloodDonation(event, httpLogger, config.getConfig())
+}

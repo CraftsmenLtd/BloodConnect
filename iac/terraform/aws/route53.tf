@@ -12,7 +12,7 @@ resource "aws_route53_record" "root" {
 
   alias {
     name                   = module.cloudfront.cloudfront_cdn_domain_name
-    zone_id                = var.cloudfront_hosted_zone_id
+    zone_id                = module.cloudfront.cloudfront_cdn_hosted_zone_id
     evaluate_target_health = false
   }
 }
