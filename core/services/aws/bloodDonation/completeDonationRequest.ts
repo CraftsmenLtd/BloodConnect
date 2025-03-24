@@ -112,12 +112,12 @@ async function completeDonationRequest(
       )
     }
 
-    await Promise.all(donorIds.map(async(donorId) => {
+    await Promise.allSettled(donorIds.map(async(donorId) => {
       const notificationAttributes: NotificationAttributes = {
         userId: donorId,
         title: 'Thank you for your donation',
         status: NotificationStatus.COMPLETED,
-        body: 'Thank you for your generous blood donation! Your kindness can save lives. A heartfelt thanks from the Blood Connect Team! ❤️',
+        body: 'Thank you for your donation 🙏! A heartfelt thanks from the Blood Connect Team! ❤️',
         type: NotificationType.COMMON,
         payload: {
           donorId,
