@@ -1,22 +1,22 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import UserOperationError from './UserOperationError'
-import { LocationDTO, UserDetailsDTO, UserDTO } from '../../../commons/dto/UserDTO'
+import type { LocationDTO, UserDetailsDTO, UserDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import { GenericMessage } from '../../../commons/dto/MessageDTO'
+import type { GenericMessage } from '../../../commons/dto/MessageDTO'
 import {
   getAppUserWelcomeMailMessage,
   getEmailVerificationMessage,
   getPasswordResetVerificationMessage
 } from './userMessages'
-import Repository from '../models/policies/repositories/Repository'
-import { CreateUserAttributes, UpdateUserAttributes, UserAttributes } from './Types'
+import type Repository from '../models/policies/repositories/Repository'
+import type { CreateUserAttributes, UpdateUserAttributes, UserAttributes } from './Types'
 import { generateGeohash } from '../utils/geohash'
 import { differenceInMonths, differenceInYears } from 'date-fns'
-import { BloodGroup } from '../../../commons/dto/DonationDTO'
-import LocationRepository from '../models/policies/repositories/LocationRepository'
+import type { BloodGroup } from '../../../commons/dto/DonationDTO'
+import type LocationRepository from '../models/policies/repositories/LocationRepository'
 
 export class UserService {
-  async createNewUser(
+  async createNewUser (
     userAttributes: UserAttributes,
     userRepository: Repository<UserDTO>
   ): Promise<UserDTO> {
@@ -32,19 +32,19 @@ export class UserService {
       })
   }
 
-  getPostSignUpMessage(userName: string, securityCode: string): GenericMessage {
+  getPostSignUpMessage (userName: string, securityCode: string): GenericMessage {
     return getEmailVerificationMessage(userName, securityCode)
   }
 
-  getForgotPasswordMessage(userName: string, securityCode: string): GenericMessage {
+  getForgotPasswordMessage (userName: string, securityCode: string): GenericMessage {
     return getPasswordResetVerificationMessage(userName, securityCode)
   }
 
-  getAppUserWelcomeMail(userName: string): GenericMessage {
+  getAppUserWelcomeMail (userName: string): GenericMessage {
     return getAppUserWelcomeMailMessage(userName)
   }
 
-  async getUser(
+  async getUser (
     userId: string,
     userRepository: Repository<UserDetailsDTO>
   ): Promise<UserDetailsDTO> {
@@ -55,7 +55,7 @@ export class UserService {
     return userProfile
   }
 
-  async updateUser(
+  async updateUser (
     userAttributes: CreateUserAttributes | UpdateUserAttributes,
     userRepository: Repository<UserDetailsDTO>,
     locationRepository: LocationRepository<LocationDTO>
@@ -90,7 +90,7 @@ export class UserService {
     })
   }
 
-  async UpdateUserAttributes(
+  async UpdateUserAttributes (
     userId: string,
     userAttributes: UpdateUserAttributes,
     userRepository: Repository<UserDetailsDTO>,
@@ -107,7 +107,7 @@ export class UserService {
     await this.updateUser(updatedUserAttributes, userRepository, locationRepository)
   }
 
-  private checkLastDonationDate(
+  private checkLastDonationDate (
     lastDonationDate: string | undefined,
     availableForDonation: boolean
   ): boolean {
@@ -123,7 +123,7 @@ export class UserService {
     return availableForDonation
   }
 
-  private calculateAge(dateOfBirth: string): number | undefined {
+  private calculateAge (dateOfBirth: string): number | undefined {
     if (dateOfBirth !== '') {
       const birthDate = new Date(dateOfBirth)
       const currentDate = new Date()
@@ -134,7 +134,7 @@ export class UserService {
     }
   }
 
-  private async updateUserLocation(
+  private async updateUserLocation (
     userId: string,
     preferredDonationLocations: LocationDTO[],
     userAttributes: Partial<UserDetailsDTO>,
@@ -165,7 +165,7 @@ export class UserService {
     }
   }
 
-  async getDeviceSnsEndpointArn(
+  async getDeviceSnsEndpointArn (
     userId: string,
     userRepository: Repository<UserDetailsDTO>
   ): Promise<string> {

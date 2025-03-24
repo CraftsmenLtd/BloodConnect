@@ -5,7 +5,7 @@ import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { extractErrorMessage } from '../../donationWorkflow/donationHelpers'
 import { completeDonation } from '../../donationWorkflow/donationService'
 import { SCREENS } from '../../setup/constant/screens'
-import { DonorConfirmationNavigationProp } from '../../setup/navigation/navigationTypes'
+import type { DonorConfirmationNavigationProp } from '../../setup/navigation/navigationTypes'
 
 interface UseCompleteDonationReturn {
   executeFunction: (donorIds: string[], requestPostId: string, createdAt: string) => Promise<void>;
@@ -33,7 +33,7 @@ const useCompleteDonation = (): UseCompleteDonationReturn => {
   }
 
   const [executeFunction, loading, , error] = useFetchData(
-    async(donorIds: string[], requestPostId: string, createdAt: string) => {
+    async (donorIds: string[], requestPostId: string, createdAt: string) => {
       const response = await completeDonation(
         { requestPostId, requestCreatedAt: createdAt, donorIds },
         fetchClient

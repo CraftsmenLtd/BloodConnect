@@ -1,5 +1,5 @@
-import { HttpClient } from '../../setup/clients/HttpClient'
-import { ApiResponse } from '../../setup/clients/response'
+import type { HttpClient } from '../../setup/clients/HttpClient'
+import type { ApiResponse } from '../../setup/clients/response'
 
 export type preferredDonationLocations = { area: string }
 
@@ -14,7 +14,7 @@ export interface DonorProfile {
   preferredDonationLocations?: preferredDonationLocations[];
 }
 
-export const getDonorProfile = async(donorId: string, httpClient: HttpClient): Promise<ApiResponse<DonorProfile>> => {
+export const getDonorProfile = async (donorId: string, httpClient: HttpClient): Promise<ApiResponse<DonorProfile>> => {
   try {
     const response = await httpClient.get<ApiResponse<DonorProfile>>(`/donors/${donorId}`, {})
     return {

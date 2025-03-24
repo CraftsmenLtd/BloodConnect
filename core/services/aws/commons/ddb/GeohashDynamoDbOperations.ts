@@ -1,12 +1,14 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
-import { DTO } from '../../../../../commons/dto/DTOCommon'
-import {
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type {
   NosqlModel,
   DbModelDtoAdapter
 } from '../../../../application/models/dbModels/DbModelDefinitions'
-import {
-  QueryConditionOperator,
+import type {
   QueryInput
+} from '../../../../application/models/policies/repositories/QueryTypes';
+import {
+  QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 
 export default class GeohashDynamoDbOperations<
@@ -14,7 +16,7 @@ export default class GeohashDynamoDbOperations<
   DbFields extends Record<string, unknown>,
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
 > extends DynamoDbTableOperations<Dto, DbFields, ModelAdapter> {
-  async queryGeohash(
+  async queryGeohash (
     countryCode: string,
     geoPartition: string,
     requestedBloodGroup: string,

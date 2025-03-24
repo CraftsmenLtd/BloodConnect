@@ -3,7 +3,7 @@ import { Text, View, StyleSheet } from 'react-native'
 import { useDonationResponse } from './useDonationResponse'
 import PostCard from '../../components/donation/PostCard'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
 
 const DonorResponse = () => {

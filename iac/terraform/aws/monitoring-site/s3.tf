@@ -45,10 +45,7 @@ locals {
 
 resource "null_resource" "vite_build" {
   triggers = {
-    directory_md5 = sha1(join("", [
-      for f in fileset(local.client_path, "**/*") :
-      !startswith(f, "node_modules") && !startswith(f, "dist") ? filesha1("${local.client_path}/${f}") : ""
-    ]))
+    directory_md5 = timestamp()
   }
 
   provisioner "local-exec" {
@@ -77,6 +74,7 @@ resource "aws_s3_object" "site_assets" {
   key           = "${var.site_path}/${each.key}"
   source        = "${local.dist_path}/${each.value}"
   source_hash   = filemd5("${local.dist_path}/${each.value}")
+  etag          = filemd5("${local.dist_path}/${each.value}")
   content_type  = lookup(local.content_type_map, split(".", each.value)[1], "text/html")
 }
 

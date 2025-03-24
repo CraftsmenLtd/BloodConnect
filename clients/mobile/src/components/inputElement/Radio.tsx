@@ -1,8 +1,8 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
-import { InputProps } from './types'
+import type { Theme } from '../../setup/theme'
+import type { InputProps } from './types'
 import { commonStyles } from './commonStyles'
 
 interface RadioButtonProps extends Omit<InputProps, 'placeholder' | 'onChangeText'> {

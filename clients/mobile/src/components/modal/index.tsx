@@ -1,15 +1,17 @@
 import React from 'react'
+import type {
+  ImageSourcePropType
+} from 'react-native';
 import {
   TouchableWithoutFeedback,
   Modal,
   View,
   Text,
   StyleSheet,
-  Image,
-  ImageSourcePropType
+  Image
 } from 'react-native'
 import Button from '../button/Button'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
 type ButtonType = {

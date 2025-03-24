@@ -5,9 +5,9 @@ import { useAuth } from '../../../authentication/context/useAuth'
 import { Platform } from 'react-native'
 import { Cache } from 'aws-amplify/utils'
 import { SCREENS } from '../../../setup/constant/screens'
-import { FetchResponse } from '../../../setup/clients/FetchClient'
-import { AccountScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
-import { LocationDTO, UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
+import type { FetchResponse } from '../../../setup/clients/FetchClient'
+import type { AccountScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { LocationDTO, UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
 import storageService from '../../../utility/storageService'
 import { TOKEN } from '../../../setup/constant/token'
 
@@ -39,7 +39,7 @@ export const useAccount = (): UseAccountReturnType => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const clearStorageExceptDeviceToken = async(): Promise<void> => {
+  const clearStorageExceptDeviceToken = async (): Promise<void> => {
     if (Platform.OS !== 'web') {
       const keys = await storageService.getAllKeys()
       const filteredKeys = keys.filter(TOKEN.DEVICE_TOKEN)
@@ -47,7 +47,7 @@ export const useAccount = (): UseAccountReturnType => {
     }
   }
 
-  const handleSignOut = async(): Promise<void> => {
+  const handleSignOut = async (): Promise<void> => {
     try {
       await Promise.all([Cache.clear(), clearStorageExceptDeviceToken()])
       await auth.logoutUser()
@@ -57,7 +57,7 @@ export const useAccount = (): UseAccountReturnType => {
     }
   }
 
-  const fetchUserData = async(): Promise<void> => {
+  const fetchUserData = async (): Promise<void> => {
     try {
       const response: FetchResponse<UserResponseData> = await fetchClient.get('/users')
 

@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
-import { validateRequired, validatePassword, ValidationRule, validateInput } from '../../../utility/validator'
+import type { ValidationRule} from '../../../utility/validator';
+import { validateRequired, validatePassword, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { SetPasswordRouteProp, SetPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { SetPasswordRouteProp, SetPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import { confirmResetPasswordHandler, registerUser, UserRegistrationCredentials } from '../../services/authService'
+import type { UserRegistrationCredentials } from '../../services/authService';
+import { confirmResetPasswordHandler, registerUser } from '../../services/authService'
 
 export const PASSWORD_INPUT_NAME = 'password'
 
@@ -16,14 +18,14 @@ export interface Password {
   confirmPassword: string;
 }
 
-interface SetPasswordErrors extends Password {}
+type SetPasswordErrors = Password
 
 const validationRules: Record<CredentialKeys, ValidationRule[]> = {
   password: [validateRequired, validatePassword],
   confirmPassword: [validateRequired, validatePassword]
 }
 
-export const useSetPassword = (): any => {
+export const useSetPassword = (): unknown => {
   const navigation = useNavigation<SetPasswordScreenNavigationProp>()
   const [loading, setLoading] = useState(false)
   const route = useRoute<SetPasswordRouteProp>()
@@ -64,14 +66,14 @@ export const useSetPassword = (): any => {
     )
   }, [newPassword, errors])
 
-  const handleRegister = async(): Promise<void> => {
+  const handleRegister = async (): Promise<void> => {
     const isSuccess = await registerUser({ ...(routeParams as UserRegistrationCredentials), password: newPassword.password })
     if (isSuccess) {
       navigation.navigate(SCREENS.OTP, { email: routeParams.email, password: newPassword.password, fromScreen: SCREENS.SET_PASSWORD })
     }
   }
 
-  const handleSetPassword = async(): Promise<void> => {
+  const handleSetPassword = async (): Promise<void> => {
     setLoading(true)
     try {
       if (fromScreen === SCREENS.REGISTER) {

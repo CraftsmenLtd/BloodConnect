@@ -1,4 +1,4 @@
-import { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
 
 export type StatusType = 'ACCEPTED' | 'IGNORED' | 'PENDING' | 'CANCELLED' | 'EXPIRED' | 'MANAGED' | 'COMPLETED'
 

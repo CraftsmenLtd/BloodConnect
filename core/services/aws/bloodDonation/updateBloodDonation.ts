@@ -1,22 +1,26 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
-import { UpdateBloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import { DonationDTO } from '../../../../commons/dto/DonationDTO'
-import { BloodDonationNotificationDTO } from '../../../../commons/dto/NotificationDTO'
-import {
-  BloodDonationModel,
+import type { UpdateBloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import type { BloodDonationNotificationDTO } from '../../../../commons/dto/NotificationDTO'
+import type {
   DonationFields
+} from '../../../application/models/dbModels/BloodDonationModel';
+import {
+  BloodDonationModel
 } from '../../../application/models/dbModels/BloodDonationModel'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
-import { DonationRequestPayloadAttributes } from '../../../application/notificationWorkflow/Types'
-import DonationNotificationModel, {
+import type { DonationRequestPayloadAttributes } from '../../../application/notificationWorkflow/Types'
+import type {
   BloodDonationNotificationFields
-} from '../../..//application/models/dbModels/DonationNotificationModel'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
+} from '../../..//application/models/dbModels/DonationNotificationModel';
+import DonationNotificationModel from '../../..//application/models/dbModels/DonationNotificationModel'
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE, UPDATE_DONATION_REQUEST_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [
@@ -39,7 +43,7 @@ type OptionalAttributes = Partial<Omit<UpdateBloodDonationAttributes, 'requestPo
 const bloodDonationService = new BloodDonationService()
 const notificationService = new NotificationService()
 
-async function updateBloodDonationLambda(
+async function updateBloodDonationLambda (
   event: UpdateBloodDonationAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

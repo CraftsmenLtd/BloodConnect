@@ -1,4 +1,4 @@
-import { DTO } from '../../../../commons/dto/DTOCommon'
+import type { DTO } from '../../../../commons/dto/DTOCommon'
 
 export interface QueueModel {
   queue(message: DTO, queue_url: string, delaySeconds?: number): Promise<void>;

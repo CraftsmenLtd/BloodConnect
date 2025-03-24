@@ -1,5 +1,6 @@
-import { ValidationRule, validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
-import {
+import type { ValidationRule} from '../utils/validator';
+import { validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
+import type {
   AcceptDonationStatus,
   BloodGroup,
   DonorSearchStatus,
@@ -25,7 +26,7 @@ export interface BloodDonationAttributes {
 }
 type CredentialKeys = 'donationDateTime' | 'bloodQuantity'
 
-export const validationRules: Record<CredentialKeys, Array<ValidationRule<any>>> = {
+export const validationRules: Record<CredentialKeys, Array<ValidationRule<string>>| Array<ValidationRule<number>>> = {
   donationDateTime: [(value: string) => validateDonationDateTime(value)],
   bloodQuantity: [(value: number) => validateBloodQuantity(value)]
 }

@@ -1,16 +1,20 @@
-import { SQSEvent, SQSRecord } from 'aws-lambda'
+import type { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import {
+import type {
   AcceptedDonationDTO,
-  DonationDTO,
+  DonationDTO} from '../../../../commons/dto/DonationDTO';
+import {
   DonationStatus
 } from '../../../../commons/dto/DonationDTO'
-import {
-  BloodDonationModel,
+import type {
   DonationFields
-} from '../../../application/models/dbModels/BloodDonationModel'
+} from '../../../application/models/dbModels/BloodDonationModel';
 import {
-  AcceptedDonationFields,
+  BloodDonationModel
+} from '../../../application/models/dbModels/BloodDonationModel'
+import type {
+  AcceptedDonationFields} from '../../../application/models/dbModels/AcceptDonationModel';
+import {
   AcceptDonationRequestModel
 } from '../../../application/models/dbModels/AcceptDonationModel'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
@@ -21,7 +25,7 @@ import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiRes
 const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
 
-async function donationStatusManager(event: SQSEvent): Promise<{ status: string }> {
+async function donationStatusManager (event: SQSEvent): Promise<{ status: string }> {
   try {
     for (const record of event.Records) {
       await processSQSRecord(record)
@@ -32,7 +36,7 @@ async function donationStatusManager(event: SQSEvent): Promise<{ status: string 
   }
 }
 
-async function processSQSRecord(record: SQSRecord): Promise<void> {
+async function processSQSRecord (record: SQSRecord): Promise<void> {
   const body =
     typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 

@@ -1,11 +1,13 @@
-import React, { createContext, ReactNode, useEffect } from 'react'
+import type { ReactNode} from 'react';
+import React, { createContext, useEffect } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { fetchDonationList, fetchMyResponses } from '../../donationWorkflow/donationService'
-import { DonationData, extractErrorMessage, formatDonations } from '../../donationWorkflow/donationHelpers'
+import type { DonationData} from '../../donationWorkflow/donationHelpers';
+import { extractErrorMessage, formatDonations } from '../../donationWorkflow/donationHelpers'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import useFetchData from '../../setup/clients/useFetchData'
 import storageService from '../../utility/storageService'
-import { UserProfile } from '../../userWorkflow/services/userProfileService'
+import type { UserProfile } from '../../userWorkflow/services/userProfileService'
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
 import { useAuth } from '../../authentication/context/useAuth'
 
@@ -27,8 +29,8 @@ const defaultContextValue = {
   myResponsesError: null,
   loading: false,
   myResponsesLoading: false,
-  fetchDonationPosts: async() => { },
-  getMyResponses: async() => { }
+  fetchDonationPosts: async () => { },
+  getMyResponses: async () => { }
 }
 
 export const MyActivityContext = createContext<MyActivityContextType>(defaultContextValue)
@@ -38,7 +40,7 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
   const { isAuthenticated } = useAuth()
   const fetchClient = useFetchClient()
 
-  const fetchMyResponsesCallback = async() => {
+  const fetchMyResponsesCallback = async () => {
     const response = await fetchMyResponses({}, fetchClient)
     if (response.data !== undefined && response.data.length > 0) {
       return formatDonations(response.data)
@@ -46,7 +48,7 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
     return []
   }
 
-  const fetchDonationPostsCallback = async() => {
+  const fetchDonationPostsCallback = async () => {
     const response = await fetchDonationList({}, fetchClient)
     if (response.data !== undefined && response.data.length > 0) {
       const profile = await storageService.getItem<UserProfile>(LOCAL_STORAGE_KEYS.USER_PROFILE)

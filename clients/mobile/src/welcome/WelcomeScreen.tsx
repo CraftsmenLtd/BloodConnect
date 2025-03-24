@@ -1,10 +1,10 @@
 import React from 'react'
 import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native'
-import { WelcomeScreenNavigationProp } from '../setup/navigation/navigationTypes'
+import type { WelcomeScreenNavigationProp } from '../setup/navigation/navigationTypes'
 import { SCREENS } from '../setup/constant/screens'
 import { Button } from '../components/button/Button'
 import { useTheme } from '../setup/theme/hooks/useTheme'
-import { Theme } from '../setup/theme'
+import type { Theme } from '../setup/theme'
 
 export interface WelcomeScreenProps {
   navigation: WelcomeScreenNavigationProp;

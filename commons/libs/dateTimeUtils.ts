@@ -1,8 +1,8 @@
-export function getRemainingSecsOfDay(dateNow = Date.now()): number {
+export function getRemainingSecsOfDay (dateNow = Date.now()): number {
   return Math.round((new Date().setUTCHours(23, 59, 59) - dateNow) / 1000)
 }
 
-export function getDaysInSecs(dayCount: number): number {
+export function getDaysInSecs (dayCount: number): number {
   if (dayCount < 0) {
     return 0
   }

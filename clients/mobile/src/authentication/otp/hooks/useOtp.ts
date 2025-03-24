@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo, useEffect } from 'react'
-import { TextInput } from 'react-native'
+import type { TextInput } from 'react-native'
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/native'
-import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
+import type { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
 import { submitOtp, loginUser, resetPasswordHandler, resendSignUpOtp } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
@@ -10,7 +10,7 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
 const RESEND_CODE_COUNTDOWN = 120
 
-export const useOtp = (): any => {
+export const useOtp = (): unknown => {
   const fetchClient = useFetchClient()
   const { setIsAuthenticated } = useAuth()
   const navigation = useNavigation<OtpScreenNavigationProp>()
@@ -50,7 +50,7 @@ export const useOtp = (): any => {
 
   const isButtonDisabled = useMemo(() => otp.join('').trim().length !== 6, [otp])
 
-  const handleRegister = async(): Promise<void> => {
+  const handleRegister = async (): Promise<void> => {
     const isRegistrationSuccessful = await submitOtp(email, otp.join(''))
     if (isRegistrationSuccessful) {
       const isSignedIn = await loginUser(email, password)
@@ -70,7 +70,7 @@ export const useOtp = (): any => {
     }
   }
 
-  const resendForgotPasswordOtpHandler = async(email: string): Promise<void> => {
+  const resendForgotPasswordOtpHandler = async (email: string): Promise<void> => {
     const nextStep = await resetPasswordHandler(email)
     switch (nextStep.resetPasswordStep) {
       case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
@@ -86,7 +86,7 @@ export const useOtp = (): any => {
     }
   }
 
-  const resendSignUpOtpHandler = async(): Promise<void> => {
+  const resendSignUpOtpHandler = async (): Promise<void> => {
     const isResendCodeSuccessful = await resendSignUpOtp(email)
     if (isResendCodeSuccessful) {
       setCountdown(RESEND_CODE_COUNTDOWN)
@@ -95,7 +95,7 @@ export const useOtp = (): any => {
     }
   }
 
-  const resendOtpHandler = async(): Promise<void> => {
+  const resendOtpHandler = async (): Promise<void> => {
     try {
       if (fromScreen === SCREENS.SET_PASSWORD) {
         await resendSignUpOtpHandler()
@@ -108,7 +108,7 @@ export const useOtp = (): any => {
     }
   }
 
-  const handleSubmit = async(): Promise<void> => {
+  const handleSubmit = async (): Promise<void> => {
     setLoading(true)
     try {
       if (fromScreen === SCREENS.SET_PASSWORD) {

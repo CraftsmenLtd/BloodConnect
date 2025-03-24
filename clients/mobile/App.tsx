@@ -11,7 +11,7 @@ import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
 import { UserProfileProvider } from './src/userWorkflow/context/UserProfileContext'
 import * as Notifications from 'expo-notifications'
-import { RootStackParamList } from './src/setup/navigation/navigationTypes'
+import type { RootStackParamList } from './src/setup/navigation/navigationTypes'
 import Constants from 'expo-constants'
 import { MyActivityProvider } from './src/myActivity/context/MyActivityProvider'
 import useBackPressHandler from './src/hooks/useBackPressHandler'
@@ -26,7 +26,7 @@ if (APP_ENV !== 'development') {
 Amplify.configure(awsCognitoConfiguration)
 
 Notifications.setNotificationHandler({
-  handleNotification: async() => ({
+  handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false
@@ -40,7 +40,7 @@ ErrorUtils.setGlobalHandler((error, isFatal) => {
   }
 })
 
-export default function App() {
+export default function App () {
   useBackPressHandler()
   const navigationRef = useNavigationContainerRef<RootStackParamList>()
 

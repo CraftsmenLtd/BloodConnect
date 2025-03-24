@@ -1,3 +1,7 @@
+import type {
+  StyleProp,
+  ImageStyle
+} from 'react-native';
 import {
   Text,
   View,
@@ -5,9 +9,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Linking,
-  StyleProp,
-  ImageStyle
+  Linking
 } from 'react-native'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
@@ -124,7 +126,7 @@ const ResponseDonationRequest = () => {
                   <TouchableOpacity
                     style={styles.callButton}
                     onPress={() => {
-                      void (async() => {
+                      void (async () => {
                         await Linking.openURL(`tel:${bloodRequest.contactNumber}`)
                       })()
                     }}

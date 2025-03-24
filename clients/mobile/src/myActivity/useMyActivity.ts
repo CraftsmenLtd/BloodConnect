@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { BloodDonationRecord, STATUS } from '../donationWorkflow/types'
+import type { BloodDonationRecord} from '../donationWorkflow/types';
+import { STATUS } from '../donationWorkflow/types'
 import { SCREENS } from '../setup/constant/screens'
-import { DonationPostsScreenNavigationProp } from '../setup/navigation/navigationTypes'
+import type { DonationPostsScreenNavigationProp } from '../setup/navigation/navigationTypes'
 import { cancelDonation } from '../donationWorkflow/donationService'
 import { useFetchClient } from '../setup/clients/useFetchClient'
 import { extractErrorMessage } from '../donationWorkflow/donationHelpers'
-import { TabConfig } from './types'
+import type { TabConfig } from './types'
 import useToast from '../components/toast/useToast'
 import { useMyActivityContext } from './context/useMyActivityContext'
 
@@ -19,7 +20,7 @@ export interface DonationData extends Omit<BloodDonationRecord, 'reqPostId' | 'l
   requestPostId: string;
 }
 
-export const useMyActivity = (): any => {
+export const useMyActivity = (): unknown => {
   const fetchClient = useFetchClient()
   const { fetchDonationPosts, getMyResponses } = useMyActivityContext()
   const { showToastMessage, showToast, toastAnimationFinished } = useToast()
@@ -30,6 +31,7 @@ export const useMyActivity = (): any => {
   const [refreshing, setRefreshing] = useState(false)
 
   const updatePost = (donationData: DonationData): void => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { status, acceptedDonors, ...rest } = donationData
     navigation.navigate(SCREENS.DONATION, { data: rest, isUpdating: true })
   }
@@ -42,7 +44,7 @@ export const useMyActivity = (): any => {
     navigation.navigate(SCREENS.DETAIL_POST, { data: { ...data }, useAsDetailsPage: true })
   }
 
-  const cancelPost = async(donationData: DonationData): Promise<void> => {
+  const cancelPost = async (donationData: DonationData): Promise<void> => {
     setIsLoading(true)
     const payload = {
       requestPostId: donationData.requestPostId,
@@ -71,7 +73,7 @@ export const useMyActivity = (): any => {
     setCurrentTab(tab)
   }
 
-  const refreshPosts = async(): Promise<void> => {
+  const refreshPosts = async (): Promise<void> => {
     setRefreshing(true)
     await getMyResponses()
     setRefreshing(false)

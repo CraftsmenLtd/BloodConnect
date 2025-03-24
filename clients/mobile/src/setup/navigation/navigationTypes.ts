@@ -1,13 +1,13 @@
-import { StackNavigationProp } from '@react-navigation/stack'
-import { RouteProp } from '@react-navigation/native'
-import { SCREENS } from '../constant/screens'
-import { UserRegistrationCredentials } from '../../authentication/services/authService'
-import { DonationScreenParams } from '../../donationWorkflow/types'
-import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
-import { DonorResponseNotification } from '../../donationWorkflow/donorResponse/type'
-import { NotificationData } from '../notification/NotificationData'
-import { EditProfileData } from '../../userWorkflow/userProfile/UI/Profile'
-import { DonorItem } from '../../myActivity/myPosts/donorResponses/DonorResponses'
+import type { StackNavigationProp } from '@react-navigation/stack'
+import type { RouteProp } from '@react-navigation/native'
+import type { SCREENS } from '../constant/screens'
+import type { UserRegistrationCredentials } from '../../authentication/services/authService'
+import type { DonationScreenParams } from '../../donationWorkflow/types'
+import type { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
+import type { DonorResponseNotification } from '../../donationWorkflow/donorResponse/type'
+import type { NotificationData } from '../notification/NotificationData'
+import type { EditProfileData } from '../../userWorkflow/userProfile/UI/Profile'
+import type { DonorItem } from '../../myActivity/myPosts/donorResponses/DonorResponses'
 
 type FromScreen = SCREENS.SET_PASSWORD | SCREENS.FORGOT_PASSWORD
 

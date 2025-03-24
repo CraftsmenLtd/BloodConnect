@@ -1,18 +1,19 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import { MapsHandler } from '../../maps/MapsHandler'
-import { GeocodeRequest } from '../../../application/maps/dto/Maps'
+import type { GeocodeRequest } from '../../../application/maps/dto/Maps'
 import { MapsService } from '../../../application/maps/MapsService'
 import { GoogleMapsProvider } from '../../maps/providers/GoogleMaps'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 
 const googleMapsProvider = new GoogleMapsProvider()
 const mapsService = new MapsService(googleMapsProvider)
 const mapsHandler = new MapsHandler(mapsService)
 
-async function geocode(
+async function geocode (
   event: GeocodeRequest & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

@@ -1,6 +1,6 @@
-import { HttpClient } from '../../setup/clients/HttpClient'
+import type { HttpClient } from '../../setup/clients/HttpClient'
 import { ProfileError } from '../../utility/errors'
-import { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
+import type { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
 
 interface UserPreferredLocation {
   area: string;
@@ -34,7 +34,7 @@ interface APIResponse {
   status: number;
 }
 
-export const fetchUserProfileFromApi = async(httpClient: HttpClient): Promise<APIResponse> => {
+export const fetchUserProfileFromApi = async (httpClient: HttpClient): Promise<APIResponse> => {
   try {
     const response = await httpClient.get<APIResponse>('/users')
     return {
@@ -50,7 +50,7 @@ export const fetchUserProfileFromApi = async(httpClient: HttpClient): Promise<AP
   }
 }
 
-export const createUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
+export const createUserProfile = async (payload: Record<string, unknown>, httpClient: HttpClient):
 Promise<APIResponse> => {
   try {
     const response = await httpClient.post<APIResponse>('/users', payload)
@@ -64,7 +64,7 @@ Promise<APIResponse> => {
   }
 }
 
-export const updateUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
+export const updateUserProfile = async (payload: Record<string, unknown>, httpClient: HttpClient):
 Promise<APIResponse> => {
   try {
     const response = await httpClient.patch<APIResponse>('/users', payload)

@@ -8,7 +8,7 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import createStyles from './createStyle'
 import { useNavigation } from '@react-navigation/native'
 import { useAccount } from '../hooks/useAccount'
-import { ProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { ProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import Loader from '../../../components/loaders/loader'
 import ProfileSection from '../../components/ProfileSection'
 

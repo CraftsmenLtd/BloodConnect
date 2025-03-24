@@ -1,5 +1,6 @@
-import { BloodDonationNotificationDTO, NotificationType } from '../../../../commons/dto/NotificationDTO'
-import { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
+import type { BloodDonationNotificationDTO} from '../../../../commons/dto/NotificationDTO';
+import { NotificationType } from '../../../../commons/dto/NotificationDTO'
+import type { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 import { NOTIFICATION_PK_PREFIX } from './NotificationModel'
 
 export type BloodDonationNotificationFields = Omit<BloodDonationNotificationDTO, 'id' | 'userId' | 'type'> & HasTimeLog & {
@@ -11,7 +12,7 @@ export type BloodDonationNotificationFields = Omit<BloodDonationNotificationDTO,
 }
 
 export default class DonationNotificationModel implements NosqlModel<BloodDonationNotificationFields>, DbModelDtoAdapter<BloodDonationNotificationDTO, BloodDonationNotificationFields> {
-  getIndexDefinitions(): IndexDefinitions<BloodDonationNotificationFields> {
+  getIndexDefinitions (): IndexDefinitions<BloodDonationNotificationFields> {
     return {
       GSI: {
         GSI1: {
@@ -22,15 +23,15 @@ export default class DonationNotificationModel implements NosqlModel<BloodDonati
     }
   }
 
-  getPrimaryIndex(): DbIndex<BloodDonationNotificationFields> {
+  getPrimaryIndex (): DbIndex<BloodDonationNotificationFields> {
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex(indexType: IndexType, indexName: string): DbIndex<BloodDonationNotificationFields> | undefined {
+  getIndex (indexType: IndexType, indexName: string): DbIndex<BloodDonationNotificationFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(BloodDonationNotificationDTO: BloodDonationNotificationDTO): BloodDonationNotificationFields {
+  fromDto (BloodDonationNotificationDTO: BloodDonationNotificationDTO): BloodDonationNotificationFields {
     const { id, userId, type, ...remainingNotificationFields } = BloodDonationNotificationDTO
 
     const data: BloodDonationNotificationFields = {
@@ -49,7 +50,8 @@ export default class DonationNotificationModel implements NosqlModel<BloodDonati
     return data
   }
 
-  toDto(dbFields: BloodDonationNotificationFields): BloodDonationNotificationDTO {
+  toDto (dbFields: BloodDonationNotificationFields): BloodDonationNotificationDTO {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { PK, SK, GSI1PK, GSI1SK, LSI1SK, ...remainingBloodDonationNotificationFields } = dbFields
     const userId = PK.replace(`${NOTIFICATION_PK_PREFIX}#`, '')
     return {

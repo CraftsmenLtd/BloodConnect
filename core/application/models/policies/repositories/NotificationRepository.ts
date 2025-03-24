@@ -1,5 +1,5 @@
-import { DTO } from '../../../../../commons/dto/DTOCommon'
-import Repository from './Repository'
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type Repository from './Repository'
 
 export default interface NotificationRepository<
   T extends DTO,

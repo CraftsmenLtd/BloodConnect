@@ -1,7 +1,8 @@
 import React from 'react'
-import { TouchableOpacity, Text, StyleSheet, StyleProp, ViewStyle, TextStyle, View } from 'react-native'
+import type { StyleProp, ViewStyle, TextStyle} from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import Loader from '../loaders/loader'
 
 interface ButtonProps {

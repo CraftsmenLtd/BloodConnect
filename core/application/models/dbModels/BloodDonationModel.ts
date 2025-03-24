@@ -1,6 +1,6 @@
 import { GEO_PARTITION_PREFIX_LENGTH } from '../../../../commons/libs/constants/NoMagicNumbers'
-import { DonationDTO, BloodGroup } from '../../../../commons/dto/DonationDTO'
-import {
+import type { DonationDTO, BloodGroup } from '../../../../commons/dto/DonationDTO'
+import type {
   DbModelDtoAdapter,
   HasTimeLog,
   NosqlModel,
@@ -23,7 +23,7 @@ HasTimeLog & {
 
 export class BloodDonationModel
 implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFields> {
-  getIndexDefinitions(): IndexDefinitions<DonationFields> {
+  getIndexDefinitions (): IndexDefinitions<DonationFields> {
     return {
       GSI: {
         GSI1: {
@@ -34,11 +34,11 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
     }
   }
 
-  getPrimaryIndex(): DbIndex<DonationFields> {
+  getPrimaryIndex (): DbIndex<DonationFields> {
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex(indexType: IndexType, indexName: string): DbIndex<DonationFields> | undefined {
+  getIndex (indexType: IndexType, indexName: string): DbIndex<DonationFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
@@ -66,7 +66,8 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
     return data
   }
 
-  toDto(dbFields: DonationFields): DonationDTO {
+  toDto (dbFields: DonationFields): DonationDTO {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { PK, SK, LSI1SK, createdAt, ...remainingDonationFields } = dbFields
     return {
       ...remainingDonationFields,

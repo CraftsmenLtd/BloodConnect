@@ -1,15 +1,15 @@
 import { ChangeMessageVisibilityCommand, SQS } from '@aws-sdk/client-sqs'
-import { QueueModel } from '../../../../application/models/queue/QueueModel'
-import { DTO } from 'commons/dto/DTOCommon'
+import type { QueueModel } from '../../../../application/models/queue/QueueModel'
+import type { DTO } from 'commons/dto/DTOCommon'
 
 export default class SQSOperations implements QueueModel {
   private readonly client: SQS
 
-  constructor() {
+  constructor () {
     this.client = new SQS({ region: process.env.AWS_REGION })
   }
 
-  async queue(messageBody: DTO, queueUrl: string, delaySeconds?: number): Promise<void> {
+  async queue (messageBody: DTO, queueUrl: string, delaySeconds?: number): Promise<void> {
     await this.client.sendMessage({
       QueueUrl: queueUrl,
       MessageBody: JSON.stringify(messageBody),
@@ -17,7 +17,7 @@ export default class SQSOperations implements QueueModel {
     })
   }
 
-  async updateVisibilityTimeout(
+  async updateVisibilityTimeout (
     receiptHandle: string,
     queueUrl: string,
     visibilityTimeout: number

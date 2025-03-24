@@ -1,28 +1,34 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import { DonationDTO, DonationStatus } from '../../../commons/dto/DonationDTO'
+import type { DonationDTO} from '../../../commons/dto/DonationDTO';
+import { DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import Repository from '../models/policies/repositories/Repository'
+import type Repository from '../models/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
-import {
-  BLOOD_REQUEST_PK_PREFIX,
+import type {
   BloodDonationModel,
   DonationFields
-} from '../models/dbModels/BloodDonationModel'
-import { QueryConditionOperator, QueryInput } from '../models/policies/repositories/QueryTypes'
+} from '../models/dbModels/BloodDonationModel';
 import {
+  BLOOD_REQUEST_PK_PREFIX
+} from '../models/dbModels/BloodDonationModel'
+import type { QueryInput } from '../models/policies/repositories/QueryTypes';
+import { QueryConditionOperator } from '../models/policies/repositories/QueryTypes'
+import type {
   BloodDonationAttributes,
-  validationRules,
   UpdateBloodDonationAttributes,
   BloodDonationResponseAttributes
+} from './Types';
+import {
+  validationRules
 } from './Types'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
-import BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
+import type BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
 
 export class BloodDonationService {
-  async createBloodDonation(
+  async createBloodDonation (
     donationAttributes: BloodDonationAttributes,
     bloodDonationRepository: Repository<DonationDTO, DonationFields>,
     model: BloodDonationModel
@@ -72,7 +78,7 @@ export class BloodDonationService {
     }
   }
 
-  private async checkDailyRequestThrottling(
+  private async checkDailyRequestThrottling (
     seekerId: string,
     repository: Repository<DonationDTO, DonationFields>,
     model: BloodDonationModel
@@ -115,7 +121,7 @@ export class BloodDonationService {
     }
   }
 
-  async getDonationRequest(
+  async getDonationRequest (
     seekerId: string,
     requestPostId: string,
     createdAt: string,
@@ -132,7 +138,7 @@ export class BloodDonationService {
     return item
   }
 
-  async updateBloodDonation(
+  async updateBloodDonation (
     donationAttributes: UpdateBloodDonationAttributes,
     bloodDonationRepository: BloodDonationRepository<DonationDTO>
   ): Promise<BloodDonationResponseAttributes> {
@@ -185,7 +191,7 @@ export class BloodDonationService {
     }
   }
 
-  async updateDonationStatus(
+  async updateDonationStatus (
     seekerId: string,
     requestPostId: string,
     createdAt: string,

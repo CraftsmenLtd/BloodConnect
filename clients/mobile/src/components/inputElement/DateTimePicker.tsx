@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Text, TouchableOpacity, View, StyleSheet, StyleProp, ViewStyle } from 'react-native'
+import type { StyleProp, ViewStyle } from 'react-native';
+import { Text, TouchableOpacity, View, StyleSheet } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { formattedDate } from '../../utility/formatting'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
@@ -24,7 +25,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
   const [isPickingTime, setIsPickingTime] = useState<boolean>(false)
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false)
 
-  const handleDateChange = (event: any, selectedDate: Date | undefined) => {
+  const handleDateChange = (event: unknown, selectedDate: Date | undefined) => {
     if (event.type === 'dismissed') {
       setShowDatePicker(false)
       setIsPickingTime(false)

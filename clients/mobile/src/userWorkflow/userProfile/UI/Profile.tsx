@@ -2,12 +2,13 @@ import React from 'react'
 import { View, Text, ScrollView } from 'react-native'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
-import { formattedDate, LocationData } from '../../../utility/formatting'
+import type { LocationData } from '../../../utility/formatting';
+import { formattedDate } from '../../../utility/formatting'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
 import { useProfile } from '../hooks/useProfile'
 import { SCREENS } from '../../../setup/constant/screens'
-import { EditProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { EditProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { useNavigation } from '@react-navigation/native'
 
 export interface EditProfileData {
@@ -20,13 +21,13 @@ export interface EditProfileData {
   lastDonationDate: string;
   preferredDonationLocations: LocationData[];
   locations: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
   const { userDetails } = useProfile()
-  const navigation = useNavigation<EditProfileScreenNavigationProp>()
+  const navigation =  useNavigation<EditProfileScreenNavigationProp>()
 
   const renderDetailRow = (label: string, value: string = '', isLast: boolean = false): JSX.Element => (
     <View style={[styles.row, isLast && styles.lastRow]}>
@@ -38,10 +39,9 @@ const Profile: React.FC = () => {
   const handleEditPress = () => {
     if (userDetails === null) return
 
-    const { weight, height, dateOfBirth, name, ...rest } = userDetails
     navigation.navigate(SCREENS.EDIT_PROFILE, {
       userDetails: {
-        ...rest,
+        ...userDetails,
         weight: userDetails.weight?.toString() ?? '',
         height: userDetails.height?.toString() ?? '',
         dateOfBirth: userDetails.dateOfBirth ?? '',

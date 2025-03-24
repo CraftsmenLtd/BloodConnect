@@ -1,6 +1,8 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react'
+import type { ReactNode } from 'react';
+import React, { createContext, useState, useContext } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
-import { fetchUserProfileFromApi, UserProfile } from '../services/userProfileService'
+import type { UserProfile } from '../services/userProfileService';
+import { fetchUserProfileFromApi } from '../services/userProfileService'
 import { ProfileError } from '../../utility/errors'
 import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
@@ -34,7 +36,7 @@ const UserProfileContext = createContext<UserProfileContextData | undefined>({
   userProfile: defaultProfile,
   loading: true,
   error: '',
-  fetchUserProfile: async() => { }
+  fetchUserProfile: async () => { }
 })
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -43,7 +45,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [error, setError] = useState<string>('')
   const fetchClient = useFetchClient()
 
-  function formatUserProfile(profile: UserProfile): UserProfile {
+  function formatUserProfile (profile: UserProfile): UserProfile {
     return {
       bloodGroup: profile.bloodGroup ?? '',
       userId: profile.userId ?? '',
@@ -69,7 +71,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     }
   }
 
-  const fetchUserProfile = async(): Promise<void> => {
+  const fetchUserProfile = async (): Promise<void> => {
     try {
       setLoading(true)
       const response = await fetchUserProfileFromApi(fetchClient)

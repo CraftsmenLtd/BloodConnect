@@ -1,7 +1,7 @@
 import { MapsHandler } from '../MapsHandler'
 import { MapsService } from '../../../application/maps/MapsService'
 import { GoogleMapsProvider } from '../providers/GoogleMaps'
-import { APIResponse, PlaceAutocompleteResponse, GeocodeResponse } from '../../../application/maps/dto/Maps'
+import type { APIResponse, PlaceAutocompleteResponse, GeocodeResponse } from '../../../application/maps/dto/Maps'
 
 jest.mock('../../../application/maps/MapsService')
 
@@ -13,7 +13,7 @@ describe('MapsHandler', () => {
   const mapsHandler = new MapsHandler(mapsServiceMock)
 
   describe('getPlaceAutocomplete', () => {
-    it('should return place autocomplete results when given valid parameters', async() => {
+    it('should return place autocomplete results when given valid parameters', async () => {
       const mockResponse: APIResponse<PlaceAutocompleteResponse> = {
         success: true,
         data: {
@@ -60,7 +60,7 @@ describe('MapsHandler', () => {
   })
 
   describe('getGeocode', () => {
-    it('should return geocode results when given valid parameters', async() => {
+    it('should return geocode results when given valid parameters', async () => {
       const mockResponse: APIResponse<GeocodeResponse> = {
         success: true,
         data: {

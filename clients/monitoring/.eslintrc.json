@@ -1,27 +1,25 @@
 {
   "extends": [
-    "../../.eslintrc.json"
+    "../../.eslintrc.json",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
   ],
-  "parser": "@typescript-eslint/parser",
   "ignorePatterns": [
-    "dist",
-    ".eslintrc.cjs",
     "vite.config.ts",
-    "node_modules",
-    "tailwind.config.js",
-    "vite-env.d.ts",
-    "postcss.config.js"
+    "vite-env.d.ts"
   ],
   "plugins": [
-    "react"
+    "react",
+    "react-hooks"
   ],
   "rules": {
-    "react/function-component-definition": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "react/react-in-jsx-scope": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "import/prefer-default-export": "off",
-    "react/require-default-props": "off",
-    "jsx-a11y/label-has-associated-control": "off",
-    "import/no-extraneous-dependencies": "off"
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "env": {
+    "browser": false,
+    "es2021": true
   }
 }

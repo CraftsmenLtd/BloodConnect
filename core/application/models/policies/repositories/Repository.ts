@@ -1,5 +1,5 @@
-import { DTO } from '../../../../../commons/dto/DTOCommon'
-import { QueryInput } from './QueryTypes'
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type { QueryInput } from './QueryTypes'
 
 export default interface Repository<
   T extends DTO,

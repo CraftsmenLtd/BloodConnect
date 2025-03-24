@@ -1,20 +1,23 @@
-import { SQSEvent } from 'aws-lambda'
+import type { SQSEvent } from 'aws-lambda'
 import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
-import { DonorSearchQueueAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import {
-  AcceptDonationStatus,
+import type { DonorSearchQueueAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type {
   AcceptedDonationDTO,
   DonationDTO,
   DonationStatus,
   DonorSearchDTO,
-  DonorSearchStatus,
   EligibleDonorInfo
+} from '../../../../commons/dto/DonationDTO';
+import {
+  AcceptDonationStatus,
+  DonorSearchStatus
 } from '../../../../commons/dto/DonationDTO'
-import { LocationDTO } from '../../../../commons/dto/UserDTO'
+import type { LocationDTO } from '../../../../commons/dto/UserDTO'
 
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
+import type {
+  DonorSearchFields} from '../../../application/models/dbModels/DonorSearchModel';
 import {
-  DonorSearchFields,
   DonorSearchModel
 } from '../../../application/models/dbModels/DonorSearchModel'
 import SQSOperations from '../commons/sqs/SQSOperations'
@@ -25,8 +28,9 @@ import {
 } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
 import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
+import type {
+  AcceptedDonationFields} from '../../../application/models/dbModels/AcceptDonationModel';
 import {
-  AcceptedDonationFields,
   AcceptDonationRequestModel
 } from '../../../application/models/dbModels/AcceptDonationModel'
 import {
@@ -34,26 +38,30 @@ import {
   calculateRemainingBagsNeeded,
   calculateTotalDonorsToFind
 } from '../../../application/utils/calculateDonorsToNotify'
-import {
+import type {
   DonorInfo,
+  GeohashDonorMap} from '../../../application/utils/GeohashCacheMapManager';
+import {
   GeohashCacheManager,
-  GeohashDonorMap,
   updateGroupedGeohashCache
 } from '../../../application/utils/GeohashCacheMapManager'
 import GeohashDynamoDbOperations from '../commons/ddb/GeohashDynamoDbOperations'
-import LocationModel, { LocationFields } from '../../../application/models/dbModels/LocationModel'
+import type { LocationFields } from '../../../application/models/dbModels/LocationModel';
+import LocationModel from '../../../application/models/dbModels/LocationModel'
 import { getDistanceBetweenGeohashes } from '../../../application/utils/geohash'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
-import { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
+import type { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
 import { getBloodRequestMessage } from '../../../application/bloodDonationWorkflow/BloodDonationMessages'
+import type {
+  BloodDonationNotificationDTO} from '../../../../commons/dto/NotificationDTO';
 import {
-  BloodDonationNotificationDTO,
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
 import { GEO_PARTITION_PREFIX_LENGTH, MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from '../../../../commons/libs/constants/NoMagicNumbers'
-import DonationNotificationModel, {
+import type {
   BloodDonationNotificationFields
-} from '../../../application/models/dbModels/DonationNotificationModel'
+} from '../../../application/models/dbModels/DonationNotificationModel';
+import DonationNotificationModel from '../../../application/models/dbModels/DonationNotificationModel'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import { DonationFields, BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
@@ -70,7 +78,7 @@ const GEOHASH_CACHE = new GeohashCacheManager<string, GeohashDonorMap>(
   Number(process.env.MAX_GEOHASH_CACHE_TIMEOUT_MINUTES)
 )
 
-async function donorSearch(event: SQSEvent): Promise<void> {
+async function donorSearch (event: SQSEvent): Promise<void> {
   const record = event.Records[0]
   const donorSearchQueueAttributes: DonorSearchQueueAttributes = JSON.parse(record.body)
 
@@ -265,7 +273,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
 
 export default donorSearch
 
-async function sendRequestNotification(
+async function sendRequestNotification (
   donorSearchAttributes: DonorSearchDTO,
   eligibleDonors: Record<string, EligibleDonorInfo>
 ): Promise<void> {
@@ -302,7 +310,7 @@ async function sendRequestNotification(
   }
 }
 
-async function handleVisibilityTimeout(
+async function handleVisibilityTimeout (
   targetedExecutionTime: number | undefined,
   receiptHandle: string
 ): Promise<void> {
@@ -321,7 +329,7 @@ async function handleVisibilityTimeout(
   }
 }
 
-async function getRemainingBagsNeeded(
+async function getRemainingBagsNeeded (
   seekerId: string,
   requestPostId: string,
   bloodQuantity: number
@@ -338,7 +346,7 @@ async function getRemainingBagsNeeded(
   return calculateRemainingBagsNeeded(bloodQuantity, acceptedDonors.length)
 }
 
-async function queryEligibleDonors(
+async function queryEligibleDonors (
   seekerId: string,
   requestedBloodGroup: string,
   countryCode: string,
@@ -376,7 +384,7 @@ async function queryEligibleDonors(
   }
 }
 
-async function getNewDonorsInNeighborGeohash(
+async function getNewDonorsInNeighborGeohash (
   seekerId: string,
   requestedBloodGroup: string,
   countryCode: string,
@@ -435,7 +443,7 @@ async function getNewDonorsInNeighborGeohash(
   )
 }
 
-async function getDonorsFromCache(
+async function getDonorsFromCache (
   geohashToProcess: string,
   countryCode: string,
   requestedBloodGroup: string
@@ -463,7 +471,7 @@ async function getDonorsFromCache(
   return cachedDonorMap[geohashToProcess] ?? []
 }
 
-async function getRejectedDonorsCount(requestPostId: string): Promise<number> {
+async function getRejectedDonorsCount (requestPostId: string): Promise<number> {
   const rejectedDonors = await notificationService.getIgnoredDonorList(
     requestPostId,
     new NotificationDynamoDbOperations<

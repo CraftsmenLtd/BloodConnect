@@ -1,11 +1,11 @@
-import { DonationRecordDTO } from '../../../commons/dto/DonationDTO'
+import type { DonationRecordDTO } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import { DonationRecordFields } from '../models/dbModels/DonationRecordModel'
-import { DonationRecordAttributes } from './Types'
-import DonationRecordRepository from '../models/policies/repositories/DonationRecordRepository'
+import type { DonationRecordFields } from '../models/dbModels/DonationRecordModel'
+import type { DonationRecordAttributes } from './Types'
+import type DonationRecordRepository from '../models/policies/repositories/DonationRecordRepository'
 
 export class DonationRecordService {
-  async createDonationRecord(
+  async createDonationRecord (
     donationRecordAttributes: DonationRecordAttributes,
     DonationRecordRepository: DonationRecordRepository<DonationRecordDTO, DonationRecordFields>
   ): Promise<void> {

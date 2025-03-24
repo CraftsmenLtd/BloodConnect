@@ -1,5 +1,5 @@
-import { AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
-import {
+import type { AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
+import type {
   DbModelDtoAdapter,
   HasTimeLog,
   NosqlModel,
@@ -24,19 +24,19 @@ export class AcceptDonationRequestModel
 implements
     NosqlModel<AcceptedDonationFields>,
     DbModelDtoAdapter<AcceptedDonationDTO, AcceptedDonationFields> {
-  getIndexDefinitions(): IndexDefinitions<AcceptedDonationFields> {
+  getIndexDefinitions (): IndexDefinitions<AcceptedDonationFields> {
     return {}
   }
 
-  getPrimaryIndex(): DbIndex<AcceptedDonationFields> {
+  getPrimaryIndex (): DbIndex<AcceptedDonationFields> {
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex(indexType: IndexType, indexName: string): DbIndex<AcceptedDonationFields> | undefined {
+  getIndex (indexType: IndexType, indexName: string): DbIndex<AcceptedDonationFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(acceptedDonationDto: AcceptedDonationDTO): AcceptedDonationFields {
+  fromDto (acceptedDonationDto: AcceptedDonationDTO): AcceptedDonationFields {
     const { seekerId, requestPostId, donorId, ...remainingData } = acceptedDonationDto
     return {
       PK: `${ACCEPTED_DONATION_PK_PREFIX}#${seekerId}`,
@@ -45,7 +45,7 @@ implements
     }
   }
 
-  toDto(dbFields: AcceptedDonationFields): AcceptedDonationDTO {
+  toDto (dbFields: AcceptedDonationFields): AcceptedDonationDTO {
     const { PK, SK, ...remainingFields } = dbFields
     return {
       ...remainingFields,

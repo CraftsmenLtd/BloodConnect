@@ -1,5 +1,5 @@
-import { AcceptDonationStatus, AcceptedDonationDTO } from './DonationDTO'
-import { DTO, HasIdentifier } from './DTOCommon'
+import type { AcceptDonationStatus, AcceptedDonationDTO } from './DonationDTO'
+import type { DTO, HasIdentifier } from './DTOCommon'
 
 export enum NotificationType {
   BLOOD_REQ_POST = 'BLOOD_REQ_POST',

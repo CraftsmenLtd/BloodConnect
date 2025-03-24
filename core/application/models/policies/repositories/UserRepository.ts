@@ -1,4 +1,4 @@
-import { DTO } from '../../../../../commons/dto/DTOCommon'
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
 
 export interface UserProfileDTO extends DTO {
   userId: string;

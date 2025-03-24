@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react'
+import type {
+  ValidationRule
+} from '../../../utility/validator';
 import {
   validateDateOfBirth,
   validateHeight, validateInput, validatePastOrTodayDate, validatePhoneNumber,
-  validateRequired, validateWeight,
-  ValidationRule
+  validateRequired, validateWeight
 } from '../../../utility/validator'
 import { useRoute } from '@react-navigation/native'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
@@ -12,8 +14,8 @@ import { Alert } from 'react-native'
 import { useUserProfile } from '../../context/UserProfileContext'
 import useFetchData from '../../../setup/clients/useFetchData'
 import { updateUserProfile } from '../../services/userProfileService'
-import { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
-import { EditProfileData } from '../../userProfile/UI/Profile'
+import type { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
+import type { EditProfileData } from '../../userProfile/UI/Profile'
 import Constants from 'expo-constants'
 import { formatLocations } from '../../../utility/formatting'
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
@@ -42,7 +44,7 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   locations: []
 }
 
-export const useEditProfile = (): any => {
+export const useEditProfile = (): unknown => {
   const { fetchUserProfile } = useUserProfile()
   const route = useRoute<EditProfileRouteProp>()
   const fetchClient = useFetchClient()
@@ -63,7 +65,7 @@ export const useEditProfile = (): any => {
   )
 
   const [executeUpdateProfile, loading, , updateError] = useFetchData(
-    async(payload: Partial<ProfileData>) => {
+    async (payload: Partial<ProfileData>) => {
       const response = await updateUserProfile(payload, fetchClient)
 
       if (response.status !== 200) {
@@ -93,7 +95,7 @@ export const useEditProfile = (): any => {
     })
   }
 
-  const handleSave = async(): Promise<void> => {
+  const handleSave = async (): Promise<void> => {
     const newErrors: Record<string, string | null> = {}
     const validationFields = Object.keys(validationRules) as ProfileFields[]
     validationFields.forEach(field => {

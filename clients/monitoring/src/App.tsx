@@ -1,8 +1,8 @@
 import GeohashMap from './components/GeohashMap'
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import { Amplify } from 'aws-amplify';
-import { Authenticator } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { Amplify } from 'aws-amplify'
+import { Authenticator } from '@aws-amplify/ui-react'
+import '@aws-amplify/ui-react/styles.css'
 
 Amplify.configure({
   Auth: {
@@ -12,21 +12,22 @@ Amplify.configure({
       identityPoolId: import.meta.env.VITE_AWS_IDENTITY_POOL_ID,
       groups: [{ maintainers: { precedence: 1 } }],
       loginWith: {
-        username: true,
-      },
+        username: true
+      }
     }
   }
 })
 
-function App() {
-
+const App = () => {
   return (
     <Authenticator
       socialProviders={['google']}
       hideSignUp>
       <Router>
         <Routes>
-          <Route path="/" element={<GeohashMap />} />
+          <Route
+            path='/'
+            element={<GeohashMap />} />
         </Routes>
       </Router>
     </Authenticator>
