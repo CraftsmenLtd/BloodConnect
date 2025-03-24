@@ -78,16 +78,17 @@ export class DonorSearchService {
 
   async queryGeohash(
     countryCode: string,
-    city: string,
     requestedBloodGroup: string,
     geohash: string,
     geohashRepository: GeohashRepository<LocationDTO, Record<string, unknown>>,
     lastEvaluatedKey: Record<string, unknown> | undefined = undefined,
     foundDonors: LocationDTO[] = []
   ): Promise<LocationDTO[]> {
+
+    const geoPartition = geohash.slice(0, 4)
     const queryResult = await geohashRepository.queryGeohash(
       countryCode,
-      city,
+      geoPartition,
       requestedBloodGroup,
       geohash,
       lastEvaluatedKey
@@ -98,7 +99,6 @@ export class DonorSearchService {
     return nextLastEvaluatedKey != null
       ? this.queryGeohash(
         countryCode,
-        city,
         requestedBloodGroup,
         geohash,
         geohashRepository,

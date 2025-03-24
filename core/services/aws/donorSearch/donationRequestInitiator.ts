@@ -53,7 +53,6 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
         bloodQuantity: Number(body.bloodQuantity),
         urgencyLevel: body.urgencyLevel,
         countryCode: body.countryCode,
-        city: body.city,
         location: body.location,
         patientName: body.patientName,
         seekerName: userProfile.name,

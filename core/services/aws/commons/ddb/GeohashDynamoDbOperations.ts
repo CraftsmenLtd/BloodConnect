@@ -16,7 +16,7 @@ export default class GeohashDynamoDbOperations<
 > extends DynamoDbTableOperations<Dto, DbFields, ModelAdapter> {
   async queryGeohash(
     countryCode: string,
-    city: string,
+    geoPartition: string,
     requestedBloodGroup: string,
     geohash: string,
     lastEvaluatedKey: Record<string, unknown> | undefined
@@ -30,7 +30,7 @@ export default class GeohashDynamoDbOperations<
       partitionKeyCondition: {
         attributeName: gsiIndex.partitionKey,
         operator: QueryConditionOperator.EQUALS,
-        attributeValue: `LOCATION#${countryCode}-${city}#BG#${requestedBloodGroup}#DONATIONSTATUS#true`
+        attributeValue: `LOCATION#${countryCode}-${geoPartition}#BG#${requestedBloodGroup}#DONATIONSTATUS#true`
       },
       options: {
         exclusiveStartKey: lastEvaluatedKey
