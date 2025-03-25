@@ -74,7 +74,7 @@ export default class SNSOperations implements SNSModel {
       return { snsEndpointArn: `${response.EndpointArn}` }
     } else {
       throw new Error(
-        "Unsupported platform. Use 'APNS' for iOS or 'FCM' for Android."
+        'Unsupported platform. Use "APNS" for iOS or "FCM" for Android.'
       )
     }
   }

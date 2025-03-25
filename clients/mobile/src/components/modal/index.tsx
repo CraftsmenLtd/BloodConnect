@@ -100,7 +100,8 @@ const GenericModal: React.FC<GenericModalProps> = ({
   icon,
   iconSize = 50,
   buttons = [],
-  onClose = () => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onClose = () => { }
 }) => {
   const styles = createStyles(useTheme())
   return (
@@ -117,11 +118,11 @@ const GenericModal: React.FC<GenericModalProps> = ({
             <View style={styles.modalContainer}>
               {/* Conditional Rendering for Icon */}
               {icon != null && (
-                  <Image
-                      source={icon}
-                      style={{ width: iconSize, height: iconSize, marginBottom: 10 }}
-                      resizeMode="contain"
-                  />
+                <Image
+                  source={icon}
+                  style={{ width: iconSize, height: iconSize, marginBottom: 10 }}
+                  resizeMode="contain"
+                />
               )}
 
               {/* Title */}
@@ -133,14 +134,14 @@ const GenericModal: React.FC<GenericModalProps> = ({
               {/* Buttons */}
               <View style={styles.buttonContainer}>
                 {buttons.map((button, index) => (
-                    <Button
-                        key={`${button.text}-${index}`}
-                        text={button.text}
-                        onPress={button.onPress}
-                        buttonStyle={[styles.button, button.style]}
-                        textStyle={[styles.buttonText, button.style]}
-                        loading={button.loading}
-                    />
+                  <Button
+                    key={`${button.text}-${index}`}
+                    text={button.text}
+                    onPress={button.onPress}
+                    buttonStyle={[styles.button, button.style]}
+                    textStyle={[styles.buttonText, button.style]}
+                    loading={button.loading}
+                  />
                 ))}
               </View>
             </View>

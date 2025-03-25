@@ -33,8 +33,9 @@ resource "aws_s3_bucket_public_access_block" "monitoring_site_public_access_bloc
 }
 
 locals {
+  dist_dir    = "dist"
   client_path = "${path.module}/../../../../clients/monitoring"
-  dist_path   = "${local.client_path}/dist"
+  dist_path   = "${local.client_path}/${local.dist_dir}"
 
   content_type_map = {
     "js"   = "application/javascript"
@@ -43,45 +44,55 @@ locals {
   }
 }
 
-resource "null_resource" "vite_build" {
-  triggers = {
-    directory_md5 = timestamp()
-  }
+# resource "null_resource" "vite_build" {
+#   triggers = {
+#     directory_md5 = timestamp()
+#   }
 
-  provisioner "local-exec" {
-    command     = "npm run build"
-    working_dir = local.client_path
+#   provisioner "local-exec" {
+#     command     = "npm run build"
+#     working_dir = local.client_path
 
-    environment = {
-      VITE_AWS_S3_BUCKET           = aws_s3_bucket.monitoring_site.id
-      VITE_BUCKET_PATH_PREFIX      = local.monitor_donation_request_s3_path_prefix
-      VITE_AWS_S3_REGION           = aws_s3_bucket.monitoring_site.region
-      VITE_MAPBOX_PUBLIC_KEY       = var.mapbox_public_key
-      VITE_BASE_ROUTE              = var.site_path
-      VITE_AWS_USER_POOL_ID        = var.cognito_user_pool_id
-      VITE_AWS_USER_POOL_CLIENT_ID = var.cognito_app_client_id
-      VITE_AWS_IDENTITY_POOL_ID    = var.cognito_identity_pool_id
-      VITE_MAX_GEOHASH_PREFIX_SIZE = var.max_geohash_prefix_length
-    }
-  }
+#     environment = {
+#       VITE_AWS_S3_BUCKET           = aws_s3_bucket.monitoring_site.id
+#       VITE_BUCKET_PATH_PREFIX      = local.monitor_donation_request_s3_path_prefix
+#       VITE_AWS_S3_REGION           = aws_s3_bucket.monitoring_site.region
+#       VITE_MAPBOX_PUBLIC_KEY       = var.mapbox_public_key
+#       VITE_BASE_ROUTE              = var.site_path
+#       VITE_AWS_USER_POOL_ID        = var.cognito_user_pool_id
+#       VITE_AWS_USER_POOL_CLIENT_ID = var.cognito_app_client_id
+#       VITE_AWS_IDENTITY_POOL_ID    = var.cognito_identity_pool_id
+#       VITE_MAX_GEOHASH_PREFIX_SIZE = var.max_geohash_prefix_length
+#     }
+#   }
+# }
+
+data "external" "vite_build" {
+  working_dir = local.client_path
+  program = ["bash", "-c", join(" ", [
+    "VITE_AWS_S3_BUCKET=${aws_s3_bucket.monitoring_site.id}",
+    "VITE_BUCKET_PATH_PREFIX=${local.monitor_donation_request_s3_path_prefix}",
+    "VITE_AWS_S3_REGION=${aws_s3_bucket.monitoring_site.region}",
+    "VITE_MAPBOX_PUBLIC_KEY=${var.mapbox_public_key}",
+    "VITE_BASE_ROUTE=${var.site_path}",
+    "VITE_AWS_USER_POOL_ID=${var.cognito_user_pool_id}",
+    "VITE_AWS_USER_POOL_CLIENT_ID=${var.cognito_app_client_id}",
+    "VITE_AWS_IDENTITY_POOL_ID=${var.cognito_identity_pool_id}",
+    "VITE_MAX_GEOHASH_PREFIX_SIZE=${var.max_geohash_prefix_length}",
+    "npm run build > /dev/null 2>&1 &&",
+    "printf '{\"files\": \"%s\"}' \"$(find ${local.dist_dir} -type f | sed 's|^'${local.dist_dir}'/||g' | tr '\\n' ',' | sed 's/,$//')\""
+  ])]
 }
 
 resource "aws_s3_object" "site_assets" {
-  depends_on    = [null_resource.vite_build]
-  for_each      = fileset(local.dist_path, "**/*")
-  force_destroy = true
+  for_each      = toset(split(",", data.external.vite_build.result.files))
   bucket        = aws_s3_bucket.monitoring_site.id
   key           = "${var.site_path}/${each.key}"
   source        = "${local.dist_path}/${each.value}"
   source_hash   = filemd5("${local.dist_path}/${each.value}")
   etag          = filemd5("${local.dist_path}/${each.value}")
   content_type  = lookup(local.content_type_map, split(".", each.value)[1], "text/html")
-
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.vite_build
-    ]
-  }
+  force_destroy = true
 }
 
 resource "aws_iam_policy" "data_access_policy" {

@@ -19,8 +19,11 @@ const initialAuthContext = {
   isAuthenticated: false,
   loading: true,
   logoutUser: async () => Promise.resolve(),
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAccessToken: () => { },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setIdToken: () => { },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setIsAuthenticated: () => { }
 }
 

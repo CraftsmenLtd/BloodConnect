@@ -36,15 +36,17 @@
     }
   ],
   "rules": {
-    "@typescript-eslint/consistent-type-definitions": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/consistent-type-definitions": [
+      "warn",
+      "type"
+    ],
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "@typescript-eslint/space-before-function-paren": "error",
     "@typescript-eslint/no-empty-interface": "off",
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/method-signature-style": "off",
-    "@typescript-eslint/restrict-template-expressions": "off",
-    "@typescript-eslint/consistent-type-imports": "off",
+    "@typescript-eslint/no-empty-function": "error",
     "@typescript-eslint/return-await": "off",
+    "@typescript-eslint/no-extra-semi": "error",
+    "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/member-delimiter-style": [
       "error",
       {
@@ -66,6 +68,10 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-    "no-console": "warn"
+    "no-console": "warn",
+    "quotes": [
+      "error",
+      "single"
+    ]
   }
 }
