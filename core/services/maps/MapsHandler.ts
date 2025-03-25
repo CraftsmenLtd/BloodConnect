@@ -27,7 +27,8 @@ const placeAutocompleteSchema = z.object({
   components: z.string().optional(),
   location: z.string().optional(),
   radius: z.number().positive().optional(),
-  language: z.string().optional()
+  language: z.string().optional(),
+  countryCode: z.string()
 })
 
 export class MapsHandler {

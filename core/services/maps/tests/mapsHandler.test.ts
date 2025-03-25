@@ -50,7 +50,8 @@ describe('MapsHandler', () => {
 
       const params = {
         input: 'Mirpur',
-        types: 'geocode'
+        types: 'geocode',
+        countryCode: 'BD'
       }
 
       await expect(mapsHandler.getPlaceAutocomplete(params)).resolves.toEqual(mockResponse)
