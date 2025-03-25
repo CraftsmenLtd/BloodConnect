@@ -98,7 +98,7 @@ localstack-start:
 
 # Nodejs
 install-node-packages:
-	find . -type f -name package.json -not -path "**node_modules**" -execdir npm i \;
+	npm i
 
 build-node-%:
 	cd core/services/aws && npm run build-$* -- $(NPM_ARGS)

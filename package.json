@@ -10,8 +10,8 @@
   "type": "module",
   "workspaces": [
     "core/application",
-    "core/service/aws",
-    "core/service/maps",
+    "core/services/aws",
+    "core/services/maps",
     "clients/mobile",
     "clients/organization",
     "clients/monitoring"
