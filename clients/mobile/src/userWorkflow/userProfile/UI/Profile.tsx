@@ -18,7 +18,6 @@ export interface EditProfileData {
   name: string;
   gender: string;
   lastDonationDate: string;
-  city: string;
   preferredDonationLocations: LocationData[];
   locations: string[];
   [key: string]: any;

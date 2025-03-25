@@ -41,13 +41,11 @@ export interface BloodRequestData {
   patientName?: string;
   shortDescription?: string;
   transportationInfo?: string;
-  city: string;
 }
 
 interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'transportationInfo' | 'donationDateTime'> { donationDateTime: string | null }
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
-  city: [validateRequired],
   urgencyLevel: [validateRequired],
   requestedBloodGroup: [validateRequired],
   bloodQuantity: [validateRequired],
@@ -75,7 +73,6 @@ export const useBloodRequest = (): any => {
     patientName: userProfile.name ?? '',
     shortDescription: '',
     transportationInfo: '',
-    city: '',
     ...data
   })
 

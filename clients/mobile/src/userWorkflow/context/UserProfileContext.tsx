@@ -17,7 +17,6 @@ const defaultProfile: UserProfile = {
   userId: '',
   name: '',
   lastDonationDate: '',
-  city: '',
   height: '',
   weight: 0,
   gender: '',
@@ -27,7 +26,8 @@ const defaultProfile: UserProfile = {
   NIDFront: '',
   NIDBack: '',
   phoneNumbers: [],
-  preferredDonationLocations: []
+  preferredDonationLocations: [],
+  uniqueGeoPartitions: []
 }
 
 const UserProfileContext = createContext<UserProfileContextData | undefined>({
@@ -61,10 +61,12 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       phoneNumbers: profile.phoneNumbers ?? [],
       preferredDonationLocations: profile.preferredDonationLocations?.map(location => ({
         area: location.area ?? '',
-        city: location.city ?? '',
+        geoHash: location.geoHash ?? '',
+        geoPartition: location.geoPartition ?? '',
         latitude: location.latitude ?? 0,
         longitude: location.longitude ?? 0
-      })) ?? []
+      })) ?? [],
+      uniqueGeoPartitions: [...new Set(profile.preferredDonationLocations?.map(loc => loc.geoPartition))]
     }
   }
 
