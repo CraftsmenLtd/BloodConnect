@@ -25,7 +25,7 @@ export const districts = [
   { label: 'Brahmanbaria', value: 'Brahmanbaria' },
   { label: 'Chandpur', value: 'Chandpur' },
   { label: 'Chattogram', value: 'Chattogram' },
-  { label: "Cox's Bazar", value: "Cox's Bazar" },
+  { label: 'Cox\'s Bazar', value: 'Cox\'s Bazar' },
   { label: 'Cumilla', value: 'Cumilla' },
   { label: 'Dhaka', value: 'Dhaka' },
   { label: 'Dinajpur', value: 'Dinajpur' },

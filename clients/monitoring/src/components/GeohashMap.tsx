@@ -1,4 +1,4 @@
-import type { LegacyRef} from 'react';
+import type { LegacyRef } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import type { LngLat } from 'mapbox-gl';
@@ -8,65 +8,21 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import { useAuthenticator } from '@aws-amplify/ui-react'
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { useAws } from '../hooks/useAws'
-import { bloodTypeColors, bloodTypes } from '../constants/constants'
+import { bloodTypes } from '../constants/constants'
+const centerMarker = new mapboxgl.Marker({ color: 'black' })
 
-const centerMarker = new mapboxgl.Marker({ color:  'black' })
+import './GeohashMap.css'
 
-const GeoHashMap =  () => {
+const GeoHashMap = () => {
   const mapContainerRef = useRef<HTMLDivElement>()
   const mapRef = useRef<mapboxgl.Map>()
   const [currentGeoHashPrefix, setCurrentGeoHashPrefix] = useState<string>()
   const [searchParams] = useSearchParams()
-  const refreshIntervalSeconds = Number(searchParams.get('refresh')) ?? 60
+  const refreshIntervalSeconds = Number(searchParams.get('refresh') ?? 60)
   const [geoHashCount, setGeoHashCount] = useState(0)
   const awsCredentials = useAws()
 
   const { signOut } = useAuthenticator((context) => [context.user])
-
-  const drawGeoHashPopUps =
-    (geoHashes: Array<{ color: string; geoHashes: string[]; id: string }>) => {
-      const map = geoHashes.reduce(
-        (map, { geoHashes, color }, index) => {
-          geoHashes.forEach((hash) => {
-            const { latitude, longitude } = geoHash.decode(hash)
-            const key = `${hash}-${color}`
-
-            if (!map.has(key)) {
-              map.set(key, {
-                color,
-                count: 0,
-                lat: latitude,
-                lng: longitude,
-                bloodType: bloodTypes[index]
-              })
-            }
-
-            map.get(key)!.count += 1
-            setGeoHashCount((prev) => prev + 1)
-          })
-          return map
-        },
-        new Map<string,
-        {
-          color: string;
-          count: number;
-          lat: number;
-          lng: number;
-          bloodType: string;
-        }>()
-      )
-
-      map.forEach(({ color, count, lat, lng, bloodType }) => {
-        new mapboxgl.Popup({ closeOnClick: false, closeButton: false })
-          .setHTML(
-            `<strong style="color: ${color}; font-size: large">${count}</strong>` +
-            '<br/>' +
-            `<text style="color: black">${bloodType}<test/>`
-          )
-          .setLngLat([lng, lat])
-          .addTo(mapRef.current!)
-      })
-    }
 
   const getDataFromAws = useCallback(async (prefix: string) => {
     const { accessKeyId, secretAccessKey, sessionToken } = awsCredentials!
@@ -89,11 +45,9 @@ const GeoHashMap =  () => {
                 }/${prefix}-${type}.txt`
             })
           )
-          .then(async (response) =>
-            response.Body?.transformToString().then((content) =>
-              content.split('\n')
-            )
-          )
+          .then(async (response) => response.Body ? response.Body.transformToString().then((content) =>
+            content.split('\n')
+          ) : [])
           .catch(() => [])
       )
     )
@@ -113,14 +67,50 @@ const GeoHashMap =  () => {
     centerMarker.setLngLat(center).addTo(mapRef.current)
     getDataFromAws(getPrefix(center)).then((data) => {
       setGeoHashCount(0)
-      drawGeoHashPopUps(
-        data.map((items, index) => ({
-          color: bloodTypeColors[index],
-          geoHashes: items ?? [],
-          id: `${index}-${bloodTypeColors[index]}`
-        }))
-      )
-    // eslint-disable-next-line no-console
+      const mappedGeoHashes = data.reduce((geoHashMap, geoHashes, index) => {
+        const bloodType = bloodTypes[index]
+        geoHashes.forEach((key) => {
+          const { latitude, longitude } = geoHash.decode(key)
+          if (!geoHashMap.has(key)) {
+            geoHashMap.set(key, {
+              lat: latitude,
+              lng: longitude,
+              counter: {
+                [bloodType]: 0
+              },
+              totalCount: 0
+            })
+          }
+          const currentData = geoHashMap.get(key)!
+
+          currentData.counter[bloodType] = currentData.counter[bloodType] ? currentData.counter[bloodType] + 1 : 1
+          currentData.totalCount += 1
+
+          geoHashMap.set(key, currentData)
+        })
+        return geoHashMap
+      }, new Map<string,
+        {
+          lat: number;
+          lng: number;
+          counter: { [k in (typeof bloodTypes)[number]]: number; };
+          totalCount: number;
+        }>())
+
+      mappedGeoHashes.forEach(({ counter, lat, lng, totalCount }) => {
+        const list = Object.entries(counter)
+          .map(([bloodType, count]) => `<text>${count} : ${bloodType}</text>`)
+          .join('<br/>')
+
+        new mapboxgl.Popup({ closeOnClick: false, closeButton: false })
+          .setHTML(`<div style="color: red; font-weight: bold; font-size: small">${list}</div>`)
+          .setLngLat([lng, lat])
+          .addTo(mapRef.current!)
+
+        setGeoHashCount((prev) => prev + totalCount)
+      })
+
+      // eslint-disable-next-line no-console
     }).catch(console.error)
   }, [getDataFromAws])
 
@@ -146,7 +136,8 @@ const GeoHashMap =  () => {
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current!,
       center: [90.4125, 23.8103],
-      zoom: 10
+      zoom: 13,
+      pitch: 20,
     })
     mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right')
 
@@ -175,7 +166,7 @@ const GeoHashMap =  () => {
 
   useEffect(() => {
     if (refreshIntervalSeconds !== 0) {
-      const refreshIntervalInMS = Number(refreshIntervalSeconds) * 1000
+      const refreshIntervalInMS = refreshIntervalSeconds * 1000
       const refreshIntervalId = setInterval(() => {
         centerMarker.remove()
         void refreshMap()

@@ -1,8 +1,8 @@
-import type { ReactNode} from 'react';
+import type { ReactNode } from 'react';
 import React, { createContext, useEffect } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { fetchDonationList, fetchMyResponses } from '../../donationWorkflow/donationService'
-import type { DonationData} from '../../donationWorkflow/donationHelpers';
+import type { DonationData } from '../../donationWorkflow/donationHelpers';
 import { extractErrorMessage, formatDonations } from '../../donationWorkflow/donationHelpers'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import useFetchData from '../../setup/clients/useFetchData'
@@ -11,7 +11,7 @@ import type { UserProfile } from '../../userWorkflow/services/userProfileService
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
 import { useAuth } from '../../authentication/context/useAuth'
 
-export interface MyActivityContextType {
+export type MyActivityContextType = {
   donationPosts: DonationData[];
   myResponses: DonationData[];
   errorMessage: string | null;
@@ -29,7 +29,9 @@ const defaultContextValue = {
   myResponsesError: null,
   loading: false,
   myResponsesLoading: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   fetchDonationPosts: async () => { },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   getMyResponses: async () => { }
 }
 

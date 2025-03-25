@@ -7,7 +7,7 @@ import { ProfileError } from '../../utility/errors'
 import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
 
-interface UserProfileContextData {
+type UserProfileContextData = {
   userProfile: UserProfile;
   loading: boolean;
   error: string;
@@ -36,6 +36,7 @@ const UserProfileContext = createContext<UserProfileContextData | undefined>({
   userProfile: defaultProfile,
   loading: true,
   error: '',
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   fetchUserProfile: async () => { }
 })
 

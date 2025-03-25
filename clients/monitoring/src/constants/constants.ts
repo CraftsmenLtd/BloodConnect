@@ -7,7 +7,7 @@ export const bloodTypeColors = [
   '#2196F3',
   '#FFEB3B',
   '#FF9800'
-];
+]
 
 export const bloodTypes = [
   'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'

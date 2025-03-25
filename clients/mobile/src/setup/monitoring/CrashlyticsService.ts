@@ -11,11 +11,13 @@ class CrashlyticsMonitoringService implements IMonitoringService {
   }
 
   setUserId (userId: string): void {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     crashlytics().setUserId(userId).catch(() => {})
   }
 
   setAttributes (attributes: Record<string, string>): void {
     Object.keys(attributes).forEach((key) => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       crashlytics().setAttribute(key, attributes[key]).catch(() => {})
     })
   }

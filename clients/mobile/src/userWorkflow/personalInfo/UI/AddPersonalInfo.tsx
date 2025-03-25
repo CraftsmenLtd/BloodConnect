@@ -34,6 +34,7 @@ const AddPersonalInfo = () => {
     isSSO
   } = useAddPersonalInfo()
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const openLink = (url: string) => { Linking.openURL(url).catch(() => { }) }
 
   return (

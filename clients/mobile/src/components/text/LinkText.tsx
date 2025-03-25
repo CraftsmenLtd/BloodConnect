@@ -1,10 +1,10 @@
 import React from 'react'
-import type { StyleProp, TextStyle} from 'react-native';
+import type { StyleProp, TextStyle } from 'react-native';
 import { Text, StyleSheet, Linking } from 'react-native'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
-interface LinkTextProps {
+type LinkTextProps = {
   url: string;
   text: string;
   style?: StyleProp<TextStyle>;
@@ -15,7 +15,8 @@ export const LinkText: React.FC<LinkTextProps> = ({
   url,
   text,
   style,
-  onError = () => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onError = () => { }
 }) => {
   const theme = useTheme()
   const styles = createStyles(theme)
