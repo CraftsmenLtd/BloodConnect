@@ -1,3 +1,4 @@
+import { GEO_PARTITION_PREFIX_LENGTH } from '../../../../commons/libs/constants/NoMagicNumbers'
 import { DonationDTO, BloodGroup } from '../../../../commons/dto/DonationDTO'
 import {
   DbModelDtoAdapter,
@@ -51,7 +52,7 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
       createdAt
     }
 
-    const geoPartition = remainingData.geohash.slice(0, 4)
+    const geoPartition = remainingData.geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
 
     if (remainingData.status !== undefined) {
       data.GSI1PK = `LOCATION#${remainingData.countryCode}-${geoPartition}#STATUS#${remainingData.status}`

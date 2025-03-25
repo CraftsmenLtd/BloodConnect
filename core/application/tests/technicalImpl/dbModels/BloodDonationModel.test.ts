@@ -11,6 +11,7 @@ import {
   donationDtoMock,
   donationFieldsMock
 } from '../../mocks/mockDonationRequestData'
+import { GEO_PARTITION_PREFIX_LENGTH } from '../../../../../commons/libs/constants/NoMagicNumbers'
 
 jest.useFakeTimers()
 
@@ -75,7 +76,7 @@ describe('BloodDonationModel', () => {
 
       const result = bloodDonationModel.toDto(fields)
 
-      const geoPartition = donationDtoMock.geohash.slice(0, 4)
+      const geoPartition = donationDtoMock.geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
       expect(result).toEqual({
         GSI1PK: `LOCATION#${donationDtoMock.countryCode}-${geoPartition}#STATUS#${DonationStatus.PENDING}`,
         GSI1SK: `${donationFieldsMock.createdAt}#BG#${donationDtoMock.requestedBloodGroup}`,

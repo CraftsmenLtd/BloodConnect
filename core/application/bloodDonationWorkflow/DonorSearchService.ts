@@ -6,6 +6,7 @@ import { DONOR_SEARCH_PK_PREFIX } from '../models/dbModels/DonorSearchModel'
 import { LocationDTO } from '../../../commons/dto/UserDTO'
 import GeohashRepository from '../models/policies/repositories/GeohashRepository'
 import { QueueModel } from '../models/queue/QueueModel'
+import { GEO_PARTITION_PREFIX_LENGTH } from '../../../commons/libs/constants/NoMagicNumbers'
 
 const DONOR_SEARCH_QUEUE_URL = process.env.DONOR_SEARCH_QUEUE_URL as string
 
@@ -84,7 +85,7 @@ export class DonorSearchService {
     lastEvaluatedKey: Record<string, unknown> | undefined = undefined,
     foundDonors: LocationDTO[] = []
   ): Promise<LocationDTO[]> {
-    const geoPartition = geohash.slice(0, 4)
+    const geoPartition = geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
     const queryResult = await geohashRepository.queryGeohash(
       countryCode,
       geoPartition,
