@@ -79,7 +79,7 @@ implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFi
     const [, countryCode, , bloodGroupStr, donationStatus] = gsiMatch
     const bloodGroup: BloodGroup = bloodGroupStr as BloodGroup
     const availableForDonation: boolean = donationStatus === 'true'
-    console.log(gsiMatch)
+
     return {
       userId,
       locationId,
