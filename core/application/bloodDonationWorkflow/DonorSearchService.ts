@@ -84,7 +84,6 @@ export class DonorSearchService {
     lastEvaluatedKey: Record<string, unknown> | undefined = undefined,
     foundDonors: LocationDTO[] = []
   ): Promise<LocationDTO[]> {
-
     const geoPartition = geohash.slice(0, 4)
     const queryResult = await geohashRepository.queryGeohash(
       countryCode,

@@ -75,8 +75,9 @@ describe('BloodDonationModel', () => {
 
       const result = bloodDonationModel.toDto(fields)
 
+      const geoPartition = donationDtoMock.geohash.slice(0, 4)
       expect(result).toEqual({
-        GSI1PK: `LOCATION#${donationDtoMock.countryCode}-${donationDtoMock.city}#STATUS#${DonationStatus.PENDING}`,
+        GSI1PK: `LOCATION#${donationDtoMock.countryCode}-${geoPartition}#STATUS#${DonationStatus.PENDING}`,
         GSI1SK: `${donationFieldsMock.createdAt}#BG#${donationDtoMock.requestedBloodGroup}`,
         ...donationDtoMock,
         requestPostId: donationDtoMock.requestPostId,
