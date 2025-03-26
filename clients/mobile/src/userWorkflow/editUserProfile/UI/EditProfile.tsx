@@ -135,7 +135,7 @@ const EditProfile = () => {
                 enableSearch={true}
                 fetchOptions={
                   async(searchText) =>
-                    locationService.preferredLocationAutocomplete(searchText, profileData.city)
+                    locationService.preferredLocationAutocomplete(searchText)
                 }
                 minRequiredLabel="Add minimum 1 area."
               />

@@ -86,7 +86,7 @@ const AddPersonalInfo = () => {
             enableSearch={true}
             fetchOptions={
               async(searchText) =>
-                locationService.preferredLocationAutocomplete(searchText, personalInfo.city)
+                locationService.preferredLocationAutocomplete(searchText)
             }
             minRequiredLabel='Add minimum 1 area.'
           />

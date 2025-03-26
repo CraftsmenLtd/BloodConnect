@@ -22,7 +22,6 @@ DonationDTO,
 | 'contactNumber'
 | 'transportationInfo'
 | 'shortDescription'
-| 'city'
 | 'seekerId'
 > & {
   requestPostId: string;

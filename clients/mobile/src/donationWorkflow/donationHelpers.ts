@@ -63,7 +63,6 @@ export const formatDonations = (requests: BloodDonationRecord[], name?: string):
     contactNumber: request.contactNumber ?? '',
     transportationInfo: request.transportationInfo ?? '',
     shortDescription: request.shortDescription ?? '',
-    city: request.city ?? '',
     status: request.status ?? '',
     createdAt: request.createdAt ?? new Date().toISOString(),
     acceptedDonors: request.acceptedDonors ?? []

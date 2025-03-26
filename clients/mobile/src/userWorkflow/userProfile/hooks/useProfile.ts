@@ -2,13 +2,6 @@ import { useMemo } from 'react'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { UserProfile } from '../../services/userProfileService'
 
-export interface DonationLocation {
-  area: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-}
-
 export interface UserProfileDetails extends UserProfile {
   age: number;
   location: string;
@@ -18,10 +11,10 @@ export interface UserProfileDetails extends UserProfile {
 export const useProfile = (): { userDetails: UserProfileDetails } => {
   const { userProfile } = useUserProfile()
 
-  const getLocation = (preferredDonationLocations: Array<{ city: string; area: string }>): string => {
+  const getLocation = (preferredDonationLocations: Array<{ area: string }>): string => {
     if (preferredDonationLocations.length > 0) {
-      const { city = '', area = '' } = preferredDonationLocations[0]
-      return `${city}, ${area}`
+      const { area = '' } = preferredDonationLocations[0]
+      return `${area}`
     }
     return ''
   }

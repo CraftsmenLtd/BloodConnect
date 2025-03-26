@@ -48,7 +48,6 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       bloodGroup: profile.bloodGroup ?? '',
       userId: profile.userId ?? '',
       name: profile.name ?? '',
-      city: profile.city ?? '',
       lastDonationDate: profile.lastDonationDate ?? '',
       height: profile.height ?? '',
       weight: profile.weight ?? 0,
