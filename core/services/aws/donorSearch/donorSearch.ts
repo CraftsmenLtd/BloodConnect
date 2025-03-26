@@ -48,7 +48,7 @@ import {
   BloodDonationNotificationDTO,
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
-import { MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from '../../../../commons/libs/constants/NoMagicNumbers'
+import { GEO_PARTITION_PREFIX_LENGTH, MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from '../../../../commons/libs/constants/NoMagicNumbers'
 import DonationNotificationModel, {
   BloodDonationNotificationFields
 } from '../../../application/models/dbModels/DonationNotificationModel'
@@ -422,7 +422,7 @@ async function getDonorsFromCache(
     0,
     Number(process.env.CACHE_GEOHASH_PREFIX_LENGTH)
   )
-  const geoPartitionPrefix = geohashToProcess.slice(0, 4)
+  const geoPartitionPrefix = geohashToProcess.slice(0, GEO_PARTITION_PREFIX_LENGTH)
 
   const cacheKey = `${countryCode}-${geoPartitionPrefix}-${requestedBloodGroup}-${geohashCachePrefix}`
   const cachedGroupedGeohash = GEOHASH_CACHE.get(cacheKey) as GeohashDonorMap
