@@ -58,7 +58,6 @@ describe('useAddPersonalInfo Hook', () => {
     lastDonationDate: new Date('2023-01-01'),
     dateOfBirth: new Date('2000-01-01'),
     lastVaccinatedDate: new Date('2023-06-01'),
-    city: 'Dhaka',
     locations: ['Mirpur'],
     availableForDonation: 'yes',
     acceptPolicy: true
@@ -83,7 +82,6 @@ describe('useAddPersonalInfo Hook', () => {
       lastDonationDate: null,
       dateOfBirth: expect.any(Date),
       lastVaccinatedDate: null,
-      city: '',
       locations: [],
       availableForDonation: 'yes',
       acceptPolicy: false
