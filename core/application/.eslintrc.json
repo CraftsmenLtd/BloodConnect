@@ -3,6 +3,6 @@
     "../../.eslintrc.json"
   ],
   "ignorePatterns": [
-    "tests/"
+    "tests/" // FIXME: this should not be ignored
   ]
 }

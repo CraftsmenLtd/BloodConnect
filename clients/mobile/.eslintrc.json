@@ -4,6 +4,6 @@
   ],
   "ignorePatterns": [
     "babel.config.js",
-    "__tests__/"
+    "__tests__/" // FIXME: this should not be ignored
   ]
 }
