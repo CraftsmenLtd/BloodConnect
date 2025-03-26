@@ -21,7 +21,6 @@
         "bloodGroup": "$item.bloodGroup.S",
         "lastDonationDate": "$item.lastDonationDate.S",
         "countryCode": "$item.countryCode.S",
-        "city": "$item.city.S",
         "height": "$item.height.S",
         #if($item.weight && $item.weight.S != "")
           "weight": $item.weight.S,
@@ -46,7 +45,8 @@
           #set($isFirstIter = false)
           {
             "area": "$location.area.S",
-            "city": "Dhaka",
+            "geohash": "$location.GSI1SK.S",
+            "geoPartition": "$location.GSI1PK.S.split('#')[1].split('-')[1]",
             "latitude": $location.latitude.N,
             "longitude": $location.longitude.N
           }

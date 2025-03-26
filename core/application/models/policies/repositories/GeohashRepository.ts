@@ -7,7 +7,7 @@ export default interface GeohashRepository<
 > extends Repository<T, DbFields> {
   queryGeohash(
     countryCode: string,
-    city: string,
+    geoPartition: string,
     requestedBloodGroup: string,
     geohash: string,
     lastEvaluatedKey: Record<string, unknown> | undefined

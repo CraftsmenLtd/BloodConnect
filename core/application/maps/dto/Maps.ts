@@ -6,6 +6,7 @@ export interface PlaceAutocompleteRequest {
   radius?: number;
   types?: string;
   language?: string;
+  countryCode: string;
 }
 
 export interface PlaceAutocompleteResponse {

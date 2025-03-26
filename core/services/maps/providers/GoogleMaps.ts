@@ -18,12 +18,10 @@ export const config = {
 export class GoogleMapsProvider implements MapsProvider {
   private readonly baseUrl: string
   private readonly apiKey: string
-  private readonly country: string = ''
 
   constructor(apiKey?: string) {
     this.baseUrl = config.GOOGLE_MAPS_BASE_URL
     this.apiKey = apiKey ?? config.GOOGLE_MAPS_API_KEY
-    this.country = config.COUNTRY
     this.validateAPIKey()
   }
 
@@ -38,7 +36,7 @@ export class GoogleMapsProvider implements MapsProvider {
       const response = await axios.get(`${this.baseUrl}/place/autocomplete/json`, {
         params: {
           ...params,
-          components: params.components ?? `country:${this.country}`,
+          components: params.components ?? `country:${params.countryCode}`,
           key: this.apiKey
         }
       })

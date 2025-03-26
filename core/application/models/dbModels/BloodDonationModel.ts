@@ -1,3 +1,4 @@
+import { GEO_PARTITION_PREFIX_LENGTH } from '../../../../commons/libs/constants/NoMagicNumbers'
 import { DonationDTO, BloodGroup } from '../../../../commons/dto/DonationDTO'
 import {
   DbModelDtoAdapter,
@@ -42,23 +43,25 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
   }
 
   fromDto(donationDto: DonationDTO): DonationFields {
-    const { seekerId, requestPostId, createdAt, ...remainingDonationData } = donationDto
+    const { seekerId, requestPostId, createdAt, ...remainingData } = donationDto
 
     const data: DonationFields = {
       PK: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
       SK: `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`,
-      ...remainingDonationData,
+      ...remainingData,
       createdAt
     }
 
-    if (remainingDonationData.city !== undefined && remainingDonationData.status !== undefined) {
-      data.GSI1PK = `LOCATION#${remainingDonationData.countryCode}-${remainingDonationData.city}#STATUS#${remainingDonationData.status}`
+    const geoPartition = remainingData.geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
+
+    if (remainingData.status !== undefined) {
+      data.GSI1PK = `LOCATION#${remainingData.countryCode}-${geoPartition}#STATUS#${remainingData.status}`
     }
-    if ((remainingDonationData.requestedBloodGroup as BloodGroup) !== undefined) {
-      data.GSI1SK = `${createdAt}#BG#${remainingDonationData.requestedBloodGroup}`
+    if ((remainingData.requestedBloodGroup as BloodGroup) !== undefined) {
+      data.GSI1SK = `${createdAt}#BG#${remainingData.requestedBloodGroup}`
     }
-    if (remainingDonationData.status !== undefined) {
-      data.LSI1SK = `${BLOOD_REQUEST_LSI1SK_PREFIX}#${remainingDonationData.status}#${requestPostId}`
+    if (remainingData.status !== undefined) {
+      data.LSI1SK = `${BLOOD_REQUEST_LSI1SK_PREFIX}#${remainingData.status}#${requestPostId}`
     }
     return data
   }

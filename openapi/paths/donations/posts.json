@@ -7,7 +7,7 @@
     ],
     "parameters": [
       {
-        "name": "city",
+        "name": "geoPartition",
         "in": "path",
         "required": true,
         "schema": {
@@ -59,7 +59,7 @@
   "options": {
     "parameters": [
       {
-        "name": "city",
+        "name": "geoPartition",
         "in": "path",
         "required": true,
         "schema": {
