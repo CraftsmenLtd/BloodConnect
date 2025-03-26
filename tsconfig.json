@@ -30,8 +30,7 @@
     "clients",
     "babel.config.js",
     "jest.config.ts",
-    "jest.env.ts",
-    "metro.config.js"
+    "jest.env.ts"
   ],
   "exclude": [
     "node_modules/**/*",

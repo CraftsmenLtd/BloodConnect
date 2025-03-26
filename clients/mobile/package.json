@@ -13,6 +13,7 @@
     "@aws-amplify/react-native": "^1.1.6",
     "@aws-amplify/rtn-web-browser": "^1.1.0",
     "@aws-amplify/ui-react-native": "^2.2.12",
+    "@expo/metro-config": "^0.19.12",
     "@expo/vector-icons": "^14.0.3",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.0.1",
