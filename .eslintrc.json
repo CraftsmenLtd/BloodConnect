@@ -18,6 +18,7 @@
     "docs/",
     "clients/website/",
     "iac/",
+    "metro.config.js",
     ".build/",
     ".idea/",
     ".vscode/",
