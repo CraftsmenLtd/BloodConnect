@@ -1,7 +1,7 @@
 {
   "name": "mobile",
   "version": "1.0.0",
-  "main": "expo/AppEntry.js",
+  "main": "index.js",
   "scripts": {
     "start": "expo start --go",
     "android": "expo start --android",
