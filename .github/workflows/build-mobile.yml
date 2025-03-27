@@ -92,7 +92,7 @@ jobs:
         run: make run-command-fetch-google-service-file
 
       - name: Base64 Encode Google Service File and Save to Output
-        run: echo "ENCODED_GOOGLE_SERVICE_FILE=$(base64 -w 0 clients/mobile/google-services.json)" >> $GITHUB_OUTPUT
+        run: echo "ENCODED_GOOGLE_SERVICE_FILE=$(openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -pass pass:${{ secrets.ENCRYPTION_KEY }} -in clients/mobile/google-services.json -out myfile.txt.enc | base64 -w 0)" >> $GITHUB_OUTPUT
         id: encode_google_service
 
       - name: 🗂️ Parse Mobile Env file Into Github Env
