@@ -33,7 +33,6 @@ module "monitoring_site" {
 
 locals {
   monitoring_site_path = "monitoring"
-
 }
 
 module "cloudfront" {
