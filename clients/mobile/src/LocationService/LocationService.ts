@@ -75,7 +75,7 @@ export class LocationService {
     }, [])
   }
 
-  async preferredLocationAutocomplete(location: string, city: string): Promise<Array<{ label: string; value: string }>> {
+  async preferredLocationAutocomplete(location: string): Promise<Array<{ label: string; value: string }>> {
     try {
       const response = await this.httpClient.get<{ predictions: Prediction[] }>(
         '/maps/place/autocomplete/json', {
@@ -107,6 +107,7 @@ export class LocationService {
   }
 
   async healthLocationAutocomplete(location: string): Promise<Array<{ label: string; value: string }>> {
+    if (location === '') return []
     try {
       const response = await this.httpClient.get<{ predictions: Prediction[] }>(
         '/maps/place/autocomplete/json', {

@@ -39,7 +39,7 @@ const DonorProfile = () => {
           <View style={styles.locationRow} key={index}>
             <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
             <Text style={styles.locationText}>
-              {location?.area ?? ''}, {location?.city ?? ''}
+              {location?.area ?? ''}
             </Text>
           </View>
         ))}

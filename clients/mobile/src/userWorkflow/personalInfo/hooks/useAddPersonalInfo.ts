@@ -16,21 +16,18 @@ import { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigat
 import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { createUserProfile } from '../../services/userProfileService'
-import { LocationService } from '../../../LocationService/LocationService'
-import { formatErrorMessage, formatToTwoDecimalPlaces, formatPhoneNumber } from '../../../utility/formatting'
+import {
+  formatErrorMessage,
+  formatToTwoDecimalPlaces,
+  formatPhoneNumber,
+  formatLocations
+} from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type PersonalInfoKeys = keyof PersonalInfo
-
-interface LocationData {
-  area: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-}
 
 export interface PersonalInfo {
   bloodGroup: string;
@@ -40,7 +37,6 @@ export interface PersonalInfo {
   lastDonationDate: null | Date;
   dateOfBirth: Date;
   lastVaccinatedDate: null | Date;
-  city: string;
   locations: string[];
   availableForDonation: string;
   acceptPolicy: boolean;
@@ -75,7 +71,6 @@ export const useAddPersonalInfo = (): any => {
   const getValidationRules = (): Record<PersonalInfoKeys, ValidationRule[]> => {
     const rules: Partial<Record<PersonalInfoKeys, ValidationRule[]>> = {
       availableForDonation: [validateRequired],
-      city: [validateRequired],
       locations: [validateRequired],
       bloodGroup: [validateRequired],
       lastDonationDate: [validatePastOrTodayDate],
@@ -101,7 +96,6 @@ export const useAddPersonalInfo = (): any => {
     lastDonationDate: null,
     dateOfBirth: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
     lastVaccinatedDate: null,
-    city: '',
     locations: [],
     availableForDonation: 'yes',
     acceptPolicy: false,
@@ -147,29 +141,11 @@ export const useAddPersonalInfo = (): any => {
     ) || !personalInfo.acceptPolicy
   }, [personalInfo, errors, isSSO])
 
-  async function formatLocations(locations: string[], city: string): Promise<LocationData[]> {
-    const locationService = new LocationService(API_BASE_URL)
-
-    const formattedLocations = await Promise.all(
-      locations.map(async(area) =>
-        locationService.getLatLon(area)
-          .then((location) => {
-            if (location !== null) {
-              const { latitude, longitude } = location
-              return { area, city, latitude, longitude }
-            }
-          })
-          .catch(() => { return null })
-      )
-    )
-    return formattedLocations.filter((location): location is LocationData => location !== null)
-  }
-
   const handleSubmit = async(): Promise<void> => {
     try {
       setLoading(true)
       const { locations, dateOfBirth, lastDonationDate, lastVaccinatedDate, phoneNumber, ...rest } = personalInfo
-      const preferredDonationLocations = await formatLocations(locations, personalInfo.city)
+      const preferredDonationLocations = await formatLocations(locations, API_BASE_URL)
 
       if (preferredDonationLocations.length === 0) {
         setErrorMessage('No valid locations were found. Please verify your input.')

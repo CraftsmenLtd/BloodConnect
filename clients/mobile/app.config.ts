@@ -10,7 +10,6 @@ type EnvVars = {
   APP_NAME: string;
   APP_VERSION: string;
   APP_ENV: string;
-  COUNTRY: string;
 }
 
 const ensureEnvVars = (vars: Record<string, string | undefined>): EnvVars => {
@@ -33,8 +32,7 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     API_BASE_URL: process.env.API_BASE_URL,
     APP_NAME: process.env.APP_NAME,
     APP_VERSION: process.env.APP_VERSION,
-    APP_ENV: process.env.APP_ENV ?? 'preview',
-    COUNTRY: process.env.COUNTRY
+    APP_ENV: process.env.APP_ENV ?? 'preview'
   }
 
   const ENV_VARS: Record<string, EnvVars> = {

@@ -28,8 +28,7 @@ const useDonorProfile = (): any => {
       phoneNumbers: Array.isArray(donorProfile.phoneNumbers) ? donorProfile.phoneNumbers : [],
       preferredDonationLocations: Array.isArray(donorProfile.preferredDonationLocations)
         ? donorProfile.preferredDonationLocations.map((location) => ({
-          area: location?.area ?? '',
-          city: location?.city ?? ''
+          area: location?.area ?? ''
         }))
         : []
     }

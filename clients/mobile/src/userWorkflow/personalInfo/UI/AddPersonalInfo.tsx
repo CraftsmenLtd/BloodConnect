@@ -5,7 +5,7 @@ import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
 import { useAddPersonalInfo } from '../hooks/useAddPersonalInfo'
-import { bloodGroupOptions, districts, genderOptions } from '../options'
+import { bloodGroupOptions, genderOptions } from '../options'
 import { Input } from '../../../components/inputElement/Input'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Theme } from '../../../setup/theme'
@@ -75,19 +75,6 @@ const AddPersonalInfo = () => {
         )}
 
         <View style={styles.fieldSpacing}>
-          <Dropdown
-            label='Preferred District for Donating Blood'
-            isRequired={true}
-            placeholder='Select City'
-            options={districts}
-            name='city'
-            selectedValue={personalInfo.city}
-            onChange={handleInputChange}
-            error={errors.city}
-          />
-        </View>
-
-        <View style={styles.fieldSpacing}>
           <MultiSelect
             name='locations'
             label="Select Preferred Location"
@@ -99,10 +86,9 @@ const AddPersonalInfo = () => {
             enableSearch={true}
             fetchOptions={
               async(searchText) =>
-                locationService.preferredLocationAutocomplete(searchText, personalInfo.city)
+                locationService.preferredLocationAutocomplete(searchText)
             }
             minRequiredLabel='Add minimum 1 area.'
-            editable={personalInfo.city.length > 0}
           />
         </View>
 
