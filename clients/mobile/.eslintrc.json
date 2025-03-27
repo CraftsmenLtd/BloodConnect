@@ -4,6 +4,7 @@
   ],
   "ignorePatterns": [
     "babel.config.js",
+    "metro.config.js",
     "__tests__/" // FIXME: this should not be ignored
   ]
 }
