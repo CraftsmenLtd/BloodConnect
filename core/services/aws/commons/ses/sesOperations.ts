@@ -1,5 +1,6 @@
-import { SESClient, SendEmailCommand, SendEmailCommandInput } from '@aws-sdk/client-ses'
-import { GenericMessage } from '../../../../../commons/dto/MessageDTO'
+import type { SendEmailCommandInput } from '@aws-sdk/client-ses';
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
+import type { GenericMessage } from '../../../../../commons/dto/MessageDTO'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
 const sesClient = new SESClient({ region: process.env.AWS_REGION })
@@ -9,7 +10,7 @@ interface SendWelcomeEmailParams {
   emailContent: GenericMessage;
 }
 
-export async function sendAppUserWelcomeMail({ email, emailContent }: SendWelcomeEmailParams): Promise<void> {
+export async function sendAppUserWelcomeMail ({ email, emailContent }: SendWelcomeEmailParams): Promise<void> {
   const { title, content } = emailContent
   const senderEmail = process.env.EMAIL_SENDER
 

@@ -1,25 +1,29 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import { BloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import { DonationDTO } from '../../../../commons/dto/DonationDTO'
-import {
-  BloodDonationModel,
+import type { BloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import type {
   DonationFields
+} from '../../../application/models/dbModels/BloodDonationModel';
+import {
+  BloodDonationModel
 } from '../../../application/models/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { CREATE_DONATION_REQUEST_SUCCESS, UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
+import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import type { UserFields } from '../../../application/models/dbModels/UserModel';
+import UserModel from '../../../application/models/dbModels/UserModel'
 
 const bloodDonationService = new BloodDonationService()
 const userService = new UserService()
 
-async function createBloodDonationLambda(
+async function createBloodDonationLambda (
   event: BloodDonationAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

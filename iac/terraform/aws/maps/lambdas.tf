@@ -3,7 +3,7 @@ locals {
     autocomplete = {
       name                       = "get-place-auto-complete"
       handler                    = "getPlaceAutoComplete.default"
-      zip_path                   = "getPlaceAutoComplete.zip"
+      js_file_name               = "getPlaceAutoComplete.js"
       statement                  = local.policies.common_policies
       invocation_arn_placeholder = "GET_PLACE_AUTO_COMPLETE_INVOCATION_ARN"
       env_variables = {
@@ -13,7 +13,7 @@ locals {
     geocode = {
       name                       = "get-geo-code"
       handler                    = "getGeoCode.default"
-      zip_path                   = "getGeoCode.zip"
+      js_file_name               = "getGeoCode.js"
       statement                  = local.policies.common_policies,
       invocation_arn_placeholder = "GET_GEO_CODE_INVOCATION_ARN"
       env_variables = {

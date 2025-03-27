@@ -1,8 +1,14 @@
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_file = local.lambda_file_path
+  output_path = "${local.lambda_archive_path}/${split(".", var.lambda_option.js_file_name)[0]}.zip"
+}
+
 resource "aws_lambda_function" "lambda_function" {
   #checkov:skip=CKV_AWS_173: "Check encryption settings for Lambda environmental variable"
   function_name    = "${var.environment}-${var.lambda_option.name}"
-  filename         = "${local.lambda_archive_path}/${var.lambda_option.zip_path}"
-  source_code_hash = filebase64sha256("${local.lambda_archive_path}/${var.lambda_option.zip_path}")
+  filename         = data.archive_file.lambda.output_path
+  source_code_hash = filemd5(local.lambda_file_path)
   handler          = var.lambda_option.handler
   role             = aws_iam_role.lambda_role.arn
   runtime          = var.lambda_runtime

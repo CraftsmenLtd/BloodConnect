@@ -7,7 +7,9 @@
       "dev-image"
     ]
   },
-  "postCreateCommand": "apt install -y openssh-client less",
+  "postCreateCommand": {
+    "apt": "apt install -y openssh-client less"
+  },
   "runArgs": [
     "--env-file",
     ".devcontainer/.env",
@@ -23,7 +25,8 @@
         "dbaeumer.vscode-eslint",
         "hashicorp.terraform",
         "eamodio.gitlens",
-        "streetsidesoftware.code-spell-checker"
+        "streetsidesoftware.code-spell-checker",
+        "visualstudioexptteam.vscodeintellicode-completions"
       ]
     }
   }

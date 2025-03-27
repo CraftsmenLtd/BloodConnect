@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react'
+import type { ReactNode } from 'react';
+import React, { createContext, useState, useEffect } from 'react'
 import authService from '../services/authService'
 
 interface AuthContextProps {
@@ -17,9 +18,12 @@ const initialAuthContext = {
   idToken: null,
   isAuthenticated: false,
   loading: true,
-  logoutUser: async() => Promise.resolve(),
+  logoutUser: async () => Promise.resolve(),
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAccessToken: () => { },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setIdToken: () => { },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setIsAuthenticated: () => { }
 }
 
@@ -31,7 +35,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
 
-  const loadTokens = async() => {
+  const loadTokens = async () => {
     const tokens = await authService.loadTokens()
     if (tokens.storedAccessToken !== undefined && tokens.storedIdToken !== undefined) {
       const { storedAccessToken, storedIdToken } = tokens
@@ -47,7 +51,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(false)
   }
 
-  const logoutUser = async() => {
+  const logoutUser = async () => {
     try {
       await authService.logoutUser()
       setAccessToken(null)
@@ -59,7 +63,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }
 
   useEffect(() => {
-    const loadTokensIIFE = async() => {
+    const loadTokensIIFE = async () => {
       try {
         await loadTokens()
       } catch (error) {

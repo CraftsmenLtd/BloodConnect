@@ -1,29 +1,33 @@
-import { SQSEvent, SQSRecord } from 'aws-lambda'
-import {
+import type { SQSEvent, SQSRecord } from 'aws-lambda'
+import type {
   DonationNotificationAttributes,
   NotificationAttributes
 } from '../../../application/notificationWorkflow/Types'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import SNSOperations from '../commons/sns/SNSOperations'
-import {
+import type {
   BloodDonationNotificationDTO,
-  NotificationDTO,
+  NotificationDTO} from '../../../../commons/dto/NotificationDTO';
+import {
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
-import { AcceptDonationStatus, AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
-import NotificationModel, {
+import type { AcceptDonationStatus, AcceptedDonationDTO } from '../../../../commons/dto/DonationDTO'
+import type {
   NotificationFields
-} from '../../../application/models/dbModels/NotificationModel'
+} from '../../../application/models/dbModels/NotificationModel';
+import NotificationModel from '../../../application/models/dbModels/NotificationModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import { LocalCacheMapManager } from '../../../application/utils/localCacheMapManager'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
+import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import type { UserFields } from '../../../application/models/dbModels/UserModel';
+import UserModel from '../../../application/models/dbModels/UserModel'
 import { MAX_LOCAL_CACHE_SIZE_COUNT } from '../../../../commons/libs/constants/NoMagicNumbers'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
-import DonationNotificationModel, {
+import type {
   BloodDonationNotificationFields
-} from '../../../application/models/dbModels/DonationNotificationModel'
+} from '../../../application/models/dbModels/DonationNotificationModel';
+import DonationNotificationModel from '../../../application/models/dbModels/DonationNotificationModel'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import NotificationOperationError from 'core/application/notificationWorkflow/NotificationOperationError'
 
@@ -34,13 +38,13 @@ const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(
 const notificationService = new NotificationService()
 const userService = new UserService()
 
-async function sendPushNotification(event: SQSEvent): Promise<void> {
+async function sendPushNotification (event: SQSEvent): Promise<void> {
   for (const record of event.Records) {
     await processSQSRecord(record)
   }
 }
 
-async function processSQSRecord(record: SQSRecord): Promise<void> {
+async function processSQSRecord (record: SQSRecord): Promise<void> {
   const body: NotificationAttributes =
     typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
@@ -82,7 +86,7 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
 
 export default sendPushNotification
 
-async function createNotification(body: NotificationAttributes): Promise<boolean> {
+async function createNotification (body: NotificationAttributes): Promise<boolean> {
   if (body.type === NotificationType.BLOOD_REQ_POST) {
     const existingNotification = await notificationService.getBloodDonationNotification(
       body.userId,

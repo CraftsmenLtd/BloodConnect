@@ -1,5 +1,5 @@
-import { Gender, LocationDTO } from '../../../commons/dto/UserDTO'
-import { BloodGroup } from '../../../commons/dto/DonationDTO'
+import type { Gender, LocationDTO } from '../../../commons/dto/UserDTO'
+import type { BloodGroup } from '../../../commons/dto/DonationDTO'
 
 export type UserAttributes = {
   email: string;

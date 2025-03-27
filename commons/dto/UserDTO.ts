@@ -1,5 +1,5 @@
-import { BloodGroup } from './DonationDTO'
-import { DTO, HasIdentifier } from './DTOCommon'
+import type { BloodGroup } from './DonationDTO'
+import type { DTO, HasIdentifier } from './DTOCommon'
 
 export type UserDTO = DTO & HasIdentifier & {
   email: string;

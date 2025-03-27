@@ -26,7 +26,7 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
     : trimmedPhoneNumber
 }
 
-export function formatErrorMessage(error: unknown): string {
+export function formatErrorMessage (error: unknown): string {
   if (error instanceof Error && typeof error.message === 'string') {
     const errorMessage = error.message.toLowerCase()
     if (errorMessage.startsWith('failed to retrieve coordinates for')) {
@@ -77,11 +77,11 @@ export const replaceTemplatePlaceholders = (template: string, ...values: string[
   })
 }
 
-export const formatLocations = async(locations: string[], city: string, mapAPI: string): Promise<LocationData[]> => {
+export const formatLocations = async (locations: string[], city: string, mapAPI: string): Promise<LocationData[]> => {
   const locationService = new LocationService(mapAPI)
 
   const formattedLocations = await Promise.all(
-    locations.map(async(area) =>
+    locations.map(async (area) =>
       locationService.getLatLon(area)
         .then((location) => {
           if (location !== null) {

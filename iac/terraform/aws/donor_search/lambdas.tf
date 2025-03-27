@@ -1,9 +1,9 @@
 locals {
   donor_search_lambda_options = {
     donation-request-initiator = {
-      name     = "donation-request-initiator"
-      handler  = "donationRequestInitiator.default"
-      zip_path = "donationRequestInitiator.zip"
+      name         = "donation-request-initiator"
+      handler      = "donationRequestInitiator.default"
+      js_file_name = "donationRequestInitiator.js"
       statement = concat(
         local.policies.common_policies,
         local.policies.dynamodb_policy,
@@ -16,9 +16,9 @@ locals {
       }
     },
     donor-search = {
-      name     = "donor-search"
-      handler  = "donorSearch.default"
-      zip_path = "donorSearch.zip"
+      name         = "donor-search"
+      handler      = "donorSearch.default"
+      js_file_name = "donorSearch.js"
       statement = concat(
         local.policies.common_policies,
         local.policies.dynamodb_policy,
@@ -42,9 +42,9 @@ locals {
       }
     },
     donation-status-manager = {
-      name     = "donation-status-manager"
-      handler  = "donationStatusManager.default"
-      zip_path = "donationStatusManager.zip"
+      name         = "donation-status-manager"
+      handler      = "donationStatusManager.default"
+      js_file_name = "donationStatusManager.js"
       statement = concat(
         local.policies.common_policies,
         local.policies.dynamodb_policy,

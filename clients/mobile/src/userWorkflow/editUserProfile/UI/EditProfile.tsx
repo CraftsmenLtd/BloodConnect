@@ -75,6 +75,7 @@ const EditProfile = () => {
                 name="age"
                 label="Age"
                 value={profileData.age.toString()}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 onChangeText={() => { }}
                 placeholder="Enter your name"
                 readOnly={true}
@@ -149,8 +150,8 @@ const EditProfile = () => {
                 isRequired={false}
                 enableSearch={true}
                 fetchOptions={
-                  async(searchText) =>
-                    locationService.preferredLocationAutocomplete(searchText, profileData.city)
+                  async (searchText) =>
+                    locationService.preferredLocationAutocomplete(searchText)
                 }
                 minRequiredLabel="Add minimum 1 area."
                 editable={profileData.city.length > 0}

@@ -2,14 +2,14 @@ import {
   CognitoIdentityProviderClient,
   AdminUpdateUserAttributesCommand
 } from '@aws-sdk/client-cognito-identity-provider'
-import { UpdateCognitoAttributes } from '../../../../application/models/cognito/CognitoModel'
+import type { UpdateCognitoAttributes } from '../../../../application/models/cognito/CognitoModel'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
 const cognitoClient = new CognitoIdentityProviderClient({
   region: process.env.AWS_REGION
 })
 
-export async function updateCognitoUserInfo({
+export async function updateCognitoUserInfo ({
   userPoolId,
   username,
   attributes

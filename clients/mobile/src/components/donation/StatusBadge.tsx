@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleProp, ViewStyle, TextStyle } from 'react-native'
+import type { StyleProp, ViewStyle, TextStyle } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
-import { STATUS, StatusType } from '../../donationWorkflow/types'
+import type { Theme } from '../../setup/theme'
+import type { StatusType } from '../../donationWorkflow/types';
+import { STATUS } from '../../donationWorkflow/types'
 import Badge from '../badge'
 
 export interface StatusBadgeProps {

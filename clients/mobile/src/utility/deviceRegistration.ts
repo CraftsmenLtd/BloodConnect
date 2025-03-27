@@ -1,4 +1,4 @@
-import { HttpClient } from '../setup/clients/HttpClient'
+import type { HttpClient } from '../setup/clients/HttpClient'
 import { saveDeviceTokenOnSNS, saveDeviceTokenLocally } from '../setup/notification/saveDeviceToken'
 import { registerForPushNotificationsAsync } from '../setup/notification/registerForPushNotifications'
 

@@ -1,5 +1,5 @@
-import { SnsRegistrationAttributes } from '../../notificationWorkflow/Types'
-import { DTO } from '../../../../commons/dto/DTOCommon'
+import type { SnsRegistrationAttributes } from '../../notificationWorkflow/Types'
+import type { DTO } from '../../../../commons/dto/DTOCommon'
 
 export interface SNSModel {
   publish(message: DTO, snsEndpointArn: string): Promise<void>;

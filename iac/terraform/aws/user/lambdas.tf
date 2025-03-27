@@ -3,7 +3,7 @@ locals {
     update-user = {
       name                       = "update-user"
       handler                    = "updateUser.default"
-      zip_path                   = "updateUser.zip"
+      js_file_name               = "updateUser.js"
       statement                  = concat(local.policies.common_policies, local.policies.dynamodb_policy)
       invocation_arn_placeholder = "UPDATE_USER_INVOCATION_ARN"
       env_variables = {
@@ -14,7 +14,7 @@ locals {
     create-user = {
       name                       = "create-user"
       handler                    = "createUser.default"
-      zip_path                   = "createUser.zip"
+      js_file_name               = "createUser.js"
       statement                  = concat(local.policies.common_policies, local.policies.dynamodb_policy)
       invocation_arn_placeholder = "CREATE_USER_INVOCATION_ARN"
       env_variables = {
