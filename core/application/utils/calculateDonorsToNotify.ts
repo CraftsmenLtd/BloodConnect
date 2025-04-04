@@ -8,7 +8,7 @@ const DELAY_PERIOD: DelayPeriodConfig = {
   urgent: {
     minutes: {
       min: 5,
-      max: 10
+      max: 7
     },
     hours: {
       min: 0.6,
