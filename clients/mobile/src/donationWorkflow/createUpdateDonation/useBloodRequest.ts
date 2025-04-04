@@ -182,7 +182,7 @@ export const useBloodRequest = (): any => {
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
       contactNumber: formatPhoneNumber(rest.contactNumber),
-      bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1'),
+      bloodQuantity: Number(bloodQuantity),
       donationDateTime: typeof rest.donationDateTime === 'string'
         ? new Date(rest.donationDateTime).toISOString()
         : rest.donationDateTime.toISOString(),
@@ -207,7 +207,7 @@ export const useBloodRequest = (): any => {
       transportationInfo: bloodRequestData.transportationInfo,
       requestPostId: bloodRequestData?.requestPostId,
       createdAt: bloodRequestData?.createdAt,
-      bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1')
+      bloodQuantity: Number(bloodQuantity)
     }
     return await updateDonation(finalData, fetchClient)
   }
