@@ -75,12 +75,6 @@ variable "firebase_token_s3_url" {
   type        = string
 }
 
-variable "cloudfront_hosted_zone_id" {
-  description = "The hosted zone ID for the CloudFront distribution"
-  type        = string
-  default     = "Z2FDTNDATAQYW2"
-}
-
 variable "google_maps_api_key" {
   description = "google maps api key"
   type        = string
