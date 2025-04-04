@@ -4,6 +4,8 @@ import { DonorSearchQueueAttributes } from '../../../application/bloodDonationWo
 import {
   AcceptDonationStatus,
   AcceptedDonationDTO,
+  DonationDTO,
+  DonationStatus,
   DonorSearchDTO,
   DonorSearchStatus,
   EligibleDonorInfo
@@ -53,7 +55,11 @@ import DonationNotificationModel, {
   BloodDonationNotificationFields
 } from '../../../application/models/dbModels/DonationNotificationModel'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
+import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
+import { DonationFields, BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
+import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
+const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
 const donorSearchService = new DonorSearchService()
 const notificationService = new NotificationService()
@@ -86,6 +92,20 @@ async function donorSearch(event: SQSEvent): Promise<void> {
   })
 
   try {
+    const donationPost = await bloodDonationService.getDonationRequest(
+      seekerId,
+      requestPostId,
+      createdAt,
+      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
+        new BloodDonationModel()
+      )
+    )
+
+    if (donationPost.status === DonationStatus.COMPLETED || donationPost.status === DonationStatus.CANCELLED) {
+      serviceLogger.info(`terminating process as donation status is ${donationPost.status}`)
+      return
+    }
+
     serviceLogger.info(`checking targeted execution time${targetedExecutionTime !== undefined ? ` ${targetedExecutionTime}` : ''}`)
     await handleVisibilityTimeout(targetedExecutionTime, record.receiptHandle)
 
@@ -104,8 +124,10 @@ async function donorSearch(event: SQSEvent): Promise<void> {
 
     const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, countryCode, geohash } =
       donorSearchRecord
+
+    const isFirstInitiation = initiationCount === 1
     const remainingBagsNeeded =
-      initiationCount === 1
+      isFirstInitiation
         ? bloodQuantity
         : await getRemainingBagsNeeded(seekerId, requestPostId, bloodQuantity)
 
@@ -115,7 +137,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     }
 
     const rejectedDonorsCount: number =
-      initiationCount === 1 ? 0 : await getRejectedDonorsCount(requestPostId)
+      isFirstInitiation ? 0 : await getRejectedDonorsCount(requestPostId)
 
     const totalDonorsToFind =
       remainingDonorsToFind !== undefined && remainingDonorsToFind > 0

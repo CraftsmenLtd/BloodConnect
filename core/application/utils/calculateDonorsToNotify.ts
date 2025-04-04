@@ -1,4 +1,5 @@
-type UrgencyType = 'urgent' | 'regular'
+import { UrgencyType } from 'commons/dto/DonationDTO'
+
 type TimeUnit = 'minutes' | 'hours'
 type DelayRange = { min: number; max: number }
 type TimeUnitDelays = Record<TimeUnit, DelayRange>
