@@ -87,6 +87,7 @@ module "logger" {
 }
 
 module "dashboard" {
+  count                    = var.environment == module.environments.PRODUCTION ? 1 : 0
   source                   = "./dashboard"
   environment              = var.environment
   donor_search_lambda_name = module.donor_search.donor_search_lambda_name
