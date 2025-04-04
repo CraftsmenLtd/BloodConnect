@@ -41,13 +41,11 @@ export interface BloodRequestData {
   patientName?: string;
   shortDescription?: string;
   transportationInfo?: string;
-  city: string;
 }
 
 interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'transportationInfo' | 'donationDateTime'> { donationDateTime: string | null }
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
-  city: [validateRequired],
   urgencyLevel: [validateRequired],
   requestedBloodGroup: [validateRequired],
   bloodQuantity: [validateRequired],
@@ -75,7 +73,6 @@ export const useBloodRequest = (): any => {
     patientName: userProfile.name ?? '',
     shortDescription: '',
     transportationInfo: '',
-    city: '',
     ...data
   })
 
@@ -185,7 +182,7 @@ export const useBloodRequest = (): any => {
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
       contactNumber: formatPhoneNumber(rest.contactNumber),
-      bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1'),
+      bloodQuantity: Number(bloodQuantity),
       donationDateTime: typeof rest.donationDateTime === 'string'
         ? new Date(rest.donationDateTime).toISOString()
         : rest.donationDateTime.toISOString(),
@@ -210,7 +207,7 @@ export const useBloodRequest = (): any => {
       transportationInfo: bloodRequestData.transportationInfo,
       requestPostId: bloodRequestData?.requestPostId,
       createdAt: bloodRequestData?.createdAt,
-      bloodQuantity: +bloodQuantity.replace(/\b(\d+) (Bag|Bags)\b/, '$1')
+      bloodQuantity: Number(bloodQuantity)
     }
     return await updateDonation(finalData, fetchClient)
   }

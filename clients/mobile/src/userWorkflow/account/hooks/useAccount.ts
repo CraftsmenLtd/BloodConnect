@@ -68,8 +68,8 @@ export const useAccount = (): UseAccountReturnType => {
       const { preferredDonationLocations, ...userData } = response.data
 
       if (preferredDonationLocations.length > 0) {
-        const { city = '', area = '' } = preferredDonationLocations[0]
-        const location = `${city}, ${area}`
+        const { area = '' } = preferredDonationLocations[0]
+        const location = `${area}`
         setUserProfileData({ ...userData, location })
       }
     } catch (err) {

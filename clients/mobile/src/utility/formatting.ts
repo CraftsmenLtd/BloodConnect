@@ -2,7 +2,6 @@ import { LocationService } from '../LocationService/LocationService'
 
 export interface LocationData {
   area: string;
-  city: string;
   latitude: number;
   longitude: number;
 }
@@ -77,7 +76,7 @@ export const replaceTemplatePlaceholders = (template: string, ...values: string[
   })
 }
 
-export const formatLocations = async(locations: string[], city: string, mapAPI: string): Promise<LocationData[]> => {
+export const formatLocations = async(locations: string[], mapAPI: string): Promise<LocationData[]> => {
   const locationService = new LocationService(mapAPI)
 
   const formattedLocations = await Promise.all(
@@ -86,7 +85,7 @@ export const formatLocations = async(locations: string[], city: string, mapAPI: 
         .then((location) => {
           if (location !== null) {
             const { latitude, longitude } = location
-            return { area, city, latitude, longitude }
+            return { area, latitude, longitude }
           }
         })
         .catch(() => { return null })

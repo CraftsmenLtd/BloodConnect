@@ -1,7 +1,7 @@
 import { HttpClient } from '../../setup/clients/HttpClient'
 import { ApiResponse } from '../../setup/clients/response'
 
-export type preferredDonationLocations = { area: string; city: string }
+export type preferredDonationLocations = { area: string }
 
 export interface DonorProfile {
   phoneNumbers?: string[];

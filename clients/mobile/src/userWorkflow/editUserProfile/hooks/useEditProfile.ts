@@ -39,7 +39,6 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   phone: [validateRequired, validatePhoneNumber],
   preferredDonationLocations: [validateRequired],
   lastDonationDate: [validatePastOrTodayDate],
-  city: [],
   locations: []
 }
 
@@ -125,7 +124,7 @@ export const useEditProfile = (): any => {
         weight: parseFloat(profileData.weight),
         preferredDonationLocations: [
           ...updatedPreferredDonationLocations,
-          ...await formatLocations(filteredLocations, rest.city, API_BASE_URL)
+          ...await formatLocations(filteredLocations, API_BASE_URL)
         ]
       }
 
