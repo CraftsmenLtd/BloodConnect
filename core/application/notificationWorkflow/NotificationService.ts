@@ -3,7 +3,6 @@ import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
 import {
   BloodDonationNotificationDTO,
   NotificationDTO,
-  NotificationStatus,
   NotificationType
 } from '../../../commons/dto/NotificationDTO'
 import NotificationOperationError from './NotificationOperationError'
@@ -15,7 +14,7 @@ import {
   StoreNotificationEndPoint
 } from './Types'
 import Repository from '../models/policies/repositories/Repository'
-import { SNSModel } from '../../application/models/sns/SNSModel'
+import { SNSModel } from '../models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
 import { QueueModel } from '../models/queue/QueueModel'
 import NotificationRepository from '../models/policies/repositories/NotificationRepository'
@@ -44,7 +43,6 @@ export class NotificationService {
     try {
       await notificationRepository.create({
         ...notificationAttributes,
-        status: NotificationStatus.PENDING,
         id: generateUniqueID(),
         createdAt: new Date().toISOString()
       })
