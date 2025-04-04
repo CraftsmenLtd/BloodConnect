@@ -13,7 +13,6 @@ export interface BloodDonationAttributes {
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   countryCode: string;
-  city: string;
   location: string;
   latitude: number;
   longitude: number;
@@ -54,7 +53,6 @@ export interface DonorSearchAttributes {
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   countryCode: string;
-  city: string;
   location: string;
   geohash: string;
   donationDateTime: string;

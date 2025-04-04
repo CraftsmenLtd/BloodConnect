@@ -1,4 +1,5 @@
-type UrgencyType = 'urgent' | 'regular'
+import { UrgencyType } from 'commons/dto/DonationDTO'
+
 type TimeUnit = 'minutes' | 'hours'
 type DelayRange = { min: number; max: number }
 type TimeUnitDelays = Record<TimeUnit, DelayRange>
@@ -8,7 +9,7 @@ const DELAY_PERIOD: DelayPeriodConfig = {
   urgent: {
     minutes: {
       min: 5,
-      max: 10
+      max: 7
     },
     hours: {
       min: 0.6,

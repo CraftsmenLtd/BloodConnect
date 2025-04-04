@@ -18,7 +18,6 @@ export interface UserDetailsDTO extends UserDTO {
   dateOfBirth: string;
   age: number;
   countryCode: string;
-  city: string;
   availableForDonation: boolean;
   NIDFront: string;
   NIDBack: string;
@@ -34,7 +33,6 @@ export interface LocationDTO {
   locationId: string;
   area: string;
   countryCode: string;
-  city: string;
   latitude: number;
   longitude: number;
   geohash: string;

@@ -15,5 +15,4 @@ locals {
   })
 
   bloodconnect_environment_domain = var.environment == module.environments.PRODUCTION ? var.bloodconnect_domain : "${var.environment}.${var.bloodconnect_domain}"
-  valid_country_codes             = "['BD']"
 }

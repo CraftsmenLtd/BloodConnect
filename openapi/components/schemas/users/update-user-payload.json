@@ -36,9 +36,6 @@
         "type": "string",
         "format": "date"
       },
-      "city": {
-        "type": "string"
-      },
       "preferredDonationLocations": {
         "type": "array",
         "items": {
@@ -86,7 +83,6 @@
       "weight": 70,
       "gender": "male",
       "dateOfBirth": "1990-05-15",
-      "city": "Dhaka",
       "preferredDonationLocations": [
         {
           "area": "Banani",

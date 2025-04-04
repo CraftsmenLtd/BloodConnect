@@ -9,7 +9,6 @@
       "latitude",
       "longitude",
       "donationDateTime",
-      "city",
       "contactNumber"
     ],
     "properties": {
@@ -24,10 +23,6 @@
       "urgencyLevel": {
         "type": "string",
         "enum": ["regular", "urgent"]
-      },
-      "city": {
-        "type": "string",
-        "minLength": 1
       },
       "location": {
         "type": "string",
@@ -66,7 +61,6 @@
       "requestedBloodGroup": "O-",
       "bloodQuantity": 2,
       "urgencyLevel": "urgent",
-      "city": "Dhaka",
       "location": "Baridhara, Dhaka",
       "latitude": 23.7936,
       "longitude": 90.4043,

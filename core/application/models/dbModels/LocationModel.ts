@@ -1,3 +1,4 @@
+import { GEO_PARTITION_PREFIX_LENGTH } from '../../../../commons/libs/constants/NoMagicNumbers'
 import { BloodGroup } from '../../../../commons/dto/DonationDTO'
 import { LocationDTO } from '../../../../commons/dto/UserDTO'
 import {
@@ -12,7 +13,6 @@ export type LocationFields = Omit<
 LocationDTO,
 | 'userId'
 | 'locationId'
-| 'city'
 | 'countryCode'
 | 'bloodGroup'
 | 'availableForDonation'
@@ -49,7 +49,6 @@ implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFi
     const {
       userId,
       locationId,
-      city,
       countryCode,
       bloodGroup,
       availableForDonation,
@@ -57,10 +56,11 @@ implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFi
       ...remainingFields
     } = locationDto
 
+    const geoPartition = geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
     return {
       PK: `USER#${userId}`,
       SK: `LOCATION#${locationId}`,
-      GSI1PK: `LOCATION#${countryCode}-${city}#BG#${bloodGroup}#DONATIONSTATUS#${availableForDonation}`,
+      GSI1PK: `LOCATION#${countryCode}-${geoPartition}#BG#${bloodGroup}#DONATIONSTATUS#${availableForDonation}`,
       GSI1SK: `${geohash}`,
       ...remainingFields,
       createdAt: new Date().toISOString()
@@ -77,14 +77,13 @@ implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFi
       throw new Error('GSI1PK format is invalid.')
     }
 
-    const [, countryCode, city, bloodGroupStr, donationStatus] = gsiMatch
+    const [, countryCode, , bloodGroupStr, donationStatus] = gsiMatch
     const bloodGroup: BloodGroup = bloodGroupStr as BloodGroup
     const availableForDonation: boolean = donationStatus === 'true'
 
     return {
       userId,
       locationId,
-      city,
       countryCode,
       bloodGroup,
       availableForDonation,
