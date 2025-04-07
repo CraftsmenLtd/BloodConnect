@@ -45,6 +45,9 @@ locals {
 }
 
 resource "null_resource" "vite_build" {
+  triggers = {
+    always = timestamp()
+  }
   provisioner "local-exec" {
     command     = "npm run build"
     working_dir = local.client_path
