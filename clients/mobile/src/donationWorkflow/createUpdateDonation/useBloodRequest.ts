@@ -20,7 +20,6 @@ import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { useMyActivityContext } from '../../myActivity/context/useMyActivityContext'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
-import { LOCAL_NOTIFICATION_TYPE } from '../../setup/constant/consts'
 import { cancelNotificationById, fetchScheduledNotifications, scheduleNotification } from '../../setup/notification/scheduleNotification'
 import { NotificationRequest } from 'expo-notifications'
 import { UrgencyLevel } from '../types'
@@ -235,14 +234,6 @@ export const useBloodRequest = (): any => {
   const handleNotification = (donationDateTime: string | Date, donationResponse: { requestPostId: string; createdAt: string }): void => {
     if (isUpdating && currentBloodRequestData.current?.donationDateTime === bloodRequestData.donationDateTime) return
     if (isUpdating) { void updateNotificationTriggerTime(donationDateTime, donationResponse.requestPostId) }
-    const adjustedTime = adjustNotificationTime(donationDateTime)
-    const content = {
-      title: 'Blood Request Status Update',
-      body: 'It\'s been a day since your donation. Thank you!',
-      data: { payload: { ...donationResponse }, type: LOCAL_NOTIFICATION_TYPE.REQUEST_STATUS }
-    }
-
-    void scheduleNotification({ date: adjustedTime }, content)
   }
 
   const handlePostNow = async(): Promise<void> => {
