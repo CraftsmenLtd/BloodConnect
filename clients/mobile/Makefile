@@ -15,7 +15,6 @@ DIR:=$(dir $(ENV_FILE))
 BUILD_PROFILE?=development
 APP_NAME?=net.bloodconnect.app
 APP_VERSION?=1.0.0
-COUNTRY?=BD
 
 install-native-packages:
 	@npm install --prefix $(DIR)
@@ -38,4 +37,3 @@ upload-env:
 	@eas env:create --environment $(BUILD_PROFILE) --name AWS_USER_POOL_ID --value $(AWS_USER_POOL_ID) --type string --visibility plaintext --force --scope project --non-interactive
 	@eas env:create --environment $(BUILD_PROFILE) --name API_BASE_URL --value $(API_BASE_URL) --type string --visibility plaintext --force --scope project --non-interactive
 	@eas env:create --environment $(BUILD_PROFILE) --name AWS_COGNITO_DOMAIN --value $(AWS_COGNITO_DOMAIN) --type string --visibility plaintext --force --scope project --non-interactive
-	@eas env:create --environment $(BUILD_PROFILE) --name COUNTRY --value $(COUNTRY) --type string --visibility plaintext --force --scope project --non-interactive

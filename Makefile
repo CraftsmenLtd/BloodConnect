@@ -41,7 +41,6 @@ DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
             -e EAS_PROJECT_ID \
             -e APP_VERSION \
             -e APP_NAME \
-            -e COUNTRY \
             -e AWS_USER_POOL_CLIENT_ID \
             -e AWS_USER_POOL_ID \
             -e API_BASE_URL \

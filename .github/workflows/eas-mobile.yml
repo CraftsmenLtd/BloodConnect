@@ -39,10 +39,6 @@ on:
         description: "Defines B64 encoded google services file"
         required: true
         type: string
-      country:
-        description: "Defines country For EXPO"
-        required: true
-        type: string
 permissions:
   contents: read
   packages: write
@@ -89,15 +85,18 @@ jobs:
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install React Native Modules
-        run: make run-command-install-native-packages
+        run: make run-command-install-node-packages
 
       - name: 📥 Decode Google Service File from Input
         run: base64 --decode <<< "${{ inputs.encoded_google_services_file }}" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -salt -pass pass:${{ secrets.ENCRYPTION_KEY }} > clients/mobile/google-services.json
 
       - name: 📤 Upload Environment Variables to Expo
-        run: cd clients/mobile && make upload-env
+        run: make upload-env
+        working-directory: clients/mobile
       
       - name: ⏳ Start Expo Build Job
-        run: cd clients/mobile && make build-android
+        run: make build-android
+        working-directory: clients/mobile

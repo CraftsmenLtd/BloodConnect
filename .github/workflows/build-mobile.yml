@@ -123,4 +123,3 @@ jobs:
       api_base_url: ${{ needs.fetch-env-file.outputs.ap_base_url }}
       aws_cognito_domain: ${{ needs.fetch-env-file.outputs.aws_cognito_domain }}
       encoded_google_services_file: ${{ needs.fetch-env-file.outputs.encoded_google_services_file }}
-      country: BD
