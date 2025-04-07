@@ -46,9 +46,13 @@ locals {
 
 resource "null_resource" "vite_build" {
   triggers = {
-    always = timestamp()
+    directory_sha1 = sha1(join("", [
+      for f in fileset(local.client_path, "**/*") :
+      filesha1("${local.client_path}/${f}") if !strcontains(f, "node_modules")
+    ]))
   }
   provisioner "local-exec" {
+    on_failure  = fail
     command     = "npm run build"
     working_dir = local.client_path
 
@@ -64,18 +68,11 @@ resource "null_resource" "vite_build" {
       VITE_MAX_GEOHASH_PREFIX_SIZE = var.max_geohash_prefix_length
     }
   }
-}
 
-resource "aws_s3_object" "site_assets" {
-  depends_on    = [null_resource.vite_build]
-  for_each      = fileset(local.dist_path, "**/*")
-  bucket        = aws_s3_bucket.monitoring_site.id
-  key           = "${var.site_path}/${each.key}"
-  source        = "${local.dist_path}/${each.value}"
-  source_hash   = filemd5("${local.dist_path}/${each.value}")
-  etag          = filemd5("${local.dist_path}/${each.value}")
-  content_type  = lookup(local.content_type_map, split(".", each.value)[1], "text/html")
-  force_destroy = true
+  provisioner "local-exec" {
+    command     = "aws s3 cp ${local.dist_dir} s3://${aws_s3_bucket.monitoring_site.id}/${var.site_path}/ --recursive --region ${aws_s3_bucket.monitoring_site.region}"
+    working_dir = local.client_path
+  }
 }
 
 resource "aws_iam_policy" "data_access_policy" {
