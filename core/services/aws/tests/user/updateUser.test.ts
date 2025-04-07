@@ -51,7 +51,6 @@ describe('updateUserLambda', () => {
       NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
       lastVaccinatedDate: '2023-05-01',
       countryCode: 'BD',
-      city: 'Dhaka',
       email: 'example@gmail.com',
       age: 34
     }

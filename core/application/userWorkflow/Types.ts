@@ -16,7 +16,6 @@ export interface BaseUserAttributes extends UserAttributes {
   dateOfBirth: string;
   age: number;
   countryCode: string;
-  city: string;
   preferredDonationLocations: LocationDTO[];
   availableForDonation: boolean;
   NIDFront: string;

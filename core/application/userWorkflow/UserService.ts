@@ -142,8 +142,7 @@ export class UserService {
   ): Promise<void> {
     if (
       preferredDonationLocations !== undefined &&
-      preferredDonationLocations.length !== 0 &&
-      userAttributes.city !== undefined
+      preferredDonationLocations.length !== 0
     ) {
       await locationRepository.deleteUserLocations(userId)
 
@@ -153,7 +152,6 @@ export class UserService {
           locationId: generateUniqueID(),
           area: location.area,
           countryCode: userAttributes.countryCode as string,
-          city: userAttributes.city,
           latitude: location.latitude,
           longitude: location.longitude,
           geohash: generateGeohash(location.latitude, location.longitude),

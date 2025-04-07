@@ -25,8 +25,7 @@ export const mockUserDetailsWithStringId: UserDetailsDTO = {
   NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
   NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
   lastVaccinatedDate: '2023-03-01T10:00:00Z',
-  countryCode: 'BD',
-  city: 'Dhaka'
+  countryCode: 'BD'
 }
 
 export const mockUserWithNumberId: UserDTO = {
@@ -57,6 +56,5 @@ export const expectedUser: UserFields = {
   NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
   NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
   lastVaccinatedDate: '2023-03-01T10:00:00Z',
-  countryCode: 'BD',
-  city: 'Dhaka'
+  countryCode: 'BD'
 }

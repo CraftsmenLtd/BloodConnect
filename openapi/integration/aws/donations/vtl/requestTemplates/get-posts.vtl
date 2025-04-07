@@ -32,7 +32,7 @@ $seconds + "." + $milliseconds + "Z")
   "FilterExpression": "donationDateTime > :donationDateTime",
   "ExpressionAttributeValues": {
     ":gsi1pk": {
-      "S": "LOCATION#$input.params().header.get('CloudFront-Viewer-Country')-$input.params('city')#STATUS#PENDING"
+      "S": "LOCATION#$input.params().header.get('CloudFront-Viewer-Country')-$input.params('geoPartition')#STATUS#PENDING"
     },
     ":donationDateTime": {
       "S": "$nowIsoDate"

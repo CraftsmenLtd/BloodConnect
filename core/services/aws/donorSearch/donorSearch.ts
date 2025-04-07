@@ -4,6 +4,8 @@ import { DonorSearchQueueAttributes } from '../../../application/bloodDonationWo
 import {
   AcceptDonationStatus,
   AcceptedDonationDTO,
+  DonationDTO,
+  DonationStatus,
   DonorSearchDTO,
   DonorSearchStatus,
   EligibleDonorInfo
@@ -48,12 +50,16 @@ import {
   BloodDonationNotificationDTO,
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
-import { MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from '../../../../commons/libs/constants/NoMagicNumbers'
+import { GEO_PARTITION_PREFIX_LENGTH, MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from '../../../../commons/libs/constants/NoMagicNumbers'
 import DonationNotificationModel, {
   BloodDonationNotificationFields
 } from '../../../application/models/dbModels/DonationNotificationModel'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
+import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
+import { DonationFields, BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
+import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
+const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
 const donorSearchService = new DonorSearchService()
 const notificationService = new NotificationService()
@@ -86,6 +92,20 @@ async function donorSearch(event: SQSEvent): Promise<void> {
   })
 
   try {
+    const donationPost = await bloodDonationService.getDonationRequest(
+      seekerId,
+      requestPostId,
+      createdAt,
+      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
+        new BloodDonationModel()
+      )
+    )
+
+    if (donationPost.status === DonationStatus.COMPLETED || donationPost.status === DonationStatus.CANCELLED) {
+      serviceLogger.info(`terminating process as donation status is ${donationPost.status}`)
+      return
+    }
+
     serviceLogger.info(`checking targeted execution time${targetedExecutionTime !== undefined ? ` ${targetedExecutionTime}` : ''}`)
     await handleVisibilityTimeout(targetedExecutionTime, record.receiptHandle)
 
@@ -102,10 +122,12 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       return
     }
 
-    const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, countryCode, city, geohash } =
+    const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, countryCode, geohash } =
       donorSearchRecord
+
+    const isFirstInitiation = initiationCount === 1
     const remainingBagsNeeded =
-      initiationCount === 1
+      isFirstInitiation
         ? bloodQuantity
         : await getRemainingBagsNeeded(seekerId, requestPostId, bloodQuantity)
 
@@ -115,7 +137,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     }
 
     const rejectedDonorsCount: number =
-      initiationCount === 1 ? 0 : await getRejectedDonorsCount(requestPostId)
+      isFirstInitiation ? 0 : await getRejectedDonorsCount(requestPostId)
 
     const totalDonorsToFind =
       remainingDonorsToFind !== undefined && remainingDonorsToFind > 0
@@ -128,7 +150,6 @@ async function donorSearch(event: SQSEvent): Promise<void> {
         seekerId,
         requestedBloodGroup,
         countryCode,
-        city,
         geohash,
         totalDonorsToFind,
         currentNeighborSearchLevel,
@@ -156,7 +177,8 @@ async function donorSearch(event: SQSEvent): Promise<void> {
           currentNeighborSearchLevel: updatedNeighborSearchLevel,
           remainingGeohashesToProcessCount: geohashesForNextIteration.length,
           remainingDonorsToFind: nextRemainingDonorsToFind,
-          delayPeriod
+          delayPeriod,
+          initiationCount
         },
         `continuing donor search to find remaining ${nextRemainingDonorsToFind} donors`
       )
@@ -320,7 +342,6 @@ async function queryEligibleDonors(
   seekerId: string,
   requestedBloodGroup: string,
   countryCode: string,
-  city: string,
   geohash: string,
   totalDonorsToFind: number,
   currentNeighborSearchLevel: number,
@@ -342,7 +363,6 @@ async function queryEligibleDonors(
     seekerId,
     requestedBloodGroup,
     countryCode,
-    city,
     geohash,
     updatedGeohashesToProcess,
     totalDonorsToFind,
@@ -360,7 +380,6 @@ async function getNewDonorsInNeighborGeohash(
   seekerId: string,
   requestedBloodGroup: string,
   countryCode: string,
-  city: string,
   seekerGeohash: string,
   geohashesToProcess: string[],
   totalDonorsToFind: number,
@@ -380,7 +399,7 @@ async function getNewDonorsInNeighborGeohash(
   }
 
   const geohashToProcess = geohashesToProcess[0]
-  const donors = await getDonorsFromCache(geohashToProcess, countryCode, city, requestedBloodGroup)
+  const donors = await getDonorsFromCache(geohashToProcess, countryCode, requestedBloodGroup)
 
   const updatedEligibleDonors = donors.reduce<Record<string, EligibleDonorInfo>>(
     (donorAccumulator, donor) => {
@@ -407,7 +426,6 @@ async function getNewDonorsInNeighborGeohash(
     seekerId,
     requestedBloodGroup,
     countryCode,
-    city,
     seekerGeohash,
     geohashesToProcess.slice(1),
     totalDonorsToFind,
@@ -420,20 +438,20 @@ async function getNewDonorsInNeighborGeohash(
 async function getDonorsFromCache(
   geohashToProcess: string,
   countryCode: string,
-  city: string,
   requestedBloodGroup: string
 ): Promise<DonorInfo[]> {
   const geohashCachePrefix = geohashToProcess.slice(
     0,
     Number(process.env.CACHE_GEOHASH_PREFIX_LENGTH)
   )
-  const cacheKey = `${countryCode}-${city}-${requestedBloodGroup}-${geohashCachePrefix}`
+  const geoPartitionPrefix = geohashToProcess.slice(0, GEO_PARTITION_PREFIX_LENGTH)
+
+  const cacheKey = `${countryCode}-${geoPartitionPrefix}-${requestedBloodGroup}-${geohashCachePrefix}`
   const cachedGroupedGeohash = GEOHASH_CACHE.get(cacheKey) as GeohashDonorMap
 
   if (cachedGroupedGeohash === undefined) {
     const queriedDonors = await donorSearchService.queryGeohash(
       countryCode,
-      city,
       requestedBloodGroup,
       geohashCachePrefix,
       new GeohashDynamoDbOperations<LocationDTO, LocationFields, LocationModel>(new LocationModel())

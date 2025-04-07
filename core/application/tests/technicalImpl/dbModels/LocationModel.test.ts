@@ -12,7 +12,6 @@ describe('LocationModel Tests', () => {
       const locationDto: LocationDTO = {
         area: 'Banani',
         countryCode: 'BD',
-        city: 'Dhaka',
         latitude: 23.7936,
         longitude: 90.4043,
         userId: 'user1',
@@ -29,7 +28,7 @@ describe('LocationModel Tests', () => {
       expect(result).toEqual({
         PK: 'USER#user1',
         SK: 'LOCATION#location1',
-        GSI1PK: 'LOCATION#BD-Dhaka#BG#A+#DONATIONSTATUS#true',
+        GSI1PK: 'LOCATION#BD-gcpu#BG#A+#DONATIONSTATUS#true',
         GSI1SK: 'gcpuv',
         createdAt: expect.any(String),
         area: 'Banani',
@@ -43,7 +42,6 @@ describe('LocationModel Tests', () => {
       const locationDto: LocationDTO = {
         area: 'Banani',
         countryCode: 'BD',
-        city: 'Dhaka',
         latitude: 23.7936,
         longitude: 90.4043,
         userId: 'user1',
@@ -65,7 +63,7 @@ describe('LocationModel Tests', () => {
       const dbFields: LocationFields = {
         PK: 'USER#user1',
         SK: 'LOCATION#location1',
-        GSI1PK: 'LOCATION#BD-CityA#BG#A+#DONATIONSTATUS#true',
+        GSI1PK: 'LOCATION#BD-gcpu#BG#A+#DONATIONSTATUS#true',
         GSI1SK: 'gcpuv',
         createdAt: '2023-10-01T00:00:00.000Z',
         area: 'Banani',
@@ -80,7 +78,6 @@ describe('LocationModel Tests', () => {
         userId: 'user1',
         locationId: 'location1',
         countryCode: 'BD',
-        city: 'CityA',
         bloodGroup: 'A+' as BloodGroup,
         availableForDonation: true,
         geohash: 'gcpuv',

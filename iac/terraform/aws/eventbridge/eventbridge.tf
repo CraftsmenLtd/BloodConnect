@@ -33,7 +33,6 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   "requestedBloodGroup": "<$.dynamodb.NewImage.requestedBloodGroup.S>",
   "bloodQuantity": "<$.dynamodb.NewImage.bloodQuantity.N>",
   "countryCode": "<$.dynamodb.NewImage.countryCode.S>",
-  "city": "<$.dynamodb.NewImage.city.S>",
   "urgencyLevel": "<$.dynamodb.NewImage.urgencyLevel.S>",
   "createdAt": "<$.dynamodb.NewImage.createdAt.S>",
   "geohash": "<$.dynamodb.NewImage.geohash.S>",
