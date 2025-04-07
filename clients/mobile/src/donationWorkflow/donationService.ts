@@ -33,10 +33,14 @@ export const updateDonation = async(payload: Record<string, unknown>, httpClient
   }
 }
 
-export const fetchDonationPublicPosts = async(city: string, httpClient: HttpClient, bloodGroup: string = ''): Promise<DonationResponse> => {
+export const fetchDonationPublicPosts = async(
+  geoPartition: string,
+  httpClient: HttpClient,
+  bloodGroup: string = ''
+): Promise<DonationResponse> => {
   try {
     const response = await httpClient.get<DonationResponse>(
-      `/donations/posts/${city}`,
+      `/donations/posts/${geoPartition}`,
       { bloodGroup: (bloodGroup !== '' ? bloodGroup : '') }
     )
     return {

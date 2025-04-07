@@ -25,11 +25,21 @@ export const useDonationPosts = (): any => {
   useEffect(() => { void fetchPosts() }, [])
 
   const fetchDonations = async(bloodGroup: string = ''): Promise<void> => {
-    const response = await fetchDonationPublicPosts(userProfile.city, fetchClient, bloodGroup)
-    if (response.data !== undefined) {
-      const formattedDonations = formatDonations(response.data)
-      setDonationPosts(formattedDonations)
-    }
+    const results = await Promise.allSettled(
+      userProfile.uniqueGeoPartitions.map(async(eachPartition) => {
+        const response = await fetchDonationPublicPosts(eachPartition, fetchClient, bloodGroup)
+        return (response.data != null) ? formatDonations(response.data) : []
+      })
+    )
+
+    const formattedDonations = results
+      .filter(result => result.status === 'fulfilled')
+      .flatMap(result => (result as PromiseFulfilledResult<DonationData[]>).value)
+
+    formattedDonations.sort((a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    setDonationPosts(formattedDonations)
   }
 
   const fetchPosts = async(): Promise<void> => {

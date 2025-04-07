@@ -4,7 +4,8 @@ import { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
 
 interface UserPreferredLocation {
   area: string;
-  city: string;
+  geoHash: string;
+  geoPartition: string;
   latitude: number;
   longitude: number;
 }
@@ -19,8 +20,8 @@ export interface UserProfile extends
   | 'gender'
   | 'availableForDonation'>> {
   preferredDonationLocations?: UserPreferredLocation[];
+  uniqueGeoPartitions: string[];
   userId: string;
-  city: string;
   bloodGroup: string;
   gender: string;
   availableForDonation: boolean;
