@@ -6,7 +6,7 @@ import { Button } from '../components/button/Button'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import type { Theme } from '../setup/theme'
 
-export interface WelcomeScreenProps {
+export type WelcomeScreenProps = {
   navigation: WelcomeScreenNavigationProp;
 }
 

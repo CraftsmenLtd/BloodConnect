@@ -6,11 +6,11 @@ import type { StatusType } from '../../donationWorkflow/types';
 import { STATUS } from '../../donationWorkflow/types'
 import Badge from '../badge'
 
-export interface StatusBadgeProps {
+export type StatusBadgeProps = {
   status: StatusType;
 }
 
-interface StatusStyles {
+type StatusStyles = {
   container: StyleProp<ViewStyle>;
   text: StyleProp<TextStyle>;
 }

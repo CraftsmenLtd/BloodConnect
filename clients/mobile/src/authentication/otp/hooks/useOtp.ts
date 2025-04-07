@@ -50,7 +50,7 @@ export const useOtp = (): unknown => {
 
   const isButtonDisabled = useMemo(() => otp.join('').trim().length !== 6, [otp])
 
-  const handleRegister = async (): Promise<void> => {
+  const handleRegister = async(): Promise<void> => {
     const isRegistrationSuccessful = await submitOtp(email, otp.join(''))
     if (isRegistrationSuccessful) {
       const isSignedIn = await loginUser(email, password)
@@ -70,7 +70,7 @@ export const useOtp = (): unknown => {
     }
   }
 
-  const resendForgotPasswordOtpHandler = async (email: string): Promise<void> => {
+  const resendForgotPasswordOtpHandler = async(email: string): Promise<void> => {
     const nextStep = await resetPasswordHandler(email)
     switch (nextStep.resetPasswordStep) {
       case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
@@ -86,7 +86,7 @@ export const useOtp = (): unknown => {
     }
   }
 
-  const resendSignUpOtpHandler = async (): Promise<void> => {
+  const resendSignUpOtpHandler = async(): Promise<void> => {
     const isResendCodeSuccessful = await resendSignUpOtp(email)
     if (isResendCodeSuccessful) {
       setCountdown(RESEND_CODE_COUNTDOWN)
@@ -95,7 +95,7 @@ export const useOtp = (): unknown => {
     }
   }
 
-  const resendOtpHandler = async (): Promise<void> => {
+  const resendOtpHandler = async(): Promise<void> => {
     try {
       if (fromScreen === SCREENS.SET_PASSWORD) {
         await resendSignUpOtpHandler()
@@ -108,7 +108,7 @@ export const useOtp = (): unknown => {
     }
   }
 
-  const handleSubmit = async (): Promise<void> => {
+  const handleSubmit = async(): Promise<void> => {
     setLoading(true)
     try {
       if (fromScreen === SCREENS.SET_PASSWORD) {

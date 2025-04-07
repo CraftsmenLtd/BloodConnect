@@ -7,7 +7,7 @@ type UseFetchDataReturn<DataFetchType> = [
   string | null
 ]
 
-export default function useFetchData<DataFetchType> (
+export default function useFetchData<DataFetchType>(
   dataFetchFunction: (...args: unknown[]) => Promise<DataFetchType>,
   executeNow = false
 ): UseFetchDataReturn<DataFetchType> {
@@ -17,7 +17,7 @@ export default function useFetchData<DataFetchType> (
   const dataFetchFunctionRef = useRef(dataFetchFunction)
 
   const executeFunction = useCallback(
-    async (...args: unknown[]): Promise<void> => {
+    async(...args: unknown[]): Promise<void> => {
       setLoading(true)
       setError(null)
       try {

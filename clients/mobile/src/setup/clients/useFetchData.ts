@@ -1,6 +1,6 @@
 import { useCallback, useState, useRef, useEffect } from 'react'
 
-interface UseFetchDataProps {
+type UseFetchDataProps = {
   shouldExecuteOnMount?: boolean;
   parseError?: (error: unknown) => string;
   errorMessage?: string;
@@ -28,7 +28,7 @@ const useFetchData = <DataFetchType>(
   }
 
   const executeFunction = useCallback(
-    async (...args: unknown[]) => {
+    async(...args: unknown[]) => {
       setLoading(true)
       setError(null)
       try {

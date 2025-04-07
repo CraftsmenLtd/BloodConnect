@@ -30,7 +30,7 @@ import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiRes
 const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
 
-async function completeDonationRequest (
+async function completeDonationRequest(
   event: GetDonationRequestAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

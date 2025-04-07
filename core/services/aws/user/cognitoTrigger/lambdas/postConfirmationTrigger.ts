@@ -9,7 +9,7 @@ import UserModel from '../../../../../application/models/dbModels/UserModel'
 import { updateCognitoUserInfo } from '../../../commons/cognito/CognitoOperations'
 import { sendAppUserWelcomeMail } from '../../../commons/ses/sesOperations'
 
-async function postConfirmationLambda (
+async function postConfirmationLambda(
   event: PostConfirmationTriggerEvent
 ): Promise<PostConfirmationTriggerEvent> {
   if (event.triggerSource !== 'PostConfirmation_ConfirmSignUp') {

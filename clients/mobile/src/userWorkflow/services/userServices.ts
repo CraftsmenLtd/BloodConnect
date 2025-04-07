@@ -3,7 +3,7 @@ import type { ApiResponse } from '../../setup/clients/response'
 
 export type preferredDonationLocations = { area: string }
 
-export interface DonorProfile {
+export type DonorProfile = {
   phoneNumbers?: string[];
   donorName?: string;
   bloodGroup?: string;
@@ -14,7 +14,7 @@ export interface DonorProfile {
   preferredDonationLocations?: preferredDonationLocations[];
 }
 
-export const getDonorProfile = async (donorId: string, httpClient: HttpClient): Promise<ApiResponse<DonorProfile>> => {
+export const getDonorProfile = async(donorId: string, httpClient: HttpClient): Promise<ApiResponse<DonorProfile>> => {
   try {
     const response = await httpClient.get<ApiResponse<DonorProfile>>(`/donors/${donorId}`, {})
     return {

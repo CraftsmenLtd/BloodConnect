@@ -16,9 +16,9 @@ export const MY_ACTIVITY_TAB_CONFIG: TabConfig = {
   initialTab: 'My Requests'
 }
 
-export interface DonationData extends Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> {
+export type DonationData = {
   requestPostId: string;
-}
+} & Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'>
 
 export const useMyActivity = (): unknown => {
   const fetchClient = useFetchClient()
@@ -44,7 +44,7 @@ export const useMyActivity = (): unknown => {
     navigation.navigate(SCREENS.DETAIL_POST, { data: { ...data }, useAsDetailsPage: true })
   }
 
-  const cancelPost = async (donationData: DonationData): Promise<void> => {
+  const cancelPost = async(donationData: DonationData): Promise<void> => {
     setIsLoading(true)
     const payload = {
       requestPostId: donationData.requestPostId,
@@ -73,7 +73,7 @@ export const useMyActivity = (): unknown => {
     setCurrentTab(tab)
   }
 
-  const refreshPosts = async (): Promise<void> => {
+  const refreshPosts = async(): Promise<void> => {
     setRefreshing(true)
     await getMyResponses()
     setRefreshing(false)

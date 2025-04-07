@@ -41,7 +41,7 @@
       "type"
     ],
     "@typescript-eslint/explicit-function-return-type": "warn",
-    "@typescript-eslint/space-before-function-paren": "error",
+    "@typescript-eslint/space-before-function-paren": ["error", "never"],
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-empty-function": "error",
     "@typescript-eslint/return-await": "off",

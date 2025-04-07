@@ -13,7 +13,7 @@ import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { CREATE_PROFILE_SUCCESS, UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
 
-async function createUserLambda (
+async function createUserLambda(
   event: CreateUserAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const { userId, apiGwRequestId, cloudFrontRequestId } = event

@@ -59,7 +59,7 @@ export const useSignUp = (): UseSignUpReturnType => {
     }, toastHideDisappearTime)
   }
 
-  const handleSignUp = async (): Promise<void> => {
+  const handleSignUp = async(): Promise<void> => {
     const { passwordResults, confirmPasswordResult } = validatePassword(
       password,
       confirmPassword

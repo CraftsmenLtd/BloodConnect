@@ -53,7 +53,7 @@ export const useLogin = (): UseLoginReturn => {
     }, 3000)
   }
 
-  const handleLogin = async (): Promise<void> => {
+  const handleLogin = async(): Promise<void> => {
     try {
       await signIn(email, password)
       void fetchUser()

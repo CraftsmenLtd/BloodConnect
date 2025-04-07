@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 
-interface CheckboxProps {
+type CheckboxProps = {
   isChecked: boolean;
   name: string;
   onCheckboxChange: (name: string, text: boolean) => void;

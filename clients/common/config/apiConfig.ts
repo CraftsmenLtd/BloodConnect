@@ -9,14 +9,14 @@ const api = axios.create({
 })
 
 api.interceptors.request.use(
-  async (config) => {
+  async(config) => {
     const idToken = (await getAuthSession()).tokens?.idToken?.toString()
     if (idToken !== undefined && idToken !== null) {
       config.headers.Authorization = `Bearer ${idToken}`
     }
     return config
   },
-  async (error) => Promise.reject(error)
+  async(error) => Promise.reject(error)
 )
 
 export default api

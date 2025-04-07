@@ -6,12 +6,12 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 
-interface Option {
+type Option = {
   label: string;
   value: string;
 }
 
-interface DropdownComponentProps {
+type DropdownComponentProps = {
   label: string;
   options: Option[];
   name: string;

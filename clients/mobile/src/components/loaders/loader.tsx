@@ -2,7 +2,7 @@ import React from 'react'
 import { View, ActivityIndicator, StyleSheet } from 'react-native'
 import { loaderHOC } from './loaderHOC'
 
-interface LoaderProps {
+type LoaderProps = {
   size?: 'small' | 'large';
   color?: string;
   theme?: unknown;

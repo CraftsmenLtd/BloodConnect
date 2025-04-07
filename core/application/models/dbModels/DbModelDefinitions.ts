@@ -7,21 +7,21 @@ export type HasTimeLog = {
   updatedAt?: string;
 }
 
-export interface DbModelDtoAdapter<Dto extends DTO, DbFields = Record<string, unknown>> {
+export type DbModelDtoAdapter<Dto extends DTO, DbFields = Record<string, unknown>> = {
   fromDto(dto: Dto): DbFields;
   toDto(dbFields: DbFields): Dto;
 }
 
-export interface SqlModel extends DbModel {
+export type SqlModel = {
   getId(): string;
-}
+} & DbModel
 
 export type DbIndex<DbFields extends Record<string, unknown>> = { partitionKey: keyof DbFields; sortKey?: keyof DbFields }
 export type IndexType = 'GSI' | 'LSI'
 export type IndexDefinitions<DbFields extends Record<string, unknown>> = Partial<Record<IndexType, Record<string, DbIndex<DbFields>>>>
 
-export interface NosqlModel<DbFields extends Record<string, unknown>> extends DbModel {
+export type NosqlModel<DbFields extends Record<string, unknown>> = {
   getIndexDefinitions(): IndexDefinitions<DbFields>;
   getPrimaryIndex(): DbIndex<DbFields>;
   getIndex(indexType: IndexType, indexName: string): DbIndex<DbFields> | undefined;
-}
+} & DbModel

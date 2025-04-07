@@ -5,7 +5,7 @@ import type { DonationRecordAttributes } from './Types'
 import type DonationRecordRepository from '../models/policies/repositories/DonationRecordRepository'
 
 export class DonationRecordService {
-  async createDonationRecord (
+  async createDonationRecord(
     donationRecordAttributes: DonationRecordAttributes,
     DonationRecordRepository: DonationRecordRepository<DonationRecordDTO, DonationRecordFields>
   ): Promise<void> {

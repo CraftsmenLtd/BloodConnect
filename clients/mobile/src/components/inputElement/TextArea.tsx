@@ -4,7 +4,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 
-interface TextAreaProps {
+type TextAreaProps = {
   name: string;
   label: string;
   value: string;

@@ -3,16 +3,16 @@ import { FetchClient } from '../setup/clients/FetchClient'
 import { stringToNumber } from '../utility/stringParser'
 const { APP_NAME, APP_VERSION, LOCATION_SERVICE_EMAIL } = Constants.expoConfig?.extra ?? {}
 
-export interface Coordinates {
+export type Coordinates = {
   lat: string;
   lon: string;
 }
 
-interface GeocodeResponse {
+type GeocodeResponse = {
   results: GeocodeResult[];
 }
 
-interface GeocodeResult {
+type GeocodeResult = {
   geometry: {
     location: {
       lat: number;
@@ -21,7 +21,7 @@ interface GeocodeResult {
   };
 }
 
-interface Prediction {
+type Prediction = {
   description: string;
   structured_formatting?: {
     main_text: string;
@@ -34,11 +34,11 @@ interface Prediction {
 export class LocationService {
   private readonly httpClient: FetchClient
 
-  constructor (baseUrl: string) {
+  constructor(baseUrl: string) {
     this.httpClient = new FetchClient(baseUrl)
   }
 
-  async getCoordinates (location: string): Promise<{ latitude: number; longitude: number }> {
+  async getCoordinates(location: string): Promise<{ latitude: number; longitude: number }> {
     try {
       const params = {
         q: location,
@@ -63,7 +63,7 @@ export class LocationService {
     }
   }
 
-  filterAndFormatPredictions (predictions: Prediction[], allowedTypes: string[]): Array<{ label: string; value: string }> {
+  filterAndFormatPredictions(predictions: Prediction[], allowedTypes: string[]): Array<{ label: string; value: string }> {
     return predictions.reduce((acc: Array<{ label: string; value: string }>, prediction) => {
       if (prediction.types.some((type) => allowedTypes.includes(type))) {
         acc.push({
@@ -90,7 +90,7 @@ export class LocationService {
     }
   }
 
-  async getLatLon (location: string): Promise<{ latitude: number; longitude: number }> {
+  async getLatLon(location: string): Promise<{ latitude: number; longitude: number }> {
     try {
       const response = await this.httpClient.get<GeocodeResponse>('/maps/geocode/json', {
         address: location

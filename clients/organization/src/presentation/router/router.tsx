@@ -7,7 +7,7 @@ import { ProtectedRoute } from './protectedRoutes';
 import { AppRoutes } from './routes';
 import type { RouteConfig } from '../../types/routeConfig';
 
-function RouterConfig () {
+function RouterConfig() {
   return (
     <BrowserRouter>
       <React.Suspense fallback={<FullPageLoader />}>

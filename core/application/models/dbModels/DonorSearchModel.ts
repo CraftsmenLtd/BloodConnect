@@ -21,19 +21,19 @@ HasTimeLog & {
 
 export class DonorSearchModel
 implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, DonorSearchFields> {
-  getIndexDefinitions (): IndexDefinitions<DonorSearchFields> {
+  getIndexDefinitions(): IndexDefinitions<DonorSearchFields> {
     return {}
   }
 
-  getPrimaryIndex (): DbIndex<DonorSearchFields> {
+  getPrimaryIndex(): DbIndex<DonorSearchFields> {
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex (indexType: IndexType, indexName: string): DbIndex<DonorSearchFields> | undefined {
+  getIndex(indexType: IndexType, indexName: string): DbIndex<DonorSearchFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto (donationDto: DonorSearchDTO): DonorSearchFields {
+  fromDto(donationDto: DonorSearchDTO): DonorSearchFields {
     const { seekerId, requestPostId, ...remainingDonationData } = donationDto
     const postCreationDate = remainingDonationData.createdAt ?? new Date().toISOString()
     return {
@@ -45,7 +45,7 @@ implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, Dono
     }
   }
 
-  toDto (dbFields: DonorSearchFields): DonorSearchDTO {
+  toDto(dbFields: DonorSearchFields): DonorSearchDTO {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { PK, SK, LSI1SK, createdAt, ...remainingDonorSearchFields } = dbFields
     return {

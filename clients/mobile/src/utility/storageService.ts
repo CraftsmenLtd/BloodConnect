@@ -25,7 +25,7 @@ const getItem = async <T>(key: string): Promise<T | null> => {
   }
 }
 
-const removeItem = async (key: string): Promise<void> => {
+const removeItem = async(key: string): Promise<void> => {
   try {
     await AsyncStorage.removeItem(key)
   } catch (error) {
@@ -33,7 +33,7 @@ const removeItem = async (key: string): Promise<void> => {
   }
 }
 
-const clearStorage = async (): Promise<void> => {
+const clearStorage = async(): Promise<void> => {
   try {
     await AsyncStorage.clear()
   } catch (error) {
@@ -41,7 +41,7 @@ const clearStorage = async (): Promise<void> => {
   }
 }
 
-interface KeySet {
+type KeySet = {
   filter(key: string): KeySet;
   getKeys(): readonly string[];
   remove(): Promise<void>;
@@ -51,7 +51,7 @@ const createKeySet = (keys: readonly string[]): KeySet => {
     return createKeySet(keys.filter(k => k !== key))
   }
 
-  const remove = async (): Promise<void> => {
+  const remove = async(): Promise<void> => {
     await removeKeys(keys)
   }
 
@@ -62,7 +62,7 @@ const createKeySet = (keys: readonly string[]): KeySet => {
   }
 }
 
-const getAllKeys = async (): Promise<KeySet> => {
+const getAllKeys = async(): Promise<KeySet> => {
   try {
     const keys = await AsyncStorage.getAllKeys()
     return createKeySet(keys)
@@ -74,7 +74,7 @@ const getAllKeys = async (): Promise<KeySet> => {
   }
 }
 
-const removeKeys = async (keysToRemove: readonly string[]): Promise<void> => {
+const removeKeys = async(keysToRemove: readonly string[]): Promise<void> => {
   try {
     await AsyncStorage.multiRemove(keysToRemove)
   } catch (error: unknown) {

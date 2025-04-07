@@ -7,7 +7,7 @@ import { PASSWORD_INPUT_NAME, useSetPassword } from '../hooks/useSetPassword'
 import AuthLayout from '../../AuthLayout'
 import { PasswordInput } from '../../../components/inputElement/PasswordInput'
 
-export default function SetPassword (): JSX.Element {
+export default function SetPassword(): JSX.Element {
   const styles = createStyles(useTheme())
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false)

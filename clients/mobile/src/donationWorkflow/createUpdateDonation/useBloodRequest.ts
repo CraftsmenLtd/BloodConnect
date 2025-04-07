@@ -32,7 +32,7 @@ export const DONATION_DATE_TIME_INPUT_NAME = 'donationDateTime'
 export const DONATION_URGENCY_LEVEL = 'urgencyLevel'
 type CredentialKeys = keyof BloodRequestData
 
-export interface BloodRequestData {
+export type BloodRequestData = {
   urgencyLevel: string;
   requestedBloodGroup: string;
   bloodQuantity: string;
@@ -44,7 +44,7 @@ export interface BloodRequestData {
   transportationInfo?: string;
 }
 
-interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'transportationInfo' | 'donationDateTime'> { donationDateTime: string | null }
+type BloodRequestDataErrors = { donationDateTime: string | null } & Omit<BloodRequestData, 'patientName' | 'transportationInfo' | 'donationDateTime'>
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
   urgencyLevel: [validateRequired],
@@ -176,7 +176,7 @@ export const useBloodRequest = (): unknown => {
     return Object.fromEntries(Object.entries(object).filter(([_, v]) => v != null && v !== ''))
   }
 
-  const createBloodDonationRequest = async (): Promise<DonationCreateUpdateResponse> => {
+  const createBloodDonationRequest = async(): Promise<DonationCreateUpdateResponse> => {
     const { bloodQuantity, ...rest } = bloodRequestData
     const locationService = new LocationService(API_BASE_URL)
     const coordinates = await locationService.getLatLon(rest.location)
@@ -193,7 +193,7 @@ export const useBloodRequest = (): unknown => {
     return createDonation(finalData, fetchClient)
   }
 
-  const updateBloodDonationRequest = async (): Promise<DonationCreateUpdateResponse> => {
+  const updateBloodDonationRequest = async(): Promise<DonationCreateUpdateResponse> => {
     if (!('requestPostId' in bloodRequestData) || !('createdAt' in bloodRequestData)) {
       throw new Error('Invalid bloodRequestData: Missing requestPostId or createdAt')
     }
@@ -219,7 +219,7 @@ export const useBloodRequest = (): unknown => {
     notifications.find(notification => notification.content?.data?.payload?.requestPostId === requestPostId
     )
 
-  const updateNotificationTriggerTime = async (donationDateTime: string | Date, requestPostId: string): Promise<void> => {
+  const updateNotificationTriggerTime = async(donationDateTime: string | Date, requestPostId: string): Promise<void> => {
       const notifications = await fetchScheduledNotifications()
       const notificationToUpdate = findNotificationByRequestPostId(notifications, requestPostId)
       if (notificationToUpdate == null) return
@@ -233,7 +233,7 @@ export const useBloodRequest = (): unknown => {
     if (isUpdating) { void updateNotificationTriggerTime(donationDateTime, donationResponse.requestPostId) }
   }
 
-  const handlePostNow = async (): Promise<void> => {
+  const handlePostNow = async(): Promise<void> => {
     try {
       setLoading(true)
       const validateDonationDate = validateDonationDateTime(new Date(bloodRequestData.donationDateTime).toISOString())

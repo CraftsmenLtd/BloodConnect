@@ -5,7 +5,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import Loader from '../loaders/loader'
 
-interface ButtonProps {
+type ButtonProps = {
   text: string;
   onPress: () => void;
   disabled?: boolean;

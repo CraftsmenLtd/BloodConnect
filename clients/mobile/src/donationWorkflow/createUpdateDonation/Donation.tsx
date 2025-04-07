@@ -100,7 +100,7 @@ const CreateBloodRequest = () => {
               error={errors.location}
               multiSelect={false}
               isRequired={true}
-              fetchOptions={async (searchText) => locationService.healthLocationAutocomplete(searchText)}
+              fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
             />
           </View>
 

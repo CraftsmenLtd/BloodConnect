@@ -5,7 +5,7 @@ import FullPageLoader from '../components/loader/FullPageLoader';
 import * as RouteConsts from '../../constants/routeConsts';
 import DefaultLayout from '../layout/DefaultLayout/DefaultLayout';
 
-export function ProtectedRoute () {
+export function ProtectedRoute() {
   const [, loading, user, error] = useFetchData(getUser, true);
 
   

@@ -26,7 +26,7 @@ if (APP_ENV !== 'development') {
 Amplify.configure(awsCognitoConfiguration)
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
+  handleNotification: async() => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false
@@ -40,7 +40,7 @@ ErrorUtils.setGlobalHandler((error, isFatal) => {
   }
 })
 
-export default function App () {
+export default function App() {
   useBackPressHandler()
   const navigationRef = useNavigationContainerRef<RootStackParamList>()
 

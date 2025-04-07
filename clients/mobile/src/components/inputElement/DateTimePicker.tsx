@@ -8,7 +8,7 @@ import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 
-interface DateTimePickerComponentProps {
+type DateTimePickerComponentProps = {
   label: string;
   value: Date | null;
   onChange: (date: Date) => void;

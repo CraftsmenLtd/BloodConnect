@@ -5,7 +5,7 @@ import type AcceptedDonationRepository from '../models/policies/repositories/Acc
 import type { AcceptDonationStatus, AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
 
 export class AcceptDonationService {
-  async createAcceptanceRecord (
+  async createAcceptanceRecord(
     acceptDonationRequestAttributes: AcceptDonationRequestAttributes,
     acceptDonationRequestRepository: AcceptedDonationRepository<AcceptedDonationDTO>
   ): Promise<void> {
@@ -18,7 +18,7 @@ export class AcceptDonationService {
     })
   }
 
-  async updateAcceptanceRecord (
+  async updateAcceptanceRecord(
     acceptDonationRequestAttributes: AcceptDonationRequestAttributes,
     acceptDonationRequestRepository: AcceptedDonationRepository<AcceptedDonationDTO>
   ): Promise<void> {
@@ -30,7 +30,7 @@ export class AcceptDonationService {
     })
   }
 
-  async updateAcceptanceRecordStatus (
+  async updateAcceptanceRecordStatus(
     seekerId: string,
     requestPostId: string,
     donorId: string,
@@ -51,7 +51,7 @@ export class AcceptDonationService {
     })
   }
 
-  async getAcceptanceRecord (
+  async getAcceptanceRecord(
     seekerId: string,
     requestPostId: string,
     donorId: string,
@@ -61,7 +61,7 @@ export class AcceptDonationService {
     return item
   }
 
-  async getAcceptedDonorList (
+  async getAcceptedDonorList(
     seekerId: string,
     requestPostId: string,
     acceptDonationRepository: AcceptedDonationRepository<AcceptedDonationDTO>
@@ -73,7 +73,7 @@ export class AcceptDonationService {
     return queryResult ?? []
   }
 
-  async deleteAcceptedRequest (
+  async deleteAcceptedRequest(
     seekerId: string,
     requestPostId: string,
     donorId: string,

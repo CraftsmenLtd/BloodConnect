@@ -1,5 +1,5 @@
 export type NotificationData = Record<string, unknown> | null
 
-export interface NotificationDataTypes {
+export type NotificationDataTypes = {
   notificationData: NotificationData;
 }

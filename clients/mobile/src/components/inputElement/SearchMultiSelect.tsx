@@ -6,7 +6,7 @@ import type { Theme } from '../../setup/theme'
 import type { Option } from './types'
 import { commonStyles } from './commonStyles'
 
-interface MultiSelectProps {
+type MultiSelectProps = {
   name: string;
   label: string;
   isVisible: string;

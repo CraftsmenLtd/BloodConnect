@@ -12,17 +12,17 @@ export class FetchClient implements HttpClient {
   private readonly baseURL: string
   private readonly logoutUser?: () => Promise<void>
 
-  constructor (baseURL: string, logoutUser?: () => Promise<void>) {
+  constructor(baseURL: string, logoutUser?: () => Promise<void>) {
     this.baseURL = baseURL
     this.logoutUser = logoutUser
     void this.loadIdToken()
   }
 
-  public async loadIdToken (): Promise<void> {
+  public async loadIdToken(): Promise<void> {
     this.idToken = await StorageService.getItem('idToken')
   }
 
-  public async setupRequestHeaders (headers: Record<string, string>): Promise<Record<string, string>> {
+  public async setupRequestHeaders(headers: Record<string, string>): Promise<Record<string, string>> {
     const requestHeaders: Record<string, string> = { 'Content-Type': 'application/json', ...headers }
     const { idToken } = await authService.fetchSession()
     requestHeaders.Authorization = `Bearer ${idToken}`

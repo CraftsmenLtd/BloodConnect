@@ -10,7 +10,7 @@ import { useSocialAuth } from '../../socialAuth/hooks/useSocialAuth'
 
 type CredentialKeys = keyof RegisterCredential
 
-export interface RegisterCredential {
+export type RegisterCredential = {
   name: string;
   email: string;
   phoneNumber: string;
@@ -58,7 +58,7 @@ export const useRegister = (): unknown => {
     )
   }, [registerCredential, errors])
 
-  const handleRegister = async (): Promise<void> => {
+  const handleRegister = async(): Promise<void> => {
     navigation.navigate(SCREENS.SET_PASSWORD, {
       routeParams: {
         ...registerCredential,

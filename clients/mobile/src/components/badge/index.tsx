@@ -11,7 +11,7 @@ import { FontAwesome6 } from '@expo/vector-icons'
  * @property {StyleProp<TextStyle>} textStyle - Custom styles for the badge text.
  * @property {string} iconName - Give icon name - support @expo/vector-icons/fontawesome6 names.
  */
-interface BadgeProps {
+type BadgeProps = {
   text: string | number;
   containerStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;

@@ -65,7 +65,7 @@ export const useEditProfile = (): unknown => {
   )
 
   const [executeUpdateProfile, loading, , updateError] = useFetchData(
-    async (payload: Partial<ProfileData>) => {
+    async(payload: Partial<ProfileData>) => {
       const response = await updateUserProfile(payload, fetchClient)
 
       if (response.status !== 200) {
@@ -95,7 +95,7 @@ export const useEditProfile = (): unknown => {
     })
   }
 
-  const handleSave = async (): Promise<void> => {
+  const handleSave = async(): Promise<void> => {
     const newErrors: Record<string, string | null> = {}
     const validationFields = Object.keys(validationRules) as ProfileFields[]
     validationFields.forEach(field => {

@@ -7,7 +7,7 @@ import { THEME_NAME } from '../../constant/theme'
 
 export const ThemeContext = createContext<Theme | null>(null)
 
-interface ThemeProviderProps {
+type ThemeProviderProps = {
   children: ReactNode;
 }
 

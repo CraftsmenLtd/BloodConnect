@@ -1,7 +1,7 @@
 import type { RequestPreviewScreenNavigationProp } from '../navigation/navigationTypes'
 
 export const useNavigationReady = (navigation: RequestPreviewScreenNavigationProp) => {
-  return async (): Promise<void> => {
+  return async(): Promise<void> => {
     let attempts = 0
     while (attempts < 10) {
       if (navigation.isReady() === true) {

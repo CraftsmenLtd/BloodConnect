@@ -10,7 +10,7 @@ import type { SocialLoading } from '../types/loadingType'
 import type { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SOCIAL_TYPES } from '../constants/socialTypes'
 
-interface UseSocialAuthOutput {
+type UseSocialAuthOutput = {
   socialLoading: SocialLoading;
   socialLoginError: string;
   handleGoogleSignIn: () => Promise<void>;
@@ -25,7 +25,7 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
   const [socialLoginError, setSocialLoginError] = useState<string>('')
   const navigation = useNavigation<LoginScreenNavigationProp>()
 
-  const handleSocialSignIn = async (loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
+  const handleSocialSignIn = async(loginFunction: () => Promise<void>, socialMedia: string): Promise<void> => {
     try {
       setSocialLoading(socialMedia.toLowerCase() as SocialLoading)
       await loginFunction()
@@ -45,11 +45,11 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
     }
   }
 
-  const handleGoogleSignIn = async (): Promise<void> => {
+  const handleGoogleSignIn = async(): Promise<void> => {
     await handleSocialSignIn(googleLogin, SOCIAL_TYPES.GOOGLE)
   }
 
-  const handleFacebookSignIn = async (): Promise<void> => {
+  const handleFacebookSignIn = async(): Promise<void> => {
     await handleSocialSignIn(facebookLogin, SOCIAL_TYPES.FACEBOOK)
   }
 

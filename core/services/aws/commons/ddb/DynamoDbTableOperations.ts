@@ -28,7 +28,7 @@ import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCode
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
-interface CreateUpdateExpressionsReturnType {
+type CreateUpdateExpressionsReturnType = {
   updateExpression: string[];
   expressionAttribute: Record<string, unknown>;
   expressionAttributeNames: Record<string, unknown>;
@@ -39,14 +39,14 @@ export default class DynamoDbTableOperations<
   DbFields extends Record<string, unknown>,
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
 > implements Repository<Dto, DbFields> {
-  constructor (
+  constructor(
     protected readonly modelAdapter: ModelAdapter,
     private readonly client = DynamoDBDocumentClient.from(
       new DynamoDBClient({ region: process.env.AWS_REGION })
     )
   ) { }
 
-  async create (item: Dto): Promise<Dto> {
+  async create(item: Dto): Promise<Dto> {
     const items = this.modelAdapter.fromDto(item)
     const command = new PutCommand({
       TableName: this.getTableName(),
@@ -61,7 +61,7 @@ export default class DynamoDbTableOperations<
     )
   }
 
-  async query (
+  async query(
     queryInput: QueryInput<DbFields>,
     indexName?: string,
     requestedAttributes?: string[]
@@ -109,7 +109,7 @@ export default class DynamoDbTableOperations<
     }
   }
 
-  private applyQueryOptions (
+  private applyQueryOptions(
     queryCommandInput: QueryCommandInput,
     options?: QueryInput<DbFields>['options']
   ): void {
@@ -153,7 +153,7 @@ export default class DynamoDbTableOperations<
     }
   }
 
-  private buildKeyConditionExpression (
+  private buildKeyConditionExpression(
     partitionKeyCondition: QueryCondition<DbFields>,
     sortKeyCondition?: QueryCondition<DbFields>
   ): {
@@ -235,7 +235,7 @@ export default class DynamoDbTableOperations<
     }
   }
 
-  async update (item: Dto): Promise<Dto> {
+  async update(item: Dto): Promise<Dto> {
     try {
       const items = this.modelAdapter.fromDto(item)
       const primaryKeyName = this.modelAdapter.getPrimaryIndex()
@@ -286,7 +286,7 @@ export default class DynamoDbTableOperations<
     }
   }
 
-  async getItem (partitionKey: string, sortKey?: string): Promise<Dto | null> {
+  async getItem(partitionKey: string, sortKey?: string): Promise<Dto | null> {
     try {
       const primaryKeyName = this.modelAdapter.getPrimaryIndex()
       const key: Record<string, DbFields[keyof DbFields]> = {
@@ -314,7 +314,7 @@ export default class DynamoDbTableOperations<
     }
   }
 
-  async delete (partitionKey: string, sortKey?: string): Promise<void> {
+  async delete(partitionKey: string, sortKey?: string): Promise<void> {
     try {
       const primaryKeyName = this.modelAdapter.getPrimaryIndex()
       const key: Record<string, DbFields[keyof DbFields]> = {
@@ -340,7 +340,7 @@ export default class DynamoDbTableOperations<
     }
   }
 
-  getTableName (): string {
+  getTableName(): string {
     if (process.env.DYNAMODB_TABLE_NAME == null) {
       throw new DatabaseError(
         'DDB Table name not defined',
@@ -350,7 +350,7 @@ export default class DynamoDbTableOperations<
     return process.env.DYNAMODB_TABLE_NAME
   }
 
-  private createUpdateExpressions (
+  private createUpdateExpressions(
     item: Record<string, unknown>
   ): CreateUpdateExpressionsReturnType {
     const updateExpression: string[] = []
@@ -366,7 +366,7 @@ export default class DynamoDbTableOperations<
     return { updateExpression, expressionAttribute, expressionAttributeNames }
   }
 
-  private removePrimaryKey (
+  private removePrimaryKey(
     partitionKeyName: string,
     item: Record<string, unknown>,
     sortKeyName?: string

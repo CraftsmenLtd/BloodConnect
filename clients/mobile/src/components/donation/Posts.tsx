@@ -7,7 +7,7 @@ import type { DonationData } from '../../donationWorkflow/donationPosts/useDonat
 import React from 'react'
 import StateAwareRenderer from '../StateAwareRenderer'
 
-interface PostsProps {
+type PostsProps = {
   updatePost?: (donationData: DonationData) => void;
   donationPosts: DonationData[];
   loading: boolean;

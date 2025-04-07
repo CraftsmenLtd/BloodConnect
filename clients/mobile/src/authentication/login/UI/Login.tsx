@@ -14,11 +14,11 @@ import { Divider } from '../../../components/button/Divider'
 import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
 import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
 
-interface LoginScreenProps {
+type LoginScreenProps = {
   navigation: LoginScreenNavigationProp;
 }
 
-export default function LoginScreen ({ navigation }: LoginScreenProps) {
+export default function LoginScreen({ navigation }: LoginScreenProps) {
   const styles = createStyles(useTheme())
   const { loginLoading, socialLoading, loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
 

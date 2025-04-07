@@ -1,10 +1,10 @@
 import type { DTO } from '../../../../../commons/dto/DTOCommon'
 import type Repository from './Repository'
 
-export default interface NotificationRepository<
+type NotificationRepository<
   T extends DTO,
   DbFields extends Record<string, unknown> = Record<string, unknown>
-> extends Repository<T, DbFields> {
+> = {
   queryBloodDonationNotifications(
     requestPostId: string,
     status?: string
@@ -15,4 +15,5 @@ export default interface NotificationRepository<
     requestPostId: string,
     type: string
   ): Promise<T | null>;
-}
+} & Repository<T, DbFields>
+export default NotificationRepository

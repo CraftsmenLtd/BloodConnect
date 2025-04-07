@@ -21,7 +21,7 @@ import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiRes
 
 const bloodDonationService = new BloodDonationService()
 
-async function cancelBloodDonation (
+async function cancelBloodDonation(
   event: DonationRecordEventAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

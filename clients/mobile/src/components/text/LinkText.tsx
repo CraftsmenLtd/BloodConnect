@@ -22,7 +22,7 @@ export const LinkText: React.FC<LinkTextProps> = ({
   const styles = createStyles(theme)
 
   const handlePress = React.useCallback(() => {
-    void (async () => {
+    void (async() => {
       try {
         const supported = await Linking.canOpenURL(url)
         if (supported) {

@@ -29,7 +29,7 @@ export enum DynamoDBEventName {
 const donorSearchService = new DonorSearchService()
 const userService = new UserService()
 
-async function donationRequestInitiator (event: SQSEvent): Promise<void> {
+async function donationRequestInitiator(event: SQSEvent): Promise<void> {
   for (const record of event.Records) {
     const body =
       typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}

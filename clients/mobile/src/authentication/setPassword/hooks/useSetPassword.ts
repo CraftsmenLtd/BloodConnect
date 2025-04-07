@@ -13,7 +13,7 @@ export const PASSWORD_INPUT_NAME = 'password'
 type CredentialKeys = keyof Password
 type errorMessageType = string | null
 
-export interface Password {
+export type Password = {
   password: string;
   confirmPassword: string;
 }
@@ -66,14 +66,14 @@ export const useSetPassword = (): unknown => {
     )
   }, [newPassword, errors])
 
-  const handleRegister = async (): Promise<void> => {
+  const handleRegister = async(): Promise<void> => {
     const isSuccess = await registerUser({ ...(routeParams as UserRegistrationCredentials), password: newPassword.password })
     if (isSuccess) {
       navigation.navigate(SCREENS.OTP, { email: routeParams.email, password: newPassword.password, fromScreen: SCREENS.SET_PASSWORD })
     }
   }
 
-  const handleSetPassword = async (): Promise<void> => {
+  const handleSetPassword = async(): Promise<void> => {
     setLoading(true)
     try {
       if (fromScreen === SCREENS.REGISTER) {

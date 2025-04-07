@@ -28,7 +28,7 @@ import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLim
 import type BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
 
 export class BloodDonationService {
-  async createBloodDonation (
+  async createBloodDonation(
     donationAttributes: BloodDonationAttributes,
     bloodDonationRepository: Repository<DonationDTO, DonationFields>,
     model: BloodDonationModel
@@ -78,7 +78,7 @@ export class BloodDonationService {
     }
   }
 
-  private async checkDailyRequestThrottling (
+  private async checkDailyRequestThrottling(
     seekerId: string,
     repository: Repository<DonationDTO, DonationFields>,
     model: BloodDonationModel
@@ -121,7 +121,7 @@ export class BloodDonationService {
     }
   }
 
-  async getDonationRequest (
+  async getDonationRequest(
     seekerId: string,
     requestPostId: string,
     createdAt: string,
@@ -138,7 +138,7 @@ export class BloodDonationService {
     return item
   }
 
-  async updateBloodDonation (
+  async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
     bloodDonationRepository: BloodDonationRepository<DonationDTO>
   ): Promise<BloodDonationResponseAttributes> {
@@ -191,7 +191,7 @@ export class BloodDonationService {
     }
   }
 
-  async updateDonationStatus (
+  async updateDonationStatus(
     seekerId: string,
     requestPostId: string,
     createdAt: string,

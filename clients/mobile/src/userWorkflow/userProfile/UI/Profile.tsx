@@ -11,7 +11,7 @@ import { SCREENS } from '../../../setup/constant/screens'
 import type { EditProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { useNavigation } from '@react-navigation/native'
 
-export interface EditProfileData {
+export type EditProfileData = {
   phone: string;
   weight: string;
   height: string;

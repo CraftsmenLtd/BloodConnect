@@ -13,7 +13,7 @@ const useRequestStatus = (): unknown => {
   const { requestPostId, createdAt } = useRoute<RequestStatusRouteProp>().params
   const { executeFunction, loading: completeDonationLoading, error: completeDonationError } = useCompleteDonation()
 
-  const [, loading, bloodRequest, error] = useFetchData(async () => {
+  const [, loading, bloodRequest, error] = useFetchData(async() => {
     const response = await fetchSingleDonationPost(requestPostId, createdAt, fetchClient)
     if (response.status === 200 && response.data !== undefined) {
       return formatDonations([response.data])[0]

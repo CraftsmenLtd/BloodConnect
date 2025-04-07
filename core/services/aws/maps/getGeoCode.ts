@@ -13,7 +13,7 @@ const googleMapsProvider = new GoogleMapsProvider()
 const mapsService = new MapsService(googleMapsProvider)
 const mapsHandler = new MapsHandler(mapsService)
 
-async function geocode (
+async function geocode(
   event: GeocodeRequest & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

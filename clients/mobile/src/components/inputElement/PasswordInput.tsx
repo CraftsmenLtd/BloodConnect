@@ -6,10 +6,10 @@ import type { InputProps } from './types'
 import { commonStyles } from './commonStyles'
 import type { Dispatch, SetStateAction } from 'react'
 
-interface PasswordInputProps extends Omit<InputProps, 'placeholder'> {
+type PasswordInputProps = {
   isVisible: boolean;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
-}
+} & Omit<InputProps, 'placeholder'>
 
 export const PasswordInput = ({ name, label, value, onChangeText, isVisible, setIsVisible, error }: PasswordInputProps) => {
   const styles = createStyles(useTheme())

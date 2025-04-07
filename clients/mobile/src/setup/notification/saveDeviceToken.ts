@@ -4,7 +4,7 @@ import authService from '../../authentication/services/authService'
 import StorageService from '../../utility/storageService'
 import { TOKEN } from '../constant/token'
 
-export const saveDeviceTokenOnSNS = async (
+export const saveDeviceTokenOnSNS = async(
   deviceToken: string,
   fetchClient: HttpClient
 ): Promise<void> => {
@@ -32,7 +32,7 @@ export const saveDeviceTokenOnSNS = async (
   }
 }
 
-export const saveDeviceTokenLocally = async (
+export const saveDeviceTokenLocally = async(
   deviceToken: string
 ): Promise<void> => {
   const loggedInUser = await authService.currentLoggedInUser()
@@ -42,7 +42,7 @@ export const saveDeviceTokenLocally = async (
   )
 }
 
-export const isDeviceAlreadyRegisteredForUser = async (deviceToken: string, userId: string): Promise<boolean> => {
+export const isDeviceAlreadyRegisteredForUser = async(deviceToken: string, userId: string): Promise<boolean> => {
   const registeredDevice = await StorageService.getItem<
   { deviceToken: string; userId: string }
   >(TOKEN.DEVICE_TOKEN)

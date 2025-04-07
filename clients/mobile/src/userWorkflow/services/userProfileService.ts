@@ -2,7 +2,7 @@ import type { HttpClient } from '../../setup/clients/HttpClient'
 import { ProfileError } from '../../utility/errors'
 import type { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
 
-interface UserPreferredLocation {
+type UserPreferredLocation = {
   area: string;
   geoHash: string;
   geoPartition: string;
@@ -10,31 +10,30 @@ interface UserPreferredLocation {
   longitude: number;
 }
 
-export interface UserProfile extends
-  Partial<Omit<UserDetailsDTO,
-  'createdAt'
-  | 'updatedAt'
-  | 'deviceToken'
-  | 'snsEndpointArn'
-  | 'bloodGroup'
-  | 'gender'
-  | 'availableForDonation'>> {
+export type UserProfile = {
   preferredDonationLocations?: UserPreferredLocation[];
   uniqueGeoPartitions: string[];
   userId: string;
   bloodGroup: string;
   gender: string;
   availableForDonation: boolean;
-}
+} & Partial<Omit<UserDetailsDTO,
+  'createdAt'
+  | 'updatedAt'
+  | 'deviceToken'
+  | 'snsEndpointArn'
+  | 'bloodGroup'
+  | 'gender'
+  | 'availableForDonation'>>
 
-interface APIResponse {
+type APIResponse = {
   success?: boolean;
   data?: UserProfile;
   message?: string;
   status: number;
 }
 
-export const fetchUserProfileFromApi = async (httpClient: HttpClient): Promise<APIResponse> => {
+export const fetchUserProfileFromApi = async(httpClient: HttpClient): Promise<APIResponse> => {
   try {
     const response = await httpClient.get<APIResponse>('/users')
     return {
@@ -50,7 +49,7 @@ export const fetchUserProfileFromApi = async (httpClient: HttpClient): Promise<A
   }
 }
 
-export const createUserProfile = async (payload: Record<string, unknown>, httpClient: HttpClient):
+export const createUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
 Promise<APIResponse> => {
   try {
     const response = await httpClient.post<APIResponse>('/users', payload)
@@ -64,7 +63,7 @@ Promise<APIResponse> => {
   }
 }
 
-export const updateUserProfile = async (payload: Record<string, unknown>, httpClient: HttpClient):
+export const updateUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
 Promise<APIResponse> => {
   try {
     const response = await httpClient.patch<APIResponse>('/users', payload)

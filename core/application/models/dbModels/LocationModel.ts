@@ -26,7 +26,7 @@ LocationDTO,
 
 export default class LocationModel
 implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFields> {
-  getIndexDefinitions (): IndexDefinitions<LocationFields> {
+  getIndexDefinitions(): IndexDefinitions<LocationFields> {
     return {
       GSI: {
         GSI1: {
@@ -37,15 +37,15 @@ implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFi
     }
   }
 
-  getPrimaryIndex (): DbIndex<LocationFields> {
+  getPrimaryIndex(): DbIndex<LocationFields> {
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex (indexType: IndexType, indexName: string): DbIndex<LocationFields> | undefined {
+  getIndex(indexType: IndexType, indexName: string): DbIndex<LocationFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto (locationDto: LocationDTO): LocationFields {
+  fromDto(locationDto: LocationDTO): LocationFields {
     const {
       userId,
       locationId,
@@ -67,7 +67,7 @@ implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFi
     }
   }
 
-  toDto (dbFields: LocationFields): LocationDTO {
+  toDto(dbFields: LocationFields): LocationDTO {
     const { PK, SK, GSI1PK, GSI1SK, ...remainingFields } = dbFields
     const userId = PK.replace('USER#', '')
     const locationId = SK.replace('LOCATION#', '')

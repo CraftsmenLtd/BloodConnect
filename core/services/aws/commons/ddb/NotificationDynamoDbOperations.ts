@@ -17,7 +17,7 @@ export default class NotificationDynamoDbOperations<
   DbFields extends Record<string, unknown>,
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
 > extends DynamoDbTableOperations<Dto, DbFields, ModelAdapter> {
-  async queryBloodDonationNotifications (
+  async queryBloodDonationNotifications(
     requestPostId: string,
     status?: string
   ): Promise<Dto[]> {
@@ -49,7 +49,7 @@ export default class NotificationDynamoDbOperations<
     return queryResult.items
   }
 
-  async getBloodDonationNotification (
+  async getBloodDonationNotification(
     userId: string,
     requestPostId: string,
     type: string

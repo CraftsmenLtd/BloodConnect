@@ -5,12 +5,12 @@ import { COMMON_URLS } from '../../../setup/constant/commonUrls'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
 
-export interface DonorItem {
+export type DonorItem = {
   donorId: string;
   donorName: string;
 }
 
-interface DonorResponsesProps {
+type DonorResponsesProps = {
   acceptedDonors: DonorItem[];
   handlePressDonor: (item: string) => void;
 }

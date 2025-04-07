@@ -15,11 +15,11 @@ import type { Theme } from '../../../setup/theme'
 import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
 import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
 
-interface RegisterScreenProps {
+type RegisterScreenProps = {
   navigation: RegisterScreenNavigationProp;
 }
 
-export default function RegisterScreen ({ navigation }: RegisterScreenProps) {
+export default function RegisterScreen({ navigation }: RegisterScreenProps) {
   const { errors, socialLoading, registerCredential, handleInputChange, handleRegister, isButtonDisabled, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useRegister()
   const styles = createStyles(useTheme())
 

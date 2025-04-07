@@ -3,7 +3,7 @@ import { Text, View, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 
-interface WarningProps {
+type WarningProps = {
   text: string;
   showWarning: boolean;
 }

@@ -25,7 +25,7 @@ import Badge from '../badge'
 import GenericModal from '../modal'
 import { openMapLocation } from '../../utility/mapUtils'
 
-export interface PostCardDisplayOptions {
+export type PostCardDisplayOptions = {
   showContactNumber?: boolean;
   showDescription?: boolean;
   showTransportInfo?: boolean;
@@ -37,15 +37,15 @@ export interface PostCardDisplayOptions {
   showStatus?: boolean;
 }
 
-interface PostCardProps extends PostCardDisplayOptions {
+type PostCardProps = {
   post: DonationData;
   updateHandler?: (donationData: DonationData) => void;
   detailHandler?: (donationData: DonationData) => void;
   cancelHandler?: (donationData: DonationData) => void;
   isLoading?: boolean;
-}
+} & PostCardDisplayOptions
 
-interface DropdownPosition {
+type DropdownPosition = {
   top: number;
   right: number;
 }

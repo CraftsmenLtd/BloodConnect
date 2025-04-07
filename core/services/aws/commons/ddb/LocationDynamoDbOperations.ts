@@ -14,7 +14,7 @@ export default class LocationDynamoDbOperations extends DynamoDbTableOperations<
   LocationFields,
   LocationModel
 > {
-  async queryUserLocations (userId: string): Promise<LocationDTO[]> {
+  async queryUserLocations(userId: string): Promise<LocationDTO[]> {
     const primaryIndex = this.modelAdapter.getPrimaryIndex()
     const query: QueryInput<LocationFields> = {
       partitionKeyCondition: {
@@ -35,7 +35,7 @@ export default class LocationDynamoDbOperations extends DynamoDbTableOperations<
     return queryResult.items
   }
 
-  async deleteUserLocations (userId: string): Promise<void> {
+  async deleteUserLocations(userId: string): Promise<void> {
     const primaryIndex = this.modelAdapter.getPrimaryIndex()
     const query: QueryInput<LocationFields> = {
       partitionKeyCondition: {

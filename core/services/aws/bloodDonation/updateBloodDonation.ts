@@ -43,7 +43,7 @@ type OptionalAttributes = Partial<Omit<UpdateBloodDonationAttributes, 'requestPo
 const bloodDonationService = new BloodDonationService()
 const notificationService = new NotificationService()
 
-async function updateBloodDonationLambda (
+async function updateBloodDonationLambda(
   event: UpdateBloodDonationAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

@@ -5,7 +5,7 @@ import type { BloodDonationRecord } from './types'
 export type DonationResponse = ApiResponse<BloodDonationRecord[]>
 export type DonationCreateUpdateResponse = ApiResponse<{ requestPostId: string; createdAt: string }>
 
-export const createDonation = async (payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationCreateUpdateResponse> => {
+export const createDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationCreateUpdateResponse> => {
   try {
     const response = await httpClient.post<DonationCreateUpdateResponse>('/donations', payload)
     return {
@@ -19,7 +19,7 @@ export const createDonation = async (payload: Record<string, unknown>, httpClien
   }
 }
 
-export const updateDonation = async (payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationCreateUpdateResponse> => {
+export const updateDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationCreateUpdateResponse> => {
   try {
     const response = await httpClient.patch<DonationCreateUpdateResponse>('/donations', payload)
     return {
@@ -53,7 +53,7 @@ export const fetchDonationPublicPosts = async(
   }
 }
 
-export const fetchDonationList = async (payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+export const fetchDonationList = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.get<DonationResponse>('/donations', payload)
     return {
@@ -66,7 +66,7 @@ export const fetchDonationList = async (payload: Record<string, unknown>, httpCl
   }
 }
 
-export const fetchSingleDonationPost = async (requestPostId: string, createdAt: string, httpClient: HttpClient): Promise<ApiResponse<BloodDonationRecord>> => {
+export const fetchSingleDonationPost = async(requestPostId: string, createdAt: string, httpClient: HttpClient): Promise<ApiResponse<BloodDonationRecord>> => {
   try {
     const response = await httpClient.get<ApiResponse<BloodDonationRecord>>(`/donations/${requestPostId}/${createdAt}`, {})
     return {
@@ -79,7 +79,7 @@ export const fetchSingleDonationPost = async (requestPostId: string, createdAt: 
   }
 }
 
-export const completeDonation = async (payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+export const completeDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.post<DonationResponse>('/donations/complete', payload)
     return {
@@ -92,7 +92,7 @@ export const completeDonation = async (payload: Record<string, unknown>, httpCli
   }
 }
 
-export const fetchMyResponses = async (payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+export const fetchMyResponses = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.get<DonationResponse>('/donations/responses', payload)
     return {
@@ -105,7 +105,7 @@ export const fetchMyResponses = async (payload: Record<string, unknown>, httpCli
   }
 }
 
-export const updateMyResponses = async (payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+export const updateMyResponses = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.patch<DonationResponse>('/donations/responses', payload)
     return {
@@ -118,7 +118,7 @@ export const updateMyResponses = async (payload: Record<string, unknown>, httpCl
   }
 }
 
-export const cancelDonation = async (payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+export const cancelDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.patch<DonationResponse>('/donations/cancel', payload)
     return {

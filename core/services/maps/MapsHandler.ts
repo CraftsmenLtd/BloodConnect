@@ -34,17 +34,17 @@ const placeAutocompleteSchema = z.object({
 export class MapsHandler {
   private readonly mapsService: MapsService
 
-  constructor (mapsService: MapsService) {
+  constructor(mapsService: MapsService) {
     this.mapsService = mapsService
   }
 
-  async getPlaceAutocomplete (params: PlaceAutocompleteRequest): Promise<APIResponse<PlaceAutocompleteResponse>> {
+  async getPlaceAutocomplete(params: PlaceAutocompleteRequest): Promise<APIResponse<PlaceAutocompleteResponse>> {
     const validatedParams = placeAutocompleteSchema.parse(params)
 
     return this.mapsService.getPlaceAutocomplete(validatedParams)
   }
 
-  async getGeocode (params: GeocodeRequest): Promise<APIResponse<GeocodeResponse>> {
+  async getGeocode(params: GeocodeRequest): Promise<APIResponse<GeocodeResponse>> {
     const validatedParams = geocodeSchema.parse(params)
 
     return this.mapsService.getGeocode(validatedParams)

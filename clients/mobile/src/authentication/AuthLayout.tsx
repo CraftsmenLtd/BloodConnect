@@ -4,7 +4,7 @@ import { useTheme } from '../setup/theme/hooks/useTheme'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, StyleSheet } from 'react-native'
 
-interface AuthLayoutProps {
+type AuthLayoutProps = {
   children: ReactNode;
 }
 

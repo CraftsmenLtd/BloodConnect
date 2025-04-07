@@ -6,7 +6,7 @@ import AuthLayout from '../../AuthLayout'
 import { Input } from '../../../components/inputElement/Input'
 import { useForgotPassword } from '../hooks/useForgotPassword'
 
-export default function ForgotPassword (): JSX.Element {
+export default function ForgotPassword(): JSX.Element {
   const styles = createStyles(useTheme())
   const { credentials, handleInputChange, errors, isButtonDisabled, handleForgotPassword, error, loading } = useForgotPassword()
 

@@ -11,12 +11,11 @@ import type { LocationDTO, UserDetailsDTO } from '../../../../../../commons/dto/
 import storageService from '../../../utility/storageService'
 import { TOKEN } from '../../../setup/constant/token'
 
-export interface User extends
-  Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'> {
+export type User = {
   location: string;
-}
+} & Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'>
 
-export interface UserResponseData {
+export type UserResponseData = {
   success: boolean;
   data: {
     preferredDonationLocations: Array<Omit<LocationDTO, 'userId' | 'locationId' | 'geohash' | 'createdAt'>>;
@@ -24,7 +23,7 @@ export interface UserResponseData {
   } & Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'>;
 }
 
-interface UseAccountReturnType {
+type UseAccountReturnType = {
   userProfileData: User | null;
   loading: boolean;
   error: string | null;
@@ -39,7 +38,7 @@ export const useAccount = (): UseAccountReturnType => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const clearStorageExceptDeviceToken = async (): Promise<void> => {
+  const clearStorageExceptDeviceToken = async(): Promise<void> => {
     if (Platform.OS !== 'web') {
       const keys = await storageService.getAllKeys()
       const filteredKeys = keys.filter(TOKEN.DEVICE_TOKEN)
@@ -47,7 +46,7 @@ export const useAccount = (): UseAccountReturnType => {
     }
   }
 
-  const handleSignOut = async (): Promise<void> => {
+  const handleSignOut = async(): Promise<void> => {
     try {
       await Promise.all([Cache.clear(), clearStorageExceptDeviceToken()])
       await auth.logoutUser()
@@ -57,7 +56,7 @@ export const useAccount = (): UseAccountReturnType => {
     }
   }
 
-  const fetchUserData = async (): Promise<void> => {
+  const fetchUserData = async(): Promise<void> => {
     try {
       const response: FetchResponse<UserResponseData> = await fetchClient.get('/users')
 

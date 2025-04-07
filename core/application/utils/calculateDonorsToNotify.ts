@@ -1,4 +1,4 @@
-import { UrgencyType } from 'commons/dto/DonationDTO'
+import type { UrgencyType } from 'commons/dto/DonationDTO'
 
 type TimeUnit = 'minutes' | 'hours'
 type DelayRange = { min: number; max: number }
@@ -35,14 +35,14 @@ const DELAY_WEIGHT: Record<UrgencyType, Record<TimeUnit, number>> = {
 
 const EXTRA_DONORS_TO_NOTIFY: Record<UrgencyType, number> = { urgent: 2, regular: 1 }
 
-export function calculateRemainingBagsNeeded (
+export function calculateRemainingBagsNeeded(
   bloodQuantity: number,
   donorsFoundCount: number
 ): number {
   return Math.max(0, bloodQuantity - donorsFoundCount)
 }
 
-export function calculateTotalDonorsToFind (
+export function calculateTotalDonorsToFind(
   remainingBagsNeeded: number,
   rejectedDonorsCount: number,
   urgencyLevel: UrgencyType
@@ -50,7 +50,7 @@ export function calculateTotalDonorsToFind (
   return remainingBagsNeeded === 0 ? 0 : remainingBagsNeeded + rejectedDonorsCount + EXTRA_DONORS_TO_NOTIFY[urgencyLevel]
 }
 
-export function calculateDelayPeriod (
+export function calculateDelayPeriod(
   remainingBagsNeeded: number,
   donationDateTime: string,
   urgencyLevel: UrgencyType,

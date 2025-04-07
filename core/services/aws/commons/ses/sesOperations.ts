@@ -5,12 +5,12 @@ import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/Api
 
 const sesClient = new SESClient({ region: process.env.AWS_REGION })
 
-interface SendWelcomeEmailParams {
+type SendWelcomeEmailParams = {
   email: string;
   emailContent: GenericMessage;
 }
 
-export async function sendAppUserWelcomeMail ({ email, emailContent }: SendWelcomeEmailParams): Promise<void> {
+export async function sendAppUserWelcomeMail({ email, emailContent }: SendWelcomeEmailParams): Promise<void> {
   const { title, content } = emailContent
   const senderEmail = process.env.EMAIL_SENDER
 

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 
-interface LinkWithTextProps {
+type LinkWithTextProps = {
   staticText?: string;
   linkText: string;
   onPress: () => void;

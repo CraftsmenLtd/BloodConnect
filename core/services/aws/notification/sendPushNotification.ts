@@ -38,13 +38,13 @@ const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(
 const notificationService = new NotificationService()
 const userService = new UserService()
 
-async function sendPushNotification (event: SQSEvent): Promise<void> {
+async function sendPushNotification(event: SQSEvent): Promise<void> {
   for (const record of event.Records) {
     await processSQSRecord(record)
   }
 }
 
-async function processSQSRecord (record: SQSRecord): Promise<void> {
+async function processSQSRecord(record: SQSRecord): Promise<void> {
   const body: NotificationAttributes =
     typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
@@ -86,7 +86,7 @@ async function processSQSRecord (record: SQSRecord): Promise<void> {
 
 export default sendPushNotification
 
-async function createNotification (body: NotificationAttributes): Promise<boolean> {
+async function createNotification(body: NotificationAttributes): Promise<boolean> {
   if (body.type === NotificationType.BLOOD_REQ_POST) {
     const existingNotification = await notificationService.getBloodDonationNotification(
       body.userId,

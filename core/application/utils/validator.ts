@@ -1,6 +1,6 @@
 import { UNKNOWN_ERROR_MESSAGE } from '../../../commons/libs/constants/ApiResponseMessages'
 
-export function validateDonationDateTime (donationDateTime: string): null {
+export function validateDonationDateTime(donationDateTime: string): null {
   const now = new Date()
   const donationDate = new Date(donationDateTime)
 
@@ -11,7 +11,7 @@ export function validateDonationDateTime (donationDateTime: string): null {
   return null
 }
 
-export function validateBloodQuantity (bloodQuantity: number): null | string {
+export function validateBloodQuantity(bloodQuantity: number): null | string {
   if (bloodQuantity < 1 || bloodQuantity > 10) {
     throw new Error('Blood quantity must be between 1 and 10.')
   }
@@ -21,7 +21,7 @@ export function validateBloodQuantity (bloodQuantity: number): null | string {
 
 export type ValidationRule<T> = (value: T) => null | string
 
-export function validateInputWithRules<T extends Record<string, unknown>> (
+export function validateInputWithRules<T extends Record<string, unknown>>(
   inputs: T,
   rules: Record<keyof T, Array<ValidationRule<unknown>>>
 ): string | null {

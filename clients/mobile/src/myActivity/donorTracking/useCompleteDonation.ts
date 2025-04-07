@@ -7,7 +7,7 @@ import { completeDonation } from '../../donationWorkflow/donationService'
 import { SCREENS } from '../../setup/constant/screens'
 import type { DonorConfirmationNavigationProp } from '../../setup/navigation/navigationTypes'
 
-interface UseCompleteDonationReturn {
+type UseCompleteDonationReturn = {
   executeFunction: (donorIds: string[], requestPostId: string, createdAt: string) => Promise<void>;
   loading: boolean;
   error: string | null;
@@ -33,7 +33,7 @@ const useCompleteDonation = (): UseCompleteDonationReturn => {
   }
 
   const [executeFunction, loading, , error] = useFetchData(
-    async (donorIds: string[], requestPostId: string, createdAt: string) => {
+    async(donorIds: string[], requestPostId: string, createdAt: string) => {
       const response = await completeDonation(
         { requestPostId, requestCreatedAt: createdAt, donorIds },
         fetchClient

@@ -126,7 +126,7 @@ const ResponseDonationRequest = () => {
                   <TouchableOpacity
                     style={styles.callButton}
                     onPress={() => {
-                      void (async () => {
+                      void (async() => {
                         await Linking.openURL(`tel:${bloodRequest.contactNumber}`)
                       })()
                     }}

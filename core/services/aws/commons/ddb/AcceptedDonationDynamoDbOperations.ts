@@ -20,7 +20,7 @@ export default class AcceptedDonationDynamoDbOperations<
   DbFields extends Record<string, unknown>,
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
 > extends DynamoDbTableOperations<Dto, DbFields, ModelAdapter> {
-  async getAcceptedRequest (
+  async getAcceptedRequest(
     seekerId: string,
     requestPostId: string,
     donorId: string
@@ -32,7 +32,7 @@ export default class AcceptedDonationDynamoDbOperations<
     return item
   }
 
-  async queryAcceptedRequests (seekerId: string, requestPostId: string): Promise<Dto[] | null> {
+  async queryAcceptedRequests(seekerId: string, requestPostId: string): Promise<Dto[] | null> {
     const primaryIndex = this.modelAdapter.getPrimaryIndex()
     const query: QueryInput<DbFields> = {
       partitionKeyCondition: {
@@ -53,7 +53,7 @@ export default class AcceptedDonationDynamoDbOperations<
     return queryResult.items
   }
 
-  async deleteAcceptedRequest (
+  async deleteAcceptedRequest(
     seekerId: string,
     requestPostId: string,
     donorId: string

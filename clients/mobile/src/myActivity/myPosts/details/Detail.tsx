@@ -14,7 +14,7 @@ import { useMyActivity } from '../../useMyActivity'
 import Toast from '../../../components/toast'
 import Button from '../../../components/button/Button'
 
-interface DetailProps {
+type DetailProps = {
   navigation: DetailPostScreenNavigationProp;
   route: DetailPostRouteProp;
 }

@@ -13,7 +13,7 @@ import { useSocialAuth } from '../../socialAuth/hooks/useSocialAuth'
 
 type CredentialKeys = keyof LoginCredential
 
-export interface LoginCredential {
+export type LoginCredential = {
   email: string;
   password: string;
 }
@@ -44,7 +44,7 @@ export const useLogin = (): unknown => {
     }))
   }
 
-  const handleLogin = async (): Promise<void> => {
+  const handleLogin = async(): Promise<void> => {
     try {
       setLoginLoading(true)
       const isSignedIn = await loginUser(loginCredential.email, loginCredential.password)

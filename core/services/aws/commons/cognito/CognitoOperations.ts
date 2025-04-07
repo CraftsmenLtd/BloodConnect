@@ -9,7 +9,7 @@ const cognitoClient = new CognitoIdentityProviderClient({
   region: process.env.AWS_REGION
 })
 
-export async function updateCognitoUserInfo ({
+export async function updateCognitoUserInfo({
   userPoolId,
   username,
   attributes

@@ -18,21 +18,21 @@ import { TOKEN } from '../../setup/constant/token'
 import StorageService from '../../utility/storageService'
 import { handleAuthError } from './authErrorHandler'
 
-export interface User {
+export type User = {
   email: string;
   userId: string;
   phoneNumber: string;
   name: string;
 }
 
-export interface UserRegistrationCredentials {
+export type UserRegistrationCredentials = {
   name: string;
   email: string;
   phoneNumber: string;
   password: string;
 }
 
-interface FetchSessionResponse {
+type FetchSessionResponse = {
   accessToken: string | undefined;
   idToken: string | undefined;
 }
@@ -45,7 +45,7 @@ export const decodeAccessToken = (token: string | null): JwtPayload => {
   return payload
 }
 
-export const loadTokens = async (): Promise<{ storedAccessToken: string | undefined; storedIdToken: string | undefined }> => {
+export const loadTokens = async(): Promise<{ storedAccessToken: string | undefined; storedIdToken: string | undefined }> => {
   try {
     const session = await fetchSession()
     return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
@@ -54,7 +54,7 @@ export const loadTokens = async (): Promise<{ storedAccessToken: string | undefi
   }
 }
 
-export const logoutUser = async (): Promise<void> => {
+export const logoutUser = async(): Promise<void> => {
   try {
     await signOut()
     await StorageService.removeItem(TOKEN.ACCESS_TOKEN)
@@ -65,7 +65,7 @@ export const logoutUser = async (): Promise<void> => {
   }
 }
 
-export const registerUser = async (registerInfo: UserRegistrationCredentials): Promise<boolean> => {
+export const registerUser = async(registerInfo: UserRegistrationCredentials): Promise<boolean> => {
   try {
     const { nextStep } = await signUp({
       username: registerInfo.email,
@@ -86,7 +86,7 @@ export const registerUser = async (registerInfo: UserRegistrationCredentials): P
   }
 }
 
-export const submitOtp = async (email: string, otp: string): Promise<boolean> => {
+export const submitOtp = async(email: string, otp: string): Promise<boolean> => {
   try {
     const { nextStep } = await confirmSignUp({
       username: email,
@@ -99,7 +99,7 @@ export const submitOtp = async (email: string, otp: string): Promise<boolean> =>
   }
 }
 
-export const fetchSession = async (): Promise<FetchSessionResponse> => {
+export const fetchSession = async(): Promise<FetchSessionResponse> => {
   try {
     const session: AuthSession = await fetchAuthSession()
     if (session?.tokens === undefined) {
@@ -114,7 +114,7 @@ export const fetchSession = async (): Promise<FetchSessionResponse> => {
   }
 }
 
-export const currentLoggedInUser = async (): Promise<User> => {
+export const currentLoggedInUser = async(): Promise<User> => {
   const session: AuthSession = await fetchAuthSession()
   if (session?.tokens === undefined) {
     throw new Error('Session or tokens are undefined')
@@ -128,7 +128,7 @@ export const currentLoggedInUser = async (): Promise<User> => {
   } satisfies User
 }
 
-export const loginUser = async (email: string, password: string): Promise<boolean> => {
+export const loginUser = async(email: string, password: string): Promise<boolean> => {
   try {
     const { isSignedIn } = await signIn({
       username: email,
@@ -143,7 +143,7 @@ export const loginUser = async (email: string, password: string): Promise<boolea
   }
 }
 
-export const googleLogin = async (): Promise<void> => {
+export const googleLogin = async(): Promise<void> => {
   try {
     await signInWithRedirect({ provider: 'Google' })
     await fetchSession()
@@ -152,7 +152,7 @@ export const googleLogin = async (): Promise<void> => {
   }
 }
 
-export const facebookLogin = async (): Promise<void> => {
+export const facebookLogin = async(): Promise<void> => {
   try {
     await signInWithRedirect({ provider: 'Facebook' })
     await fetchSession()
@@ -161,7 +161,7 @@ export const facebookLogin = async (): Promise<void> => {
   }
 }
 
-export const resetPasswordHandler = async (email: string): Promise<ResetPasswordOutput['nextStep']> => {
+export const resetPasswordHandler = async(email: string): Promise<ResetPasswordOutput['nextStep']> => {
   try {
     const { nextStep } = await resetPassword({ username: email })
     return nextStep
@@ -185,7 +185,7 @@ const handleConfirmPasswordError = (error: unknown): string => {
   }
 }
 
-export const confirmResetPasswordHandler = async (email: string, otp: string, password: string): Promise<boolean> => {
+export const confirmResetPasswordHandler = async(email: string, otp: string, password: string): Promise<boolean> => {
   try {
     await confirmResetPassword({ username: email, confirmationCode: otp, newPassword: password })
     return true
@@ -195,7 +195,7 @@ export const confirmResetPasswordHandler = async (email: string, otp: string, pa
   }
 }
 
-export const resendSignUpOtp = async (email: string): Promise<boolean> => {
+export const resendSignUpOtp = async(email: string): Promise<boolean> => {
   try {
     const response = await resendSignUpCode({ username: email })
     return response.destination !== ''

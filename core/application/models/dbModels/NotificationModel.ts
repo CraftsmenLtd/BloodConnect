@@ -9,19 +9,19 @@ export type NotificationFields = Omit<NotificationDTO, 'id' | 'userId' | 'type'>
 }
 
 export default class NotificationModel implements NosqlModel<NotificationFields>, DbModelDtoAdapter<NotificationDTO, NotificationFields> {
-  getIndexDefinitions (): IndexDefinitions<NotificationFields> {
+  getIndexDefinitions(): IndexDefinitions<NotificationFields> {
     return {}
   }
 
-  getPrimaryIndex (): DbIndex<NotificationFields> {
+  getPrimaryIndex(): DbIndex<NotificationFields> {
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex (indexType: IndexType, indexName: string): DbIndex<NotificationFields> | undefined {
+  getIndex(indexType: IndexType, indexName: string): DbIndex<NotificationFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto (notificationDto: NotificationDTO): NotificationFields {
+  fromDto(notificationDto: NotificationDTO): NotificationFields {
     const { id, userId, type, ...remainingNotificationFields } = notificationDto
     return {
       PK: `${NOTIFICATION_PK_PREFIX}#${userId}`,
@@ -30,7 +30,7 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
     }
   }
 
-  toDto (dbFields: NotificationFields): NotificationDTO {
+  toDto(dbFields: NotificationFields): NotificationDTO {
     const { PK, SK, ...remainingNotificationFields } = dbFields
     const userId = PK.replace('NOTIFICATION#', '')
     return {

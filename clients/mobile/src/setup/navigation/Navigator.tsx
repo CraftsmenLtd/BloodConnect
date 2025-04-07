@@ -15,7 +15,7 @@ import { useTheme } from '../theme/hooks/useTheme'
 
 const Stack = createStackNavigator()
 
-export default function Navigator () {
+export default function Navigator() {
   const { isAuthenticated, loading } = useAuth()
   const { userProfile, fetchUserProfile, loading: profileLoading } = useUserProfile()
   const [isAllowed, setIsAllowed] = useState(false)
@@ -28,7 +28,7 @@ export default function Navigator () {
     }
   }, [isAuthenticated])
 
-  const fetchCountryAvailabilityCallback = async () => {
+  const fetchCountryAvailabilityCallback = async() => {
     const response = await countryAvailability({}, fetchClient)
     if (response.data !== undefined) {
       setIsAllowed(response.data.available)

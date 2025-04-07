@@ -11,7 +11,7 @@ import { GEO_PARTITION_PREFIX_LENGTH } from '../../../commons/libs/constants/NoM
 const DONOR_SEARCH_QUEUE_URL = process.env.DONOR_SEARCH_QUEUE_URL as string
 
 export class DonorSearchService {
-  async enqueueDonorSearchRequest (
+  async enqueueDonorSearchRequest(
     donorSearchQueueAttributes: DonorSearchQueueAttributes,
     queueModel: QueueModel,
     delayPeriod?: number
@@ -23,7 +23,7 @@ export class DonorSearchService {
     )
   }
 
-  async updateVisibilityTimeout (
+  async updateVisibilityTimeout(
     receiptHandle: string,
     visibilityTimeout: number,
     queueModel: QueueModel
@@ -35,7 +35,7 @@ export class DonorSearchService {
     )
   }
 
-  async getDonorSearchRecord (
+  async getDonorSearchRecord(
     seekerId: string,
     requestPostId: string,
     createdAt: string,
@@ -47,21 +47,21 @@ export class DonorSearchService {
     )
   }
 
-  async createDonorSearchRecord (
+  async createDonorSearchRecord(
     donorSearchAttributes: DonorSearchAttributes,
     donorSearchRepository: Repository<DonorSearchDTO, Record<string, unknown>>
   ): Promise<void> {
     await donorSearchRepository.create(donorSearchAttributes)
   }
 
-  async updateDonorSearchRecord (
+  async updateDonorSearchRecord(
     donorSearchAttributes: Partial<DonorSearchAttributes>,
     donorSearchRepository: Repository<DonorSearchDTO, Record<string, unknown>>
   ): Promise<void> {
     await donorSearchRepository.update(donorSearchAttributes)
   }
 
-  async getDonorSearch (
+  async getDonorSearch(
     seekerId: string,
     createdAt: string,
     requestPostId: string,
@@ -77,7 +77,7 @@ export class DonorSearchService {
     return donorSearchRecord
   }
 
-  async queryGeohash (
+  async queryGeohash(
     countryCode: string,
     requestedBloodGroup: string,
     geohash: string,

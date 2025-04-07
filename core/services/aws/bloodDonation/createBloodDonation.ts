@@ -23,7 +23,7 @@ import UserModel from '../../../application/models/dbModels/UserModel'
 const bloodDonationService = new BloodDonationService()
 const userService = new UserService()
 
-async function createBloodDonationLambda (
+async function createBloodDonationLambda(
   event: BloodDonationAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

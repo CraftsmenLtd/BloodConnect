@@ -26,7 +26,7 @@ export const useSidebar = (
     toggleSidebar(!sidebarExpanded)
   }
 
-  const handleSignOut = async (): Promise<void> => {
+  const handleSignOut = async(): Promise<void> => {
     await userSignOut()
     navigate(LoginPath)
   }

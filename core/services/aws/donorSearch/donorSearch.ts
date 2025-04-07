@@ -4,14 +4,14 @@ import type { DonorSearchQueueAttributes } from '../../../application/bloodDonat
 import type {
   AcceptedDonationDTO,
   DonationDTO,
-  DonationStatus,
   DonorSearchDTO,
   EligibleDonorInfo
 } from '../../../../commons/dto/DonationDTO';
 import {
   AcceptDonationStatus,
   DonorSearchStatus
-} from '../../../../commons/dto/DonationDTO'
+,
+  DonationStatus} from '../../../../commons/dto/DonationDTO'
 import type { LocationDTO } from '../../../../commons/dto/UserDTO'
 
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
@@ -64,7 +64,8 @@ import type {
 import DonationNotificationModel from '../../../application/models/dbModels/DonationNotificationModel'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import { DonationFields, BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
+import type { DonationFields} from '../../../application/models/dbModels/BloodDonationModel';
+import { BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
 const bloodDonationService = new BloodDonationService()
@@ -78,7 +79,7 @@ const GEOHASH_CACHE = new GeohashCacheManager<string, GeohashDonorMap>(
   Number(process.env.MAX_GEOHASH_CACHE_TIMEOUT_MINUTES)
 )
 
-async function donorSearch (event: SQSEvent): Promise<void> {
+async function donorSearch(event: SQSEvent): Promise<void> {
   const record = event.Records[0]
   const donorSearchQueueAttributes: DonorSearchQueueAttributes = JSON.parse(record.body)
 
@@ -273,7 +274,7 @@ async function donorSearch (event: SQSEvent): Promise<void> {
 
 export default donorSearch
 
-async function sendRequestNotification (
+async function sendRequestNotification(
   donorSearchAttributes: DonorSearchDTO,
   eligibleDonors: Record<string, EligibleDonorInfo>
 ): Promise<void> {
@@ -310,7 +311,7 @@ async function sendRequestNotification (
   }
 }
 
-async function handleVisibilityTimeout (
+async function handleVisibilityTimeout(
   targetedExecutionTime: number | undefined,
   receiptHandle: string
 ): Promise<void> {
@@ -329,7 +330,7 @@ async function handleVisibilityTimeout (
   }
 }
 
-async function getRemainingBagsNeeded (
+async function getRemainingBagsNeeded(
   seekerId: string,
   requestPostId: string,
   bloodQuantity: number
@@ -346,7 +347,7 @@ async function getRemainingBagsNeeded (
   return calculateRemainingBagsNeeded(bloodQuantity, acceptedDonors.length)
 }
 
-async function queryEligibleDonors (
+async function queryEligibleDonors(
   seekerId: string,
   requestedBloodGroup: string,
   countryCode: string,
@@ -384,7 +385,7 @@ async function queryEligibleDonors (
   }
 }
 
-async function getNewDonorsInNeighborGeohash (
+async function getNewDonorsInNeighborGeohash(
   seekerId: string,
   requestedBloodGroup: string,
   countryCode: string,
@@ -443,7 +444,7 @@ async function getNewDonorsInNeighborGeohash (
   )
 }
 
-async function getDonorsFromCache (
+async function getDonorsFromCache(
   geohashToProcess: string,
   countryCode: string,
   requestedBloodGroup: string
@@ -471,7 +472,7 @@ async function getDonorsFromCache (
   return cachedDonorMap[geohashToProcess] ?? []
 }
 
-async function getRejectedDonorsCount (requestPostId: string): Promise<number> {
+async function getRejectedDonorsCount(requestPostId: string): Promise<number> {
   const rejectedDonors = await notificationService.getIgnoredDonorList(
     requestPostId,
     new NotificationDynamoDbOperations<

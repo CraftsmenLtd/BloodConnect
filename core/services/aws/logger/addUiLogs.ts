@@ -8,7 +8,7 @@ export type LoggerAttributes = {
   userId: string;
   log: object;
 }
-async function addLoggerLambda (
+async function addLoggerLambda(
   event: LoggerAttributes & ServiceLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const lambdaLogger = createServiceLogger(event.userId)

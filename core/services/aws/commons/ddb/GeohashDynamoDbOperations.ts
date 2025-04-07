@@ -16,7 +16,7 @@ export default class GeohashDynamoDbOperations<
   DbFields extends Record<string, unknown>,
   ModelAdapter extends NosqlModel<DbFields> & DbModelDtoAdapter<Dto, DbFields>
 > extends DynamoDbTableOperations<Dto, DbFields, ModelAdapter> {
-  async queryGeohash (
+  async queryGeohash(
     countryCode: string,
     geoPartition: string,
     requestedBloodGroup: string,

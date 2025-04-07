@@ -6,7 +6,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { COMMON_URLS } from '../../setup/constant/commonUrls'
 
-interface UserData {
+type UserData = {
   name: string;
   location: string;
   isEditing?: boolean;

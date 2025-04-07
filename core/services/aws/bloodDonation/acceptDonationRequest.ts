@@ -51,7 +51,7 @@ const acceptDonationService = new AcceptDonationService()
 const userService = new UserService()
 const notificationService = new NotificationService()
 
-async function acceptDonationRequest (
+async function acceptDonationRequest(
   event: AcceptDonationRequestAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(
@@ -155,11 +155,11 @@ async function acceptDonationRequest (
   }
 }
 
-function isAlreadyDonated (acceptanceRecord: AcceptedDonationDTO | null): boolean {
+function isAlreadyDonated(acceptanceRecord: AcceptedDonationDTO | null): boolean {
   return acceptanceRecord != null && acceptanceRecord.status === AcceptDonationStatus.COMPLETED
 }
 
-async function getDonationRequest (
+async function getDonationRequest(
   seekerId: string,
   requestPostId: string,
   createdAt: string
@@ -179,7 +179,7 @@ async function getDonationRequest (
   return donationPost
 }
 
-async function createAcceptanceRecord (
+async function createAcceptanceRecord(
   donorId: string,
   seekerId: string,
   createdAt: string,
@@ -206,7 +206,7 @@ async function createAcceptanceRecord (
   )
 }
 
-async function sendNotificationToSeeker (
+async function sendNotificationToSeeker(
   seekerId: string,
   requestPostId: string,
   donationPost: DonationDTO,
@@ -254,7 +254,7 @@ async function sendNotificationToSeeker (
   await notificationService.sendNotification(notificationAttributes, new SQSOperations())
 }
 
-async function updateDonationNotification (
+async function updateDonationNotification(
   donorId: string,
   requestPostId: string,
   seekerId: string,

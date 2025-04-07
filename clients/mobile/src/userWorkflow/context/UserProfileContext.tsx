@@ -37,7 +37,7 @@ const UserProfileContext = createContext<UserProfileContextData | undefined>({
   loading: true,
   error: '',
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  fetchUserProfile: async () => { }
+  fetchUserProfile: async() => { }
 })
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -46,7 +46,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [error, setError] = useState<string>('')
   const fetchClient = useFetchClient()
 
-  function formatUserProfile (profile: UserProfile): UserProfile {
+  function formatUserProfile(profile: UserProfile): UserProfile {
     return {
       bloodGroup: profile.bloodGroup ?? '',
       userId: profile.userId ?? '',
@@ -72,7 +72,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     }
   }
 
-  const fetchUserProfile = async (): Promise<void> => {
+  const fetchUserProfile = async(): Promise<void> => {
     try {
       setLoading(true)
       const response = await fetchUserProfileFromApi(fetchClient)

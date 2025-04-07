@@ -4,7 +4,7 @@ import { TouchableOpacity, Text, StyleSheet, Image, View, ActivityIndicator } fr
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 
-interface SocialButtonProps {
+type SocialButtonProps = {
   text: string;
   onPress: () => void;
   icon: ImageSourcePropType;

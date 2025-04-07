@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 
-interface DonorCardProps {
+type DonorCardProps = {
   name: string;
   isSelected: boolean;
   onSelect: () => void;

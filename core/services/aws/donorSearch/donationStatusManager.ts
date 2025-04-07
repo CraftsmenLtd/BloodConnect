@@ -25,7 +25,7 @@ import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiRes
 const bloodDonationService = new BloodDonationService()
 const acceptDonationService = new AcceptDonationService()
 
-async function donationStatusManager (event: SQSEvent): Promise<{ status: string }> {
+async function donationStatusManager(event: SQSEvent): Promise<{ status: string }> {
   try {
     for (const record of event.Records) {
       await processSQSRecord(record)
@@ -36,7 +36,7 @@ async function donationStatusManager (event: SQSEvent): Promise<{ status: string
   }
 }
 
-async function processSQSRecord (record: SQSRecord): Promise<void> {
+async function processSQSRecord(record: SQSRecord): Promise<void> {
   const body =
     typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 

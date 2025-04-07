@@ -24,7 +24,7 @@ const GeoHashMap = () => {
 
   const { signOut } = useAuthenticator((context) => [context.user])
 
-  const getDataFromAws = useCallback(async (prefix: string) => {
+  const getDataFromAws = useCallback(async(prefix: string) => {
     const { accessKeyId, secretAccessKey, sessionToken } = awsCredentials!
     const s3Client = new S3Client({
       region: import.meta.env.VITE_AWS_S3_REGION,
@@ -36,7 +36,7 @@ const GeoHashMap = () => {
     })
 
     return Promise.all(
-      bloodTypes.map(async (type) =>
+      bloodTypes.map(async(type) =>
         s3Client
           .send(
             new GetObjectCommand({
@@ -45,7 +45,7 @@ const GeoHashMap = () => {
                 }/${prefix}-${type}.txt`
             })
           )
-          .then(async (response) => response.Body ? response.Body.transformToString().then((content) =>
+          .then(async(response) => response.Body ? response.Body.transformToString().then((content) =>
             content.split('\n')
           ) : [])
           .catch(() => [])
@@ -57,7 +57,7 @@ const GeoHashMap = () => {
     geoHash
       .encode(center.lat, center.lng)
       .substring(0, Number(import.meta.env.VITE_MAX_GEOHASH_PREFIX_SIZE))
-  const refreshMap = useCallback(async () => {
+  const refreshMap = useCallback(async() => {
     if (mapRef.current == null) return
     document
       .querySelectorAll('.mapboxgl-popup')

@@ -49,7 +49,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
     return () => { responseListener.remove() }
   }, [])
 
-  const handleLastNotification = async () => {
+  const handleLastNotification = async() => {
     const response = await Notifications.getLastNotificationResponseAsync()
     if (response === null || !isNotificationValid(response)) return
 

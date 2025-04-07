@@ -5,7 +5,7 @@ import Constants from 'expo-constants'
 
 const { projectId } = Constants.expoConfig?.extra?.eas ?? {}
 
-export const registerForPushNotificationsAsync = async (): Promise<string | undefined> => {
+export const registerForPushNotificationsAsync = async(): Promise<string | undefined> => {
   if (!Device.isDevice) {
     throw new Error('Push notifications require a physical device.')
   }
@@ -27,7 +27,7 @@ export const registerForPushNotificationsAsync = async (): Promise<string | unde
   }
 }
 
-const setupAndroidNotificationChannel = async (): Promise<void> => {
+const setupAndroidNotificationChannel = async(): Promise<void> => {
   await Notifications.setNotificationChannelAsync('default', {
     name: 'default',
     importance: Notifications.AndroidImportance.MAX,
@@ -36,7 +36,7 @@ const setupAndroidNotificationChannel = async (): Promise<void> => {
   })
 }
 
-const getNotificationPermissions = async (): Promise<Notifications.PermissionStatus> => {
+const getNotificationPermissions = async(): Promise<Notifications.PermissionStatus> => {
   const { status: existingStatus } = await Notifications.getPermissionsAsync()
 
   if (existingStatus !== 'granted') {
@@ -47,7 +47,7 @@ const getNotificationPermissions = async (): Promise<Notifications.PermissionSta
   return existingStatus
 }
 
-const getDevicePushToken = async (): Promise<string> => {
+const getDevicePushToken = async(): Promise<string> => {
   if (projectId === null) {
     throw new Error('Expo project ID not found.')
   }

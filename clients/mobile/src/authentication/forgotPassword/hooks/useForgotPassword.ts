@@ -9,11 +9,11 @@ import { SCREENS } from '../../../setup/constant/screens'
 
 type ForgotPasswordFields = keyof ForgotPasswordCredentials
 
-export interface ForgotPasswordCredentials {
+export type ForgotPasswordCredentials = {
   email: string;
 }
 
-interface ForgotPasswordErrors {
+type ForgotPasswordErrors = {
   email: string | null;
 }
 
@@ -55,7 +55,7 @@ export const useForgotPassword = (): unknown => {
     )
   }, [credentials, errors])
 
-  const handleForgotPassword = async (): Promise<void> => {
+  const handleForgotPassword = async(): Promise<void> => {
     setLoading(true)
     try {
       const nextStep = await resetPasswordHandler(credentials.email)

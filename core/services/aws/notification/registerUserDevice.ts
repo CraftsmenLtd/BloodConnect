@@ -21,7 +21,7 @@ import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiRes
 
 const notificationService = new NotificationService()
 
-async function registerUserDevice (
+async function registerUserDevice(
   event: SnsRegistrationAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

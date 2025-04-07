@@ -17,20 +17,22 @@ import type { AddPersonalInfoNavigationProp } from '../../../setup/navigation/na
 import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { createUserProfile } from '../../services/userProfileService'
+import type {
+  LocationData} from '../../../utility/formatting';
 import {
   formatErrorMessage,
   formatToTwoDecimalPlaces,
-  formatPhoneNumber,
-  formatLocations
+  formatPhoneNumber
 } from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
+import { LocationService } from '../../../LocationService/LocationService';
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type PersonalInfoKeys = keyof PersonalInfo
 
-export interface PersonalInfo {
+export type PersonalInfo = {
   bloodGroup: string;
   height: string;
   weight: string;
@@ -44,9 +46,9 @@ export interface PersonalInfo {
   phoneNumber?: string;
 }
 
-interface PersonalInfoErrors extends Omit<PersonalInfo, 'phoneNumber'> {
+type PersonalInfoErrors = {
   phoneNumber?: string | null;
-}
+} & Omit<PersonalInfo, 'phoneNumber'>
 
 export const useAddPersonalInfo = (): unknown => {
   const fetchClient = useFetchClient()
@@ -55,7 +57,7 @@ export const useAddPersonalInfo = (): unknown => {
   const [isSSO, setIsSSO] = useState(false)
 
   useEffect(() => {
-    const checkAuthProvider = async (): Promise<void> => {
+    const checkAuthProvider = async(): Promise<void> => {
       try {
         const user = await getCurrentUser()
         setIsSSO(((user?.username?.includes('Google')) ?? false) || ((user?.username?.includes('Facebook')) ?? false) || false)
@@ -142,11 +144,11 @@ export const useAddPersonalInfo = (): unknown => {
     ) || !personalInfo.acceptPolicy
   }, [personalInfo, errors, isSSO])
 
-  async function formatLocations (locations: string[], city: string): Promise<LocationData[]> {
+  async function formatLocations(locations: string[], city: string): Promise<LocationData[]> {
     const locationService = new LocationService(API_BASE_URL)
 
     const formattedLocations = await Promise.all(
-      locations.map(async (area) =>
+      locations.map(async(area) =>
         locationService.getLatLon(area)
           .then((location) => {
             if (location !== null) {
@@ -160,7 +162,7 @@ export const useAddPersonalInfo = (): unknown => {
     return formattedLocations.filter((location): location is LocationData => location !== null)
   }
 
-  const handleSubmit = async (): Promise<void> => {
+  const handleSubmit = async(): Promise<void> => {
     try {
       setLoading(true)
       const { locations, dateOfBirth, lastDonationDate, lastVaccinatedDate, phoneNumber, ...rest } = personalInfo

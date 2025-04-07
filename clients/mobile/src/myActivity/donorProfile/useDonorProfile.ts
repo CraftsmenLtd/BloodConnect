@@ -35,7 +35,7 @@ const useDonorProfile = (): unknown => {
     }
   }
 
-  const [, loading, donorProfile, error] = useFetchData<FormattedDonorProfile>(async () => {
+  const [, loading, donorProfile, error] = useFetchData<FormattedDonorProfile>(async() => {
     const response = await getDonorProfile(donorId, fetchClient)
     if (response.data !== undefined) {
       return formatDonorProfile(response.data)

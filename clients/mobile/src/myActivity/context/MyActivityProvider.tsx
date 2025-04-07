@@ -30,9 +30,9 @@ const defaultContextValue = {
   loading: false,
   myResponsesLoading: false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  fetchDonationPosts: async () => { },
+  fetchDonationPosts: async() => { },
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  getMyResponses: async () => { }
+  getMyResponses: async() => { }
 }
 
 export const MyActivityContext = createContext<MyActivityContextType>(defaultContextValue)
@@ -42,7 +42,7 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
   const { isAuthenticated } = useAuth()
   const fetchClient = useFetchClient()
 
-  const fetchMyResponsesCallback = async () => {
+  const fetchMyResponsesCallback = async() => {
     const response = await fetchMyResponses({}, fetchClient)
     if (response.data !== undefined && response.data.length > 0) {
       return formatDonations(response.data)
@@ -50,7 +50,7 @@ export const MyActivityProvider: React.FC<{ children: ReactNode }> = ({ children
     return []
   }
 
-  const fetchDonationPostsCallback = async () => {
+  const fetchDonationPostsCallback = async() => {
     const response = await fetchDonationList({}, fetchClient)
     if (response.data !== undefined && response.data.length > 0) {
       const profile = await storageService.getItem<UserProfile>(LOCAL_STORAGE_KEYS.USER_PROFILE)

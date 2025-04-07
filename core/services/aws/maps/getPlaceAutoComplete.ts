@@ -13,7 +13,7 @@ const googleMapsProvider = new GoogleMapsProvider()
 const mapsService = new MapsService(googleMapsProvider)
 const mapsHandler = new MapsHandler(mapsService)
 
-async function placeAutocomplete (
+async function placeAutocomplete(
   event: PlaceAutocompleteRequest & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(

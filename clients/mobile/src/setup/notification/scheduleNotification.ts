@@ -5,7 +5,7 @@ type NotificationTrigger =
   | { seconds: number }
   | { repeats: boolean; interval: 'minute' | 'hour' | 'day' | 'week' }
 
-export const scheduleNotification = async (trigger: NotificationTrigger, content: Notifications.NotificationContentInput): Promise<void> => {
+export const scheduleNotification = async(trigger: NotificationTrigger, content: Notifications.NotificationContentInput): Promise<void> => {
   await Notifications.scheduleNotificationAsync({ content, trigger: notificationTrigger(trigger) })
 }
 
@@ -39,10 +39,10 @@ const calculateIntervalInSeconds = (interval: 'minute' | 'hour' | 'day' | 'week'
   }
 }
 
-export const fetchScheduledNotifications = async (): Promise<Notifications.NotificationRequest[]> => {
+export const fetchScheduledNotifications = async(): Promise<Notifications.NotificationRequest[]> => {
   return Notifications.getAllScheduledNotificationsAsync()
 }
 
-export const cancelNotificationById = async (identifier: string): Promise<void> => {
+export const cancelNotificationById = async(identifier: string): Promise<void> => {
   await Notifications.cancelScheduledNotificationAsync(identifier)
 }

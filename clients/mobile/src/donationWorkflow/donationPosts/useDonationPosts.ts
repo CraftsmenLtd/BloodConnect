@@ -24,7 +24,7 @@ export const useDonationPosts = () => {
 
   useEffect(() => { void fetchPosts() }, [])
 
-  const fetchDonations = async (bloodGroup: string = ''): Promise<void> => {
+  const fetchDonations = async(bloodGroup: string = ''): Promise<void> => {
     const results = await Promise.allSettled(
       userProfile.uniqueGeoPartitions.map(async(eachPartition) => {
         const response = await fetchDonationPublicPosts(eachPartition, fetchClient, bloodGroup)
@@ -42,7 +42,7 @@ export const useDonationPosts = () => {
     setDonationPosts(formattedDonations)
   }
 
-  const fetchPosts = async (): Promise<void> => {
+  const fetchPosts = async(): Promise<void> => {
     setLoading(true)
     try {
       await fetchDonations()
@@ -54,7 +54,7 @@ export const useDonationPosts = () => {
     }
   }
 
-  const refreshPosts = async (): Promise<void> => {
+  const refreshPosts = async(): Promise<void> => {
     setIsFilteredByBloodGroup(false)
     setRefreshing(true)
     await fetchPosts()
@@ -65,7 +65,7 @@ export const useDonationPosts = () => {
     navigation.navigate(SCREENS.DONATION, { data: null, isUpdating: false })
   }
 
-  const filterWithBloodGroup = async (): Promise<void> => {
+  const filterWithBloodGroup = async(): Promise<void> => {
     setLoading(true)
     setIsFilteredByBloodGroup(true)
     try {

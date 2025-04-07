@@ -5,12 +5,12 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 
-interface DropdownProps extends InputProps {
+type DropdownProps = {
   options: Array<{ label: string; value: string }>;
   isVisible: string;
   setIsVisible: (name: string) => void;
   readOnly?: boolean;
-}
+} & InputProps
 
 export const CustomDropdown = ({
   name,

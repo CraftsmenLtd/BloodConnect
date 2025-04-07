@@ -21,14 +21,14 @@ import { ToastAndroid } from 'react-native'
 import useFetchData from '../../../../setup/clients/useFetchData'
 import type { UserProfile } from '../../../../userWorkflow/services/userProfileService'
 
-interface AcceptRequestParams {
+type AcceptRequestParams = {
   requestPostId: string;
   seekerId: string;
   createdAt: string;
   status: string;
 }
 
-interface useResponseDonationRequestReturnType {
+type useResponseDonationRequestReturnType = {
   bloodRequest: unknown;
   userProfile: UserProfile;
   isLoading: boolean;
@@ -39,7 +39,7 @@ interface useResponseDonationRequestReturnType {
   isRequestAccepted: boolean;
 }
 
-interface FetchResponse {
+type FetchResponse = {
   status: number;
   statusText?: string;
 }
@@ -77,7 +77,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     })
   }
 
-  const [handleAcceptRequest, isAcceptLoading, , acceptError] = useFetchData(async (): Promise<void> => {
+  const [handleAcceptRequest, isAcceptLoading, , acceptError] = useFetchData(async(): Promise<void> => {
     if (bloodRequest === null) {
       throw new Error('Missing some required data. Please try again')
     }
@@ -116,7 +116,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     }
   })
 
-  const [handleIgnore, isIgnoreLoading, , ignoreError] = useFetchData(async () => {
+  const [handleIgnore, isIgnoreLoading, , ignoreError] = useFetchData(async() => {
     if (
       bloodRequest === null ||
       ['requestPostId', 'seekerId', 'createdAt', 'requestedBloodGroup'].some(
