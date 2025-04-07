@@ -50,6 +50,16 @@ resource "null_resource" "vite_build" {
       for f in fileset(local.client_path, "**/*") :
       filesha1("${local.client_path}/${f}") if !strcontains(f, "node_modules")
     ]))
+
+    VITE_AWS_S3_BUCKET           = aws_s3_bucket.monitoring_site.id
+    VITE_BUCKET_PATH_PREFIX      = local.monitor_donation_request_s3_path_prefix
+    VITE_AWS_S3_REGION           = aws_s3_bucket.monitoring_site.region
+    VITE_MAPBOX_PUBLIC_KEY       = var.mapbox_public_key
+    VITE_BASE_ROUTE              = var.site_path
+    VITE_AWS_USER_POOL_ID        = var.cognito_user_pool_id
+    VITE_AWS_USER_POOL_CLIENT_ID = var.cognito_app_client_id
+    VITE_AWS_IDENTITY_POOL_ID    = var.cognito_identity_pool_id
+    VITE_MAX_GEOHASH_PREFIX_SIZE = var.max_geohash_prefix_length
   }
   provisioner "local-exec" {
     on_failure  = fail
