@@ -171,13 +171,12 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     const updatedNotifiedEligibleDonors = { ...notifiedEligibleDonors, ...eligibleDonors }
 
     if (!hasMaxGeohashLevelReached && nextRemainingDonorsToFind > 0) {
-      const delayPeriod = calculateDelayPeriod(remainingBagsNeeded, donationDateTime, urgencyLevel)
       serviceLogger.info(
         {
           currentNeighborSearchLevel: updatedNeighborSearchLevel,
           remainingGeohashesToProcessCount: geohashesForNextIteration.length,
           remainingDonorsToFind: nextRemainingDonorsToFind,
-          delayPeriod,
+          delayPeriod: Number(process.env.DONOR_SEARCH_DELAY_BETWEEN_EXECUTION),
           initiationCount
         },
         `continuing donor search to find remaining ${nextRemainingDonorsToFind} donors`
@@ -195,7 +194,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
           initiationCount
         },
         new SQSOperations(),
-        delayPeriod
+        Number(process.env.DONOR_SEARCH_DELAY_BETWEEN_EXECUTION)
       )
       return
     }
@@ -206,10 +205,11 @@ async function donorSearch(event: SQSEvent): Promise<void> {
 
     if (!hasDonorSearchMaxInstantiatedRetryReached) {
       const initiatingDelayPeriod = calculateDelayPeriod(
-        remainingBagsNeeded,
         donationDateTime,
-        urgencyLevel,
-        true
+        Number(process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL),
+        Number(process.env.MAX_GEOHASHES_PER_EXECUTION),
+        Number(process.env.DONOR_SEARCH_MAX_INITIATING_RETRY_COUNT),
+        Number(process.env.DONOR_SEARCH_DELAY_BETWEEN_EXECUTION)
       )
       serviceLogger.info(
         {
@@ -236,7 +236,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
           targetedExecutionTime: Math.floor(Date.now() / 1000) + initiatingDelayPeriod
         },
         new SQSOperations(),
-        Number(process.env.DONOR_SEARCH_QUEUE_MIN_DELAY_SECONDS)
+        Number(process.env.DONOR_SEARCH_DELAY_BETWEEN_EXECUTION)
       )
     } else {
       serviceLogger.info(`updating donor search status to ${DonorSearchStatus.COMPLETED}`)

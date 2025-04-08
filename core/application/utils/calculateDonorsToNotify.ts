@@ -1,38 +1,6 @@
 import { UrgencyType } from 'commons/dto/DonationDTO'
 
-type TimeUnit = 'minutes' | 'hours'
-type DelayRange = { min: number; max: number }
-type TimeUnitDelays = Record<TimeUnit, DelayRange>
-type DelayPeriodConfig = Record<UrgencyType, TimeUnitDelays>
-
-const DELAY_PERIOD: DelayPeriodConfig = {
-  urgent: {
-    minutes: {
-      min: 5,
-      max: 7
-    },
-    hours: {
-      min: 0.6,
-      max: 1
-    }
-  },
-  regular: {
-    minutes: {
-      min: 7,
-      max: 15
-    },
-    hours: {
-      min: 1,
-      max: 2
-    }
-  }
-}
-
-const DELAY_WEIGHT: Record<UrgencyType, Record<TimeUnit, number>> = {
-  urgent: { minutes: 0.5, hours: 0.1 },
-  regular: { minutes: 1, hours: 0.2 }
-}
-
+const MIN_DELAY_HOURS = 0.5
 const EXTRA_DONORS_TO_NOTIFY: Record<UrgencyType, number> = { urgent: 2, regular: 1 }
 
 export function calculateRemainingBagsNeeded(
@@ -50,28 +18,33 @@ export function calculateTotalDonorsToFind(
   return remainingBagsNeeded === 0 ? 0 : remainingBagsNeeded + rejectedDonorsCount + EXTRA_DONORS_TO_NOTIFY[urgencyLevel]
 }
 
+export function calculateTotalExecutionPerInitiation(
+  maxGeohashNeighborSearchLevel: number,
+  maxGeohashesPerExecution: number
+): number {
+  return (1 + 8 * ((maxGeohashNeighborSearchLevel - 1) * maxGeohashNeighborSearchLevel) / 2) / maxGeohashesPerExecution
+}
+
 export function calculateDelayPeriod(
-  remainingBagsNeeded: number,
   donationDateTime: string,
-  urgencyLevel: UrgencyType,
-  isReinstatedRetry: boolean = false
+  maxGeohashNeighborSearchLevel: number,
+  maxGeohashesPerExecution: number,
+  maxInitiatingRetryCount: number,
+  delayBetweenExecution: number
 ): number {
   const donationDate = new Date(donationDateTime)
   const currentDate = new Date()
-  const hoursUntilDonation = Math.max(
-    0,
-    (donationDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60)
+  const totalTimeAvailableInSeconds = Math.max(0, (donationDate.getTime() - currentDate.getTime()) / 1000)
+
+  const totalExecutionPerInitiation = calculateTotalExecutionPerInitiation(
+    maxGeohashNeighborSearchLevel,
+    maxGeohashesPerExecution
   )
-  const minDelay: number = isReinstatedRetry
-    ? DELAY_PERIOD[urgencyLevel].hours.min
-    : DELAY_PERIOD[urgencyLevel].minutes.min
-  const maxDelay: number = isReinstatedRetry
-    ? DELAY_PERIOD[urgencyLevel].hours.max
-    : DELAY_PERIOD[urgencyLevel].minutes.max
 
-  const weight = DELAY_WEIGHT[urgencyLevel][isReinstatedRetry ? 'hours' : 'minutes']
+  const delayPeriodInSeconds = (totalTimeAvailableInSeconds / maxInitiatingRetryCount) -
+    (totalExecutionPerInitiation * delayBetweenExecution)
 
-  const delayPeriod = (hoursUntilDonation * weight) / remainingBagsNeeded
-  const boundedDelay = Math.min(Math.max(minDelay, delayPeriod), maxDelay)
-  return Math.round(boundedDelay * (isReinstatedRetry ? 3600 : 60))
+  const boundedDelayHours = Math.max(MIN_DELAY_HOURS, delayPeriodInSeconds / 3600)
+
+  return Math.round(boundedDelayHours * 3600)
 }
