@@ -47,7 +47,17 @@ variable "cognito_identity_pool_id" {
   description = "id for app authentication"
 }
 
+variable "cognito_custom_domain_name" {
+  type        = string
+  description = "cognito domain for oauth logins"
+}
+
 variable "maintainers_role" {
   type        = string
   description = "role name to attach s3 access policies for maintainers"
+}
+
+variable "bloodconnect_domain" {
+  type        = string
+  description = "domain for app hosted"
 }
