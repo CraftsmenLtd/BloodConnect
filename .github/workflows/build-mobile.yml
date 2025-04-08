@@ -92,9 +92,6 @@ jobs:
       - name: 🔄 Fetch Google Service File From aws
         run: make run-command-fetch-google-service-file
 
-      - name: Cat Service File
-        run: cat clients/mobile/google-services.json
-
       - name: Base64 Encode Google Service File and Save to Output
         run: echo "ENCODED_GOOGLE_SERVICE_FILE=$(openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -pass pass:${{ secrets.ENCRYPTION_KEY }} -in clients/mobile/google-services.json | base64 -w 0)" >> $GITHUB_OUTPUT
         id: encode_google_service

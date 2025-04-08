@@ -12,7 +12,7 @@ RUN apt update && apt install -y ca-certificates curl gnupg make gcc zip unzip a
 
 COPY docs/requirements.txt /tmp
 RUN pip3 install -r /tmp/requirements.txt --break-system-packages && \
-    pip3 install terraform-local checkov==3.1.40 --break-system-packages && \
+    pip3 install terraform-local checkov==3.1.40 awscli-local --break-system-packages && \
     rm /tmp/requirements.txt
 
 # Install Binary tools

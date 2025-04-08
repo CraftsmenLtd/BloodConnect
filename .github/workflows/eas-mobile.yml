@@ -93,9 +93,6 @@ jobs:
       - name: 📥 Decode Google Service File from Input
         run: base64 --decode <<< "${{ inputs.encoded_google_services_file }}" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -salt -pass pass:${{ secrets.ENCRYPTION_KEY }} > clients/mobile/google-services.json
 
-      - name: Cat file
-        run: cat clients/mobile/google-services.json
-
       - name: 📤 Upload Environment Variables to Expo
         run: make upload-env
         working-directory: clients/mobile

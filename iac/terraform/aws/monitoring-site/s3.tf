@@ -80,7 +80,7 @@ resource "null_resource" "vite_build" {
   }
 
   provisioner "local-exec" {
-    command     = "aws s3 cp ${local.dist_dir} s3://${aws_s3_bucket.monitoring_site.id}/${var.site_path}/ --recursive --region ${aws_s3_bucket.monitoring_site.region}"
+    command     = "${var.environment == "localstack" ? "awslocal" : "aws"} s3 cp ${local.dist_dir} s3://${aws_s3_bucket.monitoring_site.id}/${var.site_path}/ --recursive --region ${aws_s3_bucket.monitoring_site.region}"
     working_dir = local.client_path
   }
 }
