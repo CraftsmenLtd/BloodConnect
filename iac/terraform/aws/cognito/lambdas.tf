@@ -3,15 +3,15 @@ locals {
     cognito_custom_message_trigger = {
       name          = "custom-message-trigger"
       handler       = "customMessageTrigger.default"
-      zip_path      = "customMessageTrigger.zip"
+      js_file_name  = "customMessageTrigger.js"
       statement     = local.policies.common_policies
       env_variables = {}
     },
     cognito_post_confirmation_trigger = {
-      name      = "post-confirmation-trigger"
-      handler   = "postConfirmationTrigger.default"
-      zip_path  = "postConfirmationTrigger.zip"
-      statement = concat(local.policies.common_policies, local.policies.dynamodb_policy, local.policies.cognito_policy, local.policies.ses_policy)
+      name         = "post-confirmation-trigger"
+      handler      = "postConfirmationTrigger.default"
+      js_file_name = "postConfirmationTrigger.js"
+      statement    = concat(local.policies.common_policies, local.policies.dynamodb_policy, local.policies.cognito_policy, local.policies.ses_policy)
       env_variables = {
         DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1],
         EMAIL_SENDER        = "no-reply@${var.bloodconnect_domain}"

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useRoute } from '@react-navigation/native'
-import { DonorConfirmationRouteProp } from '../../../setup/navigation/navigationTypes'
+import type { DonorConfirmationRouteProp } from '../../../setup/navigation/navigationTypes'
 
-const useDonorConfirmation = (): any => {
+const useDonorConfirmation = (): unknown => {
   const { donors, requestPostId, createdAt } = useRoute<DonorConfirmationRouteProp>().params
   const [selectedDonor, setSelectedDonor] = useState<string[]>([])
 

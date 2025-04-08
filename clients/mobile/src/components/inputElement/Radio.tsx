@@ -1,15 +1,15 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
-import { InputProps } from './types'
+import type { Theme } from '../../setup/theme'
+import type { InputProps } from './types'
 import { commonStyles } from './commonStyles'
 
-interface RadioButtonProps extends Omit<InputProps, 'placeholder' | 'onChangeText'> {
+type RadioButtonProps = {
   onPress: (name: string, value: string) => void;
   options: string[];
   extraInfo?: string;
-}
+} & Omit<InputProps, 'placeholder' | 'onChangeText'>
 
 const RadioButton: React.FC<RadioButtonProps> = ({ name, options, value, onPress, label, error, isRequired = false, extraInfo = '' }) => {
   const styles = createStyles(useTheme())

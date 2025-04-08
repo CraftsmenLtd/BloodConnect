@@ -1,8 +1,8 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import AcceptDonationRequestError from './AcceptDonationRequestError'
-import { AcceptDonationRequestAttributes } from './Types'
-import AcceptedDonationRepository from '../models/policies/repositories/AcceptedDonationRepository'
-import { AcceptDonationStatus, AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
+import type { AcceptDonationRequestAttributes } from './Types'
+import type AcceptedDonationRepository from '../models/policies/repositories/AcceptedDonationRepository'
+import type { AcceptDonationStatus, AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
 
 export class AcceptDonationService {
   async createAcceptanceRecord(

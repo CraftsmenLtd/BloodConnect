@@ -1,5 +1,5 @@
-import { DonationRecordDTO } from '../../../../commons/dto/DonationDTO'
-import {
+import type { DonationRecordDTO } from '../../../../commons/dto/DonationDTO'
+import type {
   DbModelDtoAdapter,
   HasTimeLog,
   NosqlModel,

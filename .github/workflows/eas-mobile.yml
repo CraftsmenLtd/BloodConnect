@@ -39,10 +39,6 @@ on:
         description: "Defines B64 encoded google services file"
         required: true
         type: string
-      country:
-        description: "Defines country For EXPO"
-        required: true
-        type: string
 permissions:
   contents: read
   packages: write
@@ -65,7 +61,7 @@ jobs:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       BUILD_PROFILE: ${{ inputs.build_profile }}
       EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
-      APP_NAME: net.bloodconnect-${{ inputs.deployment_environment }}.app
+      APP_NAME: net.bloodconnect.app
       APP_VERSION: 1.0.0
       AWS_USER_POOL_CLIENT_ID: ${{ inputs.aws_user_pool_client_id }}
       AWS_USER_POOL_ID: ${{ inputs.aws_user_pool_id }}
@@ -75,6 +71,8 @@ jobs:
     steps:
       - name: 📥 Checkout Branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 🔐 Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -87,15 +85,21 @@ jobs:
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install React Native Modules
-        run: make run-command-install-native-packages
+        run: make run-command-install-node-packages
 
       - name: 📥 Decode Google Service File from Input
         run: base64 --decode <<< "${{ inputs.encoded_google_services_file }}" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -salt -pass pass:${{ secrets.ENCRYPTION_KEY }} > clients/mobile/google-services.json
 
+      - name: Cat file
+        run: cat clients/mobile/google-services.json
+
       - name: 📤 Upload Environment Variables to Expo
-        run: cd clients/mobile && make upload-env
+        run: make upload-env
+        working-directory: clients/mobile
       
       - name: ⏳ Start Expo Build Job
-        run: cd clients/mobile && make build-android
+        run: make build-android
+        working-directory: clients/mobile

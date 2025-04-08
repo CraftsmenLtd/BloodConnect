@@ -8,14 +8,14 @@ export enum QueryConditionOperator {
   BETWEEN = 'BETWEEN'
 }
 
-export interface QueryCondition<T extends Record<string, unknown>> {
+export type QueryCondition<T extends Record<string, unknown>> = {
   attributeName: keyof T;
   operator: QueryConditionOperator;
   attributeValue: string | number;
   attributeValue2?: string | number;
 }
 
-export interface QueryOptions {
+export type QueryOptions = {
   indexName?: string;
   limit?: number;
   scanIndexForward?: boolean;
@@ -24,7 +24,7 @@ export interface QueryOptions {
   filterExpressionValues?: Record<string, unknown>;
 }
 
-export interface QueryInput<T extends Record<string, unknown>> {
+export type QueryInput<T extends Record<string, unknown>> = {
   partitionKeyCondition: QueryCondition<T>;
   sortKeyCondition?: QueryCondition<T>;
   options?: QueryOptions;

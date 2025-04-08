@@ -7,15 +7,15 @@ import LinkWithText from '../../../components/button/LinkWithText'
 import Warning from '../../../components/warning'
 import { WARNINGS } from '../../../setup/constant/consts'
 import { useRegister } from '../hooks/useRegister'
-import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import AuthLayout from '../../AuthLayout'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
 import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
 
-interface RegisterScreenProps {
+type RegisterScreenProps = {
   navigation: RegisterScreenNavigationProp;
 }
 

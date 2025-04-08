@@ -1,18 +1,19 @@
 import { useMemo, useState } from 'react'
 import { resetPasswordHandler } from '../../services/authService'
 import { useNavigation } from '@react-navigation/native'
-import { validateRequired, validateEmail, ValidationRule, validateInput } from '../../../utility/validator'
+import type { ValidationRule} from '../../../utility/validator';
+import { validateRequired, validateEmail, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
-import { ForgotPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { ForgotPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 
 type ForgotPasswordFields = keyof ForgotPasswordCredentials
 
-export interface ForgotPasswordCredentials {
+export type ForgotPasswordCredentials = {
   email: string;
 }
 
-interface ForgotPasswordErrors {
+type ForgotPasswordErrors = {
   email: string | null;
 }
 
@@ -20,7 +21,7 @@ const validationRules: Record<ForgotPasswordFields, ValidationRule[]> = {
   email: [validateRequired, validateEmail]
 }
 
-export const useForgotPassword = (): any => {
+export const useForgotPassword = (): unknown => {
   const navigation = useNavigation<ForgotPasswordScreenNavigationProp>()
   const [credentials, setCredentials] = useState<ForgotPasswordCredentials>(
     initializeState<ForgotPasswordCredentials>(Object.keys(validationRules) as ForgotPasswordFields[], '')

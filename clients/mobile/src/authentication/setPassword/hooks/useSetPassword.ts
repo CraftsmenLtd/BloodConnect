@@ -1,29 +1,31 @@
 import { useMemo, useState } from 'react'
-import { validateRequired, validatePassword, ValidationRule, validateInput } from '../../../utility/validator'
+import type { ValidationRule} from '../../../utility/validator';
+import { validateRequired, validatePassword, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { SetPasswordRouteProp, SetPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { SetPasswordRouteProp, SetPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import { confirmResetPasswordHandler, registerUser, UserRegistrationCredentials } from '../../services/authService'
+import type { UserRegistrationCredentials } from '../../services/authService';
+import { confirmResetPasswordHandler, registerUser } from '../../services/authService'
 
 export const PASSWORD_INPUT_NAME = 'password'
 
 type CredentialKeys = keyof Password
 type errorMessageType = string | null
 
-export interface Password {
+export type Password = {
   password: string;
   confirmPassword: string;
 }
 
-interface SetPasswordErrors extends Password {}
+type SetPasswordErrors = Password
 
 const validationRules: Record<CredentialKeys, ValidationRule[]> = {
   password: [validateRequired, validatePassword],
   confirmPassword: [validateRequired, validatePassword]
 }
 
-export const useSetPassword = (): any => {
+export const useSetPassword = (): unknown => {
   const navigation = useNavigation<SetPasswordScreenNavigationProp>()
   const [loading, setLoading] = useState(false)
   const route = useRoute<SetPasswordRouteProp>()

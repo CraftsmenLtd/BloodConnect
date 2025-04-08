@@ -1,4 +1,4 @@
-import { UrgencyType } from 'commons/dto/DonationDTO'
+import type { UrgencyType } from 'commons/dto/DonationDTO'
 
 type TimeUnit = 'minutes' | 'hours'
 type DelayRange = { min: number; max: number }

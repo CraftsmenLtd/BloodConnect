@@ -71,3 +71,8 @@ variable "hosted_zone_id" {
   type        = string
   description = "Route53 zone ID"
 }
+
+variable "monitoring_site_path" {
+  type        = string
+  description = "site path where monitoring is hosted"
+}

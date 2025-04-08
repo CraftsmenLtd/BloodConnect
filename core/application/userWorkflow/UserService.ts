@@ -1,19 +1,19 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import UserOperationError from './UserOperationError'
-import { LocationDTO, UserDetailsDTO, UserDTO } from '../../../commons/dto/UserDTO'
+import type { LocationDTO, UserDetailsDTO, UserDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import { GenericMessage } from '../../../commons/dto/MessageDTO'
+import type { GenericMessage } from '../../../commons/dto/MessageDTO'
 import {
   getAppUserWelcomeMailMessage,
   getEmailVerificationMessage,
   getPasswordResetVerificationMessage
 } from './userMessages'
-import Repository from '../models/policies/repositories/Repository'
-import { CreateUserAttributes, UpdateUserAttributes, UserAttributes } from './Types'
+import type Repository from '../models/policies/repositories/Repository'
+import type { CreateUserAttributes, UpdateUserAttributes, UserAttributes } from './Types'
 import { generateGeohash } from '../utils/geohash'
 import { differenceInMonths, differenceInYears } from 'date-fns'
-import { BloodGroup } from '../../../commons/dto/DonationDTO'
-import LocationRepository from '../models/policies/repositories/LocationRepository'
+import type { BloodGroup } from '../../../commons/dto/DonationDTO'
+import type LocationRepository from '../models/policies/repositories/LocationRepository'
 
 export class UserService {
   async createNewUser(

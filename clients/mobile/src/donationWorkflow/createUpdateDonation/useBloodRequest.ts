@@ -1,9 +1,10 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import Constants from 'expo-constants'
+import type {
+  ValidationRule} from '../../utility/validator';
 import {
   validateInput,
   validateRequired,
-  ValidationRule,
   validatePhoneNumber,
   validateDateTime,
   validateDonationDateTime,
@@ -12,16 +13,17 @@ import {
 } from '../../utility/validator'
 import { initializeState } from '../../utility/stateUtils'
 import { LocationService } from '../../LocationService/LocationService'
-import { createDonation, DonationCreateUpdateResponse, updateDonation } from '../donationService'
+import type { DonationCreateUpdateResponse} from '../donationService';
+import { createDonation, updateDonation } from '../donationService'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
-import { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
+import type { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
 import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { useMyActivityContext } from '../../myActivity/context/useMyActivityContext'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import { cancelNotificationById, fetchScheduledNotifications, scheduleNotification } from '../../setup/notification/scheduleNotification'
-import { NotificationRequest } from 'expo-notifications'
+import type { NotificationRequest } from 'expo-notifications'
 import { UrgencyLevel } from '../types'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
@@ -30,7 +32,7 @@ export const DONATION_DATE_TIME_INPUT_NAME = 'donationDateTime'
 export const DONATION_URGENCY_LEVEL = 'urgencyLevel'
 type CredentialKeys = keyof BloodRequestData
 
-export interface BloodRequestData {
+export type BloodRequestData = {
   urgencyLevel: string;
   requestedBloodGroup: string;
   bloodQuantity: string;
@@ -42,7 +44,7 @@ export interface BloodRequestData {
   transportationInfo?: string;
 }
 
-interface BloodRequestDataErrors extends Omit<BloodRequestData, 'patientName' | 'transportationInfo' | 'donationDateTime'> { donationDateTime: string | null }
+type BloodRequestDataErrors = { donationDateTime: string | null } & Omit<BloodRequestData, 'patientName' | 'transportationInfo' | 'donationDateTime'>
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
   urgencyLevel: [validateRequired],
@@ -54,7 +56,7 @@ const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = 
   shortDescription: [validateShortDescription]
 }
 
-export const useBloodRequest = (): any => {
+export const useBloodRequest = (): unknown => {
   const fetchClient = useFetchClient()
   const route = useRoute<DonationScreenRouteProp>()
   const { fetchDonationPosts } = useMyActivityContext()
@@ -188,7 +190,7 @@ export const useBloodRequest = (): any => {
       latitude: coordinates.latitude,
       longitude: coordinates.longitude
     }
-    return await createDonation(finalData, fetchClient)
+    return createDonation(finalData, fetchClient)
   }
 
   const updateBloodDonationRequest = async(): Promise<DonationCreateUpdateResponse> => {
@@ -208,7 +210,7 @@ export const useBloodRequest = (): any => {
       createdAt: bloodRequestData?.createdAt,
       bloodQuantity: Number(bloodQuantity)
     }
-    return await updateDonation(finalData, fetchClient)
+    return updateDonation(finalData, fetchClient)
   }
 
   const findNotificationByRequestPostId = (
@@ -218,14 +220,12 @@ export const useBloodRequest = (): any => {
     )
 
   const updateNotificationTriggerTime = async(donationDateTime: string | Date, requestPostId: string): Promise<void> => {
-    try {
       const notifications = await fetchScheduledNotifications()
       const notificationToUpdate = findNotificationByRequestPostId(notifications, requestPostId)
       if (notificationToUpdate == null) return
       await cancelNotificationById(notificationToUpdate.identifier)
       const adjustedTime = adjustNotificationTime(donationDateTime)
       void scheduleNotification({ date: adjustedTime }, notificationToUpdate.content?.data?.payload)
-    } catch {}
   }
 
   const handleNotification = (donationDateTime: string | Date, donationResponse: { requestPostId: string; createdAt: string }): void => {

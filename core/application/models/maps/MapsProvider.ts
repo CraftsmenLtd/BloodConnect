@@ -1,4 +1,4 @@
-import {
+import type {
   APIResponse,
   GeocodeRequest,
   GeocodeResponse,
@@ -6,7 +6,7 @@ import {
   PlaceAutocompleteResponse
 } from '../../maps/dto/Maps'
 
-export interface MapsProvider {
+export type MapsProvider = {
   getPlaceAutocomplete(params: PlaceAutocompleteRequest): Promise<APIResponse<PlaceAutocompleteResponse>>;
   getGeocode(params: GeocodeRequest): Promise<APIResponse<GeocodeResponse>>;
   handleError(error: unknown): APIResponse<never>;

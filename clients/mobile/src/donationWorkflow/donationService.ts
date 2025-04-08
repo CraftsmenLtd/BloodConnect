@@ -1,9 +1,9 @@
-import { HttpClient } from '../setup/clients/HttpClient'
-import { ApiResponse } from '../setup/clients/response'
-import { BloodDonationRecord } from './types'
+import type { HttpClient } from '../setup/clients/HttpClient'
+import type { ApiResponse } from '../setup/clients/response'
+import type { BloodDonationRecord } from './types'
 
-export interface DonationResponse extends ApiResponse<BloodDonationRecord[]> {}
-export interface DonationCreateUpdateResponse extends ApiResponse<{ requestPostId: string; createdAt: string }> {}
+export type DonationResponse = ApiResponse<BloodDonationRecord[]>
+export type DonationCreateUpdateResponse = ApiResponse<{ requestPostId: string; createdAt: string }>
 
 export const createDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationCreateUpdateResponse> => {
   try {

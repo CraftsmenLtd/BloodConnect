@@ -1,5 +1,5 @@
-import { NotificationDTO, NotificationType } from '../../../../commons/dto/NotificationDTO'
-import { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
+import type { NotificationDTO, NotificationType } from '../../../../commons/dto/NotificationDTO'
+import type { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
 export const NOTIFICATION_PK_PREFIX = 'NOTIFICATION'
 

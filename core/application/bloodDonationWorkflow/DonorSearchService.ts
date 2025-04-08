@@ -1,11 +1,11 @@
-import { DonorSearchDTO } from '../../../commons/dto/DonationDTO'
-import Repository from '../models/policies/repositories/Repository'
+import type { DonorSearchDTO } from '../../../commons/dto/DonationDTO'
+import type Repository from '../models/policies/repositories/Repository'
 import { getGeohashNthNeighbors } from '../utils/geohash'
-import { DonorSearchAttributes, DonorSearchQueueAttributes } from './Types'
+import type { DonorSearchAttributes, DonorSearchQueueAttributes } from './Types'
 import { DONOR_SEARCH_PK_PREFIX } from '../models/dbModels/DonorSearchModel'
-import { LocationDTO } from '../../../commons/dto/UserDTO'
-import GeohashRepository from '../models/policies/repositories/GeohashRepository'
-import { QueueModel } from '../models/queue/QueueModel'
+import type { LocationDTO } from '../../../commons/dto/UserDTO'
+import type GeohashRepository from '../models/policies/repositories/GeohashRepository'
+import type { QueueModel } from '../models/queue/QueueModel'
 import { GEO_PARTITION_PREFIX_LENGTH } from '../../../commons/libs/constants/NoMagicNumbers'
 
 const DONOR_SEARCH_QUEUE_URL = process.env.DONOR_SEARCH_QUEUE_URL as string
@@ -41,7 +41,7 @@ export class DonorSearchService {
     createdAt: string,
     donorSearchRepository: Repository<DonorSearchDTO, Record<string, unknown>>
   ): Promise<DonorSearchDTO | null> {
-    return await donorSearchRepository.getItem(
+    return donorSearchRepository.getItem(
       `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
       `${DONOR_SEARCH_PK_PREFIX}#${createdAt}#${requestPostId}`
     )

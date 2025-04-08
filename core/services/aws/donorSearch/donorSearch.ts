@@ -1,20 +1,23 @@
-import { SQSEvent } from 'aws-lambda'
+import type { SQSEvent } from 'aws-lambda'
 import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
-import { DonorSearchQueueAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import {
-  AcceptDonationStatus,
+import type { DonorSearchQueueAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type {
   AcceptedDonationDTO,
   DonationDTO,
-  DonationStatus,
   DonorSearchDTO,
-  DonorSearchStatus,
   EligibleDonorInfo
-} from '../../../../commons/dto/DonationDTO'
-import { LocationDTO } from '../../../../commons/dto/UserDTO'
+} from '../../../../commons/dto/DonationDTO';
+import {
+  AcceptDonationStatus,
+  DonorSearchStatus
+,
+  DonationStatus} from '../../../../commons/dto/DonationDTO'
+import type { LocationDTO } from '../../../../commons/dto/UserDTO'
 
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
+import type {
+  DonorSearchFields} from '../../../application/models/dbModels/DonorSearchModel';
 import {
-  DonorSearchFields,
   DonorSearchModel
 } from '../../../application/models/dbModels/DonorSearchModel'
 import SQSOperations from '../commons/sqs/SQSOperations'
@@ -25,8 +28,9 @@ import {
 } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
 import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
+import type {
+  AcceptedDonationFields} from '../../../application/models/dbModels/AcceptDonationModel';
 import {
-  AcceptedDonationFields,
   AcceptDonationRequestModel
 } from '../../../application/models/dbModels/AcceptDonationModel'
 import {
@@ -34,29 +38,34 @@ import {
   calculateRemainingBagsNeeded,
   calculateTotalDonorsToFind
 } from '../../../application/utils/calculateDonorsToNotify'
-import {
+import type {
   DonorInfo,
+  GeohashDonorMap} from '../../../application/utils/GeohashCacheMapManager';
+import {
   GeohashCacheManager,
-  GeohashDonorMap,
   updateGroupedGeohashCache
 } from '../../../application/utils/GeohashCacheMapManager'
 import GeohashDynamoDbOperations from '../commons/ddb/GeohashDynamoDbOperations'
-import LocationModel, { LocationFields } from '../../../application/models/dbModels/LocationModel'
+import type { LocationFields } from '../../../application/models/dbModels/LocationModel';
+import LocationModel from '../../../application/models/dbModels/LocationModel'
 import { getDistanceBetweenGeohashes } from '../../../application/utils/geohash'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
-import { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
+import type { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
 import { getBloodRequestMessage } from '../../../application/bloodDonationWorkflow/BloodDonationMessages'
+import type {
+  BloodDonationNotificationDTO} from '../../../../commons/dto/NotificationDTO';
 import {
-  BloodDonationNotificationDTO,
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
 import { GEO_PARTITION_PREFIX_LENGTH, MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from '../../../../commons/libs/constants/NoMagicNumbers'
-import DonationNotificationModel, {
+import type {
   BloodDonationNotificationFields
-} from '../../../application/models/dbModels/DonationNotificationModel'
+} from '../../../application/models/dbModels/DonationNotificationModel';
+import DonationNotificationModel from '../../../application/models/dbModels/DonationNotificationModel'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import { DonationFields, BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
+import type { DonationFields} from '../../../application/models/dbModels/BloodDonationModel';
+import { BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
 const bloodDonationService = new BloodDonationService()

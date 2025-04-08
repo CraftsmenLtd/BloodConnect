@@ -1,13 +1,14 @@
-import { JwtPayload } from '@aws-amplify/core/internals/utils'
-import {
+import type { JwtPayload } from '@aws-amplify/core/internals/utils'
+import type {
   AuthSession,
+  ResetPasswordOutput} from 'aws-amplify/auth';
+import {
   confirmResetPassword,
   confirmSignUp,
   decodeJWT,
   fetchAuthSession,
   resendSignUpCode,
   resetPassword,
-  ResetPasswordOutput,
   signIn,
   signInWithRedirect,
   signOut,
@@ -17,21 +18,21 @@ import { TOKEN } from '../../setup/constant/token'
 import StorageService from '../../utility/storageService'
 import { handleAuthError } from './authErrorHandler'
 
-export interface User {
+export type User = {
   email: string;
   userId: string;
   phoneNumber: string;
   name: string;
 }
 
-export interface UserRegistrationCredentials {
+export type UserRegistrationCredentials = {
   name: string;
   email: string;
   phoneNumber: string;
   password: string;
 }
 
-interface FetchSessionResponse {
+type FetchSessionResponse = {
   accessToken: string | undefined;
   idToken: string | undefined;
 }

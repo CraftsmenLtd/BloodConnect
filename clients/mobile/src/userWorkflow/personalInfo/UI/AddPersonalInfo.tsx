@@ -8,7 +8,7 @@ import { useAddPersonalInfo } from '../hooks/useAddPersonalInfo'
 import { bloodGroupOptions, genderOptions } from '../options'
 import { Input } from '../../../components/inputElement/Input'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 import RadioButton from '../../../components/inputElement/Radio'
 import { LocationService } from '../../../LocationService/LocationService'
 import Warning from '../../../components/warning'
@@ -34,6 +34,7 @@ const AddPersonalInfo = () => {
     isSSO
   } = useAddPersonalInfo()
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const openLink = (url: string) => { Linking.openURL(url).catch(() => { }) }
 
   return (

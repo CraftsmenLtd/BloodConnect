@@ -31,7 +31,7 @@ In ``lambdas.tf``, configure the settings for each Lambda function, such as the 
         function-one = {
           name                       = "function-one"
           handler                    = "functionOne.default"
-          zip_path                   = "functionOne.zip"
+          js_file_name               = "functionOne.js"
           statement                  = local.policies.common_policies
           invocation_arn_placeholder = "FUNCTION_ONE_INVOCATION_ARN"   # Placeholder for OpenAPI integration
           env_variables = {
@@ -41,7 +41,7 @@ In ``lambdas.tf``, configure the settings for each Lambda function, such as the 
         function-two = {
           name                       = "function-two"
           handler                    = "functionTwo.default"
-          zip_path                   = "functionTwo.zip"
+          js_file_name               = "functionTwo.js"
           statement                  = local.policies.common_policies
           invocation_arn_placeholder = "FUNCTION_TWO_INVOCATION_ARN"
           env_variables              = {}
@@ -55,7 +55,7 @@ Explanation:
 
   - ``name``: Lambda function name.
   - ``handler``: Lambda function entry point.
-  - ``zip_path``: Path to the Lambda zip file.
+  - ``js_file_name``: Js file name.
   - ``statement``: Associated IAM policies (defined in ``policies.tf``).
   - ``env_variables``: Custom environment variables for each function.
   - ``invocation_arn_placeholder``: Placeholder for integrating with OpenAPI.

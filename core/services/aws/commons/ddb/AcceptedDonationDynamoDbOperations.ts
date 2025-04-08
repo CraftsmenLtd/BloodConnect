@@ -1,12 +1,14 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
-import { DTO } from '../../../../../commons/dto/DTOCommon'
-import {
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type {
   NosqlModel,
   DbModelDtoAdapter
 } from '../../../../application/models/dbModels/DbModelDefinitions'
-import {
-  QueryConditionOperator,
+import type {
   QueryInput
+} from '../../../../application/models/policies/repositories/QueryTypes';
+import {
+  QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 import {
   ACCEPTED_DONATION_PK_PREFIX,

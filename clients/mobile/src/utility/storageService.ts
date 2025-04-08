@@ -41,7 +41,7 @@ const clearStorage = async(): Promise<void> => {
   }
 }
 
-interface KeySet {
+type KeySet = {
   filter(key: string): KeySet;
   getKeys(): readonly string[];
   remove(): Promise<void>;

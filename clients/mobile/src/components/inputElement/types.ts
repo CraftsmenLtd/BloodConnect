@@ -1,4 +1,4 @@
-export interface InputProps {
+export type InputProps = {
   label: string;
   value: string;
   placeholder: string;
@@ -8,7 +8,7 @@ export interface InputProps {
   onChangeText: (name: string | undefined, text: string) => void;
 }
 
-export interface Option {
+export type Option = {
   label: string;
   value: string;
 }

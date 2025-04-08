@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { ExpoConfig } from '@expo/config-types'
+import type { ExpoConfig } from '@expo/config-types'
 
 type EnvVars = {
   AWS_USER_POOL_ID: string;

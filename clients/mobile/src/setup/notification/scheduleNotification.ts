@@ -40,7 +40,7 @@ const calculateIntervalInSeconds = (interval: 'minute' | 'hour' | 'day' | 'week'
 }
 
 export const fetchScheduledNotifications = async(): Promise<Notifications.NotificationRequest[]> => {
-  return await Notifications.getAllScheduledNotificationsAsync()
+  return Notifications.getAllScheduledNotificationsAsync()
 }
 
 export const cancelNotificationById = async(identifier: string): Promise<void> => {

@@ -1,5 +1,5 @@
-import { BloodGroup } from './DonationDTO'
-import { DTO, HasIdentifier } from './DTOCommon'
+import type { BloodGroup } from './DonationDTO'
+import type { DTO, HasIdentifier } from './DTOCommon'
 
 export type UserDTO = DTO & HasIdentifier & {
   email: string;
@@ -9,7 +9,7 @@ export type UserDTO = DTO & HasIdentifier & {
 
 export type Gender = 'male' | 'female' | 'other'
 
-export interface UserDetailsDTO extends UserDTO {
+export type UserDetailsDTO = {
   bloodGroup: BloodGroup;
   lastDonationDate?: string;
   height: string;
@@ -26,9 +26,9 @@ export interface UserDetailsDTO extends UserDTO {
   updatedAt?: string;
   deviceToken?: string;
   snsEndpointArn?: string;
-}
+} & UserDTO
 
-export interface LocationDTO {
+export type LocationDTO = {
   userId: string;
   locationId: string;
   area: string;

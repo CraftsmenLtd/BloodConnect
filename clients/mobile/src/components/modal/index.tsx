@@ -1,15 +1,17 @@
 import React from 'react'
+import type {
+  ImageSourcePropType
+} from 'react-native';
 import {
   TouchableWithoutFeedback,
   Modal,
   View,
   Text,
   StyleSheet,
-  Image,
-  ImageSourcePropType
+  Image
 } from 'react-native'
 import Button from '../button/Button'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
 type ButtonType = {
@@ -98,7 +100,8 @@ const GenericModal: React.FC<GenericModalProps> = ({
   icon,
   iconSize = 50,
   buttons = [],
-  onClose = () => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onClose = () => { }
 }) => {
   const styles = createStyles(useTheme())
   return (
@@ -115,11 +118,11 @@ const GenericModal: React.FC<GenericModalProps> = ({
             <View style={styles.modalContainer}>
               {/* Conditional Rendering for Icon */}
               {icon != null && (
-                  <Image
-                      source={icon}
-                      style={{ width: iconSize, height: iconSize, marginBottom: 10 }}
-                      resizeMode="contain"
-                  />
+                <Image
+                  source={icon}
+                  style={{ width: iconSize, height: iconSize, marginBottom: 10 }}
+                  resizeMode="contain"
+                />
               )}
 
               {/* Title */}
@@ -131,14 +134,14 @@ const GenericModal: React.FC<GenericModalProps> = ({
               {/* Buttons */}
               <View style={styles.buttonContainer}>
                 {buttons.map((button, index) => (
-                    <Button
-                        key={`${button.text}-${index}`}
-                        text={button.text}
-                        onPress={button.onPress}
-                        buttonStyle={[styles.button, button.style]}
-                        textStyle={[styles.buttonText, button.style]}
-                        loading={button.loading}
-                    />
+                  <Button
+                    key={`${button.text}-${index}`}
+                    text={button.text}
+                    onPress={button.onPress}
+                    buttonStyle={[styles.button, button.style]}
+                    textStyle={[styles.buttonText, button.style]}
+                    loading={button.loading}
+                  />
                 ))}
               </View>
             </View>

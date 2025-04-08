@@ -2,10 +2,10 @@ import React from 'react'
 import { View, ActivityIndicator, StyleSheet } from 'react-native'
 import { loaderHOC } from './loaderHOC'
 
-interface LoaderProps {
+type LoaderProps = {
   size?: 'small' | 'large';
   color?: string;
-  theme?: any;
+  theme?: unknown;
 }
 
 const Loader: React.FC<LoaderProps> = ({ size = 'large', color, theme }) => {

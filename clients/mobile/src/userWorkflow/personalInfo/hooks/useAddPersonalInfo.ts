@@ -1,9 +1,10 @@
 import { useMemo, useState, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { useNavigation } from '@react-navigation/native'
+import type {
+  ValidationRule} from '../../../utility/validator';
 import {
   validateRequired,
-  ValidationRule,
   validateInput,
   validateDateOfBirth,
   validatePastOrTodayDate,
@@ -12,24 +13,26 @@ import {
   validatePhoneNumber
 } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
-import { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { createUserProfile } from '../../services/userProfileService'
+import type {
+  LocationData} from '../../../utility/formatting';
 import {
   formatErrorMessage,
   formatToTwoDecimalPlaces,
-  formatPhoneNumber,
-  formatLocations
+  formatPhoneNumber
 } from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
+import { LocationService } from '../../../LocationService/LocationService';
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type PersonalInfoKeys = keyof PersonalInfo
 
-export interface PersonalInfo {
+export type PersonalInfo = {
   bloodGroup: string;
   height: string;
   weight: string;
@@ -43,11 +46,11 @@ export interface PersonalInfo {
   phoneNumber?: string;
 }
 
-interface PersonalInfoErrors extends Omit<PersonalInfo, 'phoneNumber'> {
+type PersonalInfoErrors = {
   phoneNumber?: string | null;
-}
+} & Omit<PersonalInfo, 'phoneNumber'>
 
-export const useAddPersonalInfo = (): any => {
+export const useAddPersonalInfo = (): unknown => {
   const fetchClient = useFetchClient()
   const { fetchUserProfile } = useUserProfile()
   const navigation = useNavigation<AddPersonalInfoNavigationProp>()
@@ -140,6 +143,24 @@ export const useAddPersonalInfo = (): any => {
       Object.values(errors).every(error => error === null)
     ) || !personalInfo.acceptPolicy
   }, [personalInfo, errors, isSSO])
+
+  async function formatLocations(locations: string[], city: string): Promise<LocationData[]> {
+    const locationService = new LocationService(API_BASE_URL)
+
+    const formattedLocations = await Promise.all(
+      locations.map(async(area) =>
+        locationService.getLatLon(area)
+          .then((location) => {
+            if (location !== null) {
+              const { latitude, longitude } = location
+              return { area, city, latitude, longitude }
+            }
+          })
+          .catch(() => { return null })
+      )
+    )
+    return formattedLocations.filter((location): location is LocationData => location !== null)
+  }
 
   const handleSubmit = async(): Promise<void> => {
     try {

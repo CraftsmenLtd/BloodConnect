@@ -6,11 +6,11 @@ import { useAuth } from '../../context/useAuth'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
-import { SocialLoading } from '../types/loadingType'
-import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { SocialLoading } from '../types/loadingType'
+import type { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SOCIAL_TYPES } from '../constants/socialTypes'
 
-interface UseSocialAuthOutput {
+type UseSocialAuthOutput = {
   socialLoading: SocialLoading;
   socialLoginError: string;
   handleGoogleSignIn: () => Promise<void>;

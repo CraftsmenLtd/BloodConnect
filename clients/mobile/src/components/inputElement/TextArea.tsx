@@ -1,10 +1,10 @@
 import React from 'react'
 import { View, TextInput, Text, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 
-interface TextAreaProps {
+type TextAreaProps = {
   name: string;
   label: string;
   value: string;

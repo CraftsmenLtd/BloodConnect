@@ -1,7 +1,7 @@
 # Auto import env file
-ENV_FILE:=clients/mobile/.env
+ENV_FILE:=.env
 ifneq ("$(findstring clients/mobile/, $(shell pwd))", "")
-  ENV_FILE:=.env
+  ENV_FILE:=clients/mobile/.env
 endif
 
 ifneq ("$(wildcard $(ENV_FILE))", "")
@@ -13,6 +13,8 @@ DIR:=$(dir $(ENV_FILE))
 
 # Default build profile (can be overridden via CLI)
 BUILD_PROFILE?=development
+APP_NAME?=net.bloodconnect.app
+APP_VERSION?=1.0.0
 
 install-native-packages:
 	@npm install --prefix $(DIR)

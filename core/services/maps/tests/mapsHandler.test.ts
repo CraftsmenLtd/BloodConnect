@@ -1,7 +1,7 @@
 import { MapsHandler } from '../MapsHandler'
 import { MapsService } from '../../../application/maps/MapsService'
 import { GoogleMapsProvider } from '../providers/GoogleMaps'
-import { APIResponse, PlaceAutocompleteResponse, GeocodeResponse } from '../../../application/maps/dto/Maps'
+import type { APIResponse, PlaceAutocompleteResponse, GeocodeResponse } from '../../../application/maps/dto/Maps'
 
 jest.mock('../../../application/maps/MapsService')
 

@@ -11,7 +11,7 @@ import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodReques
 import { bloodBagOptions, bloodGroupOptions, transportationOptions } from './donationOption'
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import SearchMultiSelect from '../../components/inputElement/SearchMultiSelect'
 import { LocationService } from '../../LocationService/LocationService'
 import Dropdown from '../../components/inputElement/Dropdown'

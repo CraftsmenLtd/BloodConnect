@@ -1,11 +1,11 @@
-import {
+import type {
   PlaceAutocompleteRequest,
   GeocodeRequest,
   APIResponse,
   PlaceAutocompleteResponse,
   GeocodeResponse
 } from './dto/Maps'
-import { MapsProvider } from '../models/maps/MapsProvider'
+import type { MapsProvider } from '../models/maps/MapsProvider'
 
 export class MapsService {
   private readonly mapsProvider: MapsProvider
