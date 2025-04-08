@@ -15,13 +15,14 @@ Amplify.configure({
         username: true,
         oauth: {
           domain: import.meta.env.VITE_AWS_COGNITO_DOMAIN,
+          redirectSignIn: [import.meta.env.VITE_AWS_REDIRECT_SIGN_IN],
+          redirectSignOut: [import.meta.env.VITE_AWS_REDIRECT_SIGN_OUT],
+          responseType: 'code',
           scopes: ['email', 'openid', 'profile'],
-          redirectSignIn: import.meta.env.VITE_AWS_REDIRECT_SIGN_IN,
-          redirectSignOut: import.meta.env.VITE_AWS_REDIRECT_SIGN_OUT,
-          responseType: 'code'
+          providers: ['Google', 'Facebook']
         }
       }
-    },
+    }
   }
 })
 
