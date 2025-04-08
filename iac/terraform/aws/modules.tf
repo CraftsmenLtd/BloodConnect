@@ -21,14 +21,16 @@ module "web_client" {
 }
 
 module "monitoring_site" {
-  source                   = "./monitoring-site"
-  environment              = var.environment
-  mapbox_public_key        = var.mapbox_public_key
-  site_path                = "monitoring"
-  cognito_user_pool_id     = module.cognito.user_pool_id
-  cognito_app_client_id    = module.cognito.monitoring_user_pool_app_client_id
-  maintainers_role         = module.cognito.maintainers_role
-  cognito_identity_pool_id = module.cognito.identity_pool_id
+  source                     = "./monitoring-site"
+  environment                = var.environment
+  mapbox_public_key          = var.mapbox_public_key
+  site_path                  = "monitoring"
+  cognito_user_pool_id       = module.cognito.user_pool_id
+  cognito_app_client_id      = module.cognito.monitoring_user_pool_app_client_id
+  maintainers_role           = module.cognito.maintainers_role
+  cognito_identity_pool_id   = module.cognito.identity_pool_id
+  bloodconnect_domain        = local.bloodconnect_environment_domain
+  cognito_custom_domain_name = module.cognito.aws_cognito_custom_domain_name
 }
 
 locals {

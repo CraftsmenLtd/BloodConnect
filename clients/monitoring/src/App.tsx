@@ -12,9 +12,16 @@ Amplify.configure({
       identityPoolId: import.meta.env.VITE_AWS_IDENTITY_POOL_ID,
       groups: [{ maintainers: { precedence: 1 } }],
       loginWith: {
-        username: true
+        username: true,
+        oauth: {
+          domain: import.meta.env.VITE_AWS_COGNITO_DOMAIN,
+          scopes: ['email', 'openid', 'profile'],
+          redirectSignIn: import.meta.env.VITE_AWS_REDIRECT_SIGN_IN,
+          redirectSignOut: import.meta.env.VITE_AWS_REDIRECT_SIGN_OUT,
+          responseType: 'code'
+        }
       }
-    }
+    },
   }
 })
 

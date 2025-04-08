@@ -60,6 +60,9 @@ resource "null_resource" "vite_build" {
     VITE_AWS_USER_POOL_CLIENT_ID = var.cognito_app_client_id
     VITE_AWS_IDENTITY_POOL_ID    = var.cognito_identity_pool_id
     VITE_MAX_GEOHASH_PREFIX_SIZE = var.max_geohash_prefix_length
+    VITE_AWS_COGNITO_DOMAIN      = var.cognito_custom_domain_name
+    VITE_AWS_REDIRECT_SIGN_IN    = "https://${var.bloodconnect_domain}/${var.site_path}/index.html"
+    VITE_AWS_REDIRECT_SIGN_OUT   = "https://${var.bloodconnect_domain}/${var.site_path}/index.html"
   }
   provisioner "local-exec" {
     on_failure  = fail
@@ -76,6 +79,9 @@ resource "null_resource" "vite_build" {
       VITE_AWS_USER_POOL_CLIENT_ID = var.cognito_app_client_id
       VITE_AWS_IDENTITY_POOL_ID    = var.cognito_identity_pool_id
       VITE_MAX_GEOHASH_PREFIX_SIZE = var.max_geohash_prefix_length
+      VITE_AWS_COGNITO_DOMAIN      = var.cognito_custom_domain_name
+      VITE_AWS_REDIRECT_SIGN_IN    = "https://${var.bloodconnect_domain}/${var.site_path}/index.html"
+      VITE_AWS_REDIRECT_SIGN_OUT   = "https://${var.bloodconnect_domain}/${var.site_path}/index.html"
     }
   }
 
