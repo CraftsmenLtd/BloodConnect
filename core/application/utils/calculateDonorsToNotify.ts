@@ -12,10 +12,9 @@ export function calculateRemainingBagsNeeded(
 
 export function calculateTotalDonorsToFind(
   remainingBagsNeeded: number,
-  rejectedDonorsCount: number,
   urgencyLevel: UrgencyType
 ): number {
-  return remainingBagsNeeded === 0 ? 0 : remainingBagsNeeded + rejectedDonorsCount + EXTRA_DONORS_TO_NOTIFY[urgencyLevel]
+  return remainingBagsNeeded === 0 ? 0 : remainingBagsNeeded + EXTRA_DONORS_TO_NOTIFY[urgencyLevel]
 }
 
 export function calculateTotalExecutionPerInitiation(

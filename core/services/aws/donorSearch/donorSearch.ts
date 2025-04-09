@@ -151,7 +151,7 @@ async function donorSearch(event: SQSEvent): Promise<void> {
     const totalDonorsToFind =
       remainingDonorsToFind !== undefined && remainingDonorsToFind > 0
         ? remainingDonorsToFind + rejectedDonorsCount
-        : calculateTotalDonorsToFind(remainingBagsNeeded, rejectedDonorsCount, urgencyLevel)
+        : calculateTotalDonorsToFind(remainingBagsNeeded, urgencyLevel)
 
     serviceLogger.info(`querying geohash to find ${totalDonorsToFind} eligible donors`)
     const { eligibleDonors, updatedNeighborSearchLevel, geohashesForNextIteration } =
