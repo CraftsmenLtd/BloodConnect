@@ -1,8 +1,9 @@
 import type { DTO } from '../../../../../commons/dto/DTOCommon'
 import type Repository from './Repository'
 
-export default interface BloodDonationRepository<
+type BloodDonationRepository<
   T extends DTO,
   DbFields extends Record<string, unknown> = Record<string, unknown>
-> extends Repository<T, DbFields> {
-}
+> = {
+} & Repository<T, DbFields>
+export default BloodDonationRepository

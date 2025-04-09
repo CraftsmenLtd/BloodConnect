@@ -1,4 +1,4 @@
-export interface DTO {}
+export type DTO = {}
 
 export type IdType = string | number
 

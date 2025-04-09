@@ -24,9 +24,9 @@ import {
   validationRules
 } from './Types'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
-import BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
-import { UserService } from '../userWorkflow/UserService'
-import { UserDetailsDTO } from 'commons/dto/UserDTO'
+import type BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
+import type { UserService } from '../userWorkflow/UserService'
+import type { UserDetailsDTO } from 'commons/dto/UserDTO'
 
 export class BloodDonationService {
   async createBloodDonation(

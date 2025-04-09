@@ -4,22 +4,26 @@ import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import type { BloodDonationAttributes, BloodDonationEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
-import {
-  BloodDonationModel,
+import type {
   DonationFields
+} from '../../../application/models/dbModels/BloodDonationModel';
+import {
+  BloodDonationModel
 } from '../../../application/models/dbModels/BloodDonationModel';
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import {
   CREATE_DONATION_REQUEST_SUCCESS,
   UNKNOWN_ERROR_MESSAGE
 } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { UserService } from '../../../application/userWorkflow/UserService'
 import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
+import type { UserFields } from '../../../application/models/dbModels/UserModel';
+import UserModel from '../../../application/models/dbModels/UserModel'
 import { Config } from 'commons/libs/config/config'
-import { Logger } from 'core/application/models/logger/Logger'
+import type { Logger } from 'core/application/models/logger/Logger'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
 const bloodDonationService = new BloodDonationService()
@@ -42,7 +46,6 @@ async function createBloodDonation(
       requestedBloodGroup: event.requestedBloodGroup,
       bloodQuantity: event.bloodQuantity,
       urgencyLevel: event.urgencyLevel,
-      countryCode: userProfile.countryCode,
       location: event.location,
       latitude: event.latitude,
       longitude: event.longitude,

@@ -8,7 +8,7 @@ import type {
   UrgencyType
 } from '../../../commons/dto/DonationDTO'
 
-export interface BloodDonationEventAttributes {
+export type BloodDonationEventAttributes = {
   seekerId: string;
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
@@ -23,7 +23,7 @@ export interface BloodDonationEventAttributes {
   shortDescription?: string;
 }
 
-export interface BloodDonationAttributes {
+export type BloodDonationAttributes = {
   seekerId: string;
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
