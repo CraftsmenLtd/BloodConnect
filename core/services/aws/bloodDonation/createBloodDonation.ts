@@ -81,7 +81,7 @@ async function createBloodDonation(
   }
 }
 
-const config = new Config<ExpectedConfig>()
+const config = new Config<ExpectedConfig>().getConfig()
 
 export default async function createBloodDonationLambda(
   event: BloodDonationAttributes & HttpLoggerAttributes
@@ -91,5 +91,5 @@ export default async function createBloodDonationLambda(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
-  return createBloodDonation(event, httpLogger, config.getConfig())
+  return createBloodDonation(event, httpLogger, config)
 }
