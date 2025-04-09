@@ -33,7 +33,7 @@
   },
   "servers": [
     {
-      "url": "https://BRANCH_NAME.bloodconnect.net/api"
+      "url": "https://BRANCH_NAMEbloodconnect.net/api"
     },
     {
       "url": "https://API_GATEWAY_ID.execute-api.ap-south-1.amazonaws.com/api",
@@ -53,7 +53,7 @@
     "/donations/{requestPostId}/{createdAt}": {
       "$ref": "./../paths/donations/donation.json"
     },
-    "/donations/posts/{city}": {
+    "/donations/posts/{geoPartition}": {
       "$ref": "./../paths/donations/posts.json"
     },
     "/donations/cancel": {

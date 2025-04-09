@@ -1,7 +1,6 @@
 import Constants from 'expo-constants'
 import React from 'react'
 import { ScrollView, TouchableWithoutFeedback, View } from 'react-native'
-import Dropdown from '../../../components/inputElement/Dropdown'
 import { Input } from '../../../components/inputElement/Input'
 import RadioButton from '../../../components/inputElement/Radio'
 import { Button } from '../../../components/button/Button'
@@ -10,15 +9,14 @@ import MultiSelect from '../../../components/multiSelect'
 import { LocationService } from '../../../LocationService/LocationService'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import ProfileSection from '../../components/ProfileSection'
-import { districts } from '../../personalInfo/options'
 import createStyles from './createStyle'
 import Warning from '../../../components/warning'
 import { WARNINGS } from '../../../setup/constant/consts'
 import { useEditProfile } from '../hooks/useEditProfile'
 
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
-const locationService = new LocationService(GOOGLE_MAP_API)
+const locationService = new LocationService(API_BASE_URL)
 
 const EditProfile = () => {
   const styles = createStyles(useTheme())
@@ -75,6 +73,7 @@ const EditProfile = () => {
                 name="age"
                 label="Age"
                 value={profileData.age.toString()}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 onChangeText={() => { }}
                 placeholder="Enter your name"
                 readOnly={true}
@@ -126,19 +125,6 @@ const EditProfile = () => {
             </View>
 
             <View style={styles.inputFieldStyle}>
-              <Dropdown
-                label="Preferred District for Donating Blood"
-                isRequired={true}
-                placeholder="Select City"
-                options={districts}
-                name="city"
-                selectedValue={profileData.city}
-                onChange={handleInputChange}
-                error={errors.city}
-              />
-            </View>
-
-            <View style={styles.inputFieldStyle}>
               <MultiSelect
                 name="locations"
                 label="Select Preferred Location"
@@ -150,10 +136,9 @@ const EditProfile = () => {
                 enableSearch={true}
                 fetchOptions={
                   async(searchText) =>
-                    locationService.preferredLocationAutocomplete(searchText, profileData.city)
+                    locationService.preferredLocationAutocomplete(searchText)
                 }
                 minRequiredLabel="Add minimum 1 area."
-                editable={profileData.city.length > 0}
               />
             </View>
 

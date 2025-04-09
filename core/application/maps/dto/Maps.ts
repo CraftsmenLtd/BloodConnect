@@ -1,4 +1,4 @@
-export interface PlaceAutocompleteRequest {
+export type PlaceAutocompleteRequest = {
   input: string;
   sessiontoken?: string;
   components?: string;
@@ -6,14 +6,15 @@ export interface PlaceAutocompleteRequest {
   radius?: number;
   types?: string;
   language?: string;
+  countryCode: string;
 }
 
-export interface PlaceAutocompleteResponse {
+export type PlaceAutocompleteResponse = {
   predictions: Prediction[];
   status: string;
 }
 
-export interface GeocodeRequest {
+export type GeocodeRequest = {
   address?: string;
   latlng?: string;
   place_id?: string;
@@ -21,7 +22,7 @@ export interface GeocodeRequest {
   region?: string;
 }
 
-export interface GeocodeResponse {
+export type GeocodeResponse = {
   results: Array<{
     geometry: {
       location: {
@@ -33,7 +34,7 @@ export interface GeocodeResponse {
   status: string;
 }
 
-export interface Prediction {
+export type Prediction = {
   description: string;
   place_id: string;
   structured_formatting?: {
@@ -44,7 +45,7 @@ export interface Prediction {
   types: string[];
 }
 
-export interface APIResponse<T> {
+export type APIResponse<T> = {
   success: boolean;
   data?: T;
   error?: {

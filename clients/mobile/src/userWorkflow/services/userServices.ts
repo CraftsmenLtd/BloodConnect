@@ -1,9 +1,9 @@
-import { HttpClient } from '../../setup/clients/HttpClient'
-import { ApiResponse } from '../../setup/clients/response'
+import type { HttpClient } from '../../setup/clients/HttpClient'
+import type { ApiResponse } from '../../setup/clients/response'
 
-export type preferredDonationLocations = { area: string; city: string }
+export type preferredDonationLocations = { area: string }
 
-export interface DonorProfile {
+export type DonorProfile = {
   phoneNumbers?: string[];
   donorName?: string;
   bloodGroup?: string;

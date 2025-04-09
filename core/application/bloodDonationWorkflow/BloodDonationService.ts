@@ -1,23 +1,27 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import { DonationDTO, DonationStatus } from '../../../commons/dto/DonationDTO'
+import type { DonationDTO} from '../../../commons/dto/DonationDTO';
+import { DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import Repository from '../models/policies/repositories/Repository'
+import type Repository from '../models/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
-import {
-  BLOOD_REQUEST_PK_PREFIX,
+import type {
   BloodDonationModel,
   DonationFields
-} from '../models/dbModels/BloodDonationModel'
-import { QueryConditionOperator, QueryInput } from '../models/policies/repositories/QueryTypes'
+} from '../models/dbModels/BloodDonationModel';
 import {
-  BloodDonationAttributes,
-  validationRules,
-  UpdateBloodDonationAttributes,
-  BloodDonationResponseAttributes,
-  BloodDonationEventAttributes
+  BLOOD_REQUEST_PK_PREFIX
+} from '../models/dbModels/BloodDonationModel'
+import type { QueryInput } from '../models/policies/repositories/QueryTypes';
+import { QueryConditionOperator } from '../models/policies/repositories/QueryTypes'
+import {
+  type BloodDonationAttributes,
+  type UpdateBloodDonationAttributes,
+  type BloodDonationResponseAttributes,
+  type BloodDonationEventAttributes,
+  validationRules
 } from './Types'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
 import BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'

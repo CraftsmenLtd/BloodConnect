@@ -5,9 +5,9 @@ import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { extractErrorMessage } from '../../donationWorkflow/donationHelpers'
 import { completeDonation } from '../../donationWorkflow/donationService'
 import { SCREENS } from '../../setup/constant/screens'
-import { DonorConfirmationNavigationProp } from '../../setup/navigation/navigationTypes'
+import type { DonorConfirmationNavigationProp } from '../../setup/navigation/navigationTypes'
 
-interface UseCompleteDonationReturn {
+type UseCompleteDonationReturn = {
   executeFunction: (donorIds: string[], requestPostId: string, createdAt: string) => Promise<void>;
   loading: boolean;
   error: string | null;

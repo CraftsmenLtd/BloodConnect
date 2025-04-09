@@ -1,12 +1,12 @@
 import { z } from 'zod'
-import {
+import type {
   PlaceAutocompleteRequest,
   GeocodeRequest,
   APIResponse,
   PlaceAutocompleteResponse,
   GeocodeResponse
 } from '../../application/maps/dto/Maps'
-import { MapsService } from '../../application/maps/MapsService'
+import type { MapsService } from '../../application/maps/MapsService'
 
 const geocodeSchema = z.object({
   address: z.string().optional(),
@@ -27,7 +27,8 @@ const placeAutocompleteSchema = z.object({
   components: z.string().optional(),
   location: z.string().optional(),
   radius: z.number().positive().optional(),
-  language: z.string().optional()
+  language: z.string().optional(),
+  countryCode: z.string()
 })
 
 export class MapsHandler {
@@ -40,12 +41,12 @@ export class MapsHandler {
   async getPlaceAutocomplete(params: PlaceAutocompleteRequest): Promise<APIResponse<PlaceAutocompleteResponse>> {
     const validatedParams = placeAutocompleteSchema.parse(params)
 
-    return await this.mapsService.getPlaceAutocomplete(validatedParams)
+    return this.mapsService.getPlaceAutocomplete(validatedParams)
   }
 
   async getGeocode(params: GeocodeRequest): Promise<APIResponse<GeocodeResponse>> {
     const validatedParams = geocodeSchema.parse(params)
 
-    return await this.mapsService.getGeocode(validatedParams)
+    return this.mapsService.getGeocode(validatedParams)
   }
 }

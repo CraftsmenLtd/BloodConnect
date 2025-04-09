@@ -3,7 +3,7 @@ import { useFetchClient } from '../../../../setup/clients/useFetchClient'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../../../setup/constant/screens'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
-import { PostScreenNavigationProp, RequestPreviewRouteProp } from '../../../../setup/navigation/navigationTypes'
+import type { PostScreenNavigationProp, RequestPreviewRouteProp } from '../../../../setup/navigation/navigationTypes'
 import { STATUS } from '../../../types'
 import { scheduleNotification } from '../../../../setup/notification/scheduleNotification'
 import {
@@ -19,17 +19,18 @@ import { updateMyResponses } from '../../../donationService'
 import { useUserProfile } from '../../../../userWorkflow/context/UserProfileContext'
 import { ToastAndroid } from 'react-native'
 import useFetchData from '../../../../setup/clients/useFetchData'
+import type { UserProfile } from '../../../../userWorkflow/services/userProfileService'
 
-interface AcceptRequestParams {
+type AcceptRequestParams = {
   requestPostId: string;
   seekerId: string;
   createdAt: string;
   status: string;
 }
 
-interface useResponseDonationRequestReturnType {
-  bloodRequest: any;
-  userId: string;
+type useResponseDonationRequestReturnType = {
+  bloodRequest: unknown;
+  userProfile: UserProfile;
   isLoading: boolean;
   error: string | null;
   handleAcceptRequest: () => Promise<void>;
@@ -38,7 +39,7 @@ interface useResponseDonationRequestReturnType {
   isRequestAccepted: boolean;
 }
 
-interface FetchResponse {
+type FetchResponse = {
   status: number;
   statusText?: string;
 }
@@ -70,7 +71,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
         body: hoursBefore === 1
           ? REMINDER_NOTIFICATION_BODY.FINAL
           : replaceTemplatePlaceholders(REMINDER_NOTIFICATION_BODY.DEFAULT, hoursBefore.toString()),
-        data: { payload: { }, type: LOCAL_NOTIFICATION_TYPE.REMINDER }
+        data: { payload: {}, type: LOCAL_NOTIFICATION_TYPE.REMINDER }
       }
       void scheduleNotification({ date: reminderTime }, content)
     })
@@ -101,8 +102,8 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
 
       if (bloodRequest === null ||
         !(bloodRequest.donationDateTime instanceof Date ||
-        typeof bloodRequest.donationDateTime === 'string' ||
-        typeof bloodRequest.donationDateTime === 'number')) {
+          typeof bloodRequest.donationDateTime === 'string' ||
+          typeof bloodRequest.donationDateTime === 'number')) {
         return
       }
 
@@ -149,7 +150,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
     isRequestAccepted,
     isLoading: isAcceptLoading || isIgnoreLoading,
     bloodRequest,
-    userId: userProfile.userId,
+    userProfile,
     error: acceptError ?? ignoreError,
     handleAcceptRequest,
     handleIgnore,

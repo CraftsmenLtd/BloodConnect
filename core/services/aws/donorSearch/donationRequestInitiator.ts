@@ -1,18 +1,21 @@
-import { SQSEvent } from 'aws-lambda'
+import type { SQSEvent } from 'aws-lambda'
 import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
-import {
+import type {
   DonorSearchAttributes,
   DonorSearchQueueAttributes
 } from '../../../application/bloodDonationWorkflow/Types'
-import { DonorSearchDTO, DonorSearchStatus } from '../../../../commons/dto/DonationDTO'
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import type { DonorSearchDTO} from '../../../../commons/dto/DonationDTO';
+import { DonorSearchStatus } from '../../../../commons/dto/DonationDTO'
+import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
+import type {
+  DonorSearchFields} from '../../../application/models/dbModels/DonorSearchModel';
 import {
-  DonorSearchFields,
   DonorSearchModel
 } from '../../../application/models/dbModels/DonorSearchModel'
-import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
+import type { UserFields } from '../../../application/models/dbModels/UserModel';
+import UserModel from '../../../application/models/dbModels/UserModel'
 import { UserService } from '../../../application/userWorkflow/UserService'
 import SQSOperations from '../commons/sqs/SQSOperations'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
@@ -53,7 +56,6 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
         bloodQuantity: Number(body.bloodQuantity),
         urgencyLevel: body.urgencyLevel,
         countryCode: body.countryCode,
-        city: body.city,
         location: body.location,
         patientName: body.patientName,
         seekerName: userProfile.name,

@@ -1,12 +1,14 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
-import { DTO } from '../../../../../commons/dto/DTOCommon'
-import {
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type {
   NosqlModel,
   DbModelDtoAdapter
 } from '../../../../application/models/dbModels/DbModelDefinitions'
-import {
-  QueryConditionOperator,
+import type {
   QueryInput
+} from '../../../../application/models/policies/repositories/QueryTypes';
+import {
+  QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 
 export default class GeohashDynamoDbOperations<
@@ -16,7 +18,7 @@ export default class GeohashDynamoDbOperations<
 > extends DynamoDbTableOperations<Dto, DbFields, ModelAdapter> {
   async queryGeohash(
     countryCode: string,
-    city: string,
+    geoPartition: string,
     requestedBloodGroup: string,
     geohash: string,
     lastEvaluatedKey: Record<string, unknown> | undefined
@@ -30,7 +32,7 @@ export default class GeohashDynamoDbOperations<
       partitionKeyCondition: {
         attributeName: gsiIndex.partitionKey,
         operator: QueryConditionOperator.EQUALS,
-        attributeValue: `LOCATION#${countryCode}-${city}#BG#${requestedBloodGroup}#DONATIONSTATUS#true`
+        attributeValue: `LOCATION#${countryCode}-${geoPartition}#BG#${requestedBloodGroup}#DONATIONSTATUS#true`
       },
       options: {
         exclusiveStartKey: lastEvaluatedKey

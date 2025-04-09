@@ -1,5 +1,5 @@
 import { Platform } from 'react-native'
-import { HttpClient } from '../clients/HttpClient'
+import type { HttpClient } from '../clients/HttpClient'
 import authService from '../../authentication/services/authService'
 import StorageService from '../../utility/storageService'
 import { TOKEN } from '../constant/token'

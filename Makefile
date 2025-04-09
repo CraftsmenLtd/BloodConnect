@@ -4,7 +4,8 @@ ifneq ("$(wildcard .devcontainer/.env)","")
   export
 endif
 
-include makefiles/terraform.mk
+include deployment/aws/terraform/Makefile
+include clients/mobile/Makefile
 
 # Makefile flags
 MAKEFLAGS+=--no-print-directory
@@ -33,12 +34,18 @@ DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
             -e AWS_REGION \
             -e TF_BACKEND_BUCKET_NAME \
             -e TF_BACKEND_BUCKET_REGION \
-            -e TF_BACKEND_BUCKET_KEY $(TF_VARS)
+            -e TF_BACKEND_BUCKET_KEY \
+            $(TF_VARS) \
+            -e EXPO_TOKEN \
+            -e BUILD_PROFILE \
+            -e EAS_PROJECT_ID \
+            -e APP_VERSION \
+            -e APP_NAME \
+            -e AWS_USER_POOL_CLIENT_ID \
+            -e AWS_USER_POOL_ID \
+            -e API_BASE_URL \
+            -e AWS_COGNITO_DOMAIN
 
-# Terraform Backend Configuration
-TF_BACKEND_CONFIG=--backend-config="bucket=$(TF_BACKEND_BUCKET_NAME)" \
-                  --backend-config="key=$(TF_BACKEND_BUCKET_KEY)" \
-                  --backend-config="region=$(TF_BACKEND_BUCKET_REGION)"
 
 # Checkov Skip Rules
 # CKV_AWS_117 - Ensure that AWS Lambda function is configured inside a VPC
@@ -90,7 +97,7 @@ localstack-start:
 
 # Nodejs
 install-node-packages:
-	find . -type f -name package.json -not -path "**node_modules**" -execdir npm i \;
+	npm i
 
 build-node-%:
 	cd core/services/aws && npm run build-$* -- $(NPM_ARGS)
@@ -148,28 +155,32 @@ start-mobile:
 
 
 # Deploy Dev Branch from Local Machine
-LOCAL_DEV_DEPLOYMENT_CONFIG=TF_BACKEND_BUCKET_REGION=$(AWS_REGION) \
-	DEPLOYMENT_ENVIRONMENT_GROUP=dev \
-	TF_BACKEND_BUCKET_KEY=dev/$(DEPLOYMENT_ENVIRONMENT).tfstate \
-	TF_VAR_aws_environment=$(DEPLOYMENT_ENVIRONMENT) \
-	AWS_REGION=$(AWS_REGION)
 deploy-dev-branch:
-	$(MAKE) package-all
+	$(MAKE) build-node-all
 	$(MAKE) clean-terraform-files
-	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-plan-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-apply $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) tf-init DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) tf-plan-apply DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) tf-apply DEPLOYMENT_ENVIRONMENT_GROUP=dev
 
 destroy-dev-branch:
-	$(MAKE) clean-terraform-files
-	$(MAKE) tf-init $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-plan-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
-	$(MAKE) tf-destroy $(LOCAL_DEV_DEPLOYMENT_CONFIG)
+	$(MAKE) -s clean-terraform-files
+	$(MAKE) -s tf-init DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) -s tf-plan-destroy DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) -s tf-destroy DEPLOYMENT_ENVIRONMENT_GROUP=dev
 
 prep-dev: install-node-packages build-node-all package-all
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
-run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
+run-dev: run-command-build-node-all run-command-tf-init \
          run-command-tf-plan-apply run-command-tf-apply
+
+prepare-mobile-env:
+	@echo AWS_USER_POOL_CLIENT_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_client_id) >> clients/mobile/.env
+	@echo AWS_USER_POOL_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_id) >> clients/mobile/.env
+	@echo API_BASE_URL=$(shell $(MAKE) -s tf-output-aws_api_domain_url) >> clients/mobile/.env
+	@echo AWS_COGNITO_DOMAIN=$(shell $(MAKE) -s tf-output-aws_cognito_custom_domain_name) >> clients/mobile/.env
+
+fetch-google-service-file:
+	@aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/$(BUILD_PROFILE)/google-services.json clients/mobile/

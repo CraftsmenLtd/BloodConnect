@@ -33,7 +33,6 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   "requestedBloodGroup": "<$.dynamodb.NewImage.requestedBloodGroup.S>",
   "bloodQuantity": "<$.dynamodb.NewImage.bloodQuantity.N>",
   "countryCode": "<$.dynamodb.NewImage.countryCode.S>",
-  "city": "<$.dynamodb.NewImage.city.S>",
   "urgencyLevel": "<$.dynamodb.NewImage.urgencyLevel.S>",
   "createdAt": "<$.dynamodb.NewImage.createdAt.S>",
   "geohash": "<$.dynamodb.NewImage.geohash.S>",
@@ -111,7 +110,7 @@ resource "aws_pipes_pipe" "donation_request_monitoring_pipe" {
   name     = "${var.environment}-donation-request-monitoring-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
   source   = var.dynamodb_table_stream_arn
-  target   = module.lambda.lambda_arn
+  target   = var.monitor_donation_request_lambda_arn
 
   source_parameters {
     dynamodb_stream_parameters {
@@ -138,7 +137,6 @@ resource "aws_pipes_pipe" "donation_request_monitoring_pipe" {
     input_template = <<EOF
 {
   "requestedBloodGroup": "<$.dynamodb.NewImage.requestedBloodGroup.S>",
-  "city": "<$.dynamodb.NewImage.city.S>",
   "geohash": "<$.dynamodb.NewImage.geohash.S>"
 }
 EOF

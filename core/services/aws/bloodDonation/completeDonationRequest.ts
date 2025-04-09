@@ -1,44 +1,56 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { DonationRecordService } from '../../../application/bloodDonationWorkflow/DonationRecordService'
-import { DonationRecordEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type { DonationRecordEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type {
+  DonationDTO,
+  DonationRecordDTO} from '../../../../commons/dto/DonationDTO';
 import {
   AcceptDonationStatus,
-  DonationDTO,
-  DonationRecordDTO,
   DonationStatus
 } from '../../../../commons/dto/DonationDTO'
-import {
-  DonationRecordModel,
+import type {
   DonationRecordFields
+} from '../../../application/models/dbModels/DonationRecordModel';
+import {
+  DonationRecordModel
 } from '../../../application/models/dbModels/DonationRecordModel'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
-import {
-  BloodDonationModel,
+import type {
   DonationFields
+} from '../../../application/models/dbModels/BloodDonationModel';
+import {
+  BloodDonationModel
 } from '../../../application/models/dbModels/BloodDonationModel'
 import DonationRecordDynamoDbOperations from '../commons/ddb/DonationRecordDynamoDbOperations'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
+import type {
+  BloodDonationNotificationDTO} from '../../../../commons/dto/NotificationDTO';
 import {
-  BloodDonationNotificationDTO,
+  NotificationStatus,
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
-import DonationNotificationModel, {
+import type {
   BloodDonationNotificationFields
-} from '../../../application/models/dbModels/DonationNotificationModel'
-import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
+} from '../../../application/models/dbModels/DonationNotificationModel';
+import DonationNotificationModel from '../../../application/models/dbModels/DonationNotificationModel'
 import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import type { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
+import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import LocationModel from '../../../application/models/dbModels/LocationModel'
-import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
+import type { UserFields } from '../../../application/models/dbModels/UserModel';
+import UserModel from '../../../application/models/dbModels/UserModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
-import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
+import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import { createHTTPLogger } from '../commons/logger/HttpLogger'
+import SQSOperations from '../commons/sqs/SQSOperations'
+import type { NotificationAttributes } from '../../../application/notificationWorkflow/Types'
+import { UNKNOWN_ERROR_MESSAGE } from 'commons/libs/constants/ApiResponseMessages';
 
 const bloodDonationService = new BloodDonationService()
 const donationRecordService = new DonationRecordService()
@@ -104,7 +116,8 @@ async function completeDonationRequest(
       )
 
       const userAttributes = {
-        lastDonationDate: new Date().toISOString()
+        lastDonationDate: new Date().toISOString(),
+        availableForDonation: false
       }
       await userService.UpdateUserAttributes(
         donorId,
@@ -113,6 +126,30 @@ async function completeDonationRequest(
         new LocationDynamoDbOperations(new LocationModel())
       )
     }
+
+    await Promise.allSettled(donorIds.map(async(donorId) => {
+      const notificationAttributes: NotificationAttributes = {
+        userId: donorId,
+        title: 'Thank you for your donation',
+        status: NotificationStatus.COMPLETED,
+        body: 'Thank you for your donation 🙏! A heartfelt thanks from the Blood Connect Team! ❤️',
+        type: NotificationType.COMMON,
+        payload: {
+          donorId,
+          seekerId,
+          requestCreatedAt,
+          requestPostId,
+          requestedBloodGroup: donationPost.requestedBloodGroup,
+          bloodQuantity: donationPost.bloodQuantity,
+          urgencyLevel: donationPost.urgencyLevel,
+          location: donationPost.location,
+          donationDateTime: donationPost.donationDateTime,
+          shortDescription: donationPost.shortDescription
+        }
+      }
+
+      await notificationService.sendNotification(notificationAttributes, new SQSOperations())
+    }))
 
     return generateApiGatewayResponse(
       { message: 'Donation completed and donation record added successfully' },

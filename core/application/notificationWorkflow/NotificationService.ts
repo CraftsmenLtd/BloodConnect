@@ -1,24 +1,24 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
-import { UserDetailsDTO } from '../../../commons/dto/UserDTO'
-import {
+import type { UserDetailsDTO } from '../../../commons/dto/UserDTO'
+import type {
   BloodDonationNotificationDTO,
-  NotificationDTO,
-  NotificationStatus,
+  NotificationDTO} from '../../../commons/dto/NotificationDTO';
+import {
   NotificationType
 } from '../../../commons/dto/NotificationDTO'
 import NotificationOperationError from './NotificationOperationError'
-import {
+import type {
   DonationNotificationAttributes,
   DonationRequestPayloadAttributes,
   NotificationAttributes,
   SnsRegistrationAttributes,
   StoreNotificationEndPoint
 } from './Types'
-import Repository from '../models/policies/repositories/Repository'
-import { SNSModel } from '../../application/models/sns/SNSModel'
+import type Repository from '../models/policies/repositories/Repository'
+import type { SNSModel } from '../models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
-import { QueueModel } from '../models/queue/QueueModel'
-import NotificationRepository from '../models/policies/repositories/NotificationRepository'
+import type { QueueModel } from '../models/queue/QueueModel'
+import type NotificationRepository from '../models/policies/repositories/NotificationRepository'
 import { AcceptDonationStatus } from '../../../commons/dto/DonationDTO'
 
 export class NotificationService {
@@ -44,7 +44,6 @@ export class NotificationService {
     try {
       await notificationRepository.create({
         ...notificationAttributes,
-        status: NotificationStatus.PENDING,
         id: generateUniqueID(),
         createdAt: new Date().toISOString()
       })
@@ -93,7 +92,7 @@ export class NotificationService {
     requestPostId: string,
     notificationRepository: NotificationRepository<BloodDonationNotificationDTO>
   ): Promise<BloodDonationNotificationDTO[]> {
-    return await notificationRepository.queryBloodDonationNotifications(
+    return notificationRepository.queryBloodDonationNotifications(
       requestPostId,
       AcceptDonationStatus.IGNORED
     )

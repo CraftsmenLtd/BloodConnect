@@ -1,13 +1,13 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import { BloodDonationAttributes, BloodDonationEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import type { BloodDonationAttributes, BloodDonationEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
 import {
   BloodDonationModel,
   DonationFields
-} from '../../../application/models/dbModels/BloodDonationModel'
+} from '../../../application/models/dbModels/BloodDonationModel';
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
@@ -16,7 +16,7 @@ import {
   UNKNOWN_ERROR_MESSAGE
 } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
 import { Config } from 'commons/libs/config/config'
 import { Logger } from 'core/application/models/logger/Logger'
@@ -42,7 +42,7 @@ async function createBloodDonation(
       requestedBloodGroup: event.requestedBloodGroup,
       bloodQuantity: event.bloodQuantity,
       urgencyLevel: event.urgencyLevel,
-      city: event.city,
+      countryCode: userProfile.countryCode,
       location: event.location,
       latitude: event.latitude,
       longitude: event.longitude,

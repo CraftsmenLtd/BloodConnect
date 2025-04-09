@@ -1,35 +1,37 @@
-import {
+import type {
   DbModelDtoAdapter,
   NosqlModel
 } from '../../../../application/models/dbModels/DbModelDefinitions'
-import Repository from '../../../../application/models/policies/repositories/Repository'
+import type Repository from '../../../../application/models/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import type {
+  UpdateCommandInput,
+  GetCommandInput,
+  QueryCommandInput,
+  DeleteCommandInput} from '@aws-sdk/lib-dynamodb';
 import {
   DynamoDBDocumentClient,
   PutCommand,
-  UpdateCommandInput,
   UpdateCommand,
-  GetCommandInput,
   GetCommand,
   QueryCommand,
-  QueryCommandInput,
-  DeleteCommandInput,
   DeleteCommand
 } from '@aws-sdk/lib-dynamodb'
-import {
+import type {
   QueryInput,
-  QueryCondition,
+  QueryCondition} from '../../../../application/models/policies/repositories/QueryTypes';
+import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
-import { DTO } from '../../../../../commons/dto/DTOCommon'
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
 
-interface CreateUpdateExpressionsReturnType {
+type CreateUpdateExpressionsReturnType = {
   updateExpression: string[];
-  expressionAttribute: Record<string, any>;
-  expressionAttributeNames: Record<string, any>;
+  expressionAttribute: Record<string, unknown>;
+  expressionAttributeNames: Record<string, string>;
 }
 
 export default class DynamoDbTableOperations<
@@ -100,8 +102,7 @@ export default class DynamoDbTableOperations<
       }
     } catch (error) {
       throw new DatabaseError(
-        `Failed to query items from DynamoDB: ${
-          error instanceof Error ? error.message : 'Unknown error'
+        `Failed to query items from DynamoDB: ${error instanceof Error ? error.message : 'Unknown error'
         }`,
         GENERIC_CODES.ERROR
       )
@@ -156,10 +157,10 @@ export default class DynamoDbTableOperations<
     partitionKeyCondition: QueryCondition<DbFields>,
     sortKeyCondition?: QueryCondition<DbFields>
   ): {
-      keyConditionExpression: string;
-      expressionAttributeValues: Record<string, unknown>;
-      expressionAttributeNames: Record<string, string>;
-    } {
+    keyConditionExpression: string;
+    expressionAttributeValues: Record<string, unknown>;
+    expressionAttributeNames: Record<string, string>;
+  } {
     const expressionAttributeValues: Record<string, unknown> = {
       [`:${String(partitionKeyCondition.attributeName)}`]:
         partitionKeyCondition.attributeValue
@@ -274,7 +275,7 @@ export default class DynamoDbTableOperations<
       }
       throw new Error(
         'Failed to update item in DynamoDB. HTTP Status Code: ' +
-          updateCommandOutput.$metadata?.httpStatusCode
+        updateCommandOutput.$metadata?.httpStatusCode
       )
     } catch (error) {
       const errorMessage =
@@ -344,7 +345,7 @@ export default class DynamoDbTableOperations<
   ): CreateUpdateExpressionsReturnType {
     const updateExpression: string[] = []
     const expressionAttribute: Record<string, unknown> = {}
-    const expressionAttributeNames: Record<string, unknown> = {}
+    const expressionAttributeNames: Record<string, string> = {}
     Object.keys(item).forEach((key) => {
       const placeholder = `:p${key}`
       const alias = `#a${key}`
@@ -366,7 +367,7 @@ export default class DynamoDbTableOperations<
       sortKeyName !== '' &&
       sortKeyName !== undefined
     ) {
-      const { [sortKeyName]: __, ...itemWithoutPrimaryKey } = rest
+      const { [sortKeyName]: _, ...itemWithoutPrimaryKey } = rest
       return itemWithoutPrimaryKey
     }
     return rest

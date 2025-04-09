@@ -1,11 +1,13 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react'
+import type { ReactNode } from 'react';
+import React, { createContext, useState, useContext } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
-import { fetchUserProfileFromApi, UserProfile } from '../services/userProfileService'
+import type { UserProfile } from '../services/userProfileService';
+import { fetchUserProfileFromApi } from '../services/userProfileService'
 import { ProfileError } from '../../utility/errors'
 import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
 
-interface UserProfileContextData {
+type UserProfileContextData = {
   userProfile: UserProfile;
   loading: boolean;
   error: string;
@@ -17,7 +19,6 @@ const defaultProfile: UserProfile = {
   userId: '',
   name: '',
   lastDonationDate: '',
-  city: '',
   height: '',
   weight: 0,
   gender: '',
@@ -27,13 +28,15 @@ const defaultProfile: UserProfile = {
   NIDFront: '',
   NIDBack: '',
   phoneNumbers: [],
-  preferredDonationLocations: []
+  preferredDonationLocations: [],
+  uniqueGeoPartitions: []
 }
 
 const UserProfileContext = createContext<UserProfileContextData | undefined>({
   userProfile: defaultProfile,
   loading: true,
   error: '',
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   fetchUserProfile: async() => { }
 })
 
@@ -48,7 +51,6 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       bloodGroup: profile.bloodGroup ?? '',
       userId: profile.userId ?? '',
       name: profile.name ?? '',
-      city: profile.city ?? '',
       lastDonationDate: profile.lastDonationDate ?? '',
       height: profile.height ?? '',
       weight: profile.weight ?? 0,
@@ -61,10 +63,12 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       phoneNumbers: profile.phoneNumbers ?? [],
       preferredDonationLocations: profile.preferredDonationLocations?.map(location => ({
         area: location.area ?? '',
-        city: location.city ?? '',
+        geoHash: location.geoHash ?? '',
+        geoPartition: location.geoPartition ?? '',
         latitude: location.latitude ?? 0,
         longitude: location.longitude ?? 0
-      })) ?? []
+      })) ?? [],
+      uniqueGeoPartitions: [...new Set(profile.preferredDonationLocations?.map(loc => loc.geoPartition))]
     }
   }
 

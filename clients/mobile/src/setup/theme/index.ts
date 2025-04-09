@@ -1,7 +1,7 @@
 import lightTheme from './lightTheme'
 import darkTheme from './darkTheme'
 
-interface Theme {
+type Theme = {
   colors: {
     primary: string;
     secondary: string;

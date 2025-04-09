@@ -1,9 +1,10 @@
 import { useMemo, useState, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { useNavigation } from '@react-navigation/native'
+import type {
+  ValidationRule} from '../../../utility/validator';
 import {
   validateRequired,
-  ValidationRule,
   validateInput,
   validateDateOfBirth,
   validatePastOrTodayDate,
@@ -12,27 +13,26 @@ import {
   validatePhoneNumber
 } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
-import { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { createUserProfile } from '../../services/userProfileService'
-import { LocationService } from '../../../LocationService/LocationService'
-import { formatErrorMessage, formatToTwoDecimalPlaces, formatPhoneNumber } from '../../../utility/formatting'
+import type {
+  LocationData} from '../../../utility/formatting';
+import {
+  formatErrorMessage,
+  formatToTwoDecimalPlaces,
+  formatPhoneNumber
+} from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
+import { LocationService } from '../../../LocationService/LocationService';
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type PersonalInfoKeys = keyof PersonalInfo
 
-interface LocationData {
-  area: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-}
-
-export interface PersonalInfo {
+export type PersonalInfo = {
   bloodGroup: string;
   height: string;
   weight: string;
@@ -40,18 +40,17 @@ export interface PersonalInfo {
   lastDonationDate: null | Date;
   dateOfBirth: Date;
   lastVaccinatedDate: null | Date;
-  city: string;
   locations: string[];
   availableForDonation: string;
   acceptPolicy: boolean;
   phoneNumber?: string;
 }
 
-interface PersonalInfoErrors extends Omit<PersonalInfo, 'phoneNumber'> {
+type PersonalInfoErrors = {
   phoneNumber?: string | null;
-}
+} & Omit<PersonalInfo, 'phoneNumber'>
 
-export const useAddPersonalInfo = (): any => {
+export const useAddPersonalInfo = (): unknown => {
   const fetchClient = useFetchClient()
   const { fetchUserProfile } = useUserProfile()
   const navigation = useNavigation<AddPersonalInfoNavigationProp>()
@@ -75,7 +74,6 @@ export const useAddPersonalInfo = (): any => {
   const getValidationRules = (): Record<PersonalInfoKeys, ValidationRule[]> => {
     const rules: Partial<Record<PersonalInfoKeys, ValidationRule[]>> = {
       availableForDonation: [validateRequired],
-      city: [validateRequired],
       locations: [validateRequired],
       bloodGroup: [validateRequired],
       lastDonationDate: [validatePastOrTodayDate],
@@ -101,7 +99,6 @@ export const useAddPersonalInfo = (): any => {
     lastDonationDate: null,
     dateOfBirth: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
     lastVaccinatedDate: null,
-    city: '',
     locations: [],
     availableForDonation: 'yes',
     acceptPolicy: false,
@@ -169,7 +166,7 @@ export const useAddPersonalInfo = (): any => {
     try {
       setLoading(true)
       const { locations, dateOfBirth, lastDonationDate, lastVaccinatedDate, phoneNumber, ...rest } = personalInfo
-      const preferredDonationLocations = await formatLocations(locations, personalInfo.city)
+      const preferredDonationLocations = await formatLocations(locations, API_BASE_URL)
 
       if (preferredDonationLocations.length === 0) {
         setErrorMessage('No valid locations were found. Please verify your input.')

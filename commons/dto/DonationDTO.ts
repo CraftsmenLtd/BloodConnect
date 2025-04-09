@@ -1,4 +1,4 @@
-import { DTO, HasIdentifier } from './DTOCommon'
+import type { DTO, HasIdentifier } from './DTOCommon'
 
 export type BloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 export type UrgencyType = 'regular' | 'urgent'
@@ -23,7 +23,6 @@ export type DonationDTO = DTO & {
   bloodQuantity: number;
   urgencyLevel: 'regular' | 'urgent';
   countryCode: string;
-  city: string;
   location: string;
   latitude: number;
   longitude: number;
@@ -56,7 +55,6 @@ export type DonorSearchDTO = DTO & {
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   countryCode: string;
-  city: string;
   location: string;
   geohash: string;
   donationDateTime: string;

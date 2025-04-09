@@ -1,18 +1,21 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
-import UserModel, {
+import type {
   UserFields
-} from '../../../application/models/dbModels/UserModel'
+} from '../../../application/models/dbModels/UserModel';
+import UserModel from '../../../application/models/dbModels/UserModel'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import SNSOperations from '../commons/sns/SNSOperations'
-import { SnsRegistrationAttributes } from '../../../application/notificationWorkflow/Types'
-import {
-  createHTTPLogger,
+import type { SnsRegistrationAttributes } from '../../../application/notificationWorkflow/Types'
+import type {
   HttpLoggerAttributes
+} from '../commons/logger/HttpLogger';
+import {
+  createHTTPLogger
 } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 

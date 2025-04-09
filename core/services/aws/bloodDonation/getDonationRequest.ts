@@ -1,23 +1,28 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import { GetDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import {
+import type { GetDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type {
   AcceptedDonationDTO,
   DonationDTO
 } from '../../../../commons/dto/DonationDTO'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
-import {
-  BloodDonationModel,
+import type {
   DonationFields
+} from '../../../application/models/dbModels/BloodDonationModel';
+import {
+  BloodDonationModel
 } from '../../../application/models/dbModels/BloodDonationModel'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/logger/HttpLogger'
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
-import {
-  AcceptDonationRequestModel,
+import type {
   AcceptedDonationFields
+} from '../../../application/models/dbModels/AcceptDonationModel';
+import {
+  AcceptDonationRequestModel
 } from '../../../application/models/dbModels/AcceptDonationModel'
 import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'

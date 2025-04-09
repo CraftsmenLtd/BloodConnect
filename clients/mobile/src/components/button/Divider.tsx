@@ -1,9 +1,10 @@
 import React from 'react'
-import { View, Text, StyleSheet, StyleProp, ViewStyle, TextStyle } from 'react-native'
+import type { StyleProp, ViewStyle, TextStyle } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 
-interface DividerProps {
+type DividerProps = {
   text?: string;
   containerStyle?: StyleProp<ViewStyle>;
   lineStyle?: StyleProp<ViewStyle>;

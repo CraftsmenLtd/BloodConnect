@@ -1,7 +1,8 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { createServiceLogger, ServiceLoggerAttributes } from '../commons/logger/ServiceLogger'
+import type { ServiceLoggerAttributes } from '../commons/logger/ServiceLogger';
+import { createServiceLogger } from '../commons/logger/ServiceLogger'
 
 export type LoggerAttributes = {
   userId: string;

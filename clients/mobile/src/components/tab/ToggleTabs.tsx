@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 
-interface ToggleTabsProps {
+type ToggleTabsProps = {
   tabs: [string, ...string[]];
   onTabPress: (tab: string) => void;
   initialActiveTab?: string;

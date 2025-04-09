@@ -1,7 +1,7 @@
 import { MapsHandler } from '../MapsHandler'
 import { MapsService } from '../../../application/maps/MapsService'
 import { GoogleMapsProvider } from '../providers/GoogleMaps'
-import { APIResponse, PlaceAutocompleteResponse, GeocodeResponse } from '../../../application/maps/dto/Maps'
+import type { APIResponse, PlaceAutocompleteResponse, GeocodeResponse } from '../../../application/maps/dto/Maps'
 
 jest.mock('../../../application/maps/MapsService')
 
@@ -50,7 +50,8 @@ describe('MapsHandler', () => {
 
       const params = {
         input: 'Mirpur',
-        types: 'geocode'
+        types: 'geocode',
+        countryCode: 'BD'
       }
 
       await expect(mapsHandler.getPlaceAutocomplete(params)).resolves.toEqual(mockResponse)

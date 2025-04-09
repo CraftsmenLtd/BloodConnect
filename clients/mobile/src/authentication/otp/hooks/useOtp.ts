@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo, useEffect } from 'react'
-import { TextInput } from 'react-native'
+import type { TextInput } from 'react-native'
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/native'
-import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
+import type { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
 import { submitOtp, loginUser, resetPasswordHandler, resendSignUpOtp } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
@@ -10,7 +10,7 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
 const RESEND_CODE_COUNTDOWN = 120
 
-export const useOtp = (): any => {
+export const useOtp = (): unknown => {
   const fetchClient = useFetchClient()
   const { setIsAuthenticated } = useAuth()
   const navigation = useNavigation<OtpScreenNavigationProp>()

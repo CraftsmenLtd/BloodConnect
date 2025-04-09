@@ -1,7 +1,7 @@
-import { HttpClient } from '../clients/HttpClient'
-import { ApiResponse } from '../clients/response'
+import type { HttpClient } from '../clients/HttpClient'
+import type { ApiResponse } from '../clients/response'
 
-interface CountryAvailabilityData {
+type CountryAvailabilityData = {
   available: boolean;
   countryCode: string;
   countryName: string;

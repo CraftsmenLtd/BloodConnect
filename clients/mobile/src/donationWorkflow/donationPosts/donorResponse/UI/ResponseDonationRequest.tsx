@@ -1,3 +1,7 @@
+import type {
+  StyleProp,
+  ImageStyle
+} from 'react-native';
 import {
   Text,
   View,
@@ -5,9 +9,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Linking,
-  StyleProp,
-  ImageStyle
+  Linking
 } from 'react-native'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
@@ -26,7 +28,7 @@ const ResponseDonationRequest = () => {
   const { myResponses } = useMyActivityContext()
   const {
     bloodRequest,
-    userId,
+    userProfile,
     error,
     isLoading,
     handleAcceptRequest,
@@ -163,7 +165,7 @@ const ResponseDonationRequest = () => {
       </ScrollView>
 
       {error !== null && <Text style={styles.error}>{error}</Text>}
-      {userId !== bloodRequest.seekerId &&
+      {userProfile.userId !== bloodRequest.seekerId && userProfile.bloodGroup === bloodRequest.requestedBloodGroup &&
         <View style={styles.buttonContainer}>
           {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
             <Button

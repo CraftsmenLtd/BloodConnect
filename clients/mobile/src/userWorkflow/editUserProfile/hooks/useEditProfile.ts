@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react'
+import type {
+  ValidationRule
+} from '../../../utility/validator';
 import {
   validateDateOfBirth,
   validateHeight, validateInput, validatePastOrTodayDate, validatePhoneNumber,
-  validateRequired, validateWeight,
-  ValidationRule
+  validateRequired, validateWeight
 } from '../../../utility/validator'
 import { useRoute } from '@react-navigation/native'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
@@ -12,11 +14,11 @@ import { Alert } from 'react-native'
 import { useUserProfile } from '../../context/UserProfileContext'
 import useFetchData from '../../../setup/clients/useFetchData'
 import { updateUserProfile } from '../../services/userProfileService'
-import { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
-import { EditProfileData } from '../../userProfile/UI/Profile'
+import type { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
+import type { EditProfileData } from '../../userProfile/UI/Profile'
 import Constants from 'expo-constants'
 import { formatLocations } from '../../../utility/formatting'
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type ProfileFields = keyof Omit<ProfileData, 'location'>
 
@@ -39,11 +41,10 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   phone: [validateRequired, validatePhoneNumber],
   preferredDonationLocations: [validateRequired],
   lastDonationDate: [validatePastOrTodayDate],
-  city: [],
   locations: []
 }
 
-export const useEditProfile = (): any => {
+export const useEditProfile = (): unknown => {
   const { fetchUserProfile } = useUserProfile()
   const route = useRoute<EditProfileRouteProp>()
   const fetchClient = useFetchClient()
@@ -125,7 +126,7 @@ export const useEditProfile = (): any => {
         weight: parseFloat(profileData.weight),
         preferredDonationLocations: [
           ...updatedPreferredDonationLocations,
-          ...await formatLocations(filteredLocations, rest.city, GOOGLE_MAP_API)
+          ...await formatLocations(filteredLocations, API_BASE_URL)
         ]
       }
 

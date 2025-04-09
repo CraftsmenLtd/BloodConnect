@@ -1,32 +1,32 @@
-import { HttpClient } from '../../setup/clients/HttpClient'
+import type { HttpClient } from '../../setup/clients/HttpClient'
 import { ProfileError } from '../../utility/errors'
-import { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
+import type { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
 
-interface UserPreferredLocation {
+type UserPreferredLocation = {
   area: string;
-  city: string;
+  geoHash: string;
+  geoPartition: string;
   latitude: number;
   longitude: number;
 }
 
-export interface UserProfile extends
-  Partial<Omit<UserDetailsDTO,
+export type UserProfile = {
+  preferredDonationLocations?: UserPreferredLocation[];
+  uniqueGeoPartitions: string[];
+  userId: string;
+  bloodGroup: string;
+  gender: string;
+  availableForDonation: boolean;
+} & Partial<Omit<UserDetailsDTO,
   'createdAt'
   | 'updatedAt'
   | 'deviceToken'
   | 'snsEndpointArn'
   | 'bloodGroup'
   | 'gender'
-  | 'availableForDonation'>> {
-  preferredDonationLocations?: UserPreferredLocation[];
-  userId: string;
-  city: string;
-  bloodGroup: string;
-  gender: string;
-  availableForDonation: boolean;
-}
+  | 'availableForDonation'>>
 
-interface APIResponse {
+type APIResponse = {
   success?: boolean;
   data?: UserProfile;
   message?: string;

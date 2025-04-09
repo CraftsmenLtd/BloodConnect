@@ -1,74 +1,52 @@
 {
-  "settings": {
-    "import/parsers": {
-      "@typescript-eslint/parser": [
-        ".ts",
-        ".tsx"
-      ]
-    },
-    "import/resolver": {
-      "typescript": {},
-      "node": {
-        "moduleDirectory": [
-          "node_modules",
-          "clients/web/node_modules"
-        ]
-      }
-    }
-  },
+  "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint"
   ],
   "env": {
-    "browser": true,
-    "es2021": true
+    "node": true
   },
   "extends": [
-    "standard-with-typescript"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "ignorePatterns": [
+    "node_modules/",
+    "coverage/",
+    "dist/",
+    "docs/",
+    "clients/website/",
+    "iac/",
+    ".build/",
+    ".idea/",
+    ".vscode/",
+    ".github/"
   ],
   "overrides": [
     {
-      "env": {
-        "node": true
-      },
       "files": [
-        ".eslintrc.{js,cjs}",
-        "*.ts"
+        "tests/*",
+        "__tests__/*",
+        "setupTests.js"
       ],
-      "rules": {
-        "@typescript-eslint/explicit-function-return-type": [
-          "error"
-        ]
-      },
-      "parserOptions": {
-        "sourceType": "script"
+      "env": {
+        "jest": true
       }
     }
   ],
-  "parserOptions": {
-    "ecmaVersion": "latest",
-    "sourceType": "module"
-  },
   "rules": {
-    "import/no-unresolved": [
-      "error"
+    "@typescript-eslint/consistent-type-definitions": [
+      "warn",
+      "type"
     ],
-    "no-console": [
-      "warn"
-    ],
-    "@typescript-eslint/consistent-type-definitions": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/space-before-function-paren": [
-      "error",
-      "never"
-    ],
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "@typescript-eslint/space-before-function-paren": ["error", "never"],
     "@typescript-eslint/no-empty-interface": "off",
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/method-signature-style": "off",
-    "@typescript-eslint/restrict-template-expressions": "off",
-    "@typescript-eslint/consistent-type-imports": "off",
+    "@typescript-eslint/no-empty-function": "error",
     "@typescript-eslint/return-await": "off",
+    "@typescript-eslint/no-extra-semi": "error",
+    "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/member-delimiter-style": [
       "error",
       {
@@ -81,14 +59,19 @@
           "requireLast": false
         }
       }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "no-console": "warn",
+    "quotes": [
+      "error",
+      "single"
     ]
-  },
-  "ignorePatterns": [
-    "coverage/",
-    "dist/",
-    "node_modules/",
-    "docs/",
-    "clients/website/",
-    "iac/"
-  ]
+  }
 }

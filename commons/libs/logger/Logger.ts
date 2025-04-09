@@ -1,4 +1,4 @@
-export default interface Logger {
+type Logger = {
   readonly shouldLog: boolean;
 
   info(...message: string[]): void;
@@ -6,3 +6,4 @@ export default interface Logger {
   warn(...message: string[]): void;
   error(...message: string[]): void;
 }
+export default Logger

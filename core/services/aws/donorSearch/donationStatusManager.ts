@@ -1,16 +1,20 @@
-import { SQSEvent, SQSRecord } from 'aws-lambda'
+import type { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import {
+import type {
   AcceptedDonationDTO,
-  DonationDTO,
+  DonationDTO} from '../../../../commons/dto/DonationDTO';
+import {
   DonationStatus
 } from '../../../../commons/dto/DonationDTO'
-import {
-  BloodDonationModel,
+import type {
   DonationFields
-} from '../../../application/models/dbModels/BloodDonationModel'
+} from '../../../application/models/dbModels/BloodDonationModel';
 import {
-  AcceptedDonationFields,
+  BloodDonationModel
+} from '../../../application/models/dbModels/BloodDonationModel'
+import type {
+  AcceptedDonationFields} from '../../../application/models/dbModels/AcceptDonationModel';
+import {
   AcceptDonationRequestModel
 } from '../../../application/models/dbModels/AcceptDonationModel'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'

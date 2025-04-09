@@ -11,10 +11,9 @@ import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodReques
 import { bloodBagOptions, bloodGroupOptions, transportationOptions } from './donationOption'
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import SearchMultiSelect from '../../components/inputElement/SearchMultiSelect'
 import { LocationService } from '../../LocationService/LocationService'
-import { districts } from '../../userWorkflow/personalInfo/options'
 import Dropdown from '../../components/inputElement/Dropdown'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
@@ -86,21 +85,6 @@ const CreateBloodRequest = () => {
               error={errors.donationDateTime}
               isRequired={true}
               isOnlyDate={false}
-            />
-          </View>
-
-          <View style={[styles.fieldSpacing]}>
-            <Dropdown
-              label='Select City'
-              isRequired={true}
-              placeholder='Select City'
-              options={districts}
-              readonly={isUpdating}
-              name='city'
-              selectedValue={bloodRequestData.city}
-              onChange={handleInputChange}
-              error={errors.city}
-              allowSearch={true}
             />
           </View>
 

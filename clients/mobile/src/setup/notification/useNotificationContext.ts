@@ -1,8 +1,8 @@
 import { useContext } from 'react'
 import { NotificationContext } from './NotificationProvider'
-import { NotificationData } from './NotificationData'
+import type { NotificationData } from './NotificationData'
 
-export interface NotificationContextType {
+export type NotificationContextType = {
   notificationData: NotificationData | null;
 }
 

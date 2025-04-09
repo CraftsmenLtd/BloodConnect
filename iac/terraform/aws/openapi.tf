@@ -1,6 +1,5 @@
 resource "null_resource" "update_and_import_open_api_script" {
   provisioner "local-exec" {
-    when    = create
     command = "redocly bundle ${var.openapi_directory}/versions/${var.api_version}.json -o ${var.combined_openapi_file} --config ${var.openapi_directory}/configs/redocly.yaml"
   }
 
@@ -19,7 +18,6 @@ data "template_file" "openapi_definition" {
     DYNAMODB_TABLE_NAME       = split("/", module.database.dynamodb_table_arn)[1]
     USER_POOL_ARN             = module.cognito.user_pool_arn
     API_GATEWAY_DYNAMODB_ROLE = aws_iam_role.api_gw_role.arn
-    VALID_COUNTRY_CODES       = local.valid_country_codes
     },
     local.all_lambda_invoke_arns
   )

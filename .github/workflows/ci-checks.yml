@@ -20,7 +20,6 @@ jobs:
     env:
       RUNNER_IMAGE_NAME: ${{ inputs.runner_image_name }}
       LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
-      TF_VAR_google_maps_api_key: ${{ secrets.GOOGLE_MAPS_API_KEY }}
     steps:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
@@ -44,8 +43,8 @@ jobs:
       - name: 🧐 Lint Code
         run: make run-command-lint-code
 
-      - name: 🎁 Package Code
-        run: make run-command-package-all
+      - name: 🎁 Build Code
+        run: make run-command-build-node-all
 
       - name: 🐬 Start Localstack
         if: ${{ inputs.deploy_localstack }}

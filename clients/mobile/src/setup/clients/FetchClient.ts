@@ -1,4 +1,4 @@
-import { HttpClient } from './HttpClient'
+import type { HttpClient } from './HttpClient'
 import { FetchClientError } from './FetchClientError'
 import StorageService from '../../utility/storageService'
 import authService from '../../authentication/services/authService'
@@ -29,17 +29,17 @@ export class FetchClient implements HttpClient {
     return requestHeaders
   }
 
-  async get<T>(url: string, params: Record<string, any> = {}, headers: Record<string, string> = {}): Promise<FetchResponse<T>> {
+  async get<T>(url: string, params: Record<string, unknown> = {}, headers: Record<string, string> = {}): Promise<FetchResponse<T>> {
     const queryString = new URLSearchParams(params).toString()
-    return await this.fetchWithAuth<T>(`${url}?${queryString}`, 'GET', null, headers)
+    return this.fetchWithAuth<T>(`${url}?${queryString}`, 'GET', null, headers)
   }
 
-  async post<T>(url: string, body: Record<string, any>, headers: Record<string, string> = {}): Promise<FetchResponse<T>> {
-    return await this.fetchWithAuth<T>(url, 'POST', JSON.stringify(body), headers)
+  async post<T>(url: string, body: Record<string, unknown>, headers: Record<string, string> = {}): Promise<FetchResponse<T>> {
+    return this.fetchWithAuth<T>(url, 'POST', JSON.stringify(body), headers)
   }
 
-  async patch<T>(url: string, body: Record<string, any>, headers: Record<string, string> = {}): Promise<FetchResponse<T>> {
-    return await this.fetchWithAuth<T>(url, 'PATCH', JSON.stringify(body), headers)
+  async patch<T>(url: string, body: Record<string, unknown>, headers: Record<string, string> = {}): Promise<FetchResponse<T>> {
+    return this.fetchWithAuth<T>(url, 'PATCH', JSON.stringify(body), headers)
   }
 
   public async fetchWithAuth<T>(url: string, method: string, body: string | null, headers: Record<string, string>): Promise<FetchResponse<T>> {

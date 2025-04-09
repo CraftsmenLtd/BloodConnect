@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { RequestStatusNavigationProp, RequestStatusRouteProp } from '../../../setup/navigation/navigationTypes'
+import type { RequestStatusNavigationProp, RequestStatusRouteProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import useFetchData from '../../../setup/clients/useFetchData'
 import { fetchSingleDonationPost } from '../../../donationWorkflow/donationService'
@@ -7,7 +7,7 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { extractErrorMessage, formatDonations } from '../../../donationWorkflow/donationHelpers'
 import useCompleteDonation from '../useCompleteDonation'
 
-const useRequestStatus = (): any => {
+const useRequestStatus = (): unknown => {
   const fetchClient = useFetchClient()
   const navigation = useNavigation<RequestStatusNavigationProp>()
   const { requestPostId, createdAt } = useRoute<RequestStatusRouteProp>().params

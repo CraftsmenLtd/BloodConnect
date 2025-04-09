@@ -1,5 +1,6 @@
-import { ValidationRule, validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
-import {
+import type { ValidationRule} from '../utils/validator';
+import { validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
+import type {
   AcceptDonationStatus,
   BloodGroup,
   DonorSearchStatus,
@@ -12,7 +13,6 @@ export interface BloodDonationEventAttributes {
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
-  city: string;
   location: string;
   latitude: number;
   longitude: number;
@@ -29,7 +29,6 @@ export interface BloodDonationAttributes {
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   countryCode: string;
-  city: string;
   location: string;
   latitude: number;
   longitude: number;
@@ -42,12 +41,12 @@ export interface BloodDonationAttributes {
 }
 type CredentialKeys = 'donationDateTime' | 'bloodQuantity'
 
-export const validationRules: Record<CredentialKeys, Array<ValidationRule<any>>> = {
+export const validationRules: Record<CredentialKeys, Array<ValidationRule<any>> > = {
   donationDateTime: [(value: string) => validateDonationDateTime(value)],
   bloodQuantity: [(value: number) => validateBloodQuantity(value)]
 }
 
-export interface UpdateBloodDonationAttributes {
+export type UpdateBloodDonationAttributes = {
   requestPostId: string;
   seekerId: string;
   createdAt: string;
@@ -61,7 +60,7 @@ export interface UpdateBloodDonationAttributes {
   shortDescription?: string;
 }
 
-export interface DonorSearchAttributes {
+export type DonorSearchAttributes = {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
@@ -70,7 +69,6 @@ export interface DonorSearchAttributes {
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
   countryCode: string;
-  city: string;
   location: string;
   geohash: string;
   donationDateTime: string;
@@ -82,7 +80,7 @@ export interface DonorSearchAttributes {
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 
-export interface DonorSearchQueueAttributes {
+export type DonorSearchQueueAttributes = {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
@@ -94,7 +92,7 @@ export interface DonorSearchQueueAttributes {
   initiationCount: number;
 }
 
-export interface AcceptDonationRequestAttributes {
+export type AcceptDonationRequestAttributes = {
   donorId: string;
   seekerId: string;
   createdAt: string;
@@ -105,14 +103,14 @@ export interface AcceptDonationRequestAttributes {
   phoneNumbers: string[];
 }
 
-export interface DonationRecordEventAttributes {
+export type DonationRecordEventAttributes = {
   donorIds: string[];
   seekerId: string;
   requestPostId: string;
   requestCreatedAt: string;
 }
 
-export interface DonationRecordAttributes {
+export type DonationRecordAttributes = {
   donorId: string;
   seekerId: string;
   requestPostId: string;

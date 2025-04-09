@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
-import { DonationPostsScreenNavigationProp } from '../../setup/navigation/navigationTypes'
+import type { DonationPostsScreenNavigationProp } from '../../setup/navigation/navigationTypes'
 import { extractErrorMessage, formatDonations } from '../donationHelpers'
-import { BloodDonationRecord } from '../types'
+import type { BloodDonationRecord } from '../types'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { fetchDonationPublicPosts } from '../donationService'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
@@ -12,7 +12,7 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
   requestPostId: string;
 }
 
-export const useDonationPosts = (): any => {
+export const useDonationPosts = () => {
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const fetchClient = useFetchClient()
   const [donationPosts, setDonationPosts] = useState<DonationData[]>([])
@@ -20,15 +20,26 @@ export const useDonationPosts = (): any => {
   const [loading, setLoading] = useState<boolean>(true)
   const [refreshing, setRefreshing] = useState(false)
   const { userProfile } = useUserProfile()
+  const [isFilteredByBloodGroup, setIsFilteredByBloodGroup] = useState(false)
 
   useEffect(() => { void fetchPosts() }, [])
 
-  const fetchDonations = async(): Promise<void> => {
-    const response = await fetchDonationPublicPosts(userProfile.city, fetchClient)
-    if (response.data !== undefined && response.data.length > 0) {
-      const formattedDonations = formatDonations(response.data)
-      setDonationPosts(formattedDonations)
-    }
+  const fetchDonations = async(bloodGroup: string = ''): Promise<void> => {
+    const results = await Promise.allSettled(
+      userProfile.uniqueGeoPartitions.map(async(eachPartition) => {
+        const response = await fetchDonationPublicPosts(eachPartition, fetchClient, bloodGroup)
+        return (response.data != null) ? formatDonations(response.data) : []
+      })
+    )
+
+    const formattedDonations = results
+      .filter(result => result.status === 'fulfilled')
+      .flatMap(result => (result as PromiseFulfilledResult<DonationData[]>).value)
+
+    formattedDonations.sort((a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    setDonationPosts(formattedDonations)
   }
 
   const fetchPosts = async(): Promise<void> => {
@@ -44,6 +55,7 @@ export const useDonationPosts = (): any => {
   }
 
   const refreshPosts = async(): Promise<void> => {
+    setIsFilteredByBloodGroup(false)
     setRefreshing(true)
     await fetchPosts()
     setRefreshing(false)
@@ -51,6 +63,19 @@ export const useDonationPosts = (): any => {
 
   const createPost = (): void => {
     navigation.navigate(SCREENS.DONATION, { data: null, isUpdating: false })
+  }
+
+  const filterWithBloodGroup = async(): Promise<void> => {
+    setLoading(true)
+    setIsFilteredByBloodGroup(true)
+    try {
+      await fetchDonations(userProfile.bloodGroup)
+    } catch (error) {
+      setErrorMessage(extractErrorMessage(error))
+    } finally {
+      setRefreshing(false)
+      setLoading(false)
+    }
   }
 
   const viewDetailsHandler = (donationData: DonationData): void => {
@@ -64,6 +89,9 @@ export const useDonationPosts = (): any => {
     loading,
     viewDetailsHandler,
     handleRefresh: refreshPosts,
-    refreshing
+    refreshing,
+    bloodGroup: userProfile.bloodGroup,
+    isFilteredByBloodGroup,
+    filterWithBloodGroup
   }
 }
