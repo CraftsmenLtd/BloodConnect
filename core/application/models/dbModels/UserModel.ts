@@ -1,5 +1,5 @@
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
+import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import type { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
 export const USER_PK_PREFIX = 'USER'
 export const USER_SK = 'PROFILE'
@@ -33,6 +33,7 @@ export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdap
   }
 
   toDto(dbFields: UserFields): UserDetailsDTO {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { PK, SK, ...remainingUserFields } = dbFields
     return { ...remainingUserFields, id: PK.replace(`${USER_PK_PREFIX}#`, '') }
   }

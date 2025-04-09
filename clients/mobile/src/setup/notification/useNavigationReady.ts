@@ -1,4 +1,4 @@
-import { RequestPreviewScreenNavigationProp } from '../navigation/navigationTypes'
+import type { RequestPreviewScreenNavigationProp } from '../navigation/navigationTypes'
 
 export const useNavigationReady = (navigation: RequestPreviewScreenNavigationProp) => {
   return async(): Promise<void> => {

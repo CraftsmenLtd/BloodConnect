@@ -1,7 +1,7 @@
 import { ACCOUNT_CREATION_MINIMUM_AGE, SHORT_DESCRIPTION_MAX_LENGTH } from '../setup/constant/consts'
 import { formattedDate } from './formatting'
 
-interface PasswordPolicy {
+type PasswordPolicy = {
   minimum_length: number;
   require_lowercase: boolean;
   require_numbers: boolean;

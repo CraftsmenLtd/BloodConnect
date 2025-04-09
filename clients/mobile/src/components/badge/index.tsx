@@ -1,6 +1,6 @@
 import React from 'react'
-import { View, Text, StyleSheet, ViewStyle, TextStyle, StyleProp } from 'react-native'
-import { Theme } from '../../setup/theme'
+import type { ViewStyle, TextStyle, StyleProp } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { FontAwesome6 } from '@expo/vector-icons'
 
@@ -11,7 +11,7 @@ import { FontAwesome6 } from '@expo/vector-icons'
  * @property {StyleProp<TextStyle>} textStyle - Custom styles for the badge text.
  * @property {string} iconName - Give icon name - support @expo/vector-icons/fontawesome6 names.
  */
-interface BadgeProps {
+type BadgeProps = {
   text: string | number;
   containerStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
@@ -52,7 +52,7 @@ const Badge: React.FC<BadgeProps> = ({
   iconName
 }: BadgeProps) => {
   const theme = useTheme()
-  const styles = createStyles(theme)
+  const styles = createStyles()
 
   return (
     <View
@@ -74,7 +74,7 @@ const Badge: React.FC<BadgeProps> = ({
   )
 }
 
-const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
+const createStyles = (): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   badge: {
     paddingVertical: 4,
     paddingHorizontal: 12,

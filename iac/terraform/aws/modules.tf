@@ -20,15 +20,34 @@ module "web_client" {
   environment = var.environment
 }
 
+module "monitoring_site" {
+  source                     = "./monitoring-site"
+  environment                = var.environment
+  mapbox_public_key          = var.mapbox_public_key
+  site_path                  = "monitoring"
+  cognito_user_pool_id       = module.cognito.user_pool_id
+  cognito_app_client_id      = module.cognito.monitoring_user_pool_app_client_id
+  maintainers_role           = module.cognito.maintainers_role
+  cognito_identity_pool_id   = module.cognito.identity_pool_id
+  bloodconnect_domain        = local.bloodconnect_environment_domain
+  cognito_custom_domain_name = module.cognito.aws_cognito_custom_domain_name
+}
+
+locals {
+  monitoring_site_path = "monitoring"
+}
+
 module "cloudfront" {
   source                          = "./cloudfront"
   environment                     = var.environment
   acm_certificate_arn             = data.aws_acm_certificate.certificate.arn
   rest_api_id                     = aws_api_gateway_rest_api.rest_api.id
   static_site_bucket              = module.web_client.static_site_bucket
+  monitoring_site_bucket          = module.monitoring_site.site_bucket
   failover_bucket                 = module.web_client.failover_bucket
   log_store_bucket                = module.web_client.log_store_bucket
   bloodconnect_environment_domain = local.bloodconnect_environment_domain
+  monitoring_site_path            = local.monitoring_site_path
 }
 
 module "database" {
@@ -48,6 +67,8 @@ module "cognito" {
   facebook_client_secret = var.facebook_client_secret
   acm_certificate_arn    = data.aws_acm_certificate.certificate.arn
   hosted_zone_id         = data.aws_route53_zone.main.zone_id
+  monitoring_site_path   = local.monitoring_site_path
+
 }
 
 module "donor_search" {
@@ -60,12 +81,14 @@ module "donor_search" {
 }
 
 module "eventbridge" {
-  source                            = "./eventbridge"
-  environment                       = var.environment
-  dynamodb_table_stream_arn         = module.database.dynamodb_table_stream_arn
-  donation_request_queue_arn        = module.donor_search.donation_request_queue_arn
-  donation_status_manager_queue_arn = module.donor_search.donation_status_manager_queue_arn
-  dynamodb_table_arn                = module.database.dynamodb_table_arn
+  source                              = "./eventbridge"
+  environment                         = var.environment
+  dynamodb_table_stream_arn           = module.database.dynamodb_table_stream_arn
+  donation_request_queue_arn          = module.donor_search.donation_request_queue_arn
+  donation_status_manager_queue_arn   = module.donor_search.donation_status_manager_queue_arn
+  dynamodb_table_arn                  = module.database.dynamodb_table_arn
+  monitor_donation_request_lambda_arn = module.monitoring_site.donation_request_lambda_arn
+
 }
 
 module "notification" {

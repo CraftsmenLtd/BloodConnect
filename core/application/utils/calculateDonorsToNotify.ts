@@ -1,4 +1,4 @@
-import { UrgencyType } from 'commons/dto/DonationDTO'
+import type { UrgencyType } from 'commons/dto/DonationDTO'
 
 const MIN_DELAY_HOURS = 0.5
 const EXTRA_DONORS_TO_NOTIFY: Record<UrgencyType, number> = { urgent: 2, regular: 1 }

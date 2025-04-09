@@ -5,8 +5,8 @@ import {
   SetEndpointAttributesCommand,
   SNS
 } from '@aws-sdk/client-sns'
-import { SNSModel } from '../../../../application/models/sns/SNSModel'
-import {
+import type { SNSModel } from '../../../../application/models/sns/SNSModel'
+import type {
   NotificationAttributes,
   SnsRegistrationAttributes
 } from '../../../../application/notificationWorkflow/Types'
@@ -74,7 +74,7 @@ export default class SNSOperations implements SNSModel {
       return { snsEndpointArn: `${response.EndpointArn}` }
     } else {
       throw new Error(
-        "Unsupported platform. Use 'APNS' for iOS or 'FCM' for Android."
+        'Unsupported platform. Use "APNS" for iOS or "FCM" for Android.'
       )
     }
   }

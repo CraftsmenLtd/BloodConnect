@@ -1,11 +1,13 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react'
+import type { ReactNode } from 'react';
+import React, { createContext, useState, useContext } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
-import { fetchUserProfileFromApi, UserProfile } from '../services/userProfileService'
+import type { UserProfile } from '../services/userProfileService';
+import { fetchUserProfileFromApi } from '../services/userProfileService'
 import { ProfileError } from '../../utility/errors'
 import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
 
-interface UserProfileContextData {
+type UserProfileContextData = {
   userProfile: UserProfile;
   loading: boolean;
   error: string;
@@ -34,6 +36,7 @@ const UserProfileContext = createContext<UserProfileContextData | undefined>({
   userProfile: defaultProfile,
   loading: true,
   error: '',
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   fetchUserProfile: async() => { }
 })
 

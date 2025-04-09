@@ -1,4 +1,4 @@
-import { IMonitoringService } from './IMonitoringService'
+import type { IMonitoringService } from './IMonitoringService'
 import CrashlyticsMonitoringService from './CrashlyticsService'
 
 let instance: IMonitoringService = new CrashlyticsMonitoringService()

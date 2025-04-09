@@ -1,5 +1,6 @@
-import { DonorSearchDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
-import {
+import type { DonorSearchDTO} from '../../../../commons/dto/DonationDTO';
+import { DonationStatus } from '../../../../commons/dto/DonationDTO'
+import type {
   DbModelDtoAdapter,
   HasTimeLog,
   NosqlModel,
@@ -45,6 +46,7 @@ implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, Dono
   }
 
   toDto(dbFields: DonorSearchFields): DonorSearchDTO {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { PK, SK, LSI1SK, createdAt, ...remainingDonorSearchFields } = dbFields
     return {
       ...remainingDonorSearchFields,

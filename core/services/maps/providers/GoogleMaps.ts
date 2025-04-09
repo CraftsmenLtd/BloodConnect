@@ -1,12 +1,12 @@
 import axios from 'axios'
-import {
+import type {
   APIResponse,
   GeocodeRequest,
   GeocodeResponse,
   PlaceAutocompleteRequest,
   PlaceAutocompleteResponse
 } from '../../../application/maps/dto/Maps'
-import { MapsProvider } from '../../../application/models/maps/MapsProvider'
+import type { MapsProvider } from '../../../application/models/maps/MapsProvider'
 
 // TODO: Move this to config module
 export const config = {

@@ -1,7 +1,7 @@
 import { GEO_PARTITION_PREFIX_LENGTH } from '../../../../commons/libs/constants/NoMagicNumbers'
-import { BloodGroup } from '../../../../commons/dto/DonationDTO'
-import { LocationDTO } from '../../../../commons/dto/UserDTO'
-import {
+import type { BloodGroup } from '../../../../commons/dto/DonationDTO'
+import type { LocationDTO } from '../../../../commons/dto/UserDTO'
+import type {
   DbIndex,
   DbModelDtoAdapter,
   IndexDefinitions,

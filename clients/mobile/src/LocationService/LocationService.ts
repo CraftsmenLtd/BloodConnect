@@ -3,16 +3,16 @@ import { FetchClient } from '../setup/clients/FetchClient'
 import { stringToNumber } from '../utility/stringParser'
 const { APP_NAME, APP_VERSION, LOCATION_SERVICE_EMAIL } = Constants.expoConfig?.extra ?? {}
 
-export interface Coordinates {
+export type Coordinates = {
   lat: string;
   lon: string;
 }
 
-interface GeocodeResponse {
+type GeocodeResponse = {
   results: GeocodeResult[];
 }
 
-interface GeocodeResult {
+type GeocodeResult = {
   geometry: {
     location: {
       lat: number;
@@ -21,7 +21,7 @@ interface GeocodeResult {
   };
 }
 
-interface Prediction {
+type Prediction = {
   description: string;
   structured_formatting?: {
     main_text: string;

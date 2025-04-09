@@ -73,6 +73,7 @@ const EditProfile = () => {
                 name="age"
                 label="Age"
                 value={profileData.age.toString()}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 onChangeText={() => { }}
                 placeholder="Enter your name"
                 readOnly={true}

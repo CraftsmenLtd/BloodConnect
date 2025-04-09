@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
   statement {
     effect    = "Allow"
     actions   = ["lambda:InvokeFunction"]
-    resources = [module.lambda.lambda_arn]
+    resources = [var.monitor_donation_request_lambda_arn]
   }
 }
 

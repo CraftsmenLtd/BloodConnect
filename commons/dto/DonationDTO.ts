@@ -1,4 +1,4 @@
-import { DTO, HasIdentifier } from './DTOCommon'
+import type { DTO, HasIdentifier } from './DTOCommon'
 
 export type BloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 export type UrgencyType = 'regular' | 'urgent'

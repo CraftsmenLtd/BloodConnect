@@ -10,7 +10,7 @@ import useFetchData from '../clients/useFetchData'
 import { countryAvailability } from './services'
 import { useFetchClient } from '../clients/useFetchClient'
 import { extractErrorMessage } from '../../donationWorkflow/donationHelpers'
-import { Theme } from '../theme'
+import type { Theme } from '../theme'
 import { useTheme } from '../theme/hooks/useTheme'
 
 const Stack = createStackNavigator()

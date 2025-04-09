@@ -1,6 +1,6 @@
 import { LocationService } from '../LocationService/LocationService'
 
-export interface LocationData {
+export type LocationData = {
   area: string;
   latitude: number;
   longitude: number;

@@ -1,12 +1,13 @@
 import { FlatList, StyleSheet, View, Text } from 'react-native'
-import { PostCard, PostCardDisplayOptions } from './PostCard'
-import { Theme } from '../../setup/theme'
+import type { PostCardDisplayOptions } from './PostCard';
+import { PostCard } from './PostCard'
+import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
+import type { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import React from 'react'
 import StateAwareRenderer from '../StateAwareRenderer'
 
-interface PostsProps {
+type PostsProps = {
   updatePost?: (donationData: DonationData) => void;
   donationPosts: DonationData[];
   loading: boolean;

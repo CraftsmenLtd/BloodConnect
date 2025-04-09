@@ -1,6 +1,6 @@
 import { GEO_PARTITION_PREFIX_LENGTH } from '../../../../commons/libs/constants/NoMagicNumbers'
-import { DonationDTO, BloodGroup } from '../../../../commons/dto/DonationDTO'
-import {
+import type { DonationDTO, BloodGroup } from '../../../../commons/dto/DonationDTO'
+import type {
   DbModelDtoAdapter,
   HasTimeLog,
   NosqlModel,
@@ -67,6 +67,7 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
   }
 
   toDto(dbFields: DonationFields): DonationDTO {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { PK, SK, LSI1SK, createdAt, ...remainingDonationFields } = dbFields
     return {
       ...remainingDonationFields,

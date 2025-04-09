@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 import { useUserProfile } from '../../context/UserProfileContext'
-import { UserProfile } from '../../services/userProfileService'
+import type { UserProfile } from '../../services/userProfileService'
 
-export interface UserProfileDetails extends UserProfile {
+export type UserProfileDetails = {
   age: number;
   location: string;
   phone: string;
-}
+} & UserProfile
 
 export const useProfile = (): { userDetails: UserProfileDetails } => {
   const { userProfile } = useUserProfile()

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
-import { DonationPostsScreenNavigationProp } from '../../setup/navigation/navigationTypes'
+import type { DonationPostsScreenNavigationProp } from '../../setup/navigation/navigationTypes'
 import { extractErrorMessage, formatDonations } from '../donationHelpers'
-import { BloodDonationRecord } from '../types'
+import type { BloodDonationRecord } from '../types'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { fetchDonationPublicPosts } from '../donationService'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
@@ -12,7 +12,7 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
   requestPostId: string;
 }
 
-export const useDonationPosts = (): any => {
+export const useDonationPosts = () => {
   const navigation = useNavigation<DonationPostsScreenNavigationProp>()
   const fetchClient = useFetchClient()
   const [donationPosts, setDonationPosts] = useState<DonationData[]>([])

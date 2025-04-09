@@ -1,4 +1,4 @@
-import { LocationDTO } from 'commons/dto/UserDTO'
+import type { LocationDTO } from 'commons/dto/UserDTO'
 
 export type DonorInfo = {
   userId: string;
@@ -30,7 +30,7 @@ export class GeohashCacheManager<K, V> {
     this.currentByteSize = 0
   }
 
-  private calculateByteSize(value: any): number {
+  private calculateByteSize(value: unknown): number {
     return new TextEncoder().encode(JSON.stringify(value)).length
   }
 

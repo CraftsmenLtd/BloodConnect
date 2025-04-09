@@ -64,6 +64,7 @@ jobs:
       TF_BACKEND_BUCKET_KEY: ${{ format('{0}/{1}.tfstate', github.event.inputs.environment_group_selection, needs.setup-environment.outputs.deployment_environment) }}
       TF_BACKEND_BUCKET_REGION: ap-south-1
       AWS_REGION: ap-south-1
+      BUILD_PROFILE: ${{ github.event.inputs.build_selection }}
     steps:
       - name: 📥 Checkout Branch
         uses: actions/checkout@v4
@@ -123,4 +124,3 @@ jobs:
       api_base_url: ${{ needs.fetch-env-file.outputs.ap_base_url }}
       aws_cognito_domain: ${{ needs.fetch-env-file.outputs.aws_cognito_domain }}
       encoded_google_services_file: ${{ needs.fetch-env-file.outputs.encoded_google_services_file }}
-      country: BD

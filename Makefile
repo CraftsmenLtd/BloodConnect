@@ -41,7 +41,6 @@ DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
             -e EAS_PROJECT_ID \
             -e APP_VERSION \
             -e APP_NAME \
-            -e COUNTRY \
             -e AWS_USER_POOL_CLIENT_ID \
             -e AWS_USER_POOL_ID \
             -e API_BASE_URL \
@@ -98,7 +97,7 @@ localstack-start:
 
 # Nodejs
 install-node-packages:
-	find . -type f -name package.json -not -path "**node_modules**" -execdir npm i \;
+	npm i
 
 build-node-%:
 	cd core/services/aws && npm run build-$* -- $(NPM_ARGS)
@@ -157,24 +156,24 @@ start-mobile:
 
 # Deploy Dev Branch from Local Machine
 deploy-dev-branch:
-	$(MAKE) -s package-all
-	$(MAKE) -s clean-terraform-files
-	$(MAKE) -s tf-init
-	$(MAKE) -s tf-plan-apply
-	$(MAKE) -s tf-apply
+	$(MAKE) build-node-all
+	$(MAKE) clean-terraform-files
+	$(MAKE) tf-init DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) tf-plan-apply DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) tf-apply DEPLOYMENT_ENVIRONMENT_GROUP=dev
 
 destroy-dev-branch:
 	$(MAKE) -s clean-terraform-files
-	$(MAKE) -s tf-init
-	$(MAKE) -s tf-plan-destroy
-	$(MAKE) -s tf-destroy
+	$(MAKE) -s tf-init DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) -s tf-plan-destroy DEPLOYMENT_ENVIRONMENT_GROUP=dev
+	$(MAKE) -s tf-destroy DEPLOYMENT_ENVIRONMENT_GROUP=dev
 
 prep-dev: install-node-packages build-node-all package-all
 
 # Dev commands
 start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
 
-run-dev: run-command-build-node-all run-command-package-all run-command-tf-init \
+run-dev: run-command-build-node-all run-command-tf-init \
          run-command-tf-plan-apply run-command-tf-apply
 
 prepare-mobile-env:

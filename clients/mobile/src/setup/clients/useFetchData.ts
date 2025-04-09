@@ -1,15 +1,15 @@
 import { useCallback, useState, useRef, useEffect } from 'react'
 
-interface UseFetchDataProps {
+type UseFetchDataProps = {
   shouldExecuteOnMount?: boolean;
   parseError?: (error: unknown) => string;
   errorMessage?: string;
 }
 
 const useFetchData = <DataFetchType>(
-  dataFetchFunction: (...args: any[]) => Promise<DataFetchType>,
+  dataFetchFunction: (...args: unknown[]) => Promise<DataFetchType>,
   { shouldExecuteOnMount = false, parseError, errorMessage }: UseFetchDataProps = {}
-): [executeFunction: (...args: any[]) => Promise<void>, loading: boolean, data: DataFetchType | null, error: string | null] => {
+): [executeFunction: (...args: unknown[]) => Promise<void>, loading: boolean, data: DataFetchType | null, error: string | null] => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<DataFetchType | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -28,7 +28,7 @@ const useFetchData = <DataFetchType>(
   }
 
   const executeFunction = useCallback(
-    async(...args: any[]) => {
+    async(...args: unknown[]) => {
       setLoading(true)
       setError(null)
       try {

@@ -1,4 +1,4 @@
-import { Theme } from './index'
+import type { Theme } from './index'
 const darkTheme: Theme = {
   colors: {
     primary: '#FF4D4D',
