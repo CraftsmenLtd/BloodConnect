@@ -4,3 +4,7 @@ module "donor_search_lambda" {
   environment   = var.environment
   lambda_option = each.value
 }
+
+module "environments" {
+  source = "../environments"
+}
