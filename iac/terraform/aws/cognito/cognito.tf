@@ -187,8 +187,8 @@ resource "aws_cognito_user_pool_client" "monitoring_pool_client" {
   allowed_oauth_flows                  = ["code"]
   explicit_auth_flows                  = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
   supported_identity_providers         = ["COGNITO", "Google", "Facebook"]
-  callback_urls                        = ["https://${var.bloodconnect_domain}/${var.monitoring_site_path}/index.html"]
-  logout_urls                          = ["https://${var.bloodconnect_domain}/${var.monitoring_site_path}/index.html"]
+  callback_urls                        = ["https://${local.environment_aware_domain}/${var.monitoring_site_path}/index.html"]
+  logout_urls                          = ["https://${local.environment_aware_domain}/${var.monitoring_site_path}/index.html"]
 
   depends_on = [
     aws_cognito_identity_provider.google,
