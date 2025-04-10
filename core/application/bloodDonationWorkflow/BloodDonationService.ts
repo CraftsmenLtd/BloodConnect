@@ -27,6 +27,7 @@ import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLim
 import type BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
 import type { UserService } from '../userWorkflow/UserService'
 import type { UserDetailsDTO } from 'commons/dto/UserDTO'
+import { Logger } from '../models/logger/Logger'
 
 export class BloodDonationService {
   async createBloodDonation(
@@ -34,7 +35,8 @@ export class BloodDonationService {
     bloodDonationRepository: Repository<DonationDTO, DonationFields>,
     model: BloodDonationModel,
     userService: UserService,
-    userRepository: Repository<UserDetailsDTO>
+    userRepository: Repository<UserDetailsDTO>,
+    logger: Logger
   ): Promise<BloodDonationResponseAttributes> {
     const userProfile = await userService.getUser(
       donationEventAttributes.seekerId,
@@ -45,12 +47,15 @@ export class BloodDonationService {
       seekerName: userProfile.name,
       countryCode: userProfile.countryCode
     }
+
+    logger.info('checking daily request limit')
     await this.checkDailyRequestThrottling(
       bloodDonationAttributes.seekerId,
       bloodDonationRepository,
       model
     )
 
+    logger.info('validating donation request')
     const validationResponse = validateInputWithRules(
       {
         bloodQuantity: bloodDonationAttributes.bloodQuantity,
@@ -65,6 +70,7 @@ export class BloodDonationService {
       )
     }
 
+    logger.info('creating donation request')
     const response: DonationDTO = await bloodDonationRepository
       .create({
         requestPostId: generateUniqueID(),

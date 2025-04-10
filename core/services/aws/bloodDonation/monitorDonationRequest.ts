@@ -13,7 +13,7 @@ import {
   UploadPartCopyCommand,
   GetObjectCommand
 } from '@aws-sdk/client-s3'
-import { createServiceLogger } from '../commons/serviceLogger/ServiceLogger'
+import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import type { Context } from 'aws-lambda'
 import { Config } from 'commons/libs/config/config'
 

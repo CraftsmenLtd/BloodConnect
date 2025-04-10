@@ -3,13 +3,16 @@ import createBloodDonationLambda from '../../bloodDonation/createBloodDonation'
 import { BloodDonationService } from '../../../../application/bloodDonationWorkflow/BloodDonationService'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
-import { BloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
+import { BloodDonationAttributes, BloodDonationEventAttributes } from '../../../../application/bloodDonationWorkflow/Types'
 import { donationAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 import BloodDonationOperationError from '../../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 import { CREATE_DONATION_REQUEST_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
 import { UserService } from '../../../../application/userWorkflow/UserService'
 import { mockUserDetailsWithStringId } from '../../../../application/tests/mocks/mockUserData'
+import BloodDonationDynamoDbOperations from '../../commons/ddb/BloodDonationDynamoDbOperations'
+import { BloodDonationModel } from '../../../../application/models/dbModels/BloodDonationModel'
+import DynamoDbTableOperations from '../../commons/ddb/DynamoDbTableOperations'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/userWorkflow/UserService')
@@ -28,8 +31,8 @@ const mockUserService = UserService as jest.MockedClass<typeof UserService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('createBloodDonationLambda', () => {
-  const { shortDescription, ...rest } = donationAttributesMock
-  const mockEvent: BloodDonationAttributes = { ...rest }
+  const { shortDescription,countryCode, seekerName, ...rest } = donationAttributesMock
+  const mockEvent: BloodDonationEventAttributes = { ...rest }
 
   afterEach(() => {
     jest.clearAllMocks()
@@ -58,11 +61,18 @@ describe('createBloodDonationLambda', () => {
     expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith(
       {
         ...mockEvent,
-        seekerName: mockUserDetailsWithStringId.name,
         shortDescription: undefined
       },
-      expect.anything(),
-      expect.any(Object)
+      expect.any(BloodDonationDynamoDbOperations),
+      expect.any(BloodDonationModel),
+      expect.any(UserService),
+      expect.any(DynamoDbTableOperations),
+      expect.objectContaining({
+        error: expect.any(Function),
+        info: expect.any(Function),
+        warn: expect.any(Function),
+        debug: expect.any(Function)
+      })
     )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
       {

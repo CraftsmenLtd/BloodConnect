@@ -14,7 +14,10 @@ import {
 } from '../../models/dbModels/BloodDonationModel'
 import { QueryConditionOperator } from '../../models/policies/repositories/QueryTypes'
 import { GENERIC_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import BloodDonationRepository from 'core/application/models/policies/repositories/BloodDonationRepository'
+import BloodDonationRepository from '../../../application/models/policies/repositories/BloodDonationRepository'
+import { UserService } from '../../../application/userWorkflow/UserService'
+import { UserDetailsDTO } from 'commons/dto/UserDTO'
+import { Logger } from '../../models/logger/Logger'
 
 jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
@@ -33,19 +36,38 @@ const bloodDonationMockRepository = {
   queryPublicDonations: jest.fn(),
   getDonationRequest: jest.fn()
 }
+const userMockRepository = {
+  ...mockRepository,
+  getUser: jest.fn()
+}
+
 
 describe('BloodDonationService', () => {
   const bloodDonationRepository: jest.Mocked<Repository<DonationDTO>> =
     bloodDonationMockRepository as jest.Mocked<Repository<DonationDTO>>
+  const userRepository: jest.Mocked<Repository<UserDetailsDTO>> =
+    userMockRepository as jest.Mocked<Repository<UserDetailsDTO>>
   const mockModel = new BloodDonationModel()
   const mockCreatedAt = '2024-01-01T00:00:00Z'
-
+  const mockUserService = {
+    getUser: jest.fn()
+  } as unknown as jest.Mocked<UserService>
+  const mockLogger = {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn()
+  } as unknown as jest.Mocked<Logger>
+  
   beforeEach(() => {
     jest.resetAllMocks();
     (generateUniqueID as jest.Mock).mockReturnValue('uniqueID');
     (generateGeohash as jest.Mock).mockReturnValue('geohash123');
     (validateInputWithRules as jest.Mock).mockReturnValue(null)
     jest.spyOn(mockModel, 'getPrimaryIndex').mockReturnValue({ partitionKey: 'PK', sortKey: 'SK' })
+    mockUserService.getUser = jest.fn().mockResolvedValue({
+      name: 'Test User',
+      countryCode: 'US'
+    })
   })
 
   afterEach(() => {
@@ -61,32 +83,48 @@ describe('BloodDonationService', () => {
         lastEvaluatedKey: undefined
       })
       bloodDonationRepository.create.mockResolvedValue(donationDtoMock)
+      
+      jest.spyOn(bloodDonationService, 'checkDailyRequestThrottling' as any).mockResolvedValue(undefined)
+      
       const result = await bloodDonationService.createBloodDonation(
         donationAttributesMock,
         bloodDonationRepository,
-        mockModel
+        mockModel,
+        mockUserService,
+        userRepository,
+        mockLogger
       )
 
-      expect(bloodDonationRepository.query).toHaveBeenCalledWith(
-        expect.objectContaining({
-          partitionKeyCondition: expect.any(Object),
-          sortKeyCondition: expect.any(Object)
-        })
+      expect(mockUserService.getUser).toHaveBeenCalledWith(
+        donationAttributesMock.seekerId,
+        userRepository
       )
-      expect(mockModel.getPrimaryIndex).toHaveBeenCalled()
+      
+      expect(validateInputWithRules).toHaveBeenCalledWith(
+        {
+          bloodQuantity: donationAttributesMock.bloodQuantity,
+          donationDateTime: donationAttributesMock.donationDateTime
+        },
+        expect.any(Object)
+      )
+      
       expect(generateUniqueID).toHaveBeenCalled()
       expect(generateGeohash).toHaveBeenCalledWith(
         donationAttributesMock.latitude,
         donationAttributesMock.longitude
       )
+      
       expect(bloodDonationRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           requestPostId: 'uniqueID',
           status: DonationStatus.PENDING,
           geohash: 'geohash123',
-          donationDateTime: expect.any(String)
+          donationDateTime: expect.any(String),
+          seekerName: 'Test User',
+          countryCode: 'US'
         })
       )
+      
       expect(result).toStrictEqual({ createdAt: expect.any(String), requestPostId: 'req123' })
     })
 
@@ -103,7 +141,10 @@ describe('BloodDonationService', () => {
         bloodDonationService.createBloodDonation(
           donationAttributesMock,
           bloodDonationRepository,
-          mockModel
+          mockModel,
+          mockUserService,
+          userRepository,
+          mockLogger
         )
       ).rejects.toThrow(BloodDonationOperationError)
 
@@ -129,7 +170,10 @@ describe('BloodDonationService', () => {
         bloodDonationService.createBloodDonation(
           donationAttributesMock,
           bloodDonationRepository,
-          mockModel
+          mockModel,
+          mockUserService,
+          userRepository,
+          mockLogger
         )
       ).rejects.toThrow(BloodDonationOperationError)
 
@@ -137,7 +181,10 @@ describe('BloodDonationService', () => {
         bloodDonationService.createBloodDonation(
           donationAttributesMock,
           bloodDonationRepository,
-          mockModel
+          mockModel,
+          mockUserService,
+          userRepository,
+          mockLogger
         )
       ).rejects.toThrow(/Failed to submit blood donation request/)
 
@@ -167,7 +214,10 @@ describe('BloodDonationService', () => {
       const result = await bloodDonationService.createBloodDonation(
         donationAttributesMock,
         bloodDonationRepository,
-        mockModel
+        mockModel,
+        mockUserService,
+        userRepository,
+        mockLogger
       )
 
       expect(result).toStrictEqual({ createdAt: expect.any(String), requestPostId: 'req123' })
@@ -196,7 +246,10 @@ describe('BloodDonationService', () => {
         bloodDonationService.createBloodDonation(
           donationAttributesMock,
           bloodDonationRepository,
-          mockModel
+          mockModel,
+          mockUserService,
+          userRepository,
+          mockLogger
         )
       ).rejects.toThrow(ThrottlingError)
 
@@ -204,7 +257,10 @@ describe('BloodDonationService', () => {
         bloodDonationService.createBloodDonation(
           donationAttributesMock,
           bloodDonationRepository,
-          mockModel
+          mockModel,
+          mockUserService,
+          userRepository,
+          mockLogger
         )
       ).rejects.toThrow(/You've reached today's limit of 10 requests/)
     })
@@ -221,7 +277,10 @@ describe('BloodDonationService', () => {
       await bloodDonationService.createBloodDonation(
         donationAttributesMock,
         bloodDonationRepository,
-        mockModel
+        mockModel,
+        mockUserService,
+        userRepository,
+        mockLogger
       )
 
       expect(bloodDonationRepository.query).toHaveBeenCalledWith(
@@ -243,7 +302,10 @@ describe('BloodDonationService', () => {
         bloodDonationService.createBloodDonation(
           donationAttributesMock,
           bloodDonationRepository,
-          mockModel
+          mockModel,
+          mockUserService,
+          userRepository,
+          mockLogger
         )
       ).rejects.toThrow(BloodDonationOperationError)
 
@@ -251,7 +313,10 @@ describe('BloodDonationService', () => {
         bloodDonationService.createBloodDonation(
           donationAttributesMock,
           bloodDonationRepository,
-          mockModel
+          mockModel,
+          mockUserService,
+          userRepository,
+          mockLogger
         )
       ).rejects.toThrow(/Failed to check request limits/)
     })
@@ -277,7 +342,10 @@ describe('BloodDonationService', () => {
       await bloodDonationService.createBloodDonation(
         donationAttributesMock,
         bloodDonationRepository,
-        mockModel
+        mockModel,
+        mockUserService,
+        userRepository,
+        mockLogger
       )
 
       expect(bloodDonationRepository.query).toHaveBeenCalledWith({
@@ -306,7 +374,10 @@ describe('BloodDonationService', () => {
       await bloodDonationService.createBloodDonation(
         donationAttributesMock,
         bloodDonationRepository,
-        mockModel
+        mockModel,
+        mockUserService,
+        userRepository,
+        mockLogger
       )
 
       expect(bloodDonationRepository.query).toHaveBeenCalledWith(

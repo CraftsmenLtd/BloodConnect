@@ -23,7 +23,7 @@ describe('DynamoDbTableOperations Tests', () => {
   UserDetailsDTO,
   any,
   UserModel
-  >(new UserModel())
+  >(new UserModel(), "TestTable", "ap-south-1")
 
   beforeEach(() => {
     ddbMock.reset()
@@ -144,18 +144,6 @@ describe('DynamoDbTableOperations Tests', () => {
     )
 
     expect(ddbMock.calls()).toHaveLength(1)
-  })
-
-  test('should throw error when DynamoDB table name is not defined', () => {
-    delete process.env.DYNAMODB_TABLE_NAME
-    expect(() => dynamoDbOperations.getTableName()).toThrow(
-      new DatabaseError('DDB Table name not defined', GENERIC_CODES.ERROR)
-    )
-  })
-
-  test('should return the correct table name from the environment', () => {
-    const tableName = dynamoDbOperations.getTableName()
-    expect(tableName).toBe('TestTable')
   })
 
   describe('query method tests', () => {

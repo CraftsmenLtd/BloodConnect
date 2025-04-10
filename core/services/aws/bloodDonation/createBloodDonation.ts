@@ -22,7 +22,7 @@ import { UserService } from '../../../application/userWorkflow/UserService'
 import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 import type { UserFields } from '../../../application/models/dbModels/UserModel';
 import UserModel from '../../../application/models/dbModels/UserModel'
-import { Config } from 'commons/libs/config/config'
+import { Config } from '../../../../commons/libs/config/config'
 import type { Logger } from 'core/application/models/logger/Logger'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
@@ -54,7 +54,6 @@ async function createBloodDonation(
       contactNumber: event.contactNumber,
       transportationInfo: event.transportationInfo
     }
-    httpLogger.info('creating donation request')
     const response = await bloodDonationService.createBloodDonation(
       bloodDonationAttributes,
       new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
@@ -62,7 +61,8 @@ async function createBloodDonation(
       ),
       new BloodDonationModel(),
       userService,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel(), config.dynamodbTableName, config.awsRegion)
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel(), config.dynamodbTableName, config.awsRegion),
+      httpLogger
     )
     return generateApiGatewayResponse(
       {
