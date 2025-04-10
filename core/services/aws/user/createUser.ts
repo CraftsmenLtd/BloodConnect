@@ -12,16 +12,24 @@ import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { CREATE_PROFILE_SUCCESS, UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
+import { Config } from '../../../../commons/libs/config/config';
+import type { Logger } from '../../../application/models/logger/Logger';
 
-async function createUserLambda(
-  event: CreateUserAttributes & HttpLoggerAttributes
+type ExpectedConfig = {
+  dynamodbTableName: string;
+  awsRegion: string;
+  minMonthsBetweenDonations: number;
+}
+
+async function createUser(
+  event: CreateUserAttributes,
+  httpLogger: Logger,
+  config: ExpectedConfig
 ): Promise<APIGatewayProxyResult> {
-  const { userId, apiGwRequestId, cloudFrontRequestId } = event
-  const httpLogger = createHTTPLogger(userId, apiGwRequestId, cloudFrontRequestId)
   try {
     const userService = new UserService()
     const userAttributes = {
-      userId,
+      userId: event.userId,
       ...Object.fromEntries(
         Object.entries(event).filter(([_, value]) => value !== undefined && value !== '')
       ),
@@ -30,8 +38,10 @@ async function createUserLambda(
 
     await userService.updateUser(
       userAttributes as CreateUserAttributes,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel()),
-      new LocationDynamoDbOperations(new LocationModel())
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel(), config.dynamodbTableName, config.awsRegion),
+      new LocationDynamoDbOperations(new LocationModel(), config.dynamodbTableName, config.awsRegion),
+      config.minMonthsBetweenDonations,
+      httpLogger
     )
     return generateApiGatewayResponse(
       { message: CREATE_PROFILE_SUCCESS, success: true },
@@ -44,4 +54,15 @@ async function createUserLambda(
   }
 }
 
-export default createUserLambda
+const config = new Config<ExpectedConfig>().getConfig()
+
+export default async function createUserLambda(
+  event: CreateUserAttributes & HttpLoggerAttributes
+): Promise<APIGatewayProxyResult> {
+  const httpLogger = createHTTPLogger(
+    event.userId,
+    event.apiGwRequestId,
+    event.cloudFrontRequestId
+  )
+  return createUser(event, httpLogger, config)
+}

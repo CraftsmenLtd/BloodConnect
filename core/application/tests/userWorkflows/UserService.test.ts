@@ -15,9 +15,11 @@ import {
 } from '../../../../commons/dto/UserDTO'
 import { UpdateUserAttributes } from '../../userWorkflow/Types'
 import LocationRepository from '../../../application/models/policies/repositories/LocationRepository'
+import { Logger } from 'core/application/models/logger/Logger'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflow/userMessages')
+
 const locationMockRepository = {
   ...mockRepository,
   queryUserLocations: jest.fn(),
@@ -32,6 +34,12 @@ describe('UserService Tests', () => {
   const locationRepository = locationMockRepository as jest.Mocked<
   LocationRepository<LocationDTO>
   >
+  const mockLogger = {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn()
+  } as unknown as jest.Mocked<Logger>
+  const minMonthsBetweenDonations = 4
 
   const mockUserAttributes = {
     email: 'ebrahim@example.com',
@@ -47,7 +55,6 @@ describe('UserService Tests', () => {
       items: [],
       lastEvaluatedKey: undefined
     })
-    process.env.MIN_MONTHS_BETWEEN_DONATIONS = '4'
   })
 
   test('should create a new user successfully', async() => {
@@ -127,7 +134,9 @@ describe('UserService Tests', () => {
     await userService.updateUser(
       mockUpdateAttributes as unknown as UpdateUserAttributes,
       userDetailsRepository,
-      locationRepository
+      locationRepository,
+      minMonthsBetweenDonations,
+      mockLogger
     )
 
     expect(userRepository.update).toHaveBeenCalledWith(

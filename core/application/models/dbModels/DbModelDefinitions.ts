@@ -1,6 +1,6 @@
 import type { DTO } from '../../../../commons/dto/DTOCommon'
 
-type DbModel = Record<string, unknown>;
+type DbModel = {};
 
 export type HasTimeLog = {
   createdAt?: string;

@@ -12,20 +12,24 @@ import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE, UPDATE_PROFILE_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
 import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
+import type { Logger } from '../../../application/models/logger/Logger';
+import { Config } from '../../../../commons/libs/config/config';
 
-async function updateUserLambda(
-  event: UpdateUserAttributes & HttpLoggerAttributes
+type ExpectedConfig = {
+  dynamodbTableName: string;
+  awsRegion: string;
+  minMonthsBetweenDonations: number;
+}
+
+async function updateUser(
+  event: UpdateUserAttributes,
+  httpLogger: Logger,
+  config: ExpectedConfig
 ): Promise<APIGatewayProxyResult> {
-  const httpLogger = createHTTPLogger(event.userId, event.apiGwRequestId, event.cloudFrontRequestId)
   try {
     const userService = new UserService()
-    const userProfile = await userService.getUser(
-      event.userId,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
-    )
     const userAttributes = {
       userId: event.userId,
-      countryCode: userProfile.countryCode,
       ...Object.fromEntries(
         Object.entries(event).filter(([_, value]) => value !== undefined && value !== '')
       ),
@@ -34,8 +38,10 @@ async function updateUserLambda(
 
     await userService.updateUser(
       userAttributes as UpdateUserAttributes,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel()),
-      new LocationDynamoDbOperations(new LocationModel())
+      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel(), config.dynamodbTableName, config.awsRegion),
+      new LocationDynamoDbOperations(new LocationModel(), config.dynamodbTableName, config.awsRegion),
+      config.minMonthsBetweenDonations,
+      httpLogger
     )
     return generateApiGatewayResponse(
       { message: UPDATE_PROFILE_SUCCESS, success: true },
@@ -48,4 +54,15 @@ async function updateUserLambda(
   }
 }
 
-export default updateUserLambda
+const config = new Config<ExpectedConfig>().getConfig()
+
+export default async function updateUserLambda(
+  event: UpdateUserAttributes & HttpLoggerAttributes
+): Promise<APIGatewayProxyResult> {
+  const httpLogger = createHTTPLogger(
+    event.userId,
+    event.apiGwRequestId,
+    event.cloudFrontRequestId
+  )
+  return updateUser(event, httpLogger, config)
+}

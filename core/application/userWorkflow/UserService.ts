@@ -14,6 +14,7 @@ import { generateGeohash } from '../utils/geohash'
 import { differenceInMonths, differenceInYears } from 'date-fns'
 import type { BloodGroup } from '../../../commons/dto/DonationDTO'
 import type LocationRepository from '../models/policies/repositories/LocationRepository'
+import type { Logger } from '../models/logger/Logger'
 
 export class UserService {
   async createNewUser(
@@ -58,7 +59,9 @@ export class UserService {
   async updateUser(
     userAttributes: CreateUserAttributes | UpdateUserAttributes,
     userRepository: Repository<UserDetailsDTO>,
-    locationRepository: LocationRepository<LocationDTO>
+    locationRepository: LocationRepository<LocationDTO>,
+    minMonthsBetweenDonations: number,
+    logger: Logger
   ): Promise<void> {
     const { userId, preferredDonationLocations, ...restAttributes } = userAttributes
     const updateData: Partial<UserDetailsDTO> = {
@@ -67,16 +70,20 @@ export class UserService {
       updatedAt: new Date().toISOString()
     }
 
+    logger.info('validating user attributes')
     updateData.age = this.calculateAge(userAttributes.dateOfBirth)
     updateData.availableForDonation = this.checkLastDonationDate(
       userAttributes.lastDonationDate,
-      userAttributes.availableForDonation
+      userAttributes.availableForDonation,
+      minMonthsBetweenDonations
     )
 
+    logger.info('updating user profile')
     await userRepository.update(updateData).catch((error) => {
       throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     })
 
+    logger.info('updating user locations')
     await this.updateUserLocation(
       userId,
       preferredDonationLocations,
@@ -109,7 +116,8 @@ export class UserService {
 
   private checkLastDonationDate(
     lastDonationDate: string | undefined,
-    availableForDonation: boolean
+    availableForDonation: boolean,
+    minMonthsBetweenDonations: number
   ): boolean {
     if (availableForDonation && lastDonationDate !== undefined && lastDonationDate !== '') {
       const donationDate = new Date(lastDonationDate)
@@ -117,7 +125,7 @@ export class UserService {
 
       if (!isNaN(donationDate.getTime())) {
         const donationMonths = differenceInMonths(currentDate, donationDate)
-        return donationMonths > Number(process.env.MIN_MONTHS_BETWEEN_DONATIONS)
+        return donationMonths > minMonthsBetweenDonations
       }
     }
     return availableForDonation

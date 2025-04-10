@@ -15,7 +15,6 @@ export type BaseUserAttributes = {
   gender: Gender;
   dateOfBirth: string;
   age: number;
-  countryCode: string;
   preferredDonationLocations: LocationDTO[];
   availableForDonation: boolean;
   NIDFront: string;
@@ -23,6 +22,7 @@ export type BaseUserAttributes = {
 } & UserAttributes
 
 export type CreateUserAttributes = {
+  countryCode: string;
   lastDonationDate?: string;
   lastVaccinatedDate?: string;
 } & BaseUserAttributes
