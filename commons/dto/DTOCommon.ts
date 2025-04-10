@@ -1,4 +1,4 @@
-export type DTO = {}
+export type DTO = Record<string, unknown>;
 
 export type IdType = string | number
 

@@ -27,7 +27,7 @@ export type EditProfileData = {
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
   const { userDetails } = useProfile()
-  const navigation =  useNavigation<EditProfileScreenNavigationProp>()
+  const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
   const renderDetailRow = (label: string, value: string = '', isLast: boolean = false): JSX.Element => (
     <View style={[styles.row, isLast && styles.lastRow]}>

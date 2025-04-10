@@ -4,6 +4,5 @@ import type Repository from './Repository'
 type BloodDonationRepository<
   T extends DTO,
   DbFields extends Record<string, unknown> = Record<string, unknown>
-> = {
-} & Repository<T, DbFields>
+> = Repository<T, DbFields>
 export default BloodDonationRepository

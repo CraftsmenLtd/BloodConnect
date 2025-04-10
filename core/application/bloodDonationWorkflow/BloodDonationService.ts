@@ -27,7 +27,7 @@ import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLim
 import type BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
 import type { UserService } from '../userWorkflow/UserService'
 import type { UserDetailsDTO } from 'commons/dto/UserDTO'
-import { Logger } from '../models/logger/Logger'
+import type { Logger } from '../models/logger/Logger'
 
 export class BloodDonationService {
   async createBloodDonation(
