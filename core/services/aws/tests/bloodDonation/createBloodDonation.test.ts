@@ -3,7 +3,10 @@ import createBloodDonationLambda from '../../bloodDonation/createBloodDonation'
 import { BloodDonationService } from '../../../../application/bloodDonationWorkflow/BloodDonationService'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
-import { BloodDonationAttributes, BloodDonationEventAttributes } from '../../../../application/bloodDonationWorkflow/Types'
+import {
+  BloodDonationAttributes,
+  BloodDonationEventAttributes
+} from '../../../../application/bloodDonationWorkflow/Types'
 import { donationAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 import BloodDonationOperationError from '../../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
@@ -27,7 +30,9 @@ jest.mock('../../commons/logger/HttpLogger', () => ({
   }))
 }))
 
-const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
+const mockBloodDonationService = BloodDonationService as jest.MockedClass<
+  typeof BloodDonationService
+>
 const mockUserService = UserService as jest.MockedClass<typeof UserService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
@@ -53,7 +58,9 @@ describe('createBloodDonationLambda', () => {
       body: JSON.stringify({ message: mockResponse })
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(
+      mockEvent as BloodDonationAttributes & HttpLoggerAttributes
+    )
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.OK,
@@ -82,13 +89,17 @@ describe('createBloodDonationLambda', () => {
 
   it('should return an error response when a standard Error is thrown', async () => {
     const errorMessage = 'Database connection failed'
-    mockBloodDonationService.prototype.createBloodDonation.mockRejectedValue(new Error(errorMessage))
+    mockBloodDonationService.prototype.createBloodDonation.mockRejectedValue(
+      new Error(errorMessage)
+    )
     mockGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.ERROR,
       body: `Error: ${errorMessage}`
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(
+      mockEvent as BloodDonationAttributes & HttpLoggerAttributes
+    )
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.ERROR,
@@ -111,7 +122,9 @@ describe('createBloodDonationLambda', () => {
       body: `Error: ${errorMessage}`
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(
+      mockEvent as BloodDonationAttributes & HttpLoggerAttributes
+    )
 
     expect(result).toEqual({
       statusCode: customErrorCode,
@@ -131,7 +144,9 @@ describe('createBloodDonationLambda', () => {
       body: 'Error: An unknown error occurred'
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(
+      mockEvent as BloodDonationAttributes & HttpLoggerAttributes
+    )
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.ERROR,
@@ -145,7 +160,10 @@ describe('createBloodDonationLambda', () => {
 
   it('should handle BloodDonationOperationError with TOO_MANY_REQUESTS code', async () => {
     const errorMessage = 'Rate limit exceeded'
-    const operationError = new BloodDonationOperationError(errorMessage, HTTP_CODES.TOO_MANY_REQUESTS)
+    const operationError = new BloodDonationOperationError(
+      errorMessage,
+      HTTP_CODES.TOO_MANY_REQUESTS
+    )
 
     mockBloodDonationService.prototype.createBloodDonation.mockRejectedValue(operationError)
     mockGenerateApiGatewayResponse.mockReturnValue({
@@ -153,7 +171,9 @@ describe('createBloodDonationLambda', () => {
       body: `Error: ${errorMessage}`
     })
 
-    const result: APIGatewayProxyResult = await createBloodDonationLambda(mockEvent as BloodDonationAttributes & HttpLoggerAttributes)
+    const result: APIGatewayProxyResult = await createBloodDonationLambda(
+      mockEvent as BloodDonationAttributes & HttpLoggerAttributes
+    )
 
     expect(result).toEqual({
       statusCode: HTTP_CODES.TOO_MANY_REQUESTS,

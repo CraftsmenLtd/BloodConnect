@@ -44,7 +44,6 @@
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-empty-function": "error",
     "@typescript-eslint/return-await": "off",
-    "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/no-extra-semi": "error",
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/space-before-function-paren": [
