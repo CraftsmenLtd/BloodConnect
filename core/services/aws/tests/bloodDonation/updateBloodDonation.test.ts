@@ -6,6 +6,12 @@ import { mockEvent } from '../cannedData/updateBloodDonationLambdaEvent'
 import { UpdateBloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
 import { NotificationService } from '../../../../application/notificationWorkflow/NotificationService'
 import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
+import BloodDonationDynamoDbOperations from '../../commons/ddb/BloodDonationDynamoDbOperations'
+import { mockRepository } from '../../../../application/tests/mocks/mockRepositories'
+import { BloodDonationNotificationDTO } from 'commons/dto/NotificationDTO'
+import NotificationRepository from 'core/application/models/policies/repositories/NotificationRepository'
+import NotificationDynamoDbOperations from '../../commons/ddb/NotificationDynamoDbOperations'
+import { mockServiceLogger } from '../mock/loggerMock'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/notificationWorkflow/NotificationService')
@@ -19,7 +25,9 @@ jest.mock('../../commons/logger/HttpLogger', () => ({
   }))
 }))
 
-const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
+const mockBloodDonationService = BloodDonationService as jest.MockedClass<
+  typeof BloodDonationService
+>
 const mockNotificationService = NotificationService as jest.MockedClass<typeof NotificationService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
@@ -28,35 +36,59 @@ describe('updateBloodDonationLambda', () => {
     jest.clearAllMocks()
   })
 
-  it('should return a successful response when blood donation is updated', async() => {
+  it('should return a successful response when blood donation is updated', async () => {
     const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
     mockBloodDonationService.prototype.updateBloodDonation.mockResolvedValue(mockResponse)
     mockNotificationService.prototype.updateBloodDonationNotifications.mockResolvedValue()
-    mockGenerateApiGatewayResponse.mockReturnValue({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
+    mockGenerateApiGatewayResponse.mockReturnValue({
+      statusCode: HTTP_CODES.OK,
+      body: JSON.stringify(mockResponse)
+    })
 
-    const result = await updateBloodDonationLambda(mockEvent as UpdateBloodDonationAttributes & HttpLoggerAttributes)
+    const result = await updateBloodDonationLambda(
+      mockEvent as UpdateBloodDonationAttributes & HttpLoggerAttributes
+    )
 
     expect(result).toEqual({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
-    expect(mockBloodDonationService.prototype.updateBloodDonation).toHaveBeenCalledWith({ ...mockEvent }, expect.anything())
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith({
-      message: 'We have updated your request and will let you know once there is an update.',
-      success: true,
-      data: mockResponse
-    }, HTTP_CODES.OK)
+    expect(mockBloodDonationService.prototype.updateBloodDonation).toHaveBeenCalledWith(
+      { ...mockEvent },
+      expect.any(BloodDonationDynamoDbOperations),
+      expect.any(NotificationService),
+      expect.any(NotificationDynamoDbOperations),
+      mockServiceLogger
+    )
+    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
+      {
+        message: 'We have updated your request and will let you know once there is an update.',
+        success: true,
+        data: mockResponse
+      },
+      HTTP_CODES.OK
+    )
   })
 
-  it('should return an error response when an error is thrown', async() => {
+  it('should return an error response when an error is thrown', async () => {
     const errorMessage = 'Database update failed'
-    mockBloodDonationService.prototype.updateBloodDonation.mockRejectedValue(new Error(errorMessage))
-    mockGenerateApiGatewayResponse.mockReturnValue({ statusCode: HTTP_CODES.ERROR, body: `Error: ${errorMessage}` })
+    mockBloodDonationService.prototype.updateBloodDonation.mockRejectedValue(
+      new Error(errorMessage)
+    )
+    mockGenerateApiGatewayResponse.mockReturnValue({
+      statusCode: HTTP_CODES.ERROR,
+      body: `Error: ${errorMessage}`
+    })
 
-    const result = await updateBloodDonationLambda(mockEvent as UpdateBloodDonationAttributes & HttpLoggerAttributes)
+    const result = await updateBloodDonationLambda(
+      mockEvent as UpdateBloodDonationAttributes & HttpLoggerAttributes
+    )
 
     expect(result).toEqual({ statusCode: HTTP_CODES.ERROR, body: `Error: ${errorMessage}` })
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
+    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
+      `Error: ${errorMessage}`,
+      HTTP_CODES.ERROR
+    )
   })
 
-  it('should filter out undefined values from update attributes', async() => {
+  it('should filter out undefined values from update attributes', async () => {
     const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
     const eventWithUndefined: UpdateBloodDonationAttributes = {
       ...mockEvent,
@@ -70,14 +102,16 @@ describe('updateBloodDonationLambda', () => {
       body: JSON.stringify(mockResponse)
     })
 
-    await updateBloodDonationLambda(eventWithUndefined as UpdateBloodDonationAttributes & HttpLoggerAttributes)
+    await updateBloodDonationLambda(
+      eventWithUndefined as UpdateBloodDonationAttributes & HttpLoggerAttributes
+    )
 
     const calledAttributes = mockBloodDonationService.prototype.updateBloodDonation.mock.calls[0][0]
     expect(calledAttributes).not.toHaveProperty('bloodQuantity')
     expect(calledAttributes).toHaveProperty('patientName', 'John Doe')
   })
 
-  it('should filter out empty string values from update attributes', async() => {
+  it('should filter out empty string values from update attributes', async () => {
     const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
     const eventWithEmptyStrings: UpdateBloodDonationAttributes = {
       ...mockEvent,
@@ -91,14 +125,16 @@ describe('updateBloodDonationLambda', () => {
       body: JSON.stringify(mockResponse)
     })
 
-    await updateBloodDonationLambda(eventWithEmptyStrings as UpdateBloodDonationAttributes & HttpLoggerAttributes)
+    await updateBloodDonationLambda(
+      eventWithEmptyStrings as UpdateBloodDonationAttributes & HttpLoggerAttributes
+    )
 
     const calledAttributes = mockBloodDonationService.prototype.updateBloodDonation.mock.calls[0][0]
     expect(calledAttributes).not.toHaveProperty('patientName')
     expect(calledAttributes).toHaveProperty('transportationInfo', 'Available')
   })
 
-  it('should handle non-Error objects in error case', async() => {
+  it('should handle non-Error objects in error case', async () => {
     const nonErrorObject = { custom: 'error' }
     mockBloodDonationService.prototype.updateBloodDonation.mockRejectedValue(nonErrorObject)
     mockGenerateApiGatewayResponse.mockReturnValue({
@@ -106,13 +142,21 @@ describe('updateBloodDonationLambda', () => {
       body: 'Error: An unknown error occurred'
     })
 
-    const result = await updateBloodDonationLambda(mockEvent as UpdateBloodDonationAttributes & HttpLoggerAttributes)
+    const result = await updateBloodDonationLambda(
+      mockEvent as UpdateBloodDonationAttributes & HttpLoggerAttributes
+    )
 
-    expect(result).toEqual({ statusCode: HTTP_CODES.ERROR, body: 'Error: An unknown error occurred' })
-    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith('Error: An unknown error occurred', HTTP_CODES.ERROR)
+    expect(result).toEqual({
+      statusCode: HTTP_CODES.ERROR,
+      body: 'Error: An unknown error occurred'
+    })
+    expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
+      'Error: An unknown error occurred',
+      HTTP_CODES.ERROR
+    )
   })
 
-  it('should handle mixed valid and invalid update attributes', async() => {
+  it('should handle mixed valid and invalid update attributes', async () => {
     const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
 
     const mixedEvent: UpdateBloodDonationAttributes = {
@@ -130,7 +174,9 @@ describe('updateBloodDonationLambda', () => {
       body: JSON.stringify(mockResponse)
     })
 
-    await updateBloodDonationLambda(mixedEvent as UpdateBloodDonationAttributes & HttpLoggerAttributes)
+    await updateBloodDonationLambda(
+      mixedEvent as UpdateBloodDonationAttributes & HttpLoggerAttributes
+    )
 
     const calledAttributes = mockBloodDonationService.prototype.updateBloodDonation.mock.calls[0][0]
 
@@ -143,7 +189,7 @@ describe('updateBloodDonationLambda', () => {
     expect(calledAttributes).not.toHaveProperty('invalidKey')
   })
 
-  it('should preserve required attributes while filtering invalid ones', async() => {
+  it('should preserve required attributes while filtering invalid ones', async () => {
     const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
 
     const eventWithExtra: UpdateBloodDonationAttributes & Record<string, unknown> = {
@@ -158,7 +204,9 @@ describe('updateBloodDonationLambda', () => {
       body: JSON.stringify(mockResponse)
     })
 
-    await updateBloodDonationLambda(eventWithExtra as unknown as UpdateBloodDonationAttributes & HttpLoggerAttributes)
+    await updateBloodDonationLambda(
+      eventWithExtra as unknown as UpdateBloodDonationAttributes & HttpLoggerAttributes
+    )
 
     const calledAttributes = mockBloodDonationService.prototype.updateBloodDonation.mock.calls[0][0]
 
@@ -169,7 +217,7 @@ describe('updateBloodDonationLambda', () => {
     expect(calledAttributes).not.toHaveProperty('extraProperty2')
   })
 
-  it('should handle allowed keys with valid values', async() => {
+  it('should handle allowed keys with valid values', async () => {
     const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
 
     const eventWithAllowedKeys: UpdateBloodDonationAttributes = {
@@ -186,7 +234,9 @@ describe('updateBloodDonationLambda', () => {
       body: JSON.stringify(mockResponse)
     })
 
-    await updateBloodDonationLambda(eventWithAllowedKeys as UpdateBloodDonationAttributes & HttpLoggerAttributes)
+    await updateBloodDonationLambda(
+      eventWithAllowedKeys as UpdateBloodDonationAttributes & HttpLoggerAttributes
+    )
 
     const calledAttributes = mockBloodDonationService.prototype.updateBloodDonation.mock.calls[0][0]
 

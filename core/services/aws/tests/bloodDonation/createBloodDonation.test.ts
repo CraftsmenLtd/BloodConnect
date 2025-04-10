@@ -13,6 +13,7 @@ import { mockUserDetailsWithStringId } from '../../../../application/tests/mocks
 import BloodDonationDynamoDbOperations from '../../commons/ddb/BloodDonationDynamoDbOperations'
 import { BloodDonationModel } from '../../../../application/models/dbModels/BloodDonationModel'
 import DynamoDbTableOperations from '../../commons/ddb/DynamoDbTableOperations'
+import { mockServiceLogger } from '../mock/loggerMock'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/userWorkflow/UserService')
@@ -31,14 +32,14 @@ const mockUserService = UserService as jest.MockedClass<typeof UserService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('createBloodDonationLambda', () => {
-  const { shortDescription,countryCode, seekerName, ...rest } = donationAttributesMock
+  const { shortDescription, countryCode, seekerName, ...rest } = donationAttributesMock
   const mockEvent: BloodDonationEventAttributes = { ...rest }
 
   afterEach(() => {
     jest.clearAllMocks()
   })
 
-  it('should return a successful response when blood donation is created', async() => {
+  it('should return a successful response when blood donation is created', async () => {
     const mockResponse = CREATE_DONATION_REQUEST_SUCCESS
 
     mockUserService.prototype.getUser.mockResolvedValue(mockUserDetailsWithStringId)
@@ -59,20 +60,12 @@ describe('createBloodDonationLambda', () => {
       body: JSON.stringify({ message: mockResponse })
     })
     expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith(
-      {
-        ...mockEvent,
-        shortDescription: undefined
-      },
+      mockEvent,
       expect.any(BloodDonationDynamoDbOperations),
       expect.any(BloodDonationModel),
       expect.any(UserService),
       expect.any(DynamoDbTableOperations),
-      expect.objectContaining({
-        error: expect.any(Function),
-        info: expect.any(Function),
-        warn: expect.any(Function),
-        debug: expect.any(Function)
-      })
+      mockServiceLogger
     )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
       {
@@ -87,7 +80,7 @@ describe('createBloodDonationLambda', () => {
     )
   })
 
-  it('should return an error response when a standard Error is thrown', async() => {
+  it('should return an error response when a standard Error is thrown', async () => {
     const errorMessage = 'Database connection failed'
     mockBloodDonationService.prototype.createBloodDonation.mockRejectedValue(new Error(errorMessage))
     mockGenerateApiGatewayResponse.mockReturnValue({
@@ -107,7 +100,7 @@ describe('createBloodDonationLambda', () => {
     )
   })
 
-  it('should handle BloodDonationOperationError with custom error code', async() => {
+  it('should handle BloodDonationOperationError with custom error code', async () => {
     const errorMessage = 'Operation failed'
     const customErrorCode = HTTP_CODES.NOT_FOUND
     const operationError = new BloodDonationOperationError(errorMessage, customErrorCode)
@@ -130,7 +123,7 @@ describe('createBloodDonationLambda', () => {
     )
   })
 
-  it('should handle non-Error objects with default error message', async() => {
+  it('should handle non-Error objects with default error message', async () => {
     const nonErrorObject = { random: 'error' }
     mockBloodDonationService.prototype.createBloodDonation.mockRejectedValue(nonErrorObject)
     mockGenerateApiGatewayResponse.mockReturnValue({
@@ -150,7 +143,7 @@ describe('createBloodDonationLambda', () => {
     )
   })
 
-  it('should handle BloodDonationOperationError with TOO_MANY_REQUESTS code', async() => {
+  it('should handle BloodDonationOperationError with TOO_MANY_REQUESTS code', async () => {
     const errorMessage = 'Rate limit exceeded'
     const operationError = new BloodDonationOperationError(errorMessage, HTTP_CODES.TOO_MANY_REQUESTS)
 

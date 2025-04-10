@@ -14,7 +14,6 @@ import {
 } from '../../../application/models/dbModels/BloodDonationModel'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
-import type { DonationRequestPayloadAttributes } from '../../../application/notificationWorkflow/Types'
 import type {
   BloodDonationNotificationFields
 } from '../../..//application/models/dbModels/DonationNotificationModel';
@@ -22,6 +21,8 @@ import DonationNotificationModel from '../../..//application/models/dbModels/Don
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE, UPDATE_DONATION_REQUEST_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
+import type { Logger } from '../../../application/models/logger/Logger'
+import { Config } from '../../../../commons/libs/config/config'
 
 const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [
   'bloodQuantity',
@@ -43,14 +44,16 @@ type OptionalAttributes = Partial<Omit<UpdateBloodDonationAttributes, 'requestPo
 const bloodDonationService = new BloodDonationService()
 const notificationService = new NotificationService()
 
-async function updateBloodDonationLambda(
-  event: UpdateBloodDonationAttributes & HttpLoggerAttributes
+type ExpectedConfig = {
+  dynamodbTableName: string;
+  awsRegion: string;
+}
+
+async function updateBloodDonation(
+  event: UpdateBloodDonationAttributes,
+  httpLogger: Logger,
+  config: ExpectedConfig
 ): Promise<APIGatewayProxyResult> {
-  const httpLogger = createHTTPLogger(
-    event.seekerId,
-    event.apiGwRequestId,
-    event.cloudFrontRequestId
-  )
   try {
     const bloodDonationAttributes: RequiredAttributes & OptionalAttributes = {
       requestPostId: event.requestPostId,
@@ -65,18 +68,15 @@ async function updateBloodDonationLambda(
     const response = await bloodDonationService.updateBloodDonation(
       bloodDonationAttributes,
       new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
-        new BloodDonationModel()
-      )
-    )
-
-    await notificationService.updateBloodDonationNotifications(
-      event.requestPostId,
-      bloodDonationAttributes as Partial<DonationRequestPayloadAttributes>,
+        new BloodDonationModel(), config.dynamodbTableName, config.awsRegion
+      ),
+      notificationService,
       new NotificationDynamoDbOperations<
       BloodDonationNotificationDTO,
       BloodDonationNotificationFields,
       DonationNotificationModel
-      >(new DonationNotificationModel())
+        >(new DonationNotificationModel(), config.dynamodbTableName, config.awsRegion),
+      httpLogger
     )
     return generateApiGatewayResponse(
       {
@@ -93,4 +93,15 @@ async function updateBloodDonationLambda(
   }
 }
 
-export default updateBloodDonationLambda
+const config = new Config<ExpectedConfig>().getConfig()
+
+export default async function updateBloodDonationLambda(
+  event: UpdateBloodDonationAttributes & HttpLoggerAttributes
+): Promise<APIGatewayProxyResult> {
+  const httpLogger = createHTTPLogger(
+    event.seekerId,
+    event.apiGwRequestId,
+    event.cloudFrontRequestId
+  )
+  return updateBloodDonation(event, httpLogger, config)
+}

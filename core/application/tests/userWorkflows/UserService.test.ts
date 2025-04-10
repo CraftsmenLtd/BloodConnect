@@ -15,7 +15,7 @@ import {
 } from '../../../../commons/dto/UserDTO'
 import { UpdateUserAttributes } from '../../userWorkflow/Types'
 import LocationRepository from '../../../application/models/policies/repositories/LocationRepository'
-import { Logger } from 'core/application/models/logger/Logger'
+import { mockLogger } from '../mocks/mockLogger'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflow/userMessages')
@@ -34,11 +34,6 @@ describe('UserService Tests', () => {
   const locationRepository = locationMockRepository as jest.Mocked<
   LocationRepository<LocationDTO>
   >
-  const mockLogger = {
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn()
-  } as unknown as jest.Mocked<Logger>
   const minMonthsBetweenDonations = 4
 
   const mockUserAttributes = {

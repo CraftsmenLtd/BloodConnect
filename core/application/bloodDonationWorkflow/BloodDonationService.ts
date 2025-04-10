@@ -1,7 +1,7 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import type { DonationDTO} from '../../../commons/dto/DonationDTO';
+import type { DonationDTO } from '../../../commons/dto/DonationDTO';
 import { DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import type Repository from '../models/policies/repositories/Repository'
@@ -28,6 +28,10 @@ import type BloodDonationRepository from '../models/policies/repositories/BloodD
 import type { UserService } from '../userWorkflow/UserService'
 import type { UserDetailsDTO } from 'commons/dto/UserDTO'
 import type { Logger } from '../models/logger/Logger'
+import type { NotificationService } from '../notificationWorkflow/NotificationService';
+import type { DonationRequestPayloadAttributes } from '../notificationWorkflow/Types';
+import type NotificationRepository from '../models/policies/repositories/NotificationRepository';
+import type { BloodDonationNotificationDTO } from '../../../commons/dto/NotificationDTO';
 
 export class BloodDonationService {
   async createBloodDonation(
@@ -158,7 +162,10 @@ export class BloodDonationService {
 
   async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
-    bloodDonationRepository: BloodDonationRepository<DonationDTO>
+    bloodDonationRepository: BloodDonationRepository<DonationDTO>,
+    notificationService: NotificationService,
+    notificationRepository: NotificationRepository<BloodDonationNotificationDTO>,
+    logger: Logger
   ): Promise<BloodDonationResponseAttributes> {
     const { seekerId, requestPostId, donationDateTime, createdAt, ...restAttributes } =
       donationAttributes
@@ -172,6 +179,7 @@ export class BloodDonationService {
       throw new BloodDonationOperationError('Item not found.', GENERIC_CODES.NOT_FOUND)
     }
 
+    logger.info('checking donation status')
     if (item?.status !== undefined && item.status === DonationStatus.CANCELLED) {
       throw new BloodDonationOperationError(
         'You can\'t update a cancelled request',
@@ -186,6 +194,7 @@ export class BloodDonationService {
       createdAt
     }
 
+    logger.info('validating donation request')
     if (donationDateTime !== undefined) {
       const validationResponse = validateInputWithRules({ donationDateTime }, validationRules)
       if (validationResponse !== null) {
@@ -194,6 +203,7 @@ export class BloodDonationService {
       updateData.donationDateTime = new Date(donationDateTime).toISOString()
     }
 
+    logger.info('updating donation request')
     await bloodDonationRepository.update(updateData).catch((error) => {
       if (error instanceof BloodDonationOperationError) {
         throw error
@@ -203,6 +213,14 @@ export class BloodDonationService {
         GENERIC_CODES.ERROR
       )
     })
+
+    logger.info('updating donation notifications')
+    await notificationService.updateBloodDonationNotifications(
+      requestPostId,
+      donationAttributes as Partial<DonationRequestPayloadAttributes>,
+      notificationRepository
+    )
+
     return {
       requestPostId,
       createdAt
