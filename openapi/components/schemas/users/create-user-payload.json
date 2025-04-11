@@ -3,8 +3,6 @@
     "type": "object",
     "required": [
       "bloodGroup",
-      "height",
-      "weight",
       "gender",
       "dateOfBirth",
       "preferredDonationLocations",

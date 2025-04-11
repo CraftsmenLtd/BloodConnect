@@ -1,8 +1,9 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { useNavigation } from '@react-navigation/native'
 import type {
-  ValidationRule} from '../../../utility/validator';
+  ValidationRule
+} from '../../../utility/validator';
 import {
   validateRequired,
   validateInput,
@@ -10,7 +11,8 @@ import {
   validatePastOrTodayDate,
   validateHeight,
   validateWeight,
-  validatePhoneNumber
+  validatePhoneNumber,
+  validateRequiredFieldsTruthy
 } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import type { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
@@ -18,7 +20,8 @@ import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { createUserProfile } from '../../services/userProfileService'
 import type {
-  LocationData} from '../../../utility/formatting';
+  LocationData
+} from '../../../utility/formatting';
 import {
   formatErrorMessage,
   formatToTwoDecimalPlaces,
@@ -34,8 +37,8 @@ type PersonalInfoKeys = keyof PersonalInfo
 
 export type PersonalInfo = {
   bloodGroup: string;
-  height: string;
-  weight: string;
+  height?: string;
+  weight?: string;
   gender: string;
   lastDonationDate: null | Date;
   dateOfBirth: Date;
@@ -50,7 +53,7 @@ type PersonalInfoErrors = {
   phoneNumber?: string | null;
 } & Omit<PersonalInfo, 'phoneNumber'>
 
-export const useAddPersonalInfo = (): unknown => {
+export const useAddPersonalInfo = () => {
   const fetchClient = useFetchClient()
   const { fetchUserProfile } = useUserProfile()
   const navigation = useNavigation<AddPersonalInfoNavigationProp>()
@@ -60,7 +63,8 @@ export const useAddPersonalInfo = (): unknown => {
     const checkAuthProvider = async(): Promise<void> => {
       try {
         const user = await getCurrentUser()
-        setIsSSO(((user?.username?.includes('Google')) ?? false) || ((user?.username?.includes('Facebook')) ?? false) || false)
+        setIsSSO(((user?.username?.includes('Google')) ?? false) ||
+          ((user?.username?.includes('Facebook')) ?? false) || false)
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
         setIsSSO(false)
@@ -77,8 +81,8 @@ export const useAddPersonalInfo = (): unknown => {
       locations: [validateRequired],
       bloodGroup: [validateRequired],
       lastDonationDate: [validatePastOrTodayDate],
-      height: [validateRequired, validateHeight],
-      weight: [validateRequired, validateWeight],
+      height: [validateHeight],
+      weight: [validateWeight],
       gender: [validateRequired],
       dateOfBirth: [validateRequired, validateDateOfBirth],
       lastVaccinatedDate: [validatePastOrTodayDate],
@@ -93,8 +97,8 @@ export const useAddPersonalInfo = (): unknown => {
 
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     bloodGroup: '',
-    height: '',
-    weight: '',
+    height: null,
+    weight: null,
     gender: '',
     lastDonationDate: null,
     dateOfBirth: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
@@ -133,16 +137,8 @@ export const useAddPersonalInfo = (): unknown => {
     }
   }
 
-  const isButtonDisabled = useMemo(() => {
-    const requiredFields = Object.keys(getValidationRules()) as PersonalInfoKeys[]
-    return !(
-      requiredFields.every(field => {
-        const value = personalInfo[field]
-        return value !== '' && !(Array.isArray(value) && value.length === 0)
-      }) &&
-      Object.values(errors).every(error => error === null)
-    ) || !personalInfo.acceptPolicy
-  }, [personalInfo, errors, isSSO])
+  const isButtonDisabled = !validateRequiredFieldsTruthy<PersonalInfo>(
+    getValidationRules(), personalInfo)
 
   async function formatLocations(locations: string[], city: string): Promise<LocationData[]> {
     const locationService = new LocationService(API_BASE_URL)
@@ -165,7 +161,16 @@ export const useAddPersonalInfo = (): unknown => {
   const handleSubmit = async(): Promise<void> => {
     try {
       setLoading(true)
-      const { locations, dateOfBirth, lastDonationDate, lastVaccinatedDate, phoneNumber, ...rest } = personalInfo
+      const {
+        locations,
+        dateOfBirth,
+        lastDonationDate,
+        lastVaccinatedDate,
+        phoneNumber,
+        height,
+        weight,
+        ...rest
+      } = personalInfo
       const preferredDonationLocations = await formatLocations(locations, API_BASE_URL)
 
       if (preferredDonationLocations.length === 0) {
@@ -177,10 +182,12 @@ export const useAddPersonalInfo = (): unknown => {
       const finalData = {
         ...rest,
         dateOfBirth: dateOfBirth.toISOString().substring(0, 10),
-        ...(lastDonationDate !== null && { lastDonationDate: lastDonationDate.toISOString().substring(0, 10) }),
-        ...(lastVaccinatedDate !== null && { lastVaccinatedDate: lastVaccinatedDate.toISOString().substring(0, 10) }),
-        height: personalInfo.height,
-        weight: formatToTwoDecimalPlaces(personalInfo.weight),
+        ...(lastDonationDate !== null &&
+          { lastDonationDate: lastDonationDate.toISOString().substring(0, 10) }),
+        ...(lastVaccinatedDate !== null &&
+          { lastVaccinatedDate: lastVaccinatedDate.toISOString().substring(0, 10) }),
+        ...(height !== null && { height }),
+        ...(weight !== null && { weight: formatToTwoDecimalPlaces(weight) }),
         preferredDonationLocations,
         ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {}),
         availableForDonation: rest.availableForDonation === 'yes'

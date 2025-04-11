@@ -12,8 +12,8 @@ export type Gender = 'male' | 'female' | 'other'
 export type UserDetailsDTO = {
   bloodGroup: BloodGroup;
   lastDonationDate?: string;
-  height: string;
-  weight: number;
+  height?: string;
+  weight?: number;
   gender: Gender;
   dateOfBirth: string;
   age: number;

@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type {
   ValidationRule
 } from '../../../utility/validator';
 import {
   validateDateOfBirth,
   validateHeight, validateInput, validatePastOrTodayDate, validatePhoneNumber,
-  validateRequired, validateWeight
+  validateRequired, validateRequiredFieldsTruthy, validateWeight
 } from '../../../utility/validator'
 import { useRoute } from '@react-navigation/native'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
@@ -23,7 +23,8 @@ const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 type ProfileFields = keyof Omit<ProfileData, 'location'>
 
 type ProfileData = {
-  [K in keyof EditProfileData as K extends string ? (string extends K ? never : K) : never]: EditProfileData[K];
+  [K in keyof EditProfileData as K extends string
+  ? (string extends K ? never : K) : never]: EditProfileData[K];
 } & {
   weight: string | undefined;
 }
@@ -35,8 +36,8 @@ type ProfileDataErrors = {
 const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRule[]> = {
   name: [validateRequired],
   dateOfBirth: [validateDateOfBirth, validateRequired],
-  weight: [validateRequired, validateWeight],
-  height: [validateRequired, validateHeight],
+  weight: [validateWeight],
+  height: [validateHeight],
   gender: [validateRequired],
   phone: [validateRequired, validatePhoneNumber],
   preferredDonationLocations: [validateRequired],
@@ -44,7 +45,7 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   locations: []
 }
 
-export const useEditProfile = (): unknown => {
+export const useEditProfile = () => {
   const { fetchUserProfile } = useUserProfile()
   const route = useRoute<EditProfileRouteProp>()
   const fetchClient = useFetchClient()
@@ -66,8 +67,9 @@ export const useEditProfile = (): unknown => {
 
   const [executeUpdateProfile, loading, , updateError] = useFetchData(
     async(payload: Partial<ProfileData>) => {
+      console.log('payload', payload)
       const response = await updateUserProfile(payload, fetchClient)
-
+      console.log('response', response)
       if (response.status !== 200) {
         throw new Error('Failed to update profile')
       }
@@ -114,7 +116,8 @@ export const useEditProfile = (): unknown => {
     const { phone, ...rest } = profileData
     userDetails.phoneNumbers[0] = phone
     const filteredLocations = rest.locations.filter(
-      (location) => !rest.preferredDonationLocations.some((preferred) => preferred.area === location)
+      (location) => !rest.preferredDonationLocations.some(
+        (preferred) => preferred.area === location)
     )
     const updatedPreferredDonationLocations = rest.preferredDonationLocations.filter(
       (preferred) => rest.locations.includes(preferred.area)
@@ -123,13 +126,15 @@ export const useEditProfile = (): unknown => {
     try {
       const requestPayload = {
         ...rest,
-        weight: parseFloat(profileData.weight),
+
+        weight: Number.isNaN(parseFloat(rest.weight)) ? null : parseFloat(rest.weight),
+        height: rest.height !== '' ? rest.height : null,
+
         preferredDonationLocations: [
           ...updatedPreferredDonationLocations,
           ...await formatLocations(filteredLocations, API_BASE_URL)
         ]
       }
-
       await executeUpdateProfile(requestPayload)
       if (updateError !== null) {
         throw new Error('Failed to update profile')
@@ -141,22 +146,8 @@ export const useEditProfile = (): unknown => {
     }
   }
 
-  const hasErrors = useMemo(
-    () => Object.values(errors).some((error) => error),
-    [errors]
-  )
-  const requiredFields = Object.keys(validationRules).filter(key => !['lastDonationDate'].includes(key))
-
-  const areRequiredFieldsFilled = useMemo(
-    () =>
-      requiredFields.every((key) => {
-        const value = profileData[key as keyof ProfileData]
-        return value !== null && value !== undefined && value.toString().trim() !== ''
-      }),
-    [profileData]
-  )
-
-  const isButtonDisabled = hasErrors || !areRequiredFieldsFilled
+  const isButtonDisabled = !validateRequiredFieldsTruthy<ProfileData>(
+    validationRules, profileData)
 
   return {
     profileData,

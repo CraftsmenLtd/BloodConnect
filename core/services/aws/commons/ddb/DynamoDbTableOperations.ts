@@ -8,7 +8,7 @@ import type {
   UpdateCommandInput,
   GetCommandInput,
   QueryCommandInput,
-  DeleteCommandInput} from '@aws-sdk/lib-dynamodb';
+  DeleteCommandInput } from '@aws-sdk/lib-dynamodb';
 import {
   DynamoDBDocumentClient,
   PutCommand,
@@ -19,7 +19,7 @@ import {
 } from '@aws-sdk/lib-dynamodb'
 import type {
   QueryInput,
-  QueryCondition} from '../../../../application/models/policies/repositories/QueryTypes';
+  QueryCondition } from '../../../../application/models/policies/repositories/QueryTypes';
 import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
@@ -30,6 +30,7 @@ import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/Api
 
 type CreateUpdateExpressionsReturnType = {
   updateExpression: string[];
+  removeExpression: string[];
   expressionAttribute: Record<string, unknown>;
   expressionAttributeNames: Record<string, unknown>;
 }
@@ -102,7 +103,8 @@ export default class DynamoDbTableOperations<
       }
     } catch (error) {
       throw new DatabaseError(
-        `Failed to query items from DynamoDB: ${error instanceof Error ? error.message : 'Unknown error'
+        `Failed to query items from DynamoDB: ${error instanceof Error ?
+          error.message : 'Unknown error'
         }`,
         GENERIC_CODES.ERROR
       )
@@ -191,47 +193,47 @@ export default class DynamoDbTableOperations<
       sortKeyCondition.attributeValue
 
     switch (sortKeyCondition.operator) {
-      case QueryConditionOperator.BEGINS_WITH:
-        return {
-          keyConditionExpression: `${baseKeyConditionExpression} AND begins_with(#${String(
-            sortKeyCondition.attributeName
-          )}, :${String(sortKeyCondition.attributeName)})`,
-          expressionAttributeValues,
-          expressionAttributeNames
-        }
-
-      case QueryConditionOperator.BETWEEN: {
-        const value2 = sortKeyCondition.attributeValue2
-        if (value2 === undefined || value2 === null || value2 === '') {
-          throw new DatabaseError(
-            'BETWEEN operator requires a non-empty second value',
-            GENERIC_CODES.ERROR
-          )
-        }
-        expressionAttributeValues[
-          `:${String(sortKeyCondition.attributeName)}2`
-        ] = value2
-        return {
-          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
-            sortKeyCondition.attributeName
-          )} BETWEEN :${String(sortKeyCondition.attributeName)} AND :${String(
-            sortKeyCondition.attributeName
-          )}2`,
-          expressionAttributeValues,
-          expressionAttributeNames
-        }
+    case QueryConditionOperator.BEGINS_WITH:
+      return {
+        keyConditionExpression: `${baseKeyConditionExpression} AND begins_with(#${String(
+          sortKeyCondition.attributeName
+        )}, :${String(sortKeyCondition.attributeName)})`,
+        expressionAttributeValues,
+        expressionAttributeNames
       }
 
-      default:
-        return {
-          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
-            sortKeyCondition.attributeName
-          )} ${sortKeyCondition.operator} :${String(
-            sortKeyCondition.attributeName
-          )}`,
-          expressionAttributeValues,
-          expressionAttributeNames
-        }
+    case QueryConditionOperator.BETWEEN: {
+      const value2 = sortKeyCondition.attributeValue2
+      if (value2 === undefined || value2 === null || value2 === '') {
+        throw new DatabaseError(
+          'BETWEEN operator requires a non-empty second value',
+          GENERIC_CODES.ERROR
+        )
+      }
+      expressionAttributeValues[
+        `:${String(sortKeyCondition.attributeName)}2`
+      ] = value2
+      return {
+        keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
+          sortKeyCondition.attributeName
+        )} BETWEEN :${String(sortKeyCondition.attributeName)} AND :${String(
+          sortKeyCondition.attributeName
+        )}2`,
+        expressionAttributeValues,
+        expressionAttributeNames
+      }
+    }
+
+    default:
+      return {
+        keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
+          sortKeyCondition.attributeName
+        )} ${sortKeyCondition.operator} :${String(
+          sortKeyCondition.attributeName
+        )}`,
+        expressionAttributeValues,
+        expressionAttributeNames
+      }
     }
   }
 
@@ -246,6 +248,7 @@ export default class DynamoDbTableOperations<
       )
       const {
         updateExpression,
+        removeExpression,
         expressionAttribute,
         expressionAttributeNames
       } = this.createUpdateExpressions(updatedItem)
@@ -261,7 +264,9 @@ export default class DynamoDbTableOperations<
       const input: UpdateCommandInput = {
         TableName: this.getTableName(),
         Key: keyObject,
-        UpdateExpression: `SET ${updateExpression.join(', ')}`,
+        UpdateExpression: `${updateExpression.length
+          ? `SET ${updateExpression.join(', ')}` : ''}${removeExpression.length
+          ? `REMOVE ${removeExpression.join(', ')}` : ''}`,
         ExpressionAttributeValues: expressionAttribute,
         ExpressionAttributeNames: expressionAttributeNames
       }
@@ -354,16 +359,23 @@ export default class DynamoDbTableOperations<
     item: Record<string, unknown>
   ): CreateUpdateExpressionsReturnType {
     const updateExpression: string[] = []
+    const removeExpression: string[] = []
     const expressionAttribute: Record<string, unknown> = {}
     const expressionAttributeNames: Record<string, string> = {}
     Object.keys(item).forEach((key) => {
+      const value = item[key]
       const placeholder = `:p${key}`
       const alias = `#a${key}`
-      updateExpression.push(`${alias} = ${placeholder}`)
-      expressionAttribute[placeholder] = item[key]
       expressionAttributeNames[alias] = key
+  
+      if (value === null) {
+        removeExpression.push(alias)
+      } else {
+        updateExpression.push(`${alias} = ${placeholder}`)
+        expressionAttribute[placeholder] = value
+      }
     })
-    return { updateExpression, expressionAttribute, expressionAttributeNames }
+    return { updateExpression, expressionAttribute, expressionAttributeNames, removeExpression }
   }
 
   private removePrimaryKey(

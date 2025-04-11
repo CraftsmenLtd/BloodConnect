@@ -10,7 +10,8 @@ import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
-import { UNKNOWN_ERROR_MESSAGE, UPDATE_PROFILE_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { UNKNOWN_ERROR_MESSAGE,
+  UPDATE_PROFILE_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
 import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
 
 async function updateUserLambda(
@@ -27,9 +28,10 @@ async function updateUserLambda(
       userId: event.userId,
       countryCode: userProfile.countryCode,
       ...Object.fromEntries(
-        Object.entries(event).filter(([_, value]) => value !== undefined && value !== '')
+        Object.entries(event).filter(([_, value]) => value !== undefined
+          && value !== '')
       ),
-      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation
+      availableForDonation: event.availableForDonation,
     }
 
     await userService.updateUser(

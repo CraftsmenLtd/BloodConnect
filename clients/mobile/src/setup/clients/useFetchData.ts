@@ -9,7 +9,8 @@ type UseFetchDataProps = {
 const useFetchData = <DataFetchType>(
   dataFetchFunction: (...args: unknown[]) => Promise<DataFetchType>,
   { shouldExecuteOnMount = false, parseError, errorMessage }: UseFetchDataProps = {}
-): [executeFunction: (...args: unknown[]) => Promise<void>, loading: boolean, data: DataFetchType | null, error: string | null] => {
+): [executeFunction: (...args: unknown[]) => Promise<void>,
+    loading: boolean, data: DataFetchType | null, error: string | null] => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<DataFetchType | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -34,7 +35,9 @@ const useFetchData = <DataFetchType>(
       try {
         const result = await dataFetchFunctionRef.current(...args)
         setData(result)
+        console.log('result', result)
       } catch (error) {
+        console.error(error)
         const message = getErrorMessage(error)
         setData(null)
         setError(message)
