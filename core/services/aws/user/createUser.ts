@@ -12,7 +12,7 @@ import {
 import LocationDynamoDbOperations from '../commons/ddbOperations/LocationDynamoDbOperations'
 import { Config } from '../../../../commons/libs/config/config'
 import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
-import { LocationService } from 'core/application/userWorkflow/LocationService'
+import { LocationService } from '../../../application/userWorkflow/LocationService'
 
 const config = new Config<{
   dynamodbTableName: string;
