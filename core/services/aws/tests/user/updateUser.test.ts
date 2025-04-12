@@ -12,8 +12,8 @@ import { BloodGroup } from 'commons/dto/DonationDTO'
 import { Gender } from 'commons/dto/UserDTO'
 
 jest.mock('../../../../application/userWorkflow/UserService')
-jest.mock('../../commons/ddb/DynamoDbTableOperations')
-jest.mock('../../commons/ddb/LocationDynamoDbOperations')
+jest.mock('../../commons/ddbOperations/DynamoDbTableOperations')
+jest.mock('../../commons/ddbOperations/LocationDynamoDbOperations')
 jest.mock('../../commons/lambda/ApiGateway')
 jest.mock('../../commons/logger/HttpLogger', () => ({
   createHTTPLogger: jest.fn(() => ({

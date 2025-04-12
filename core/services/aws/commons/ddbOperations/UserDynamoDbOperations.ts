@@ -1,7 +1,7 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
 import type { UserDetailsDTO } from 'commons/dto/UserDTO'
-import type { UserFields } from 'core/services/aws/commons/ddbModels/UserModel'
-import UserModel from 'core/services/aws/commons/ddbModels/UserModel'
+import type { UserFields } from '../ddbModels/UserModel'
+import UserModel from '../ddbModels/UserModel'
 
 export default class UserDynamoDbOperations extends DynamoDbTableOperations<
   UserDetailsDTO,

@@ -9,7 +9,7 @@ import { GenericMessage } from '../../../../../../../commons/dto/MessageDTO'
 import { createPostConfirmationEvent } from '../../../mock/cognitoEventMocks'
 
 jest.mock('../../../../../../application/userWorkflow/UserService')
-jest.mock('../../../../commons/ddb/DynamoDbTableOperations')
+jest.mock('../../../../commons/ddbOperations/DynamoDbTableOperations')
 jest.mock('../../../../commons/cognito/CognitoOperations')
 jest.mock('../../../../commons/ses/sesOperations')
 

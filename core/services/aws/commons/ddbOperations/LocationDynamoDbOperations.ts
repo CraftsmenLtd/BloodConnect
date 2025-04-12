@@ -6,8 +6,8 @@ import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 import type { LocationDTO } from 'commons/dto/UserDTO'
-import type { LocationFields } from 'core/services/aws/commons/ddbModels/LocationModel';
-import LocationModel from 'core/services/aws/commons/ddbModels/LocationModel'
+import type { LocationFields } from '../ddbModels/LocationModel';
+import LocationModel from '../ddbModels/LocationModel'
 
 export default class LocationDynamoDbOperations extends DynamoDbTableOperations<
   LocationDTO,
