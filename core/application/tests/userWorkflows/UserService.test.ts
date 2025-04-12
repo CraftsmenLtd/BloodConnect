@@ -10,28 +10,23 @@ import { mockRepository } from '../mocks/mockRepositories'
 import Repository from '../../models/policies/repositories/Repository'
 import {
   UserDTO,
-  UserDetailsDTO,
-  LocationDTO
 } from '../../../../commons/dto/UserDTO'
 import { UpdateUserAttributes } from '../../userWorkflow/Types'
-import LocationRepository from '../../../application/models/policies/repositories/LocationRepository'
+import { mockLogger } from '../mocks/mockLogger'
+import { LocationService } from '../../userWorkflow/LocationService'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflow/userMessages')
-const locationMockRepository = {
+jest.mock('../../userWorkflow/LocationService')
+const userMockRepository = {
   ...mockRepository,
   queryUserLocations: jest.fn(),
   deleteUserLocations: jest.fn()
 }
 describe('UserService Tests', () => {
-  const userService = new UserService()
+  const userService = new UserService(userMockRepository, mockLogger)
   const userRepository = mockRepository as jest.Mocked<Repository<UserDTO>>
-  const userDetailsRepository = mockRepository as jest.Mocked<
-  Repository<UserDetailsDTO>
-  >
-  const locationRepository = locationMockRepository as jest.Mocked<
-  LocationRepository<LocationDTO>
-  >
+  const minMonthsBetweenDonations = 4
 
   const mockUserAttributes = {
     email: 'ebrahim@example.com',
@@ -47,10 +42,9 @@ describe('UserService Tests', () => {
       items: [],
       lastEvaluatedKey: undefined
     })
-    process.env.MIN_MONTHS_BETWEEN_DONATIONS = '4'
   })
 
-  test('should create a new user successfully', async() => {
+  test('should create a new user successfully', async () => {
     userRepository.create.mockResolvedValue(mockUserWithStringId)
     const result = await userService.createNewUser(
       mockUserAttributes,
@@ -64,7 +58,7 @@ describe('UserService Tests', () => {
     })
   })
 
-  test('should throw an error on failure', async() => {
+  test('should throw an error on failure', async () => {
     const errorMessage = 'Database error'
     const originalError = new Error(errorMessage)
 
@@ -103,7 +97,7 @@ describe('UserService Tests', () => {
     )
     expect(result).toEqual(mockMessage)
   })
-  test('should update user successfully', async() => {
+  test('should update user successfully', async () => {
     const mockUpdateAttributes = {
       userId: '12345',
       name: 'Updated Ebrahim',
@@ -117,25 +111,40 @@ describe('UserService Tests', () => {
       gender: 'male',
       NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
       NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
-      lastVaccinatedDate: '2023-05-01'
+      lastVaccinatedDate: '2023-05-01',
+      preferredDonationLocations: ['location-1', 'location-2']
     }
 
-    const { userId, ...mockResponse } = mockUpdateAttributes
+    const { userId, preferredDonationLocations, ...expectedUserData } = mockUpdateAttributes
 
     userRepository.update.mockResolvedValue(mockUserWithStringId)
 
+    const locationService = {
+      updateUserLocation: jest.fn().mockResolvedValue(undefined)
+    } as unknown as jest.Mocked<LocationService>
+
     await userService.updateUser(
       mockUpdateAttributes as unknown as UpdateUserAttributes,
-      userDetailsRepository,
-      locationRepository
+      locationService,
+      minMonthsBetweenDonations,
     )
 
     expect(userRepository.update).toHaveBeenCalledWith(
       expect.objectContaining({
-        ...mockResponse,
+        ...expectedUserData,
         age: expect.any(Number),
         id: mockUpdateAttributes.userId,
         updatedAt: expect.any(String)
+      })
+    )
+
+    expect(locationService.updateUserLocation).toHaveBeenCalledWith(
+      mockUpdateAttributes.userId,
+      mockUpdateAttributes.preferredDonationLocations,
+      expect.objectContaining({
+        id: mockUpdateAttributes.userId,
+        age: expect.any(Number),
+        updatedAt: expect.any(String),
       })
     )
   })

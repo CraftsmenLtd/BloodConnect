@@ -10,12 +10,18 @@ import {
 } from './userMessages'
 import type Repository from '../models/policies/repositories/Repository'
 import type { CreateUserAttributes, UpdateUserAttributes, UserAttributes } from './Types'
-import { generateGeohash } from '../utils/geohash'
 import { differenceInMonths, differenceInYears } from 'date-fns'
-import type { BloodGroup } from '../../../commons/dto/DonationDTO'
 import type LocationRepository from '../models/policies/repositories/LocationRepository'
+import type { Logger } from '../models/logger/Logger'
+import type UserRepository from '../models/policies/repositories/UserRepository'
+import type { LocationService } from './LocationService'
 
 export class UserService {
+  constructor(
+    protected readonly userRepository: UserRepository,
+    protected readonly logger: Logger
+  ) { }
+  
   async createNewUser(
     userAttributes: UserAttributes,
     userRepository: Repository<UserDTO>
@@ -57,8 +63,8 @@ export class UserService {
 
   async updateUser(
     userAttributes: CreateUserAttributes | UpdateUserAttributes,
-    userRepository: Repository<UserDetailsDTO>,
-    locationRepository: LocationRepository<LocationDTO>
+    locationService: LocationService,
+    minMonthsBetweenDonations: number
   ): Promise<void> {
     const { userId, preferredDonationLocations, ...restAttributes } = userAttributes
     const updateData: Partial<UserDetailsDTO> = {
@@ -67,21 +73,24 @@ export class UserService {
       updatedAt: new Date().toISOString()
     }
 
+    this.logger.info('validating user attributes')
     updateData.age = this.calculateAge(userAttributes.dateOfBirth)
     updateData.availableForDonation = this.checkLastDonationDate(
       userAttributes.lastDonationDate,
-      userAttributes.availableForDonation
+      userAttributes.availableForDonation,
+      minMonthsBetweenDonations
     )
 
-    await userRepository.update(updateData).catch((error) => {
+    this.logger.info('updating user profile')
+    await this.userRepository.update(updateData).catch((error) => {
       throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     })
 
-    await this.updateUserLocation(
+    this.logger.info('updating user locations')
+    await locationService.updateUserLocation(
       userId,
       preferredDonationLocations,
-      updateData,
-      locationRepository
+      updateData
     ).catch((error) => {
       throw new UserOperationError(
         `Failed to update user location. Error: ${error}`,
@@ -109,7 +118,8 @@ export class UserService {
 
   private checkLastDonationDate(
     lastDonationDate: string | undefined,
-    availableForDonation: boolean
+    availableForDonation: boolean,
+    minMonthsBetweenDonations: number
   ): boolean {
     if (availableForDonation && lastDonationDate !== undefined && lastDonationDate !== '') {
       const donationDate = new Date(lastDonationDate)
@@ -117,7 +127,7 @@ export class UserService {
 
       if (!isNaN(donationDate.getTime())) {
         const donationMonths = differenceInMonths(currentDate, donationDate)
-        return donationMonths > Number(process.env.MIN_MONTHS_BETWEEN_DONATIONS)
+        return donationMonths > minMonthsBetweenDonations
       }
     }
     return availableForDonation
@@ -130,37 +140,6 @@ export class UserService {
 
       if (!isNaN(birthDate.getTime())) {
         return differenceInYears(currentDate, birthDate)
-      }
-    }
-  }
-
-  private async updateUserLocation(
-    userId: string,
-    preferredDonationLocations: LocationDTO[],
-    userAttributes: Partial<UserDetailsDTO>,
-    locationRepository: LocationRepository<LocationDTO, Record<string, unknown>>
-  ): Promise<void> {
-    if (
-      preferredDonationLocations !== undefined &&
-      preferredDonationLocations.length !== 0
-    ) {
-      await locationRepository.deleteUserLocations(userId)
-
-      for (const location of preferredDonationLocations) {
-        const locationData: LocationDTO = {
-          userId: `${userId}`,
-          locationId: generateUniqueID(),
-          area: location.area,
-          countryCode: userAttributes.countryCode as string,
-          latitude: location.latitude,
-          longitude: location.longitude,
-          geohash: generateGeohash(location.latitude, location.longitude),
-          bloodGroup: userAttributes.bloodGroup as BloodGroup,
-          availableForDonation: userAttributes.availableForDonation === true,
-          lastVaccinatedDate: `${userAttributes.lastVaccinatedDate}`,
-          createdAt: new Date().toISOString()
-        }
-        await locationRepository.create(locationData)
       }
     }
   }

@@ -1,4 +1,4 @@
-import DynamoDbTableOperations from '../../../commons/ddb/DynamoDbTableOperations'
+import DynamoDbTableOperations from '../../../commons/ddbOperations/DynamoDbTableOperations'
 import {
   DynamoDBDocumentClient,
   PutCommand,
@@ -8,7 +8,7 @@ import {
 } from '@aws-sdk/lib-dynamodb'
 import { mockClient } from 'aws-sdk-client-mock'
 import { UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
-import UserModel from '../../../../../application/models/dbModels/UserModel'
+import UserModel from '../../../commons/ddbModels/UserModel'
 import DatabaseError from '../../../../../../commons/libs/errors/DatabaseError'
 import { GENERIC_CODES } from '../../../../../../commons/libs/constants/GenericCodes'
 import {
@@ -23,7 +23,7 @@ describe('DynamoDbTableOperations Tests', () => {
   UserDetailsDTO,
   any,
   UserModel
-  >(new UserModel())
+  >(new UserModel(), "TestTable", "ap-south-1")
 
   beforeEach(() => {
     ddbMock.reset()
@@ -144,18 +144,6 @@ describe('DynamoDbTableOperations Tests', () => {
     )
 
     expect(ddbMock.calls()).toHaveLength(1)
-  })
-
-  test('should throw error when DynamoDB table name is not defined', () => {
-    delete process.env.DYNAMODB_TABLE_NAME
-    expect(() => dynamoDbOperations.getTableName()).toThrow(
-      new DatabaseError('DDB Table name not defined', GENERIC_CODES.ERROR)
-    )
-  })
-
-  test('should return the correct table name from the environment', () => {
-    const tableName = dynamoDbOperations.getTableName()
-    expect(tableName).toBe('TestTable')
   })
 
   describe('query method tests', () => {

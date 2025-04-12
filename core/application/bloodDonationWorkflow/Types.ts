@@ -26,9 +26,9 @@ export type BloodDonationAttributes = {
 }
 type CredentialKeys = 'donationDateTime' | 'bloodQuantity'
 
-export const validationRules: Record<CredentialKeys, Array<ValidationRule<string>>| Array<ValidationRule<number>>> = {
-  donationDateTime: [(value: string) => validateDonationDateTime(value)],
-  bloodQuantity: [(value: number) => validateBloodQuantity(value)]
+export const validationRules: Record<CredentialKeys, Array<ValidationRule<unknown>> > = {
+  donationDateTime: [(value: string): boolean => validateDonationDateTime(value)],
+  bloodQuantity: [(value: number): boolean => validateBloodQuantity(value)]
 }
 
 export type UpdateBloodDonationAttributes = {

@@ -1,10 +1,5 @@
-import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type { UserDetailsDTO } from 'commons/dto/UserDTO';
+import type Repository from './Repository';
 
-export type UserProfileDTO = {
-  userId: string;
-  deviceToken?: string;
-} & DTO
-
-export type UserRepository = {
-  getUserProfile(userId: string): Promise<UserProfileDTO | null>;
-}
+type UserRepository<> = Repository<UserDetailsDTO, Record<string, unknown>>
+export default UserRepository
