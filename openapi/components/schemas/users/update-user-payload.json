@@ -19,16 +19,10 @@
         "format": "date"
       },
       "height": {
-        "type": [
-          "string",
-          "null"
-        ]
+        "type": "string"
       },
       "weight": {
-        "type": [
-          "number",
-          "null"
-        ]
+        "type": "number"
       },
       "gender": {
         "type": "string",
