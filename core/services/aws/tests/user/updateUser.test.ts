@@ -2,16 +2,16 @@ import { UpdateUserAttributes } from '../../../../application/userWorkflow/Types
 import { UserService } from '../../../../application/userWorkflow/UserService'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import { APIGatewayProxyResult } from 'aws-lambda'
-import DynamoDbTableOperations from '../../commons/ddbOperations/DynamoDbTableOperations'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import updateUserLambda from '../../user/updateUser'
 import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
-import LocationDynamoDbOperations from '../../commons/ddbOperations/LocationDynamoDbOperations'
 import { UPDATE_PROFILE_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
 import { BloodGroup } from 'commons/dto/DonationDTO'
 import { Gender } from 'commons/dto/UserDTO'
+import { LocationService } from '../../../../application/userWorkflow/LocationService'
 
 jest.mock('../../../../application/userWorkflow/UserService')
+jest.mock('../../../../application/userWorkflow/LocationService')
 jest.mock('../../commons/ddbOperations/DynamoDbTableOperations')
 jest.mock('../../commons/ddbOperations/LocationDynamoDbOperations')
 jest.mock('../../commons/lambda/ApiGateway')
@@ -82,15 +82,8 @@ describe('updateUserLambda', () => {
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining(mockEvent),
-      expect.any(DynamoDbTableOperations),
-      expect.any(LocationDynamoDbOperations),
-      minMonthsBetweenDonations,
-      expect.objectContaining({
-        error: expect.any(Function),
-        info: expect.any(Function),
-        warn: expect.any(Function),
-        debug: expect.any(Function)
-      })
+      expect.any(LocationService),
+      minMonthsBetweenDonations
     )
     expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
       { success: true, message: mockResponse },
@@ -100,7 +93,7 @@ describe('updateUserLambda', () => {
     expect(result.body).toBe(JSON.stringify({ message: mockResponse }))
   })
 
-  it('should return error response when updateUser throws an error', async() => {
+  it('should return error response when updateUser throws an error', async () => {
     const mockEvent = {
       userId: '12345',
       name: 'Updated Ebrahim',
@@ -130,15 +123,8 @@ describe('updateUserLambda', () => {
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining(mockEvent),
-      expect.any(DynamoDbTableOperations),
-      expect.any(LocationDynamoDbOperations),
-      minMonthsBetweenDonations,
-      expect.objectContaining({
-        error: expect.any(Function),
-        info: expect.any(Function),
-        warn: expect.any(Function),
-        debug: expect.any(Function)
-      })
+      expect.any(LocationService),
+      minMonthsBetweenDonations
     )
     expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
       `Error: ${mockError.message}`,
@@ -148,7 +134,7 @@ describe('updateUserLambda', () => {
     expect(result.body).toBe(`Error: ${mockError.message}`)
   })
 
-  it('should return error response when updateUser throws an error', async() => {
+  it('should return error response when updateUser throws an error', async () => {
     const mockEvent = {
       userId: '12345',
       name: 'Updated Ebrahim',
@@ -178,15 +164,8 @@ describe('updateUserLambda', () => {
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining(mockEvent),
-      expect.any(DynamoDbTableOperations),
-      expect.any(LocationDynamoDbOperations),
-      minMonthsBetweenDonations,
-      expect.objectContaining({
-        error: expect.any(Function),
-        info: expect.any(Function),
-        warn: expect.any(Function),
-        debug: expect.any(Function)
-      })
+      expect.any(LocationService),
+      minMonthsBetweenDonations
     )
     expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
       `Error: ${mockError.message}`,
@@ -196,7 +175,7 @@ describe('updateUserLambda', () => {
     expect(result.body).toBe(`Error: ${mockError.message}`)
   })
 
-  it('should filter out undefined and empty fields from event', async() => {
+  it('should filter out undefined and empty fields from event', async () => {
     const mockEvent = {
       userId: 'user123',
       email: 'test@example.com',
@@ -217,15 +196,8 @@ describe('updateUserLambda', () => {
 
     expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
       expect.objectContaining({ userId: 'user123', email: 'test@example.com' }),
-      expect.any(DynamoDbTableOperations),
-      expect.any(LocationDynamoDbOperations),
-      minMonthsBetweenDonations,
-      expect.objectContaining({
-        error: expect.any(Function),
-        info: expect.any(Function),
-        warn: expect.any(Function),
-        debug: expect.any(Function)
-      })
+      expect.any(LocationService),
+      minMonthsBetweenDonations
     )
     expect(mockedGenerateApiGatewayResponse).toHaveBeenCalledWith(
       { success: true, message: mockResponse },
