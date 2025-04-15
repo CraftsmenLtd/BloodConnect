@@ -37,8 +37,6 @@ async function updateUserLambda(
   try {
     const userAttributes: UpdateUserAttributes = {
       userId: event.userId,
-      email: event.email,
-      name: event.name,
       phoneNumbers: event.phoneNumbers,
       bloodGroup: event.bloodGroup,
       height: event.height,
