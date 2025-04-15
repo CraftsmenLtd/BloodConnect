@@ -5,6 +5,8 @@ import { Input } from '../../../components/inputElement/Input'
 import RadioButton from '../../../components/inputElement/Radio'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
+import MapView from '../../../components/mapView'
+import useMapView from '../../../components/mapView/useMapView';
 import MultiSelect from '../../../components/multiSelect'
 import { LocationService } from '../../../LocationService/LocationService'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
@@ -28,6 +30,7 @@ const EditProfile = () => {
     isButtonDisabled,
     handleSave
   } = useEditProfile()
+  const { mapMarkers, zoomLevel } = useMapView(profileData?.locations)
 
   return (
     <TouchableWithoutFeedback>
@@ -37,7 +40,7 @@ const EditProfile = () => {
       >
         <ProfileSection
           name={profileData.name}
-          location={profileData.location}
+          location={profileData?.location}
           isEditing={true}
         />
 
@@ -140,6 +143,21 @@ const EditProfile = () => {
                 }
                 minRequiredLabel="Add minimum 1 area."
               />
+              <View
+                onStartShouldSetResponder={() => {
+                  return false
+                }}
+                onResponderRelease={() => {
+                  return true
+                }}
+              >
+                <MapView
+                  style={styles.mapViewContainer}
+                  centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
+                  zoomLevel={zoomLevel}
+                  markers={mapMarkers}
+                />
+              </View>
             </View>
 
             <View style={styles.inputFieldStyle}>

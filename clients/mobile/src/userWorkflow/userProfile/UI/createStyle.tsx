@@ -65,6 +65,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   selectedItemText: {
     marginRight: 5
+  },
+  mapViewContainer: {
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10
   }
 })
 
