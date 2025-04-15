@@ -8,7 +8,8 @@ import type {
   UpdateCommandInput,
   GetCommandInput,
   QueryCommandInput,
-  DeleteCommandInput} from '@aws-sdk/lib-dynamodb';
+  DeleteCommandInput
+} from '@aws-sdk/lib-dynamodb';
 import {
   DynamoDBDocumentClient,
   PutCommand,
@@ -19,7 +20,8 @@ import {
 } from '@aws-sdk/lib-dynamodb'
 import type {
   QueryInput,
-  QueryCondition} from '../../../../application/models/policies/repositories/QueryTypes';
+  QueryCondition
+} from '../../../../application/models/policies/repositories/QueryTypes';
 import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
@@ -56,9 +58,7 @@ export default class DynamoDbTableOperations<
     if (putCommandOutput?.$metadata?.httpStatusCode === 200) {
       return this.modelAdapter.toDto(items)
     }
-    throw new Error(
-      'Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined'
-    )
+    throw new Error('Failed to create item in DynamoDB')
   }
 
   async query(
@@ -346,13 +346,13 @@ export default class DynamoDbTableOperations<
     const updateExpression: string[] = []
     const expressionAttribute: Record<string, unknown> = {}
     const expressionAttributeNames: Record<string, string> = {}
-    Object.keys(item).forEach((key) => {
+    for (const key in item) {
       const placeholder = `:p${key}`
       const alias = `#a${key}`
       updateExpression.push(`${alias} = ${placeholder}`)
       expressionAttribute[placeholder] = item[key]
       expressionAttributeNames[alias] = key
-    })
+    }
     return { updateExpression, expressionAttribute, expressionAttributeNames }
   }
 

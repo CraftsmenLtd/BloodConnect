@@ -59,9 +59,7 @@ describe('DynamoDbTableOperations Tests', () => {
 
     await expect(
       dynamoDbOperations.create(mockUserDetailsWithStringId)
-    ).rejects.toThrow(
-      'Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined'
-    )
+    ).rejects.toThrow('Failed to create item in DynamoDB')
 
     expect(ddbMock.calls()).toHaveLength(1)
   })
