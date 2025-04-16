@@ -131,8 +131,7 @@ export class BloodDonationService {
 
   async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
-    notificationService: NotificationService,
-    logger: Logger
+    notificationService: NotificationService
   ): Promise<BloodDonationResponseAttributes> {
     const { seekerId, requestPostId, donationDateTime, createdAt, ...restAttributes } =
       donationAttributes
@@ -146,7 +145,7 @@ export class BloodDonationService {
       throw new BloodDonationOperationError('Item not found.', GENERIC_CODES.NOT_FOUND)
     }
 
-    logger.info('checking donation status')
+    this.logger.info('checking donation status')
     if (item?.status !== undefined && item.status === DonationStatus.CANCELLED) {
       throw new BloodDonationOperationError(
         'You can\'t update a cancelled request',
@@ -161,7 +160,7 @@ export class BloodDonationService {
       createdAt
     }
 
-    logger.info('validating donation request')
+    this.logger.info('validating donation request')
     if (donationDateTime !== undefined) {
       const validationResponse = validateInputWithRules({ donationDateTime }, validationRules)
       if (validationResponse !== null) {
@@ -170,7 +169,7 @@ export class BloodDonationService {
       updateData.donationDateTime = new Date(donationDateTime).toISOString()
     }
 
-    logger.info('updating donation request')
+    this.logger.info('updating donation request')
     await this.bloodDonationRepository.update(updateData).catch((error) => {
       if (error instanceof BloodDonationOperationError) {
         throw error
@@ -181,7 +180,7 @@ export class BloodDonationService {
       )
     })
 
-    logger.info('updating donation notifications')
+    this.logger.info('updating donation notifications')
     await notificationService.updateBloodDonationNotifications(
       requestPostId,
       donationAttributes as Partial<DonationRequestPayloadAttributes>

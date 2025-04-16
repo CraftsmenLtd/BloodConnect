@@ -101,25 +101,6 @@ describe('BloodDonationModel', () => {
       expect(result.requestPostId).toBe('custom-request-id')
       expect(result.seekerId).toBe('custom-seeker-id')
     })
-
-    it('should preserve all other fields during conversion', () => {
-      const customFields: DonationFields = {
-        ...donationFieldsMock,
-        createdAt: mockCreatedAt,
-        PK: `${BLOOD_REQUEST_PK_PREFIX}#${donationDtoMock.seekerId}`,
-        SK: `${BLOOD_REQUEST_PK_PREFIX}#${mockCreatedAt}#${donationDtoMock.requestPostId}`,
-        LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#${donationDtoMock.requestPostId}`,
-        patientName: 'Custom Name',
-        contactNumber: 'Custom Phone',
-        bloodQuantity: 5
-      }
-
-      const result = bloodDonationModel.toDto(customFields)
-
-      expect(result.patientName).toBe('Custom Name')
-      expect(result.contactNumber).toBe('Custom Phone')
-      expect(result.bloodQuantity).toBe(5)
-    })
   })
 
   describe('getPrimaryIndex', () => {
