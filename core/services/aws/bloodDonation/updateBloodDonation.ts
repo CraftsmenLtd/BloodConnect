@@ -4,44 +4,27 @@ import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import type { UpdateBloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
-import type { BloodDonationNotificationDTO } from '../../../../commons/dto/NotificationDTO'
-import type {
-  DonationFields
-} from '../../../application/models/dbModels/BloodDonationModel';
-import {
-  BloodDonationModel
-} from '../../../application/models/dbModels/BloodDonationModel'
-import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
-import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
-import type { DonationRequestPayloadAttributes } from '../../../application/notificationWorkflow/Types'
-import type {
-  BloodDonationNotificationFields
-} from '../../..//application/models/dbModels/DonationNotificationModel';
-import DonationNotificationModel from '../../..//application/models/dbModels/DonationNotificationModel'
+import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE, UPDATE_DONATION_REQUEST_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { Config } from '../../../../commons/libs/config/config'
+import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
 
-const allowedKeys: Array<keyof UpdateBloodDonationAttributes> = [
-  'bloodQuantity',
-  'urgencyLevel',
-  'donationDateTime',
-  'contactNumber',
-  'patientName',
-  'transportationInfo',
-  'shortDescription',
-  'createdAt'
-]
+const config = new Config<{
+  dynamodbTableName: string;
+  awsRegion: string;
+}>().getConfig()
 
-type RequiredAttributes = Pick<
-UpdateBloodDonationAttributes,
-'requestPostId' | 'seekerId' | 'createdAt'
->
-type OptionalAttributes = Partial<Omit<UpdateBloodDonationAttributes, 'requestPostId' | 'seekerId'>>
+const notificationDynamoDbOperations = new DonationNotificationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
-const bloodDonationService = new BloodDonationService()
-const notificationService = new NotificationService()
+const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 async function updateBloodDonationLambda(
   event: UpdateBloodDonationAttributes & HttpLoggerAttributes
@@ -51,32 +34,29 @@ async function updateBloodDonationLambda(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
+  const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
+  const notificationService = new NotificationService(notificationDynamoDbOperations, httpLogger)
   try {
-    const bloodDonationAttributes: RequiredAttributes & OptionalAttributes = {
-      requestPostId: event.requestPostId,
+    const bloodDonationAttributes: UpdateBloodDonationAttributes = {
       seekerId: event.seekerId,
+      requestPostId: event.requestPostId,
       createdAt: event.createdAt,
-      ...Object.fromEntries(
-        Object.entries(event)
-          .filter(([key]) => allowedKeys.includes(key as keyof UpdateBloodDonationAttributes))
-          .filter(([_, value]) => value !== undefined && value !== '')
-      )
+      patientName: event.patientName,
+      requestedBloodGroup: event.requestedBloodGroup,
+      bloodQuantity: event.bloodQuantity,
+      urgencyLevel: event.urgencyLevel,
+      location: event.location,
+      latitude: event.latitude,
+      longitude: event.longitude,
+      donationDateTime: event.donationDateTime,
+      shortDescription: event.shortDescription,
+      contactNumber: event.contactNumber,
+      transportationInfo: event.transportationInfo
     }
     const response = await bloodDonationService.updateBloodDonation(
       bloodDonationAttributes,
-      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
-        new BloodDonationModel()
-      )
-    )
-
-    await notificationService.updateBloodDonationNotifications(
-      event.requestPostId,
-      bloodDonationAttributes as Partial<DonationRequestPayloadAttributes>,
-      new NotificationDynamoDbOperations<
-      BloodDonationNotificationDTO,
-      BloodDonationNotificationFields,
-      DonationNotificationModel
-      >(new DonationNotificationModel())
+      notificationService,
+      httpLogger
     )
     return generateApiGatewayResponse(
       {

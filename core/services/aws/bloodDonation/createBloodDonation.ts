@@ -2,26 +2,36 @@ import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import type { BloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
 import type {
-  DonationFields
-} from '../../../application/models/dbModels/BloodDonationModel';
-import {
-  BloodDonationModel
-} from '../../../application/models/dbModels/BloodDonationModel'
-import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
+  BloodDonationAttributes,
+  BloodDonationEventAttributes
+} from '../../../application/bloodDonationWorkflow/Types'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
-import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
-import { CREATE_DONATION_REQUEST_SUCCESS, UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import {
+  CREATE_DONATION_REQUEST_SUCCESS,
+  UNKNOWN_ERROR_MESSAGE
+} from '../../../../commons/libs/constants/ApiResponseMessages'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import type { UserFields } from '../../../application/models/dbModels/UserModel';
-import UserModel from '../../../application/models/dbModels/UserModel'
+import { Config } from '../../../../commons/libs/config/config'
+import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
+import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
 
-const bloodDonationService = new BloodDonationService()
-const userService = new UserService()
+const config = new Config<{
+  dynamodbTableName: string;
+  awsRegion: string;
+}>().getConfig()
+
+const userDynamoDbOperations = new UserDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+
+const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 async function createBloodDonationLambda(
   event: BloodDonationAttributes & HttpLoggerAttributes
@@ -31,21 +41,16 @@ async function createBloodDonationLambda(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
-
+  const userService = new UserService(userDynamoDbOperations, httpLogger)
+  const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
+  
   try {
-    const userProfile = await userService.getUser(
-      event.seekerId,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel())
-    )
-
-    const bloodDonationAttributes: BloodDonationAttributes = {
+    const bloodDonationAttributes: BloodDonationEventAttributes = {
       seekerId: event.seekerId,
-      seekerName: userProfile.name,
       patientName: event.patientName,
       requestedBloodGroup: event.requestedBloodGroup,
       bloodQuantity: event.bloodQuantity,
       urgencyLevel: event.urgencyLevel,
-      countryCode: userProfile.countryCode,
       location: event.location,
       latitude: event.latitude,
       longitude: event.longitude,
@@ -56,10 +61,7 @@ async function createBloodDonationLambda(
     }
     const response = await bloodDonationService.createBloodDonation(
       bloodDonationAttributes,
-      new DynamoDbTableOperations<DonationDTO, DonationFields, BloodDonationModel>(
-        new BloodDonationModel()
-      ),
-      new BloodDonationModel()
+      userService
     )
     return generateApiGatewayResponse(
       {

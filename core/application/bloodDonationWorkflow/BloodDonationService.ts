@@ -1,48 +1,52 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import type { DonationDTO} from '../../../commons/dto/DonationDTO';
+import type { DonationDTO } from '../../../commons/dto/DonationDTO'
 import { DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import type Repository from '../models/policies/repositories/Repository'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
-import type {
-  BloodDonationModel,
-  DonationFields
-} from '../models/dbModels/BloodDonationModel';
 import {
-  BLOOD_REQUEST_PK_PREFIX
-} from '../models/dbModels/BloodDonationModel'
-import type { QueryInput } from '../models/policies/repositories/QueryTypes';
-import { QueryConditionOperator } from '../models/policies/repositories/QueryTypes'
-import type {
-  BloodDonationAttributes,
-  UpdateBloodDonationAttributes,
-  BloodDonationResponseAttributes
-} from './Types';
-import {
+  type BloodDonationAttributes,
+  type UpdateBloodDonationAttributes,
+  type BloodDonationResponseAttributes,
+  type BloodDonationEventAttributes,
   validationRules
 } from './Types'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
 import type BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
+import type { UserService } from '../userWorkflow/UserService'
+import type { Logger } from '../models/logger/Logger'
+import type { NotificationService } from '../notificationWorkflow/NotificationService'
+import type { DonationRequestPayloadAttributes } from '../notificationWorkflow/Types'
 
 export class BloodDonationService {
+  constructor(
+    protected readonly bloodDonationRepository: BloodDonationRepository,
+    protected readonly logger: Logger
+  ) {}
+
   async createBloodDonation(
-    donationAttributes: BloodDonationAttributes,
-    bloodDonationRepository: Repository<DonationDTO, DonationFields>,
-    model: BloodDonationModel
+    donationEventAttributes: BloodDonationEventAttributes,
+    userService: UserService
   ): Promise<BloodDonationResponseAttributes> {
+    const userProfile = await userService.getUser(donationEventAttributes.seekerId)
+    const bloodDonationAttributes: BloodDonationAttributes = {
+      ...donationEventAttributes,
+      seekerName: userProfile.name,
+      countryCode: userProfile.countryCode
+    }
+
+    this.logger.info('checking daily request limit')
     await this.checkDailyRequestThrottling(
-      donationAttributes.seekerId,
-      bloodDonationRepository,
-      model
+      bloodDonationAttributes.seekerId
     )
 
+    this.logger.info('validating donation request')
     const validationResponse = validateInputWithRules(
       {
-        bloodQuantity: donationAttributes.bloodQuantity,
-        donationDateTime: donationAttributes.donationDateTime
+        bloodQuantity: bloodDonationAttributes.bloodQuantity,
+        donationDateTime: bloodDonationAttributes.donationDateTime
       },
       validationRules
     )
@@ -53,13 +57,17 @@ export class BloodDonationService {
       )
     }
 
-    const response: DonationDTO = await bloodDonationRepository
+    this.logger.info('creating donation request')
+    const response: DonationDTO = await this.bloodDonationRepository
       .create({
         requestPostId: generateUniqueID(),
-        ...donationAttributes,
+        ...bloodDonationAttributes,
         status: DonationStatus.PENDING,
-        geohash: generateGeohash(donationAttributes.latitude, donationAttributes.longitude),
-        donationDateTime: new Date(donationAttributes.donationDateTime).toISOString(),
+        geohash: generateGeohash(
+          bloodDonationAttributes.latitude,
+          bloodDonationAttributes.longitude
+        ),
+        donationDateTime: new Date(bloodDonationAttributes.donationDateTime).toISOString(),
         createdAt: new Date().toISOString()
       })
       .catch((error) => {
@@ -78,33 +86,17 @@ export class BloodDonationService {
     }
   }
 
-  private async checkDailyRequestThrottling(
-    seekerId: string,
-    repository: Repository<DonationDTO, DonationFields>,
-    model: BloodDonationModel
-  ): Promise<void> {
+  private async checkDailyRequestThrottling(seekerId: string): Promise<void> {
     const datePrefix = new Date().toISOString().split('T')[0]
-    const primaryIndex = model.getPrimaryIndex()
-
-    const query: QueryInput<DonationFields> = {
-      partitionKeyCondition: {
-        attributeName: primaryIndex.partitionKey,
-        operator: QueryConditionOperator.EQUALS,
-        attributeValue: `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`
-      }
-    }
-
-    if (primaryIndex.sortKey !== undefined) {
-      query.sortKeyCondition = {
-        attributeName: primaryIndex.sortKey,
-        operator: QueryConditionOperator.BEGINS_WITH,
-        attributeValue: `${BLOOD_REQUEST_PK_PREFIX}#${datePrefix}`
-      }
-    }
-
     try {
-      const queryResult = await repository.query(query)
-      if (queryResult.items.length >= THROTTLING_LIMITS.BLOOD_REQUEST.MAX_REQUESTS_PER_DAY) {
+      const queryResult = await this.bloodDonationRepository.getDonationRequestsByDate(
+        seekerId,
+        datePrefix
+      )
+      if (
+        queryResult !== null &&
+        queryResult.length >= THROTTLING_LIMITS.BLOOD_REQUEST.MAX_REQUESTS_PER_DAY
+      ) {
         throw new ThrottlingError(
           THROTTLING_LIMITS.BLOOD_REQUEST.ERROR_MESSAGE,
           GENERIC_CODES.TOO_MANY_REQUESTS
@@ -124,10 +116,9 @@ export class BloodDonationService {
   async getDonationRequest(
     seekerId: string,
     requestPostId: string,
-    createdAt: string,
-    bloodDonationRepository: BloodDonationRepository<DonationDTO>
+    createdAt: string
   ): Promise<DonationDTO> {
-    const item = await bloodDonationRepository.getDonationRequest(
+    const item = await this.bloodDonationRepository.getDonationRequest(
       seekerId,
       requestPostId,
       createdAt
@@ -140,11 +131,12 @@ export class BloodDonationService {
 
   async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
-    bloodDonationRepository: BloodDonationRepository<DonationDTO>
+    notificationService: NotificationService,
+    logger: Logger
   ): Promise<BloodDonationResponseAttributes> {
     const { seekerId, requestPostId, donationDateTime, createdAt, ...restAttributes } =
       donationAttributes
-    const item = await bloodDonationRepository.getDonationRequest(
+    const item = await this.bloodDonationRepository.getDonationRequest(
       seekerId,
       requestPostId,
       createdAt
@@ -154,6 +146,7 @@ export class BloodDonationService {
       throw new BloodDonationOperationError('Item not found.', GENERIC_CODES.NOT_FOUND)
     }
 
+    logger.info('checking donation status')
     if (item?.status !== undefined && item.status === DonationStatus.CANCELLED) {
       throw new BloodDonationOperationError(
         'You can\'t update a cancelled request',
@@ -168,6 +161,7 @@ export class BloodDonationService {
       createdAt
     }
 
+    logger.info('validating donation request')
     if (donationDateTime !== undefined) {
       const validationResponse = validateInputWithRules({ donationDateTime }, validationRules)
       if (validationResponse !== null) {
@@ -176,7 +170,8 @@ export class BloodDonationService {
       updateData.donationDateTime = new Date(donationDateTime).toISOString()
     }
 
-    await bloodDonationRepository.update(updateData).catch((error) => {
+    logger.info('updating donation request')
+    await this.bloodDonationRepository.update(updateData).catch((error) => {
       if (error instanceof BloodDonationOperationError) {
         throw error
       }
@@ -185,6 +180,13 @@ export class BloodDonationService {
         GENERIC_CODES.ERROR
       )
     })
+
+    logger.info('updating donation notifications')
+    await notificationService.updateBloodDonationNotifications(
+      requestPostId,
+      donationAttributes as Partial<DonationRequestPayloadAttributes>
+    )
+
     return {
       requestPostId,
       createdAt
@@ -196,7 +198,7 @@ export class BloodDonationService {
     requestPostId: string,
     createdAt: string,
     status: DonationStatus,
-    bloodDonationRepository: BloodDonationRepository<DonationDTO>
+    bloodDonationRepository: BloodDonationRepository
   ): Promise<void> {
     const item = await bloodDonationRepository.getDonationRequest(
       seekerId,

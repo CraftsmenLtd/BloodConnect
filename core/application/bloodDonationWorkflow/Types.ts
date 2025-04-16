@@ -8,6 +8,21 @@ import type {
   UrgencyType
 } from '../../../commons/dto/DonationDTO'
 
+export type BloodDonationEventAttributes = {
+  seekerId: string;
+  requestedBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyType;
+  location: string;
+  latitude: number;
+  longitude: number;
+  donationDateTime: string;
+  contactNumber: string;
+  patientName?: string;
+  transportationInfo?: string;
+  shortDescription?: string;
+}
+
 export type BloodDonationAttributes = {
   seekerId: string;
   requestedBloodGroup: BloodGroup;
@@ -35,12 +50,16 @@ export type UpdateBloodDonationAttributes = {
   requestPostId: string;
   seekerId: string;
   createdAt: string;
-  bloodQuantity?: number;
-  urgencyLevel?: UrgencyType;
-  donationDateTime?: string;
-  contactNumber?: string;
-  patientCondition?: string;
+  requestedBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyType;
+  location: string;
+  latitude: number;
+  longitude: number;
+  donationDateTime: string;
+  contactNumber: string;
   patientName?: string;
+  seekerName?: string;
   transportationInfo?: string;
   shortDescription?: string;
 }
