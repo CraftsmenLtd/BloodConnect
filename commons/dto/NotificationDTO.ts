@@ -1,4 +1,4 @@
-import type { AcceptDonationStatus, AcceptedDonationDTO } from './DonationDTO'
+import type { AcceptDonationStatus, AcceptDonationDTO } from './DonationDTO'
 import type { DTO, HasIdentifier } from './DTOCommon'
 
 export enum NotificationType {
@@ -24,7 +24,7 @@ export type NotificationDTO = DTO & HasIdentifier & {
   createdAt: string;
 }
 
-export type BloodDonationNotificationDTO = Omit<NotificationDTO, 'payload' | 'status'> & {
+export type DonationNotificationDTO = Omit<NotificationDTO, 'payload' | 'status'> & {
   payload: DonationRequestPayload | DonationAcceptancePayload;
   status: AcceptDonationStatus;
 }
@@ -58,6 +58,6 @@ export type DonationAcceptancePayload = {
   urgencyLevel: string;
   location: string;
   donationDateTime: string;
-  acceptedDonors?: AcceptedDonationDTO[];
+  acceptedDonors?: AcceptDonationDTO[];
   shortDescription?: string;
 }

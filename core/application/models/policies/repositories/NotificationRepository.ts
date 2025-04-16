@@ -1,19 +1,16 @@
-import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type {DonationNotificationDTO, NotificationDTO } from '../../../../../commons/dto/NotificationDTO';
 import type Repository from './Repository'
 
-type NotificationRepository<
-  T extends DTO,
-  DbFields extends Record<string, unknown> = Record<string, unknown>
-> = {
+type NotificationRepository = {
   queryBloodDonationNotifications(
     requestPostId: string,
     status?: string
-  ): Promise<T[]>;
+  ): Promise<(NotificationDTO | DonationNotificationDTO)[]>;
 
   getBloodDonationNotification(
     userId: string,
     requestPostId: string,
     type: string
-  ): Promise<T | null>;
-} & Repository<T, DbFields>
+  ): Promise<(NotificationDTO | DonationNotificationDTO) | null>;
+} & Repository<(NotificationDTO | DonationNotificationDTO), Record<string, unknown>>
 export default NotificationRepository
