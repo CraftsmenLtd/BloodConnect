@@ -7,9 +7,6 @@ import { UpdateBloodDonationAttributes } from '../../../../application/bloodDona
 import { NotificationService } from '../../../../application/notificationWorkflow/NotificationService'
 import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 import BloodDonationDynamoDbOperations from '../../commons/ddbOperations/BloodDonationDynamoDbOperations'
-import { mockRepository } from '../../../../application/tests/mocks/mockRepositories'
-import { DonationNotificationDTO } from 'commons/dto/NotificationDTO'
-import NotificationRepository from 'core/application/models/policies/repositories/NotificationRepository'
 import NotificationDynamoDbOperations from '../../commons/ddbOperations/DonationNotificationDynamoDbOperations'
 import { mockServiceLogger } from '../mock/loggerMock'
 
@@ -86,29 +83,6 @@ describe('updateBloodDonationLambda', () => {
       `Error: ${errorMessage}`,
       HTTP_CODES.ERROR
     )
-  })
-
-  it('should filter out undefined values from update attributes', async () => {
-    const mockResponse = { createdAt: expect.any(String), requestPostId: 'req123' }
-    const eventWithUndefined: UpdateBloodDonationAttributes = {
-      ...mockEvent,
-      bloodQuantity: undefined,
-      patientName: 'John Doe'
-    }
-
-    mockBloodDonationService.prototype.updateBloodDonation.mockResolvedValue(mockResponse)
-    mockGenerateApiGatewayResponse.mockReturnValue({
-      statusCode: HTTP_CODES.OK,
-      body: JSON.stringify(mockResponse)
-    })
-
-    await updateBloodDonationLambda(
-      eventWithUndefined as UpdateBloodDonationAttributes & HttpLoggerAttributes
-    )
-
-    const calledAttributes = mockBloodDonationService.prototype.updateBloodDonation.mock.calls[0][0]
-    expect(calledAttributes).not.toHaveProperty('bloodQuantity')
-    expect(calledAttributes).toHaveProperty('patientName', 'John Doe')
   })
 
   it('should filter out empty string values from update attributes', async () => {

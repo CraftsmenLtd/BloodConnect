@@ -68,11 +68,7 @@ describe('createBloodDonationLambda', () => {
     })
     expect(mockBloodDonationService.prototype.createBloodDonation).toHaveBeenCalledWith(
       mockEvent,
-      expect.any(BloodDonationDynamoDbOperations),
-      expect.any(BloodDonationModel),
       expect.any(UserService),
-      expect.any(DynamoDbTableOperations),
-      mockServiceLogger
     )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
       {
