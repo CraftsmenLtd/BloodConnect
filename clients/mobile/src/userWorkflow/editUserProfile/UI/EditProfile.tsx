@@ -143,21 +143,12 @@ const EditProfile = () => {
                 }
                 minRequiredLabel="Add minimum 1 area."
               />
-              <View
-                onStartShouldSetResponder={() => {
-                  return false
-                }}
-                onResponderRelease={() => {
-                  return true
-                }}
-              >
-                <MapView
-                  style={styles.mapViewContainer}
-                  centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
-                  zoomLevel={zoomLevel}
-                  markers={mapMarkers}
-                />
-              </View>
+              <MapView
+                style={styles.mapViewContainer}
+                centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
+                zoomLevel={zoomLevel}
+                markers={mapMarkers}
+              />
             </View>
 
             <View style={styles.inputFieldStyle}>
