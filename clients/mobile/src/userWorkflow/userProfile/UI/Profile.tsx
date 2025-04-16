@@ -29,7 +29,9 @@ export type EditProfileData = {
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
   const { userDetails } = useProfile()
-  const { mapMarkers, zoomLevel } = useMapView(userDetails?.preferredDonationLocations.map(location => location.area) ?? [])
+  const { mapMarkers, zoomLevel } = useMapView(
+    userDetails?.preferredDonationLocations.map(location => location.area) ?? []
+  )
   const navigation =  useNavigation<EditProfileScreenNavigationProp>()
 
   const renderDetailRow = (label: string, value: string = '', isLast: boolean = false): JSX.Element => (
@@ -92,21 +94,12 @@ const Profile: React.FC = () => {
               )
             })}
           </View>
-          <View
-            onStartShouldSetResponder={() => {
-              return false;
-            }}
-            onResponderRelease={() => {
-              return true;
-            }}
-          >
-            <MapView
-              style={styles.mapViewContainer}
-              centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
-              zoomLevel={zoomLevel}
-              markers={mapMarkers}
-            />
-          </View>
+          <MapView
+            style={styles.mapViewContainer}
+            centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
+            zoomLevel={zoomLevel}
+            markers={mapMarkers}
+          />
         </View>
       </ScrollView>
 

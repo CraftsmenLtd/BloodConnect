@@ -1,3 +1,4 @@
+import type React from 'react';
 import { useEffect, useState } from 'react'
 import { LocationService } from '../../LocationService/LocationService'
 import storageService from '../../utility/storageService'
@@ -6,9 +7,10 @@ import { Dimensions } from 'react-native'
 
 const screenWidth = Dimensions.get('window').width
 
-type Marker = {
+export type Marker = {
   coordinate: [number, number];
-}
+  component?: React.ReactElement;
+};
 
 type BoundingBox = {
   ne: [number, number]; // northeast [lon, lat]
@@ -60,7 +62,13 @@ const getZoomLevel = (
   return Math.min(Math.floor(Math.min(latZoom, lngZoom)) - 1, ZOOM_MAX)
 }
 
-const useMapView = (locations: string[]): { mapMarkers: Marker[]; zoomLevel: number } => {
+const useMapView = (
+  locations: string[],
+  markerComponent?: React.ReactElement
+): {
+  mapMarkers: Marker[];
+  zoomLevel: number;
+} => {
   const [mapMarkers, setMapMarkers] = useState<Marker[]>([])
   const [zoomLevel, setZoomLevel] = useState<number>(13)
 
@@ -74,13 +82,13 @@ const useMapView = (locations: string[]): { mapMarkers: Marker[]; zoomLevel: num
       const newMarkers: Marker[] = await Promise.all(
         locations.map(async(location): Promise<Marker> => {
           const cached = await storageService.getItem<[number, number]>(`location-coord-${location}`)
-          if (cached) return { coordinate: cached }
+          if (cached) return { coordinate: cached, component: markerComponent }
 
           const { latitude, longitude } = await locationService.getLatLon(location)
           const coordinate: [number, number] = [longitude, latitude]
           await storageService.storeItem(`location-coord-${location}`, coordinate)
 
-          return { coordinate }
+          return { coordinate, component: markerComponent }
         })
       )
 
@@ -95,7 +103,7 @@ const useMapView = (locations: string[]): { mapMarkers: Marker[]; zoomLevel: num
     }
 
     void fetchMarkers()
-  }, [locations])
+  }, [locations, markerComponent])
 
   return {
     mapMarkers,

@@ -1,9 +1,12 @@
 import Constants from 'expo-constants'
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Linking } from 'react-native'
 import Dropdown from '../../../components/inputElement/Dropdown'
 import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
+import MapView from '../../../components/mapView';
+import useMapView from '../../../components/mapView/useMapView';
 import { useAddPersonalInfo } from '../hooks/useAddPersonalInfo'
 import { bloodGroupOptions, genderOptions } from '../options'
 import { Input } from '../../../components/inputElement/Input'
@@ -33,6 +36,7 @@ const AddPersonalInfo = () => {
     errorMessage,
     isSSO
   } = useAddPersonalInfo()
+  const { mapMarkers, zoomLevel } = useMapView(personalInfo?.locations)
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const openLink = (url: string) => { Linking.openURL(url).catch(() => { }) }
@@ -91,6 +95,14 @@ const AddPersonalInfo = () => {
             }
             minRequiredLabel='Add minimum 1 area.'
           />
+          { personalInfo.locations.length > 0 && (
+            <MapView
+              style={styles.mapViewContainer}
+              centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
+              zoomLevel={zoomLevel}
+              markers={mapMarkers}
+            />
+          )}
         </View>
 
         <View style={styles.fieldSpacing}>
@@ -268,6 +280,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   submitButton: {
     marginTop: 15,
     paddingVertical: 16
+  },
+  mapViewContainer: {
+    borderRadius: 6,
+    borderWidth: 1.5
   }
 })
 

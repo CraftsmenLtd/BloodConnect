@@ -1,5 +1,9 @@
-import React from 'react'
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useRef } from 'react';
+import { View, StyleSheet, Text } from 'react-native'
+import { MaterialIcons } from '@expo/vector-icons'
+import type { 
+  CameraRef
+} from '@maplibre/maplibre-react-native'
 import {
   MapView as MMapView,
   Camera,
@@ -10,18 +14,14 @@ import {
 } from '@maplibre/maplibre-react-native'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-
-type Marker = {
-  coordinate: [number, number];
-  component?: React.ReactElement;
-};
+import type { Marker } from './useMapView'
 
 type MapViewProps = {
   centerCoordinate: [number, number];
   markers?: Marker[];
   zoomLevel?: number;
   style?: object;
-};
+}
 
 /**
  * MapView Component
@@ -41,24 +41,42 @@ type MapViewProps = {
  * Example Usage:
  * ---------------
  * ```tsx
- * import MapView from './MapView';
- * import useMapView from './useMapView';
  * import { View, Text } from 'react-native';
+ * import { MaterialIcons } from '@expo/vector-icons'
+ * import MapView from './MapView'
+ * import useMapView from './useMapView'
  *
  * const ExampleScreen = () => {
- *   const { mapMarkers, zoomLevel } = useMapView(locations) // locations -> string[]
+ *   const CustomMarker = (): React.ReactElement => {
+ *     const theme = useTheme();
+ *     const styles = createStyles(theme);
+ *
+ *     return (
+ *       <MaterialIcons
+ *         name={'location-pin'}
+ *         size={32}
+ *         color={theme.colors.primary}
+ *         style={{
+ *           width: 30,
+ *           height: 40
+ *         }}
+ *       />
+ *     )
+ *   }
+ *
+ *   const { mapMarkers, zoomLevel } = useMapView(locations, CustomMarker) // locations -> string[]
  *
  *   return (
  *     <MapView
  *       centerCoordinate={[90.4125, 23.8103]}
- *       zoomLevel={10}
+ *       zoomLevel={zoomLevel}
  *       markers={markers}
  *       style={{
  *         borderRadius: 6
  *       }}
  *     />
- *   );
- * };
+ *   )
+ * }
  * ```
  *
  * Dependencies:
@@ -70,16 +88,26 @@ const MapView: React.FC<MapViewProps> = ({
   markers = [],
   zoomLevel = 13,
   style = {}
-}) => {
-  const theme = useTheme();
-  const styles = createStyles(theme);
+}): React.ReactElement => {
+  const theme = useTheme()
+  const styles = createStyles(theme)
+  const cameraRef = useRef<CameraRef>(null)
 
   return (
-    <View style={[styles.container, style]}>
+    <View
+      style={[styles.container, style]}
+    >
       <MMapView
         style={StyleSheet.absoluteFill}
         mapStyle={StyleURL.Default}
         attributionEnabled={false}
+        zoomEnabled={true}
+        onDidFinishLoadingMap={() => {
+          cameraRef.current?.setCamera({
+            centerCoordinate: centerCoordinate,
+            zoomLevel: zoomLevel
+          });
+        }}
       >
         <RasterSource
           id="osm"
@@ -89,53 +117,50 @@ const MapView: React.FC<MapViewProps> = ({
           tileSize={256}>
           <RasterLayer id="osmTiles" sourceID="osm" style={{ rasterOpacity: 1 }} />
         </RasterSource>
-        <Camera
-          zoomLevel={zoomLevel}
-          centerCoordinate={centerCoordinate}
-        />
+        <Camera ref={cameraRef} />
         {markers.map((marker, index) => {
           const markerContent = React.isValidElement(marker.component)
             ? marker.component
-            : <DefaultMarker />;
+            : <DefaultMarker />
 
           return (
             <MarkerView key={index} coordinate={marker.coordinate}>
               {markerContent}
             </MarkerView>
-          );
+          )
         })}
       </MMapView>
       <MapAttribution />
     </View>
-  );
-};
+  )
+}
 
-const DefaultMarker = () => {
+const DefaultMarker = (): React.ReactElement => {
   const theme = useTheme();
   const styles = createStyles(theme);
 
   return (
-    <View style={styles.markerContainer}>
-      <View style={styles.pinHead}>
-        <View style={styles.innerDot} />
-      </View>
-      <View style={styles.pinTail} />
-    </View>
-  );
-};
+    <MaterialIcons
+      name={'location-pin'}
+      size={32}
+      color={theme.colors.primary}
+      style={styles.markerContainer}
+    />
+  )
+}
 
-const MapAttribution = () => {
+const MapAttribution = (): React.ReactElement => {
   const theme = useTheme();
   const styles = createStyles(theme);
 
   return (
     <View style={styles.attributionContainer}>
-      <Text style={styles.attributionText}>© OpenStreetMap contributors</Text>
+      <Text style={styles.attributionText}>© OpenStreetMap Contributors</Text>
     </View>
-  );
+  )
 }
 
-const createStyles = (theme: Theme) =>
+const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -146,40 +171,7 @@ const createStyles = (theme: Theme) =>
     },
     markerContainer: {
       width: 30,
-      height: 40,
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      backgroundColor: 'transparent'
-    },
-    pinHead: {
-      width: 24,
-      height: 24,
-      backgroundColor: theme.colors.primary,
-      borderRadius: 12,
-      justifyContent: 'center',
-      alignItems: 'center',
-      shadowColor: 'red',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 2,
-      elevation: 4,
-    },
-    innerDot: {
-      width: 8,
-      height: 8,
-      backgroundColor: 'white',
-      borderRadius: 4,
-    },
-    pinTail: {
-      width: 0,
-      height: 0,
-      borderLeftWidth: 6,
-      borderRightWidth: 6,
-      borderTopWidth: 10,
-      borderLeftColor: 'transparent',
-      borderRightColor: 'transparent',
-      borderTopColor: theme.colors.primary,
-      marginTop: -2,
+      height: 40
     },
     attributionContainer: {
       position: 'absolute',
@@ -188,12 +180,12 @@ const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.textSecondary,
       paddingHorizontal: 6,
       paddingVertical: 2,
-      borderRadius: 4,
+      borderRadius: 4
     },
     attributionText: {
       fontSize: 10,
-      color: theme.colors.white,
+      color: theme.colors.white
     }
-  });
+  })
 
-export default MapView;
+export default MapView
