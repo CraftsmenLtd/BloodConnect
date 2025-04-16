@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { View, StyleSheet, Text } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
-import type { 
+import type {
   CameraRef
 } from '@maplibre/maplibre-react-native'
 import {

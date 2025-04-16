@@ -5,8 +5,8 @@ import RadioButton from '../../components/inputElement/Radio'
 import { TextArea } from '../../components/inputElement/TextArea'
 import { Input } from '../../components/inputElement/Input'
 import { Button } from '../../components/button/Button'
-import MapView from '../../components/mapView';
-import useMapView from '../../components/mapView/useMapView';
+import MapView from '../../components/mapView'
+import useMapView from '../../components/mapView/useMapView'
 import Warning from '../../components/warning'
 import { SHORT_DESCRIPTION_MAX_LENGTH, WARNINGS } from '../../setup/constant/consts'
 import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodRequest'

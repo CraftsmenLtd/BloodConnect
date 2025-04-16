@@ -5,8 +5,8 @@ import Dropdown from '../../../components/inputElement/Dropdown'
 import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
-import MapView from '../../../components/mapView';
-import useMapView from '../../../components/mapView/useMapView';
+import MapView from '../../../components/mapView'
+import useMapView from '../../../components/mapView/useMapView'
 import { useAddPersonalInfo } from '../hooks/useAddPersonalInfo'
 import { bloodGroupOptions, genderOptions } from '../options'
 import { Input } from '../../../components/inputElement/Input'

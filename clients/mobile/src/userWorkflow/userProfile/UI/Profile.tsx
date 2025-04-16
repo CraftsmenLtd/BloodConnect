@@ -1,10 +1,10 @@
 import React from 'react'
 import { View, Text, ScrollView } from 'react-native'
-import MapView from '../../../components/mapView';
-import useMapView from '../../../components/mapView/useMapView';
+import MapView from '../../../components/mapView'
+import useMapView from '../../../components/mapView/useMapView'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
-import type { LocationData } from '../../../utility/formatting';
+import type { LocationData } from '../../../utility/formatting'
 import { formattedDate } from '../../../utility/formatting'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'

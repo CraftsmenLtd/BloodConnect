@@ -6,7 +6,7 @@ import RadioButton from '../../../components/inputElement/Radio'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
 import MapView from '../../../components/mapView'
-import useMapView from '../../../components/mapView/useMapView';
+import useMapView from '../../../components/mapView/useMapView'
 import MultiSelect from '../../../components/multiSelect'
 import { LocationService } from '../../../LocationService/LocationService'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'

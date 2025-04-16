@@ -10,7 +10,7 @@ const screenWidth = Dimensions.get('window').width
 export type Marker = {
   coordinate: [number, number];
   component?: React.ReactElement;
-};
+}
 
 type BoundingBox = {
   ne: [number, number]; // northeast [lon, lat]
