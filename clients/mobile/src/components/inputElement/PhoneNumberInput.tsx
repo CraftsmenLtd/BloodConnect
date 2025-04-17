@@ -8,6 +8,41 @@ import Warning from '../warning'
 import { commonStyles } from './commonStyles'
 import usePhoneNumberInput from './hooks/usePhoneNumberInput'
 
+/**
+ * PhoneNumberInput Component
+ *
+ * A reusable phone number input field using `react-native-phone-number-input`.
+ * Supports validation, formatting, and optional warnings for data visibility.
+ *
+ * Props:
+ * -------
+ * @param value - The current phone number value.
+ * @param onChange -{(name: string, text: string) => void}  - Callback triggered when the formatted phone number changes.
+ * @param placeholder - Placeholder text for the phone input.
+ * @param name - Field identifier used for form tracking.
+ * @param label - Label displayed above the input field.
+ * @param isRequired - Indicates if the field is required. If true, an asterisk is shown beside the label.
+ * @param showWarning - If true, displays a warning message about phone number visibility.
+ * @returns A styled phone number input field with label, validation, and warning support.
+ *
+ * Example Usage:
+ * ---------------
+ * ```tsx
+ *   <PhoneNumberInput
+ *      value={phone}
+ *      onChange={setPhone}
+ *      placeholder="Enter phone number"
+ *      name="userPhone"
+ *      label="Phone"
+ *      isRequired
+ *      showWarning
+ *   />
+ * ```
+ *
+ * Dependencies:
+ * - react-native-phone-number-input
+ * - libphonenumber-js
+ */
 const PhoneNumberInput = ({
   value,
   onChange,
@@ -16,11 +51,11 @@ const PhoneNumberInput = ({
   label = 'Contact Number',
   isRequired = true,
   showWarning = false
-}): React.ReactElement => {
+}: { value: string; onChange: (text: string) => void; placeholder?: string; name?: string; label?: string; isRequired?: boolean; showWarning?: boolean }): React.ReactElement => {
   const theme = useTheme()
   const styles = createStyles(theme)
-    const {
-    phoneInputRef,
+  const {
+      phoneInputRef,
       isValid,
       handleChangeFormattedText,
       parsedValue,
