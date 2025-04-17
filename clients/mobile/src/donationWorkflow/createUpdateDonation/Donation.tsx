@@ -35,7 +35,7 @@ const CreateBloodRequest = () => {
     loading,
     errorMessage
   } = useBloodRequest()
-  const { mapMarkers, zoomLevel } = useMapView([bloodRequestData.location])
+  const { centerCoordinate, mapMarkers, zoomLevel } = useMapView([bloodRequestData.location])
 
   return (
     <TouchableWithoutFeedback>
@@ -108,7 +108,7 @@ const CreateBloodRequest = () => {
             { bloodRequestData.location !== '' && (
               <MapView
                 style={styles.mapViewContainer}
-                centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
+                centerCoordinate={centerCoordinate}
                 zoomLevel={zoomLevel}
                 markers={mapMarkers}
               />

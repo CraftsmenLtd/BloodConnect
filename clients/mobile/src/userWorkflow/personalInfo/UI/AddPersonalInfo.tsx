@@ -36,7 +36,7 @@ const AddPersonalInfo = () => {
     errorMessage,
     isSSO
   } = useAddPersonalInfo()
-  const { mapMarkers, zoomLevel } = useMapView(personalInfo?.locations)
+  const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(personalInfo?.locations)
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const openLink = (url: string) => { Linking.openURL(url).catch(() => { }) }
@@ -98,7 +98,7 @@ const AddPersonalInfo = () => {
           { personalInfo.locations.length > 0 && (
             <MapView
               style={styles.mapViewContainer}
-              centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
+              centerCoordinate={centerCoordinate}
               zoomLevel={zoomLevel}
               markers={mapMarkers}
             />

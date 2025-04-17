@@ -1,6 +1,12 @@
 import type React from 'react';
 import { useEffect, useState } from 'react'
 import { LocationService } from '../../LocationService/LocationService'
+import {
+  DEFAULT_CENTER_COORDINATES,
+  DEFAULT_ZOOM_LEVEL,
+  MAX_ZOOM_LEVEL,
+  WORLD_DIM
+} from '../../setup/constant/consts'
 import storageService from '../../utility/storageService'
 import Constants from 'expo-constants'
 import { Dimensions } from 'react-native'
@@ -13,6 +19,7 @@ export type Marker = {
 }
 
 type BoundingBox = {
+  center: [number, number];
   ne: [number, number]; // northeast [lon, lat]
   sw: [number, number]; // southwest [lon, lat]
 }
@@ -29,7 +36,13 @@ const getBoundingBox = (coordinates: [number, number][]): BoundingBox => {
   const minLon = Math.min(...lons)
   const maxLon = Math.max(...lons)
 
+  const center: [number, number] = [
+    (minLon + maxLon) / 2,
+    (minLat + maxLat) / 2,
+  ]
+
   return {
+    center,
     ne: [maxLon, maxLat],
     sw: [minLon, minLat],
   }
@@ -41,9 +54,6 @@ const getZoomLevel = (
   mapHeight: number = 300,
   padding: number = 10
 ): number => {
-  const WORLD_DIM = { width: 256, height: 256 }
-  const ZOOM_MAX = 22
-
   const latRad = (lat: number): number => {
     const sin = Math.sin((lat * Math.PI) / 180)
     return Math.log((1 + sin) / (1 - sin)) / 2
@@ -59,53 +69,76 @@ const getZoomLevel = (
   const latZoom = Math.log(mapHeight * (1 - padding / mapHeight) / WORLD_DIM.height / latFraction) / Math.LN2
   const lngZoom = Math.log(mapWidth * (1 - padding / mapWidth) / WORLD_DIM.width / lngFraction) / Math.LN2
 
-  return Math.min(Math.floor(Math.min(latZoom, lngZoom)) - 1, ZOOM_MAX)
+  return Math.min(Math.floor(Math.min(latZoom, lngZoom)) - 1, MAX_ZOOM_LEVEL)
 }
 
 const useMapView = (
   locations: string[],
   markerComponent?: React.ReactElement
 ): {
+  centerCoordinate: [number, number];
   mapMarkers: Marker[];
   zoomLevel: number;
 } => {
   const [mapMarkers, setMapMarkers] = useState<Marker[]>([])
-  const [zoomLevel, setZoomLevel] = useState<number>(13)
+  const [zoomLevel, setZoomLevel] = useState<number>(DEFAULT_ZOOM_LEVEL)
+  const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>(DEFAULT_CENTER_COORDINATES)
+  const [stableLocations, setStableLocations] = useState(locations)
+
+  useEffect(() => {
+    if (JSON.stringify(stableLocations) !== JSON.stringify(locations)) {
+      setStableLocations(locations)
+    }
+  }, [locations])
 
   useEffect(() => {
     const fetchMarkers = async(): Promise<void> => {
-      if (!locations || locations.length === 0) {
+      if (!stableLocations || stableLocations.length === 0) {
         setMapMarkers([])
         return
       }
 
+      const coords: [number, number][] = []
       const newMarkers: Marker[] = await Promise.all(
         locations.map(async(location): Promise<Marker> => {
-          const cached = await storageService.getItem<[number, number]>(`location-coord-${location}`)
-          if (cached) return { coordinate: cached, component: markerComponent }
+          let coordinate = await storageService.getItem<[number, number]>(
+            `location-coord-${location}`
+          )
 
-          const { latitude, longitude } = await locationService.getLatLon(location)
-          const coordinate: [number, number] = [longitude, latitude]
-          await storageService.storeItem(`location-coord-${location}`, coordinate)
+          if (!coordinate) {
+            const { latitude, longitude } = await locationService.getLatLon(location)
+            coordinate = [longitude, latitude]
+            await storageService.storeItem(`location-coord-${location}`, coordinate)
+          }
 
-          return { coordinate, component: markerComponent }
+          coords.push(coordinate)
+
+          return {
+            coordinate,
+            component: markerComponent,
+          }
         })
       )
 
       setMapMarkers(newMarkers)
 
-      const coords = newMarkers.map(marker => marker.coordinate)
-      if (coords.length > 1) {
-        const bbox = getBoundingBox(coords)
-        const zoom = getZoomLevel(bbox, screenWidth, 300)
-        setZoomLevel(zoom)
+      if (coords.length <= 1) {
+        setZoomLevel(DEFAULT_ZOOM_LEVEL)
+        setCenterCoordinate(DEFAULT_CENTER_COORDINATES)
+        return
       }
+
+      const bbox = getBoundingBox(coords)
+      const zoom = getZoomLevel(bbox, screenWidth, 300)
+      setZoomLevel(zoom)
+      setCenterCoordinate(bbox.center)
     }
 
     void fetchMarkers()
-  }, [locations, markerComponent])
+  }, [stableLocations])
 
   return {
+    centerCoordinate,
     mapMarkers,
     zoomLevel,
   }

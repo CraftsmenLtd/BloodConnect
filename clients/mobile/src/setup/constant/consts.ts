@@ -19,3 +19,8 @@ export enum LOCAL_NOTIFICATION_TYPE {
 export const REMINDING_HOURS_BEFORE_DONATION = [3, 1]
 export const SHORT_DESCRIPTION_MAX_LENGTH = 200
 export const ACCOUNT_CREATION_MINIMUM_AGE = 18
+
+export const WORLD_DIM = { width: 256, height: 256 }
+export const MAX_ZOOM_LEVEL = 22
+export const DEFAULT_ZOOM_LEVEL = 13
+export const DEFAULT_CENTER_COORDINATES: [number, number] = [90.4125, 23.8103]

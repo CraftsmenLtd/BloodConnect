@@ -29,7 +29,7 @@ export type EditProfileData = {
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
   const { userDetails } = useProfile()
-  const { mapMarkers, zoomLevel } = useMapView(
+  const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(
     userDetails?.preferredDonationLocations.map(location => location.area) ?? []
   )
   const navigation =  useNavigation<EditProfileScreenNavigationProp>()
@@ -96,7 +96,7 @@ const Profile: React.FC = () => {
           </View>
           <MapView
             style={styles.mapViewContainer}
-            centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
+            centerCoordinate={centerCoordinate}
             zoomLevel={zoomLevel}
             markers={mapMarkers}
           />

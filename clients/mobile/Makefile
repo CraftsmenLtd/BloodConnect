@@ -37,4 +37,3 @@ upload-env:
 	@eas env:create --environment $(BUILD_PROFILE) --name AWS_USER_POOL_ID --value $(AWS_USER_POOL_ID) --type string --visibility plaintext --force --scope project --non-interactive
 	@eas env:create --environment $(BUILD_PROFILE) --name API_BASE_URL --value $(API_BASE_URL) --type string --visibility plaintext --force --scope project --non-interactive
 	@eas env:create --environment $(BUILD_PROFILE) --name AWS_COGNITO_DOMAIN --value $(AWS_COGNITO_DOMAIN) --type string --visibility plaintext --force --scope project --non-interactive
-	@eas env:create --environment $(BUILD_PROFILE) --name EXPO_USE_METRO_WORKSPACE_ROOT --value $(EXPO_USE_METRO_WORKSPACE_ROOT) --type string --visibility plaintext --force --scope project --non-interactive

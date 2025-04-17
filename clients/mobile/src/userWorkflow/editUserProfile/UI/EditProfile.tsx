@@ -30,7 +30,7 @@ const EditProfile = () => {
     isButtonDisabled,
     handleSave
   } = useEditProfile()
-  const { mapMarkers, zoomLevel } = useMapView(profileData?.locations)
+  const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(profileData?.locations)
 
   return (
     <TouchableWithoutFeedback>
@@ -145,7 +145,7 @@ const EditProfile = () => {
               />
               <MapView
                 style={styles.mapViewContainer}
-                centerCoordinate={mapMarkers.length > 0 ? mapMarkers[0].coordinate : [90.4125, 23.8103]}
+                centerCoordinate={centerCoordinate}
                 zoomLevel={zoomLevel}
                 markers={mapMarkers}
               />

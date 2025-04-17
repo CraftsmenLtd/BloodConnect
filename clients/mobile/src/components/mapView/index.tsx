@@ -1,9 +1,6 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { View, StyleSheet, Text } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
-import type {
-  CameraRef
-} from '@maplibre/maplibre-react-native'
 import {
   MapView as MMapView,
   Camera,
@@ -64,11 +61,11 @@ type MapViewProps = {
  *     )
  *   }
  *
- *   const { mapMarkers, zoomLevel } = useMapView(locations, CustomMarker) // locations -> string[]
+ *   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(locations, CustomMarker)
  *
  *   return (
  *     <MapView
- *       centerCoordinate={[90.4125, 23.8103]}
+ *       centerCoordinate={centerCoordinate}
  *       zoomLevel={zoomLevel}
  *       markers={markers}
  *       style={{
@@ -91,7 +88,6 @@ const MapView: React.FC<MapViewProps> = ({
 }): React.ReactElement => {
   const theme = useTheme()
   const styles = createStyles(theme)
-  const cameraRef = useRef<CameraRef>(null)
 
   return (
     <View
@@ -102,12 +98,8 @@ const MapView: React.FC<MapViewProps> = ({
         mapStyle={StyleURL.Default}
         attributionEnabled={false}
         zoomEnabled={true}
-        onDidFinishLoadingMap={() => {
-          cameraRef.current?.setCamera({
-            centerCoordinate: centerCoordinate,
-            zoomLevel: zoomLevel
-          });
-        }}
+        compassEnabled={true}
+        rotateEnabled={true}
       >
         <RasterSource
           id="osm"
@@ -117,7 +109,7 @@ const MapView: React.FC<MapViewProps> = ({
           tileSize={256}>
           <RasterLayer id="osmTiles" sourceID="osm" style={{ rasterOpacity: 1 }} />
         </RasterSource>
-        <Camera ref={cameraRef} />
+        <Camera centerCoordinate={centerCoordinate} zoomLevel={zoomLevel} />
         {markers.map((marker, index) => {
           const markerContent = React.isValidElement(marker.component)
             ? marker.component
