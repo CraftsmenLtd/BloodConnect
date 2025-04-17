@@ -17,7 +17,7 @@ import { createDonation, updateDonation } from '../donationService'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
 import type { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
-import { formatErrorMessage, formatPhoneNumber } from '../../utility/formatting'
+import { formatErrorMessage } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { useMyActivityContext } from '../../myActivity/context/useMyActivityContext'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
@@ -181,7 +181,7 @@ export const useBloodRequest = (): unknown => {
     const coordinates = await locationService.getLatLon(rest.location)
     const finalData = {
       ...removeEmptyAndNullProperty(rest),
-      contactNumber: formatPhoneNumber(rest.contactNumber),
+      contactNumber: rest.contactNumber,
       bloodQuantity: Number(bloodQuantity),
       donationDateTime: typeof rest.donationDateTime === 'string'
         ? new Date(rest.donationDateTime).toISOString()
@@ -201,7 +201,7 @@ export const useBloodRequest = (): unknown => {
     const finalData = {
       urgencyLevel: bloodRequestData.urgencyLevel,
       donationDateTime: new Date(bloodRequestData.donationDateTime).toISOString(),
-      contactNumber: formatPhoneNumber(bloodRequestData.contactNumber),
+      contactNumber: bloodRequestData.contactNumber,
       patientName: bloodRequestData.patientName,
       shortDescription: bloodRequestData.shortDescription,
       transportationInfo: bloodRequestData.transportationInfo,

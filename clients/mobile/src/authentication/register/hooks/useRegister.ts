@@ -9,7 +9,6 @@ import {
 import { initializeState } from '../../../utility/stateUtils'
 import type { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import { formatPhoneNumber } from '../../../utility/formatting'
 import { useSocialAuth } from '../../socialAuth/hooks/useSocialAuth'
 
 type CredentialKeys = keyof RegisterCredential
@@ -66,7 +65,7 @@ export const useRegister = (): unknown => {
     navigation.navigate(SCREENS.SET_PASSWORD, {
       routeParams: {
         ...registerCredential,
-        phoneNumber: formatPhoneNumber(registerCredential.phoneNumber),
+        phoneNumber: registerCredential.phoneNumber,
         password: ''
       },
       fromScreen: SCREENS.REGISTER

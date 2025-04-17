@@ -20,8 +20,7 @@ import type {
   LocationData} from '../../../utility/formatting';
 import {
   formatErrorMessage,
-  formatToTwoDecimalPlaces,
-  formatPhoneNumber
+  formatToTwoDecimalPlaces
 } from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
@@ -181,7 +180,7 @@ export const useAddPersonalInfo = (): unknown => {
         height: personalInfo.height,
         weight: formatToTwoDecimalPlaces(personalInfo.weight),
         preferredDonationLocations,
-        ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {}),
+        ...(isSSO && phoneNumber != null ? { phoneNumbers: [phoneNumber] } : {}),
         availableForDonation: rest.availableForDonation === 'yes'
       }
 

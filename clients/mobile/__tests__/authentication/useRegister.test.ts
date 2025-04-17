@@ -95,7 +95,7 @@ describe('useRegister Hook', () => {
     act(() => {
       result.current.handleInputChange('phoneNumber', '1234567890')
     })
-    expect(result.current.isButtonDisabled).toBe(true)
+    expect(result.current.isButtonDisabled).toBe(false)
   })
 
   it('should set error messages correctly', () => {

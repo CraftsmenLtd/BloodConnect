@@ -2,6 +2,7 @@ import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import type PhoneInput from 'react-native-phone-number-input'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { DEFAULT_COUNTRY_CODE } from '../../../setup/constant/consts'
 
 const usePhoneNumberInput = (
   value: string,
@@ -17,7 +18,7 @@ const usePhoneNumberInput = (
   const phoneInputRef = useRef<PhoneInput>(null)
   const [isValid, setIsValid] = useState(true)
   const [parsedValue, setParsedValue] = useState('')
-  const [defaultCode, setDefaultCode] = useState('BD')
+  const [defaultCode, setDefaultCode] = useState(DEFAULT_COUNTRY_CODE)
 
   useEffect(() => {
    if (value) {
@@ -25,7 +26,7 @@ const usePhoneNumberInput = (
         const phoneNumber = parsePhoneNumberFromString(value)
 
         if (phoneNumber) {
-          setDefaultCode(phoneNumber.country || 'BD')
+          setDefaultCode(phoneNumber.country || DEFAULT_COUNTRY_CODE)
           setParsedValue(phoneNumber.nationalNumber || '')
           const valid = phoneNumber.isValid()
           setIsValid(valid)
