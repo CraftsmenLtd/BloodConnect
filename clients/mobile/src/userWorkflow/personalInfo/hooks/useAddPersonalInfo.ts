@@ -9,8 +9,7 @@ import {
   validateDateOfBirth,
   validatePastOrTodayDate,
   validateHeight,
-  validateWeight,
-  validatePhoneNumber
+  validateWeight
 } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import type { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
@@ -85,7 +84,7 @@ export const useAddPersonalInfo = (): unknown => {
       acceptPolicy: [validateRequired]
     }
     if (isSSO) {
-      rules.phoneNumber = [validateRequired, validatePhoneNumber]
+      rules.phoneNumber = [validateRequired]
     }
 
     return rules as Record<PersonalInfoKeys, ValidationRule[]>

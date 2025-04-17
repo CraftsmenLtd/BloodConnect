@@ -5,7 +5,6 @@ import type {
 import {
   validateInput,
   validateRequired,
-  validatePhoneNumber,
   validateDateTime,
   validateDonationDateTime,
   validateShortDescription,
@@ -52,7 +51,7 @@ const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = 
   bloodQuantity: [validateRequired],
   donationDateTime: [validateRequired, validateDateTime],
   location: [validateRequired],
-  contactNumber: [validateRequired, validatePhoneNumber],
+  contactNumber: [validateRequired],
   shortDescription: [validateShortDescription]
 }
 

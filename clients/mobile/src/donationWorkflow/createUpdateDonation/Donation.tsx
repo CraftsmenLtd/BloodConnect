@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import Constants from 'expo-constants'
 import { ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
+import PhoneNumberInput from '../../components/inputElement/PhoneNumberInput'
 import RadioButton from '../../components/inputElement/Radio'
 import { TextArea } from '../../components/inputElement/TextArea'
 import { Input } from '../../components/inputElement/Input'
 import { Button } from '../../components/button/Button'
 import MapView from '../../components/mapView'
 import useMapView from '../../components/mapView/useMapView'
-import Warning from '../../components/warning'
-import { SHORT_DESCRIPTION_MAX_LENGTH, WARNINGS } from '../../setup/constant/consts'
+import { SHORT_DESCRIPTION_MAX_LENGTH } from '../../setup/constant/consts'
 import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodRequest'
 import { bloodBagOptions, bloodGroupOptions, transportationOptions } from './donationOption'
 import DateTimePickerComponent from '../../components/inputElement/DateTimePicker'
@@ -116,18 +116,9 @@ const CreateBloodRequest = () => {
           </View>
 
           <View style={styles.fieldSpacing}>
-            <Input
-              name="contactNumber"
-              label="Contact Number"
+            <PhoneNumberInput
               value={bloodRequestData.contactNumber}
-              onChangeText={handleInputChange}
-              placeholder="Enter contact number"
-              keyboardType="phone-pad"
-              error={errors.contactNumber}
-              isRequired={true}
-            />
-            <Warning
-              text={WARNINGS.PHONE_NUMBER_VISIBLE}
+              onChange={handleInputChange}
               showWarning={bloodRequestData.contactNumber !== ''}
             />
           </View>
