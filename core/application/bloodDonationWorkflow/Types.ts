@@ -3,6 +3,7 @@ import { validateDonationDateTime, validateBloodQuantity } from '../utils/valida
 import type {
   AcceptDonationStatus,
   BloodGroup,
+  DonationStatus,
   DonorSearchStatus,
   EligibleDonorInfo,
   UrgencyType
@@ -62,6 +63,46 @@ export type UpdateBloodDonationAttributes = {
   seekerName?: string;
   transportationInfo?: string;
   shortDescription?: string;
+}
+
+export enum DynamoDBEventName {
+  INSERT = 'INSERT',
+  MODIFY = 'MODIFY'
+}
+
+export type DonorSearchConfig = {
+  dynamodbTableName: string;
+  awsRegion: string;
+  cacheGeohashPrefixLength: number;
+  maxGeohashCacheEntriesCount: number;
+  maxGeohashCacheMbSize: number;
+  maxGeohashCacheTimeoutMinutes: number;
+  maxGeohashNeighborSearchLevel: number;
+  donorSearchMaxInitiatingRetryCount: number;
+  neighborSearchGeohashPrefixLength: number;
+  donorSearchDelayBetweenExecution: number;
+  maxGeohashPerProcessingBatch: number;
+  maxGeohashesPerExecution: number;
+  donorSearchQueueUrl: string;
+}
+
+export type DonationRequestInitiatorAttributes = {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+  requestedBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyType;
+  countryCode: string;
+  location: string;
+  patientName: string;
+  status: DonationStatus;
+  geohash: string;
+  donationDateTime: string;
+  contactNumber: string;
+  transportationInfo: string;
+  shortDescription: string;
+  eventName?: DynamoDBEventName;
 }
 
 export type DonorSearchAttributes = {
