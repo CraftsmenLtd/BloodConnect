@@ -42,15 +42,16 @@ export class AcceptDonationService {
 
     const donorProfile = await userService.getUser(donorId)
     const seekerProfile = await userService.getUser(seekerId)
-    const donationPost = await this.getDonationRequest(
-      bloodDonationService,
+    const donationPost = await bloodDonationService.getDonationRequest(
       seekerId,
       requestPostId,
       createdAt
     )
-
     if (donorProfile.bloodGroup !== donationPost.requestedBloodGroup) {
       throw new Error('Your blood group doesn\'t match with the request blood group')
+    }
+    if (donationPost.status !== DonationStatus.PENDING) {
+      throw new Error('Donation request is no longer available for acceptance.')
     }
 
     if (acceptanceRecord === null) {
@@ -191,23 +192,6 @@ export class AcceptDonationService {
 
   isAlreadyDonated(acceptanceRecord: AcceptDonationDTO | null): boolean {
     return acceptanceRecord != null && acceptanceRecord.status === AcceptDonationStatus.COMPLETED
-  }
-
-  async getDonationRequest(
-    bloodDonationService: BloodDonationService,
-    seekerId: string,
-    requestPostId: string,
-    createdAt: string
-  ): Promise<DonationDTO> {
-    const donationPost = await bloodDonationService.getDonationRequest(
-      seekerId,
-      requestPostId,
-      createdAt
-    )
-    if (donationPost.status !== DonationStatus.PENDING) {
-      throw new Error('Donation request is no longer available for acceptance.')
-    }
-    return donationPost
   }
 
   async sendNotificationToSeeker(

@@ -2,35 +2,31 @@ import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import type { GetDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import type {
-  AcceptedDonationDTO,
-  DonationDTO
-} from '../../../../commons/dto/DonationDTO'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
-import type {
-  DonationFields
-} from '../../../application/models/dbModels/BloodDonationModel';
-import {
-  BloodDonationModel
-} from '../../../application/models/dbModels/BloodDonationModel'
+import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
-import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
-import type {
-  AcceptedDonationFields
-} from '../../../application/models/dbModels/AcceptDonationModel';
-import {
-  AcceptDonationRequestModel
-} from '../../../application/models/dbModels/AcceptDonationModel'
 import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import AcceptDonationDynamoDbOperations from '../commons/ddbOperations/AcceptedDonationDynamoDbOperations'
+import { Config } from '../../../../commons/libs/config/config'
 
-const bloodDonationService = new BloodDonationService()
-const acceptDonationService = new AcceptDonationService()
+const config = new Config<{
+  dynamodbTableName: string;
+  awsRegion: string;
+}>().getConfig()
 
-async function completeDonationRequest(
+const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const acceptDonationDynamoDbOperations = new AcceptDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+
+async function getDonationRequestLambda(
   event: GetDonationRequestAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(
@@ -38,31 +34,16 @@ async function completeDonationRequest(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
+  const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
+  const acceptDonationService = new AcceptDonationService(acceptDonationDynamoDbOperations, httpLogger)
   try {
     const { seekerId, requestPostId, createdAt } = event
-    const donationPost = await bloodDonationService.getDonationRequest(
+    const donationDetails = await bloodDonationService.getDonationRequestDetails(
       seekerId,
       requestPostId,
       createdAt,
-      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
-        new BloodDonationModel()
-      )
+      acceptDonationService
     )
-    const acceptedDonors = await acceptDonationService.getAcceptedDonorList(
-      seekerId,
-      requestPostId,
-      new AcceptedDonationDynamoDbOperations<
-      AcceptedDonationDTO,
-      AcceptedDonationFields,
-      AcceptDonationRequestModel
-      >(new AcceptDonationRequestModel())
-    )
-
-    const donationDetails = {
-      ...donationPost,
-      requestPostId: donationPost.id,
-      acceptedDonors
-    }
     return generateApiGatewayResponse(
       {
         success: true,
@@ -80,4 +61,4 @@ async function completeDonationRequest(
   }
 }
 
-export default completeDonationRequest
+export default getDonationRequestLambda

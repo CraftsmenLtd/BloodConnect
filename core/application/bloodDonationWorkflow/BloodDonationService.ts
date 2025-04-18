@@ -6,6 +6,9 @@ import { DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
+import type {
+  BloodDonationResponse
+} from './Types';
 import {
   type BloodDonationAttributes,
   type UpdateBloodDonationAttributes,
@@ -19,6 +22,7 @@ import type { UserService } from '../userWorkflow/UserService'
 import type { Logger } from '../models/logger/Logger'
 import type { NotificationService } from '../notificationWorkflow/NotificationService'
 import type { DonationRequestPayloadAttributes } from '../notificationWorkflow/Types'
+import type { AcceptDonationService } from './AcceptDonationRequestService'
 
 export class BloodDonationService {
   constructor(
@@ -38,9 +42,7 @@ export class BloodDonationService {
     }
 
     this.logger.info('checking daily request limit')
-    await this.checkDailyRequestThrottling(
-      bloodDonationAttributes.seekerId
-    )
+    await this.checkDailyRequestThrottling(bloodDonationAttributes.seekerId)
 
     this.logger.info('validating donation request')
     const validationResponse = validateInputWithRules(
@@ -196,10 +198,9 @@ export class BloodDonationService {
     seekerId: string,
     requestPostId: string,
     createdAt: string,
-    status: DonationStatus,
-    bloodDonationRepository: BloodDonationRepository
+    status: DonationStatus
   ): Promise<void> {
-    const item = await bloodDonationRepository.getDonationRequest(
+    const item = await this.bloodDonationRepository.getDonationRequest(
       seekerId,
       requestPostId,
       createdAt
@@ -214,6 +215,25 @@ export class BloodDonationService {
       createdAt,
       status
     }
-    await bloodDonationRepository.update(updateData)
+    await this.bloodDonationRepository.update(updateData)
+  }
+
+  async getDonationRequestDetails(
+    seekerId: string,
+    requestPostId: string,
+    createdAt: string,
+    acceptDonationService: AcceptDonationService
+  ): Promise<BloodDonationResponse> {
+    const donationPost = await this.getDonationRequest(
+      seekerId,
+      requestPostId,
+      createdAt
+    )
+    const acceptedDonors = await acceptDonationService.getAcceptedDonorList(seekerId, requestPostId)
+
+    return {
+      ...donationPost,
+      acceptedDonors
+    }
   }
 }

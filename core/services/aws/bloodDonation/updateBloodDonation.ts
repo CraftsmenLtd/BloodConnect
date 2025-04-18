@@ -20,7 +20,6 @@ const notificationDynamoDbOperations = new DonationNotificationDynamoDbOperation
   config.dynamodbTableName,
   config.awsRegion
 )
-
 const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
   config.dynamodbTableName,
   config.awsRegion
@@ -55,8 +54,7 @@ async function updateBloodDonationLambda(
     }
     const response = await bloodDonationService.updateBloodDonation(
       bloodDonationAttributes,
-      notificationService,
-      httpLogger
+      notificationService
     )
     return generateApiGatewayResponse(
       {

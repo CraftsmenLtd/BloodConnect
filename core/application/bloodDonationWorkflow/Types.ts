@@ -1,8 +1,10 @@
-import type { ValidationRule} from '../utils/validator';
+import type { ValidationRule } from '../utils/validator';
 import { validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
 import type {
+  AcceptDonationDTO,
   AcceptDonationStatus,
   BloodGroup,
+  DonationDTO,
   DonationStatus,
   DonorSearchStatus,
   EligibleDonorInfo,
@@ -42,7 +44,7 @@ export type BloodDonationAttributes = {
 }
 type CredentialKeys = 'donationDateTime' | 'bloodQuantity'
 
-export const validationRules: Record<CredentialKeys, Array<ValidationRule<unknown>> > = {
+export const validationRules: Record<CredentialKeys, Array<ValidationRule<unknown>>> = {
   donationDateTime: [(value: string): boolean => validateDonationDateTime(value)],
   bloodQuantity: [(value: number): boolean => validateBloodQuantity(value)]
 }
@@ -146,6 +148,10 @@ export type AcceptDonationRequestAttributes = {
   status: AcceptDonationStatus;
   donorName: string;
   phoneNumbers: string[];
+}
+
+export type BloodDonationResponse = DonationDTO & {
+  acceptedDonors: AcceptDonationDTO[];
 }
 
 export type DonationRecordEventAttributes = {
