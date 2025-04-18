@@ -19,6 +19,7 @@ export default class DonationNotificationDynamoDbOperations extends DynamoDbTabl
   constructor(tableName: string, region: string) {
     super(new DonationNotificationModel(), tableName, region)
   }
+
   async queryBloodDonationNotifications(
     requestPostId: string,
     status?: string

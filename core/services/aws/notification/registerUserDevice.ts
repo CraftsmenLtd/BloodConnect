@@ -1,13 +1,7 @@
 import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
-import type {
-  UserFields
-} from '../../../application/models/dbModels/UserModel';
-import UserModel from '../../../application/models/dbModels/UserModel'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import SNSOperations from '../commons/sns/SNSOperations'
 import type { SnsRegistrationAttributes } from '../../../application/notificationWorkflow/Types'
@@ -18,10 +12,27 @@ import {
   createHTTPLogger
 } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { Config } from 'commons/libs/config/config'
+import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
+import { UserService } from 'core/application/userWorkflow/UserService'
+import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
 
-const notificationService = new NotificationService()
+const config = new Config<{
+  dynamodbTableName: string;
+  awsRegion: string;
+  minMonthsBetweenDonations: number;
+}>().getConfig()
 
-async function registerUserDevice(
+const notificationDynamoDbOperations = new DonationNotificationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const userDynamoDbOperations = new UserDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+
+async function registerUserDeviceLambda(
   event: SnsRegistrationAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(
@@ -29,6 +40,9 @@ async function registerUserDevice(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
+  const notificationService = new NotificationService(notificationDynamoDbOperations, httpLogger)
+  const userService = new UserService(userDynamoDbOperations, httpLogger)
+
   try {
     const snsAttributes = {
       userId: event.userId,
@@ -37,9 +51,7 @@ async function registerUserDevice(
     }
     const response = await notificationService.storeDevice(
       snsAttributes,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(
-        new UserModel()
-      ),
+      userService,
       new SNSOperations()
     )
     return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
@@ -55,4 +67,4 @@ async function registerUserDevice(
   }
 }
 
-export default registerUserDevice
+export default registerUserDeviceLambda

@@ -1,5 +1,4 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
-import type { UserDetailsDTO } from '../../../commons/dto/UserDTO'
 import type {
   DonationNotificationDTO,
   NotificationDTO
@@ -12,10 +11,7 @@ import type {
   DonationNotificationAttributes,
   DonationRequestPayloadAttributes,
   NotificationAttributes,
-  SnsRegistrationAttributes,
-  StoreNotificationEndPoint
-} from './Types'
-import type Repository from '../models/policies/repositories/Repository'
+  SnsRegistrationAttributes} from './Types'
 import type { SNSModel } from '../models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
 import type { QueueModel } from '../models/queue/QueueModel'
@@ -24,6 +20,7 @@ import { AcceptDonationStatus } from '../../../commons/dto/DonationDTO'
 import type { Logger } from '../models/logger/Logger';
 import type NotificationRepository from '../models/policies/repositories/NotificationRepository';
 import { getBloodRequestMessage } from '../bloodDonationWorkflow/BloodDonationMessages';
+import type { UserService } from '../userWorkflow/UserService';
 
 export class NotificationService {
   constructor(
@@ -175,8 +172,8 @@ export class NotificationService {
 
   async storeDevice(
     registrationAttributes: SnsRegistrationAttributes,
-    userRepository: Repository<UserDetailsDTO>,
-    snsModel: SNSModel
+    userService: UserService,
+    snsModel: SNSModel,
   ): Promise<string> {
     try {
       const { userId } = registrationAttributes
@@ -186,17 +183,11 @@ export class NotificationService {
         throw new Error('Device registration failed.')
       }
 
-      const item = await userRepository.getItem(`USER#${userId}`, 'PROFILE')
+      const item = await userService.getUser(userId)
       if (item === null) {
         throw new Error('Item not found.')
       }
-
-      const updateData: Partial<StoreNotificationEndPoint> = {
-        id: userId,
-        snsEndpointArn,
-        updatedAt: new Date().toISOString()
-      }
-      await userRepository.update(updateData)
+      await userService.updateUserNotificationEndPoint(userId, snsEndpointArn)
       return 'Device registration successful.'
     } catch (error: unknown) {
       const typedError = error as Error
@@ -207,8 +198,8 @@ export class NotificationService {
         if (existingArn !== null) {
           return await this.handleExistingSnsEndpoint(
             snsModel,
+            userService,
             existingArn,
-            userRepository,
             registrationAttributes
           )
         }
@@ -219,28 +210,15 @@ export class NotificationService {
 
   private async handleExistingSnsEndpoint(
     snsModel: SNSModel,
+    userService: UserService,
     existingArn: string,
-    userRepository: Repository<UserDetailsDTO>,
     registrationAttributes: SnsRegistrationAttributes
   ): Promise<string> {
     const existingAttributes = await snsModel.getEndpointAttributes(existingArn)
-    const oldUpdateData: Partial<StoreNotificationEndPoint> = {
-      id: existingAttributes.CustomUserData,
-      snsEndpointArn: '',
-      updatedAt: new Date().toISOString()
-    }
-
-    await userRepository.update(oldUpdateData)
+    await userService.updateUserNotificationEndPoint(existingAttributes.CustomUserData, '')
 
     await snsModel.setEndpointAttributes(existingArn, registrationAttributes)
-    const { userId } = registrationAttributes
-
-    const updateData: Partial<StoreNotificationEndPoint> = {
-      id: userId,
-      snsEndpointArn: existingArn,
-      updatedAt: new Date().toISOString()
-    }
-    await userRepository.update(updateData)
+    await userService.updateUserNotificationEndPoint(registrationAttributes.userId, existingArn)
     return 'Device registration successful with existing endpoint.'
   }
 
