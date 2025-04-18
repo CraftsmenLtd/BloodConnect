@@ -16,13 +16,17 @@ type AllConfig = {
   platformArnApns: string;
   platformArnFcm: string;
   notificationQueueUrl: string;
-  maxGeohashCacheEntriesCount: string;
-  maxGeohashCacheMbSize: string;
-  maxGeohashCacheTimeoutMinutes: string;
-  maxGeohashNeighborSearchLevel: string;
+  donorSearchQueueUrl: string;
+  maxGeohashCacheEntriesCount: number;
+  maxGeohashCacheMbSize: number;
+  maxGeohashCacheTimeoutMinutes: number;
+  maxGeohashNeighborSearchLevel: number;
   neighborSearchGeohashPrefixLength: number;
-  cacheGeohashPrefixLength: string;
+  cacheGeohashPrefixLength: number;
+  donorSearchMaxInitiatingRetryCount: number;
   maxGeohashPrefixLength: number;
+  donorSearchDelayBetweenExecution: number;
+  maxGeohashesPerExecution: number;
   monitorDonationBucketPrefix: string;
 }
 
@@ -50,13 +54,17 @@ export class Config<T extends ConfigSubset<T>> {
       platformArnApns: process.env.PLATFORM_ARN_APNS as AllConfig['platformArnApns'],
       platformArnFcm: process.env.PLATFORM_ARN_FCM as AllConfig['platformArnFcm'],
       notificationQueueUrl: process.env.NOTIFICATION_QUEUE_URL as AllConfig['notificationQueueUrl'],
-      maxGeohashCacheEntriesCount: process.env.MAX_GEOHASH_CACHE_ENTRIES_COUNT as AllConfig['maxGeohashCacheEntriesCount'],
-      maxGeohashCacheMbSize: process.env.MAX_GEOHASH_CACHE_MB_SIZE as AllConfig['maxGeohashCacheMbSize'],
-      maxGeohashCacheTimeoutMinutes: process.env.MAX_GEOHASH_CACHE_TIMEOUT_MINUTES as AllConfig['maxGeohashCacheTimeoutMinutes'],
-      maxGeohashNeighborSearchLevel: process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL as AllConfig['maxGeohashNeighborSearchLevel'],
+      donorSearchQueueUrl: process.env.DONOR_SEARCH_QUEUE_URL as AllConfig['donorSearchQueueUrl'],
+      maxGeohashCacheEntriesCount: Number(process.env.MAX_GEOHASH_CACHE_ENTRIES_COUNT) as AllConfig['maxGeohashCacheEntriesCount'],
+      maxGeohashCacheMbSize: Number(process.env.MAX_GEOHASH_CACHE_MB_SIZE) as AllConfig['maxGeohashCacheMbSize'],
+      maxGeohashCacheTimeoutMinutes: Number(process.env.MAX_GEOHASH_CACHE_TIMEOUT_MINUTES) as AllConfig['maxGeohashCacheTimeoutMinutes'],
+      maxGeohashNeighborSearchLevel: Number(process.env.MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL) as AllConfig['maxGeohashNeighborSearchLevel'],
       neighborSearchGeohashPrefixLength: Number(process.env.NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH) as AllConfig['neighborSearchGeohashPrefixLength'],
-      cacheGeohashPrefixLength: process.env.CACHE_GEOHASH_PREFIX_LENGTH as AllConfig['cacheGeohashPrefixLength'],
+      cacheGeohashPrefixLength: Number(process.env.CACHE_GEOHASH_PREFIX_LENGTH) as AllConfig['cacheGeohashPrefixLength'],
+      donorSearchMaxInitiatingRetryCount: Number(process.env.DONOR_SEARCH_MAX_INITIATING_RETRY_COUNT) as AllConfig['cacheGeohashPrefixLength'],
       maxGeohashPrefixLength: Number(process.env.MAX_GEOHASH_PREFIX_LENGTH) as AllConfig['maxGeohashPrefixLength'],
+      donorSearchDelayBetweenExecution: Number(process.env.DONOR_SEARCH_DELAY_BETWEEN_EXECUTION) as AllConfig['maxGeohashPrefixLength'],
+      maxGeohashesPerExecution: Number(process.env.MAX_GEOHASHES_PER_EXECUTION) as AllConfig['maxGeohashPrefixLength'],
       monitorDonationBucketPrefix: process.env.MONITOR_DONATION_BUCKET_PREFIX as AllConfig['monitorDonationBucketPrefix'],
     }
   }
