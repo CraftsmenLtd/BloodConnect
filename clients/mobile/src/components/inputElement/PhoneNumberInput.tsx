@@ -68,12 +68,12 @@ const PhoneNumberInput = ({
 
   return (
     <View style={styles.container}>
-      {label ? (
+      {label && (
         <Text style={styles.label}>
           {label}
           {isRequired && <Text style={styles.asterisk}> *</Text>}
         </Text>
-      ) : null}
+      )}
       <PhoneInput
         key={`${defaultCode}-${parsedValue}`}
         ref={phoneInputRef}
