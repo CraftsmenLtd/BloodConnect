@@ -2,13 +2,11 @@ import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
 import type { DonationDTO } from '../../../commons/dto/DonationDTO'
-import { DonationStatus } from '../../../commons/dto/DonationDTO'
+import { AcceptDonationStatus, DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { generateGeohash } from '../utils/geohash'
 import { validateInputWithRules } from '../utils/validator'
-import type {
-  BloodDonationResponse
-} from './Types';
+import type { BloodDonationResponse } from './Types'
 import {
   type BloodDonationAttributes,
   type UpdateBloodDonationAttributes,
@@ -21,8 +19,16 @@ import type BloodDonationRepository from '../models/policies/repositories/BloodD
 import type { UserService } from '../userWorkflow/UserService'
 import type { Logger } from '../models/logger/Logger'
 import type { NotificationService } from '../notificationWorkflow/NotificationService'
-import type { DonationRequestPayloadAttributes } from '../notificationWorkflow/Types'
+import type {
+  DonationRequestPayloadAttributes,
+  NotificationAttributes
+} from '../notificationWorkflow/Types'
 import type { AcceptDonationService } from './AcceptDonationRequestService'
+import type { DonationRecordService } from './DonationRecordService'
+import { NotificationStatus, NotificationType } from '../../../commons/dto/NotificationDTO'
+import type { UpdateUserAttributes } from '../userWorkflow/Types'
+import type { LocationService } from '../userWorkflow/LocationService'
+import type { QueueModel } from '../models/queue/QueueModel'
 
 export class BloodDonationService {
   constructor(
@@ -218,22 +224,109 @@ export class BloodDonationService {
     await this.bloodDonationRepository.update(updateData)
   }
 
+  async checkAndUpdateDonationStatus(
+    seekerId: string,
+    requestPostId: string,
+    createdAt: string,
+    acceptDonationService: AcceptDonationService
+  ): Promise<void> {
+    const donationPost = await this.getDonationRequest(seekerId, requestPostId, createdAt)
+    const acceptedDonors = await acceptDonationService.getAcceptedDonorList(seekerId, requestPostId)
+
+    if (acceptedDonors.length >= donationPost.bloodQuantity) {
+      await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.MANAGED)
+    }
+  }
+
   async getDonationRequestDetails(
     seekerId: string,
     requestPostId: string,
     createdAt: string,
     acceptDonationService: AcceptDonationService
   ): Promise<BloodDonationResponse> {
-    const donationPost = await this.getDonationRequest(
-      seekerId,
-      requestPostId,
-      createdAt
-    )
+    const donationPost = await this.getDonationRequest(seekerId, requestPostId, createdAt)
     const acceptedDonors = await acceptDonationService.getAcceptedDonorList(seekerId, requestPostId)
 
     return {
       ...donationPost,
       acceptedDonors
     }
+  }
+
+  async completeDonationRequest(
+    seekerId: string,
+    requestPostId: string,
+    requestCreatedAt: string,
+    donorIds: string[],
+    donationRecordService: DonationRecordService,
+    userService: UserService,
+    notificationService: NotificationService,
+    locationService: LocationService,
+    minMonthsBetweenDonations: number,
+    queueModel: QueueModel
+  ): Promise<void> {
+    const donationPost = await this.getDonationRequest(seekerId, requestPostId, requestCreatedAt)
+
+    await this.updateDonationStatus(
+      seekerId,
+      requestPostId,
+      requestCreatedAt,
+      DonationStatus.COMPLETED
+    )
+    for (const donorId of donorIds) {
+      await donationRecordService.createDonationRecord({
+        donorId,
+        seekerId,
+        requestPostId,
+        requestCreatedAt,
+        requestedBloodGroup: donationPost.requestedBloodGroup,
+        location: donationPost.location,
+        donationDateTime: donationPost.donationDateTime
+      })
+
+      await notificationService.updateBloodDonationNotificationStatus(
+        donorId,
+        requestPostId,
+        NotificationType.BLOOD_REQ_POST,
+        AcceptDonationStatus.COMPLETED
+      )
+
+      const userAttributes = {
+        lastDonationDate: new Date().toISOString(),
+        availableForDonation: false
+      }
+      await userService.updateUserAttributes(
+        donorId,
+        userAttributes as UpdateUserAttributes,
+        locationService,
+        minMonthsBetweenDonations
+      )
+    }
+
+    await Promise.allSettled(
+      donorIds.map(async(donorId) => {
+        const notificationAttributes: NotificationAttributes = {
+          userId: donorId,
+          title: 'Thank you for your donation',
+          status: NotificationStatus.COMPLETED,
+          body: 'Thank you for your donation 🙏! A heartfelt thanks from the Blood Connect Team! ❤️',
+          type: NotificationType.COMMON,
+          payload: {
+            donorId,
+            seekerId,
+            requestCreatedAt,
+            requestPostId,
+            requestedBloodGroup: donationPost.requestedBloodGroup,
+            bloodQuantity: donationPost.bloodQuantity,
+            urgencyLevel: donationPost.urgencyLevel,
+            location: donationPost.location,
+            donationDateTime: donationPost.donationDateTime,
+            shortDescription: donationPost.shortDescription
+          }
+        }
+
+        await notificationService.sendNotification(notificationAttributes, queueModel)
+      })
+    )
   }
 }

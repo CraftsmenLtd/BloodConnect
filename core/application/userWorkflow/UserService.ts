@@ -107,7 +107,7 @@ export class UserService {
     return updateData
   }
 
-  async UpdateUserAttributes(
+  async updateUserAttributes(
     userId: string,
     userAttributes: Partial<CreateUserAttributes | UpdateUserAttributes>,
     locationService: LocationService,
