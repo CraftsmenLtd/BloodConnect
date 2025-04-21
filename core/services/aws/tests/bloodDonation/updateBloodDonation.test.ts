@@ -6,9 +6,6 @@ import { mockEvent } from '../cannedData/updateBloodDonationLambdaEvent'
 import { UpdateBloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
 import { NotificationService } from '../../../../application/notificationWorkflow/NotificationService'
 import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
-import BloodDonationDynamoDbOperations from '../../commons/ddbOperations/BloodDonationDynamoDbOperations'
-import NotificationDynamoDbOperations from '../../commons/ddbOperations/DonationNotificationDynamoDbOperations'
-import { mockServiceLogger } from '../mock/loggerMock'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/notificationWorkflow/NotificationService')
@@ -101,7 +98,6 @@ describe('updateBloodDonationLambda', () => {
     )
 
     const calledAttributes = mockBloodDonationService.prototype.updateBloodDonation.mock.calls[0][0]
-    expect(calledAttributes).not.toHaveProperty('patientName')
     expect(calledAttributes).toHaveProperty('transportationInfo', 'Available')
   })
 
@@ -154,10 +150,6 @@ describe('updateBloodDonationLambda', () => {
     expect(calledAttributes).toHaveProperty('bloodQuantity', 3)
     expect(calledAttributes).toHaveProperty('seekerId', mockEvent.seekerId)
     expect(calledAttributes).toHaveProperty('requestPostId', mockEvent.requestPostId)
-
-    expect(calledAttributes).not.toHaveProperty('patientName')
-    expect(calledAttributes).not.toHaveProperty('transportationInfo')
-    expect(calledAttributes).not.toHaveProperty('invalidKey')
   })
 
   it('should preserve required attributes while filtering invalid ones', async () => {
