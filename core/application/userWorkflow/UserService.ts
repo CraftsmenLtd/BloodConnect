@@ -64,9 +64,15 @@ export class UserService {
     minMonthsBetweenDonations: number
   ): Promise<void> {
     const { userId, preferredDonationLocations } = userAttributes
+    const userProfile = await this.getUser(
+      userId
+    )
     const updateData: Partial<UserDetailsDTO> = await this.updateUserProfile(
       userId,
-      userAttributes,
+      {
+        ...userAttributes,
+        countryCode: userProfile.countryCode
+      },
       minMonthsBetweenDonations
     )
 
