@@ -53,12 +53,8 @@ export type UpdateBloodDonationAttributes = {
   requestPostId: string;
   seekerId: string;
   createdAt: string;
-  requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
-  location: string;
-  latitude: number;
-  longitude: number;
   donationDateTime: string;
   contactNumber: string;
   patientName?: string;
