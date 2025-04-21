@@ -58,6 +58,29 @@ export class UserService {
     return userProfile
   }
 
+  async createUser(
+    userAttributes: CreateUserAttributes,
+    locationService: LocationService,
+    minMonthsBetweenDonations: number
+  ): Promise<void> {
+    const { userId, preferredDonationLocations } = userAttributes
+    const updateData: Partial<UserDetailsDTO> = await this.updateUserProfile(
+      userId,
+      userAttributes,
+      minMonthsBetweenDonations
+    )
+
+    this.logger.info('updating user locations')
+    await locationService
+      .updateUserLocation(userId, preferredDonationLocations, updateData)
+      .catch((error) => {
+        throw new UserOperationError(
+          `Failed to update user location. Error: ${error}`,
+          GENERIC_CODES.ERROR
+        )
+      })
+  }
+
   async updateUser(
     userAttributes: CreateUserAttributes | UpdateUserAttributes,
     locationService: LocationService,

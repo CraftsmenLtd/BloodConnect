@@ -49,14 +49,14 @@ async function createUserLambda(
       dateOfBirth: event.dateOfBirth,
       age: event.age,
       preferredDonationLocations: event.preferredDonationLocations,
-      lastDonationDate: event.lastDonationDate,
-      NIDFront: event.NIDFront,
-      lastVaccinatedDate: event.lastVaccinatedDate,
-      NIDBack: event.NIDBack,
-      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation
+      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation,
+      ...(event.lastDonationDate !== undefined && { lastDonationDate: event.lastDonationDate }),
+      ...(event.lastVaccinatedDate !== undefined && { lastVaccinatedDate: event.lastVaccinatedDate }),
+      ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
+      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
     }
 
-    await userService.updateUser(userAttributes, locationService, config.minMonthsBetweenDonations)
+    await userService.createUser(userAttributes, locationService, config.minMonthsBetweenDonations)
 
     return generateApiGatewayResponse(
       { message: CREATE_PROFILE_SUCCESS, success: true },
