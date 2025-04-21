@@ -116,7 +116,14 @@ describe('UserService Tests', () => {
     }
 
     const { userId, preferredDonationLocations, ...expectedUserData } = mockUpdateAttributes
-
+    const mockUpdatedUserData = {
+      id: userId,
+      ...expectedUserData,
+      countryCode: 'BD',
+      age: 34,
+      updatedAt: new Date().toISOString()
+    }
+    userService.getUser = jest.fn().mockResolvedValue(mockUpdatedUserData)
     userRepository.update.mockResolvedValue(mockUserWithStringId)
 
     const locationService = {
