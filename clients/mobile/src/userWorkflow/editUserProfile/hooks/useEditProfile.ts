@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'react'
 import type {
   ValidationRule
-} from '../../../utility/validator';
+} from '../../../utility/validator'
 import {
   validateDateOfBirth,
-  validateHeight, validateInput, validatePastOrTodayDate, validatePhoneNumber,
-  validateRequired, validateWeight
+  validateHeight,
+  validateInput,
+  validatePastOrTodayDate,
+  validateRequired,
+  validateWeight
 } from '../../../utility/validator'
 import { useRoute } from '@react-navigation/native'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
@@ -18,6 +21,7 @@ import type { EditProfileRouteProp } from '../../../setup/navigation/navigationT
 import type { EditProfileData } from '../../userProfile/UI/Profile'
 import Constants from 'expo-constants'
 import { formatLocations } from '../../../utility/formatting'
+
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type ProfileFields = keyof Omit<ProfileData, 'location'>
@@ -38,7 +42,7 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   weight: [validateRequired, validateWeight],
   height: [validateRequired, validateHeight],
   gender: [validateRequired],
-  phone: [validateRequired, validatePhoneNumber],
+  phone: [validateRequired],
   preferredDonationLocations: [validateRequired],
   lastDonationDate: [validatePastOrTodayDate],
   locations: []

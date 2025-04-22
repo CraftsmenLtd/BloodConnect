@@ -5,6 +5,7 @@ import Dropdown from '../../../components/inputElement/Dropdown'
 import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
+import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput';
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
 import { useAddPersonalInfo } from '../hooks/useAddPersonalInfo'
@@ -14,8 +15,6 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
 import RadioButton from '../../../components/inputElement/Radio'
 import { LocationService } from '../../../LocationService/LocationService'
-import Warning from '../../../components/warning'
-import { WARNINGS } from '../../../setup/constant/consts'
 import { POLICY_URLS } from '../../../setup/constant/urls'
 import MultiSelect from '../../../components/multiSelect'
 
@@ -62,19 +61,12 @@ const AddPersonalInfo = () => {
 
         {(Boolean(isSSO)) && (
           <View>
-            <Input
+            <PhoneNumberInput
               name="phoneNumber"
               label="Phone Number"
               value={personalInfo.phoneNumber}
-              onChangeText={handleInputChange}
-              placeholder="01XXXXXXXXX"
-              keyboardType="phone-pad"
-              isRequired={true}
-              error={errors.phoneNumber}
-            />
-            <Warning
-              text={WARNINGS.PHONE_NUMBER_VISIBLE}
-              showWarning={Boolean(personalInfo.phoneNumber?.trim())}
+              onChange={handleInputChange}
+              showWarning={personalInfo.phoneNumber !== ''}
             />
           </View>
         )}

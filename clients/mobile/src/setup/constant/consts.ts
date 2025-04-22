@@ -24,3 +24,5 @@ export const WORLD_DIM = { width: 256, height: 256 }
 export const MAX_ZOOM_LEVEL = 22
 export const DEFAULT_ZOOM_LEVEL = 13
 export const DEFAULT_CENTER_COORDINATES: [number, number] = [90.4125, 23.8103]
+
+export const DEFAULT_COUNTRY_CODE = 'BD'

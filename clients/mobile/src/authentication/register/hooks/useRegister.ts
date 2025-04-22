@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import type { ValidationRule} from '../../../utility/validator';
-import { validateRequired, validateEmail, validatePhoneNumber, validateInput } from '../../../utility/validator'
+import type { ValidationRule} from '../../../utility/validator'
+import {
+  validateRequired,
+  validateEmail,
+  validateInput
+} from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import type { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import { formatPhoneNumber } from '../../../utility/formatting'
 import { useSocialAuth } from '../../socialAuth/hooks/useSocialAuth'
 
 type CredentialKeys = keyof RegisterCredential
@@ -21,7 +24,7 @@ type RegisterErrors = RegisterCredential
 const validationRules: Record<CredentialKeys, ValidationRule[]> = {
   name: [validateRequired],
   email: [validateRequired, validateEmail],
-  phoneNumber: [validateRequired, validatePhoneNumber]
+  phoneNumber: [validateRequired]
 }
 
 export const useRegister = (): unknown => {
@@ -62,7 +65,7 @@ export const useRegister = (): unknown => {
     navigation.navigate(SCREENS.SET_PASSWORD, {
       routeParams: {
         ...registerCredential,
-        phoneNumber: formatPhoneNumber(registerCredential.phoneNumber),
+        phoneNumber: registerCredential.phoneNumber,
         password: ''
       },
       fromScreen: SCREENS.REGISTER
