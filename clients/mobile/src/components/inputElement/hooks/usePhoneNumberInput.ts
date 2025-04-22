@@ -9,7 +9,7 @@ const usePhoneNumberInput = (
   name: string,
   onChange: (name: string, formatted: string) => void
 ): {
-  phoneInputRef:  React.MutableRefObject<PhoneInput>;
+  phoneInputRef: React.MutableRefObject<PhoneInput>;
   isValid: boolean;
   handleChangeFormattedText: (formatted: string) => void;
   parsedValue: string;
