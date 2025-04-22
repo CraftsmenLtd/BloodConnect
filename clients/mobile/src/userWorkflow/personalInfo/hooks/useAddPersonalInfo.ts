@@ -9,8 +9,7 @@ import {
   validateDateOfBirth,
   validatePastOrTodayDate,
   validateHeight,
-  validateWeight,
-  validatePhoneNumber
+  validateWeight
 } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import type { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
@@ -21,8 +20,7 @@ import type {
   LocationData} from '../../../utility/formatting';
 import {
   formatErrorMessage,
-  formatToTwoDecimalPlaces,
-  formatPhoneNumber
+  formatToTwoDecimalPlaces
 } from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
@@ -85,7 +83,7 @@ export const useAddPersonalInfo = (): unknown => {
       acceptPolicy: [validateRequired]
     }
     if (isSSO) {
-      rules.phoneNumber = [validateRequired, validatePhoneNumber]
+      rules.phoneNumber = [validateRequired]
     }
 
     return rules as Record<PersonalInfoKeys, ValidationRule[]>
@@ -182,7 +180,7 @@ export const useAddPersonalInfo = (): unknown => {
         height: personalInfo.height,
         weight: formatToTwoDecimalPlaces(personalInfo.weight),
         preferredDonationLocations,
-        ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {}),
+        ...(isSSO && phoneNumber != null ? { phoneNumbers: [phoneNumber] } : {}),
         availableForDonation: rest.availableForDonation === 'yes'
       }
 

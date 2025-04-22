@@ -17,14 +17,6 @@ export const formattedDate = (date: string | Date, showOnlyDate = false): string
   })
 }
 
-export const formatPhoneNumber = (phoneNumber: string): string => {
-  const trimmedPhoneNumber = phoneNumber.trim()
-
-  return trimmedPhoneNumber.startsWith('01')
-    ? trimmedPhoneNumber.replace('01', '+8801')
-    : trimmedPhoneNumber
-}
-
 export function formatErrorMessage(error: unknown): string {
   if (error instanceof Error && typeof error.message === 'string') {
     const errorMessage = error.message.toLowerCase()

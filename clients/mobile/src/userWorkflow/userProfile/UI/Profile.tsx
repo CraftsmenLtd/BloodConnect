@@ -1,8 +1,10 @@
 import React from 'react'
 import { View, Text, ScrollView } from 'react-native'
+import MapView from '../../../components/mapView'
+import useMapView from '../../../components/mapView/useMapView'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
-import type { LocationData } from '../../../utility/formatting';
+import type { LocationData } from '../../../utility/formatting'
 import { formattedDate } from '../../../utility/formatting'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
@@ -27,6 +29,9 @@ export type EditProfileData = {
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
   const { userDetails } = useProfile()
+  const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(
+    userDetails?.preferredDonationLocations.map(location => location.area) ?? []
+  )
   const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
   const renderDetailRow = (label: string, value: string = '', isLast: boolean = false): JSX.Element => (
@@ -89,6 +94,12 @@ const Profile: React.FC = () => {
               )
             })}
           </View>
+          <MapView
+            style={styles.mapViewContainer}
+            centerCoordinate={centerCoordinate}
+            zoomLevel={zoomLevel}
+            markers={mapMarkers}
+          />
         </View>
       </ScrollView>
 
