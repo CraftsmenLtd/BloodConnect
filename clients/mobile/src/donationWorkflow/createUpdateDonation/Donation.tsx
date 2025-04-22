@@ -5,6 +5,8 @@ import RadioButton from '../../components/inputElement/Radio'
 import { TextArea } from '../../components/inputElement/TextArea'
 import { Input } from '../../components/inputElement/Input'
 import { Button } from '../../components/button/Button'
+import MapView from '../../components/mapView'
+import useMapView from '../../components/mapView/useMapView'
 import Warning from '../../components/warning'
 import { SHORT_DESCRIPTION_MAX_LENGTH, WARNINGS } from '../../setup/constant/consts'
 import { DONATION_DATE_TIME_INPUT_NAME, useBloodRequest } from './useBloodRequest'
@@ -33,6 +35,7 @@ const CreateBloodRequest = () => {
     loading,
     errorMessage
   } = useBloodRequest()
+  const { centerCoordinate, mapMarkers, zoomLevel } = useMapView([bloodRequestData.location])
 
   return (
     <TouchableWithoutFeedback>
@@ -102,6 +105,14 @@ const CreateBloodRequest = () => {
               isRequired={true}
               fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
             />
+            { bloodRequestData.location !== '' && (
+              <MapView
+                style={styles.mapViewContainer}
+                centerCoordinate={centerCoordinate}
+                zoomLevel={zoomLevel}
+                markers={mapMarkers}
+              />
+            )}
           </View>
 
           <View style={styles.fieldSpacing}>
@@ -204,6 +215,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     textAlign: 'center',
     marginTop: 16,
     fontSize: theme.typography.fontSize
+  },
+  mapViewContainer: {
+    borderRadius: 6,
+    borderWidth: 1.5
   }
 })
 

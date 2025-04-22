@@ -279,7 +279,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     backgroundColor: theme.colors.greyBG,
     borderRadius: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 1,
     paddingVertical: 5,
     marginRight: 5
   },
