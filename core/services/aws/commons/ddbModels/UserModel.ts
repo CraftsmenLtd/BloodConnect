@@ -1,4 +1,4 @@
-import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
+import type { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
 import type { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 
 export const USER_PK_PREFIX = 'USER'

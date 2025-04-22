@@ -1,15 +1,18 @@
-import type { DonationRecordDTO } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import type { DonationRecordFields } from '../models/dbModels/DonationRecordModel'
 import type { DonationRecordAttributes } from './Types'
 import type DonationRecordRepository from '../models/policies/repositories/DonationRecordRepository'
+import type { Logger } from '../models/logger/Logger'
 
 export class DonationRecordService {
+  constructor(
+    protected readonly DonationRecordRepository: DonationRecordRepository,
+    protected readonly logger: Logger
+  ) { }
+
   async createDonationRecord(
-    donationRecordAttributes: DonationRecordAttributes,
-    DonationRecordRepository: DonationRecordRepository<DonationRecordDTO, DonationRecordFields>
+    donationRecordAttributes: DonationRecordAttributes
   ): Promise<void> {
-    await DonationRecordRepository.create({
+    await this.DonationRecordRepository.create({
       id: generateUniqueID(),
       donorId: donationRecordAttributes.donorId,
       seekerId: donationRecordAttributes.seekerId,

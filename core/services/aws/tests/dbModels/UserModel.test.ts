@@ -1,8 +1,8 @@
-import UserModel from '../../../models/dbModels/UserModel'
+import UserModel from '../../commons/ddbModels/UserModel'
 import {
-  expectedUser,
   mockUserDetailsWithStringId
-} from '../../mocks/mockUserData'
+} from '../../../../application/tests/mocks/mockUserData'
+import { expectedUser } from '../mock/mockUserData'
 
 describe('UserModel Unit Tests', () => {
   const userModel = new UserModel()

@@ -1,9 +1,9 @@
-import type { BloodDonationNotificationDTO} from '../../../../commons/dto/NotificationDTO';
-import { NotificationType } from '../../../../commons/dto/NotificationDTO'
+import type { DonationNotificationDTO} from '../../../../../commons/dto/NotificationDTO';
+import { NotificationType } from '../../../../../commons/dto/NotificationDTO'
 import type { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
 import { NOTIFICATION_PK_PREFIX } from './NotificationModel'
 
-export type BloodDonationNotificationFields = Omit<BloodDonationNotificationDTO, 'id' | 'userId' | 'type'> & HasTimeLog & {
+export type DonationNotificationFields = Omit<DonationNotificationDTO, 'id' | 'userId' | 'type'> & HasTimeLog & {
   PK: `${typeof NOTIFICATION_PK_PREFIX}#${string}`;
   SK: `${string}`;
   GSI1PK?: `${string}`;
@@ -11,8 +11,8 @@ export type BloodDonationNotificationFields = Omit<BloodDonationNotificationDTO,
   LSI1SK?: `STATUS#${string}#${string}`;
 }
 
-export default class DonationNotificationModel implements NosqlModel<BloodDonationNotificationFields>, DbModelDtoAdapter<BloodDonationNotificationDTO, BloodDonationNotificationFields> {
-  getIndexDefinitions(): IndexDefinitions<BloodDonationNotificationFields> {
+export default class DonationNotificationModel implements NosqlModel<DonationNotificationFields>, DbModelDtoAdapter<DonationNotificationDTO, DonationNotificationFields> {
+  getIndexDefinitions(): IndexDefinitions<DonationNotificationFields> {
     return {
       GSI: {
         GSI1: {
@@ -23,18 +23,18 @@ export default class DonationNotificationModel implements NosqlModel<BloodDonati
     }
   }
 
-  getPrimaryIndex(): DbIndex<BloodDonationNotificationFields> {
+  getPrimaryIndex(): DbIndex<DonationNotificationFields> {
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex(indexType: IndexType, indexName: string): DbIndex<BloodDonationNotificationFields> | undefined {
+  getIndex(indexType: IndexType, indexName: string): DbIndex<DonationNotificationFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(BloodDonationNotificationDTO: BloodDonationNotificationDTO): BloodDonationNotificationFields {
-    const { id, userId, type, ...remainingNotificationFields } = BloodDonationNotificationDTO
+  fromDto(DonationNotificationDTO: DonationNotificationDTO): DonationNotificationFields {
+    const { id, userId, type, ...remainingNotificationFields } = DonationNotificationDTO
 
-    const data: BloodDonationNotificationFields = {
+    const data: DonationNotificationFields = {
       PK: `${NOTIFICATION_PK_PREFIX}#${userId}`,
       SK: `${type}#${id}`,
       ...remainingNotificationFields
@@ -50,12 +50,12 @@ export default class DonationNotificationModel implements NosqlModel<BloodDonati
     return data
   }
 
-  toDto(dbFields: BloodDonationNotificationFields): BloodDonationNotificationDTO {
+  toDto(dbFields: DonationNotificationFields): DonationNotificationDTO {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { PK, SK, GSI1PK, GSI1SK, LSI1SK, ...remainingBloodDonationNotificationFields } = dbFields
+    const { PK, SK, GSI1PK, GSI1SK, LSI1SK, ...remainingDonationNotificationFields } = dbFields
     const userId = PK.replace(`${NOTIFICATION_PK_PREFIX}#`, '')
     return {
-      ...remainingBloodDonationNotificationFields,
+      ...remainingDonationNotificationFields,
       userId,
       type: SK.split('#')[0] as NotificationType,
       id: SK.split('#')[1]

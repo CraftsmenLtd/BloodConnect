@@ -1,38 +1,63 @@
 import type { APIGatewayProxyResult } from 'aws-lambda'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
-import type { UserFields } from '../../../application/models/dbModels/UserModel';
-import UserModel from '../../../application/models/dbModels/UserModel'
 import type { CreateUserAttributes } from '../../../application/userWorkflow/Types'
-import LocationModel from '../../../application/models/dbModels/LocationModel'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
-import { CREATE_PROFILE_SUCCESS, UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
-import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
+import {
+  CREATE_PROFILE_SUCCESS,
+  UNKNOWN_ERROR_MESSAGE
+} from '../../../../commons/libs/constants/ApiResponseMessages'
+import LocationDynamoDbOperations from '../commons/ddbOperations/LocationDynamoDbOperations'
+import { Config } from '../../../../commons/libs/config/config'
+import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
+import { LocationService } from '../../../application/userWorkflow/LocationService'
+
+const config = new Config<{
+  dynamodbTableName: string;
+  awsRegion: string;
+  minMonthsBetweenDonations: number;
+}>().getConfig()
+
+const userDynamoDbOperations = new UserDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const locationDynamoDbOperations = new LocationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 async function createUserLambda(
   event: CreateUserAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
-  const { userId, apiGwRequestId, cloudFrontRequestId } = event
-  const httpLogger = createHTTPLogger(userId, apiGwRequestId, cloudFrontRequestId)
+
+  const httpLogger = createHTTPLogger(event.userId, event.apiGwRequestId, event.cloudFrontRequestId)
+  const userService = new UserService(userDynamoDbOperations, httpLogger)
+  const locationService = new LocationService(locationDynamoDbOperations, httpLogger)
+
   try {
-    const userService = new UserService()
-    const userAttributes = {
-      userId,
-      ...Object.fromEntries(
-        Object.entries(event).filter(([_, value]) => value !== undefined && value !== '')
-      ),
-      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation
+    const userAttributes: CreateUserAttributes = {
+      userId: event.userId,
+      phoneNumbers: event.phoneNumbers,
+      bloodGroup: event.bloodGroup,
+      height: event.height,
+      weight: event.weight,
+      gender: event.gender,
+      countryCode: event.countryCode,
+      dateOfBirth: event.dateOfBirth,
+      age: event.age,
+      preferredDonationLocations: event.preferredDonationLocations,
+      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation,
+      ...(event.lastDonationDate !== undefined && { lastDonationDate: event.lastDonationDate }),
+      ...(event.lastVaccinatedDate !== undefined && { lastVaccinatedDate: event.lastVaccinatedDate }),
+      ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
+      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
     }
 
-    await userService.updateUser(
-      userAttributes as CreateUserAttributes,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel()),
-      new LocationDynamoDbOperations(new LocationModel())
-    )
+    await userService.createUser(userAttributes, locationService, config.minMonthsBetweenDonations)
+
     return generateApiGatewayResponse(
       { message: CREATE_PROFILE_SUCCESS, success: true },
       HTTP_CODES.CREATED

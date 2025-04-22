@@ -8,7 +8,7 @@ export const createServiceLogger = (
   return JsonLogger.child({
     userId,
     ...extraArgs
-  })
+  }) as Logger
 }
 
 export type ServiceLoggerAttributes = {

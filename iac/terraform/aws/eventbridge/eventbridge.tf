@@ -39,6 +39,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   "location": "<$.dynamodb.NewImage.location.S>",
   "donationDateTime": "<$.dynamodb.NewImage.donationDateTime.S>",
   "patientName": "<$.dynamodb.NewImage.patientName.S>",
+  "status": "<$.dynamodb.NewImage.status.S>",
   "contactNumber": "<$.dynamodb.NewImage.contactNumber.S>",
   "shortDescription": "<$.dynamodb.NewImage.shortDescription.S>",
   "transportationInfo": "<$.dynamodb.NewImage.transportationInfo.S>"

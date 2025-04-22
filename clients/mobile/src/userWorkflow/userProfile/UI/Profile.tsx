@@ -32,7 +32,7 @@ const Profile: React.FC = () => {
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(
     userDetails?.preferredDonationLocations.map(location => location.area) ?? []
   )
-  const navigation =  useNavigation<EditProfileScreenNavigationProp>()
+  const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
   const renderDetailRow = (label: string, value: string = '', isLast: boolean = false): JSX.Element => (
     <View style={[styles.row, isLast && styles.lastRow]}>

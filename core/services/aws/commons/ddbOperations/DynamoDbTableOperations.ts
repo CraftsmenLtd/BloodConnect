@@ -1,14 +1,15 @@
 import type {
   DbModelDtoAdapter,
   NosqlModel
-} from '../../../../application/models/dbModels/DbModelDefinitions'
+} from '../ddbModels/DbModelDefinitions'
 import type Repository from '../../../../application/models/policies/repositories/Repository'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import type {
   UpdateCommandInput,
   GetCommandInput,
   QueryCommandInput,
-  DeleteCommandInput} from '@aws-sdk/lib-dynamodb';
+  DeleteCommandInput
+} from '@aws-sdk/lib-dynamodb';
 import {
   DynamoDBDocumentClient,
   PutCommand,
@@ -19,7 +20,8 @@ import {
 } from '@aws-sdk/lib-dynamodb'
 import type {
   QueryInput,
-  QueryCondition} from '../../../../application/models/policies/repositories/QueryTypes';
+  QueryCondition
+} from '../../../../application/models/policies/repositories/QueryTypes';
 import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
@@ -31,7 +33,7 @@ import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/Api
 type CreateUpdateExpressionsReturnType = {
   updateExpression: string[];
   expressionAttribute: Record<string, unknown>;
-  expressionAttributeNames: Record<string, unknown>;
+  expressionAttributeNames: Record<string, string>;
 }
 
 export default class DynamoDbTableOperations<
@@ -41,24 +43,22 @@ export default class DynamoDbTableOperations<
 > implements Repository<Dto, DbFields> {
   constructor(
     protected readonly modelAdapter: ModelAdapter,
-    private readonly client = DynamoDBDocumentClient.from(
-      new DynamoDBClient({ region: process.env.AWS_REGION })
-    )
-  ) { }
+    protected readonly tableName: string,
+    protected readonly region: string,
+    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient({ region }))
+  ) {}
 
   async create(item: Dto): Promise<Dto> {
     const items = this.modelAdapter.fromDto(item)
     const command = new PutCommand({
-      TableName: this.getTableName(),
+      TableName: this.tableName,
       Item: items
     })
     const putCommandOutput = await this.client.send(command)
     if (putCommandOutput?.$metadata?.httpStatusCode === 200) {
       return this.modelAdapter.toDto(items)
     }
-    throw new Error(
-      'Failed to create item in DynamoDB. property "putCommandOutput.Attributes" is undefined'
-    )
+    throw new Error('Failed to create item in DynamoDB')
   }
 
   async query(
@@ -77,7 +77,7 @@ export default class DynamoDbTableOperations<
       )
 
       const queryCommandInput: QueryCommandInput = {
-        TableName: this.getTableName(),
+        TableName: this.tableName,
         KeyConditionExpression: keyConditionExpression,
         ExpressionAttributeValues: expressionAttributeValues,
         ExpressionAttributeNames: expressionAttributeNames
@@ -259,7 +259,7 @@ export default class DynamoDbTableOperations<
       }
 
       const input: UpdateCommandInput = {
-        TableName: this.getTableName(),
+        TableName: this.tableName,
         Key: keyObject,
         UpdateExpression: `SET ${updateExpression.join(', ')}`,
         ExpressionAttributeValues: expressionAttribute,
@@ -281,7 +281,7 @@ export default class DynamoDbTableOperations<
       const errorMessage =
         error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
       throw new Error(
-        `Failed to update item in ${this.getTableName()}. Error: ${errorMessage}`
+        `Failed to update item in ${this.tableName}. Error: ${errorMessage}`
       )
     }
   }
@@ -297,7 +297,7 @@ export default class DynamoDbTableOperations<
         key[primaryKeyName.sortKey] = sortKey as DbFields[keyof DbFields]
       }
       const input: GetCommandInput = {
-        TableName: this.getTableName(),
+        TableName: this.tableName,
         Key: key
       }
 
@@ -326,7 +326,7 @@ export default class DynamoDbTableOperations<
       }
 
       const input: DeleteCommandInput = {
-        TableName: this.getTableName(),
+        TableName: this.tableName,
         Key: key
       }
 
@@ -335,19 +335,9 @@ export default class DynamoDbTableOperations<
       const errorMessage =
         error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
       throw new Error(
-        `Failed to delete item in ${this.getTableName()}. Error: ${errorMessage}`
+        `Failed to delete item in ${this.tableName}. Error: ${errorMessage}`
       )
     }
-  }
-
-  getTableName(): string {
-    if (process.env.DYNAMODB_TABLE_NAME == null) {
-      throw new DatabaseError(
-        'DDB Table name not defined',
-        GENERIC_CODES.ERROR
-      )
-    }
-    return process.env.DYNAMODB_TABLE_NAME
   }
 
   private createUpdateExpressions(
@@ -356,13 +346,13 @@ export default class DynamoDbTableOperations<
     const updateExpression: string[] = []
     const expressionAttribute: Record<string, unknown> = {}
     const expressionAttributeNames: Record<string, string> = {}
-    Object.keys(item).forEach((key) => {
+    for (const key in item) {
       const placeholder = `:p${key}`
       const alias = `#a${key}`
       updateExpression.push(`${alias} = ${placeholder}`)
       expressionAttribute[placeholder] = item[key]
       expressionAttributeNames[alias] = key
-    })
+    }
     return { updateExpression, expressionAttribute, expressionAttributeNames }
   }
 

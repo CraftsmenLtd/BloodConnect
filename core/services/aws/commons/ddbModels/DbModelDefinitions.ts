@@ -1,6 +1,6 @@
-import type { DTO } from '../../../../commons/dto/DTOCommon'
-
-interface DbModel {}
+import type { DTO } from '../../../../../commons/dto/DTOCommon'
+// eslint-disable-next-line @typescript-eslint/ban-types
+type DbModel = {};
 
 export type HasTimeLog = {
   createdAt?: string;
