@@ -17,11 +17,13 @@ import usePhoneNumberInput from './hooks/usePhoneNumberInput'
  * Props:
  * -------
  * @param value - The current phone number value.
- * @param onChange -{(name: string, text: string) => void}  - Callback triggered when the formatted phone number changes.
+ * @param onChange -{(name: string, text: string) => void}  -
+ * Callback triggered when the formatted phone number changes.
  * @param placeholder - Placeholder text for the phone input.
  * @param name - Field identifier used for form tracking.
  * @param label - Label displayed above the input field.
- * @param isRequired - Indicates if the field is required. If true, an asterisk is shown beside the label.
+ * @param isRequired - Indicates if the field is required.
+ * If true, an asterisk is shown beside the label.
  * @param showWarning - If true, displays a warning message about phone number visibility.
  * @returns A styled phone number input field with label, validation, and warning support.
  *
@@ -51,16 +53,24 @@ const PhoneNumberInput = ({
   label = 'Contact Number',
   isRequired = true,
   showWarning = false
-}: { value: string; onChange: (text: string) => void; placeholder?: string; name?: string; label?: string; isRequired?: boolean; showWarning?: boolean }): React.ReactElement => {
+}: {
+  value: string;
+  onChange: (text: string) => void;
+  placeholder?: string;
+  name?: string;
+  label?: string;
+  isRequired?: boolean;
+  showWarning?: boolean;
+}): React.ReactElement => {
   const theme = useTheme()
   const styles = createStyles(theme)
   const {
-      phoneInputRef,
-      isValid,
-      handleChangeFormattedText,
-      parsedValue,
-      defaultCode
-    } = usePhoneNumberInput(
+    phoneInputRef,
+    isValid,
+    handleChangeFormattedText,
+    parsedValue,
+    defaultCode
+  } = usePhoneNumberInput(
     value,
     name,
     onChange
@@ -84,7 +94,7 @@ const PhoneNumberInput = ({
         onChangeFormattedText={handleChangeFormattedText}
         containerStyle={[
           styles.phoneContainer,
-         !isValid ? styles.errorBorder : null
+          !isValid ? styles.errorBorder : null
         ]}
         textContainerStyle={styles.textInput}
         textInputStyle={styles.text}

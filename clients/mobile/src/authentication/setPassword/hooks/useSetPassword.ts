@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react'
-import type { ValidationRule} from '../../../utility/validator';
+import type { ValidationRule } from '../../../utility/validator'
 import { validateRequired, validatePassword, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import type { SetPasswordRouteProp, SetPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type {
+  SetPasswordRouteProp,
+  SetPasswordScreenNavigationProp
+} from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import type { UserRegistrationCredentials } from '../../services/authService';
 import { confirmResetPasswordHandler, registerUser } from '../../services/authService'
@@ -67,9 +70,19 @@ export const useSetPassword = (): unknown => {
   }, [newPassword, errors])
 
   const handleRegister = async(): Promise<void> => {
-    const isSuccess = await registerUser({ ...(routeParams as UserRegistrationCredentials), password: newPassword.password })
+    const isSuccess = await registerUser({
+      ...(routeParams as UserRegistrationCredentials),
+      password: newPassword.password
+    })
     if (isSuccess) {
-      navigation.navigate(SCREENS.OTP, { email: routeParams.email, password: newPassword.password, fromScreen: SCREENS.SET_PASSWORD })
+      navigation.navigate(
+        SCREENS.OTP,
+        {
+          email: routeParams.email,
+          password: newPassword.password,
+          fromScreen: SCREENS.SET_PASSWORD
+        }
+      )
     }
   }
 

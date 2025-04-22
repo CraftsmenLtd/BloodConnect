@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import Constants from 'expo-constants'
 import type {
-  ValidationRule} from '../../utility/validator';
+  ValidationRule
+} from '../../utility/validator';
 import {
   validateInput,
   validateRequired,
@@ -12,16 +13,23 @@ import {
 } from '../../utility/validator'
 import { initializeState } from '../../utility/stateUtils'
 import { LocationService } from '../../LocationService/LocationService'
-import type { DonationCreateUpdateResponse} from '../donationService';
+import type { DonationCreateUpdateResponse } from '../donationService';
 import { createDonation, updateDonation } from '../donationService'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
-import type { DonationScreenNavigationProp, DonationScreenRouteProp } from '../../setup/navigation/navigationTypes'
+import type {
+  DonationScreenNavigationProp,
+  DonationScreenRouteProp
+} from '../../setup/navigation/navigationTypes'
 import { formatErrorMessage } from '../../utility/formatting'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { useMyActivityContext } from '../../myActivity/context/useMyActivityContext'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
-import { cancelNotificationById, fetchScheduledNotifications, scheduleNotification } from '../../setup/notification/scheduleNotification'
+import {
+  cancelNotificationById,
+  fetchScheduledNotifications,
+  scheduleNotification
+} from '../../setup/notification/scheduleNotification'
 import type { NotificationRequest } from 'expo-notifications'
 import { UrgencyLevel } from '../types'
 
@@ -43,7 +51,9 @@ export type BloodRequestData = {
   transportationInfo?: string;
 }
 
-type BloodRequestDataErrors = { donationDateTime: string | null } & Omit<BloodRequestData, 'patientName' | 'transportationInfo' | 'donationDateTime'>
+type BloodRequestDataErrors = {
+  donationDateTime: string | null;
+} & Omit<BloodRequestData, 'patientName' | 'transportationInfo' | 'donationDateTime'>
 
 const validationRules: Record<keyof BloodRequestDataErrors, ValidationRule[]> = {
   urgencyLevel: [validateRequired],
@@ -79,7 +89,8 @@ export const useBloodRequest = (): unknown => {
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<BloodRequestDataErrors>(initializeState<BloodRequestDataErrors>(
+  const [errors, setErrors] = useState<BloodRequestDataErrors>(
+    initializeState<BloodRequestDataErrors>(
     Object.keys(validationRules) as Array<keyof BloodRequestDataErrors>, null)
   )
 
@@ -119,7 +130,11 @@ export const useBloodRequest = (): unknown => {
           updateErrors(null)
         }
       } else {
-        updateErrors(validateDonationDateTimeWithin24Hours(bloodRequestData.donationDateTime.toString()))
+        updateErrors(
+          validateDonationDateTimeWithin24Hours(
+            bloodRequestData.donationDateTime.toString()
+          )
+        )
       }
     }
 
@@ -159,7 +174,9 @@ export const useBloodRequest = (): unknown => {
     const hasErrors = !Object.values(errors).every(error => error === null)
     const requiredFieldsFilled = Object.keys(validationRules).every((key: string) => {
       const value = bloodRequestData[key as CredentialKeys]
-      const isRequired = validationRules[key as keyof BloodRequestDataErrors].includes(validateRequired)
+      const isRequired = validationRules[
+        key as keyof BloodRequestDataErrors
+      ].includes(validateRequired)
       if (!isRequired) return true
       if (typeof value === 'string') {
         return value.trim() !== ''
@@ -215,34 +232,52 @@ export const useBloodRequest = (): unknown => {
   const findNotificationByRequestPostId = (
     notifications: NotificationRequest[],
     requestPostId: string): NotificationRequest | undefined =>
-    notifications.find(notification => notification.content?.data?.payload?.requestPostId === requestPostId
+    notifications.find(
+      notification => notification.content?.data?.payload?.requestPostId === requestPostId
     )
 
-  const updateNotificationTriggerTime = async(donationDateTime: string | Date, requestPostId: string): Promise<void> => {
-      const notifications = await fetchScheduledNotifications()
-      const notificationToUpdate = findNotificationByRequestPostId(notifications, requestPostId)
-      if (notificationToUpdate == null) return
-      await cancelNotificationById(notificationToUpdate.identifier)
-      const adjustedTime = adjustNotificationTime(donationDateTime)
-      void scheduleNotification({ date: adjustedTime }, notificationToUpdate.content?.data?.payload)
+  const updateNotificationTriggerTime = async(
+    donationDateTime: string | Date,
+    requestPostId: string
+  ): Promise<void> => {
+    const notifications = await fetchScheduledNotifications();
+    const notificationToUpdate = findNotificationByRequestPostId(notifications, requestPostId);
+    if (notificationToUpdate == null) return;
+    await cancelNotificationById(notificationToUpdate.identifier);
+    const adjustedTime = adjustNotificationTime(donationDateTime);
+    void scheduleNotification({ date: adjustedTime }, notificationToUpdate.content?.data?.payload);
   }
 
-  const handleNotification = (donationDateTime: string | Date, donationResponse: { requestPostId: string; createdAt: string }): void => {
-    if (isUpdating && currentBloodRequestData.current?.donationDateTime === bloodRequestData.donationDateTime) return
-    if (isUpdating) { void updateNotificationTriggerTime(donationDateTime, donationResponse.requestPostId) }
+  const handleNotification = (
+    donationDateTime: string | Date,
+    donationResponse: {
+      requestPostId: string;
+      createdAt: string;
+    }): void => {
+    if (
+      isUpdating &&
+      currentBloodRequestData.current?.donationDateTime === bloodRequestData.donationDateTime
+    ) return
+    if (isUpdating) {
+      void updateNotificationTriggerTime(donationDateTime, donationResponse.requestPostId)
+    }
   }
 
   const handlePostNow = async(): Promise<void> => {
     try {
       setLoading(true)
-      const validateDonationDate = validateDonationDateTime(new Date(bloodRequestData.donationDateTime).toISOString())
+      const validateDonationDate = validateDonationDateTime(
+        new Date(bloodRequestData.donationDateTime).toISOString()
+      )
       if (validateDonationDate !== null) {
         setErrorMessage(validateDonationDate)
         return
       }
 
       if (bloodRequestData.urgencyLevel === UrgencyLevel.URGENT) {
-        const validationError = validateDonationDateTimeWithin24Hours(bloodRequestData.donationDateTime.toString())
+        const validationError = validateDonationDateTimeWithin24Hours(
+          bloodRequestData.donationDateTime.toString()
+        )
         if (validationError !== null) {
           setErrorMessage(validationError)
           return
