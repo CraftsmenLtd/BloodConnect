@@ -40,4 +40,10 @@ export class LocationService {
       }
     }
   }
+
+  async queryUserLocations(
+    userId: string,
+  ): Promise<LocationDTO[]> {
+    return await this.locationRepository.queryUserLocations(userId)
+  }
 }

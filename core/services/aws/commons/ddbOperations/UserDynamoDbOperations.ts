@@ -12,4 +12,8 @@ export default class UserDynamoDbOperations extends DynamoDbTableOperations<
   constructor(tableName: string, region: string) {
     super(new UserModel(), tableName, region)
   }
+
+  async getUser(userId: string): Promise<UserDetailsDTO | null> {
+    return await super.getItem(`USER#${userId}`, 'PROFILE')
+  }
 }

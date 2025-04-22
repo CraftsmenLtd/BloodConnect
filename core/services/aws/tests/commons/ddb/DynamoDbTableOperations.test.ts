@@ -12,10 +12,10 @@ import UserModel from '../../../commons/ddbModels/UserModel'
 import DatabaseError from '../../../../../../commons/libs/errors/DatabaseError'
 import { GENERIC_CODES } from '../../../../../../commons/libs/constants/GenericCodes'
 import {
-  mockUserDetailsWithStringId,
-  expectedUser
+  mockUserDetailsWithStringId
 } from '../../../../../application/tests/mocks/mockUserData'
 import { QueryConditionOperator } from '../../../../../application/models/policies/repositories/QueryTypes'
+import { expectedUser } from '../../mock/mockUserData'
 
 describe('DynamoDbTableOperations Tests', () => {
   const ddbMock = mockClient(DynamoDBDocumentClient)

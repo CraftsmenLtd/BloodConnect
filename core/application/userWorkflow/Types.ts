@@ -18,8 +18,8 @@ export type BaseUserAttributes = {
   age: number;
   preferredDonationLocations: LocationDTO[];
   availableForDonation: boolean;
-  NIDFront: string;
-  NIDBack: string;
+  NIDFront?: string;
+  NIDBack?: string;
 }
 
 export type CreateUserAttributes = {

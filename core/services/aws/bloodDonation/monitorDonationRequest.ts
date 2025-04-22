@@ -13,16 +13,29 @@ import {
   UploadPartCopyCommand,
   GetObjectCommand
 } from '@aws-sdk/client-s3'
-import { createServiceLogger } from '../commons/serviceLogger/ServiceLogger'
+import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import type { Context } from 'aws-lambda'
+import { Config } from 'commons/libs/config/config'
 
-const client = new S3Client({ region: process.env.AWS_REGION })
-const maxGeoHashLength = Number(process.env.MAX_GEOHASH_LENGTH)
-const maxGeoHashPrefixLength = Number(process.env.MAX_GEOHASH_PREFIX_LENGTH)
-const bucketName = process.env.BUCKET_NAME
+
+type ExpectedConfig = {
+  dynamodbTableName: string;
+  awsRegion: string;
+  maxGeohashLength: number;
+  maxGeohashPrefixLength: number;
+  monitorDonationBucketName: string;
+  maxGeohashStorage: number;
+  monitorDonationBucketPrefix: string;
+}
+const config = new Config<ExpectedConfig>().getConfig()
+
+const client = new S3Client({ region: config.awsRegion })
+const maxGeoHashLength = config.maxGeohashLength
+const maxGeoHashPrefixLength = config.maxGeohashPrefixLength
+const bucketName = config.monitorDonationBucketName
 const maxEstimatedGeohashSizeInBytes = maxGeoHashLength + 1
-const maxGeohashToStoreInFile = Number(process.env.MAX_GEOHASH_STORAGE)
-const bucketPathPrefix = process.env.BUCKET_PATH_PREFIX as string
+const maxGeohashToStoreInFile = config.maxGeohashStorage
+const bucketPathPrefix = config.monitorDonationBucketPrefix
 
 const countGeohashesInFile = (fileSize: number): number => fileSize / maxEstimatedGeohashSizeInBytes
 const deleteExpiredFile = async(fileName: string): Promise<void> => { await client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: fileName })) }

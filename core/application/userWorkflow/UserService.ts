@@ -11,17 +11,17 @@ import {
 import type Repository from '../models/policies/repositories/Repository'
 import type { CreateUserAttributes, UpdateUserAttributes, UserAttributes } from './Types'
 import { differenceInMonths, differenceInYears } from 'date-fns'
-import type LocationRepository from '../models/policies/repositories/LocationRepository'
 import type { Logger } from '../models/logger/Logger'
 import type UserRepository from '../models/policies/repositories/UserRepository'
 import type { LocationService } from './LocationService'
+import type { StoreNotificationEndPoint } from '../notificationWorkflow/Types'
 
 export class UserService {
   constructor(
     protected readonly userRepository: UserRepository,
     protected readonly logger: Logger
   ) { }
-  
+
   async createNewUser(
     userAttributes: UserAttributes,
     userRepository: Repository<UserDTO>
@@ -50,15 +50,35 @@ export class UserService {
     return getAppUserWelcomeMailMessage(userName)
   }
 
-  async getUser(
-    userId: string,
-    userRepository: Repository<UserDetailsDTO>
-  ): Promise<UserDetailsDTO> {
-    const userProfile = await userRepository.getItem(`USER#${userId}`, 'PROFILE')
+  async getUser(userId: string): Promise<UserDetailsDTO> {
+    const userProfile = await this.userRepository.getItem(`USER#${userId}`, 'PROFILE')
     if (userProfile === null) {
       throw new Error('User not found')
     }
     return userProfile
+  }
+
+  async createUser(
+    userAttributes: CreateUserAttributes,
+    locationService: LocationService,
+    minMonthsBetweenDonations: number
+  ): Promise<void> {
+    const { userId, preferredDonationLocations } = userAttributes
+    const updateData: Partial<UserDetailsDTO> = await this.updateUserProfile(
+      userId,
+      userAttributes,
+      minMonthsBetweenDonations
+    )
+
+    this.logger.info('updating user locations')
+    await locationService
+      .updateUserLocation(userId, preferredDonationLocations, updateData)
+      .catch((error) => {
+        throw new UserOperationError(
+          `Failed to update user location. Error: ${error}`,
+          GENERIC_CODES.ERROR
+        )
+      })
   }
 
   async updateUser(
@@ -66,9 +86,37 @@ export class UserService {
     locationService: LocationService,
     minMonthsBetweenDonations: number
   ): Promise<void> {
-    const { userId, preferredDonationLocations, ...restAttributes } = userAttributes
+    const { userId, preferredDonationLocations } = userAttributes
+    const userProfile = await this.getUser(
+      userId
+    )
+    const updateData: Partial<UserDetailsDTO> = await this.updateUserProfile(
+      userId,
+      {
+        ...userAttributes,
+        countryCode: userProfile.countryCode
+      },
+      minMonthsBetweenDonations
+    )
+
+    this.logger.info('updating user locations')
+    await locationService
+      .updateUserLocation(userId, preferredDonationLocations, updateData)
+      .catch((error) => {
+        throw new UserOperationError(
+          `Failed to update user location. Error: ${error}`,
+          GENERIC_CODES.ERROR
+        )
+      })
+  }
+
+  async updateUserProfile(
+    userId: string,
+    userAttributes: CreateUserAttributes | UpdateUserAttributes,
+    minMonthsBetweenDonations: number
+  ): Promise<Partial<UserDetailsDTO>> {
     const updateData: Partial<UserDetailsDTO> = {
-      ...restAttributes,
+      ...userAttributes,
       id: userId,
       updatedAt: new Date().toISOString()
     }
@@ -85,35 +133,24 @@ export class UserService {
     await this.userRepository.update(updateData).catch((error) => {
       throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     })
-
-    this.logger.info('updating user locations')
-    await locationService.updateUserLocation(
-      userId,
-      preferredDonationLocations,
-      updateData
-    ).catch((error) => {
-      throw new UserOperationError(
-        `Failed to update user location. Error: ${error}`,
-        GENERIC_CODES.ERROR
-      )
-    })
+    return updateData
   }
 
-  async UpdateUserAttributes(
+  async updateUserAttributes(
     userId: string,
-    userAttributes: UpdateUserAttributes,
-    userRepository: Repository<UserDetailsDTO>,
-    locationRepository: LocationRepository<LocationDTO>
+    userAttributes: Partial<CreateUserAttributes | UpdateUserAttributes>,
+    locationService: LocationService,
+    minMonthsBetweenDonations: number
   ): Promise<void> {
-    const userProfile: UserDetailsDTO = await this.getUser(userId, userRepository)
-    const userLocations: LocationDTO[] = await locationRepository.queryUserLocations(userId)
+    const userProfile: UserDetailsDTO = await this.getUser(userId)
+    const userLocations: LocationDTO[] = await locationService.queryUserLocations(userId)
     const updatedUserAttributes: UpdateUserAttributes = {
       ...userProfile,
       ...userAttributes,
       preferredDonationLocations: userLocations,
       userId
     }
-    await this.updateUser(updatedUserAttributes, userRepository, locationRepository)
+    await this.updateUser(updatedUserAttributes, locationService, minMonthsBetweenDonations)
   }
 
   private checkLastDonationDate(
@@ -144,12 +181,21 @@ export class UserService {
     }
   }
 
-  async getDeviceSnsEndpointArn(
+  async updateUserNotificationEndPoint(
     userId: string,
-    userRepository: Repository<UserDetailsDTO>
-  ): Promise<string> {
+    snsEndpointArn: string,
+  ): Promise<void> {
+    const updateData: Partial<StoreNotificationEndPoint> = {
+      id: userId,
+      snsEndpointArn,
+      updatedAt: new Date().toISOString()
+    }
+    await this.userRepository.update(updateData)
+  }
+
+  async getDeviceSnsEndpointArn(userId: string): Promise<string> {
     try {
-      const userProfile = await userRepository.getItem(`USER#${userId}`, 'PROFILE')
+      const userProfile = await this.userRepository.getUser(userId)
       if (userProfile?.snsEndpointArn == null) {
         throw new Error('User has no registered device for notifications')
       }
