@@ -76,8 +76,8 @@ describe('useAddPersonalInfo Hook', () => {
 
     expect(result.current.personalInfo).toEqual({
       bloodGroup: '',
-      height: '',
-      weight: '',
+      height: null,
+      weight: null,
       gender: '',
       lastDonationDate: null,
       dateOfBirth: expect.any(Date),
