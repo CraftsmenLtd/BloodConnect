@@ -1,4 +1,7 @@
-import { ACCOUNT_CREATION_MINIMUM_AGE, SHORT_DESCRIPTION_MAX_LENGTH } from '../setup/constant/consts'
+import {
+  ACCOUNT_CREATION_MINIMUM_AGE,
+  SHORT_DESCRIPTION_MAX_LENGTH
+} from '../setup/constant/consts'
 import { formattedDate } from './formatting'
 
 type PasswordPolicy = {
@@ -134,7 +137,7 @@ export const validateDateOfBirth = (dateOfBirth: string): string | null => {
 }
 
 export const validateHeight = (height: string): string | null => {
-  if (height === '' || height === null || height === undefined) {
+  if (height === '' || height === null || height === undefined || height === '0.0') {
     return null
   }
 
@@ -152,7 +155,7 @@ export const validateHeight = (height: string): string | null => {
 }
 
 export const validateWeight = (weight: string): string | null => {
-  if (weight === '' || weight === null || weight === undefined) {
+  if (weight === '' || weight === null || weight === undefined || weight === '0') {
     return null
   }
 

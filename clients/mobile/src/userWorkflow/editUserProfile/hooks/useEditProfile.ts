@@ -4,8 +4,13 @@ import type {
 } from '../../../utility/validator';
 import {
   validateDateOfBirth,
-  validateHeight, validateInput, validatePastOrTodayDate, validatePhoneNumber,
-  validateRequired, validateRequiredFieldsTruthy, validateWeight
+  validateHeight,
+  validateInput,
+  validatePastOrTodayDate,
+  validatePhoneNumber,
+  validateRequired,
+  validateRequiredFieldsTruthy,
+  validateWeight
 } from '../../../utility/validator'
 import { useRoute } from '@react-navigation/native'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
@@ -14,7 +19,9 @@ import { Alert } from 'react-native'
 import { useUserProfile } from '../../context/UserProfileContext'
 import useFetchData from '../../../setup/clients/useFetchData'
 import { updateUserProfile } from '../../services/userProfileService'
-import type { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
+import type {
+  EditProfileRouteProp,
+} from '../../../setup/navigation/navigationTypes'
 import type { EditProfileData } from '../../userProfile/UI/Profile'
 import Constants from 'expo-constants'
 import { formatLocations } from '../../../utility/formatting'
@@ -65,11 +72,9 @@ export const useEditProfile = () => {
     initializeState<ProfileDataErrors>(Object.keys(validationRules) as ProfileFields[], null)
   )
 
-  const [executeUpdateProfile, loading, , updateError] = useFetchData(
+  const [executeUpdateProfile, loading, updateError] = useFetchData(
     async(payload: Partial<ProfileData>) => {
-      console.log('payload', payload)
       const response = await updateUserProfile(payload, fetchClient)
-      console.log('response', response)
       if (response.status !== 200) {
         throw new Error('Failed to update profile')
       }
@@ -123,25 +128,20 @@ export const useEditProfile = () => {
       (preferred) => rest.locations.includes(preferred.area)
     )
 
-    try {
-      const requestPayload = {
-        ...rest,
+    const requestPayload = {
+      ...rest,
 
-        weight: Number.isNaN(parseFloat(rest.weight)) ? null : parseFloat(rest.weight),
-        height: rest.height !== '' ? rest.height : null,
+      weight: Number.isNaN(parseFloat(rest.weight)) ? 0 : parseFloat(rest.weight),
+      height: rest.height !== '' ? rest.height : '0.0',
 
-        preferredDonationLocations: [
-          ...updatedPreferredDonationLocations,
-          ...await formatLocations(filteredLocations, API_BASE_URL)
-        ]
-      }
-      await executeUpdateProfile(requestPayload)
-      if (updateError !== null) {
-        throw new Error('Failed to update profile')
-      } else {
-        await fetchUserProfile()
-      }
-    } catch (error) {
+      preferredDonationLocations: [
+        ...updatedPreferredDonationLocations,
+        ...await formatLocations(filteredLocations, API_BASE_URL)
+      ]
+    }
+
+    await executeUpdateProfile(requestPayload)
+    if (updateError !== null) {
       Alert.alert('Error', 'Could not update profile.')
     }
   }

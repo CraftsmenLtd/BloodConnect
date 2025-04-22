@@ -35,7 +35,6 @@ const useFetchData = <DataFetchType>(
       try {
         const result = await dataFetchFunctionRef.current(...args)
         setData(result)
-        console.log('result', result)
       } catch (error) {
         console.error(error)
         const message = getErrorMessage(error)
