@@ -1,5 +1,5 @@
 import React from 'react'
-import type { ImageSourcePropType, StyleProp, ViewStyle, TextStyle} from 'react-native';
+import type { ImageSourcePropType, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { TouchableOpacity, Text, StyleSheet, Image, View, ActivityIndicator } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'

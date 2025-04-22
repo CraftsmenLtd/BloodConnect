@@ -1,47 +1,49 @@
 import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { DonationRecordService } from '../../../application/bloodDonationWorkflow/DonationRecordService'
-import type { DonationRecordEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import { DonationRecordService } from 'application/bloodDonationWorkflow/DonationRecordService'
+import type { DonationRecordEventAttributes } from 'application/bloodDonationWorkflow/Types'
 import type {
   DonationDTO,
-  DonationRecordDTO} from '../../../../commons/dto/DonationDTO';
+  DonationRecordDTO
+} from '../../../../commons/dto/DonationDTO';
 import {
   AcceptDonationStatus,
   DonationStatus
 } from '../../../../commons/dto/DonationDTO'
 import type {
   DonationRecordFields
-} from '../../../application/models/dbModels/DonationRecordModel';
+} from 'application/models/dbModels/DonationRecordModel';
 import {
   DonationRecordModel
-} from '../../../application/models/dbModels/DonationRecordModel'
-import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
+} from 'application/models/dbModels/DonationRecordModel'
+import { BloodDonationService } from 'application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 import type {
   DonationFields
-} from '../../../application/models/dbModels/BloodDonationModel';
+} from 'application/models/dbModels/BloodDonationModel';
 import {
   BloodDonationModel
-} from '../../../application/models/dbModels/BloodDonationModel'
+} from 'application/models/dbModels/BloodDonationModel'
 import DonationRecordDynamoDbOperations from '../commons/ddb/DonationRecordDynamoDbOperations'
-import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
+import { NotificationService } from 'application/notificationWorkflow/NotificationService'
 import type {
-  BloodDonationNotificationDTO} from '../../../../commons/dto/NotificationDTO';
+  BloodDonationNotificationDTO
+} from '../../../../commons/dto/NotificationDTO';
 import {
   NotificationStatus,
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
 import type {
   BloodDonationNotificationFields
-} from '../../../application/models/dbModels/DonationNotificationModel';
-import DonationNotificationModel from '../../../application/models/dbModels/DonationNotificationModel'
-import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
-import { UserService } from '../../../application/userWorkflow/UserService'
-import type { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
+} from 'application/models/dbModels/DonationNotificationModel';
+import DonationNotificationModel from 'application/models/dbModels/DonationNotificationModel'
+import DonationRecordOperationError from 'application/bloodDonationWorkflow/DonationRecordOperationError'
+import { UserService } from 'application/userWorkflow/UserService'
+import type { UpdateUserAttributes } from 'application/userWorkflow/Types'
 import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import LocationModel from '../../../application/models/dbModels/LocationModel'
-import type { UserFields } from '../../../application/models/dbModels/UserModel';
-import UserModel from '../../../application/models/dbModels/UserModel'
+import LocationModel from 'application/models/dbModels/LocationModel'
+import type { UserFields } from 'application/models/dbModels/UserModel';
+import UserModel from 'application/models/dbModels/UserModel'
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
@@ -49,7 +51,7 @@ import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import SQSOperations from '../commons/sqs/SQSOperations'
-import type { NotificationAttributes } from '../../../application/notificationWorkflow/Types'
+import type { NotificationAttributes } from 'application/notificationWorkflow/Types'
 import { UNKNOWN_ERROR_MESSAGE } from 'commons/libs/constants/ApiResponseMessages';
 
 const bloodDonationService = new BloodDonationService()

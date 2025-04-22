@@ -39,140 +39,140 @@ const CreateBloodRequest = () => {
 
   return (
     <TouchableWithoutFeedback>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
-          <RadioButton
-            name='urgencyLevel'
-            options={['regular', 'urgent']}
-            value={bloodRequestData.urgencyLevel}
-            onPress={handleInputChange}
-            label="Urgency"
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <RadioButton
+          name='urgencyLevel'
+          options={['regular', 'urgent']}
+          value={bloodRequestData.urgencyLevel}
+          onPress={handleInputChange}
+          label="Urgency"
+          isRequired={true}
+          extraInfo='Select "urgent" if the blood is needed within 24 hours.'
+        />
+
+        <View style={styles.fieldSpacing}>
+          <Dropdown
+            label='Blood Group'
             isRequired={true}
-            extraInfo='Select "urgent" if the blood is needed within 24 hours.'
+            placeholder='Select Blood Group'
+            options={bloodGroupOptions}
+            readonly={isUpdating}
+            name='requestedBloodGroup'
+            selectedValue={bloodRequestData.requestedBloodGroup}
+            onChange={handleInputChange}
+            error={errors.requestedBloodGroup}
           />
+        </View>
 
-          <View style={styles.fieldSpacing}>
-            <Dropdown
-              label='Blood Group'
-              isRequired={true}
-              placeholder='Select Blood Group'
-              options={bloodGroupOptions}
-              readonly={isUpdating}
-              name='requestedBloodGroup'
-              selectedValue={bloodRequestData.requestedBloodGroup}
-              onChange={handleInputChange}
-              error={errors.requestedBloodGroup}
+        <View style={styles.fieldSpacing}>
+          <Dropdown
+            label='Unit'
+            isRequired={true}
+            placeholder='Select Unit'
+            options={bloodBagOptions}
+            name='bloodQuantity'
+            selectedValue={bloodRequestData.bloodQuantity}
+            onChange={handleInputChange}
+            error={errors.bloodQuantity}
+          />
+        </View>
+
+        <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
+          <DateTimePickerComponent
+            label="Donation Date and Time"
+            value={new Date(bloodRequestData.donationDateTime)}
+            onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}
+            error={errors.donationDateTime}
+            isRequired={true}
+            isOnlyDate={false}
+          />
+        </View>
+
+        <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
+          <SearchMultiSelect
+            name="location"
+            label="Donation Point"
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            onChange={handleInputChange}
+            initialValue={bloodRequestData.location}
+            editable={isUpdating !== true}
+            error={errors.location}
+            multiSelect={false}
+            isRequired={true}
+            fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
+          />
+          { bloodRequestData.location !== '' && (
+            <MapView
+              style={styles.mapViewContainer}
+              centerCoordinate={centerCoordinate}
+              zoomLevel={zoomLevel}
+              markers={mapMarkers}
             />
-          </View>
+          )}
+        </View>
 
-          <View style={styles.fieldSpacing}>
-            <Dropdown
-              label='Unit'
-              isRequired={true}
-              placeholder='Select Unit'
-              options={bloodBagOptions}
-              name='bloodQuantity'
-              selectedValue={bloodRequestData.bloodQuantity}
-              onChange={handleInputChange}
-              error={errors.bloodQuantity}
-            />
-          </View>
+        <View style={styles.fieldSpacing}>
+          <PhoneNumberInput
+            value={bloodRequestData.contactNumber}
+            onChange={handleInputChange}
+            showWarning={bloodRequestData.contactNumber !== ''}
+          />
+        </View>
 
-          <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
-            <DateTimePickerComponent
-              label="Donation Date and Time"
-              value={new Date(bloodRequestData.donationDateTime)}
-              onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}
-              error={errors.donationDateTime}
-              isRequired={true}
-              isOnlyDate={false}
-            />
-          </View>
+        <View style={[styles.fieldSpacing, styles.reducedSpacing]}>
+          <Input
+            name="patientName"
+            label="Name of the Patient"
+            value={bloodRequestData.patientName}
+            onChangeText={handleInputChange}
+            placeholder="Enter patient's name"
+            keyboardType="twitter"
+            error=''
+          />
+        </View>
 
-          <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
-            <SearchMultiSelect
-              name="location"
-              label="Donation Point"
-              isVisible={isVisible}
-              setIsVisible={setIsVisible}
-              onChange={handleInputChange}
-              initialValue={bloodRequestData.location}
-              editable={isUpdating !== true}
-              error={errors.location}
-              multiSelect={false}
-              isRequired={true}
-              fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
-            />
-            { bloodRequestData.location !== '' && (
-              <MapView
-                style={styles.mapViewContainer}
-                centerCoordinate={centerCoordinate}
-                zoomLevel={zoomLevel}
-                markers={mapMarkers}
-              />
-            )}
-          </View>
+        <View style={styles.fieldSpacing}>
+          <TextArea
+            name='shortDescription'
+            placeholder="Write a short description"
+            label='Short Description of the Problem'
+            value={bloodRequestData.shortDescription}
+            error={errors.shortDescription}
+            onChangeText={handleInputChange}
+            maxLength={SHORT_DESCRIPTION_MAX_LENGTH}
+          />
+        </View>
 
-          <View style={styles.fieldSpacing}>
-            <PhoneNumberInput
-              value={bloodRequestData.contactNumber}
-              onChange={handleInputChange}
-              showWarning={bloodRequestData.contactNumber !== ''}
-            />
-          </View>
+        <View style={styles.fieldSpacing}>
+          <Dropdown
+            label='Transportation Facility for the Donor'
+            isRequired={false}
+            placeholder='Select Transportation Option'
+            options={transportationOptions}
+            name='transportationInfo'
+            selectedValue={bloodRequestData.transportationInfo}
+            onChange={handleInputChange}
+            error={null}
+          />
+        </View>
 
-          <View style={[styles.fieldSpacing, styles.reducedSpacing]}>
-            <Input
-              name="patientName"
-              label="Name of the Patient"
-              value={bloodRequestData.patientName}
-              onChangeText={handleInputChange}
-              placeholder="Enter patient's name"
-              keyboardType="twitter"
-              error=''
-            />
-          </View>
-
-          <View style={styles.fieldSpacing}>
-            <TextArea
-              name='shortDescription'
-              placeholder="Write a short description"
-              label='Short Description of the Problem'
-              value={bloodRequestData.shortDescription}
-              error={errors.shortDescription}
-              onChangeText={handleInputChange}
-              maxLength={SHORT_DESCRIPTION_MAX_LENGTH}
-            />
-          </View>
-
-          <View style={styles.fieldSpacing}>
-            <Dropdown
-              label='Transportation Facility for the Donor'
-              isRequired={false}
-              placeholder='Select Transportation Option'
-              options={transportationOptions}
-              name='transportationInfo'
-              selectedValue={bloodRequestData.transportationInfo}
-              onChange={handleInputChange}
-              error={null}
-            />
-          </View>
-
-          {errorMessage !== '' &&
+        {errorMessage !== '' &&
             <Text style={styles.errorMessage}>{errorMessage}</Text>
-          }
+        }
 
-          <View style={styles.buttonContainer}>
-            <Button
-              text={isUpdating === true ? 'Update Request' : 'Request Now'}
-              onPress={handlePostNow}
-              disabled={isButtonDisabled}
-              loading={loading}
-            />
-          </View>
-        </ScrollView>
+        <View style={styles.buttonContainer}>
+          <Button
+            text={isUpdating === true ? 'Update Request' : 'Request Now'}
+            onPress={handlePostNow}
+            disabled={isButtonDisabled}
+            loading={loading}
+          />
+        </View>
+      </ScrollView>
     </TouchableWithoutFeedback>
   )
 }

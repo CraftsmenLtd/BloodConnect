@@ -1,6 +1,6 @@
 import type { SQSEvent } from 'aws-lambda'
-import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
-import type { DonorSearchQueueAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import { DonorSearchService } from 'application/bloodDonationWorkflow/DonorSearchService'
+import type { DonorSearchQueueAttributes } from 'application/bloodDonationWorkflow/Types'
 import type {
   AcceptedDonationDTO,
   DonationDTO,
@@ -9,63 +9,72 @@ import type {
 } from '../../../../commons/dto/DonationDTO';
 import {
   AcceptDonationStatus,
-  DonorSearchStatus
-,
-  DonationStatus} from '../../../../commons/dto/DonationDTO'
+  DonorSearchStatus,
+  DonationStatus
+} from '../../../../commons/dto/DonationDTO'
 import type { LocationDTO } from '../../../../commons/dto/UserDTO'
 
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import type {
-  DonorSearchFields} from '../../../application/models/dbModels/DonorSearchModel';
+  DonorSearchFields
+} from 'application/models/dbModels/DonorSearchModel';
 import {
   DonorSearchModel
-} from '../../../application/models/dbModels/DonorSearchModel'
+} from 'application/models/dbModels/DonorSearchModel'
 import SQSOperations from '../commons/sqs/SQSOperations'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
   DonorSearchIntentionalError,
   DonorSearchOperationalError
-} from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
-import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
+} from 'application/bloodDonationWorkflow/DonorSearchOperationalError'
+import {
+  AcceptDonationService
+} from 'application/bloodDonationWorkflow/AcceptDonationRequestService'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
 import type {
-  AcceptedDonationFields} from '../../../application/models/dbModels/AcceptDonationModel';
+  AcceptedDonationFields
+} from 'application/models/dbModels/AcceptDonationModel';
 import {
   AcceptDonationRequestModel
-} from '../../../application/models/dbModels/AcceptDonationModel'
+} from 'application/models/dbModels/AcceptDonationModel'
 import {
   calculateDelayPeriod,
   calculateRemainingBagsNeeded,
   calculateTotalDonorsToFind
-} from '../../../application/utils/calculateDonorsToNotify'
+} from 'application/utils/calculateDonorsToNotify'
 import type {
   DonorInfo,
-  GeohashDonorMap} from '../../../application/utils/GeohashCacheMapManager';
+  GeohashDonorMap
+} from 'application/utils/GeohashCacheMapManager';
 import {
   GeohashCacheManager,
   updateGroupedGeohashCache
-} from '../../../application/utils/GeohashCacheMapManager'
+} from 'application/utils/GeohashCacheMapManager'
 import GeohashDynamoDbOperations from '../commons/ddb/GeohashDynamoDbOperations'
-import type { LocationFields } from '../../../application/models/dbModels/LocationModel';
+import type { LocationFields } from 'application/models/dbModels/LocationModel';
 import LocationModel from '../../../application/models/dbModels/LocationModel'
-import { getDistanceBetweenGeohashes } from '../../../application/utils/geohash'
-import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
-import type { DonationNotificationAttributes } from '../../../application/notificationWorkflow/Types'
-import { getBloodRequestMessage } from '../../../application/bloodDonationWorkflow/BloodDonationMessages'
+import { getDistanceBetweenGeohashes } from 'application/utils/geohash'
+import { NotificationService } from 'application/notificationWorkflow/NotificationService'
+import type { DonationNotificationAttributes } from 'application/notificationWorkflow/Types'
+import { getBloodRequestMessage } from 'application/bloodDonationWorkflow/BloodDonationMessages'
 import type {
-  BloodDonationNotificationDTO} from '../../../../commons/dto/NotificationDTO';
+  BloodDonationNotificationDTO
+} from '../../../../commons/dto/NotificationDTO';
 import {
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
-import { GEO_PARTITION_PREFIX_LENGTH, MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from '../../../../commons/libs/constants/NoMagicNumbers'
+import {
+  GEO_PARTITION_PREFIX_LENGTH,
+  MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS
+} from '../../../../commons/libs/constants/NoMagicNumbers'
 import type {
   BloodDonationNotificationFields
-} from '../../../application/models/dbModels/DonationNotificationModel';
-import DonationNotificationModel from '../../../application/models/dbModels/DonationNotificationModel'
+} from 'application/models/dbModels/DonationNotificationModel';
+import DonationNotificationModel from 'application/models/dbModels/DonationNotificationModel'
 import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
-import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import type { DonationFields} from '../../../application/models/dbModels/BloodDonationModel';
-import { BloodDonationModel } from '../../../application/models/dbModels/BloodDonationModel'
+import { BloodDonationService } from 'application/bloodDonationWorkflow/BloodDonationService'
+import type { DonationFields } from 'application/models/dbModels/BloodDonationModel'
+import { BloodDonationModel } from 'application/models/dbModels/BloodDonationModel'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
 
 const bloodDonationService = new BloodDonationService()
@@ -110,12 +119,20 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       )
     )
 
-    if (donationPost.status === DonationStatus.COMPLETED || donationPost.status === DonationStatus.CANCELLED) {
+    if (
+      donationPost.status === DonationStatus.COMPLETED ||
+      donationPost.status === DonationStatus.CANCELLED
+    ) {
       serviceLogger.info(`terminating process as donation status is ${donationPost.status}`)
       return
     }
 
-    serviceLogger.info(`checking targeted execution time${targetedExecutionTime !== undefined ? ` ${targetedExecutionTime}` : ''}`)
+    serviceLogger.info(
+      `checking targeted execution time${targetedExecutionTime !== undefined ? 
+        ` ${targetedExecutionTime}` : 
+        ''
+      }`
+    )
     await handleVisibilityTimeout(targetedExecutionTime, record.receiptHandle)
 
     const donorSearchRecord = await donorSearchService.getDonorSearchRecord(
@@ -131,8 +148,14 @@ async function donorSearch(event: SQSEvent): Promise<void> {
       return
     }
 
-    const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, countryCode, geohash } =
-      donorSearchRecord
+    const {
+      bloodQuantity,
+      requestedBloodGroup,
+      urgencyLevel,
+      donationDateTime,
+      countryCode,
+      geohash
+    } = donorSearchRecord
 
     const isFirstInitiation = initiationCount === 1
     const remainingBagsNeeded =

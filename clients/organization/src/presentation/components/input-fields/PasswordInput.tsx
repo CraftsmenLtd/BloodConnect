@@ -1,4 +1,4 @@
-import type { ChangeEvent} from 'clients/commons/platform/node_modules/@types/react';
+import type { ChangeEvent } from 'clients/commons/platform/node_modules/@types/react';
 import React, { useState } from 'clients/commons/platform/node_modules/@types/react';
 import { FaRegEye, FaRegEyeSlash } from '../../assets/icons';
 import InputField from './index';

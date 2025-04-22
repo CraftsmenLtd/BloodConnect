@@ -1,6 +1,6 @@
 import type {
   UploadPartCopyCommandOutput,
-  UploadPartCommandOutput} from '@aws-sdk/client-s3';
+  UploadPartCommandOutput } from '@aws-sdk/client-s3';
 import {
   S3Client,
   HeadObjectCommand,
@@ -25,7 +25,16 @@ const maxGeohashToStoreInFile = Number(process.env.MAX_GEOHASH_STORAGE)
 const bucketPathPrefix = process.env.BUCKET_PATH_PREFIX as string
 
 const countGeohashesInFile = (fileSize: number): number => fileSize / maxEstimatedGeohashSizeInBytes
-const deleteExpiredFile = async(fileName: string): Promise<void> => { await client.send(new DeleteObjectCommand({ Bucket: bucketName, Key: fileName })) }
+const deleteExpiredFile = async(fileName: string): Promise<void> => { 
+  await client.send(
+    new DeleteObjectCommand(
+      { 
+        Bucket: bucketName, 
+        Key: fileName 
+      }
+    )
+  ) 
+}
 const createNewFile = async(fileName: string, geohash: string): Promise<void> => {
   await client.send(
     new PutObjectCommand({
@@ -35,7 +44,11 @@ const createNewFile = async(fileName: string, geohash: string): Promise<void> =>
     }))
 }
 
-const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: string, fileSize: number): Promise<void> => {
+const appendGeohashToFileLargerThan5MB = async(
+  fileName: string, 
+  fileContent: string, 
+  fileSize: number
+): Promise<void> => {
   const createMultipartUploadResponse = await client.send(
     new CreateMultipartUploadCommand({
       Bucket: bucketName,
@@ -64,16 +77,17 @@ const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: st
     })
   )
 
-  const parts = await Promise.all([uploadExistingFilePromise, uploadNewPartPromise].map(async(promise, index) => {
-    const response = await promise
-    const isExistingPart = index === 0
-    return {
-      PartNumber: index + 1,
-      ETag: isExistingPart
-        ? (response as UploadPartCopyCommandOutput).CopyPartResult?.ETag
-        : (response as UploadPartCommandOutput).ETag
-    }
-  }))
+  const parts = await Promise.all(
+    [uploadExistingFilePromise, uploadNewPartPromise].map(async(promise, index) => {
+      const response = await promise
+      const isExistingPart = index === 0
+      return {
+        PartNumber: index + 1,
+        ETag: isExistingPart
+          ? (response as UploadPartCopyCommandOutput).CopyPartResult?.ETag
+          : (response as UploadPartCommandOutput).ETag
+      }
+    }))
 
   await client.send(
     new CompleteMultipartUploadCommand({
@@ -87,7 +101,10 @@ const appendGeohashToFileLargerThan5MB = async(fileName: string, fileContent: st
   )
 }
 
-const appendGeohashToFileSmallerThan5MB = async(fileName: string, fileContent: string): Promise<void> => {
+const appendGeohashToFileSmallerThan5MB = async(
+  fileName: string,
+  fileContent: string
+): Promise<void> => {
   const existingFileResponse = await client.send(
     new GetObjectCommand({
       Bucket: bucketName,
@@ -129,7 +146,14 @@ async function monitorDonationRequest(event: Event[], context: Context): Promise
     for (const [key, fileContent] of formatEvent(event)) {
       const potentialFileName = `${bucketPathPrefix}/${key}.txt`
       try {
-        const existingFile = await client.send(new HeadObjectCommand({ Bucket: bucketName, Key: potentialFileName }))
+        const existingFile = await client.send(
+          new HeadObjectCommand(
+            {
+              Bucket: bucketName,
+              Key: potentialFileName
+            }
+          )
+        )
         serviceLogger.debug('found existing file')
         const fileSize = existingFile.ContentLength as number
         const currentNumberOfGeohashes = countGeohashesInFile(fileSize)

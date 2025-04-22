@@ -1,9 +1,21 @@
-import type { BloodDonationNotificationDTO} from '../../../../commons/dto/NotificationDTO';
+import type { BloodDonationNotificationDTO } from '../../../../commons/dto/NotificationDTO';
 import { NotificationType } from '../../../../commons/dto/NotificationDTO'
-import type { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
+import type {
+  DbIndex,
+  DbModelDtoAdapter,
+  HasTimeLog,
+  IndexDefinitions,
+  IndexType,
+  NosqlModel
+} from './DbModelDefinitions'
 import { NOTIFICATION_PK_PREFIX } from './NotificationModel'
 
-export type BloodDonationNotificationFields = Omit<BloodDonationNotificationDTO, 'id' | 'userId' | 'type'> & HasTimeLog & {
+export type BloodDonationNotificationFields = Omit<
+  BloodDonationNotificationDTO,
+  'id' |
+  'userId' |
+  'type'
+> & HasTimeLog & {
   PK: `${typeof NOTIFICATION_PK_PREFIX}#${string}`;
   SK: `${string}`;
   GSI1PK?: `${string}`;
@@ -11,7 +23,13 @@ export type BloodDonationNotificationFields = Omit<BloodDonationNotificationDTO,
   LSI1SK?: `STATUS#${string}#${string}`;
 }
 
-export default class DonationNotificationModel implements NosqlModel<BloodDonationNotificationFields>, DbModelDtoAdapter<BloodDonationNotificationDTO, BloodDonationNotificationFields> {
+export default class DonationNotificationModel implements
+  NosqlModel<BloodDonationNotificationFields>,
+  DbModelDtoAdapter<
+    BloodDonationNotificationDTO,
+    BloodDonationNotificationFields
+  >
+{
   getIndexDefinitions(): IndexDefinitions<BloodDonationNotificationFields> {
     return {
       GSI: {
@@ -27,11 +45,15 @@ export default class DonationNotificationModel implements NosqlModel<BloodDonati
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex(indexType: IndexType, indexName: string): DbIndex<BloodDonationNotificationFields> | undefined {
+  getIndex(
+    indexType: IndexType,
+    indexName: string): DbIndex<BloodDonationNotificationFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(BloodDonationNotificationDTO: BloodDonationNotificationDTO): BloodDonationNotificationFields {
+  fromDto(
+    BloodDonationNotificationDTO: BloodDonationNotificationDTO
+  ): BloodDonationNotificationFields {
     const { id, userId, type, ...remainingNotificationFields } = BloodDonationNotificationDTO
 
     const data: BloodDonationNotificationFields = {

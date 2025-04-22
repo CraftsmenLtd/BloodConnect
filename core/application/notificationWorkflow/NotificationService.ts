@@ -2,7 +2,8 @@ import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import type { UserDetailsDTO } from '../../../commons/dto/UserDTO'
 import type {
   BloodDonationNotificationDTO,
-  NotificationDTO} from '../../../commons/dto/NotificationDTO';
+  NotificationDTO
+} from '../../../commons/dto/NotificationDTO'
 import {
   NotificationType
 } from '../../../commons/dto/NotificationDTO'

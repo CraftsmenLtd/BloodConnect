@@ -42,12 +42,15 @@ const GeoHashMap = () => {
             new GetObjectCommand({
               Bucket: import.meta.env.VITE_AWS_S3_BUCKET,
               Key: `${import.meta.env.VITE_BUCKET_PATH_PREFIX
-                }/${prefix}-${type}.txt`
+              }/${prefix}-${type}.txt`
             })
           )
-          .then(async(response) => response.Body ? response.Body.transformToString().then((content) =>
-            content.split('\n')
-          ) : [])
+          .then(async(
+            response
+          ) => 
+            response.Body ? response.Body.transformToString().then((content) =>
+              content.split('\n')
+            ) : [])
           .catch(() => [])
       )
     )
@@ -83,7 +86,9 @@ const GeoHashMap = () => {
           }
           const currentData = geoHashMap.get(key)!
 
-          currentData.counter[bloodType] = currentData.counter[bloodType] ? currentData.counter[bloodType] + 1 : 1
+          currentData.counter[bloodType] = currentData.counter[bloodType] ?
+            currentData.counter[bloodType] + 1 :
+            1
           currentData.totalCount += 1
 
           geoHashMap.set(key, currentData)

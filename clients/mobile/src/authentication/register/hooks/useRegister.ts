@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import type { ValidationRule} from '../../../utility/validator'
+import type { ValidationRule } from '../../../utility/validator'
 import {
   validateRequired,
   validateEmail,

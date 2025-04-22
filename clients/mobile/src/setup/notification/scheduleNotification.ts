@@ -5,11 +5,17 @@ type NotificationTrigger =
   | { seconds: number }
   | { repeats: boolean; interval: 'minute' | 'hour' | 'day' | 'week' }
 
-export const scheduleNotification = async(trigger: NotificationTrigger, content: Notifications.NotificationContentInput): Promise<void> => {
+export const scheduleNotification = async(
+  trigger: NotificationTrigger, 
+  content: Notifications.NotificationContentInput
+): Promise<void> => {
   await Notifications.scheduleNotificationAsync({ content, trigger: notificationTrigger(trigger) })
 }
 
-const notificationTrigger = (trigger: NotificationTrigger): Notifications.NotificationTriggerInput => {
+const notificationTrigger = (
+  trigger: NotificationTrigger
+):
+  Notifications.NotificationTriggerInput => {
   if ('date' in trigger) {
     return trigger.date
   } else if ('seconds' in trigger) {
@@ -26,20 +32,22 @@ const notificationTrigger = (trigger: NotificationTrigger): Notifications.Notifi
 
 const calculateIntervalInSeconds = (interval: 'minute' | 'hour' | 'day' | 'week'): number => {
   switch (interval) {
-    case 'minute':
-      return 60
-    case 'hour':
-      return 60 * 60
-    case 'day':
-      return 24 * 60 * 60
-    case 'week':
-      return 7 * 24 * 60 * 60
-    default:
-      throw new Error('Invalid interval provided.')
+  case 'minute':
+    return 60
+  case 'hour':
+    return 60 * 60
+  case 'day':
+    return 24 * 60 * 60
+  case 'week':
+    return 7 * 24 * 60 * 60
+  default:
+    throw new Error('Invalid interval provided.')
   }
 }
 
-export const fetchScheduledNotifications = async(): Promise<Notifications.NotificationRequest[]> => {
+export const fetchScheduledNotifications = async():
+  Promise<Notifications.NotificationRequest[]> =>
+{
   return Notifications.getAllScheduledNotificationsAsync()
 }
 

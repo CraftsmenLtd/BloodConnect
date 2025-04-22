@@ -1,25 +1,29 @@
 import type { SQSEvent, SQSRecord } from 'aws-lambda'
-import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
+import { BloodDonationService } from 'application/bloodDonationWorkflow/BloodDonationService'
 import type {
   AcceptedDonationDTO,
-  DonationDTO} from '../../../../commons/dto/DonationDTO';
+  DonationDTO
+} from '../../../../commons/dto/DonationDTO'
 import {
   DonationStatus
 } from '../../../../commons/dto/DonationDTO'
 import type {
   DonationFields
-} from '../../../application/models/dbModels/BloodDonationModel';
+} from 'application/models/dbModels/BloodDonationModel'
 import {
   BloodDonationModel
-} from '../../../application/models/dbModels/BloodDonationModel'
+} from 'application/models/dbModels/BloodDonationModel'
 import type {
-  AcceptedDonationFields} from '../../../application/models/dbModels/AcceptDonationModel';
+  AcceptedDonationFields
+} from 'application/models/dbModels/AcceptDonationModel';
 import {
   AcceptDonationRequestModel
-} from '../../../application/models/dbModels/AcceptDonationModel'
+} from 'application/models/dbModels/AcceptDonationModel'
 import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
 import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
-import { AcceptDonationService } from 'core/application/bloodDonationWorkflow/AcceptDonationRequestService'
+import {
+  AcceptDonationService
+} from 'core/application/bloodDonationWorkflow/AcceptDonationRequestService'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 
 const bloodDonationService = new BloodDonationService()

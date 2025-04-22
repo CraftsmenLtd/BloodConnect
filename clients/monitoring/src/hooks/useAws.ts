@@ -1,4 +1,4 @@
-import type { AuthSession} from 'aws-amplify/auth';
+import type { AuthSession } from 'aws-amplify/auth'
 import { fetchAuthSession } from 'aws-amplify/auth'
 import { useEffect, useState } from 'react'
 

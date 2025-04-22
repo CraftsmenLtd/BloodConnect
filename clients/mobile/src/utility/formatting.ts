@@ -25,20 +25,20 @@ export function formatErrorMessage(error: unknown): string {
     }
 
     switch (errorMessage.trim()) {
-      case 'user already exists':
-        return 'User already exists, Please Login.'
-      case 'invalid request body':
-        return 'Please check your input and try again.'
-      case 'network error':
-        return 'Please check your internet connection.'
-      case 'network request failed':
-        return 'Please check your internet connection.'
-      case 'timeout':
-        return 'Request timed out, please try again later.'
-      case 'error: you\'ve reached today\'s limit of 10 requests. please try tomorrow.':
-        return 'You have reached the daily request limit. Please try again tomorrow.'
-      default:
-        return 'Something went wrong.'
+    case 'user already exists':
+      return 'User already exists, Please Login.'
+    case 'invalid request body':
+      return 'Please check your input and try again.'
+    case 'network error':
+      return 'Please check your internet connection.'
+    case 'network request failed':
+      return 'Please check your internet connection.'
+    case 'timeout':
+      return 'Request timed out, please try again later.'
+    case 'error: you\'ve reached today\'s limit of 10 requests. please try tomorrow.':
+      return 'You have reached the daily request limit. Please try again tomorrow.'
+    default:
+      return 'Something went wrong.'
     }
   }
 
@@ -68,7 +68,10 @@ export const replaceTemplatePlaceholders = (template: string, ...values: string[
   })
 }
 
-export const formatLocations = async(locations: string[], mapAPI: string): Promise<LocationData[]> => {
+export const formatLocations = async(
+  locations: string[],
+  mapAPI: string
+): Promise<LocationData[]> => {
   const locationService = new LocationService(mapAPI)
 
   const formattedLocations = await Promise.all(

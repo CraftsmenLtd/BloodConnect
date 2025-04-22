@@ -63,14 +63,20 @@ const ResponseDonationRequest = () => {
             <View style={styles.frameBloodType}>
               <View style={styles.requestSection}>
                 <MaterialIcons
-                name='bloodtype'
-                style={styles.bloodtypeImage as StyleProp<ImageStyle>}
-                size={32}
+                  name='bloodtype'
+                  style={styles.bloodtypeImage as StyleProp<ImageStyle>}
+                  size={32}
                 />
                 <View style={styles.requestText}>
                   <Text style={styles.primaryCaption}>Looking for</Text>
                   <Text style={styles.highlightedText}>
-                    {formatBloodQuantity(bloodRequest.bloodQuantity) ?? 0} {bloodRequest.requestedBloodGroup}(ve) blood
+                    {
+                      formatBloodQuantity(
+                        bloodRequest.bloodQuantity) ?? 0
+                    } 
+                    {
+                      bloodRequest.requestedBloodGroup
+                    }(ve) blood
                   </Text>
                 </View>
               </View>
@@ -91,9 +97,14 @@ const ResponseDonationRequest = () => {
                   <Text style={styles.label}>Donation point</Text>
                 </View>
                 {bloodRequest.location !== ''
-                  ? <TouchableOpacity onPress={() => { openMapLocation({ location: bloodRequest.location }) }}>
-                      <Text style={[styles.value, styles.link]}>{bloodRequest.location}</Text>
-                    </TouchableOpacity>
+                  ? <TouchableOpacity 
+                    onPress={() => { 
+                      openMapLocation({ 
+                        location: bloodRequest.location 
+                      }) 
+                    }}>
+                    <Text style={[styles.value, styles.link]}>{bloodRequest.location}</Text>
+                  </TouchableOpacity>
                   : <Text style={styles.value}>Location not provided</Text>}
 
               </View>
@@ -118,8 +129,10 @@ const ResponseDonationRequest = () => {
                       {bloodRequest.contactNumber ?? 'Contact Not Shared'}
                     </Text>
                     : <Text style={styles.hiddenNumber}>
-                      {`${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`}
-                      </Text>
+                      {
+                        `${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`
+                      }
+                    </Text>
                   }
                 </View>
                 {isRequestAlreadyAccepted && (
@@ -143,7 +156,9 @@ const ResponseDonationRequest = () => {
             {bloodRequest.patientName !== '' &&
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Name of the Patient</Text>
-                <Text style={styles.value}>{bloodRequest.patientName ?? 'Patient Name not provided'}</Text>
+                <Text style={styles.value}>
+                  {bloodRequest.patientName ?? 'Patient Name not provided'}
+                </Text>
               </View>
             }
             {bloodRequest.shortDescription !== '' &&
@@ -157,7 +172,9 @@ const ResponseDonationRequest = () => {
             {bloodRequest.transportationInfo !== '' &&
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Transportation Facility for the Donor</Text>
-                <Text style={styles.value}>{bloodRequest.transportationInfo ?? 'No transportation info'}</Text>
+                <Text style={styles.value}>
+                  {bloodRequest.transportationInfo ?? 'No transportation info'}
+                </Text>
               </View>
             }
           </View>
@@ -165,7 +182,9 @@ const ResponseDonationRequest = () => {
       </ScrollView>
 
       {error !== null && <Text style={styles.error}>{error}</Text>}
-      {userProfile.userId !== bloodRequest.seekerId && userProfile.bloodGroup === bloodRequest.requestedBloodGroup &&
+      {
+        userProfile.userId !== bloodRequest.seekerId && 
+        userProfile.bloodGroup === bloodRequest.requestedBloodGroup &&
         <View style={styles.buttonContainer}>
           {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
             <Button
@@ -176,7 +195,10 @@ const ResponseDonationRequest = () => {
                 void handleIgnore()
               }} />}
           <Button
-            text={isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 'Accept Request'}
+            text={
+              isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 
+                'Accept Request'
+            }
             loading={isLoading}
             disabled={isRequestAccepted || isRequestAlreadyAccepted}
             buttonStyle={styles.acceptButton}

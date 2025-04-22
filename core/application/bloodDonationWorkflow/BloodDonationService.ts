@@ -1,7 +1,7 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import type { DonationDTO} from '../../../commons/dto/DonationDTO';
+import type { DonationDTO } from '../../../commons/dto/DonationDTO'
 import { DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import type Repository from '../models/policies/repositories/Repository'

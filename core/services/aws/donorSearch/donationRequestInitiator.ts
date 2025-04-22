@@ -1,25 +1,28 @@
 import type { SQSEvent } from 'aws-lambda'
-import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
+import { DonorSearchService } from 'application/bloodDonationWorkflow/DonorSearchService'
 import type {
   DonorSearchAttributes,
   DonorSearchQueueAttributes
-} from '../../../application/bloodDonationWorkflow/Types'
-import type { DonorSearchDTO} from '../../../../commons/dto/DonationDTO';
+} from 'application/bloodDonationWorkflow/Types'
+import type { DonorSearchDTO } from '../../../../commons/dto/DonationDTO'
 import { DonorSearchStatus } from '../../../../commons/dto/DonationDTO'
 import type { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
 
 import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
 import type {
-  DonorSearchFields} from '../../../application/models/dbModels/DonorSearchModel';
+  DonorSearchFields
+} from 'application/models/dbModels/DonorSearchModel';
 import {
   DonorSearchModel
-} from '../../../application/models/dbModels/DonorSearchModel'
-import type { UserFields } from '../../../application/models/dbModels/UserModel';
-import UserModel from '../../../application/models/dbModels/UserModel'
-import { UserService } from '../../../application/userWorkflow/UserService'
+} from 'application/models/dbModels/DonorSearchModel'
+import type { UserFields } from 'application/models/dbModels/UserModel'
+import UserModel from 'application/models/dbModels/UserModel'
+import { UserService } from 'application/userWorkflow/UserService'
 import SQSOperations from '../commons/sqs/SQSOperations'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
-import { DonorSearchIntentionalError } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
+import {
+  DonorSearchIntentionalError
+} from 'application/bloodDonationWorkflow/DonorSearchOperationalError'
 
 export enum DynamoDBEventName {
   INSERT = 'INSERT',
@@ -32,7 +35,8 @@ const userService = new UserService()
 async function donationRequestInitiator(event: SQSEvent): Promise<void> {
   for (const record of event.Records) {
     const body =
-      typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
+      typeof record.body === 'string' &&
+      record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
     const primaryIndex: string = body?.PK
     const secondaryIndex: string = body?.SK
@@ -102,7 +106,9 @@ async function donationRequestInitiator(event: SQSEvent): Promise<void> {
           )
         )
       } else {
-        serviceLogger.info('updating donor search record because the donation request has been updated')
+        serviceLogger.info(
+          'updating donor search record because the donation request has been updated'
+        )
         await donorSearchService.updateDonorSearchRecord(
           {
             ...donorSearchAttributes,

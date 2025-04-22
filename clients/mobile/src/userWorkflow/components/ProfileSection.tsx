@@ -1,5 +1,5 @@
 import React from 'react'
-import type { StyleProp, ImageStyle} from 'react-native';
+import type { StyleProp, ImageStyle } from 'react-native'
 import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -13,7 +13,13 @@ type UserData = {
   onImageUpload?: () => void;
 }
 
-const ProfileSection: React.FC<UserData> = ({ name, location, isEditing = false, onImageUpload }) => {
+const ProfileSection: React.FC<UserData> = (
+  {
+    name,
+    location,
+    isEditing = false,
+    onImageUpload
+  }) => {
   const styles = createStyles(useTheme())
 
   return (
