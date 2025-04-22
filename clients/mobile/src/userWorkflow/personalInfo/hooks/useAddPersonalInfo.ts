@@ -11,7 +11,6 @@ import {
   validatePastOrTodayDate,
   validateHeight,
   validateWeight,
-  validatePhoneNumber,
   validateRequiredFieldsTruthy
 } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
@@ -24,8 +23,7 @@ import type {
 } from '../../../utility/formatting';
 import {
   formatErrorMessage,
-  formatToTwoDecimalPlaces,
-  formatPhoneNumber
+  formatToTwoDecimalPlaces
 } from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
@@ -89,7 +87,7 @@ export const useAddPersonalInfo = () => {
       acceptPolicy: [validateRequired]
     }
     if (isSSO) {
-      rules.phoneNumber = [validateRequired, validatePhoneNumber]
+      rules.phoneNumber = [validateRequired]
     }
 
     return rules as Record<PersonalInfoKeys, ValidationRule[]>
@@ -189,7 +187,7 @@ export const useAddPersonalInfo = () => {
         ...(height !== null && { height }),
         ...(weight !== null && { weight: formatToTwoDecimalPlaces(weight) }),
         preferredDonationLocations,
-        ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {}),
+        ...(isSSO && phoneNumber != null ? { phoneNumbers: [phoneNumber] } : {}),
         availableForDonation: rest.availableForDonation === 'yes'
       }
 

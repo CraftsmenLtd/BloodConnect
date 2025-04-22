@@ -66,7 +66,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
     <View style={{ marginVertical: 4 }}>
       <Text style={styles.label}>
         {label}
-        {isRequired && <Text style={styles.asterisk}>*</Text>}
+        {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
       <TouchableOpacity onPress={() => { setShowDatePicker(true) }} style={[styles.datePicker, inputStyle]}>
       <Text>

@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import type {
   ValidationRule
-} from '../../../utility/validator';
+} from '../../../utility/validator'
 import {
   validateDateOfBirth,
   validateHeight,
   validateInput,
   validatePastOrTodayDate,
-  validatePhoneNumber,
   validateRequired,
   validateRequiredFieldsTruthy,
   validateWeight
@@ -25,6 +24,7 @@ import type {
 import type { EditProfileData } from '../../userProfile/UI/Profile'
 import Constants from 'expo-constants'
 import { formatLocations } from '../../../utility/formatting'
+
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type ProfileFields = keyof Omit<ProfileData, 'location'>
@@ -46,7 +46,7 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   weight: [validateWeight],
   height: [validateHeight],
   gender: [validateRequired],
-  phone: [validateRequired, validatePhoneNumber],
+  phone: [validateRequired],
   preferredDonationLocations: [validateRequired],
   lastDonationDate: [validatePastOrTodayDate],
   locations: []
