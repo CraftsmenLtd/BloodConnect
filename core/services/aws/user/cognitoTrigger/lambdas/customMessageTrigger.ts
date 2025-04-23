@@ -1,7 +1,7 @@
 import { UserService } from '../../../../../application/userWorkflow/UserService'
 import type { GenericMessage } from '../../../../../../commons/dto/MessageDTO'
 import type { Callback, Context, CustomMessageTriggerEvent } from 'aws-lambda'
-import UserDynamoDbOperations from 'core/services/aws/commons/ddbOperations/UserDynamoDbOperations';
+import UserDynamoDbOperations from '../../../commons/ddbOperations/UserDynamoDbOperations';
 import { JsonLogger } from 'commons/libs/logger/JsonLogger';
 import type { Logger } from 'core/application/models/logger/Logger';
 import { Config } from 'commons/libs/config/config';
