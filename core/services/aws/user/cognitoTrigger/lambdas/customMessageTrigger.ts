@@ -2,9 +2,9 @@ import { UserService } from '../../../../../application/userWorkflow/UserService
 import type { GenericMessage } from '../../../../../../commons/dto/MessageDTO'
 import type { Callback, Context, CustomMessageTriggerEvent } from 'aws-lambda'
 import UserDynamoDbOperations from '../../../commons/ddbOperations/UserDynamoDbOperations';
-import { JsonLogger } from 'commons/libs/logger/JsonLogger';
-import type { Logger } from 'core/application/models/logger/Logger';
-import { Config } from 'commons/libs/config/config';
+import { JsonLogger } from '../../../../../../commons/libs/logger/JsonLogger';
+import type { Logger } from '../../../../../application/models/logger/Logger';
+import { Config } from '../../../../../../commons/libs/config/config';
 
 const config = new Config<{
   dynamodbTableName: string;
