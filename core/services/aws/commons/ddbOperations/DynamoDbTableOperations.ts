@@ -21,10 +21,10 @@ import {
 import type {
   QueryInput,
   QueryCondition
-} from 'application/models/policies/repositories/QueryTypes';
+} from '../../../../application/models/policies/repositories/QueryTypes';
 import {
   QueryConditionOperator
-} from 'application/models/policies/repositories/QueryTypes'
+} from '../../../../application/models/policies/repositories/QueryTypes'
 import type { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'

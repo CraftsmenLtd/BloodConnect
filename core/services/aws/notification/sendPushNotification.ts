@@ -2,21 +2,21 @@ import type { SQSEvent, SQSRecord } from 'aws-lambda'
 import type {
   DonationNotificationAttributes,
   NotificationAttributes
-} from 'application/notificationWorkflow/Types'
-import { NotificationService } from 'application/notificationWorkflow/NotificationService'
+} from '../../../application/notificationWorkflow/Types'
+import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import SNSOperations from '../commons/sns/SNSOperations'
 import {
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
-import { LocalCacheMapManager } from 'application/utils/localCacheMapManager'
-import { UserService } from 'application/userWorkflow/UserService'
+import { LocalCacheMapManager } from '../../../application/utils/localCacheMapManager'
+import { UserService } from '../../../application/userWorkflow/UserService'
 import type {
   AcceptDonationStatus,
   AcceptDonationDTO
 } from '../../../../commons/dto/DonationDTO'
 import { MAX_LOCAL_CACHE_SIZE_COUNT } from '../../../../commons/libs/constants/NoMagicNumbers'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
-import NotificationOperationError from 'application/notificationWorkflow/NotificationOperationError'
+import NotificationOperationError from '../../../application/notificationWorkflow/NotificationOperationError'
 import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
 import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
 import { Config } from 'commons/libs/config/config'

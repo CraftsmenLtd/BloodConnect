@@ -1,6 +1,6 @@
 import type { APIGatewayProxyResult } from 'aws-lambda'
-import { UserService } from 'application/userWorkflow/UserService'
-import type { UpdateUserAttributes } from 'application/userWorkflow/Types'
+import { UserService } from '../../../application/userWorkflow/UserService'
+import type { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
@@ -12,7 +12,7 @@ import {
 import LocationDynamoDbOperations from '../commons/ddbOperations/LocationDynamoDbOperations'
 import { Config } from '../../../../commons/libs/config/config';
 import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations';
-import { LocationService } from 'application/userWorkflow/LocationService';
+import { LocationService } from '../../../application/userWorkflow/LocationService';
 
 const config = new Config<{
   dynamodbTableName: string;

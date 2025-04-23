@@ -1,9 +1,9 @@
 import type { SQSEvent } from 'aws-lambda'
-import { DonorSearchService } from 'application/bloodDonationWorkflow/DonorSearchService'
+import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
 import type {
   DonorSearchConfig,
   DonorSearchQueueAttributes
-} from 'application/bloodDonationWorkflow/Types'
+} from '../../../application/bloodDonationWorkflow/Types'
 import {
   DonorSearchStatus,
   DonationStatus
@@ -14,23 +14,23 @@ import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
   DonorSearchIntentionalError,
   DonorSearchOperationalError
-} from 'application/bloodDonationWorkflow/DonorSearchOperationalError'
+} from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
 import {
   AcceptDonationService
-} from 'application/bloodDonationWorkflow/AcceptDonationRequestService'
+} from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import {
   calculateDelayPeriod,
   calculateTotalDonorsToFind
-} from 'application/utils/calculateDonorsToNotify'
+} from '../../../application/utils/calculateDonorsToNotify'
 import type {
   GeohashDonorMap
-} from 'application/utils/GeohashCacheMapManager';
+} from '../../../application/utils/GeohashCacheMapManager';
 import {
   GeohashCacheManager
-} from 'application/utils/GeohashCacheMapManager'
+} from '../../../application/utils/GeohashCacheMapManager'
 import GeohashDynamoDbOperations from '../commons/ddbOperations/GeohashDynamoDbOperations'
-import { NotificationService } from 'application/notificationWorkflow/NotificationService'
-import { BloodDonationService } from 'application/bloodDonationWorkflow/BloodDonationService'
+import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
+import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import { Config } from '../../../../commons/libs/config/config';
 import DonorSearchDynamoDbOperations from '../commons/ddbOperations/DonorSearchDynamoDbOperations';

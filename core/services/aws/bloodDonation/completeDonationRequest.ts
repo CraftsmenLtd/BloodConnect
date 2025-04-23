@@ -1,15 +1,15 @@
 import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { DonationRecordService } from 'application/bloodDonationWorkflow/DonationRecordService'
+import { DonationRecordService } from '../../../application/bloodDonationWorkflow/DonationRecordService'
 import type {
   DonationRecordEventAttributes
-} from 'application/bloodDonationWorkflow/Types'
-import { BloodDonationService } from 'application/bloodDonationWorkflow/BloodDonationService'
+} from '../../../application/bloodDonationWorkflow/Types'
+import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import DonationRecordDynamoDbOperations from '../commons/ddbOperations/DonationRecordDynamoDbOperations'
-import { NotificationService } from 'application/notificationWorkflow/NotificationService'
-import DonationRecordOperationError from 'application/bloodDonationWorkflow/DonationRecordOperationError'
-import { UserService } from 'application/userWorkflow/UserService'
+import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
+import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
+import { UserService } from '../../../application/userWorkflow/UserService'
 import LocationDynamoDbOperations from '../commons/ddbOperations/LocationDynamoDbOperations'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';

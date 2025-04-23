@@ -1,4 +1,4 @@
-import { UserService } from 'application/userWorkflow/UserService'
+import { UserService } from '../../../../../application/userWorkflow/UserService'
 import type { GenericMessage } from '../../../../../../commons/dto/MessageDTO'
 import type { Callback, Context, CustomMessageTriggerEvent } from 'aws-lambda'
 

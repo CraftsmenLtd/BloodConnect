@@ -1,19 +1,19 @@
 import type { SQSEvent } from 'aws-lambda'
 import {
   DonorSearchService
-} from 'application/bloodDonationWorkflow/DonorSearchService'
+} from '../../../application/bloodDonationWorkflow/DonorSearchService'
 import type {
   DonationRequestInitiatorAttributes,
   DonorSearchConfig,
-} from 'application/bloodDonationWorkflow/Types'
+} from '../../../application/bloodDonationWorkflow/Types'
 import {
   UserService
-} from 'application/userWorkflow/UserService'
+} from '../../../application/userWorkflow/UserService'
 import SQSOperations from '../commons/sqs/SQSOperations'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
   DonorSearchIntentionalError
-} from 'application/bloodDonationWorkflow/DonorSearchOperationalError'
+} from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
 import { Config } from 'commons/libs/config/config';
 import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations';
 import DonorSearchDynamoDbOperations from '../commons/ddbOperations/DonorSearchDynamoDbOperations';

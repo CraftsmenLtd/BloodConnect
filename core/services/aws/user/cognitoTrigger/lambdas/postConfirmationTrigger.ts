@@ -1,5 +1,5 @@
 import type { PostConfirmationTriggerEvent } from 'aws-lambda'
-import { UserService } from 'application/userWorkflow/UserService'
+import { UserService } from '../../../../../application/userWorkflow/UserService'
 import type { UserDTO } from '../../../../../../commons/dto/UserDTO'
 import DynamoDbTableOperations from '../../../commons/ddbOperations/DynamoDbTableOperations'
 import type {
@@ -8,7 +8,7 @@ import type {
 import UserModel from '../../../commons/ddbModels/UserModel'
 import { updateCognitoUserInfo } from '../../../commons/cognito/CognitoOperations'
 import { sendAppUserWelcomeMail } from '../../../commons/ses/sesOperations'
-import type { Logger } from 'application/models/logger/Logger';
+import type { Logger } from '../../../../../application/models/logger/Logger';
 import { JsonLogger } from '../../../../../../commons/libs/logger/JsonLogger';
 import { Config } from '../../../../../../commons/libs/config/config';
 import UserDynamoDbOperations from '../../../commons/ddbOperations/UserDynamoDbOperations';
