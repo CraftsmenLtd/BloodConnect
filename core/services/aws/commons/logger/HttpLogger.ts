@@ -4,13 +4,15 @@ import { JsonLogger } from '../../../../../commons/libs/logger/JsonLogger'
 export const createHTTPLogger = (
   userId: string,
   apiGwRequestId: string,
-  cloudFrontRequestId: string
+  cloudFrontRequestId: string,
+  extraArgs: Record<string, unknown> = {}
 ): Logger => {
   return JsonLogger.child({
     userId,
     apiGwRequestId,
-    cloudFrontRequestId
-  })
+    cloudFrontRequestId,
+    ...extraArgs
+  }) as Logger
 }
 
 export type HttpLoggerAttributes = {

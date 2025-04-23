@@ -5,21 +5,23 @@ import { BloodDonationService } from 'application/bloodDonationWorkflow/BloodDon
 import type {
   DonationRecordEventAttributes
 } from 'application/bloodDonationWorkflow/Types'
-import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
 import { DonationStatus } from '../../../../commons/dto/DonationDTO'
-import type {
-  DonationFields
-} from 'application/models/dbModels/BloodDonationModel';
-import {
-  BloodDonationModel
-} from 'application/models/dbModels/BloodDonationModel'
 import BloodDonationOperationError from 'application/bloodDonationWorkflow/BloodDonationOperationError'
-import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
+import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import { Config } from '../../../../commons/libs/config/config'
 
-const bloodDonationService = new BloodDonationService()
+const config = new Config<{
+  dynamodbTableName: string;
+  awsRegion: string;
+}>().getConfig()
+
+const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 async function cancelBloodDonation(
   event: DonationRecordEventAttributes & HttpLoggerAttributes
@@ -29,15 +31,13 @@ async function cancelBloodDonation(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
+  const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
   try {
     await bloodDonationService.updateDonationStatus(
       event.seekerId,
       event.requestPostId,
       event.requestCreatedAt,
-      DonationStatus.CANCELLED,
-      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
-        new BloodDonationModel()
-      )
+      DonationStatus.CANCELLED
     )
 
     return generateApiGatewayResponse(
@@ -49,12 +49,9 @@ async function cancelBloodDonation(
     )
   } catch (error) {
     httpLogger.error(error)
-    const errorMessage =
-      error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
+    const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     const errorCode =
-      error instanceof BloodDonationOperationError
-        ? error.errorCode
-        : HTTP_CODES.ERROR
+      error instanceof BloodDonationOperationError ? error.errorCode : HTTP_CODES.ERROR
     return generateApiGatewayResponse(`Error: ${errorMessage}`, errorCode)
   }
 }

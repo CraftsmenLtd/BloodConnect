@@ -1,33 +1,27 @@
 import type { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from 'application/bloodDonationWorkflow/BloodDonationService'
-import type {
-  AcceptedDonationDTO,
-  DonationDTO
-} from '../../../../commons/dto/DonationDTO'
-import {
-  DonationStatus
-} from '../../../../commons/dto/DonationDTO'
-import type {
-  DonationFields
-} from 'application/models/dbModels/BloodDonationModel'
-import {
-  BloodDonationModel
-} from 'application/models/dbModels/BloodDonationModel'
-import type {
-  AcceptedDonationFields
-} from 'application/models/dbModels/AcceptDonationModel';
-import {
-  AcceptDonationRequestModel
-} from 'application/models/dbModels/AcceptDonationModel'
-import AcceptedDonationDynamoDbOperations from '../commons/ddb/AcceptedDonationDynamoDbOperations'
-import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
+import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import {
   AcceptDonationService
-} from 'core/application/bloodDonationWorkflow/AcceptDonationRequestService'
+} from 'application/bloodDonationWorkflow/AcceptDonationRequestService'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import AcceptDonationDynamoDbOperations from '../commons/ddbOperations/AcceptedDonationDynamoDbOperations'
+import { Config } from '../../../../commons/libs/config/config'
+import { createServiceLogger } from '../commons/logger/ServiceLogger'
 
-const bloodDonationService = new BloodDonationService()
-const acceptDonationService = new AcceptDonationService()
+const config = new Config<{
+  dynamodbTableName: string;
+  awsRegion: string;
+}>().getConfig()
+
+const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const acceptDonationDynamoDbOperations = new AcceptDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 async function donationStatusManager(event: SQSEvent): Promise<{ status: string }> {
   try {
@@ -54,36 +48,23 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
   const seekerId = primaryIndex.split('#')[1]
   const requestPostId = secondaryIndex.split('#')[1]
 
-  const donationPost = await bloodDonationService.getDonationRequest(
+  const serviceLogger = createServiceLogger(seekerId, { requestPostId, createdAt })
+
+  const bloodDonationService = new BloodDonationService(
+    bloodDonationDynamoDbOperations,
+    serviceLogger
+  )
+  const acceptDonationService = new AcceptDonationService(
+    acceptDonationDynamoDbOperations,
+    serviceLogger
+  )
+
+  await bloodDonationService.checkAndUpdateDonationStatus(
     seekerId,
     requestPostId,
     createdAt,
-    new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
-      new BloodDonationModel()
-    )
+    acceptDonationService
   )
-
-  const acceptedDonors = await acceptDonationService.getAcceptedDonorList(
-    seekerId,
-    requestPostId,
-    new AcceptedDonationDynamoDbOperations<
-    AcceptedDonationDTO,
-    AcceptedDonationFields,
-    AcceptDonationRequestModel
-    >(new AcceptDonationRequestModel())
-  )
-
-  if (acceptedDonors.length >= donationPost.bloodQuantity) {
-    await bloodDonationService.updateDonationStatus(
-      seekerId,
-      requestPostId,
-      createdAt,
-      DonationStatus.MANAGED,
-      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
-        new BloodDonationModel()
-      )
-    )
-  }
 }
 
 export default donationStatusManager

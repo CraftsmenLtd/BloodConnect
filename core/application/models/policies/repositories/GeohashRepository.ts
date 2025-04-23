@@ -1,16 +1,13 @@
-import type { DTO } from '../../../../../commons/dto/DTOCommon'
+import type { LocationDTO } from 'commons/dto/UserDTO';
 import type Repository from './Repository'
 
-type GeohashRepository<
-  T extends DTO,
-  DbFields extends Record<string, unknown> = Record<string, unknown>
-> = {
+type GeohashRepository = {
   queryGeohash(
     countryCode: string,
     geoPartition: string,
     requestedBloodGroup: string,
     geohash: string,
     lastEvaluatedKey: Record<string, unknown> | undefined
-  ): Promise<{ items: T[]; lastEvaluatedKey?: Record<string, unknown> }>;
-} & Repository<T, DbFields>
+  ): Promise<{ items: LocationDTO[]; lastEvaluatedKey?: Record<string, unknown> }>;
+} & Repository<LocationDTO, Record<string, unknown>>
 export default GeohashRepository

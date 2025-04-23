@@ -74,7 +74,7 @@ export enum AcceptDonationStatus {
   IGNORED = 'IGNORED'
 }
 
-type BaseAcceptedDonationDTO = {
+type BaseAcceptDonationDTO = {
   donorId: string;
   requestPostId: string;
   acceptanceTime?: string;
@@ -83,7 +83,7 @@ type BaseAcceptedDonationDTO = {
   createdAt: string;
 }
 
-export type AcceptedDonationDTO = BaseAcceptedDonationDTO & DTO & {
+export type AcceptDonationDTO = BaseAcceptDonationDTO & DTO & {
   status?: string;
 }
 

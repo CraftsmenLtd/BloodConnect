@@ -1,4 +1,4 @@
-import type { AcceptDonationStatus, AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
+import type { AcceptDonationStatus, AcceptDonationDTO } from '../../../commons/dto/DonationDTO'
 import type { NotificationType, NotificationStatus } from '../../../commons/dto/NotificationDTO'
 import type { UserDTO } from '../../../commons/dto/UserDTO'
 
@@ -45,7 +45,7 @@ export type DonationAcceptancePayloadAttributes = {
   urgencyLevel: string;
   location: string;
   donationDateTime: string;
-  acceptedDonors?: AcceptedDonationDTO[];
+  acceptedDonors?: AcceptDonationDTO[];
   shortDescription?: string;
 }
 

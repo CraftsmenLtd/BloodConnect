@@ -6,14 +6,19 @@ import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 import type { LocationDTO } from 'commons/dto/UserDTO'
-import type { LocationFields } from 'core/application/models/dbModels/LocationModel';
-import type LocationModel from 'core/application/models/dbModels/LocationModel'
+import type { LocationFields } from '../ddbModels/LocationModel';
+import LocationModel from '../ddbModels/LocationModel'
+import type LocationRepository from './../../../../application/models/policies/repositories/LocationRepository';
 
 export default class LocationDynamoDbOperations extends DynamoDbTableOperations<
   LocationDTO,
   LocationFields,
   LocationModel
-> {
+> implements LocationRepository{
+  constructor(tableName: string, region: string) {
+    super(new LocationModel(), tableName, region)
+  }
+
   async queryUserLocations(userId: string): Promise<LocationDTO[]> {
     const primaryIndex = this.modelAdapter.getPrimaryIndex()
     const query: QueryInput<LocationFields> = {
