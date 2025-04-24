@@ -10,7 +10,7 @@ export type UserAttributes = {
 export type BaseUserAttributes = {
   userId: string;
   bloodGroup: BloodGroup;
-  phoneNumbers: string[];
+  phoneNumbers?: string[];
   height?: string;
   weight?: number;
   gender: Gender;

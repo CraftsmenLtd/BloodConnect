@@ -40,7 +40,6 @@ async function createUserLambda(
   try {
     const userAttributes: CreateUserAttributes = {
       userId: event.userId,
-      phoneNumbers: event.phoneNumbers,
       bloodGroup: event.bloodGroup,
       gender: event.gender,
       countryCode: event.countryCode,
@@ -48,6 +47,7 @@ async function createUserLambda(
       age: event.age,
       preferredDonationLocations: event.preferredDonationLocations,
       availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation,
+      ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
       ...(event.height !== undefined && { height: event.height }),
       ...(event.weight !== undefined && { weight: event.weight }),
       ...(event.lastDonationDate !== undefined && { lastDonationDate: event.lastDonationDate }),

@@ -39,19 +39,19 @@ async function updateUserLambda(
   try {
     const userAttributes: UpdateUserAttributes = {
       userId: event.userId,
-      phoneNumbers: event.phoneNumbers,
       bloodGroup: event.bloodGroup,
-      height: event.height,
-      weight: event.weight,
       gender: event.gender,
       dateOfBirth: event.dateOfBirth,
       age: event.age,
       preferredDonationLocations: event.preferredDonationLocations,
-      lastDonationDate: event.lastDonationDate,
-      NIDFront: event.NIDFront,
-      lastVaccinatedDate: event.lastVaccinatedDate,
-      NIDBack: event.NIDBack,
-      availableForDonation: event.availableForDonation,
+      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation,
+      ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
+      ...(event.height !== undefined && { height: event.height }),
+      ...(event.weight !== undefined && { weight: event.weight }),
+      ...(event.lastDonationDate !== undefined && { lastDonationDate: event.lastDonationDate }),
+      ...(event.lastVaccinatedDate !== undefined && { lastVaccinatedDate: event.lastVaccinatedDate }),
+      ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
+      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
     }
 
     await userService.updateUser(userAttributes, locationService, config.minMonthsBetweenDonations)
