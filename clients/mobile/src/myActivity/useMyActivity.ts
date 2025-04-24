@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { useCallback, useState } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import type { BloodDonationRecord } from '../donationWorkflow/types'
 import { STATUS } from '../donationWorkflow/types'
 import { SCREENS } from '../setup/constant/screens'
@@ -29,6 +29,12 @@ export const useMyActivity = (): unknown => {
   const [cancelPostError, setCancelPostError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+
+  useFocusEffect(
+    useCallback(() => {
+      void refreshPosts()
+    }, [])
+  )
 
   const updatePost = (donationData: DonationData): void => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
