@@ -1,6 +1,11 @@
+import { useFocusEffect } from '@react-navigation/native'
+import { useCallback } from 'react'
 import type { HttpClient } from '../setup/clients/HttpClient'
+import { useFetchClient } from '../setup/clients/useFetchClient'
 import { saveDeviceTokenOnSNS, saveDeviceTokenLocally } from '../setup/notification/saveDeviceToken'
-import { registerForPushNotificationsAsync } from '../setup/notification/registerForPushNotifications'
+import {
+  registerForPushNotificationsAsync
+} from '../setup/notification/registerForPushNotifications'
 
 const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
   registerForPushNotificationsAsync().then(async token => {
@@ -14,6 +19,24 @@ const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
         }`
       )
     })
+}
+
+export const useRegisterPushOnFocus = (): void => {
+  const fetchClient = useFetchClient()
+
+  useFocusEffect(
+    useCallback(() => {
+      const register = async() => {
+        try {
+          registerUserDeviceForNotification(fetchClient)
+        } catch (error) {
+          console.error('Failed to register device:', error)
+        }
+      }
+
+      void register()
+    }, [fetchClient])
+  )
 }
 
 export default registerUserDeviceForNotification

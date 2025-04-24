@@ -5,6 +5,7 @@ import {
 import { SCREENS } from '../../../setup/constant/screens'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
+import { useRegisterPushOnFocus } from '../../../utility/deviceRegistration'
 import createStyles from './createStyle'
 import { useNavigation } from '@react-navigation/native'
 import { useAccount } from '../hooks/useAccount'
@@ -16,6 +17,7 @@ export const Account = () => {
   const styles = createStyles(useTheme())
   const { userProfileData, loading, handleSignOut } = useAccount()
   const navigation = useNavigation<ProfileScreenNavigationProp>()
+  useRegisterPushOnFocus()
 
   if (loading) {
     return <Loader />
@@ -29,7 +31,10 @@ export const Account = () => {
       ></ProfileSection>}
 
       <View style={styles.optionsSection}>
-        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.PROFILE) }}>
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => { navigation.navigate(SCREENS.PROFILE) }}
+        >
           <MaterialIcons name="person-outline" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Profile</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
@@ -47,7 +52,10 @@ export const Account = () => {
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity> */}
 
-        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.ABOUT) }}>
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => { navigation.navigate(SCREENS.ABOUT) }}
+        >
           <MaterialIcons name="info-outline" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>About</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
