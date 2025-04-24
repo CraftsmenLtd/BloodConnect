@@ -50,7 +50,8 @@ export class AcceptDonationService {
     if (donorProfile.bloodGroup !== donationPost.requestedBloodGroup) {
       throw new Error('Your blood group doesn\'t match with the request blood group')
     }
-    if (donationPost.status !== DonationStatus.PENDING) {
+    if (donationPost.status !== DonationStatus.PENDING
+      && donationPost.status !== DonationStatus.MANAGED) {
       throw new Error('Donation request is no longer available for acceptance.')
     }
 
