@@ -3,16 +3,12 @@ import { useFetchClient } from '../../../../setup/clients/useFetchClient'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../../../setup/constant/screens'
 import { formatDateTime } from '../../../../utility/formatTimeAndDate'
-import type { PostScreenNavigationProp, RequestPreviewRouteProp } from '../../../../setup/navigation/navigationTypes'
+import type {
+  PostScreenNavigationProp,
+  RequestPreviewRouteProp
+} from '../../../../setup/navigation/navigationTypes'
 import { STATUS } from '../../../types'
-import { scheduleNotification } from '../../../../setup/notification/scheduleNotification'
-import {
-  LOCAL_NOTIFICATION_TYPE,
-  REMINDER_NOTIFICATION_BODY,
-  REMINDER_NOTIFICATION_TITLE,
-  REMINDING_HOURS_BEFORE_DONATION
-} from '../../../../setup/constant/consts'
-import { replaceTemplatePlaceholders } from '../../../../utility/formatting'
+import { handleNotification } from '../../../../setup/notification/scheduleNotification'
 import { extractErrorMessage } from '../../../donationHelpers'
 import { useMyActivityContext } from '../../../../myActivity/context/useMyActivityContext'
 import { updateMyResponses } from '../../../donationService'
@@ -58,24 +54,6 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
       navigation.navigate(SCREENS.POSTS)
     }
   }, [bloodRequest, navigation])
-
-  const handleNotification = (donationDateTime: string | Date): void => {
-    const donationTime = new Date(donationDateTime)
-
-    REMINDING_HOURS_BEFORE_DONATION.forEach((hoursBefore) => {
-      const reminderTime = new Date(donationTime.getTime() - hoursBefore * 60 * 60 * 1000)
-      const content = {
-        title: hoursBefore === 1
-          ? REMINDER_NOTIFICATION_TITLE.FINAL
-          : replaceTemplatePlaceholders(REMINDER_NOTIFICATION_TITLE.DEFAULT, hoursBefore.toString()),
-        body: hoursBefore === 1
-          ? REMINDER_NOTIFICATION_BODY.FINAL
-          : replaceTemplatePlaceholders(REMINDER_NOTIFICATION_BODY.DEFAULT, hoursBefore.toString()),
-        data: { payload: {}, type: LOCAL_NOTIFICATION_TYPE.REMINDER }
-      }
-      void scheduleNotification({ date: reminderTime }, content)
-    })
-  }
 
   const [handleAcceptRequest, isAcceptLoading, , acceptError] = useFetchData(async(): Promise<void> => {
     if (bloodRequest === null) {

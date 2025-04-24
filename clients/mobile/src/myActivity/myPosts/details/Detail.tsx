@@ -11,6 +11,7 @@ import type {
 import PostCard from '../../../components/donation/PostCard'
 import { SCREENS } from '../../../setup/constant/screens'
 import type { DonationData } from '../../../donationWorkflow/donationHelpers'
+import {cancelNotification, handleNotification} from '../../../setup/notification/scheduleNotification';
 import DonorResponses from '../donorResponses/DonorResponses'
 import type { TabConfig } from '../../types'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
@@ -82,6 +83,11 @@ const Detail = ({ navigation, route }: DetailProps) => {
         createdAt: data.createdAt,
         status: newStatus
       })
+      if (newStatus === STATUS.ACCEPTED) {
+        handleNotification(new Date(data.donationDateTime))
+      } else {
+        void cancelNotification(new Date(data.donationDateTime))
+      }
     } catch (err) {
       console.error(err)
       setLocalStatus(previousStatus)
