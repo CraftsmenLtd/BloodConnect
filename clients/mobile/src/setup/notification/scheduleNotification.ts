@@ -1,12 +1,13 @@
 import * as Notifications from 'expo-notifications';
 import { replaceTemplatePlaceholders } from '../../utility/formatting'
-import storageService from '../../utility/storageService';
+import storageService from '../../utility/storageService'
 import {
   LOCAL_NOTIFICATION_TYPE,
   REMINDER_NOTIFICATION_BODY,
   REMINDER_NOTIFICATION_TITLE,
   REMINDING_HOURS_BEFORE_DONATION
-} from '../constant/consts';
+} from '../constant/consts'
+import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
 
 type NotificationTrigger =
   | { date: Date }
@@ -82,12 +83,17 @@ export const handleNotification = (donationDateTime: string | Date): void => {
     }
     const id = scheduleNotification({ date: reminderTime }, content)
 
-    void storageService.storeItem(`local-notify-${donationDateTime}`, id)
+    void storageService.storeItem(
+      `${LOCAL_STORAGE_KEYS.LOCAL_NOTIFICATION_KEY_PREFIX}-${donationDateTime}`,
+      id
+    )
   })
 }
 
 export const cancelNotification = async(donationDateTime: string | Date): Promise<void> => {
-  const existingId = await storageService.getItem<string>(`local-notify-${donationDateTime}`)
+  const existingId = await storageService.getItem<string>(
+    `${LOCAL_STORAGE_KEYS.LOCAL_NOTIFICATION_KEY_PREFIX}-${donationDateTime}`
+  )
 
   if (!existingId) {
     return
