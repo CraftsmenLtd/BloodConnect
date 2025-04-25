@@ -19,6 +19,7 @@ export const saveDeviceTokenOnSNS = async(
         'Failed to register your device. Please login again'
       )
     }
+    await saveDeviceTokenLocally(deviceToken)
   } catch (error) {
     throw new Error(
       'An unexpected error occurred'

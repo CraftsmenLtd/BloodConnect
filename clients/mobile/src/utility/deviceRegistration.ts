@@ -1,12 +1,12 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { useCallback } from 'react'
+import { InteractionManager } from 'react-native'
 import authService from '../authentication/services/authService'
 import type { HttpClient } from '../setup/clients/HttpClient'
 import { useFetchClient } from '../setup/clients/useFetchClient'
 import { TOKEN } from '../setup/constant/token'
 import {
-  saveDeviceTokenOnSNS,
-  saveDeviceTokenLocally
+  saveDeviceTokenOnSNS
 } from '../setup/notification/saveDeviceToken'
 import {
   registerForPushNotificationsAsync
@@ -21,7 +21,6 @@ const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
       return
     }
     await saveDeviceTokenOnSNS(token as string, fetchClient)
-    await saveDeviceTokenLocally(token as string)
   })
     .catch(error => {
       throw new Error(
@@ -44,8 +43,11 @@ export const useRegisterPushOnFocus = (): void => {
           console.error('Failed to register device:', error)
         }
       }
+      const task = InteractionManager.runAfterInteractions(() => {
+        void register()
+      })
 
-      void register()
+      return () => task.cancel()
     }, [fetchClient])
   )
 }
@@ -57,7 +59,6 @@ export const isDeviceAlreadyRegisteredForUser = async(
   const registeredDevice = await StorageService.getItem<
   { deviceToken: string; userId: string }
   >(TOKEN.DEVICE_TOKEN)
-
   return (registeredDevice != null) &&
     registeredDevice.deviceToken === deviceToken &&
     registeredDevice.userId === userId
