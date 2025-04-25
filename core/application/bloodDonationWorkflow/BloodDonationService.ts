@@ -221,6 +221,7 @@ export class BloodDonationService {
       createdAt,
       status
     }
+    this.logger.info('updating donation status')
     await this.bloodDonationRepository.update(updateData)
   }
 
@@ -230,11 +231,15 @@ export class BloodDonationService {
     createdAt: string,
     acceptDonationService: AcceptDonationService
   ): Promise<void> {
+    this.logger.info('checking donation status')
     const donationPost = await this.getDonationRequest(seekerId, requestPostId, createdAt)
     const acceptedDonors = await acceptDonationService.getAcceptedDonorList(seekerId, requestPostId)
 
     if (acceptedDonors.length >= donationPost.bloodQuantity) {
       await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.MANAGED)
+    }
+    else {
+      await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.PENDING)
     }
   }
 
