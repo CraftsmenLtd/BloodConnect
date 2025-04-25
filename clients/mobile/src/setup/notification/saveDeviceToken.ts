@@ -9,12 +9,6 @@ export const saveDeviceTokenOnSNS = async(
   fetchClient: HttpClient
 ): Promise<void> => {
   try {
-    const loggedInUser = await authService.currentLoggedInUser()
-
-    if (await isDeviceAlreadyRegisteredForUser(deviceToken, loggedInUser.userId)) {
-      return
-    }
-
     const response = await fetchClient.post('/notification/register', {
       deviceToken,
       platform: Platform.OS === 'android' ? 'FCM' : 'APNS'
@@ -40,14 +34,4 @@ export const saveDeviceTokenLocally = async(
     TOKEN.DEVICE_TOKEN,
     { userId: loggedInUser.userId, deviceToken }
   )
-}
-
-export const isDeviceAlreadyRegisteredForUser = async(deviceToken: string, userId: string): Promise<boolean> => {
-  const registeredDevice = await StorageService.getItem<
-  { deviceToken: string; userId: string }
-  >(TOKEN.DEVICE_TOKEN)
-
-  return (registeredDevice != null) &&
-    registeredDevice.deviceToken === deviceToken &&
-    registeredDevice.userId === userId
 }

@@ -1,14 +1,25 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { useCallback } from 'react'
+import authService from '../authentication/services/authService'
 import type { HttpClient } from '../setup/clients/HttpClient'
 import { useFetchClient } from '../setup/clients/useFetchClient'
-import { saveDeviceTokenOnSNS, saveDeviceTokenLocally } from '../setup/notification/saveDeviceToken'
+import { TOKEN } from '../setup/constant/token'
+import {
+  saveDeviceTokenOnSNS,
+  saveDeviceTokenLocally
+} from '../setup/notification/saveDeviceToken'
 import {
   registerForPushNotificationsAsync
 } from '../setup/notification/registerForPushNotifications'
+import StorageService from './storageService'
 
 const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
   registerForPushNotificationsAsync().then(async token => {
+    const loggedInUser = await authService.currentLoggedInUser()
+
+    if (await isDeviceAlreadyRegisteredForUser(token, loggedInUser.userId)) {
+      return
+    }
     await saveDeviceTokenOnSNS(token as string, fetchClient)
     await saveDeviceTokenLocally(token as string)
   })
@@ -37,6 +48,19 @@ export const useRegisterPushOnFocus = (): void => {
       void register()
     }, [fetchClient])
   )
+}
+
+export const isDeviceAlreadyRegisteredForUser = async(
+  deviceToken: string,
+  userId: string
+): Promise<boolean> => {
+  const registeredDevice = await StorageService.getItem<
+  { deviceToken: string; userId: string }
+  >(TOKEN.DEVICE_TOKEN)
+
+  return (registeredDevice != null) &&
+    registeredDevice.deviceToken === deviceToken &&
+    registeredDevice.userId === userId
 }
 
 export default registerUserDeviceForNotification
