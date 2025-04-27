@@ -1,4 +1,4 @@
-import type { AcceptDonationDTO } from 'commons/dto/DonationDTO';
+import type { AcceptDonationDTO } from 'commons/dto/DonationDTO'
 import type Repository from './Repository'
 
 type AcceptDonationRepository = {

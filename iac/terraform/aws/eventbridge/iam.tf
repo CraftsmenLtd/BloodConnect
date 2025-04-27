@@ -21,7 +21,8 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
       "dynamodb:DescribeStream",
       "dynamodb:GetRecords",
       "dynamodb:GetShardIterator",
-      "dynamodb:ListStreams"
+      "dynamodb:ListStreams",
+      "dynamodb:DeleteItem"
     ]
     resources = [var.dynamodb_table_stream_arn]
   }
