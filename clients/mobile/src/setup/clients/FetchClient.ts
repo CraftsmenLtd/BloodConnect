@@ -22,34 +22,70 @@ export class FetchClient implements HttpClient {
     this.idToken = await StorageService.getItem('idToken')
   }
 
-  public async setupRequestHeaders(headers: Record<string, string>): Promise<Record<string, string>> {
-    const requestHeaders: Record<string, string> = { 'Content-Type': 'application/json', ...headers }
+  public async setupRequestHeaders(
+    headers: Record<string, string>
+  ): Promise<Record<string, string>> {
+    const requestHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...headers
+    }
     const { idToken } = await authService.fetchSession()
     requestHeaders.Authorization = `Bearer ${idToken}`
     return requestHeaders
   }
 
-  async get<T>(url: string, params: Record<string, unknown> = {}, headers: Record<string, string> = {}): Promise<FetchResponse<T>> {
+  async get<T>(
+    url: string,
+    params: Record<string, unknown> = {},
+    headers: Record<string, string> = {}
+  ): Promise<FetchResponse<T>> {
     const queryString = new URLSearchParams(params).toString()
-    return this.fetchWithAuth<T>(`${url}?${queryString}`, 'GET', null, headers)
+    return this.fetchWithAuth<T>(
+      `${url}?${queryString}`,
+      'GET',
+      null,
+      headers
+    )
   }
 
-  async post<T>(url: string, body: Record<string, unknown>, headers: Record<string, string> = {}): Promise<FetchResponse<T>> {
-    return this.fetchWithAuth<T>(url, 'POST', JSON.stringify(body), headers)
+  async post<T>(
+    url: string,
+    body: Record<string, unknown>,
+    headers: Record<string, string> = {}
+  ): Promise<FetchResponse<T>> {
+    return this.fetchWithAuth<T>(
+      url, 'POST',
+      body,
+      headers
+    )
   }
 
-  async patch<T>(url: string, body: Record<string, unknown>, headers: Record<string, string> = {}): Promise<FetchResponse<T>> {
-    return this.fetchWithAuth<T>(url, 'PATCH', JSON.stringify(body), headers)
+  async patch<T>(
+    url: string,
+    body: Record<string, unknown>,
+    headers: Record<string, string> = {}
+  ): Promise<FetchResponse<T>> {
+    return this.fetchWithAuth<T>(
+      url,
+      'PATCH',
+      body,
+      headers
+    )
   }
 
-  public async fetchWithAuth<T>(url: string, method: string, body: string | null, headers: Record<string, string>): Promise<FetchResponse<T>> {
+  public async fetchWithAuth<T>(
+    url: string,
+    method: string,
+    body: unknown,
+    headers: Record<string, string>
+  ): Promise<FetchResponse<T>> {
     try {
       const requestHeaders = await this.setupRequestHeaders(headers)
       const fullUrl = `${this.baseURL}${url}`
       const response = await fetch(fullUrl, {
         method,
         headers: requestHeaders,
-        body
+        body: body ? JSON.stringify(body) : null
       })
 
       if (!response.ok) {

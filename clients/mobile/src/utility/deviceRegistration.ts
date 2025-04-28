@@ -17,10 +17,9 @@ const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
   registerForPushNotificationsAsync().then(async token => {
     const loggedInUser = await authService.currentLoggedInUser()
 
-    if (await isDeviceAlreadyRegisteredForUser(token, loggedInUser.userId)) {
-      return
+    if (!await isDeviceAlreadyRegisteredForUser(token, loggedInUser.userId)) {
+      await saveDeviceTokenOnSNS(token as string, fetchClient)
     }
-    await saveDeviceTokenOnSNS(token as string, fetchClient)
   })
     .catch(error => {
       throw new Error(
@@ -32,6 +31,8 @@ const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
 }
 
 export const useRegisterPushOnFocus = (): void => {
+  //TODO: move this to a HOC component so that it can be used in any screen by wrapping the
+  // auth routes
   const fetchClient = useFetchClient()
 
   useFocusEffect(
