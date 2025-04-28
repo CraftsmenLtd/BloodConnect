@@ -22,7 +22,8 @@ HasTimeLog & {
 }
 
 export class BloodDonationModel
-implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFields> {
+implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFields>
+{
   getIndexDefinitions(): IndexDefinitions<DonationFields> {
     return {
       GSI: {
@@ -52,9 +53,12 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
       createdAt
     }
 
-    const geoPartition = remainingData.geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
-
-    if (remainingData.status !== undefined) {
+    if (
+      remainingData.status !== undefined &&
+      remainingData.countryCode !== undefined &&
+      remainingData.geohash !== undefined
+    ) {
+      const geoPartition = remainingData.geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
       data.GSI1PK = `LOCATION#${remainingData.countryCode}-${geoPartition}#STATUS#${remainingData.status}`
     }
     if ((remainingData.requestedBloodGroup as BloodGroup) !== undefined) {
