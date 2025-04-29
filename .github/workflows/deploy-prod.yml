@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Get Tag and Master Commit Hashes
         id: check_hashes
