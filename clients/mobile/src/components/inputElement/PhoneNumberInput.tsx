@@ -4,6 +4,7 @@ import PhoneInput from 'react-native-phone-number-input'
 import { WARNINGS } from '../../setup/constant/consts'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import Loader from '../loaders/loader'
 import Warning from '../warning'
 import { commonStyles } from './commonStyles'
 import usePhoneNumberInput from './hooks/usePhoneNumberInput'
@@ -69,12 +70,21 @@ const PhoneNumberInput = ({
     isValid,
     handleChangeFormattedText,
     parsedValue,
-    defaultCode
+    defaultCode,
+    countryLoading
   } = usePhoneNumberInput(
     value,
     name,
     onChange
   )
+
+  if (countryLoading) {
+    return (
+      <View style={styles.loader}>
+        <Loader size="small" />
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -150,6 +160,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: theme.colors.bloodRed,
     fontSize: 12,
     marginTop: 4
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 60
   }
 })
 

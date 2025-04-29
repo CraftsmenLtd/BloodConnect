@@ -1,4 +1,4 @@
-import type React from 'react';
+import type React from 'react'
 import { useEffect, useState } from 'react'
 import { LocationService } from '../../LocationService/LocationService'
 import {
@@ -7,6 +7,7 @@ import {
   MAX_ZOOM_LEVEL,
   WORLD_DIM
 } from '../../setup/constant/consts'
+import LOCAL_STORAGE_KEYS from '../../setup/constant/localStorageKeys'
 import storageService from '../../utility/storageService'
 import Constants from 'expo-constants'
 import { Dimensions } from 'react-native'
@@ -108,24 +109,37 @@ const useMapView = (
 
       const coords: [number, number][] = []
       const newMarkers: Marker[] = await Promise.all(
-        locations.map(async(location): Promise<Marker> => {
-          let coordinate = await storageService.getItem<[number, number]>(
-            `location-coord-${location}`
+        stableLocations.reduce<Promise<Marker>[]>((acc, location) => {
+          if (location.trim() === '') {
+            return acc
+          }
+
+          acc.push(
+            (async(): Promise<Marker> => {
+              let coordinate = await storageService.getItem<[number, number]>(
+                `${LOCAL_STORAGE_KEYS.LOCATION_COORDINATE_PREFIX}-${location}`
+              )
+
+              if (!coordinate) {
+                const { latitude, longitude } = await locationService.getLatLon(location)
+                coordinate = [longitude, latitude]
+                await storageService.storeItem(
+                  `${LOCAL_STORAGE_KEYS.LOCATION_COORDINATE_PREFIX}-${location}`,
+                  coordinate
+                )
+              }
+
+              coords.push(coordinate)
+
+              return {
+                coordinate,
+                component: markerComponent,
+              }
+            })()
           )
 
-          if (!coordinate) {
-            const { latitude, longitude } = await locationService.getLatLon(location)
-            coordinate = [longitude, latitude]
-            await storageService.storeItem(`location-coord-${location}`, coordinate)
-          }
-
-          coords.push(coordinate)
-
-          return {
-            coordinate,
-            component: markerComponent,
-          }
-        })
+          return acc
+        }, [])
       )
 
       setMapMarkers(newMarkers)

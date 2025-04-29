@@ -20,7 +20,19 @@ type LoginScreenProps = {
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const styles = createStyles(useTheme())
-  const { loginLoading, socialLoading, loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
+  const {
+    loginLoading,
+    socialLoading,
+    loginCredential,
+    handleInputChange,
+    isPasswordVisible,
+    setIsPasswordVisible,
+    handleLogin,
+    loginError,
+    handleGoogleSignIn,
+    handleFacebookSignIn,
+    socialLoginError
+  } = useLogin()
 
   return (
     <AuthLayout>

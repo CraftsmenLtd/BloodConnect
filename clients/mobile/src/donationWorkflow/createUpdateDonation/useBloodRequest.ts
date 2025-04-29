@@ -204,7 +204,8 @@ export const useBloodRequest = (): unknown => {
         ? new Date(rest.donationDateTime).toISOString()
         : rest.donationDateTime.toISOString(),
       latitude: coordinates.latitude,
-      longitude: coordinates.longitude
+      longitude: coordinates.longitude,
+      shortDescription: rest.shortDescription.replaceAll(/\n/g, ' ')
     }
     return createDonation(finalData, fetchClient)
   }
@@ -220,7 +221,7 @@ export const useBloodRequest = (): unknown => {
       donationDateTime: new Date(bloodRequestData.donationDateTime).toISOString(),
       contactNumber: bloodRequestData.contactNumber,
       patientName: bloodRequestData.patientName,
-      shortDescription: bloodRequestData.shortDescription,
+      shortDescription: bloodRequestData.shortDescription.replaceAll(/\n/g, ' '),
       transportationInfo: bloodRequestData.transportationInfo,
       requestPostId: bloodRequestData?.requestPostId,
       createdAt: bloodRequestData?.createdAt,

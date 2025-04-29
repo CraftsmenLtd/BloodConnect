@@ -175,14 +175,6 @@ export const validateWeight = (weight: string): string | null => {
 const validateShortDescription = (value: string): string | null => {
   const tests = [
     {
-      test: value.includes('\n'),
-      error: 'Short description must not contain newline characters.'
-    },
-    {
-      test: !/^[a-zA-Z0-9 .,!?-]*$/.test(value),
-      error: 'Short description contains invalid special characters.'
-    },
-    {
       test: value.length > SHORT_DESCRIPTION_MAX_LENGTH,
       error: `Short description must not exceed ${SHORT_DESCRIPTION_MAX_LENGTH} characters.`
     }
