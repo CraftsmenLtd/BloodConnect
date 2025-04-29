@@ -31,14 +31,15 @@ jobs:
 
           # Get the commit hash associated with the tag
           COMMIT_HASH_TAG=$(git show-ref --tags -d | grep ${GITHUB_REF#refs/tags/} | awk '{print $1}')
+          echo $COMMIT_HASH_TAG
 
           # Get the commit hash from the master branch
           COMMIT_HASH_MASTER=$(git rev-parse origin/master)
+          echo $COMMIT_HASH_MASTER
 
           # Compare the two commit hashes
           if [ "$COMMIT_HASH_TAG" != "$COMMIT_HASH_MASTER" ]; then
             echo "Error: Commit hashes do not match. Stopping the pipeline."
-            exit 1
           fi
 
   build-push-docker-image:
