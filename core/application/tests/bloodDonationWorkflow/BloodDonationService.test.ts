@@ -12,6 +12,7 @@ import { mockLogger } from '../mocks/mockLogger'
 import { UserService } from '../../userWorkflow/UserService'
 import { mockRepository } from '../mocks/mockRepositories'
 import { mockUserDetailsWithStringId } from '../mocks/mockUserData'
+import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 
 jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
@@ -26,6 +27,7 @@ jest.mock('../../utils/validator', () => ({
 }))
 
 jest.mock('../../../application/notificationWorkflow/NotificationService')
+jest.mock('../../../application/bloodDonationWorkflow/AcceptDonationRequestService')
 
 describe('BloodDonationService', () => {
   const mockBloodDonationRepository = {
@@ -42,6 +44,10 @@ describe('BloodDonationService', () => {
   const mockNotificationService = {
     updateBloodDonationNotifications: jest.fn()
   } as unknown as jest.Mocked<NotificationService>
+
+  const mockAcceptDonationService= {
+    getAcceptedDonorList: jest.fn()
+  } as unknown as jest.Mocked<AcceptDonationService>
 
   const mockCreatedAt = '2024-01-01T00:00:00Z'
 
@@ -318,12 +324,13 @@ describe('BloodDonationService', () => {
       }
 
       mockBloodDonationRepository.getDonationRequest.mockResolvedValue(existingDonation)
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue([])
       mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
 
       const result = await bloodDonationService.updateBloodDonation(
         updateDonationAttributesMock,
         mockNotificationService,
-        mockLogger
+        mockAcceptDonationService
       )
 
       expect(mockBloodDonationRepository.getDonationRequest).toHaveBeenCalledWith(
@@ -364,7 +371,7 @@ describe('BloodDonationService', () => {
       await expect(bloodDonationService.updateBloodDonation(
         updateDonationAttributesMock,
         mockNotificationService,
-        mockLogger
+        mockAcceptDonationService
       )).rejects.toThrow(BloodDonationOperationError)
 
       expect(mockBloodDonationRepository.update).not.toHaveBeenCalled()
@@ -399,7 +406,7 @@ describe('BloodDonationService', () => {
       await expect(bloodDonationService.updateBloodDonation(
         donationAttributes,
         mockNotificationService,
-        mockLogger
+        mockAcceptDonationService
       )).rejects.toThrow('Invalid donation date')
 
       expect(validateInputWithRules).toHaveBeenCalledWith(
@@ -437,7 +444,7 @@ describe('BloodDonationService', () => {
       await expect(bloodDonationService.updateBloodDonation(
         donationAttributes,
         mockNotificationService,
-        mockLogger
+        mockAcceptDonationService
       )).rejects.toThrow("You can't update a cancelled request")
 
       expect(mockBloodDonationRepository.update).not.toHaveBeenCalled()
@@ -458,6 +465,7 @@ describe('BloodDonationService', () => {
       }
 
       mockBloodDonationRepository.getDonationRequest.mockResolvedValue(existingDonation)
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue([])
       mockBloodDonationRepository.update.mockRejectedValue(new Error('Update failed'))
 
       const donationAttributes = {
@@ -472,13 +480,13 @@ describe('BloodDonationService', () => {
       await expect(bloodDonationService.updateBloodDonation(
         donationAttributes,
         mockNotificationService,
-        mockLogger
+        mockAcceptDonationService
       )).rejects.toThrow(BloodDonationOperationError)
 
       await expect(bloodDonationService.updateBloodDonation(
         donationAttributes,
         mockNotificationService,
-        mockLogger
+        mockAcceptDonationService
       )).rejects.toThrow(/Failed to update blood donation post/)
     })
 
@@ -497,6 +505,7 @@ describe('BloodDonationService', () => {
       }
 
       mockBloodDonationRepository.getDonationRequest.mockResolvedValue(existingDonation)
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue([])
       mockBloodDonationRepository.update.mockRejectedValue(
         new BloodDonationOperationError('Operation failed', GENERIC_CODES.ERROR)
       )
@@ -513,7 +522,7 @@ describe('BloodDonationService', () => {
       await expect(bloodDonationService.updateBloodDonation(
         donationAttributes,
         mockNotificationService,
-        mockLogger
+        mockAcceptDonationService
       )).rejects.toThrow(/Operation failed/)
     })
   })
