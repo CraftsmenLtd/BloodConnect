@@ -14,7 +14,7 @@ DIR:=$(dir $(ENV_FILE))
 # Default build profile (can be overridden via CLI)
 BUILD_PROFILE?=development
 APP_NAME?=net.bloodconnect.app
-APP_VERSION?=1.0.0
+APP_VERSION?=1.1.1
 
 install-native-packages:
 	@npm install --prefix $(DIR)

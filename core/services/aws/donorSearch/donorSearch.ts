@@ -155,7 +155,7 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
       donationDateTime,
       countryCode,
       geohash
-    } = donorSearchRecord
+    } = donationPost
 
     const isFirstInitiation = initiationCount === 1
     const remainingBagsNeeded =

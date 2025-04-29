@@ -62,7 +62,7 @@ jobs:
       BUILD_PROFILE: ${{ inputs.build_profile }}
       EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
       APP_NAME: net.bloodconnect.app
-      APP_VERSION: 1.0.0
+      APP_VERSION: 1.1.1
       AWS_USER_POOL_CLIENT_ID: ${{ inputs.aws_user_pool_client_id }}
       AWS_USER_POOL_ID: ${{ inputs.aws_user_pool_id }}
       API_BASE_URL: ${{ inputs.api_base_url }}

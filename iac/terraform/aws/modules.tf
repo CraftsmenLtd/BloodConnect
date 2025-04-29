@@ -114,4 +114,5 @@ module "dashboard" {
   source                   = "./dashboard"
   environment              = var.environment
   donor_search_lambda_name = module.donor_search.donor_search_lambda_name
+  create_user_lambda_name  = module.user.create_user_lambda_name
 }
