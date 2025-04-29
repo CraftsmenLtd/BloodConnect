@@ -154,7 +154,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
             <View style={styles.buttonContainer}>
               {statusError !== '' && <Text style={styles.errorMessage}>{statusError}</Text>}
               <Button
-                text={ localStatus === STATUS.ACCEPTED ? 'Ignore Request' : 'Complete Request' }
+                text={ localStatus === STATUS.ACCEPTED ? 'Ignore Request' : 'Accept Request' }
                 onPress={() =>
                   handleStatusChange(
                     localStatus === STATUS.ACCEPTED ? STATUS.IGNORED : STATUS.ACCEPTED
