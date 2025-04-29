@@ -2,7 +2,7 @@ import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import type {
   DonationNotificationDTO,
   NotificationDTO
-} from '../../../commons/dto/NotificationDTO';
+} from '../../../commons/dto/NotificationDTO'
 import {
   NotificationType
 } from '../../../commons/dto/NotificationDTO'
@@ -11,7 +11,8 @@ import type {
   DonationNotificationAttributes,
   DonationRequestPayloadAttributes,
   NotificationAttributes,
-  SnsRegistrationAttributes} from './Types'
+  SnsRegistrationAttributes
+} from './Types'
 import type { SNSModel } from '../models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
 import type { QueueModel } from '../models/queue/QueueModel'

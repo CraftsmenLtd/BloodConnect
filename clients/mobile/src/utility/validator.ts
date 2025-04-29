@@ -1,4 +1,7 @@
-import { ACCOUNT_CREATION_MINIMUM_AGE, SHORT_DESCRIPTION_MAX_LENGTH } from '../setup/constant/consts'
+import {
+  ACCOUNT_CREATION_MINIMUM_AGE,
+  SHORT_DESCRIPTION_MAX_LENGTH
+} from '../setup/constant/consts'
 import { formattedDate } from './formatting'
 
 type PasswordPolicy = {
@@ -17,7 +20,8 @@ const passwordPolicy: PasswordPolicy = {
   require_symbols: true
 }
 
-export const validateAndReturnRequiredFieldError = (value: string | string[] | boolean): string | null => {
+export const validateAndReturnRequiredFieldError = (
+  value: string | string[] | boolean): string | null => {
   if (typeof value === 'string') {
     return value.trim().length === 0 ? 'This field is required' : null
   } else if (Array.isArray(value)) {
@@ -133,6 +137,10 @@ export const validateDateOfBirth = (dateOfBirth: string): string | null => {
 }
 
 export const validateHeight = (height: string): string | null => {
+  if (height === '' || height === null || height === undefined || height === '0.0') {
+    return null
+  }
+
   const heightValue = parseFloat(height)
 
   if (isNaN(heightValue)) {
@@ -147,6 +155,10 @@ export const validateHeight = (height: string): string | null => {
 }
 
 export const validateWeight = (weight: string): string | null => {
+  if (weight === '' || weight === null || weight === undefined || weight === '0') {
+    return null
+  }
+
   const weightValue = parseFloat(weight)
 
   if (isNaN(weightValue)) {
@@ -193,11 +205,27 @@ export const validateInput = (value: string, rules: ValidationRule[]): string | 
   return null
 }
 
+const validateRequiredFieldsTruthy = <D>(
+  validationRules: Record<string, ValidationRule[]>,
+  data: D): boolean => {
+  for (const key in validationRules) {
+    const validationFailed = validationRules[key].some(
+      func => func(data[key]) !== null)
+    if (validationFailed) {
+      return false
+    }
+  }
+
+  return true
+}
+
+
 export {
   validateShortDescription,
   validateAndReturnRequiredFieldError as validateRequired,
   validateEmailAndGetErrorMessage as validateEmail,
   validatePhoneNumberAndGetErrorMessage as validatePhoneNumber,
   checkErrorsInPassword as validatePassword,
-  validateDonationDateTime as validateDateTime
+  validateDonationDateTime as validateDateTime,
+  validateRequiredFieldsTruthy
 }

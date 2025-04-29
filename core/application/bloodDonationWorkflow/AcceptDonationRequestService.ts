@@ -50,12 +50,14 @@ export class AcceptDonationService {
     if (donorProfile.bloodGroup !== donationPost.requestedBloodGroup) {
       throw new Error('Your blood group doesn\'t match with the request blood group')
     }
-    if (donationPost.status !== DonationStatus.PENDING) {
+    if (donationPost.status !== DonationStatus.PENDING
+      && donationPost.status !== DonationStatus.MANAGED) {
       throw new Error('Donation request is no longer available for acceptance.')
     }
 
     if (acceptanceRecord === null) {
       if (status === AcceptDonationStatus.ACCEPTED) {
+        this.logger.info('adding donation acceptance entry')
         await this.createAcceptanceRecord(donorId, seekerId, createdAt, requestPostId, donorProfile)
         await this.sendNotificationToSeeker(
           notificationService,
@@ -71,6 +73,7 @@ export class AcceptDonationService {
       }
     } else {
       if (status === AcceptDonationStatus.IGNORED) {
+        this.logger.info('removing donation acceptance entry')
         await this.acceptDonationRepository.deleteAcceptedRequest(seekerId, requestPostId, donorId)
       }
       if (status !== acceptanceRecord.status) {
@@ -233,6 +236,7 @@ export class AcceptDonationService {
       }
     }
 
+    this.logger.info('sending notification to seeker')
     await notificationService.sendNotification(notificationAttributes, queueModel)
   }
 
@@ -277,9 +281,11 @@ export class AcceptDonationService {
           body: `${donationPost.requestedBloodGroup} blood request Accepted`
         }
 
+        this.logger.info('creating donation request notification')
         await notificationService.createBloodDonationNotification(notificationData)
       }
     } else {
+      this.logger.info('updating donation request notification')
       await notificationService.updateBloodDonationNotificationStatus(
         donorId,
         requestPostId,

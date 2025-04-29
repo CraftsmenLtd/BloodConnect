@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import type { BloodDonationRecord} from '../donationWorkflow/types';
+import type { BloodDonationRecord } from '../donationWorkflow/types'
 import { STATUS } from '../donationWorkflow/types'
 import { SCREENS } from '../setup/constant/screens'
 import type { DonationPostsScreenNavigationProp } from '../setup/navigation/navigationTypes'
@@ -57,7 +57,13 @@ export const useMyActivity = (): unknown => {
     try {
       const response = await cancelDonation(payload, fetchClient)
       if (response.success === true) {
-        showToastMessage({ message: response.message ?? '', type: 'success', toastAnimationFinished })
+        showToastMessage(
+          {
+            message: response.message ?? '',
+            type: 'success',
+            toastAnimationFinished
+          }
+        )
         void fetchDonationPosts()
       }
     } catch (error) {

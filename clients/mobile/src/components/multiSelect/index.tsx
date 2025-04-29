@@ -152,8 +152,13 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
     return (
       <View style={styles.dropdown}>
         {enableSearch && (
-            <View style={styles.searchContainer}>
-            <Ionicons name="search" size={20} color={theme.colors.textSecondary} style={styles.searchIcon} />
+          <View style={styles.searchContainer}>
+            <Ionicons
+              name="search"
+              size={20}
+              color={theme.colors.textSecondary}
+              style={styles.searchIcon}
+            />
             <TextInput
               ref={searchInputRef}
               style={styles.searchInput}
@@ -163,7 +168,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
               editable={editable}
             />
             <TouchableOpacity onPress={() => { setSearchText('') }}>
-            <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+              <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
             </TouchableOpacity>
           </View>
         )}
@@ -184,7 +189,16 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         </ScrollView>
       </View>
     )
-  }, [enableSearch, searchText, isLoading, filteredOptions, selectedValues, handleSelect, handleSearch, isVisible])
+  }, [
+    enableSearch,
+    searchText,
+    isLoading,
+    filteredOptions,
+    selectedValues,
+    handleSelect,
+    handleSearch,
+    isVisible,
+  ])
 
   return (
     <View style={styles.container}>
@@ -203,24 +217,30 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         <View style={styles.input}>
           <Text style={styles.placeholder}>{placeholder}</Text>
         </View>
-        <Ionicons name={isVisible ? 'chevron-up' : 'chevron-down'} size={14} color={theme.colors.textSecondary} />
+        <Ionicons
+          name={isVisible ? 'chevron-up' : 'chevron-down'}
+          size={14}
+          color={theme.colors.textSecondary}
+        />
       </TouchableOpacity>
 
-      {(minRequiredLabel != null) && <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>}
+      {(minRequiredLabel != null) &&
+        <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
+      }
       {error !== null && <Text style={styles.error}>{error}</Text>}
       <View style={styles.selectedItemContainer}>
-          {
-            selectedValues.map((value) =>
-              <View key={value} style={styles.selectedItem}>
-                <Text style={styles.selectedItemText}>
-                  {value}
-                </Text>
-                <TouchableOpacity onPress={() => { removeSelectedValue(value) }}>
-                  <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
-                </TouchableOpacity>
-              </View>)
-          }
-        </View>
+        {
+          selectedValues.map((value) =>
+            <View key={value} style={styles.selectedItem}>
+              <Text style={styles.selectedItemText}>
+                {value}
+              </Text>
+              <TouchableOpacity onPress={() => { removeSelectedValue(value) }}>
+                <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+              </TouchableOpacity>
+            </View>)
+        }
+      </View>
 
       <Modal transparent visible={isVisible} onRequestClose={toggleDropdown}>
         <TouchableOpacity

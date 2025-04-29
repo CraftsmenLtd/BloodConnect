@@ -22,34 +22,34 @@ const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProp
     <View style={styles.rootContainer}>
       {acceptedDonors.length === 0
         ? <View style={styles.centeredContainer}>
-            <Text style={styles.noDonorText}>No donors have responded yet.</Text>
-          </View>
+          <Text style={styles.noDonorText}>No donors have responded yet.</Text>
+        </View>
         : <View style={styles.responseContainer}>
-            <View style={styles.container}>
-              <Text style={styles.title}>Donors Who Responded</Text>
-              <FlatList
-                data={acceptedDonors}
-                keyExtractor={(item) => item.donorId}
-                renderItem={({ item, index }) => (
-                  <TouchableOpacity
-                    style={[
-                      styles.donorItem,
-                      index === acceptedDonors.length - 1 && styles.donorItemLast
-                    ]}
-                    onPress={() => { handlePressDonor(item.donorId) }}>
-                    <Image
-                      source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-                      style={styles.avatar as StyleProp<ImageStyle>} />
-                    <View style={styles.textContainer}>
-                      <Text style={styles.name}>{item.donorName}</Text>
-                      <Text style={styles.status}>New blood donor</Text>
-                    </View>
-                    <Text style={styles.arrow}>&gt;</Text>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
+          <View style={styles.container}>
+            <Text style={styles.title}>Donors Who Responded</Text>
+            <FlatList
+              data={acceptedDonors}
+              keyExtractor={(item) => item.donorId}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.donorItem,
+                    index === acceptedDonors.length - 1 && styles.donorItemLast
+                  ]}
+                  onPress={() => { handlePressDonor(item.donorId) }}>
+                  <Image
+                    source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
+                    style={styles.avatar as StyleProp<ImageStyle>} />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.name}>{item.donorName}</Text>
+                    <Text style={styles.status}>New blood donor</Text>
+                  </View>
+                  <Text style={styles.arrow}>&gt;</Text>
+                </TouchableOpacity>
+              )}
+            />
           </View>
+        </View>
       }
     </View>
   )

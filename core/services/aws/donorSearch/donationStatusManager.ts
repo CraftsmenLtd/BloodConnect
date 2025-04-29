@@ -1,7 +1,9 @@
 import type { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
-import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
+import {
+  AcceptDonationService
+} from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import AcceptDonationDynamoDbOperations from '../commons/ddbOperations/AcceptedDonationDynamoDbOperations'
 import { Config } from '../../../../commons/libs/config/config'

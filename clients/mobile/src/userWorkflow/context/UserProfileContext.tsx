@@ -19,8 +19,8 @@ const defaultProfile: UserProfile = {
   userId: '',
   name: '',
   lastDonationDate: '',
-  height: '',
-  weight: 0,
+  height: null,
+  weight: null,
   gender: '',
   dateOfBirth: '',
   availableForDonation: false,
@@ -52,8 +52,8 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       userId: profile.userId ?? '',
       name: profile.name ?? '',
       lastDonationDate: profile.lastDonationDate ?? '',
-      height: profile.height ?? '',
-      weight: profile.weight ?? 0,
+      height: profile.height ?? null,
+      weight: profile.weight ?? null,
       gender: profile.gender ?? '',
       dateOfBirth: profile.dateOfBirth ?? '',
       availableForDonation: profile.availableForDonation,
@@ -68,7 +68,9 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
         latitude: location.latitude ?? 0,
         longitude: location.longitude ?? 0
       })) ?? [],
-      uniqueGeoPartitions: [...new Set(profile.preferredDonationLocations?.map(loc => loc.geoPartition))]
+      uniqueGeoPartitions: [
+        ...new Set(profile.preferredDonationLocations?.map(loc => loc.geoPartition))
+      ]
     }
   }
 
@@ -78,7 +80,8 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       const response = await fetchUserProfileFromApi(fetchClient)
       if (response.status === 200 && response.data !== null && response.data !== undefined) {
         const formattedProfile = formatUserProfile(response.data)
-        await storageService.storeItem<UserProfile>(LOCAL_STORAGE_KEYS.USER_PROFILE, formattedProfile)
+        await storageService.storeItem<UserProfile>(
+          LOCAL_STORAGE_KEYS.USER_PROFILE, formattedProfile)
         setUserProfile(formattedProfile)
       } else {
         throw new ProfileError('Failed to get user profile data')

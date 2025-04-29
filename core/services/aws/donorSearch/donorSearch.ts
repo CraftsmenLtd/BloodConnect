@@ -1,6 +1,9 @@
 import type { SQSEvent } from 'aws-lambda'
 import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
-import type { DonorSearchConfig, DonorSearchQueueAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type {
+  DonorSearchConfig,
+  DonorSearchQueueAttributes
+} from '../../../application/bloodDonationWorkflow/Types'
 import {
   DonorSearchStatus,
   DonationStatus
@@ -12,7 +15,9 @@ import {
   DonorSearchIntentionalError,
   DonorSearchOperationalError
 } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
-import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
+import {
+  AcceptDonationService
+} from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import {
   calculateDelayPeriod,
   calculateTotalDonorsToFind
@@ -83,11 +88,28 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
     createdAt: donorSearchQueueAttributes.createdAt
   })
 
-  const donorSearchService = new DonorSearchService(donorSearchDynamoDbOperations, serviceLogger, config)
-  const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, serviceLogger)
-  const notificationService = new NotificationService(notificationDynamoDbOperations, serviceLogger)
-  const acceptDonationService = new AcceptDonationService(acceptDonationDynamoDbOperations, serviceLogger)
-  const geohashService = new GeohashService(geohashDynamoDbOperations, serviceLogger, config)
+  const donorSearchService = new DonorSearchService(
+    donorSearchDynamoDbOperations,
+    serviceLogger,
+    config
+  )
+  const bloodDonationService = new BloodDonationService(
+    bloodDonationDynamoDbOperations,
+    serviceLogger
+  )
+  const notificationService = new NotificationService(
+    notificationDynamoDbOperations,
+    serviceLogger
+  )
+  const acceptDonationService = new AcceptDonationService(
+    acceptDonationDynamoDbOperations,
+    serviceLogger
+  )
+  const geohashService = new GeohashService(
+    geohashDynamoDbOperations,
+    serviceLogger,
+    config
+  )
 
   try {
     const donationPost = await bloodDonationService.getDonationRequest(
@@ -96,13 +118,25 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
       createdAt
     )
 
-    if (donationPost.status === DonationStatus.COMPLETED || donationPost.status === DonationStatus.CANCELLED) {
+    if (
+      donationPost.status === DonationStatus.COMPLETED ||
+      donationPost.status === DonationStatus.CANCELLED
+    ) {
       serviceLogger.info(`terminating process as donation status is ${donationPost.status}`)
       return
     }
 
-    serviceLogger.info(`checking targeted execution time${targetedExecutionTime !== undefined ? ` ${targetedExecutionTime}` : ''}`)
-    await donorSearchService.handleVisibilityTimeout(new SQSOperations(), targetedExecutionTime, record.receiptHandle)
+    serviceLogger.info(
+      `checking targeted execution time${targetedExecutionTime !== undefined ? 
+        ` ${targetedExecutionTime}` : 
+        ''
+      }`
+    )
+    await donorSearchService.handleVisibilityTimeout(
+      new SQSOperations(),
+      targetedExecutionTime,
+      record.receiptHandle
+    )
 
     const donorSearchRecord = await donorSearchService.getDonorSearchRecord(
       seekerId,
@@ -114,8 +148,14 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
       return
     }
 
-    const { bloodQuantity, requestedBloodGroup, urgencyLevel, donationDateTime, countryCode, geohash } =
-      donorSearchRecord
+    const {
+      bloodQuantity,
+      requestedBloodGroup,
+      urgencyLevel,
+      donationDateTime,
+      countryCode,
+      geohash
+    } = donorSearchRecord
 
     const isFirstInitiation = initiationCount === 1
     const remainingBagsNeeded =
@@ -154,7 +194,11 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
     serviceLogger.info(
       `sending notification for donation request to ${Object.keys(eligibleDonors).length} donors`
     )
-    await notificationService.sendRequestNotification(donorSearchRecord, eligibleDonors, new SQSOperations())
+    await notificationService.sendRequestNotification(
+      donorSearchRecord,
+      eligibleDonors,
+      new SQSOperations()
+    )
 
     const hasMaxGeohashLevelReached =
       updatedNeighborSearchLevel >= config.maxGeohashNeighborSearchLevel &&
@@ -245,7 +289,8 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
     }
   } catch (error) {
     serviceLogger.error(
-      error instanceof DonorSearchIntentionalError || error instanceof DonorSearchOperationalError
+      error instanceof DonorSearchIntentionalError ||
+      error instanceof DonorSearchOperationalError
         ? error.message
         : error
     )

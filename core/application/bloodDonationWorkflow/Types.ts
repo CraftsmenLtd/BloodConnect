@@ -1,4 +1,4 @@
-import type { ValidationRule } from '../utils/validator';
+import type { ValidationRule } from '../utils/validator'
 import { validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
 import type {
   AcceptDonationDTO,
@@ -44,21 +44,22 @@ export type BloodDonationAttributes = {
 }
 type CredentialKeys = 'donationDateTime' | 'bloodQuantity'
 
-export const validationRules: Record<CredentialKeys, Array<ValidationRule<unknown>>> = {
-  donationDateTime: [(value: string): boolean => validateDonationDateTime(value)],
-  bloodQuantity: [(value: number): boolean => validateBloodQuantity(value)]
-}
+export const validationRules: Record<
+  CredentialKeys,
+  Array<ValidationRule<unknown>>> = {
+    donationDateTime: [(value: string): boolean => validateDonationDateTime(value)],
+    bloodQuantity: [(value: number): boolean => validateBloodQuantity(value)]
+  }
 
 export type UpdateBloodDonationAttributes = {
   requestPostId: string;
   seekerId: string;
   createdAt: string;
-  bloodQuantity: number;
-  urgencyLevel: UrgencyType;
-  donationDateTime: string;
-  contactNumber: string;
+  bloodQuantity?: number;
+  urgencyLevel?: UrgencyType;
+  donationDateTime?: string;
+  contactNumber?: string;
   patientName?: string;
-  seekerName?: string;
   transportationInfo?: string;
   shortDescription?: string;
 }

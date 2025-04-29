@@ -1,4 +1,4 @@
-import type { DonorSearchDTO} from '../../../../../commons/dto/DonationDTO';
+import type { DonorSearchDTO } from '../../../../../commons/dto/DonationDTO'
 import { DonationStatus } from '../../../../../commons/dto/DonationDTO'
 import type {
   DbModelDtoAdapter,

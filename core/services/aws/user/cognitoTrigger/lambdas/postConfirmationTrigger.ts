@@ -33,7 +33,7 @@ async function postConfirmationLambda(
     email: event.request.userAttributes.email,
     name: event.request.userAttributes.name
   }) as Logger
-  
+
   const userService = new UserService(userDynamoDbOperations, logger)
   const userAttributes = {
     email: event.request.userAttributes.email,

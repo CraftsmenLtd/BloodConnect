@@ -8,15 +8,18 @@ import SNSOperations from '../commons/sns/SNSOperations'
 import {
   NotificationType
 } from '../../../../commons/dto/NotificationDTO'
-import type { AcceptDonationStatus, AcceptDonationDTO } from '../../../../commons/dto/DonationDTO'
 import { LocalCacheMapManager } from '../../../application/utils/localCacheMapManager'
 import { UserService } from '../../../application/userWorkflow/UserService'
+import type {
+  AcceptDonationStatus,
+  AcceptDonationDTO
+} from '../../../../commons/dto/DonationDTO'
 import { MAX_LOCAL_CACHE_SIZE_COUNT } from '../../../../commons/libs/constants/NoMagicNumbers'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import NotificationOperationError from '../../../application/notificationWorkflow/NotificationOperationError'
-import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations';
-import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations';
-import { Config } from 'commons/libs/config/config';
+import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
+import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
+import { Config } from 'commons/libs/config/config'
 
 const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(
   MAX_LOCAL_CACHE_SIZE_COUNT
@@ -64,7 +67,11 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
       userDeviceToSnsEndpointMap.set(userId, userSnsEndpointArn)
       const newNotificationCreated = await createNotification(notificationService, body)
       if (newNotificationCreated) {
-        await notificationService.publishNotification(body, userSnsEndpointArn, new SNSOperations())
+        await notificationService.publishNotification(
+          body,
+          userSnsEndpointArn,
+          new SNSOperations()
+        )
       }
     } else {
       const newNotificationCreated = await createNotification(notificationService, body)

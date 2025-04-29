@@ -34,7 +34,9 @@ const Profile: React.FC = () => {
   )
   const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
-  const renderDetailRow = (label: string, value: string = '', isLast: boolean = false): JSX.Element => (
+  const renderDetailRow = (label: string,
+    value: string = '',
+    isLast: boolean = false): JSX.Element => (
     <View style={[styles.row, isLast && styles.lastRow]}>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.value}>{value}</Text>
@@ -77,11 +79,16 @@ const Profile: React.FC = () => {
           {renderDetailRow('Name', userDetails.name ?? '')}
           {renderDetailRow('Date of Birth', formattedDate(userDetails.dateOfBirth ?? '', true))}
           {renderDetailRow('Age', userDetails.age.toString())}
-          {renderDetailRow('Weight (kg)', userDetails.weight !== undefined ? userDetails.weight.toString() : '')}
-          {renderDetailRow('Height (feet)', userDetails.height !== undefined ? userDetails.height.toString() : '')}
-          {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined && userDetails.phoneNumbers.length > 0 ? userDetails.phoneNumbers[0] : '')}
+          {renderDetailRow('Weight (kg)', userDetails.weight !== null ?
+            userDetails.weight.toString() : '')}
+          {renderDetailRow('Height (feet)', userDetails.height !== undefined
+            ? userDetails.height.toString() : '')}
+          {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined &&
+            userDetails.phoneNumbers.length > 0 ?
+            userDetails.phoneNumbers[0] : '')}
           {renderDetailRow('Gender', userDetails.gender)}
-          {userDetails?.lastDonationDate !== '' && renderDetailRow('Last Donation Date', formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
+          {userDetails?.lastDonationDate !== '' && renderDetailRow('Last Donation Date',
+            formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
           <View style={[styles.row, styles.lastRow]}>
             <Text style={styles.label}>{'Locations'}</Text>
             {userDetails?.preferredDonationLocations?.map(location => {

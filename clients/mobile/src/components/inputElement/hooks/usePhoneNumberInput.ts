@@ -21,7 +21,7 @@ const usePhoneNumberInput = (
   const [defaultCode, setDefaultCode] = useState(DEFAULT_COUNTRY_CODE)
 
   useEffect(() => {
-   if (value) {
+    if (value) {
       try {
         const phoneNumber = parsePhoneNumberFromString(value)
 

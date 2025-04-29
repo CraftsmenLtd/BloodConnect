@@ -1,11 +1,15 @@
 import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
-import type { AcceptDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import {
+  AcceptDonationService
+} from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
+import type {
+  AcceptDonationRequestAttributes
+} from '../../../application/bloodDonationWorkflow/Types'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import { BloodDonationService } from './../../../application/bloodDonationWorkflow/BloodDonationService'
+import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
 import { createHTTPLogger } from '../commons/logger/HttpLogger'

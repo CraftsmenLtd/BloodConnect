@@ -141,7 +141,7 @@ export class BloodDonationService {
     donationAttributes: UpdateBloodDonationAttributes,
     notificationService: NotificationService
   ): Promise<BloodDonationResponseAttributes> {
-    const { seekerId, requestPostId, donationDateTime, createdAt, ...restAttributes } =
+    const { seekerId, requestPostId, donationDateTime, createdAt } =
       donationAttributes
     const item = await this.bloodDonationRepository.getDonationRequest(
       seekerId,
@@ -162,10 +162,8 @@ export class BloodDonationService {
     }
 
     const updateData: Partial<DonationDTO> = {
-      ...restAttributes,
-      seekerId,
-      requestPostId,
-      createdAt
+      ...item,
+      ...donationAttributes
     }
 
     this.logger.info('validating donation request')
@@ -183,7 +181,7 @@ export class BloodDonationService {
         throw error
       }
       throw new BloodDonationOperationError(
-        `Failed to update blood donation post. ${error}`,
+        'Failed to update blood donation post',
         GENERIC_CODES.ERROR
       )
     })
@@ -221,6 +219,7 @@ export class BloodDonationService {
       createdAt,
       status
     }
+    this.logger.info('updating donation status')
     await this.bloodDonationRepository.update(updateData)
   }
 
@@ -230,11 +229,15 @@ export class BloodDonationService {
     createdAt: string,
     acceptDonationService: AcceptDonationService
   ): Promise<void> {
+    this.logger.info('checking donation status')
     const donationPost = await this.getDonationRequest(seekerId, requestPostId, createdAt)
     const acceptedDonors = await acceptDonationService.getAcceptedDonorList(seekerId, requestPostId)
 
     if (acceptedDonors.length >= donationPost.bloodQuantity) {
       await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.MANAGED)
+    }
+    else {
+      await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.PENDING)
     }
   }
 

@@ -5,9 +5,12 @@ import { BloodDonationService } from '../../../application/bloodDonationWorkflow
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import type { UpdateBloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
-import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
-import { UNKNOWN_ERROR_MESSAGE, UPDATE_DONATION_REQUEST_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
+import {
+  UNKNOWN_ERROR_MESSAGE,
+  UPDATE_DONATION_REQUEST_SUCCESS
+} from '../../../../commons/libs/constants/ApiResponseMessages'
 import { Config } from '../../../../commons/libs/config/config'
 import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
 
@@ -40,13 +43,15 @@ async function updateBloodDonationLambda(
       seekerId: event.seekerId,
       requestPostId: event.requestPostId,
       createdAt: event.createdAt,
-      patientName: event.patientName,
-      bloodQuantity: event.bloodQuantity,
-      urgencyLevel: event.urgencyLevel,
-      donationDateTime: event.donationDateTime,
-      shortDescription: event.shortDescription,
-      contactNumber: event.contactNumber,
-      transportationInfo: event.transportationInfo
+      ...(event.urgencyLevel !== undefined && { urgencyLevel: event.urgencyLevel }),
+      ...(event.bloodQuantity !== undefined && { bloodQuantity: event.bloodQuantity }),
+      ...(event.patientName !== undefined && { patientName: event.patientName }),
+      ...(event.donationDateTime !== undefined && { donationDateTime: event.donationDateTime }),
+      ...(event.shortDescription !== undefined && { shortDescription: event.shortDescription }),
+      ...(event.contactNumber !== undefined && { contactNumber: event.contactNumber }),
+      ...(event.transportationInfo !== undefined && {
+        transportationInfo: event.transportationInfo
+      })
     }
     const response = await bloodDonationService.updateBloodDonation(
       bloodDonationAttributes,

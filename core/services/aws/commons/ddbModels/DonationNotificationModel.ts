@@ -1,9 +1,23 @@
-import type { DonationNotificationDTO} from '../../../../../commons/dto/NotificationDTO';
+import type {
+  DonationNotificationDTO
+} from '../../../../../commons/dto/NotificationDTO';
 import { NotificationType } from '../../../../../commons/dto/NotificationDTO'
-import type { DbIndex, DbModelDtoAdapter, HasTimeLog, IndexDefinitions, IndexType, NosqlModel } from './DbModelDefinitions'
+import type {
+  DbIndex,
+  DbModelDtoAdapter,
+  HasTimeLog,
+  IndexDefinitions,
+  IndexType,
+  NosqlModel
+} from './DbModelDefinitions'
 import { NOTIFICATION_PK_PREFIX } from './NotificationModel'
 
-export type DonationNotificationFields = Omit<DonationNotificationDTO, 'id' | 'userId' | 'type'> & HasTimeLog & {
+export type DonationNotificationFields = Omit<
+  DonationNotificationDTO,
+  'id' |
+  'userId' |
+  'type'
+> & HasTimeLog & {
   PK: `${typeof NOTIFICATION_PK_PREFIX}#${string}`;
   SK: `${string}`;
   GSI1PK?: `${string}`;
@@ -11,7 +25,13 @@ export type DonationNotificationFields = Omit<DonationNotificationDTO, 'id' | 'u
   LSI1SK?: `STATUS#${string}#${string}`;
 }
 
-export default class DonationNotificationModel implements NosqlModel<DonationNotificationFields>, DbModelDtoAdapter<DonationNotificationDTO, DonationNotificationFields> {
+export default class DonationNotificationModel implements
+  NosqlModel<DonationNotificationFields>,
+  DbModelDtoAdapter<
+    DonationNotificationDTO,
+    DonationNotificationFields
+  >
+{
   getIndexDefinitions(): IndexDefinitions<DonationNotificationFields> {
     return {
       GSI: {
@@ -27,11 +47,16 @@ export default class DonationNotificationModel implements NosqlModel<DonationNot
     return { partitionKey: 'PK', sortKey: 'SK' }
   }
 
-  getIndex(indexType: IndexType, indexName: string): DbIndex<DonationNotificationFields> | undefined {
+  getIndex(
+    indexType: IndexType,
+    indexName: string
+  ): DbIndex<DonationNotificationFields> | undefined {
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(DonationNotificationDTO: DonationNotificationDTO): DonationNotificationFields {
+  fromDto(
+    DonationNotificationDTO: DonationNotificationDTO
+  ): DonationNotificationFields {
     const { id, userId, type, ...remainingNotificationFields } = DonationNotificationDTO
 
     const data: DonationNotificationFields = {

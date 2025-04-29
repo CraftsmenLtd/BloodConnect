@@ -62,12 +62,12 @@ const Badge: React.FC<BadgeProps> = ({
       ]}
     >
       { (iconName !== undefined) && (
-          <FontAwesome6
-            name={iconName}
-            size={16}
-            color={theme.colors.black}
-            style={styles.icon}
-          />
+        <FontAwesome6
+          name={iconName}
+          size={16}
+          color={theme.colors.black}
+          style={styles.icon}
+        />
       )}
       <Text style={[styles.text, textStyle]}>{text}</Text>
     </View>

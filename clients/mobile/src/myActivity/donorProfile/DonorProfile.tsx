@@ -36,29 +36,33 @@ const DonorProfile = () => {
     <Text style={styles.name}>{donorProfile?.donorName ?? ''}</Text>
     <View>
       {Array.isArray(donorProfile?.preferredDonationLocations) &&
-        donorProfile.preferredDonationLocations.map((location: preferredDonationLocations, index: number) => (
-          <View style={styles.locationRow} key={index}>
-            <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
-            <Text style={styles.locationText}>
-              {location?.area ?? ''}
-            </Text>
-          </View>
-        ))}
+        donorProfile.preferredDonationLocations.map(
+          (location: preferredDonationLocations, index: number) => (
+            <View style={styles.locationRow} key={index}>
+              <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
+              <Text style={styles.locationText}>
+                {location?.area ?? ''}
+              </Text>
+            </View>
+          ))}
     </View>
 
     <View style={styles.detailsRow}>
-      <Text style={styles.detailsText}>BMI: {calculateBMI(donorProfile.weight, donorProfile.height)}</Text>
+      <Text style={styles.detailsText}>BMI: {
+        donorProfile.weight && donorProfile.height ?
+          calculateBMI(donorProfile.weight, donorProfile.height) : 'Not Available'}</Text>
     </View>
 
     <View style={{ width: '100%' }}>
-      <TouchableOpacity style={styles.callButton} onPress={() => handleCall(donorProfile.phoneNumbers)}>
+      <TouchableOpacity style={styles.callButton} onPress={handleCall}>
         <Text style={styles.callButtonText}>Call now</Text>
       </TouchableOpacity>
     </View>
   </View>
 
   return (
-    <StateAwareRenderer loading={loading} errorMessage={error} data={donorProfile} ViewComponent={ViewToRender} />
+    <StateAwareRenderer
+      loading={loading} errorMessage={error} data={donorProfile} ViewComponent={ViewToRender} />
   )
 }
 

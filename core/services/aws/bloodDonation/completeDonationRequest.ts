@@ -1,7 +1,9 @@
 import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import { DonationRecordService } from '../../../application/bloodDonationWorkflow/DonationRecordService'
-import type { DonationRecordEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type {
+  DonationRecordEventAttributes
+} from '../../../application/bloodDonationWorkflow/Types'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import DonationRecordDynamoDbOperations from '../commons/ddbOperations/DonationRecordDynamoDbOperations'

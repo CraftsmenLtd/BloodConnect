@@ -47,7 +47,7 @@ export class GeohashService {
     currentGeohashes: string[] = []
   ): { updatedGeohashesToProcess: string[]; updatedNeighborSearchLevel: number } => {
     if (
-      currentGeohashes.length >= this.options.maxGeohashesPerExecution||
+      currentGeohashes.length >= this.options.maxGeohashesPerExecution ||
       neighborLevel >= this.options.maxGeohashNeighborSearchLevel
     ) {
       return {

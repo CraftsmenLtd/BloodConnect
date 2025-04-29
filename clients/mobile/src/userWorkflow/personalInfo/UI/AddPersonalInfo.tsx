@@ -118,7 +118,7 @@ const AddPersonalInfo = () => {
             onChangeText={handleInputChange}
             placeholder="Enter height in feet (e.g., 5.8)"
             keyboardType="numeric"
-            isRequired={true}
+            isRequired={false}
             error={errors.height}
           />
         </View>
@@ -131,7 +131,7 @@ const AddPersonalInfo = () => {
             onChangeText={handleInputChange}
             placeholder="Enter weight in kg (e.g., 70)"
             keyboardType="numeric"
-            isRequired={true}
+            isRequired={false}
             error={errors.weight}
           />
         </View>
@@ -151,7 +151,8 @@ const AddPersonalInfo = () => {
           <DateTimePickerComponent
             isOnlyDate={true}
             label="Last Donation Date"
-            value={personalInfo.lastDonationDate !== null ? new Date(personalInfo.lastDonationDate) : null}
+            value={personalInfo.lastDonationDate !== null 
+              ? new Date(personalInfo.lastDonationDate) : null}
             onChange={(date) => handleInputChange('lastDonationDate', date)}
             error={errors.lastDonationDate}
           />
@@ -161,7 +162,8 @@ const AddPersonalInfo = () => {
           <DateTimePickerComponent
             isOnlyDate={true}
             label="Last Vaccinated Date"
-            value={personalInfo.lastVaccinatedDate !== null ? new Date(personalInfo.lastVaccinatedDate) : null}
+            value={personalInfo.lastVaccinatedDate !== null 
+              ? new Date(personalInfo.lastVaccinatedDate) : null}
             onChange={(date) => handleInputChange('lastVaccinatedDate', date)}
             error={errors.lastVaccinatedDate}
           />

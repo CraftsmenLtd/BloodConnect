@@ -1,7 +1,8 @@
 import type { JwtPayload } from '@aws-amplify/core/internals/utils'
 import type {
   AuthSession,
-  ResetPasswordOutput} from 'aws-amplify/auth';
+  ResetPasswordOutput
+} from 'aws-amplify/auth'
 import {
   confirmResetPassword,
   confirmSignUp,
@@ -45,7 +46,11 @@ export const decodeAccessToken = (token: string | null): JwtPayload => {
   return payload
 }
 
-export const loadTokens = async(): Promise<{ storedAccessToken: string | undefined; storedIdToken: string | undefined }> => {
+export const loadTokens = async():
+  Promise<{
+  storedAccessToken: string | undefined;
+  storedIdToken: string | undefined;
+}> => {
   try {
     const session = await fetchSession()
     return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
@@ -139,7 +144,9 @@ export const loginUser = async(email: string, password: string): Promise<boolean
     })
     return isSignedIn
   } catch (error) {
-    throw new Error(`Error logging in user: ${error instanceof Error ? error.message : error}`)
+    throw new Error(
+      `Error logging in user: ${error instanceof Error ? error.message : error}`
+    )
   }
 }
 
@@ -148,7 +155,9 @@ export const googleLogin = async(): Promise<void> => {
     await signInWithRedirect({ provider: 'Google' })
     await fetchSession()
   } catch (error) {
-    throw new Error(`Error logging with google: ${error instanceof Error ? error.message : error}`)
+    throw new Error(
+      `Error logging with google: ${error instanceof Error ? error.message : error}`
+    )
   }
 }
 
@@ -157,11 +166,15 @@ export const facebookLogin = async(): Promise<void> => {
     await signInWithRedirect({ provider: 'Facebook' })
     await fetchSession()
   } catch (error) {
-    throw new Error(`Error logging with facebook: ${error instanceof Error ? error.message : error}`)
+    throw new Error(
+      `Error logging with facebook: ${error instanceof Error ? error.message : error}`
+    )
   }
 }
 
-export const resetPasswordHandler = async(email: string): Promise<ResetPasswordOutput['nextStep']> => {
+export const resetPasswordHandler = async(
+  email: string
+): Promise<ResetPasswordOutput['nextStep']> => {
   try {
     const { nextStep } = await resetPassword({ username: email })
     return nextStep
@@ -185,7 +198,11 @@ const handleConfirmPasswordError = (error: unknown): string => {
   }
 }
 
-export const confirmResetPasswordHandler = async(email: string, otp: string, password: string): Promise<boolean> => {
+export const confirmResetPasswordHandler = async(
+  email: string,
+  otp: string,
+  password: string
+): Promise<boolean> => {
   try {
     await confirmResetPassword({ username: email, confirmationCode: otp, newPassword: password })
     return true

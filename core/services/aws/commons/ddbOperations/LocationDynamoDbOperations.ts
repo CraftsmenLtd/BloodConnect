@@ -14,7 +14,7 @@ export default class LocationDynamoDbOperations extends DynamoDbTableOperations<
   LocationDTO,
   LocationFields,
   LocationModel
-> implements LocationRepository{
+> implements LocationRepository {
   constructor(tableName: string, region: string) {
     super(new LocationModel(), tableName, region)
   }

@@ -35,15 +35,20 @@ export const useProfile = (): { userDetails: UserProfileDetails } => {
   }
 
   const userDetails = useMemo(() => {
-    const location = userProfile.preferredDonationLocations !== undefined ? getLocation(userProfile.preferredDonationLocations) : ''
+    const location = userProfile.preferredDonationLocations !== undefined ?
+      getLocation(userProfile.preferredDonationLocations) : ''
     const age = userProfile.dateOfBirth !== undefined ? calculateAge(userProfile.dateOfBirth) : 0
     const phone = userProfile.phoneNumbers?.[0] ?? ''
+    const height = userProfile?.height ? userProfile?.height : '0.0'
+    const weight = userProfile.weight ?? 0
 
     return {
       ...userProfile,
       location,
       age,
-      phone
+      phone,
+      height,
+      weight
     }
   }, [userProfile])
 
