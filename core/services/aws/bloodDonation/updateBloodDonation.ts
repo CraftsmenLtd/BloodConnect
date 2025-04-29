@@ -21,7 +21,7 @@ import DonationNotificationDynamoDbOperations
   from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
 import {
   AcceptDonationService 
-} from 'core/application/bloodDonationWorkflow/AcceptDonationRequestService'
+} from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import AcceptDonationDynamoDbOperations
   from '../commons/ddbOperations/AcceptedDonationDynamoDbOperations'
 

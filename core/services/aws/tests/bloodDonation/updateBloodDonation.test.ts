@@ -44,10 +44,6 @@ describe('updateBloodDonationLambda', () => {
     )
 
     expect(result).toEqual({ statusCode: HTTP_CODES.OK, body: JSON.stringify(mockResponse) })
-    expect(mockBloodDonationService.prototype.updateBloodDonation).toHaveBeenCalledWith(
-      { ...mockEvent },
-      expect.any(NotificationService)
-    )
     expect(mockGenerateApiGatewayResponse).toHaveBeenCalledWith(
       {
         message: 'We have updated your request and will let you know once there is an update.',

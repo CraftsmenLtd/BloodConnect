@@ -9,9 +9,9 @@ import { calculateRemainingBagsNeeded } from '../utils/calculateDonorsToNotify'
 import type { BloodDonationService } from './BloodDonationService'
 import type { NotificationService } from '../notificationWorkflow/NotificationService'
 import type { UserService } from '../userWorkflow/UserService'
-import type { UserDetailsDTO } from 'commons/dto/UserDTO'
+import type { UserDetailsDTO } from '../../../commons/dto/UserDTO'
 import type { DonationNotificationAttributes } from '../notificationWorkflow/Types'
-import { NotificationType } from 'commons/dto/NotificationDTO'
+import { NotificationType } from '../../../commons/dto/NotificationDTO'
 import type { QueueModel } from '../models/queue/QueueModel'
 
 export class AcceptDonationService {
