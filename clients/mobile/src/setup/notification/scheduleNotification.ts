@@ -1,4 +1,13 @@
-import * as Notifications from 'expo-notifications'
+import * as Notifications from 'expo-notifications';
+import { replaceTemplatePlaceholders } from '../../utility/formatting'
+import storageService from '../../utility/storageService'
+import {
+  LOCAL_NOTIFICATION_TYPE,
+  REMINDER_NOTIFICATION_BODY,
+  REMINDER_NOTIFICATION_TITLE,
+  REMINDING_HOURS_BEFORE_DONATION
+} from '../constant/consts'
+import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
 
 type NotificationTrigger =
   | { date: Date }
@@ -8,8 +17,11 @@ type NotificationTrigger =
 export const scheduleNotification = async(
   trigger: NotificationTrigger, 
   content: Notifications.NotificationContentInput
-): Promise<void> => {
-  await Notifications.scheduleNotificationAsync({ content, trigger: notificationTrigger(trigger) })
+): Promise<string> => {
+  return await Notifications.scheduleNotificationAsync({
+    content,
+    trigger: notificationTrigger(trigger)
+  })
 }
 
 const notificationTrigger = (
@@ -53,4 +65,39 @@ export const fetchScheduledNotifications = async():
 
 export const cancelNotificationById = async(identifier: string): Promise<void> => {
   await Notifications.cancelScheduledNotificationAsync(identifier)
+}
+
+export const handleNotification = (donationDateTime: string | Date): void => {
+  const donationTime = new Date(donationDateTime)
+
+  REMINDING_HOURS_BEFORE_DONATION.forEach((hoursBefore) => {
+    const reminderTime = new Date(donationTime.getTime() - hoursBefore * 60 * 60 * 1000)
+    const content = {
+      title: hoursBefore === 1
+        ? REMINDER_NOTIFICATION_TITLE.FINAL
+        : replaceTemplatePlaceholders(REMINDER_NOTIFICATION_TITLE.DEFAULT, hoursBefore.toString()),
+      body: hoursBefore === 1
+        ? REMINDER_NOTIFICATION_BODY.FINAL
+        : replaceTemplatePlaceholders(REMINDER_NOTIFICATION_BODY.DEFAULT, hoursBefore.toString()),
+      data: { payload: {}, type: LOCAL_NOTIFICATION_TYPE.REMINDER }
+    }
+    const id = scheduleNotification({ date: reminderTime }, content)
+
+    void storageService.storeItem(
+      `${LOCAL_STORAGE_KEYS.LOCAL_NOTIFICATION_KEY_PREFIX}-${donationDateTime}`,
+      id
+    )
+  })
+}
+
+export const cancelNotification = async(donationDateTime: string | Date): Promise<void> => {
+  const existingId = await storageService.getItem<string>(
+    `${LOCAL_STORAGE_KEYS.LOCAL_NOTIFICATION_KEY_PREFIX}-${donationDateTime}`
+  )
+
+  if (!existingId) {
+    return
+  }
+
+  void Notifications.cancelScheduledNotificationAsync(existingId)
 }
