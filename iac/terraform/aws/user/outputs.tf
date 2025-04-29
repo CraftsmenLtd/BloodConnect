@@ -7,3 +7,7 @@ output "lambda_metadata" {
     }
   ]
 }
+
+output "create_user_lambda_name" {
+  value = module.lambda["create-user"].lambda_function_name
+}

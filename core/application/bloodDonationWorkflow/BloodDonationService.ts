@@ -139,7 +139,8 @@ export class BloodDonationService {
 
   async updateBloodDonation(
     donationAttributes: UpdateBloodDonationAttributes,
-    notificationService: NotificationService
+    notificationService: NotificationService,
+    acceptDonationService: AcceptDonationService
   ): Promise<BloodDonationResponseAttributes> {
     const { seekerId, requestPostId, donationDateTime, createdAt } =
       donationAttributes
@@ -161,7 +162,7 @@ export class BloodDonationService {
       )
     }
 
-    const updateData: Partial<DonationDTO> = {
+    const updateData: DonationDTO = {
       ...item,
       ...donationAttributes
     }
@@ -173,6 +174,22 @@ export class BloodDonationService {
         throw new Error(validationResponse)
       }
       updateData.donationDateTime = new Date(donationDateTime).toISOString()
+    }
+
+    const acceptedDonors = await acceptDonationService.getAcceptedDonorList(seekerId, requestPostId)
+
+    const hasQuantityIncreased = acceptedDonors.length < updateData.bloodQuantity &&
+      updateData.status == DonationStatus.MANAGED
+
+    if (hasQuantityIncreased) {
+      updateData.status = DonationStatus.PENDING
+    }
+
+    const hasQuantityDecreased = acceptedDonors.length >= updateData.bloodQuantity &&
+      updateData.status == DonationStatus.PENDING
+
+    if (hasQuantityDecreased) {
+      updateData.status = DonationStatus.MANAGED
     }
 
     this.logger.info('updating donation request')

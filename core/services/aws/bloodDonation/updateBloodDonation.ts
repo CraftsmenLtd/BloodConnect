@@ -1,10 +1,15 @@
 import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
+import {
+  BloodDonationService 
+} from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
-import type { UpdateBloodDonationAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
+import type {
+  UpdateBloodDonationAttributes 
+} from '../../../application/bloodDonationWorkflow/Types'
+import BloodDonationDynamoDbOperations
+  from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import {
@@ -12,7 +17,13 @@ import {
   UPDATE_DONATION_REQUEST_SUCCESS
 } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { Config } from '../../../../commons/libs/config/config'
-import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
+import DonationNotificationDynamoDbOperations
+  from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
+import {
+  AcceptDonationService 
+} from 'core/application/bloodDonationWorkflow/AcceptDonationRequestService'
+import AcceptDonationDynamoDbOperations
+  from '../commons/ddbOperations/AcceptedDonationDynamoDbOperations'
 
 const config = new Config<{
   dynamodbTableName: string;
@@ -27,6 +38,10 @@ const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
   config.dynamodbTableName,
   config.awsRegion
 )
+const acceptDonationDynamoDbOperations = new AcceptDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 async function updateBloodDonationLambda(
   event: UpdateBloodDonationAttributes & HttpLoggerAttributes
@@ -38,6 +53,10 @@ async function updateBloodDonationLambda(
   )
   const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
   const notificationService = new NotificationService(notificationDynamoDbOperations, httpLogger)
+  const acceptDonationService = new AcceptDonationService(
+    acceptDonationDynamoDbOperations, httpLogger
+  )
+
   try {
     const bloodDonationAttributes: UpdateBloodDonationAttributes = {
       seekerId: event.seekerId,
@@ -55,7 +74,8 @@ async function updateBloodDonationLambda(
     }
     const response = await bloodDonationService.updateBloodDonation(
       bloodDonationAttributes,
-      notificationService
+      notificationService,
+      acceptDonationService
     )
     return generateApiGatewayResponse(
       {
