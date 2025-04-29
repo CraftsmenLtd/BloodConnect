@@ -1,6 +1,14 @@
-import React from 'react';
-import { View, StyleSheet, Text } from 'react-native'
+import React, { useRef } from 'react'
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity
+} from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
+import type {
+  CameraRef
+} from '@maplibre/maplibre-react-native'
 import {
   MapView as MMapView,
   Camera,
@@ -23,16 +31,19 @@ type MapViewProps = {
 /**
  * MapView Component
  * ------------------
- * A reusable map component built with `@maplibre/maplibre-react-native`, displaying a raster tile map
- * (OpenStreetMap by default) and customizable markers. Supports zoom level and styling.
+ * A reusable map component built with `@maplibre/maplibre-react-native`,
+ * displaying a raster tile map (OpenStreetMap by default) and customizable
+ * markers. Supports zoom level and styling.
  *
  * Props:
  * -------
  * @param centerCoordinate - `[longitude, latitude]` coordinates to center the map view.
  * @param markers - Optional array of marker objects. Each marker includes:
  *                  - `coordinate`: [longitude, latitude]
- *                  - `component`: Optional custom React element to render at the marker location.
- * @param zoomLevel - Optional number (default = 13) that controls the initial zoom level of the map.
+ *                  - `component`: Optional custom React element to render at the marker
+ *                  location.
+ * @param zoomLevel - Optional number (default = 13) that controls the initial zoom level
+ * of the map.
  * @param style - Optional custom style object to apply to the container.
  *
  * Example Usage:
@@ -88,6 +99,7 @@ const MapView: React.FC<MapViewProps> = ({
 }): React.ReactElement => {
   const theme = useTheme()
   const styles = createStyles(theme)
+  const cameraRef = useRef<CameraRef>(null)
 
   return (
     <View
@@ -109,7 +121,7 @@ const MapView: React.FC<MapViewProps> = ({
           tileSize={256}>
           <RasterLayer id="osmTiles" sourceID="osm" style={{ rasterOpacity: 1 }} />
         </RasterSource>
-        <Camera centerCoordinate={centerCoordinate} zoomLevel={zoomLevel} />
+        <Camera ref={cameraRef} centerCoordinate={centerCoordinate} zoomLevel={zoomLevel} />
         {markers.map((marker, index) => {
           const markerContent = React.isValidElement(marker.component)
             ? marker.component
@@ -122,14 +134,21 @@ const MapView: React.FC<MapViewProps> = ({
           )
         })}
       </MMapView>
+
+      <ResetToInitialView
+        cameraRef={cameraRef}
+        centerCoordinate={centerCoordinate}
+        zoomLevel={zoomLevel}
+      />
+
       <MapAttribution />
     </View>
   )
 }
 
 const DefaultMarker = (): React.ReactElement => {
-  const theme = useTheme();
-  const styles = createStyles(theme);
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   return (
     <MaterialIcons
@@ -138,6 +157,27 @@ const DefaultMarker = (): React.ReactElement => {
       color={theme.colors.primary}
       style={styles.markerContainer}
     />
+  )
+}
+
+const ResetToInitialView = ({ cameraRef, centerCoordinate, zoomLevel }): React.ReactElement => {
+  const theme = useTheme()
+  const styles = createStyles(theme)
+
+  const handlePress = (): void => {
+    if (cameraRef.current) {
+      cameraRef.current.setCamera({
+        centerCoordinate,
+        zoomLevel,
+        animationDuration: 1000
+      })
+    }
+  }
+
+  return (
+    <TouchableOpacity style={styles.resetButton} onPress={handlePress}>
+      <MaterialIcons name="my-location" size={24} color="white" />
+    </TouchableOpacity>
   )
 }
 
@@ -177,6 +217,15 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     attributionText: {
       fontSize: 10,
       color: theme.colors.white
+    },
+    resetButton: {
+      position: 'absolute',
+      bottom: 50,
+      right: 15,
+      backgroundColor: theme.colors.primary,
+      padding: 10,
+      borderRadius: 25,
+      elevation: 5
     }
   })
 

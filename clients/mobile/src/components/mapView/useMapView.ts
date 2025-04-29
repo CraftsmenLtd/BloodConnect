@@ -66,8 +66,14 @@ const getZoomLevel = (
   const lngDiff = bbox.ne[0] - bbox.sw[0]
   const lngFraction = (lngDiff + 360) % 360 / 360
 
-  const latZoom = Math.log(mapHeight * (1 - padding / mapHeight) / WORLD_DIM.height / latFraction) / Math.LN2
-  const lngZoom = Math.log(mapWidth * (1 - padding / mapWidth) / WORLD_DIM.width / lngFraction) / Math.LN2
+  const latZoom = Math.log(
+    mapHeight * (1 - padding / mapHeight) /
+    WORLD_DIM.height / latFraction
+  ) / Math.LN2
+  const lngZoom = Math.log(
+    mapWidth * (1 - padding / mapWidth) /
+    WORLD_DIM.width / lngFraction
+  ) / Math.LN2
 
   return Math.min(Math.floor(Math.min(latZoom, lngZoom)) - 1, MAX_ZOOM_LEVEL)
 }
@@ -82,7 +88,9 @@ const useMapView = (
 } => {
   const [mapMarkers, setMapMarkers] = useState<Marker[]>([])
   const [zoomLevel, setZoomLevel] = useState<number>(DEFAULT_ZOOM_LEVEL)
-  const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>(DEFAULT_CENTER_COORDINATES)
+  const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>(
+    DEFAULT_CENTER_COORDINATES
+  )
   const [stableLocations, setStableLocations] = useState(locations)
 
   useEffect(() => {
@@ -122,9 +130,15 @@ const useMapView = (
 
       setMapMarkers(newMarkers)
 
-      if (coords.length <= 1) {
+      if (coords.length === 0) {
         setZoomLevel(DEFAULT_ZOOM_LEVEL)
         setCenterCoordinate(DEFAULT_CENTER_COORDINATES)
+        return
+      }
+
+      if (coords.length === 1) {
+        setZoomLevel(DEFAULT_ZOOM_LEVEL)
+        setCenterCoordinate(coords[0])
         return
       }
 
