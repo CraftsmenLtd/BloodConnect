@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
+import useDonationStatus from '../../../api/hooks/useDonationStatus'
 import ToggleTabs from '../../../components/tab/ToggleTabs'
+import type { StatusType } from '../../../donationWorkflow/types'
 import { STATUS } from '../../../donationWorkflow/types'
-import type { DetailPostRouteProp, DetailPostScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type {
+  DetailPostRouteProp,
+  DetailPostScreenNavigationProp
+} from '../../../setup/navigation/navigationTypes'
 import PostCard from '../../../components/donation/PostCard'
 import { SCREENS } from '../../../setup/constant/screens'
 import type { DonationData } from '../../../donationWorkflow/donationHelpers'
+import {
+  cancelNotification,
+  handleNotification
+} from '../../../setup/notification/scheduleNotification'
 import DonorResponses from '../donorResponses/DonorResponses'
 import type { TabConfig } from '../../types'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
@@ -26,16 +35,28 @@ const DETAIL_POST_TAB_CONFIG: TabConfig = {
 
 const Detail = ({ navigation, route }: DetailProps) => {
   const styles = createStyles(useTheme())
-  const { cancelPost, cancelPostError, isLoading, showToast, toastAnimationFinished } = useMyActivity()
+  const {
+    cancelPost,
+    cancelPostError,
+    isLoading,
+    showToast,
+    toastAnimationFinished
+  } = useMyActivity()
+  const {
+    executeStatusRequest,
+    isLoading: statusLoading,
+    error: statusError
+  } = useDonationStatus()
   const { data, tab, useAsDetailsPage } = route.params
   const [currentTab, setCurrentTab] = useState(tab ?? DETAIL_POST_TAB_CONFIG.initialTab)
   const isDetailsPage = useAsDetailsPage !== undefined && useAsDetailsPage
+  const [localStatus, setLocalStatus] = useState<StatusType>(data.status)
 
   useEffect(() => {
     navigation.setOptions({ headerTitle: isDetailsPage ? 'Detail' : 'My Requests' })
   }, [useAsDetailsPage])
 
-  const handlePressDonor = (donorId: string) => {
+  const handlePressDonor = (donorId: string): void => {
     navigation.navigate(SCREENS.DONOR_PROFILE, { donorId })
   }
 
@@ -47,17 +68,44 @@ const Detail = ({ navigation, route }: DetailProps) => {
     navigation.navigate(SCREENS.DONATION, { data: { ...donationData }, isUpdating: true })
   }
 
-  const handleCompleteRequest = () => {
+  const handleCompleteRequest = (): void => {
     navigation.navigate(SCREENS.REQUEST_STATUS, {
       requestPostId: data.requestPostId,
       createdAt: data.createdAt
     })
   }
 
+  const handleStatusChange = async(newStatus: StatusType): Promise<void> => {
+    const previousStatus = localStatus
+    setLocalStatus(newStatus)
+
+    try {
+      await executeStatusRequest({
+        requestPostId: data.requestPostId,
+        seekerId: data.seekerId,
+        createdAt: data.createdAt,
+        status: newStatus
+      })
+      if (newStatus === STATUS.ACCEPTED) {
+        handleNotification(new Date(data.donationDateTime))
+      } else {
+        void cancelNotification(new Date(data.donationDateTime))
+      }
+    } catch (err) {
+      console.error(err)
+      setLocalStatus(previousStatus)
+    }
+  }
+
   return (
     <View style={styles.container}>
       {!isDetailsPage &&
-        <View style={[styles.tabHeader, currentTab === DETAIL_POST_TAB_CONFIG.initialTab ? { marginBottom: -18.5 } : {}]}>
+        <View style={[
+          styles.tabHeader,
+          currentTab === DETAIL_POST_TAB_CONFIG.initialTab ?
+            { marginBottom: -18.5 } :
+            {}
+        ]}>
           <ToggleTabs
             tabs={DETAIL_POST_TAB_CONFIG.tabs}
             onTabPress={handleTabPress}
@@ -79,6 +127,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
             updateHandler={updatePost}
             cancelHandler={cancelPost}
             isLoading={isLoading}
+            statusValue={localStatus}
           />
           {cancelPostError !== '' && <Text style={styles.errorMessage}>{cancelPostError}</Text>}
           {showToast != null && (
@@ -93,15 +142,33 @@ const Detail = ({ navigation, route }: DetailProps) => {
               <Button
                 text="Complete Request"
                 disabled={
-                  data.status === STATUS.COMPLETED ||
-                  data.status === STATUS.CANCELLED ||
-                  data.status === STATUS.EXPIRED
+                  localStatus === STATUS.COMPLETED ||
+                  localStatus === STATUS.CANCELLED ||
+                  localStatus === STATUS.EXPIRED
                 }
                 onPress={handleCompleteRequest} />
             </View>
           }
-        </View>
-        : <DonorResponses acceptedDonors={data.acceptedDonors} handlePressDonor={handlePressDonor} />
+          {isDetailsPage &&
+            [STATUS.ACCEPTED, STATUS.IGNORED].includes(localStatus) &&
+            <View style={styles.buttonContainer}>
+              {statusError !== '' && <Text style={styles.errorMessage}>{statusError}</Text>}
+              <Button
+                text={ localStatus === STATUS.ACCEPTED ? 'Ignore Request' : 'Accept Request' }
+                onPress={() =>
+                  handleStatusChange(
+                    localStatus === STATUS.ACCEPTED ? STATUS.IGNORED : STATUS.ACCEPTED
+                  )
+                }
+                loading={statusLoading}
+              />
+            </View>
+          }
+        </View> :
+        <DonorResponses
+          acceptedDonors={data.acceptedDonors}
+          handlePressDonor={handlePressDonor}
+        />
       }
     </View>
   )
