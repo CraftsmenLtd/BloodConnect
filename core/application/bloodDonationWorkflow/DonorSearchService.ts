@@ -29,7 +29,8 @@ export class DonorSearchService {
   async initiateDonorSearchRequest(
     donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes,
     userService: UserService,
-    queueModel: QueueModel
+    queueModel: QueueModel,
+    eventName?: DynamoDBEventName
   ): Promise<void> {
     const { seekerId, requestPostId, createdAt } = donationRequestInitiatorAttributes
     const userProfile = await userService.getUser(seekerId)
@@ -56,7 +57,7 @@ export class DonorSearchService {
     const donorSearchRecord = await this.getDonorSearchRecord(seekerId, requestPostId, createdAt)
 
     const shouldRestartSearch =
-      donationRequestInitiatorAttributes.eventName === DynamoDBEventName.MODIFY &&
+      eventName === DynamoDBEventName.MODIFY &&
       donationRequestInitiatorAttributes.status === DonationStatus.PENDING &&
       donorSearchRecord !== null &&
       donorSearchRecord.status === DonorSearchStatus.COMPLETED

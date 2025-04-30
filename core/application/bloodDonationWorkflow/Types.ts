@@ -101,7 +101,6 @@ export type DonationRequestInitiatorAttributes = {
   contactNumber: string;
   transportationInfo: string;
   shortDescription: string;
-  eventName?: DynamoDBEventName;
 }
 
 export type DonorSearchAttributes = {
