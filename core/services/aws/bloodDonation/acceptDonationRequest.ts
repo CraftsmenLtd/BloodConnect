@@ -50,7 +50,9 @@ async function acceptDonationRequestLambda(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
-  const acceptDonationService = new AcceptDonationService(acceptDonationDynamoDbOperations, httpLogger)
+  const acceptDonationService = new AcceptDonationService(
+    acceptDonationDynamoDbOperations, httpLogger
+  )
   const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
   const notificationService = new NotificationService(notificationDynamoDbOperations, httpLogger)
   const userService = new UserService(userDynamoDbOperations, httpLogger)

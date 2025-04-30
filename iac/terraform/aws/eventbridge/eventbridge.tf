@@ -17,7 +17,8 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
           "dynamodb" : {
             "NewImage" : {
               "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
-              "SK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] }
+              "SK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
+              "status": { "S": ["PENDING", "MANAGED"] }
             }
           }
         })
