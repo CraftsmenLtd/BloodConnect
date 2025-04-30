@@ -70,14 +70,14 @@ async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
         donationDateTime: body.donationDateTime,
         contactNumber: body.contactNumber,
         transportationInfo: body.transportationInfo,
-        shortDescription: body.shortDescription,
-        eventName: body.eventName
+        shortDescription: body.shortDescription
       }
 
       await donorSearchService.initiateDonorSearchRequest(
         donationRequestInitiatorAttributes,
         userService,
-        new SQSOperations()
+        new SQSOperations(),
+        body.eventName
       )
 
     } catch (error) {
