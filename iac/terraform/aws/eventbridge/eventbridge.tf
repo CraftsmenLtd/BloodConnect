@@ -6,8 +6,9 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
 
   source_parameters {
     dynamodb_stream_parameters {
-      starting_position = "LATEST"
-      batch_size        = 5
+      starting_position                  = "LATEST"
+      batch_size                         = 5
+      maximum_record_age_in_seconds      = -1
     }
 
     filter_criteria {
@@ -18,7 +19,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
             "NewImage" : {
               "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
               "SK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
-              "status": { "S": ["PENDING", "MANAGED"] }
+              "status" : { "S" : ["PENDING", "MANAGED"] }
             }
           }
         })
