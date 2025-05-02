@@ -190,9 +190,11 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
         remainingGeohashesToProcess,
         notifiedEligibleDonors
       )
+    
+    const eligibleDonorsCount = Object.keys(eligibleDonors).length
 
     serviceLogger.info(
-      `sending notification for donation request to ${Object.keys(eligibleDonors).length} donors`
+      `sending notification for donation request to ${eligibleDonorsCount} donors`
     )
     await notificationService.sendRequestNotification(
       donorSearchRecord,
@@ -204,7 +206,7 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
       updatedNeighborSearchLevel >= config.maxGeohashNeighborSearchLevel &&
       geohashesForNextIteration.length === 0
 
-    const nextRemainingDonorsToFind = totalDonorsToFind - Object.keys(eligibleDonors).length
+    const nextRemainingDonorsToFind = totalDonorsToFind - eligibleDonorsCount
 
     const updatedNotifiedEligibleDonors = { ...notifiedEligibleDonors, ...eligibleDonors }
 
@@ -240,43 +242,9 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
     const hasDonorSearchMaxInstantiatedRetryReached =
       donorSearchQueueAttributes.initiationCount >= config.donorSearchMaxInitiatingRetryCount
 
-    if (!hasDonorSearchMaxInstantiatedRetryReached) {
-      const initiatingDelayPeriod = calculateDelayPeriod(
-        donationDateTime,
-        config.maxGeohashPerProcessingBatch,
-        config.maxGeohashesPerExecution,
-        config.donorSearchMaxInitiatingRetryCount,
-        config.donorSearchDelayBetweenExecution
-      )
+    if (hasDonorSearchMaxInstantiatedRetryReached) {
       serviceLogger.info(
-        {
-          currentNeighborSearchLevel: updatedNeighborSearchLevel,
-          remainingGeohashesToProcessCount: geohashesForNextIteration.length,
-          initiationCount: initiationCount + 1,
-          initiatingDelayPeriod
-        },
-        `initiating retry request ${initiationCount + 1}`
-      )
-
-      await donorSearchService.enqueueDonorSearchRequest(
-        {
-          seekerId,
-          requestPostId,
-          createdAt,
-          notifiedEligibleDonors: updatedNotifiedEligibleDonors,
-          currentNeighborSearchLevel: 0,
-          remainingGeohashesToProcess: [
-            geohash.slice(0, config.neighborSearchGeohashPrefixLength)
-          ],
-          initiationCount: initiationCount + 1,
-          remainingDonorsToFind: 0,
-          targetedExecutionTime: Math.floor(Date.now() / 1000) + initiatingDelayPeriod
-        },
-        new SQSOperations(),
-        config.donorSearchDelayBetweenExecution
-      )
-    } else {
-      serviceLogger.info(`updating donor search status to ${DonorSearchStatus.COMPLETED}`)
+        `updating donor search status to ${DonorSearchStatus.COMPLETED} as max retry reached`)
       await donorSearchService.updateDonorSearchRecord(
         {
           seekerId,
@@ -286,7 +254,43 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
           status: DonorSearchStatus.COMPLETED
         }
       )
+      return
     }
+
+    const initiatingDelayPeriod = calculateDelayPeriod(
+      donationDateTime,
+      config.maxGeohashPerProcessingBatch,
+      config.maxGeohashesPerExecution,
+      config.donorSearchMaxInitiatingRetryCount,
+      config.donorSearchDelayBetweenExecution
+    )
+    serviceLogger.info(
+      {
+        currentNeighborSearchLevel: updatedNeighborSearchLevel,
+        remainingGeohashesToProcessCount: geohashesForNextIteration.length,
+        initiationCount: initiationCount + 1,
+        initiatingDelayPeriod
+      },
+      `initiating retry request ${initiationCount + 1}`
+    )
+
+    await donorSearchService.enqueueDonorSearchRequest(
+      {
+        seekerId,
+        requestPostId,
+        createdAt,
+        notifiedEligibleDonors: updatedNotifiedEligibleDonors,
+        currentNeighborSearchLevel: 0,
+        remainingGeohashesToProcess: [
+          geohash.slice(0, config.neighborSearchGeohashPrefixLength)
+        ],
+        initiationCount: initiationCount + 1,
+        remainingDonorsToFind: 0,
+        targetedExecutionTime: Math.floor(Date.now() / 1000) + initiatingDelayPeriod
+      },
+      new SQSOperations(),
+      config.donorSearchDelayBetweenExecution
+    )
   } catch (error) {
     serviceLogger.error(
       error instanceof DonorSearchIntentionalError ||

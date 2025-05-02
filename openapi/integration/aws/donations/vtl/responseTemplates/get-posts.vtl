@@ -1,4 +1,13 @@
 #set($inputRoot = $input.path('$'))
+#set($errorMessage = $context.error.message)
+#if($errorMessage)
+  {
+    "success": false,
+    "message": "Something went wrong"
+  }
+#else
+
+
 #set($isFirstIter = true)
 {
   "success": true,
