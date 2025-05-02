@@ -1,7 +1,11 @@
-import type { EligibleDonorInfo } from '../../../commons/dto/DonationDTO';
-import { DonationStatus, DonorSearchStatus, type DonorSearchDTO } from '../../../commons/dto/DonationDTO'
+import type { EligibleDonorInfo } from '../../../commons/dto/DonationDTO'
+import {
+  DonationStatus,
+  DonorSearchStatus,
+  type DonorSearchDTO
+} from '../../../commons/dto/DonationDTO'
 import { getDistanceBetweenGeohashes } from '../utils/geohash'
-import type { DonorSearchConfig } from './Types';
+import type { DonorSearchConfig } from './Types'
 import {
   DynamoDBEventName,
   type DonationRequestInitiatorAttributes,
@@ -10,12 +14,19 @@ import {
 } from './Types'
 import { DONOR_SEARCH_PK_PREFIX } from '../../services/aws/commons/ddbModels/DonorSearchModel'
 import type { QueueModel } from '../models/queue/QueueModel'
-import { GEO_PARTITION_PREFIX_LENGTH, MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS } from '../../../commons/libs/constants/NoMagicNumbers'
+import {
+  GEO_PARTITION_PREFIX_LENGTH,
+  MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS
+} from '../../../commons/libs/constants/NoMagicNumbers'
 import type { UserService } from '../userWorkflow/UserService'
 import type { Logger } from '../models/logger/Logger'
 import type DonorSearchRepository from '../models/policies/repositories/DonorSearchRepository'
 import { DonorSearchIntentionalError } from './DonorSearchOperationalError'
-import type { DonorInfo, GeohashCacheManager, GeohashDonorMap } from '../utils/GeohashCacheMapManager';
+import type {
+  DonorInfo,
+  GeohashCacheManager,
+  GeohashDonorMap
+} from '../utils/GeohashCacheMapManager'
 import { updateGroupedGeohashCache } from '../utils/GeohashCacheMapManager'
 import type { GeohashService } from './GeohashService'
 
@@ -30,7 +41,7 @@ export class DonorSearchService {
     donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes,
     userService: UserService,
     queueModel: QueueModel,
-    eventName?: DynamoDBEventName
+    eventName: DynamoDBEventName
   ): Promise<void> {
     const { seekerId, requestPostId, createdAt } = donationRequestInitiatorAttributes
     const userProfile = await userService.getUser(seekerId)
@@ -48,7 +59,10 @@ export class DonorSearchService {
       createdAt,
       currentNeighborSearchLevel: 0,
       remainingGeohashesToProcess: [
-        donationRequestInitiatorAttributes.geohash.slice(0, this.options.neighborSearchGeohashPrefixLength)
+        donationRequestInitiatorAttributes.geohash.slice(
+          0,
+          this.options.neighborSearchGeohashPrefixLength
+        )
       ],
       notifiedEligibleDonors: {},
       initiationCount: 1
@@ -63,9 +77,14 @@ export class DonorSearchService {
       donorSearchRecord.status === DonorSearchStatus.COMPLETED
 
     if (donorSearchRecord === null) {
+
       this.logger.info('inserting donor search record')
       await this.createDonorSearchRecord(donorSearchAttributes)
+
+      this.logger.info('starting donor search request')
+      await this.enqueueDonorSearchRequest(donorSearchQueueAttributes, queueModel)
     } else {
+
       this.logger.info('updating donor search record because the donation request has been updated')
       await this.updateDonorSearchRecord({
         ...donorSearchAttributes,
@@ -76,10 +95,9 @@ export class DonorSearchService {
 
     if (shouldRestartSearch) {
       donorSearchQueueAttributes.notifiedEligibleDonors = donorSearchRecord.notifiedEligibleDonors
+      this.logger.info('restarting donor search request')
+      await this.enqueueDonorSearchRequest(donorSearchQueueAttributes, queueModel)
     }
-
-    this.logger.info('starting donor search request')
-    await this.enqueueDonorSearchRequest(donorSearchQueueAttributes, queueModel)
   }
 
   async enqueueDonorSearchRequest(
@@ -87,14 +105,17 @@ export class DonorSearchService {
     queueModel: QueueModel,
     delayPeriod?: number
   ): Promise<void> {
-    await queueModel.queue(donorSearchQueueAttributes, this.options.donorSearchQueueUrl, delayPeriod)
+    await queueModel.queue(
+      donorSearchQueueAttributes,
+      this.options.donorSearchQueueUrl,
+      delayPeriod
+    )
   }
-
 
   async handleVisibilityTimeout(
     queueModel: QueueModel,
     targetedExecutionTime: number | undefined,
-    receiptHandle: string,
+    receiptHandle: string
   ): Promise<void> {
     const currentUnixTime = Math.floor(Date.now() / 1000)
     if (targetedExecutionTime !== undefined && targetedExecutionTime > currentUnixTime) {
@@ -171,17 +192,18 @@ export class DonorSearchService {
         remainingGeohashesToProcess
       )
 
-    const { updatedEligibleDonors, processedGeohashCount } = await this.getNewDonorsInNeighborGeohash(
-      geohashService,
-      geohashCache,
-      seekerId,
-      requestedBloodGroup,
-      countryCode,
-      geohash,
-      updatedGeohashesToProcess,
-      totalDonorsToFind,
-      notifiedEligibleDonors
-    )
+    const { updatedEligibleDonors, processedGeohashCount } =
+      await this.getNewDonorsInNeighborGeohash(
+        geohashService,
+        geohashCache,
+        seekerId,
+        requestedBloodGroup,
+        countryCode,
+        geohash,
+        updatedGeohashesToProcess,
+        totalDonorsToFind,
+        notifiedEligibleDonors
+      )
 
     return {
       eligibleDonors: updatedEligibleDonors,
@@ -215,7 +237,13 @@ export class DonorSearchService {
     }
 
     const geohashToProcess = geohashesToProcess[0]
-    const donors = await this.getDonorsFromCache(geohashService, geohashCache, geohashToProcess, countryCode, requestedBloodGroup)
+    const donors = await this.getDonorsFromCache(
+      geohashService,
+      geohashCache,
+      geohashToProcess,
+      countryCode,
+      requestedBloodGroup
+    )
 
     const updatedEligibleDonors = donors.reduce<Record<string, EligibleDonorInfo>>(
       (donorAccumulator, donor) => {
@@ -260,10 +288,7 @@ export class DonorSearchService {
     countryCode: string,
     requestedBloodGroup: string
   ): Promise<DonorInfo[]> {
-    const geohashCachePrefix = geohashToProcess.slice(
-      0,
-      this.options.cacheGeohashPrefixLength
-    )
+    const geohashCachePrefix = geohashToProcess.slice(0, this.options.cacheGeohashPrefixLength)
     const geoPartitionPrefix = geohashToProcess.slice(0, GEO_PARTITION_PREFIX_LENGTH)
 
     const cacheKey = `${countryCode}-${geoPartitionPrefix}-${requestedBloodGroup}-${geohashCachePrefix}`
