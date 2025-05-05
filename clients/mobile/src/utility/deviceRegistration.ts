@@ -30,9 +30,19 @@ const registerUserDeviceForNotification = (fetchClient: HttpClient): void => {
     })
 }
 
-export const useRegisterPushOnFocus = (): void => {
-  //TODO: move this to a HOC component so that it can be used in any screen by wrapping the
-  // auth routes
+export const isDeviceAlreadyRegisteredForUser = async(
+  deviceToken: string,
+  userId: string
+): Promise<boolean> => {
+  const registeredDevice = await StorageService.getItem<
+    { deviceToken: string; userId: string }
+  >(TOKEN.DEVICE_TOKEN)
+  return (registeredDevice != null) &&
+    registeredDevice.deviceToken === deviceToken &&
+    registeredDevice.userId === userId
+}
+
+export const withRegisterPushOnFocus = <T>(component: T): T => {
   const fetchClient = useFetchClient()
 
   useFocusEffect(
@@ -41,6 +51,7 @@ export const useRegisterPushOnFocus = (): void => {
         try {
           registerUserDeviceForNotification(fetchClient)
         } catch (error) {
+          // eslint-disable-next-line no-console
           console.error('Failed to register device:', error)
         }
       }
@@ -51,18 +62,8 @@ export const useRegisterPushOnFocus = (): void => {
       return () => task.cancel()
     }, [fetchClient])
   )
-}
 
-export const isDeviceAlreadyRegisteredForUser = async(
-  deviceToken: string,
-  userId: string
-): Promise<boolean> => {
-  const registeredDevice = await StorageService.getItem<
-  { deviceToken: string; userId: string }
-  >(TOKEN.DEVICE_TOKEN)
-  return (registeredDevice != null) &&
-    registeredDevice.deviceToken === deviceToken &&
-    registeredDevice.userId === userId
+  return component
 }
 
 export default registerUserDeviceForNotification
