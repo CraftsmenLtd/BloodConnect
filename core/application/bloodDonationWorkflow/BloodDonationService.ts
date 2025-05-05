@@ -78,7 +78,7 @@ export class BloodDonationService {
         donationDateTime: new Date(bloodDonationAttributes.donationDateTime).toISOString(),
         createdAt: new Date().toISOString()
       })
-      .catch((error) => {
+      .catch(error => {
         if (error instanceof ThrottlingError) {
           throw error
         }
@@ -142,8 +142,7 @@ export class BloodDonationService {
     notificationService: NotificationService,
     acceptDonationService: AcceptDonationService
   ): Promise<BloodDonationResponseAttributes> {
-    const { seekerId, requestPostId, donationDateTime, createdAt } =
-      donationAttributes
+    const { seekerId, requestPostId, donationDateTime, createdAt } = donationAttributes
     const item = await this.bloodDonationRepository.getDonationRequest(
       seekerId,
       requestPostId,
@@ -178,14 +177,16 @@ export class BloodDonationService {
 
     const acceptedDonors = await acceptDonationService.getAcceptedDonorList(seekerId, requestPostId)
 
-    const hasQuantityIncreased = acceptedDonors.length < updateData.bloodQuantity &&
+    const hasQuantityIncreased =
+      acceptedDonors.length < updateData.bloodQuantity &&
       updateData.status == DonationStatus.MANAGED
 
     if (hasQuantityIncreased) {
       updateData.status = DonationStatus.PENDING
     }
 
-    const hasQuantityDecreased = acceptedDonors.length >= updateData.bloodQuantity &&
+    const hasQuantityDecreased =
+      acceptedDonors.length >= updateData.bloodQuantity &&
       updateData.status == DonationStatus.PENDING
 
     if (hasQuantityDecreased) {
@@ -193,7 +194,7 @@ export class BloodDonationService {
     }
 
     this.logger.info('updating donation request')
-    await this.bloodDonationRepository.update(updateData).catch((error) => {
+    await this.bloodDonationRepository.update(updateData).catch(error => {
       if (error instanceof BloodDonationOperationError) {
         throw error
       }
@@ -250,10 +251,17 @@ export class BloodDonationService {
     const donationPost = await this.getDonationRequest(seekerId, requestPostId, createdAt)
     const acceptedDonors = await acceptDonationService.getAcceptedDonorList(seekerId, requestPostId)
 
-    if (acceptedDonors.length >= donationPost.bloodQuantity) {
+    if (
+      acceptedDonors.length >= donationPost.bloodQuantity &&
+      donationPost.status == DonationStatus.PENDING
+    ) {
       await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.MANAGED)
     }
-    else {
+
+    if (
+      acceptedDonors.length < donationPost.bloodQuantity &&
+      donationPost.status == DonationStatus.MANAGED
+    ) {
       await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.PENDING)
     }
   }
@@ -324,7 +332,7 @@ export class BloodDonationService {
     }
 
     await Promise.allSettled(
-      donorIds.map(async(donorId) => {
+      donorIds.map(async donorId => {
         const notificationAttributes: NotificationAttributes = {
           userId: donorId,
           title: 'Thank you for your donation',

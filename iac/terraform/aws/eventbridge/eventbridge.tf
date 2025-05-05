@@ -6,9 +6,9 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
 
   source_parameters {
     dynamodb_stream_parameters {
-      starting_position                  = "LATEST"
-      batch_size                         = 5
-      maximum_record_age_in_seconds      = -1
+      starting_position             = "LATEST"
+      batch_size                    = 5
+      maximum_record_age_in_seconds = -1
     }
 
     filter_criteria {
@@ -19,7 +19,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
             "NewImage" : {
               "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
               "SK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
-              "status" : { "S" : ["PENDING", "MANAGED"] }
+              "status" : { "S" : ["PENDING"] }
             }
           }
         })
@@ -41,6 +41,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   "location": "<$.dynamodb.NewImage.location.S>",
   "donationDateTime": "<$.dynamodb.NewImage.donationDateTime.S>",
   "patientName": "<$.dynamodb.NewImage.patientName.S>",
+  "seekerName": "<$.dynamodb.NewImage.seekerName.S>",
   "status": "<$.dynamodb.NewImage.status.S>",
   "contactNumber": "<$.dynamodb.NewImage.contactNumber.S>",
   "shortDescription": "<$.dynamodb.NewImage.shortDescription.S>",

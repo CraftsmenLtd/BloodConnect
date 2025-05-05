@@ -6,16 +6,12 @@ import type {
   DonationRequestInitiatorAttributes,
   DonorSearchConfig,
 } from '../../../application/bloodDonationWorkflow/Types'
-import {
-  UserService
-} from '../../../application/userWorkflow/UserService'
 import SQSOperations from '../commons/sqs/SQSOperations'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
   DonorSearchIntentionalError
 } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
 import { Config } from 'commons/libs/config/config';
-import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations';
 import DonorSearchDynamoDbOperations from '../commons/ddbOperations/DonorSearchDynamoDbOperations';
 
 const config = new Config<DonorSearchConfig>().getConfig()
@@ -25,16 +21,11 @@ const donorSearchDynamoDbOperations = new DonorSearchDynamoDbOperations(
   config.awsRegion
 )
 
-const userDynamoDbOperations = new UserDynamoDbOperations(
-  config.dynamodbTableName,
-  config.awsRegion
-)
-
 async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
   for (const record of event.Records) {
     const body =
       typeof record.body === 'string' &&
-      record.body.trim() !== '' ? JSON.parse(record.body) : {}
+        record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
     const primaryIndex: string = body?.PK
     const secondaryIndex: string = body?.SK
@@ -43,10 +34,6 @@ async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
     const createdAt = secondaryIndex.split('#')[1]
     const serviceLogger = createServiceLogger(seekerId, { requestPostId, createdAt })
 
-    const userService = new UserService(
-      userDynamoDbOperations,
-      serviceLogger
-    )
     const donorSearchService = new DonorSearchService(
       donorSearchDynamoDbOperations,
       serviceLogger,
@@ -54,7 +41,6 @@ async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
     )
 
     try {
-
       const donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes = {
         seekerId,
         requestPostId,
@@ -65,7 +51,7 @@ async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
         countryCode: body.countryCode,
         location: body.location,
         patientName: body.patientName,
-        status: body.status,
+        seekerName: body.seekerName,
         geohash: body.geohash,
         donationDateTime: body.donationDateTime,
         contactNumber: body.contactNumber,
@@ -75,8 +61,8 @@ async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
 
       await donorSearchService.initiateDonorSearchRequest(
         donationRequestInitiatorAttributes,
-        userService,
         new SQSOperations(),
+        body.status,
         body.eventName
       )
 

@@ -5,7 +5,6 @@ import type {
   AcceptDonationStatus,
   BloodGroup,
   DonationDTO,
-  DonationStatus,
   DonorSearchStatus,
   EligibleDonorInfo,
   UrgencyType
@@ -95,7 +94,7 @@ export type DonationRequestInitiatorAttributes = {
   countryCode: string;
   location: string;
   patientName: string;
-  status: DonationStatus;
+  seekerName: string;
   geohash: string;
   donationDateTime: string;
   contactNumber: string;
