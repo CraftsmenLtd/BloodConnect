@@ -1,6 +1,5 @@
 import { View, StyleSheet, RefreshControl } from 'react-native'
 import ToggleTabs from '../components/tab/ToggleTabs'
-import { useRegisterPushOnFocus } from '../utility/deviceRegistration'
 import { MY_ACTIVITY_TAB_CONFIG, useMyActivity } from './useMyActivity'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import type { Theme } from '../setup/theme'
@@ -33,7 +32,6 @@ const MyActivityTab = () => {
     showToast,
     toastAnimationFinished
   } = useMyActivity()
-  useRegisterPushOnFocus()
 
   return (
     <View style={styles.container}>
