@@ -12,6 +12,7 @@ import { useFetchClient } from '../clients/useFetchClient'
 import { extractErrorMessage } from '../../donationWorkflow/donationHelpers'
 import type { Theme } from '../theme'
 import { useTheme } from '../theme/hooks/useTheme'
+import { withRegisterPushOnFocus } from '../../utility/deviceRegistration'
 
 const Stack = createStackNavigator()
 
@@ -79,7 +80,11 @@ export default function Navigator() {
       initialRouteName={getInitialRoute()}
     >
       {filteredRoutes.map(({ name, component, options }) => (
-        <Stack.Screen key={name} name={name} component={component} options={options} />
+        <Stack.Screen
+          key={name}
+          name={name}
+          component={withRegisterPushOnFocus(component)}
+          options={options} />
       ))}
     </Stack.Navigator>
   )
