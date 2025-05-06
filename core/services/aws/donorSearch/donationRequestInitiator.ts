@@ -45,18 +45,7 @@ async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
         seekerId,
         requestPostId,
         createdAt,
-        requestedBloodGroup: body.requestedBloodGroup,
-        bloodQuantity: Number(body.bloodQuantity),
-        urgencyLevel: body.urgencyLevel,
-        countryCode: body.countryCode,
-        location: body.location,
-        patientName: body.patientName,
-        seekerName: body.seekerName,
-        geohash: body.geohash,
-        donationDateTime: body.donationDateTime,
-        contactNumber: body.contactNumber,
-        transportationInfo: body.transportationInfo,
-        shortDescription: body.shortDescription
+        geohash: body.geohash
       }
 
       await donorSearchService.initiateDonorSearchRequest(

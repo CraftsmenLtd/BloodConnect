@@ -220,7 +220,7 @@ export class DonorSearchService {
 
     this.logger.info(`sending notification for donation request to ${eligibleDonorsCount} donors`)
     await notificationService.sendRequestNotification(
-      donorSearchRecord,
+      donationPost,
       eligibleDonors,
       queueModel
     )
@@ -347,8 +347,8 @@ export class DonorSearchService {
 
   async getDonorSearch(
     seekerId: string,
-    createdAt: string,
-    requestPostId: string
+    requestPostId: string,
+    createdAt: string
   ): Promise<DonorSearchDTO | null> {
     return this.donorSearchRepository.getDonorSearchItem(
       seekerId,
