@@ -58,8 +58,9 @@ resource "aws_pipes_pipe" "donation_accept_pipe" {
 
   source_parameters {
     dynamodb_stream_parameters {
-      starting_position = "LATEST"
-      batch_size        = 1
+      starting_position             = "LATEST"
+      batch_size                    = 1
+      maximum_record_age_in_seconds = -1
     }
 
     filter_criteria {
@@ -107,8 +108,9 @@ resource "aws_pipes_pipe" "donation_ignore_pipe" {
 
   source_parameters {
     dynamodb_stream_parameters {
-      starting_position = "LATEST"
-      batch_size        = 1
+      starting_position             = "LATEST"
+      batch_size                    = 1
+      maximum_record_age_in_seconds = -1
     }
 
     filter_criteria {
@@ -156,8 +158,9 @@ resource "aws_pipes_pipe" "donation_request_monitoring_pipe" {
 
   source_parameters {
     dynamodb_stream_parameters {
-      starting_position = "LATEST"
-      batch_size        = 5
+      starting_position             = "LATEST"
+      batch_size                    = 5
+      maximum_record_age_in_seconds = -1
     }
 
     filter_criteria {
