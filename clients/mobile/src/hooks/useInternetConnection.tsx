@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import NetInfo from '@react-native-community/netinfo'
 import { useNavigation } from '@react-navigation/native'
-import { NoInternetNavigationProp } from '../setup/navigation/navigationTypes'
+import type { NoInternetNavigationProp } from '../setup/navigation/navigationTypes'
 
 export const useInternetConnection = () => {
   const navigation = useNavigation<NoInternetNavigationProp>()
@@ -24,7 +24,9 @@ export const useInternetConnection = () => {
           setIsConnected(false)
         }
       })
-      .catch(() => { })
+      .catch(() => {
+        setIsConnected(false)
+      })
   }
 
   return { isConnected, checkConnection }

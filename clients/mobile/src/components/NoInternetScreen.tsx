@@ -1,9 +1,9 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useTheme } from '../setup/theme/hooks/useTheme'
-import { Theme } from '../setup/theme'
+import type { Theme } from '../setup/theme'
 
-interface NoInternetScreenProps {
+type NoInternetScreenProps = {
   onRetry: () => void;
   isConnected: boolean | null;
 }
