@@ -1,15 +1,16 @@
 import React from 'react'
-import { View, TextInput, Text, StyleSheet, KeyboardTypeOptions, StyleProp, ViewStyle } from 'react-native'
+import type { KeyboardTypeOptions, StyleProp, ViewStyle } from 'react-native';
+import { View, TextInput, Text, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
-import { InputProps } from './types'
+import type { InputProps } from './types'
 
-interface InputElementProps extends InputProps {
+type InputElementProps = {
   keyboardType?: KeyboardTypeOptions;
   readOnly?: boolean;
   inputStyle?: StyleProp<ViewStyle>;
-}
+} & InputProps
 
 export const Input = ({ name, label, value, onChangeText, placeholder, error, keyboardType = 'default', isRequired = false, readOnly = false, inputStyle }: InputElementProps) => {
   const styles = createStyles(useTheme())

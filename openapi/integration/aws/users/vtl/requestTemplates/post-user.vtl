@@ -2,6 +2,7 @@
 {
  "userId": "$context.authorizer.claims['custom:userId']",
  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+ "countryCode": "$input.params().header.get('CloudFront-Viewer-Country')",
  "apiGwRequestId": "$context.requestId"
  #if($inputRoot.phoneNumbers != '')
  , "phoneNumbers": $inputRoot.phoneNumbers
@@ -29,9 +30,6 @@
  #end
  #if($inputRoot.age != '')
  , "age": "$inputRoot.age"
- #end
- #if($inputRoot.city != '')
- , "city": "$inputRoot.city"
  #end
  #if($inputRoot.preferredDonationLocations != '')
  , "preferredDonationLocations": $inputRoot.preferredDonationLocations

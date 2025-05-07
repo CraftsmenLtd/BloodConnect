@@ -1,10 +1,10 @@
 import { View, StyleSheet, RefreshControl } from 'react-native'
-import { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { useRegisterPushOnFocus } from '../../utility/deviceRegistration'
 import { useDonationPosts } from './useDonationPosts'
 import Header from './DonationHeader'
 import Posts from '../../components/donation/Posts'
-import { BloodDonationRecord } from '../types'
+import type { BloodDonationRecord } from '../types'
 import { COMMON_URLS } from '../../setup/constant/commonUrls'
 
 export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> & {
@@ -13,21 +13,37 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
 
 const DonationPosts = () => {
   const theme = useTheme()
-  const styles = createStyles(theme)
-  const { errorMessage, createPost, donationPosts, loading, viewDetailsHandler, refreshing, handleRefresh } = useDonationPosts()
+  const styles = createStyles()
+  useRegisterPushOnFocus()
+  const {
+    errorMessage,
+    createPost,
+    donationPosts,
+    loading,
+    viewDetailsHandler,
+    refreshing,
+    handleRefresh,
+    bloodGroup,
+    isFilteredByBloodGroup,
+    filterWithBloodGroup
+  } = useDonationPosts()
 
   return (
     <View style={styles.container}>
       <Header
         profileImageUri={COMMON_URLS.PROFILE_AVATAR}
         title="Blood needed?"
-        buttonLabel="Create Post"
+        buttonLabel="Create Request"
         onButtonPress={createPost}
+        handleRefresh={handleRefresh}
+        onFilterButtonPress={filterWithBloodGroup}
+        bloodGroup={bloodGroup}
+        isFilteredByBloodGroup={isFilteredByBloodGroup}
       />
       <Posts
         errorMessage={errorMessage}
         loading={loading}
-        emptyDataMessage='No donation posts available. Pull to refresh.'
+        emptyDataMessage='No donation requests available. Pull to refresh.'
         donationPosts={donationPosts}
         detailHandler={viewDetailsHandler}
         displayOptions={{ showOptions: false, showPostUpdatedOption: false }}
@@ -44,7 +60,7 @@ const DonationPosts = () => {
   )
 }
 
-const createStyles = (theme: Theme) => {
+const createStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1

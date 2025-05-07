@@ -1,11 +1,13 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react'
+import type { ReactNode } from 'react';
+import React, { createContext, useState, useEffect } from 'react'
 import { useColorScheme } from 'react-native'
-import { lightTheme, darkTheme, Theme } from '..'
+import type { Theme } from '..';
+import { lightTheme, darkTheme } from '..'
 import { THEME_NAME } from '../../constant/theme'
 
 export const ThemeContext = createContext<Theme | null>(null)
 
-interface ThemeProviderProps {
+type ThemeProviderProps = {
   children: ReactNode;
 }
 

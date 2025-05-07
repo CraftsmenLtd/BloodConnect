@@ -1,34 +1,61 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
-import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
-import { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
-import LocationModel from '../../../application/models/dbModels/LocationModel'
+import type { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
-import { UNKNOWN_ERROR_MESSAGE, UPDATE_PROFILE_SUCCESS } from '../../../../commons/libs/constants/ApiResponseMessages'
-import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import { createHTTPLogger } from '../commons/logger/HttpLogger'
+import {
+  UNKNOWN_ERROR_MESSAGE,
+  UPDATE_PROFILE_SUCCESS
+} from '../../../../commons/libs/constants/ApiResponseMessages'
+import LocationDynamoDbOperations from '../commons/ddbOperations/LocationDynamoDbOperations'
+import { Config } from '../../../../commons/libs/config/config';
+import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations';
+import { LocationService } from '../../../application/userWorkflow/LocationService';
+
+const config = new Config<{
+  dynamodbTableName: string;
+  awsRegion: string;
+  minMonthsBetweenDonations: number;
+}>().getConfig()
+
+const userDynamoDbOperations = new UserDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const locationDynamoDbOperations = new LocationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 async function updateUserLambda(
   event: UpdateUserAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger(event.userId, event.apiGwRequestId, event.cloudFrontRequestId)
+  const userService = new UserService(userDynamoDbOperations, httpLogger)
+  const locationService = new LocationService(locationDynamoDbOperations, httpLogger)
+
   try {
-    const userService = new UserService()
-    const userAttributes = {
+    const userAttributes: UpdateUserAttributes = {
       userId: event.userId,
-      ...Object.fromEntries(
-        Object.entries(event).filter(([_, value]) => value !== undefined && value !== '')
-      )
+      bloodGroup: event.bloodGroup,
+      gender: event.gender,
+      dateOfBirth: event.dateOfBirth,
+      age: event.age,
+      preferredDonationLocations: event.preferredDonationLocations,
+      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation,
+      ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
+      ...(event.height !== undefined && { height: event.height }),
+      ...(event.weight !== undefined && { weight: event.weight }),
+      ...(event.lastDonationDate !== undefined && { lastDonationDate: event.lastDonationDate }),
+      ...(event.lastVaccinatedDate !== undefined && { lastVaccinatedDate: event.lastVaccinatedDate }),
+      ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
+      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
     }
 
-    await userService.updateUser(
-      userAttributes as UpdateUserAttributes,
-      new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel()),
-      new LocationDynamoDbOperations(new LocationModel())
-    )
+    await userService.updateUser(userAttributes, locationService, config.minMonthsBetweenDonations)
+
     return generateApiGatewayResponse(
       { message: UPDATE_PROFILE_SUCCESS, success: true },
       HTTP_CODES.OK

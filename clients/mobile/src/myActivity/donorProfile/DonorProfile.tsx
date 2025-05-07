@@ -1,11 +1,12 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, ImageStyle, StyleProp } from 'react-native'
+import type { ImageStyle, StyleProp } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import useDonorProfile from './useDonorProfile'
-import { preferredDonationLocations } from '../../userWorkflow/services/userServices'
+import type { preferredDonationLocations } from '../../userWorkflow/services/userServices'
 import { COMMON_URLS } from '../../setup/constant/commonUrls'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import StateAwareRenderer from '../../components/StateAwareRenderer'
 
 const DonorProfile = () => {
@@ -35,29 +36,33 @@ const DonorProfile = () => {
     <Text style={styles.name}>{donorProfile?.donorName ?? ''}</Text>
     <View>
       {Array.isArray(donorProfile?.preferredDonationLocations) &&
-        donorProfile.preferredDonationLocations.map((location: preferredDonationLocations, index: number) => (
-          <View style={styles.locationRow} key={index}>
-            <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
-            <Text style={styles.locationText}>
-              {location?.area ?? ''}, {location?.city ?? ''}
-            </Text>
-          </View>
-        ))}
+        donorProfile.preferredDonationLocations.map(
+          (location: preferredDonationLocations, index: number) => (
+            <View style={styles.locationRow} key={index}>
+              <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
+              <Text style={styles.locationText}>
+                {location?.area ?? ''}
+              </Text>
+            </View>
+          ))}
     </View>
 
     <View style={styles.detailsRow}>
-      <Text style={styles.detailsText}>BMI: {calculateBMI(donorProfile.weight, donorProfile.height)}</Text>
+      <Text style={styles.detailsText}>BMI: {
+        donorProfile.weight && donorProfile.height ?
+          calculateBMI(donorProfile.weight, donorProfile.height) : 'Not Available'}</Text>
     </View>
 
     <View style={{ width: '100%' }}>
-      <TouchableOpacity style={styles.callButton} onPress={() => handleCall(donorProfile.phoneNumbers)}>
+      <TouchableOpacity style={styles.callButton} onPress={handleCall}>
         <Text style={styles.callButtonText}>Call now</Text>
       </TouchableOpacity>
     </View>
   </View>
 
   return (
-    <StateAwareRenderer loading={loading} errorMessage={error} data={donorProfile} ViewComponent={ViewToRender} />
+    <StateAwareRenderer
+      loading={loading} errorMessage={error} data={donorProfile} ViewComponent={ViewToRender} />
   )
 }
 

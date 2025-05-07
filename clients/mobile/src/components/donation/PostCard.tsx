@@ -1,4 +1,9 @@
 import React, { useState, useCallback, useRef } from 'react'
+import type {
+  ViewStyle,
+  StyleProp,
+  ImageStyle
+} from 'react-native';
 import {
   View,
   Text,
@@ -6,23 +11,22 @@ import {
   StyleSheet,
   Modal,
   TouchableWithoutFeedback,
-  Dimensions,
-  ViewStyle,
-  StyleProp,
-  ImageStyle
+  Dimensions
 } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { formatBloodQuantity } from '../../donationWorkflow/donationHelpers'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { Button } from '../button/Button'
-import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
+import type { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
+import type { StatusType } from '../../donationWorkflow/types'
 import { STATUS, UrgencyLevel } from '../../donationWorkflow/types'
 import StatusBadge from './StatusBadge'
 import Badge from '../badge'
 import GenericModal from '../modal'
 import { openMapLocation } from '../../utility/mapUtils'
 
-export interface PostCardDisplayOptions {
+export type PostCardDisplayOptions = {
   showContactNumber?: boolean;
   showDescription?: boolean;
   showTransportInfo?: boolean;
@@ -32,17 +36,18 @@ export interface PostCardDisplayOptions {
   showOptions?: boolean;
   showPostUpdatedOption?: boolean;
   showStatus?: boolean;
+  statusValue?: StatusType;
 }
 
-interface PostCardProps extends PostCardDisplayOptions {
+type PostCardProps = {
   post: DonationData;
   updateHandler?: (donationData: DonationData) => void;
   detailHandler?: (donationData: DonationData) => void;
   cancelHandler?: (donationData: DonationData) => void;
   isLoading?: boolean;
-}
+} & PostCardDisplayOptions
 
-interface DropdownPosition {
+type DropdownPosition = {
   top: number;
   right: number;
 }
@@ -61,7 +66,8 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   showOptions = true,
   showPostUpdatedOption = true,
   showStatus = false,
-  isLoading = false
+  isLoading = false,
+  statusValue = null
 }) => {
   const theme = useTheme()
   const styles = createStyles(theme)
@@ -165,7 +171,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {showStatus && <StatusBadge status={post.status} />}
+            {showStatus && <StatusBadge status={statusValue ?? post.status} />}
             {showOptions &&
               <View style={styles.menuContainer}>
                 <View ref={iconRef} collapsable={false}>
@@ -239,7 +245,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             />
             <View style={styles.bloodText}>
               <Text style={styles.lookingForText}>Looking for</Text>
-              <Text style={styles.bloodAmount}>{post.bloodQuantity} {post.requestedBloodGroup} (ve) blood</Text>
+              <Text style={styles.bloodAmount}>{formatBloodQuantity(post.bloodQuantity)} {post.requestedBloodGroup} (ve) blood</Text>
             </View>
           </View>
           {post.urgencyLevel === UrgencyLevel.URGENT && (
@@ -301,7 +307,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         }
       </View>
       {Array.isArray(post.acceptedDonors) && post.acceptedDonors.length > 0 && showPostUpdatedOption && <>
-        <Text style={styles.bloodAmount}>Post Update</Text>
+        <Text style={styles.bloodAmount}>Request Update</Text>
         <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
           <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
           <View>

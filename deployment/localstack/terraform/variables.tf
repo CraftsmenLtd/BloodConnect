@@ -23,3 +23,18 @@ variable "facebook_client_secret" {
   sensitive   = true
   default     = "client-secret"
 }
+
+variable "google_maps_api_key" {
+  description = "google maps api key"
+  type        = string
+  sensitive   = true
+  default     = "api-secret"
+}
+
+
+variable "mapbox_public_key" {
+  description = "mapbox public key"
+  type        = string
+  sensitive   = true
+  default     = "public-key"
+}

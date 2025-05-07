@@ -1,0 +1,12 @@
+#set($countryCode = $input.params().header.get('CloudFront-Viewer-Country'))
+#set($countryName = $input.params().header.get('CloudFront-Viewer-Country-Name'))
+{
+  "success": true,
+  "message": "Available in your country",
+  "data":
+  {
+    "available": true,
+    "countryCode": "$countryCode",
+    "countryName": "$countryName"
+  }
+}

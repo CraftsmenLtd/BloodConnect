@@ -2,9 +2,9 @@ import React from 'react'
 import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 
-interface CheckboxProps {
+type CheckboxProps = {
   isChecked: boolean;
   name: string;
   onCheckboxChange: (name: string, text: boolean) => void;
@@ -32,7 +32,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10
+    paddingVertical: 10
   },
   checkboxContainer: {
     marginRight: 10

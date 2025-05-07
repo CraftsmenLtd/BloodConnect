@@ -1,8 +1,16 @@
 import { useState, useRef, useMemo, useEffect } from 'react'
-import { TextInput } from 'react-native'
+import type { TextInput } from 'react-native'
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/native'
-import { OtpScreenNavigationProp, OtpScreenRouteProp } from '../../../setup/navigation/navigationTypes'
-import { submitOtp, loginUser, resetPasswordHandler, resendSignUpOtp } from '../../services/authService'
+import type { 
+  OtpScreenNavigationProp, 
+  OtpScreenRouteProp
+} from '../../../setup/navigation/navigationTypes'
+import { 
+  submitOtp, 
+  loginUser, 
+  resetPasswordHandler, 
+  resendSignUpOtp
+} from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useAuth } from '../../context/useAuth'
 import registerUserDeviceForNotification from '../../../utility/deviceRegistration'
@@ -10,7 +18,7 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 
 const RESEND_CODE_COUNTDOWN = 120
 
-export const useOtp = (): any => {
+export const useOtp = (): unknown => {
   const fetchClient = useFetchClient()
   const { setIsAuthenticated } = useAuth()
   const navigation = useNavigation<OtpScreenNavigationProp>()
@@ -26,7 +34,9 @@ export const useOtp = (): any => {
 
   useEffect(() => {
     if (countdown !== null && countdown > 0 && countdownStarted) {
-      const timer = setInterval(() => { setCountdown((prev) => (prev !== null ? prev - 1 : null)) }, 1000)
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null))
+      }, 1000)
       return () => { clearInterval(timer) }
     } else if (countdown === 0) {
       setIsDisabled(false)
@@ -73,16 +83,16 @@ export const useOtp = (): any => {
   const resendForgotPasswordOtpHandler = async(email: string): Promise<void> => {
     const nextStep = await resetPasswordHandler(email)
     switch (nextStep.resetPasswordStep) {
-      case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
-        setCountdown(RESEND_CODE_COUNTDOWN)
-        setIsDisabled(true)
-        setCountdownStarted(true)
-        break
-      case 'DONE':
-        setError('Password reset process already completed.')
-        break
-      default:
-        setError('Password reset failed. Check your email or try again.')
+    case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
+      setCountdown(RESEND_CODE_COUNTDOWN);
+      setIsDisabled(true);
+      setCountdownStarted(true);
+      break;
+    case 'DONE':
+      setError('Password reset process already completed.');
+      break;
+    default:
+      setError('Password reset failed. Check your email or try again.');
     }
   }
 
@@ -115,7 +125,16 @@ export const useOtp = (): any => {
         await handleRegister()
         registerUserDeviceForNotification(fetchClient)
       } else {
-        navigation.navigate(SCREENS.SET_PASSWORD, { routeParams: { email, otp: otp.join('') }, fromScreen: SCREENS.OTP })
+        navigation.navigate(
+          SCREENS.SET_PASSWORD,
+          {
+            routeParams: {
+              email, otp:
+                otp.join('')
+            },
+            fromScreen: SCREENS.OTP
+          }
+        )
       }
     } catch (error) {
       const errorMessage = `${error instanceof Error ? error.message : 'Unknown issue.'}`

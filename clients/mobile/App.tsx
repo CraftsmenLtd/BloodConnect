@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler'
+import '@react-native-firebase/app'
 import { LogBox, StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native'
@@ -10,10 +11,11 @@ import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
 import { UserProfileProvider } from './src/userWorkflow/context/UserProfileContext'
 import * as Notifications from 'expo-notifications'
-import { RootStackParamList } from './src/setup/navigation/navigationTypes'
+import type { RootStackParamList } from './src/setup/navigation/navigationTypes'
 import Constants from 'expo-constants'
 import { MyActivityProvider } from './src/myActivity/context/MyActivityProvider'
 import useBackPressHandler from './src/hooks/useBackPressHandler'
+import Monitoring from './src/setup/monitoring/MonitoringService'
 
 const { APP_ENV } = Constants.expoConfig?.extra ?? {}
 
@@ -29,6 +31,13 @@ Notifications.setNotificationHandler({
     shouldPlaySound: true,
     shouldSetBadge: false
   })
+})
+
+ErrorUtils.setGlobalHandler((error, isFatal) => {
+  Monitoring.recordError(error)
+  if (isFatal !== null) {
+    Monitoring.log('Fatal error occurred')
+  }
 })
 
 export default function App() {

@@ -1,4 +1,14 @@
 #set($inputRoot = $input.path('$'))
+#set($errorMessage = $context.error.message)
+#if($errorMessage)
+  {
+    "success": false,
+    "message": "Something went wrong"
+  }
+#else
+
+
+#set($isFirstIter = true)
 {
   "success": true,
   "data": [
@@ -12,6 +22,8 @@
         ) 
         || $input.params('bloodGroup') == ""
       ))
+        #if(!$isFirstIter),#end
+        #set($isFirstIter = false)
         {
           "seekerId": "$item.PK.S.split('#')[1]",
           "requestPostId": "$item.SK.S.split('#')[2]",
@@ -23,7 +35,6 @@
           "requestedBloodGroup": "$requestedBloodGroup",
           "seekerName": "$item.seekerName.S",
           "patientName": "$item.patientName.S",
-          "city": "$item.city.S",
           "bloodQuantity": $item.bloodQuantity.N,
           "shortDescription": "$item.shortDescription.S",
           "transportationInfo": "$item.transportationInfo.S",
@@ -31,7 +42,6 @@
           "longitude": $item.longitude.N,
           "latitude": $item.latitude.N
         }
-        #if($foreach.hasNext),#end
       #end
     #end
   ],

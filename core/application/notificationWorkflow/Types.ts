@@ -1,8 +1,8 @@
-import { AcceptDonationStatus, AcceptedDonationDTO } from '../../../commons/dto/DonationDTO'
-import { NotificationType, NotificationStatus } from '../../../commons/dto/NotificationDTO'
-import { UserDTO } from '../../../commons/dto/UserDTO'
+import type { AcceptDonationStatus, AcceptDonationDTO } from '../../../commons/dto/DonationDTO'
+import type { NotificationType, NotificationStatus } from '../../../commons/dto/NotificationDTO'
+import type { UserDTO } from '../../../commons/dto/UserDTO'
 
-export interface NotificationAttributes {
+export type NotificationAttributes = {
   userId: string;
   title: string;
   body: string;
@@ -45,16 +45,16 @@ export type DonationAcceptancePayloadAttributes = {
   urgencyLevel: string;
   location: string;
   donationDateTime: string;
-  acceptedDonors?: AcceptedDonationDTO[];
+  acceptedDonors?: AcceptDonationDTO[];
   shortDescription?: string;
 }
 
-export interface StoreNotificationEndPoint extends UserDTO {
+export type StoreNotificationEndPoint = {
   snsEndpointArn: string;
   updatedAt?: string;
-}
+} & UserDTO
 
-export interface SnsRegistrationAttributes {
+export type SnsRegistrationAttributes = {
   userId: string;
   deviceToken: string;
   platform: 'APNS' | 'FCM';

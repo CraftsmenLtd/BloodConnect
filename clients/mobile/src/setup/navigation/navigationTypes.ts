@@ -1,13 +1,13 @@
-import { StackNavigationProp } from '@react-navigation/stack'
-import { RouteProp } from '@react-navigation/native'
-import { SCREENS } from '../constant/screens'
-import { UserRegistrationCredentials } from '../../authentication/services/authService'
-import { DonationScreenParams } from '../../donationWorkflow/types'
-import { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
-import { DonorResponseNotification } from '../../donationWorkflow/donorResponse/type'
-import { NotificationData } from '../notification/NotificationData'
-import { EditProfileData } from '../../userWorkflow/userProfile/UI/Profile'
-import { DonorItem } from '../../myActivity/myPosts/donorResponses/DonorResponses'
+import type { StackNavigationProp } from '@react-navigation/stack'
+import type { RouteProp } from '@react-navigation/native'
+import type { SCREENS } from '../constant/screens'
+import type { UserRegistrationCredentials } from '../../authentication/services/authService'
+import type { DonationScreenParams } from '../../donationWorkflow/types'
+import type { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
+import type { DonorResponseNotification } from '../../donationWorkflow/donorResponse/type'
+import type { NotificationData } from '../notification/NotificationData'
+import type { EditProfileData } from '../../userWorkflow/userProfile/UI/Profile'
+import type { DonorItem } from '../../myActivity/myPosts/donorResponses/DonorResponses'
 
 type FromScreen = SCREENS.SET_PASSWORD | SCREENS.FORGOT_PASSWORD
 
@@ -25,7 +25,7 @@ export type RootStackParamList = {
   [SCREENS.DONATION_POSTS]: { data: DonationScreenParams | null; isUpdating: boolean };
   [SCREENS.ADD_PERSONAL_INFO]: undefined;
   [SCREENS.POSTS]: undefined;
-  [SCREENS.DETAIL_POST]: { data: DonationData; tab?: string };
+  [SCREENS.DETAIL_POST]: { data: DonationData; tab?: string; useAsDetailsPage?: boolean };
   [SCREENS.DONOR_PROFILE]: { donorId: string };
   [SCREENS.DONOR_RESPONSE]: { notificationData: DonorResponseNotification };
   [SCREENS.MY_ACTIVITY]: undefined;
@@ -33,6 +33,7 @@ export type RootStackParamList = {
   [SCREENS.ACCOUNT]: undefined;
   [SCREENS.REQUEST_STATUS]: { requestPostId: string; createdAt: string };
   [SCREENS.DONOR_CONFIRMATION]: { requestPostId: string; donors: DonorItem[]; createdAt: string };
+  [SCREENS.ABOUT]: undefined;
   [SCREENS.NO_INTERNET]: undefined;
 }
 
@@ -70,4 +71,5 @@ export type DonorResponseRouteProp = RouteProp<RootStackParamList, SCREENS.DONOR
 export type DonorProfileRouteProp = RouteProp<RootStackParamList, SCREENS.DONOR_PROFILE>
 export type RequestStatusRouteProp = RouteProp<RootStackParamList, SCREENS.REQUEST_STATUS>
 export type DonorConfirmationRouteProp = RouteProp<RootStackParamList, SCREENS.DONOR_CONFIRMATION>
+export type About = RouteProp<RootStackParamList, SCREENS.ABOUT>
 export type NoInternetRouteProp = RouteProp<RootStackParamList, SCREENS.NO_INTERNET>

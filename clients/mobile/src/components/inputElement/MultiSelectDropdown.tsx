@@ -2,16 +2,16 @@ import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown'
 import { MaterialIcons } from '@expo/vector-icons'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { commonStyles } from './commonStyles'
 
-interface Option {
+type Option = {
   label: string;
   value: string;
 }
 
-interface MultiSelectDropdownComponentProps {
+type MultiSelectDropdownComponentProps = {
   label: string;
   options: Option[];
   name: string;

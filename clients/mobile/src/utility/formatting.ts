@@ -1,3 +1,11 @@
+import { LocationService } from '../LocationService/LocationService'
+
+export type LocationData = {
+  area: string;
+  latitude: number;
+  longitude: number;
+}
+
 export const formattedDate = (date: string | Date, showOnlyDate = false): string => {
   const dte = new Date(date)
 
@@ -9,14 +17,6 @@ export const formattedDate = (date: string | Date, showOnlyDate = false): string
   })
 }
 
-export const formatPhoneNumber = (phoneNumber: string): string => {
-  const trimmedPhoneNumber = phoneNumber.trim()
-
-  return trimmedPhoneNumber.startsWith('01')
-    ? trimmedPhoneNumber.replace('01', '+8801')
-    : trimmedPhoneNumber
-}
-
 export function formatErrorMessage(error: unknown): string {
   if (error instanceof Error && typeof error.message === 'string') {
     const errorMessage = error.message.toLowerCase()
@@ -25,18 +25,20 @@ export function formatErrorMessage(error: unknown): string {
     }
 
     switch (errorMessage.trim()) {
-      case 'user already exists':
-        return 'User already exists, Please Login.'
-      case 'invalid request body':
-        return 'Please check your input and try again.'
-      case 'network error':
-        return 'Please check your internet connection.'
-      case 'timeout':
-        return 'Request timed out, please try again later.'
-      case 'error: you\'ve reached today\'s limit of 10 requests. please try tomorrow.':
-        return 'You have reached the daily request limit. Please try again tomorrow.'
-      default:
-        return 'Something went wrong.'
+    case 'user already exists':
+      return 'User already exists, Please Login.'
+    case 'invalid request body':
+      return 'Please check your input and try again.'
+    case 'network error':
+      return 'Please check your internet connection.'
+    case 'network request failed':
+      return 'Please check your internet connection.'
+    case 'timeout':
+      return 'Request timed out, please try again later.'
+    case 'error: you\'ve reached today\'s limit of 10 requests. please try tomorrow.':
+      return 'You have reached the daily request limit. Please try again tomorrow.'
+    default:
+      return 'Something went wrong.'
     }
   }
 
@@ -64,4 +66,26 @@ export const replaceTemplatePlaceholders = (template: string, ...values: string[
   return template.replace(/{(\d+)}/g, (_match, index) => {
     return typeof values[index] !== 'undefined' ? values[index] : ''
   })
+}
+
+export const formatLocations = async(
+  locations: string[],
+  mapAPI: string
+): Promise<LocationData[]> => {
+  const locationService = new LocationService(mapAPI)
+
+  const formattedLocations = await Promise.all(
+    locations.map(async(area) =>
+      locationService.getLatLon(area)
+        .then((location) => {
+          if (location !== null) {
+            const { latitude, longitude } = location
+            return { area, latitude, longitude }
+          }
+        })
+        .catch(() => { return null })
+    )
+  )
+
+  return formattedLocations.filter((location) => location !== null && location !== undefined)
 }

@@ -33,7 +33,7 @@
   },
   "servers": [
     {
-      "url": "https://BRANCH_NAME.bloodconnect.net/api"
+      "url": "https://BRANCH_NAMEbloodconnect.net/api"
     },
     {
       "url": "https://API_GATEWAY_ID.execute-api.ap-south-1.amazonaws.com/api",
@@ -53,7 +53,7 @@
     "/donations/{requestPostId}/{createdAt}": {
       "$ref": "./../paths/donations/donation.json"
     },
-    "/donations/posts/{city}": {
+    "/donations/posts/{geoPartition}": {
       "$ref": "./../paths/donations/posts.json"
     },
     "/donations/cancel": {
@@ -68,8 +68,17 @@
     "/notification/register": {
       "$ref": "./../paths/notification/register.json"
     },
+    "/maps/place/autocomplete/json": {
+      "$ref": "./../paths/maps/get-place-auto-complete.json"
+    },
+    "/maps/geocode/json": {
+      "$ref": "./../paths/maps/get-geo-code.json"
+    },
     "/logger": {
       "$ref": "./../paths/logger/logger.json"
+    },
+    "/country-availability": {
+      "$ref": "./../paths/country-availability/country-availability.json"
     }
   },
   "components": {

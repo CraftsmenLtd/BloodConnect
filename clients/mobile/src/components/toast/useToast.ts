@@ -1,14 +1,14 @@
 import { useState, useRef } from 'react'
 import { Animated, Easing } from 'react-native'
 
-interface ToastProps {
+type ToastProps = {
   message: string;
   duration?: number;
   type?: 'success' | 'error' | 'info';
   toastAnimationFinished?: Animated.Value;
 }
 
-interface ToastResponse {
+type ToastResponse = {
   showToastMessage: (props: ToastProps) => void;
   showToast: ToastProps | null;
   toastAnimationFinished?: Animated.Value;

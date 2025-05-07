@@ -1,18 +1,25 @@
 import React from 'react'
-import { View, Text, Image, StyleProp, ImageStyle, StyleSheet, Pressable } from 'react-native'
+import type { StyleProp, ImageStyle } from 'react-native'
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { COMMON_URLS } from '../../setup/constant/commonUrls'
 
-interface UserData {
+type UserData = {
   name: string;
   location: string;
   isEditing?: boolean;
   onImageUpload?: () => void;
 }
 
-const ProfileSection: React.FC<UserData> = ({ name, location, isEditing = false, onImageUpload }) => {
+const ProfileSection: React.FC<UserData> = (
+  {
+    name,
+    location,
+    isEditing = false,
+    onImageUpload
+  }) => {
   const styles = createStyles(useTheme())
 
   return (
@@ -123,7 +130,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontWeight: 'bold'
   },
   profileLocationSection: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   profileLocation: {
     fontSize: 14,

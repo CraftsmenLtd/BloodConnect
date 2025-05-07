@@ -1,4 +1,4 @@
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 import { StyleSheet } from 'react-native'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
@@ -20,6 +20,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderBottomWidth: 1,
     borderColor: theme.colors.lightGrey,
     padding: 10
+  },
+  lastRow: {
+    borderBottomWidth: 0
   },
   label: {
     fontSize: 14,
@@ -49,6 +52,23 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold'
+  },
+  selectedItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.greyBG,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginRight: 5,
+    marginBottom: 6
+  },
+  selectedItemText: {
+    marginRight: 5
+  },
+  mapViewContainer: {
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10
   }
 })
 

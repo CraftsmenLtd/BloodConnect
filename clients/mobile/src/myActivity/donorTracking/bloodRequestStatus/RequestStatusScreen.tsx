@@ -4,40 +4,68 @@ import PostCard from '../../../components/donation/PostCard'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import useRequestStatus from './useRequestStatus'
 import Button from '../../../components/button/Button'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 import StateAwareRenderer from '../../../components/StateAwareRenderer'
 import { commonStyles } from '../../../components/inputElement/commonStyles'
 
 const RequestStatusScreen = () => {
   const styles = createStyles(useTheme())
-  const { bloodRequest, notYetHandler, yesManagedHandler, loading, error, completeDonationError, completeDonationLoading } = useRequestStatus()
+  const { 
+    bloodRequest, 
+    notYetHandler, 
+    yesManagedHandler, 
+    loading, 
+    error, 
+    completeDonationError, 
+    completeDonationLoading
+  } = useRequestStatus()
 
   const ViewToRender = () =>
     <View style={styles.container}>
       <View>
         <Text style={styles.responseText}>Was the blood managed for this request?</Text>
-        <PostCard post={bloodRequest} showButton={false} showDescription showHeader={false} showPostUpdatedOption={false} />
+        <PostCard
+          post={bloodRequest}
+          showButton={false}
+          showDescription
+          showHeader={false}
+          showPostUpdatedOption={false}
+        />
       </View>
       <View>
-      <Text style={[styles.error, { textAlign: 'center', paddingBottom: 12 }]}>{completeDonationError}</Text>
+        <Text
+          style={[
+            styles.error,
+            { textAlign: 'center', paddingBottom: 12 }
+          ]}>{completeDonationError}</Text>
 
-      <View style={styles.buttonContainer}>
-        <View style={styles.buttonWrapper}>
-          <Button
-            text="Not yet"
-            buttonStyle={styles.ignoreButton}
-            textStyle={styles.buttonTextStyle}
-            onPress={notYetHandler} />
+        <View style={styles.buttonContainer}>
+          <View style={styles.buttonWrapper}>
+            <Button
+              text="Not yet"
+              buttonStyle={styles.ignoreButton}
+              textStyle={styles.buttonTextStyle}
+              onPress={notYetHandler} />
+          </View>
+          <View style={styles.buttonWrapper}>
+            <Button
+              text="Yes, managed"
+              onPress={yesManagedHandler}
+              disabled={completeDonationLoading}
+              loading={completeDonationLoading}
+            />
+          </View>
         </View>
-        <View style={styles.buttonWrapper}>
-          <Button text="Yes, managed" onPress={yesManagedHandler} disabled={completeDonationLoading} loading={completeDonationLoading} />
-        </View>
-      </View>
       </View>
 
     </View>
 
-  return <StateAwareRenderer loading={loading} errorMessage={error} data={bloodRequest} ViewComponent={ViewToRender} />
+  return <StateAwareRenderer
+    loading={loading}
+    errorMessage={error}
+    data={bloodRequest}
+    ViewComponent={ViewToRender}
+  />
 }
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({

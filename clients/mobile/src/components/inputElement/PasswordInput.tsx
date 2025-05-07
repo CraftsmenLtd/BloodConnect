@@ -1,15 +1,15 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
-import { InputProps } from './types'
+import type { Theme } from '../../setup/theme'
+import type { InputProps } from './types'
 import { commonStyles } from './commonStyles'
-import { Dispatch, SetStateAction } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
-interface PasswordInputProps extends Omit<InputProps, 'placeholder'> {
+type PasswordInputProps = {
   isVisible: boolean;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
-}
+} & Omit<InputProps, 'placeholder'>
 
 export const PasswordInput = ({ name, label, value, onChangeText, isVisible, setIsVisible, error }: PasswordInputProps) => {
   const styles = createStyles(useTheme())

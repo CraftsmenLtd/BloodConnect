@@ -1,5 +1,5 @@
-import { BloodGroup } from './DonationDTO'
-import { DTO, HasIdentifier } from './DTOCommon'
+import type { BloodGroup } from './DonationDTO'
+import type { DTO, HasIdentifier } from './DTOCommon'
 
 export type UserDTO = DTO & HasIdentifier & {
   email: string;
@@ -8,18 +8,17 @@ export type UserDTO = DTO & HasIdentifier & {
 }
 
 export type Gender = 'male' | 'female' | 'other'
-export type AvailableForDonation = 'yes' | 'no'
 
-export interface UserDetailsDTO extends UserDTO {
+export type UserDetailsDTO = {
   bloodGroup: BloodGroup;
   lastDonationDate?: string;
-  height: string;
-  weight: number;
+  height?: string;
+  weight?: number;
   gender: Gender;
   dateOfBirth: string;
   age: number;
-  city: string;
-  availableForDonation: AvailableForDonation;
+  countryCode: string;
+  availableForDonation: boolean;
   NIDFront: string;
   NIDBack: string;
   lastVaccinatedDate?: string;
@@ -27,18 +26,18 @@ export interface UserDetailsDTO extends UserDTO {
   updatedAt?: string;
   deviceToken?: string;
   snsEndpointArn?: string;
-}
+} & UserDTO
 
-export interface LocationDTO {
+export type LocationDTO = {
   userId: string;
   locationId: string;
   area: string;
-  city: string;
+  countryCode: string;
   latitude: number;
   longitude: number;
   geohash: string;
   createdAt: string;
   bloodGroup: BloodGroup;
-  availableForDonation: AvailableForDonation;
+  availableForDonation: boolean;
   lastVaccinatedDate: string;
 }

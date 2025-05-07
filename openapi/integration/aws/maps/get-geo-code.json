@@ -1,0 +1,22 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "${GET_GEO_CODE_INVOCATION_ARN}",
+  "requestTemplates": {
+    "application/json": "#importVtl maps/vtl/requestTemplates/get-geo-code.vtl"
+  },
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'GET'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#importVtl maps/vtl/responseTemplates/get-geo-code.vtl"
+      }
+    }
+  },
+  "passthroughBehavior": "never"
+}

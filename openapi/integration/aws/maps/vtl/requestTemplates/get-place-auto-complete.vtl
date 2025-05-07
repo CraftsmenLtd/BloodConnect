@@ -1,0 +1,8 @@
+{
+  "userId": "$context.authorizer.claims['custom:userId']",
+  "countryCode": "$input.params().header.get('CloudFront-Viewer-Country')",
+  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "apiGwRequestId": "$context.requestId",
+  "input": "$input.params('input')",
+  "types": "$input.params('types')"
+}

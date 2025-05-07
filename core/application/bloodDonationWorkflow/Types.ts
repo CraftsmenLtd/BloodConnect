@@ -1,12 +1,37 @@
-import { ValidationRule, validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
-import { AcceptDonationStatus, BloodGroup, UrgencyType } from '../../../commons/dto/DonationDTO'
+import type { ValidationRule } from '../utils/validator'
+import { validateDonationDateTime, validateBloodQuantity } from '../utils/validator'
+import type {
+  AcceptDonationDTO,
+  AcceptDonationStatus,
+  BloodGroup,
+  DonationDTO,
+  DonationStatus,
+  DonorSearchStatus,
+  EligibleDonorInfo,
+  UrgencyType
+} from '../../../commons/dto/DonationDTO'
 
-export interface BloodDonationAttributes {
+export type BloodDonationEventAttributes = {
   seekerId: string;
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
-  city: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  donationDateTime: string;
+  contactNumber: string;
+  patientName?: string;
+  transportationInfo?: string;
+  shortDescription?: string;
+}
+
+export type BloodDonationAttributes = {
+  seekerId: string;
+  requestedBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyType;
+  countryCode: string;
   location: string;
   latitude: number;
   longitude: number;
@@ -19,12 +44,14 @@ export interface BloodDonationAttributes {
 }
 type CredentialKeys = 'donationDateTime' | 'bloodQuantity'
 
-export const validationRules: Record<CredentialKeys, Array<ValidationRule<any>>> = {
-  donationDateTime: [(value: string) => validateDonationDateTime(value)],
-  bloodQuantity: [(value: number) => validateBloodQuantity(value)]
-}
+export const validationRules: Record<
+  CredentialKeys,
+  Array<ValidationRule<unknown>>> = {
+    donationDateTime: [(value: string): boolean => validateDonationDateTime(value)],
+    bloodQuantity: [(value: number): boolean => validateBloodQuantity(value)]
+  }
 
-export interface UpdateBloodDonationAttributes {
+export type UpdateBloodDonationAttributes = {
   requestPostId: string;
   seekerId: string;
   createdAt: string;
@@ -32,57 +59,83 @@ export interface UpdateBloodDonationAttributes {
   urgencyLevel?: UrgencyType;
   donationDateTime?: string;
   contactNumber?: string;
-  patientCondition?: string;
   patientName?: string;
   transportationInfo?: string;
   shortDescription?: string;
 }
 
-export interface DonorRoutingAttributes {
+export enum DynamoDBEventName {
+  INSERT = 'INSERT',
+  MODIFY = 'MODIFY'
+}
+
+export type DonorSearchConfig = {
+  dynamodbTableName: string;
+  awsRegion: string;
+  cacheGeohashPrefixLength: number;
+  maxGeohashCacheEntriesCount: number;
+  maxGeohashCacheMbSize: number;
+  maxGeohashCacheTimeoutMinutes: number;
+  maxGeohashNeighborSearchLevel: number;
+  donorSearchMaxInitiatingRetryCount: number;
+  neighborSearchGeohashPrefixLength: number;
+  donorSearchDelayBetweenExecution: number;
+  maxGeohashPerProcessingBatch: number;
+  maxGeohashesPerExecution: number;
+  donorSearchQueueUrl: string;
+}
+
+export type DonationRequestInitiatorAttributes = {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: UrgencyType;
-  city: string;
+  countryCode: string;
+  location: string;
+  patientName: string;
+  status: DonationStatus;
+  geohash: string;
+  donationDateTime: string;
+  contactNumber: string;
+  transportationInfo: string;
+  shortDescription: string;
+}
+
+export type DonorSearchAttributes = {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+  status: DonorSearchStatus;
+  requestedBloodGroup: BloodGroup;
+  bloodQuantity: number;
+  urgencyLevel: UrgencyType;
+  countryCode: string;
   location: string;
   geohash: string;
   donationDateTime: string;
   contactNumber: string;
   patientName: string;
-  transportationInfo: string;
-  shortDescription: string;
-}
-
-export interface StepFunctionInput {
-  seekerId: string;
-  requestPostId: string;
-  createdAt: string;
-  donationDateTime: string;
-  requestedBloodGroup: BloodGroup;
-  bloodQuantity: number;
-  urgencyLevel: UrgencyType;
-  geohash: string;
-  city: string;
   seekerName: string;
-  patientName: string;
-  location: string;
-  contactNumber: string;
   transportationInfo: string;
   shortDescription: string;
-  message: string;
-  retryCount: number;
+  notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 
-export interface StepFunctionExecutionAttributes {
-  executionArn: string;
-  status: string;
-  startDate: string;
-  input: StepFunctionInput;
+export type DonorSearchQueueAttributes = {
+  seekerId: string;
+  requestPostId: string;
+  createdAt: string;
+  targetedExecutionTime?: number;
+  remainingDonorsToFind?: number;
+  currentNeighborSearchLevel: number;
+  remainingGeohashesToProcess: string[];
+  notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
+  initiationCount: number;
 }
 
-export interface AcceptDonationRequestAttributes {
+export type AcceptDonationRequestAttributes = {
   donorId: string;
   seekerId: string;
   createdAt: string;
@@ -93,14 +146,18 @@ export interface AcceptDonationRequestAttributes {
   phoneNumbers: string[];
 }
 
-export interface DonationRecordEventAttributes {
+export type BloodDonationResponse = DonationDTO & {
+  acceptedDonors: AcceptDonationDTO[];
+}
+
+export type DonationRecordEventAttributes = {
   donorIds: string[];
   seekerId: string;
   requestPostId: string;
   requestCreatedAt: string;
 }
 
-export interface DonationRecordAttributes {
+export type DonationRecordAttributes = {
   donorId: string;
   seekerId: string;
   requestPostId: string;

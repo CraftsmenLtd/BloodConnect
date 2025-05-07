@@ -1,7 +1,7 @@
 import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
 import { renderHook, act } from '@testing-library/react-native'
 import { useAddPersonalInfo } from '../../src/userWorkflow/personalInfo/hooks/useAddPersonalInfo'
-import { addPersonalInfoHandler } from '../../src/userWorkflow/services/userServices'
+import { createUserProfile } from '../../src/userWorkflow/services/userProfileService'
 import { SCREENS } from '../../src/setup/constant/screens'
 
 const mockFetchUserProfile = jest.fn()
@@ -11,8 +11,8 @@ jest.mock('aws-amplify/auth', () => ({
   getCurrentUser: jest.fn().mockResolvedValue({ username: 'test-user' })
 }))
 
-jest.mock('../../src/userWorkflow/services/userServices', () => ({
-  addPersonalInfoHandler: jest.fn()
+jest.mock('../../src/userWorkflow/services/userProfileService', () => ({
+  createUserProfile: jest.fn()
 }))
 
 jest.mock('../../src/LocationService/LocationService', () => ({
@@ -42,6 +42,7 @@ jest.mock('expo-constants', () => ({
   default: {
     expoConfig: {
       extra: {
+        API_BASE_URL: 'https://mock-api-url.com',
         GOOGLE_MAP_API: 'mock-api-key'
       }
     }
@@ -57,7 +58,6 @@ describe('useAddPersonalInfo Hook', () => {
     lastDonationDate: new Date('2023-01-01'),
     dateOfBirth: new Date('2000-01-01'),
     lastVaccinatedDate: new Date('2023-06-01'),
-    city: 'Dhaka',
     locations: ['Mirpur'],
     availableForDonation: 'yes',
     acceptPolicy: true
@@ -76,13 +76,12 @@ describe('useAddPersonalInfo Hook', () => {
 
     expect(result.current.personalInfo).toEqual({
       bloodGroup: '',
-      height: '',
-      weight: '',
+      height: null,
+      weight: null,
       gender: '',
       lastDonationDate: null,
       dateOfBirth: expect.any(Date),
       lastVaccinatedDate: null,
-      city: '',
       locations: [],
       availableForDonation: 'yes',
       acceptPolicy: false
@@ -126,7 +125,7 @@ describe('useAddPersonalInfo Hook', () => {
 
   test('should submit data and navigate on successful submission', async() => {
     mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 });
-    (addPersonalInfoHandler as jest.Mock).mockResolvedValue({ status: 200 })
+    (createUserProfile as jest.Mock).mockResolvedValue({ status: 201 })
 
     const { result } = renderHook(() => useAddPersonalInfo())
 
@@ -140,21 +139,22 @@ describe('useAddPersonalInfo Hook', () => {
       await result.current.handleSubmit()
     })
 
-    expect(addPersonalInfoHandler).toHaveBeenCalled()
+    expect(createUserProfile).toHaveBeenCalled()
     expect(mockFetchUserProfile).toHaveBeenCalled()
     expect(mockedNavigate).toHaveBeenCalledWith(SCREENS.BOTTOM_TABS)
   })
 
   test('should set errorMessage on failed submission', async() => {
     mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 })
-    const errorMessage = 'network error'
+    const errorMessage = 'network error';
+    (createUserProfile as jest.Mock).mockRejectedValue(new Error(errorMessage))
+
     const { result } = renderHook(() => useAddPersonalInfo())
 
     await act(async() => {
       Object.entries(validPersonalInfo).forEach(([key, value]) => {
         result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
-      });
-      (addPersonalInfoHandler as jest.Mock).mockRejectedValue(new Error(errorMessage))
+      })
     })
 
     await act(async() => {

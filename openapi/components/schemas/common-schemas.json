@@ -13,7 +13,6 @@
     ]
   },
   "PhoneNumberEnum": {
-    "type": "string",
-    "pattern": "^\\+8801[3-9]\\d{8}$"
+    "type": "string"
   }
 }

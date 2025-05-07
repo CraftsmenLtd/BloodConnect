@@ -3,6 +3,11 @@ resource "aws_s3_bucket_policy" "bucket_access_policy" {
   policy = data.aws_iam_policy_document.bucket_access_policy_document.json
 }
 
+resource "aws_s3_bucket_policy" "monitoring_bucket_access_policy" {
+  bucket = var.monitoring_site_bucket.id
+  policy = data.aws_iam_policy_document.monitoring_bucket_access_policy_document.json
+}
+
 resource "aws_s3_bucket_policy" "log_store_policy" {
   bucket = var.log_store_bucket.id
   policy = data.aws_iam_policy_document.log_store_policy_document.json
@@ -24,7 +29,7 @@ data "aws_iam_policy_document" "log_store_policy_document" {
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
-      values   = [aws_cloudformation_stack.cdn.outputs["CloudFrontArn"]]
+      values   = [aws_cloudfront_distribution.cdn.arn]
     }
   }
 }
@@ -41,5 +46,21 @@ data "aws_iam_policy_document" "bucket_access_policy_document" {
     }
 
     resources = ["${var.static_site_bucket.arn}/*"]
+  }
+}
+
+
+data "aws_iam_policy_document" "monitoring_bucket_access_policy_document" {
+  statement {
+    effect = "Allow"
+
+    actions = ["s3:GetObject"]
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.s3_monitoring_bucket_oai.iam_arn]
+    }
+
+    resources = ["${var.monitoring_site_bucket.arn}/${var.monitoring_site_path}/*"]
   }
 }

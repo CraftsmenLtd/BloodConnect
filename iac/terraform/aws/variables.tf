@@ -80,3 +80,15 @@ variable "cloudfront_hosted_zone_id" {
   type        = string
   default     = "Z2FDTNDATAQYW2"
 }
+
+variable "google_maps_api_key" {
+  description = "google maps api key"
+  type        = string
+  sensitive   = true
+}
+
+variable "mapbox_public_key" {
+  description = "mapbox public key"
+  type        = string
+  sensitive   = true
+}

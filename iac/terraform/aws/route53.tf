@@ -16,3 +16,14 @@ resource "aws_route53_record" "root" {
     evaluate_target_health = false
   }
 }
+
+resource "aws_route53_record" "cognito_custom_domain" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = module.cognito.aws_cognito_custom_domain_name
+  type    = "A"
+  alias {
+    evaluate_target_health = false
+    name                   = module.cognito.aws_cognito_custom_domain_cloudfront_distribution
+    zone_id                = module.cognito.aws_cognito_custom_domain_cloudfront_distribution_zone_id
+  }
+}

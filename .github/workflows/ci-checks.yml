@@ -43,8 +43,8 @@ jobs:
       - name: 🧐 Lint Code
         run: make run-command-lint-code
 
-      - name: 🎁 Package Code
-        run: make run-command-package-all
+      - name: 🎁 Build Code
+        run: make run-command-build-node-all
 
       - name: 🐬 Start Localstack
         run: make localstack-start

@@ -3,15 +3,15 @@ import { View, Text, StyleSheet } from 'react-native'
 import { Dropdown as CustomDropdown } from 'react-native-element-dropdown'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 
-interface Option {
+type Option = {
   label: string;
   value: string;
 }
 
-interface DropdownComponentProps {
+type DropdownComponentProps = {
   label: string;
   options: Option[];
   name: string;

@@ -1,31 +1,43 @@
 import React from 'react'
 import { View, Text, ScrollView } from 'react-native'
+import MapView from '../../../components/mapView'
+import useMapView from '../../../components/mapView/useMapView'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
+import type { LocationData } from '../../../utility/formatting'
+import { formattedDate } from '../../../utility/formatting'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
 import { useProfile } from '../hooks/useProfile'
 import { SCREENS } from '../../../setup/constant/screens'
-import { EditProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { EditProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { useNavigation } from '@react-navigation/native'
 
-export interface EditProfileData {
+export type EditProfileData = {
   phone: string;
   weight: string;
   height: string;
   dateOfBirth: string;
   name: string;
   gender: string;
-  [key: string]: any;
+  lastDonationDate: string;
+  preferredDonationLocations: LocationData[];
+  locations: string[];
+  [key: string]: unknown;
 }
 
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
   const { userDetails } = useProfile()
+  const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(
+    userDetails?.preferredDonationLocations.map(location => location.area) ?? []
+  )
   const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
-  const renderDetailRow = (label: string, value: string = ''): JSX.Element => (
-    <View style={styles.row}>
+  const renderDetailRow = (label: string,
+    value: string = '',
+    isLast: boolean = false): JSX.Element => (
+    <View style={[styles.row, isLast && styles.lastRow]}>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.value}>{value}</Text>
     </View>
@@ -34,14 +46,18 @@ const Profile: React.FC = () => {
   const handleEditPress = () => {
     if (userDetails === null) return
 
-    const { weight, height, dateOfBirth, name, ...rest } = userDetails
     navigation.navigate(SCREENS.EDIT_PROFILE, {
       userDetails: {
-        ...rest,
+        ...userDetails,
         weight: userDetails.weight?.toString() ?? '',
         height: userDetails.height?.toString() ?? '',
         dateOfBirth: userDetails.dateOfBirth ?? '',
-        name: userDetails.name ?? ''
+        name: userDetails.name ?? '',
+        lastDonationDate: userDetails.lastDonationDate ?? '',
+        preferredDonationLocations: userDetails.preferredDonationLocations ?? [],
+        locations: userDetails?.preferredDonationLocations?.map(location => {
+          return location.area
+        }) ?? []
       }
     })
   }
@@ -61,12 +77,36 @@ const Profile: React.FC = () => {
       >
         <View style={styles.card}>
           {renderDetailRow('Name', userDetails.name ?? '')}
-          {renderDetailRow('Date of Birth', userDetails.dateOfBirth ?? '')}
+          {renderDetailRow('Date of Birth', formattedDate(userDetails.dateOfBirth ?? '', true))}
           {renderDetailRow('Age', userDetails.age.toString())}
-          {renderDetailRow('Weight (kg)', userDetails.weight !== undefined ? userDetails.weight.toString() : '')}
-          {renderDetailRow('Height (feet)', userDetails.height !== undefined ? userDetails.height.toString() : '')}
-          {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined && userDetails.phoneNumbers.length > 0 ? userDetails.phoneNumbers[0] : '')}
+          {renderDetailRow('Weight (kg)', userDetails.weight !== null ?
+            userDetails.weight.toString() : '')}
+          {renderDetailRow('Height (feet)', userDetails.height !== undefined
+            ? userDetails.height.toString() : '')}
+          {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined &&
+            userDetails.phoneNumbers.length > 0 ?
+            userDetails.phoneNumbers[0] : '')}
           {renderDetailRow('Gender', userDetails.gender)}
+          {userDetails?.lastDonationDate !== '' && renderDetailRow('Last Donation Date',
+            formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
+          <View style={[styles.row, styles.lastRow]}>
+            <Text style={styles.label}>{'Locations'}</Text>
+            {userDetails?.preferredDonationLocations?.map(location => {
+              return (
+                <View key={location.area} style={styles.selectedItem}>
+                  <Text style={styles.selectedItemText}>
+                    {location.area}
+                  </Text>
+                </View>
+              )
+            })}
+          </View>
+          <MapView
+            style={styles.mapViewContainer}
+            centerCoordinate={centerCoordinate}
+            zoomLevel={zoomLevel}
+            markers={mapMarkers}
+          />
         </View>
       </ScrollView>
 

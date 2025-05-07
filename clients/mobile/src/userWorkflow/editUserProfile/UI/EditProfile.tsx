@@ -1,15 +1,23 @@
+import Constants from 'expo-constants'
 import React from 'react'
 import { ScrollView, TouchableWithoutFeedback, View } from 'react-native'
 import { Input } from '../../../components/inputElement/Input'
+import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput'
 import RadioButton from '../../../components/inputElement/Radio'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
+import MapView from '../../../components/mapView'
+import useMapView from '../../../components/mapView/useMapView'
+import MultiSelect from '../../../components/multiSelect'
+import { LocationService } from '../../../LocationService/LocationService'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
-import Warning from '../../../components/warning'
-import { WARNINGS } from '../../../setup/constant/consts'
 import { useEditProfile } from '../hooks/useEditProfile'
+
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
+
+const locationService = new LocationService(API_BASE_URL)
 
 const EditProfile = () => {
   const styles = createStyles(useTheme())
@@ -17,9 +25,11 @@ const EditProfile = () => {
     profileData,
     errors,
     handleInputChange,
+    loading,
     isButtonDisabled,
     handleSave
   } = useEditProfile()
+  const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(profileData?.locations)
 
   return (
     <TouchableWithoutFeedback>
@@ -29,7 +39,7 @@ const EditProfile = () => {
       >
         <ProfileSection
           name={profileData.name}
-          location={profileData.location}
+          location={profileData?.location}
           isEditing={true}
         />
 
@@ -65,6 +75,7 @@ const EditProfile = () => {
                 name="age"
                 label="Age"
                 value={profileData.age.toString()}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
                 onChangeText={() => { }}
                 placeholder="Enter your name"
                 readOnly={true}
@@ -99,19 +110,48 @@ const EditProfile = () => {
             </View>
 
             <View style={styles.inputFieldStyle}>
-              <Input
-                name="phone"
-                label="Phone"
+              <PhoneNumberInput
+                name='phone'
+                label='Phone'
                 value={profileData.phone}
-                onChangeText={handleInputChange}
-                placeholder="Enter your phone number"
-                keyboardType="decimal-pad"
-                inputStyle={styles.inputStyle}
-                error={errors.phone}
-              />
-              <Warning
-                text={WARNINGS.PHONE_NUMBER_VISIBLE}
+                onChange={handleInputChange}
                 showWarning={profileData.phone !== ''}
+                isRequired={false}
+              />
+            </View>
+
+            <View style={styles.inputFieldStyle}>
+              <MultiSelect
+                name="locations"
+                label="Select Preferred Location"
+                options={[]}
+                selectedValues={profileData?.locations}
+                onSelect={handleInputChange}
+                placeholder="Select Preferred Location"
+                isRequired={false}
+                enableSearch={true}
+                fetchOptions={
+                  async(searchText) =>
+                    locationService.preferredLocationAutocomplete(searchText)
+                }
+                minRequiredLabel="Add minimum 1 area."
+              />
+              <MapView
+                style={styles.mapViewContainer}
+                centerCoordinate={centerCoordinate}
+                zoomLevel={zoomLevel}
+                markers={mapMarkers}
+              />
+            </View>
+
+            <View style={styles.inputFieldStyle}>
+              <DateTimePickerComponent
+                label="Last Donation Date"
+                value={profileData.lastDonationDate !== null && profileData.lastDonationDate !== '' ? new Date(profileData.lastDonationDate) : null}
+                onChange={(date) => handleInputChange('lastDonationDate', date)}
+                isOnlyDate={true}
+                inputStyle={styles.inputStyle}
+                error={errors.lastDonationDate}
               />
             </View>
 
@@ -125,9 +165,11 @@ const EditProfile = () => {
               />
             </View>
           </View>
+
           <View style={styles.buttonContainer}>
             <Button
               text="Save"
+              loading={loading}
               onPress={handleSave}
               disabled={isButtonDisabled}
             />

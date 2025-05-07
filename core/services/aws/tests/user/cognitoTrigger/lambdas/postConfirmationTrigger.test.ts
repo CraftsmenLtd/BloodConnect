@@ -1,6 +1,6 @@
 import postConfirmationLambda from '../../../../user/cognitoTrigger/lambdas/postConfirmationTrigger'
 import { UserService } from '../../../../../../application/userWorkflow/UserService'
-import DynamoDbTableOperations from '../../../../commons/ddb/DynamoDbTableOperations'
+import DynamoDbTableOperations from '../../../../commons/ddbOperations/DynamoDbTableOperations'
 import { mockDynamoDbOperations } from '../../../mock/dynamoDbMocks'
 import { mockUserWithStringId } from '../../../../../../application/tests/mocks/mockUserData'
 import { updateCognitoUserInfo } from '../../../../commons/cognito/CognitoOperations'
@@ -9,7 +9,7 @@ import { GenericMessage } from '../../../../../../../commons/dto/MessageDTO'
 import { createPostConfirmationEvent } from '../../../mock/cognitoEventMocks'
 
 jest.mock('../../../../../../application/userWorkflow/UserService')
-jest.mock('../../../../commons/ddb/DynamoDbTableOperations')
+jest.mock('../../../../commons/ddbOperations/DynamoDbTableOperations')
 jest.mock('../../../../commons/cognito/CognitoOperations')
 jest.mock('../../../../commons/ses/sesOperations')
 

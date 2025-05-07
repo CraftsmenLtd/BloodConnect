@@ -1,26 +1,36 @@
+import React from 'react';
 import { StyleSheet, Text } from 'react-native'
 import { Input } from '../../../components/inputElement/Input'
 import { Button } from '../../../components/button/Button'
 import { SocialButton } from '../../../components/button/SocialButton'
 import { Divider } from '../../../components/button/Divider'
 import LinkWithText from '../../../components/button/LinkWithText'
-import Warning from '../../../components/warning'
-import { WARNINGS } from '../../../setup/constant/consts'
+import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput'
 import { useRegister } from '../hooks/useRegister'
-import { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { RegisterScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import AuthLayout from '../../AuthLayout'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
 import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
 
-interface RegisterScreenProps {
+type RegisterScreenProps = {
   navigation: RegisterScreenNavigationProp;
 }
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
-  const { errors, socialLoading, registerCredential, handleInputChange, handleRegister, isButtonDisabled, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useRegister()
+  const {
+    errors,
+    socialLoading,
+    registerCredential,
+    handleInputChange,
+    handleRegister,
+    isButtonDisabled,
+    handleGoogleSignIn,
+    handleFacebookSignIn,
+    socialLoginError
+  } = useRegister()
   const styles = createStyles(useTheme())
 
   return (
@@ -45,18 +55,13 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
         error={errors.email}
       />
 
-      <Input
+      <PhoneNumberInput
         name="phoneNumber"
         label="Phone Number"
         value={registerCredential.phoneNumber}
-        onChangeText={handleInputChange}
-        placeholder="01XXXXXXXXX"
-        keyboardType="phone-pad"
-        error={errors.phoneNumber}
-      />
-      <Warning
-        text={WARNINGS.PHONE_NUMBER_VISIBLE}
+        onChange={handleInputChange}
         showWarning={registerCredential.phoneNumber !== ''}
+        isRequired={false}
       />
 
       <Button text="Continue" onPress={handleRegister} disabled={isButtonDisabled} />

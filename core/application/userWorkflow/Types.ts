@@ -1,5 +1,5 @@
-import { Gender, LocationDTO, AvailableForDonation } from '../../../commons/dto/UserDTO'
-import { BloodGroup } from '../../../commons/dto/DonationDTO'
+import type { Gender, LocationDTO } from '../../../commons/dto/UserDTO'
+import type { BloodGroup } from '../../../commons/dto/DonationDTO'
 
 export type UserAttributes = {
   email: string;
@@ -7,38 +7,29 @@ export type UserAttributes = {
   phoneNumbers: string[];
 }
 
-export interface CreateUserAttributes extends UserAttributes {
+export type BaseUserAttributes = {
   userId: string;
-  name: string;
   bloodGroup: BloodGroup;
-  lastDonationDate: string;
-  height: string;
-  weight: number;
+  phoneNumbers?: string[];
+  height?: string;
+  weight?: number;
   gender: Gender;
   dateOfBirth: string;
   age: number;
-  city: string;
   preferredDonationLocations: LocationDTO[];
-  availableForDonation: AvailableForDonation;
-  NIDFront: string;
-  NIDBack: string;
-  lastVaccinatedDate: string;
+  availableForDonation: boolean;
+  NIDFront?: string;
+  NIDBack?: string;
 }
 
-export interface UpdateUserAttributes extends UserAttributes {
-  userId: string;
-  name: string;
-  bloodGroup: BloodGroup;
+export type CreateUserAttributes = {
+  countryCode: string;
   lastDonationDate?: string;
-  height: string;
-  weight: number;
-  gender: Gender;
-  dateOfBirth: string;
-  age: number;
-  city: string;
-  preferredDonationLocations: LocationDTO[];
-  availableForDonation: AvailableForDonation;
-  NIDFront: string;
-  NIDBack: string;
   lastVaccinatedDate?: string;
-}
+} & BaseUserAttributes
+
+export type UpdateUserAttributes = {
+  userId: string;
+  lastDonationDate?: string;
+  lastVaccinatedDate?: string;
+} & BaseUserAttributes

@@ -1,11 +1,11 @@
-output "donor_search_queue_arn" {
-  value = aws_sqs_queue.donor_search_queue.arn
+output "donation_request_queue_arn" {
+  value = module.donation_request_queue.queue_arn
 }
 
 output "donation_status_manager_queue_arn" {
-  value = aws_sqs_queue.donation_status_manager_queue.arn
+  value = module.donation_status_manager_queue.queue_arn
 }
 
-output "donor_search_state_machine_arn" {
-  value = aws_sfn_state_machine.donor_search_state_machine.arn
+output "donor_search_lambda_name" {
+  value = module.donor_search_lambda["donor-search"].lambda_function_name
 }

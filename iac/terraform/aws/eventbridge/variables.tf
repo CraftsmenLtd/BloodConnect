@@ -8,7 +8,12 @@ variable "dynamodb_table_stream_arn" {
   description = "ARN of the DynamoDB table stream"
 }
 
-variable "donor_search_queue_arn" {
+variable "dynamodb_table_arn" {
+  type        = string
+  description = "ARN of the DynamoDB table"
+}
+
+variable "donation_request_queue_arn" {
   type        = string
   description = "ARN of the donor search SQS queue"
 }
@@ -16,4 +21,9 @@ variable "donor_search_queue_arn" {
 variable "donation_status_manager_queue_arn" {
   type        = string
   description = "ARN of the donation status manager SQS queue"
+}
+
+variable "monitor_donation_request_lambda_arn" {
+  type        = string
+  description = "ARN of the monitoring donation request lambda"
 }

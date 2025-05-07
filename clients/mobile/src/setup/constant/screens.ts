@@ -13,7 +13,7 @@ export enum SCREENS {
   ACCOUNT = 'Account',
   ADD_PERSONAL_INFO = 'AddPersonalInfo',
   HOME = 'Home',
-  POSTS = 'Posts',
+  POSTS = 'Requests',
   MY_ACTIVITY = 'My Activity',
   BLOOD_REQUEST_PREVIEW = 'BloodRequestPreview',
   DETAIL_POST = 'DetailPost',
@@ -21,5 +21,6 @@ export enum SCREENS {
   DONOR_RESPONSE = 'DonorResponse',
   REQUEST_STATUS = 'RequestStatus',
   DONOR_CONFIRMATION = 'DonorConfirmation',
+  ABOUT = 'About',
   NO_INTERNET = 'NoInternet'
 }
