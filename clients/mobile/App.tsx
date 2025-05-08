@@ -3,6 +3,8 @@ import '@react-native-firebase/app'
 import { LogBox, StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native'
+import { NetInfoProvider } from './src/authentication/context/NetInfo'
+import { NetInfoModal } from './src/components/NetInfoModal'
 import { ThemeProvider } from './src/setup/theme/context/ThemeContext'
 import Navigator from './src/setup/navigation/Navigator'
 import { Amplify } from 'aws-amplify'
@@ -47,19 +49,22 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer ref={navigationRef}>
-        <NotificationProvider navigationRef={navigationRef}>
-          <AuthProvider>
-            <UserProfileProvider>
-              <MyActivityProvider>
-                <ThemeProvider>
-                  {/* TODO: need to use themes' primary color but it's not working. */}
-                  <StatusBar hidden={false} backgroundColor='#FF4D4D' />
-                  <Navigator />
-                </ThemeProvider>
-              </MyActivityProvider>
-            </UserProfileProvider>
-          </AuthProvider>
-        </NotificationProvider>
+        <NetInfoProvider>
+          <NotificationProvider navigationRef={navigationRef}>
+            <AuthProvider>
+              <UserProfileProvider>
+                <MyActivityProvider>
+                  <ThemeProvider>
+                    {/* TODO: need to use themes' primary color but it's not working. */}
+                    <StatusBar hidden={false} backgroundColor='#FF4D4D' />
+                    <Navigator />
+                    <NetInfoModal />
+                  </ThemeProvider>
+                </MyActivityProvider>
+              </UserProfileProvider>
+            </AuthProvider>
+          </NotificationProvider>
+        </NetInfoProvider>
       </NavigationContainer>
     </SafeAreaProvider>
   )

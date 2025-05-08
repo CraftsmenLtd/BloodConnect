@@ -8,8 +8,6 @@ import { View, StyleSheet } from 'react-native'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import type { Theme } from '../theme'
 import { useTheme } from '../theme/hooks/useTheme'
-import NoInternetScreen from '../../components/NoInternetScreen'
-import { useInternetConnection } from '../../hooks/useInternetConnection'
 
 const Stack = createStackNavigator()
 
@@ -17,7 +15,6 @@ export default function Navigator() {
   const { isAuthenticated, loading } = useAuth()
   const { userProfile, fetchUserProfile, loading: profileLoading } = useUserProfile()
   const styles = createStyles(useTheme())
-  const { isConnected, checkConnection } = useInternetConnection()
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -49,12 +46,6 @@ export default function Navigator() {
     <Stack.Navigator
       initialRouteName={getInitialRoute()}
     >
-      {!isConnected &&
-        <Stack.Screen
-          name={SCREENS.NO_INTERNET}
-          children={() => <NoInternetScreen onRetry={checkConnection} isConnected={isConnected} />}
-          options={{ headerShown: false }}
-        />}
       {filteredRoutes.map(({ name, component, options }) => (
         <Stack.Screen key={name} name={name} component={component} options={options} />
       ))

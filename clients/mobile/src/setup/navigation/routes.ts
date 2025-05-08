@@ -18,7 +18,6 @@ import Profile from '../../userWorkflow/userProfile/UI/Profile'
 import EditProfile from '../../userWorkflow/editUserProfile/UI/EditProfile'
 import RequestStatusScreen from '../../myActivity/donorTracking/bloodRequestStatus/RequestStatusScreen'
 import DonorConfirmationScreen from '../../myActivity/donorTracking/donorConfirmation/DonorConfirmationScreen'
-import NoInternetScreen from '../../components/NoInternetScreen'
 
 export const routes = [
   {
@@ -134,11 +133,5 @@ export const routes = [
     component: AboutPage,
     options: { headerShown: true, headerTitle: 'About' },
     protected: true
-  },
-  {
-    name: SCREENS.NO_INTERNET,
-    component: NoInternetScreen,
-    options: { headerShown: false, headerTitle: '' },
-    protected: false
   }
 ]
