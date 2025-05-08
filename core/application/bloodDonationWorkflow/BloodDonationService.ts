@@ -181,16 +181,16 @@ export class BloodDonationService {
       acceptedDonors.length < updateData.bloodQuantity &&
       updateData.status == DonationStatus.MANAGED
     if (hasQuantityIncreased) {
-      updateData.status = DonationStatus.PENDING
       this.logger.info('setting donation status to pending as blood quantity increased')
+      updateData.status = DonationStatus.PENDING
     }
 
     const hasQuantityDecreased =
       acceptedDonors.length >= updateData.bloodQuantity &&
       updateData.status == DonationStatus.PENDING
     if (hasQuantityDecreased) {
-      updateData.status = DonationStatus.MANAGED
       this.logger.info('setting donation status to managed as enough donors accepted')
+      updateData.status = DonationStatus.MANAGED
     }
 
     this.logger.info('updating donation request')
@@ -255,16 +255,16 @@ export class BloodDonationService {
       acceptedDonors.length >= donationPost.bloodQuantity &&
       donationPost.status == DonationStatus.PENDING
     ) {
-      await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.MANAGED)
       this.logger.info('setting donation status to managed as enough donors accepted')
+      await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.MANAGED)
     }
 
     if (
       acceptedDonors.length < donationPost.bloodQuantity &&
       donationPost.status == DonationStatus.MANAGED
     ) {
-      await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.PENDING)
       this.logger.info('setting donation status to pending as enough donors not haven\'t accepted')
+      await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.PENDING)
     }
   }
 
