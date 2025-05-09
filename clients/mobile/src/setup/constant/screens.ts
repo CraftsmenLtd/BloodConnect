@@ -21,5 +21,6 @@ export enum SCREENS {
   DONOR_RESPONSE = 'DonorResponse',
   REQUEST_STATUS = 'RequestStatus',
   DONOR_CONFIRMATION = 'DonorConfirmation',
-  ABOUT = 'About'
+  ABOUT = 'About',
+  NO_INTERNET = 'NoInternet'
 }

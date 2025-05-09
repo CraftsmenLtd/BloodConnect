@@ -48,7 +48,9 @@ export default function Navigator() {
     >
       {filteredRoutes.map(({ name, component, options }) => (
         <Stack.Screen key={name} name={name} component={component} options={options} />
-      ))}
+      ))
+      }
+
     </Stack.Navigator>
   )
 }
