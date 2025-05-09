@@ -10,7 +10,7 @@ export const NetInfoModal = (): React.ReactElement => {
     setVisible(!isConnected)
   }, [isConnected])
 
-  const handleRetry = async() : Promise<void> => {
+  const handleRefreshConnection = async() : Promise<void> => {
     await refreshConnection()
     if (isConnected) setVisible(false)
   }
@@ -25,7 +25,7 @@ export const NetInfoModal = (): React.ReactElement => {
       : 'Your connection has been restored.'
     }
     buttons={[
-      { text: 'Try Again', onPress: handleRetry }
+      { text: 'Refresh Connection', onPress: handleRefreshConnection }
     ]}
   />
 }
