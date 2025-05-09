@@ -19,7 +19,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
             "NewImage" : {
               "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
               "SK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
-              "status": { "S": ["PENDING", "MANAGED"] }
+              "status" : { "S" : ["PENDING"] }
             }
           }
         })
@@ -32,19 +32,8 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
 {
   "PK": "<$.dynamodb.NewImage.PK.S>",
   "SK": "<$.dynamodb.NewImage.SK.S>",
-  "requestedBloodGroup": "<$.dynamodb.NewImage.requestedBloodGroup.S>",
-  "bloodQuantity": "<$.dynamodb.NewImage.bloodQuantity.N>",
-  "countryCode": "<$.dynamodb.NewImage.countryCode.S>",
-  "urgencyLevel": "<$.dynamodb.NewImage.urgencyLevel.S>",
-  "createdAt": "<$.dynamodb.NewImage.createdAt.S>",
   "geohash": "<$.dynamodb.NewImage.geohash.S>",
-  "location": "<$.dynamodb.NewImage.location.S>",
-  "donationDateTime": "<$.dynamodb.NewImage.donationDateTime.S>",
-  "patientName": "<$.dynamodb.NewImage.patientName.S>",
-  "status": "<$.dynamodb.NewImage.status.S>",
-  "contactNumber": "<$.dynamodb.NewImage.contactNumber.S>",
-  "shortDescription": "<$.dynamodb.NewImage.shortDescription.S>",
-  "transportationInfo": "<$.dynamodb.NewImage.transportationInfo.S>"
+  "status": "<$.dynamodb.NewImage.status.S>"
 }
 EOF
   }

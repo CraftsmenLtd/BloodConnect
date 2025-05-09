@@ -1,6 +1,6 @@
 #set($inputRoot = $input.path('$'))
 #set($errorMessage = $context.error.message)
-#if($errorMessage)
+#if($errorMessage != "")
   {
     "success": false,
     "message": "Something went wrong"
