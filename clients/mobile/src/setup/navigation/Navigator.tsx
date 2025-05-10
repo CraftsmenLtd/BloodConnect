@@ -8,7 +8,7 @@ import { View, StyleSheet } from 'react-native'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import type { Theme } from '../theme'
 import { useTheme } from '../theme/hooks/useTheme'
-import { withRegisterPushOnFocus } from '../../utility/deviceRegistration'
+import { withRegisterPushOnFocus } from '../../utility/WithDeviceRegistration'
 
 const Stack = createStackNavigator()
 
