@@ -6,25 +6,22 @@ import { useFetchClient } from '../setup/clients/useFetchClient'
 import registerUserDeviceForNotification from './deviceRegistration'
 
 export function withRegisterPushOnFocus<P>(WrappedComponent: ComponentType<P>): FC<P> {
-  const ComponentWithPushRegistration: FC<P> = (props) => {
-    const fetchClient = useFetchClient()
+  return function ComponentWithPushRegistration(props: P) {
+    const fetchClient = useFetchClient();
 
     useFocusEffect(
       useCallback(() => {
-        const register = async() => registerUserDeviceForNotification(fetchClient).catch(
-          // eslint-disable-next-line no-console
-          (error) => { console.error('Failed to register device:', error) })
-
         const task = InteractionManager.runAfterInteractions(() => {
-          void register()
-        })
+          void registerUserDeviceForNotification(fetchClient).catch(error => {
+            // eslint-disable-next-line no-console
+            console.error('Failed to register device:', error);
+          });
+        });
 
-        return () => task.cancel()
+        return () => task.cancel();
       }, [fetchClient])
-    )
+    );
 
-    return <WrappedComponent {...props} />
-  }
-
-  return ComponentWithPushRegistration
+    return <WrappedComponent {...props} />;
+  };
 }
