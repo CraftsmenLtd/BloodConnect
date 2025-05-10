@@ -15,7 +15,7 @@ type NotificationTrigger =
   | { repeats: boolean; interval: 'minute' | 'hour' | 'day' | 'week' }
 
 export const scheduleNotification = async(
-  trigger: NotificationTrigger, 
+  trigger: NotificationTrigger,
   content: Notifications.NotificationContentInput
 ): Promise<string> => {
   return await Notifications.scheduleNotificationAsync({

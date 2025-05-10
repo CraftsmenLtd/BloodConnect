@@ -38,15 +38,15 @@ const maxGeohashToStoreInFile = config.maxGeohashStorage
 const bucketPathPrefix = config.monitorDonationBucketPrefix
 
 const countGeohashesInFile = (fileSize: number): number => fileSize / maxEstimatedGeohashSizeInBytes
-const deleteExpiredFile = async(fileName: string): Promise<void> => { 
+const deleteExpiredFile = async(fileName: string): Promise<void> => {
   await client.send(
     new DeleteObjectCommand(
-      { 
-        Bucket: bucketName, 
-        Key: fileName 
+      {
+        Bucket: bucketName,
+        Key: fileName
       }
     )
-  ) 
+  )
 }
 const createNewFile = async(fileName: string, geohash: string): Promise<void> => {
   await client.send(
@@ -58,8 +58,8 @@ const createNewFile = async(fileName: string, geohash: string): Promise<void> =>
 }
 
 const appendGeohashToFileLargerThan5MB = async(
-  fileName: string, 
-  fileContent: string, 
+  fileName: string,
+  fileContent: string,
   fileSize: number
 ): Promise<void> => {
   const createMultipartUploadResponse = await client.send(
