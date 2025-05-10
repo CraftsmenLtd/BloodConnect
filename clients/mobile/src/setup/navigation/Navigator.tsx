@@ -12,7 +12,7 @@ import { useFetchClient } from '../clients/useFetchClient'
 import { extractErrorMessage } from '../../donationWorkflow/donationHelpers'
 import type { Theme } from '../theme'
 import { useTheme } from '../theme/hooks/useTheme'
-import { withRegisterPushOnFocus } from '../../utility/deviceRegistration'
+import { withRegisterPushOnFocus } from '../../utility/WithDeviceRegistration'
 
 const Stack = createStackNavigator()
 
