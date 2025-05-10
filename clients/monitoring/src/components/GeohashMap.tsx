@@ -47,7 +47,7 @@ const GeoHashMap = () => {
           )
           .then(async(
             response
-          ) => 
+          ) =>
             response.Body ? response.Body.transformToString().then((content) =>
               content.split('\n')
             ) : [])

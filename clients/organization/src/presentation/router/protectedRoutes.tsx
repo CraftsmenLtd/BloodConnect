@@ -8,7 +8,7 @@ import DefaultLayout from '../layout/DefaultLayout/DefaultLayout';
 export function ProtectedRoute() {
   const [, loading, user, error] = useFetchData(getUser, true);
 
-  
+
   if (loading == true || (user == undefined && error == null)) {
     return <FullPageLoader />;
   }

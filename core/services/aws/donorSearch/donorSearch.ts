@@ -127,8 +127,8 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
     }
 
     serviceLogger.info(
-      `checking targeted execution time${targetedExecutionTime !== undefined ? 
-        ` ${targetedExecutionTime}` : 
+      `checking targeted execution time${targetedExecutionTime !== undefined ?
+        ` ${targetedExecutionTime}` :
         ''
       }`
     )
@@ -190,7 +190,7 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
         remainingGeohashesToProcess,
         notifiedEligibleDonors
       )
-    
+
     const eligibleDonorsCount = Object.keys(eligibleDonors).length
 
     serviceLogger.info(

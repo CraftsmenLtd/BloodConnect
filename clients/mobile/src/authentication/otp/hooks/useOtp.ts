@@ -1,14 +1,14 @@
 import { useState, useRef, useMemo, useEffect } from 'react'
 import type { TextInput } from 'react-native'
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/native'
-import type { 
-  OtpScreenNavigationProp, 
+import type {
+  OtpScreenNavigationProp,
   OtpScreenRouteProp
 } from '../../../setup/navigation/navigationTypes'
-import { 
-  submitOtp, 
-  loginUser, 
-  resetPasswordHandler, 
+import {
+  submitOtp,
+  loginUser,
+  resetPasswordHandler,
   resendSignUpOtp
 } from '../../services/authService'
 import { SCREENS } from '../../../setup/constant/screens'

@@ -151,7 +151,7 @@ const AddPersonalInfo = () => {
           <DateTimePickerComponent
             isOnlyDate={true}
             label="Last Donation Date"
-            value={personalInfo.lastDonationDate !== null 
+            value={personalInfo.lastDonationDate !== null
               ? new Date(personalInfo.lastDonationDate) : null}
             onChange={(date) => handleInputChange('lastDonationDate', date)}
             error={errors.lastDonationDate}
@@ -162,7 +162,7 @@ const AddPersonalInfo = () => {
           <DateTimePickerComponent
             isOnlyDate={true}
             label="Last Vaccinated Date"
-            value={personalInfo.lastVaccinatedDate !== null 
+            value={personalInfo.lastVaccinatedDate !== null
               ? new Date(personalInfo.lastVaccinatedDate) : null}
             onChange={(date) => handleInputChange('lastVaccinatedDate', date)}
             error={errors.lastVaccinatedDate}
