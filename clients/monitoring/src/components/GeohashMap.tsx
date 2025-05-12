@@ -1,28 +1,24 @@
 import type { LegacyRef } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import type { LngLat } from 'mapbox-gl';
 import mapboxgl from 'mapbox-gl'
 import geoHash from 'ngeohash'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { useAuthenticator } from '@aws-amplify/ui-react'
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { useAws } from '../hooks/useAws'
 import { bloodTypes } from '../constants/constants'
+import { Card, Form } from 'react-bootstrap';
+import './GeohashMap.css'
+
 const centerMarker = new mapboxgl.Marker({ color: 'black' })
 
-import './GeohashMap.css'
 
 const GeoHashMap = () => {
   const mapContainerRef = useRef<HTMLDivElement>()
   const mapRef = useRef<mapboxgl.Map>()
   const [currentGeoHashPrefix, setCurrentGeoHashPrefix] = useState<string>()
-  const [searchParams] = useSearchParams()
-  const refreshIntervalSeconds = Number(searchParams.get('refresh') ?? 60)
   const [geoHashCount, setGeoHashCount] = useState(0)
   const awsCredentials = useAws()
-
-  const { signOut } = useAuthenticator((context) => [context.user])
 
   const getDataFromAws = useCallback(async(prefix: string) => {
     const { accessKeyId, secretAccessKey, sessionToken } = awsCredentials!
@@ -169,55 +165,49 @@ const GeoHashMap = () => {
     }
   }, [awsCredentials, moveHandler, refreshMap])
 
-  useEffect(() => {
-    if (refreshIntervalSeconds !== 0) {
-      const refreshIntervalInMS = refreshIntervalSeconds * 1000
-      const refreshIntervalId = setInterval(() => {
-        centerMarker.remove()
-        void refreshMap()
-      }, refreshIntervalInMS)
-
-      return () => {
-        clearInterval(refreshIntervalId)
-      }
-    }
-  }, [refreshIntervalSeconds, refreshMap])
-
   return (
     <div
       style={{ height: '100vh', width: '100vw' }}
       ref={mapContainerRef as LegacyRef<HTMLDivElement>}
       className='map-container'
     >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'absolute',
-          top: 10,
-          left: 10,
-          background: 'white',
-          padding: '10px',
-          borderRadius: '5px',
-          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
-          color: 'black',
-          zIndex: 1
-        }}
-      >
-        <div>
-          <strong style={{ color: 'red' }}>{geoHashCount}</strong> locations
-          displayed
-        </div>
-        <div>
-          <strong style={{ color: 'red' }}>{currentGeoHashPrefix}</strong> area
-          displayed
-        </div>
-        <div>
-          <button onClick={signOut}>Sign Out</button>
-        </div>
-      </div>
+      <InfoCard 
+        geoHashCount={geoHashCount}
+        currentGeoHashPrefix={currentGeoHashPrefix}
+        setCurrentGeoHashPrefix={setCurrentGeoHashPrefix}
+      />
     </div>
   )
 }
+
+type InfoCardProps = {
+  geoHashCount: number;
+  currentGeoHashPrefix?: string;
+  setCurrentGeoHashPrefix: (arg:string) => void;
+}
+
+const InfoCard = ({
+  geoHashCount,
+  currentGeoHashPrefix,
+  setCurrentGeoHashPrefix
+}: InfoCardProps) => {
+  return (
+    <Card style={{ 
+      width: '18rem', zIndex: 1, margin: '4px' }}>
+      <Card.Body>
+        <Card.Title>Current View</Card.Title>
+        <Card.Text>
+          Showing <strong>{geoHashCount}</strong> location(s) in {currentGeoHashPrefix}
+          <Form.Control
+            type="text"
+            aria-describedby="enter geohash"
+            value={currentGeoHashPrefix}
+            onChange={(e) => { setCurrentGeoHashPrefix(e.target.value) }}
+          />
+        </Card.Text>
+      </Card.Body>
+    </Card>
+  );
+};
 
 export default GeoHashMap

@@ -3,6 +3,8 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { Amplify } from 'aws-amplify'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
+import NavBar from './components/NavBar'
+
 
 Amplify.configure({
   Auth: {
@@ -32,9 +34,10 @@ const App = () => {
       socialProviders={['google']}
       hideSignUp>
       <Router>
+        <NavBar />
         <Routes>
           <Route
-            path='/'
+            path='/requests'
             element={<GeohashMap />} />
         </Routes>
       </Router>
