@@ -5,7 +5,6 @@ import type {
   AcceptDonationStatus,
   BloodGroup,
   DonationDTO,
-  DonationStatus,
   DonorSearchStatus,
   EligibleDonorInfo,
   UrgencyType
@@ -89,18 +88,7 @@ export type DonationRequestInitiatorAttributes = {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
-  requestedBloodGroup: BloodGroup;
-  bloodQuantity: number;
-  urgencyLevel: UrgencyType;
-  countryCode: string;
-  location: string;
-  patientName: string;
-  status: DonationStatus;
   geohash: string;
-  donationDateTime: string;
-  contactNumber: string;
-  transportationInfo: string;
-  shortDescription: string;
 }
 
 export type DonorSearchAttributes = {
@@ -108,18 +96,6 @@ export type DonorSearchAttributes = {
   requestPostId: string;
   createdAt: string;
   status: DonorSearchStatus;
-  requestedBloodGroup: BloodGroup;
-  bloodQuantity: number;
-  urgencyLevel: UrgencyType;
-  countryCode: string;
-  location: string;
-  geohash: string;
-  donationDateTime: string;
-  contactNumber: string;
-  patientName: string;
-  seekerName: string;
-  transportationInfo: string;
-  shortDescription: string;
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 

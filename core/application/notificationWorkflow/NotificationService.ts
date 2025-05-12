@@ -16,7 +16,7 @@ import type {
 import type { SNSModel } from '../models/sns/SNSModel'
 import { generateUniqueID } from '../utils/idGenerator'
 import type { QueueModel } from '../models/queue/QueueModel'
-import type { DonorSearchDTO, EligibleDonorInfo } from '../../../commons/dto/DonationDTO';
+import type { DonationDTO, EligibleDonorInfo } from '../../../commons/dto/DonationDTO';
 import { AcceptDonationStatus } from '../../../commons/dto/DonationDTO'
 import type { Logger } from '../models/logger/Logger';
 import type NotificationRepository from '../models/policies/repositories/NotificationRepository';
@@ -231,7 +231,7 @@ export class NotificationService {
   }
 
   async sendRequestNotification(
-    donorSearchAttributes: DonorSearchDTO,
+    donationAttributes: DonationDTO,
     eligibleDonors: Record<string, EligibleDonorInfo>,
     queueModel: QueueModel
   ): Promise<void> {
@@ -240,28 +240,28 @@ export class NotificationService {
         userId: donorId,
         title: 'Blood Request',
         body: getBloodRequestMessage(
-          donorSearchAttributes.urgencyLevel,
-          donorSearchAttributes.requestedBloodGroup,
-          donorSearchAttributes.shortDescription
+          donationAttributes.urgencyLevel,
+          donationAttributes.requestedBloodGroup,
+          donationAttributes.shortDescription
         ),
         type: NotificationType.BLOOD_REQ_POST,
         status: AcceptDonationStatus.PENDING,
         payload: {
-          seekerId: donorSearchAttributes.seekerId,
-          requestPostId: donorSearchAttributes.requestPostId,
-          createdAt: donorSearchAttributes.createdAt,
+          seekerId: donationAttributes.seekerId,
+          requestPostId: donationAttributes.requestPostId,
+          createdAt: donationAttributes.createdAt,
           locationId: eligibleDonors[donorId].locationId,
           distance: eligibleDonors[donorId].distance,
-          seekerName: donorSearchAttributes.seekerName,
-          patientName: donorSearchAttributes.patientName,
-          requestedBloodGroup: donorSearchAttributes.requestedBloodGroup,
-          bloodQuantity: donorSearchAttributes.bloodQuantity,
-          urgencyLevel: donorSearchAttributes.urgencyLevel,
-          location: donorSearchAttributes.location,
-          contactNumber: donorSearchAttributes.contactNumber,
-          transportationInfo: donorSearchAttributes.transportationInfo,
-          shortDescription: donorSearchAttributes.shortDescription,
-          donationDateTime: donorSearchAttributes.donationDateTime
+          seekerName: donationAttributes.seekerName,
+          patientName: donationAttributes.patientName,
+          requestedBloodGroup: donationAttributes.requestedBloodGroup,
+          bloodQuantity: donationAttributes.bloodQuantity,
+          urgencyLevel: donationAttributes.urgencyLevel,
+          location: donationAttributes.location,
+          contactNumber: donationAttributes.contactNumber,
+          transportationInfo: donationAttributes.transportationInfo,
+          shortDescription: donationAttributes.shortDescription,
+          donationDateTime: donationAttributes.donationDateTime
         }
       }
       await this.sendNotification(notificationAttributes, queueModel)

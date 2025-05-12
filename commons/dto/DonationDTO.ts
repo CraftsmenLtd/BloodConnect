@@ -51,19 +51,7 @@ export type DonorSearchDTO = DTO & {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
-  requestedBloodGroup: BloodGroup;
-  bloodQuantity: number;
-  urgencyLevel: UrgencyType;
-  countryCode: string;
-  location: string;
-  geohash: string;
-  donationDateTime: string;
   status: DonorSearchStatus;
-  contactNumber: string;
-  patientName?: string;
-  seekerName: string;
-  transportationInfo?: string;
-  shortDescription?: string;
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 
