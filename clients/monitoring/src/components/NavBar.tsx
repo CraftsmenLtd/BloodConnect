@@ -13,6 +13,7 @@ const NavBar = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link href="#/requests">Requests</Nav.Link>
+            <Nav.Link href="#/trace">Trace</Nav.Link>
           </Nav>
           <Nav>
             <Button variant="outline-danger" onClick={signOut}>

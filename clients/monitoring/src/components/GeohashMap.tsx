@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
+export type LatLong = { latitude: number; longitude: number }
+
 export type MapDataPoint = {
   id: string;
   longitude: number;
@@ -12,25 +14,26 @@ export type MapDataPoint = {
 type GeohashMapProps = {
   data: MapDataPoint[];
   initialCenter?: [number, number];
-  onCenterChange?: (arg: { latitude: number; longitude: number }) => void;
-  floatingComponent?: JSX.Element;
-  center: { latitude: number; longitude: number };
+  onCenterChange?: (arg: LatLong) => void;
+  center: LatLong;
 };
 
 const GeohashMap = ({
   data,
   onCenterChange,
-  floatingComponent,
   center
 }: GeohashMapProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markerRef = useRef<maplibregl.Marker | null>(null);
 
-  if (markerRef.current && mapRef.current) {
-    markerRef.current.setLngLat([center.longitude, center.latitude])
-    mapRef.current.setCenter([center.longitude, center.latitude])
-  }
+  useEffect(() => {
+    if (markerRef.current && mapRef.current) {
+      markerRef.current.setLngLat([center.longitude, center.latitude])
+      mapRef.current.setCenter([center.longitude, center.latitude])
+    }
+  }, [center.latitude, center.longitude])
+
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -78,13 +81,12 @@ const GeohashMap = ({
       .setLngLat([center.longitude, center.latitude])
       .addTo(map);
 
-    map.on('move', () => {
+    map.on('drag', () => {
       const newCenter = mapRef.current!.getCenter()
       centerMarker.setLngLat(newCenter)
-
     });
 
-    map.on('moveend', () => {
+    map.on('dragend', () => {
       const stableCenter = mapRef.current!.getCenter()
       onCenterChange?.({ latitude: stableCenter.lat, longitude: stableCenter.lng })
     })
@@ -116,9 +118,7 @@ const GeohashMap = ({
         width: '100%',
         height: '100%'
       }}
-    >
-      {floatingComponent}
-    </div>
+    />
   );
 };
 
