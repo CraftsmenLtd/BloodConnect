@@ -47,6 +47,7 @@ export class NotificationService {
       notificationAttributes
     )
     if (newNotificationCreated) {
+      this.logger.info('publishing notification')
       await this.publishNotification(
         notificationAttributes,
         cachedUserSnsEndpointArn,
@@ -74,12 +75,14 @@ export class NotificationService {
     notificationAttributes: NotificationAttributes
   ): Promise<boolean> {
     if (notificationAttributes.type === NotificationType.BLOOD_REQ_POST) {
+      this.logger.info('checking if notification record exists')
       const existingNotification = await this.getBloodDonationNotification(
         notificationAttributes.userId,
         notificationAttributes.payload.requestPostId as string,
         NotificationType.BLOOD_REQ_POST
       )
       if (existingNotification !== null) {
+        this.logger.info('notification record exists')
         return false
       }
       const notificationData: DonationNotificationAttributes = {
@@ -106,6 +109,7 @@ export class NotificationService {
         title: notificationAttributes.title,
         body: notificationAttributes.body
       }
+      this.logger.info('creating donation notification record')
       await this.createBloodDonationNotification(notificationData)
     } else if (
       [NotificationType.REQ_ACCEPTED, NotificationType.REQ_IGNORED].includes(
@@ -134,8 +138,10 @@ export class NotificationService {
         title: notificationAttributes.title,
         body: notificationAttributes.body
       }
+      this.logger.info('creating donation response notification record')
       await this.createBloodDonationNotification(notificationData)
     } else {
+      this.logger.info('creating common notification record')
       await this.createNotification(notificationAttributes)
     }
     return true
