@@ -1,101 +1,169 @@
-import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import type { MapDataPoint } from '../components/GeohashMap';
+import type { LatLong, MapDataPoint } from '../components/GeohashMap';
 import GeohashMap from '../components/GeohashMap'
-import { useAws } from '../hooks/useAws'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { encode, decode } from 'ngeohash'
-import { bloodTypes } from '../constants/constants'
 import { Container } from 'react-bootstrap';
+import type { Data } from '../components/InfoCard';
 import InfoCard from '../components/InfoCard';
+import { useAws } from '../hooks/AwsContext';
+import type {
+  AttributeValue,
+  QueryCommandInput,
+} from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb';
+import { FIVE_MIN_IN_MS } from '../constants/constants';
+import { DonationStatus } from '../../../../commons/dto/DonationDTO';
 
+type QueryDonationsInput = {
+  startTime: number;
+  endTime: number;
+  geoPartition: string;
+  country: string;
+  status: DonationStatus;
+  nextPageToken?: Record<string, AttributeValue>;
+}
 
-const GeohashMapMemoed = memo(GeohashMap)
 
 const Requests = () => {
-  const [centerGeoHash, setCenterGeohash] = useState('wh0r3mw8')
-  const [data, setData] = useState<MapDataPoint[]>([])
-  const awsCredentials = useAws()!
-  const s3Client = useMemo(() => new S3Client({
-    region: import.meta.env.VITE_AWS_S3_REGION,
-    credentials: {
-      ...awsCredentials
-    }
-  }), [awsCredentials])
+  const [queryInput, setQueryInput] = useState<Omit<Data, 'centerHash'>>({
+    startTime: Date.now(),
+    endTime: Date.now() - FIVE_MIN_IN_MS,
+    country: 'BD',
+    status: DonationStatus.PENDING
+  })
+  const [mapDataPoints, setMapDataPoints] = useState<MapDataPoint[]>([])
 
-  const centerLatLng = decode(centerGeoHash)
-
-  const centerGeohashPrefix = centerGeoHash.substring(0,
+  const [centerHash, setCenterHash] = useState('wh0r3mw8')
+  const centerLatLng = decode(centerHash)
+  const centerHashPrefix = centerHash.substring(0,
     Number(import.meta.env.VITE_MAX_GEOHASH_PREFIX_SIZE))
 
-  const fetchDonationRequests = useCallback((prefix: string) => Promise.all(
-    bloodTypes.map(async(type) =>
-      s3Client
-        .send(
-          new GetObjectCommand({
-            Bucket: import.meta.env.VITE_AWS_S3_BUCKET,
-            Key: `${import.meta.env.VITE_BUCKET_PATH_PREFIX
-            }/${prefix}-${type}.txt`
-          })
-        )
-        .then(async(
-          response
-        ) =>
-          response.Body ? response.Body.transformToString().then((content) =>
-            content.split('\n')
-          ) : [])
-        .catch(() => [])
-    )
-  ).then(data => data.reduce((acc, geohashes, index) => {
-    const bloodType = bloodTypes[index];
-    geohashes.forEach((location) => {
-      const existingDataPoint = acc.find(dp => dp.id === location);
+  const { credentials } = useAws()!
 
-      if (!existingDataPoint) {
-        const { latitude, longitude } = decode(location);
+  const dynamodbClient = useMemo(() => new DynamoDBClient({
+    region: import.meta.env.VITE_AWS_S3_REGION as string,
+    credentials: credentials!,
+  }), [credentials])
+
+  const queryDonations = async({
+    startTime,
+    endTime,
+    geoPartition,
+    country,
+    status,
+    nextPageToken,
+  }: QueryDonationsInput) => {
+    const nowIso = new Date(startTime).toISOString();
+    const endIso = new Date(endTime).toISOString();
+
+    const gsi1pk = `LOCATION#${country}-${geoPartition}#STATUS#${status}`;
+
+    const input: QueryCommandInput = {
+      TableName: 'stage-bloodConnect-table',
+      IndexName: 'GSI1',
+      KeyConditionExpression: 'GSI1PK = :gsi1pk',
+      FilterExpression: 'donationDateTime BETWEEN :end AND :start',
+      ExpressionAttributeValues: {
+        ':gsi1pk': { S: gsi1pk },
+        ':start': { S: nowIso },
+        ':end': { S: endIso },
+      },
+      ScanIndexForward: false,
+      Limit: 1,
+      ExclusiveStartKey: nextPageToken,
+    };
+
+    const command = new QueryCommand(input);
+    const response = await dynamodbClient.send(command);
+
+    return {
+      items: response.Items ?? [],
+      nextPageToken: response.LastEvaluatedKey,
+    };
+  }
+
+  const parseToMapDataPoints = (records:Record<string, AttributeValue>[]) => records.reduce(
+    (acc, item) => {
+      const geohash = item.geohash?.S;
+      const bloodType = item.requestedBloodGroup?.S;
+
+      if (!geohash || !bloodType) return acc;
+
+      const existing = acc.find((dp) => dp.id === geohash);
+
+      if (!existing) {
+        const { latitude, longitude } = decode(geohash);
         acc.push({
-          id: location,
-          longitude,
+          id: geohash,
           latitude,
-          content: `${bloodType}: 1`
+          longitude,
+          content: `${bloodType}: 1`,
         });
       } else {
-        const { content } = existingDataPoint;
-        const regex = new RegExp(`^(${bloodType}):\\s*(\\d+)$`, 'm');
-        const match = content.match(regex);
+        const regex = new RegExp(`^${bloodType}:\\s*(\\d+)$`, 'm');
+        const match = existing.content.match(regex);
+
         if (match) {
-          const currentCount = parseInt(match[2], 10);
-          const updatedLine = `${bloodType}: ${currentCount + 1}`;
-          existingDataPoint.content = updatedLine;
+          const count = parseInt(match[1], 10);
+          existing.content = existing.content.replace(regex, `${bloodType}: ${count + 1}`);
         } else {
-          existingDataPoint.content = `${content}\n${bloodType}: 1`;
+          existing.content += `\n${bloodType}: 1`;
         }
       }
-    });
 
-    return acc;
-  }, [] as MapDataPoint[])), [s3Client])
+      return acc;
+    }, [] as MapDataPoint[])
 
   useEffect(() => {
-    fetchDonationRequests(centerGeohashPrefix).then((data) => {
-      setData(data)
-    })
-  }, [centerGeohashPrefix, fetchDonationRequests])
+    queryDonations({
+      ...queryInput,
+      geoPartition: centerHashPrefix
+    }).then(response => response.items).then(parseToMapDataPoints).then(setMapDataPoints)
 
-  const infoCard = <InfoCard data={centerGeoHash} onDataChange={
-    (hash: string) => {
-      setCenterGeohash(hash);
-    }} />
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    centerHashPrefix,
+    queryInput,
+    queryInput.country,
+    queryInput.endTime,
+    queryInput.startTime
+  ])
 
   return (
     <Container
       fluid
-      style={{ width: '100vw', height: '97.7vh', padding: 0 }}>
-      <GeohashMapMemoed
+      className="position-relative p-0"
+      style={{ width: '100%', height: '95.8vh' }}>
+      <div
+        className="position-absolute top-0 start-0 m-2"
+        style={{ zIndex: 1000 }}>
+        <InfoCard
+          data={{
+            startTime: queryInput.startTime,
+            endTime: queryInput.endTime,
+            centerHash: centerHash,
+            country: queryInput.country,
+            status: queryInput.status,
+          }}
+          onDataChange={(arg: Data) => {
+            setQueryInput({
+              startTime: arg.startTime,
+              endTime: arg.endTime,
+              country: arg.country,
+              status: arg.status,
+            })
+            setCenterHash(arg.centerHash)
+          }}
+        />
+      </div>
+
+      <GeohashMap
         center={centerLatLng}
-        data={data}
-        onCenterChange={(arg) => { setCenterGeohash(encode(arg.latitude, arg.longitude)) }}
-        floatingComponent={infoCard}
+        data={mapDataPoints}
+        onCenterChange={(arg: LatLong) => {
+          setCenterHash(
+            encode(arg.latitude, arg.longitude))
+        }}
       />
     </Container>
   )

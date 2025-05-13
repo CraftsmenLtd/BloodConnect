@@ -12,3 +12,5 @@ export const bloodTypeColors = [
 export const bloodTypes = [
   'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'
 ]
+
+export const FIVE_MIN_IN_MS = 5 * 60 * 1000

@@ -4,7 +4,9 @@ import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import NavBar from './components/NavBar'
 import Requests from './pages/Requests'
-
+import Trace from './pages/Trace'
+import { AwsProvider, useAws } from './hooks/AwsContext'
+import { Container, Spinner } from 'react-bootstrap'
 
 Amplify.configure({
   Auth: {
@@ -28,6 +30,46 @@ Amplify.configure({
   }
 })
 
+const AwsProviderWrapper = () => {
+  const { loading, error, credentials } = useAws()
+
+  if (!credentials) {
+    return <Container style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '95.8vh',
+    }}>
+      {
+        error && (
+          <>
+            <div>{error.name}</div>
+            <div>{error.message}</div>
+            <div>{error.stack}</div>
+          </>
+        )
+      }
+      {
+        loading && ( 
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        )
+      }
+    </Container>
+  }
+
+  return <Routes>
+    <Route
+      path='/requests'
+      element={<Requests />} />
+    <Route
+      path='/trace'
+      element={<Trace />} />
+
+  </Routes>
+}
+
 const App = () => {
   return (
     <Authenticator
@@ -35,11 +77,9 @@ const App = () => {
       hideSignUp>
       <Router>
         <NavBar />
-        <Routes>
-          <Route
-            path='/requests'
-            element={<Requests />} />
-        </Routes>
+        <AwsProvider>
+          <AwsProviderWrapper />
+        </AwsProvider>
       </Router>
     </Authenticator>
   )
