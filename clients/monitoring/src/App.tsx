@@ -1,9 +1,9 @@
-import GeohashMap from './components/GeohashMap'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { Amplify } from 'aws-amplify'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import NavBar from './components/NavBar'
+import Requests from './pages/Requests'
 
 
 Amplify.configure({
@@ -38,7 +38,7 @@ const App = () => {
         <Routes>
           <Route
             path='/requests'
-            element={<GeohashMap />} />
+            element={<Requests />} />
         </Routes>
       </Router>
     </Authenticator>
