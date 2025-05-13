@@ -5,7 +5,8 @@ const NavBar = () => {
   const { signOut, user } = useAuthenticator((context) => [context.user]);
 
   return (
-    <Navbar bg="dark" expand="lg" data-bs-theme="dark">
+    <Navbar bg="dark" expand="lg" data-bs-theme="dark" style={{
+    }}>
       <Container>
         <Navbar.Brand href="/">Bloodconnect</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
