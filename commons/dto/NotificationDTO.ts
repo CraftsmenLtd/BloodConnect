@@ -4,6 +4,7 @@ import type { DTO, HasIdentifier } from './DTOCommon'
 export enum NotificationType {
   BLOOD_REQ_POST = 'BLOOD_REQ_POST',
   REQ_ACCEPTED = 'REQ_ACCEPTED',
+  REQ_IGNORED = 'REQ_IGNORED',
   COMMON = 'COMMON'
 }
 export enum NotificationStatus {

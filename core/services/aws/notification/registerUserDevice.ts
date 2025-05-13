@@ -20,6 +20,8 @@ import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperati
 const config = new Config<{
   dynamodbTableName: string;
   awsRegion: string;
+  platformArnApns: string;
+  platformArnFcm: string;
   minMonthsBetweenDonations: number;
 }>().getConfig()
 
@@ -52,7 +54,7 @@ async function registerUserDeviceLambda(
     const response = await notificationService.storeDevice(
       snsAttributes,
       userService,
-      new SNSOperations()
+      new SNSOperations(config.awsRegion, config.platformArnApns, config.platformArnFcm)
     )
     return generateApiGatewayResponse({ message: response }, HTTP_CODES.OK)
   } catch (error) {

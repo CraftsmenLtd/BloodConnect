@@ -29,7 +29,8 @@ export class AcceptDonationService {
     bloodDonationService: BloodDonationService,
     userService: UserService,
     notificationService: NotificationService,
-    queueModel: QueueModel
+    queueModel: QueueModel,
+    notificationQueueUrl: string
   ): Promise<void> {
     if (![AcceptDonationStatus.ACCEPTED, AcceptDonationStatus.IGNORED].includes(status)) {
       throw new Error('Invalid status for donation response.')
@@ -50,8 +51,10 @@ export class AcceptDonationService {
     if (donorProfile.bloodGroup !== donationPost.requestedBloodGroup) {
       throw new Error('Your blood group doesn\'t match with the request blood group')
     }
-    if (donationPost.status !== DonationStatus.PENDING
-      && donationPost.status !== DonationStatus.MANAGED) {
+    if (
+      donationPost.status !== DonationStatus.PENDING &&
+      donationPost.status !== DonationStatus.MANAGED
+    ) {
       throw new Error('Donation request is no longer available for acceptance.')
     }
 
@@ -62,6 +65,7 @@ export class AcceptDonationService {
         await this.sendNotificationToSeeker(
           notificationService,
           queueModel,
+          notificationQueueUrl,
           seekerId,
           requestPostId,
           donationPost,
@@ -80,6 +84,7 @@ export class AcceptDonationService {
         await this.sendNotificationToSeeker(
           notificationService,
           queueModel,
+          notificationQueueUrl,
           seekerId,
           requestPostId,
           donationPost,
@@ -200,6 +205,7 @@ export class AcceptDonationService {
   async sendNotificationToSeeker(
     notificationService: NotificationService,
     queueModel: QueueModel,
+    notificationQueueUrl: string,
     seekerId: string,
     requestPostId: string,
     donationPost: DonationDTO,
@@ -209,16 +215,15 @@ export class AcceptDonationService {
     donorProfile: UserDetailsDTO
   ): Promise<void> {
     const acceptedDonors = await this.getAcceptedDonorList(seekerId, requestPostId)
-
+    const isAccepted = status === AcceptDonationStatus.ACCEPTED
     const notificationAttributes: DonationNotificationAttributes = {
       userId: seekerId,
-      title: status === AcceptDonationStatus.ACCEPTED ? 'Donor Found' : 'Donor Ignored',
+      title: isAccepted ? 'Donor Found' : 'Donor Ignored',
       status,
-      body:
-        status === AcceptDonationStatus.ACCEPTED
-          ? `${donationPost.requestedBloodGroup} blood found`
-          : 'request was ignored by donor',
-      type: NotificationType.REQ_ACCEPTED,
+      body: isAccepted
+        ? `${donationPost.requestedBloodGroup} blood found`
+        : 'request was ignored by donor',
+      type: isAccepted ? NotificationType.REQ_ACCEPTED : NotificationType.REQ_IGNORED,
       payload: {
         donorId,
         seekerId,
@@ -237,7 +242,11 @@ export class AcceptDonationService {
     }
 
     this.logger.info('sending notification to seeker')
-    await notificationService.sendNotification(notificationAttributes, queueModel)
+    await notificationService.sendNotification(
+      notificationAttributes,
+      queueModel,
+      notificationQueueUrl
+    )
   }
 
   async updateDonationNotification(

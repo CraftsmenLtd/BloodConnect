@@ -115,7 +115,7 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
       acceptDonationService,
       notificationService,
       geohashService,
-      queueModel: new SQSOperations(),
+      queueModel: new SQSOperations(config.awsRegion),
       geohashCache: GEOHASH_CACHE
     })
   } catch (error) {

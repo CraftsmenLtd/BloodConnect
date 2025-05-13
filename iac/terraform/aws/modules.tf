@@ -92,10 +92,10 @@ module "eventbridge" {
 }
 
 module "notification" {
-  source                = "./notification"
-  environment           = var.environment
-  dynamodb_table_arn    = module.database.dynamodb_table_arn
-  firebase_token_s3_url = var.firebase_token_s3_url
+  source                  = "./notification"
+  environment             = var.environment
+  dynamodb_table_arn      = module.database.dynamodb_table_arn
+  firebase_token_s3_url   = var.firebase_token_s3_url
 }
 
 module "maps" {

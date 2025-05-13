@@ -23,6 +23,7 @@ import SQSOperations from '../commons/sqs/SQSOperations'
 const config = new Config<{
   dynamodbTableName: string;
   awsRegion: string;
+  notificationQueueUrl: string;
 }>().getConfig()
 
 const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
@@ -67,7 +68,8 @@ async function acceptDonationRequestLambda(
       bloodDonationService,
       userService,
       notificationService,
-      new SQSOperations()
+      new SQSOperations(config.awsRegion),
+      config.notificationQueueUrl
     )
 
     return generateApiGatewayResponse(

@@ -31,7 +31,6 @@ import type { BloodDonationService } from './BloodDonationService'
 import type { AcceptDonationService } from './AcceptDonationRequestService'
 import type { NotificationService } from '../notificationWorkflow/NotificationService'
 import { calculateDelayPeriod, calculateTotalDonorsToFind } from '../utils/calculateDonorsToNotify'
-import SQSOperations from 'core/services/aws/commons/sqs/SQSOperations'
 
 export class DonorSearchService {
   constructor(
@@ -222,7 +221,8 @@ export class DonorSearchService {
     await notificationService.sendRequestNotification(
       donationPost,
       eligibleDonors,
-      queueModel
+      queueModel,
+      this.options.notificationQueueUrl
     )
 
     const hasMaxGeohashLevelReached =
@@ -310,7 +310,7 @@ export class DonorSearchService {
         remainingDonorsToFind: 0,
         targetedExecutionTime: Math.floor(Date.now() / 1000) + initiatingDelayPeriod
       },
-      new SQSOperations(),
+      queueModel,
       this.options.donorSearchDelayBetweenExecution
     )
   }
@@ -488,7 +488,7 @@ export class DonorSearchService {
         requestedBloodGroup,
         geohashCachePrefix
       )
-      updateGroupedGeohashCache(geohashCache, queriedDonors, cacheKey)
+      updateGroupedGeohashCache(geohashCache, queriedDonors, cacheKey, this.options.neighborSearchGeohashPrefixLength)
     }
 
     const cachedDonorMap = geohashCache.get(cacheKey) as GeohashDonorMap

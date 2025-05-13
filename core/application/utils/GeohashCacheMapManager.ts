@@ -78,18 +78,19 @@ export class GeohashCacheManager<K, V> {
 export function updateGroupedGeohashCache(
   geohashCacheManager: GeohashCacheManager<string, GeohashDonorMap>,
   queriedDonors: LocationDTO[],
-  cacheKey: string
+  cacheKey: string,
+  neighborSearchGeohashPrefixLength: number
 ): void {
-  const donorMap = groupDonorsByGeohash(queriedDonors)
+  const donorMap = groupDonorsByGeohash(queriedDonors, neighborSearchGeohashPrefixLength)
   geohashCacheManager.set(cacheKey, donorMap)
 }
 
-function groupDonorsByGeohash(queriedDonors: LocationDTO[]): GeohashDonorMap {
+function groupDonorsByGeohash(
+  queriedDonors: LocationDTO[],
+  neighborSearchGeohashPrefixLength: number
+): GeohashDonorMap {
   return queriedDonors.reduce<GeohashDonorMap>((groups, donor) => {
-    const donorGeohash = donor.geohash.slice(
-      0,
-      Number(process.env.NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH)
-    )
+    const donorGeohash = donor.geohash.slice(0, neighborSearchGeohashPrefixLength)
     if (groups[donorGeohash] == null) {
       groups[donorGeohash] = []
     }
