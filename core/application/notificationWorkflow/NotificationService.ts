@@ -42,38 +42,8 @@ export class NotificationService {
       userId,
       userService
     )
+
     this.logger.info('creating notification record')
-    const newNotificationCreated = await this.createNotificationRecord(
-      notificationAttributes
-    )
-    if (newNotificationCreated) {
-      this.logger.info('publishing notification')
-      await this.publishNotification(
-        notificationAttributes,
-        cachedUserSnsEndpointArn,
-        snsModel
-      )
-    }
-  }
-
-  private async getUserSnsEndpointArn(
-    userDeviceToSnsEndpointMap: LocalCacheMapManager<string, string>,
-    userId: string,
-    userService: UserService
-  ): Promise<string> {
-    const cachedUserSnsEndpointArn = userDeviceToSnsEndpointMap.get(userId)
-    if (cachedUserSnsEndpointArn === undefined) {
-      const userSnsEndpointArn = await userService.getDeviceSnsEndpointArn(userId)
-      userDeviceToSnsEndpointMap.set(userId, userSnsEndpointArn)
-      return userSnsEndpointArn
-    } else {
-      return cachedUserSnsEndpointArn
-    }
-  }
-
-  async createNotificationRecord(
-    notificationAttributes: NotificationAttributes
-  ): Promise<boolean> {
     if (notificationAttributes.type === NotificationType.BLOOD_REQ_POST) {
       this.logger.info('checking if notification record exists')
       const existingNotification = await this.getBloodDonationNotification(
@@ -81,36 +51,41 @@ export class NotificationService {
         notificationAttributes.payload.requestPostId as string,
         NotificationType.BLOOD_REQ_POST
       )
-      if (existingNotification !== null) {
-        this.logger.info('notification record exists')
-        return false
+      if (existingNotification == null) {
+        const notificationData: DonationNotificationAttributes = {
+          type: notificationAttributes.type,
+          payload: {
+            seekerId: notificationAttributes.payload.seekerId as string,
+            requestPostId: notificationAttributes.payload.requestPostId as string,
+            createdAt: notificationAttributes.payload.createdAt as string,
+            bloodQuantity: notificationAttributes.payload.bloodQuantity as number,
+            requestedBloodGroup: notificationAttributes.payload.requestedBloodGroup as string,
+            urgencyLevel: notificationAttributes.payload.urgencyLevel as string,
+            contactNumber: notificationAttributes.payload.contactNumber as string,
+            donationDateTime: notificationAttributes.payload.donationDateTime as string,
+            seekerName: notificationAttributes.payload.seekerName as string,
+            patientName: notificationAttributes.payload.patientName as string,
+            location: notificationAttributes.payload.location as string,
+            locationId: notificationAttributes.payload.locationId as string,
+            shortDescription: notificationAttributes.payload.shortDescription as string,
+            transportationInfo: notificationAttributes.payload.transportationInfo as string,
+            distance: notificationAttributes.payload.distance as number
+          },
+          status: notificationAttributes.payload.status as AcceptDonationStatus,
+          userId: notificationAttributes.userId,
+          title: notificationAttributes.title,
+          body: notificationAttributes.body
+        }
+        this.logger.info('creating donation notification record')
+        await this.createBloodDonationNotification(notificationData)
+        this.logger.info('publishing notification')
+        await this.publishNotification(
+          notificationAttributes,
+          cachedUserSnsEndpointArn,
+          snsModel
+        )
       }
-      const notificationData: DonationNotificationAttributes = {
-        type: notificationAttributes.type,
-        payload: {
-          seekerId: notificationAttributes.payload.seekerId as string,
-          requestPostId: notificationAttributes.payload.requestPostId as string,
-          createdAt: notificationAttributes.payload.createdAt as string,
-          bloodQuantity: notificationAttributes.payload.bloodQuantity as number,
-          requestedBloodGroup: notificationAttributes.payload.requestedBloodGroup as string,
-          urgencyLevel: notificationAttributes.payload.urgencyLevel as string,
-          contactNumber: notificationAttributes.payload.contactNumber as string,
-          donationDateTime: notificationAttributes.payload.donationDateTime as string,
-          seekerName: notificationAttributes.payload.seekerName as string,
-          patientName: notificationAttributes.payload.patientName as string,
-          location: notificationAttributes.payload.location as string,
-          locationId: notificationAttributes.payload.locationId as string,
-          shortDescription: notificationAttributes.payload.shortDescription as string,
-          transportationInfo: notificationAttributes.payload.transportationInfo as string,
-          distance: notificationAttributes.payload.distance as number
-        },
-        status: notificationAttributes.payload.status as AcceptDonationStatus,
-        userId: notificationAttributes.userId,
-        title: notificationAttributes.title,
-        body: notificationAttributes.body
-      }
-      this.logger.info('creating donation notification record')
-      await this.createBloodDonationNotification(notificationData)
+
     } else if (
       [NotificationType.REQ_ACCEPTED, NotificationType.REQ_IGNORED].includes(
         notificationAttributes.type
@@ -140,11 +115,37 @@ export class NotificationService {
       }
       this.logger.info('creating donation response notification record')
       await this.createBloodDonationNotification(notificationData)
+      this.logger.info('publishing notification')
+      await this.publishNotification(
+        notificationAttributes,
+        cachedUserSnsEndpointArn,
+        snsModel
+      )
     } else {
       this.logger.info('creating common notification record')
       await this.createNotification(notificationAttributes)
+      this.logger.info('publishing notification')
+      await this.publishNotification(
+        notificationAttributes,
+        cachedUserSnsEndpointArn,
+        snsModel
+      )
     }
-    return true
+  }
+
+  private async getUserSnsEndpointArn(
+    userDeviceToSnsEndpointMap: LocalCacheMapManager<string, string>,
+    userId: string,
+    userService: UserService
+  ): Promise<string> {
+    const cachedUserSnsEndpointArn = userDeviceToSnsEndpointMap.get(userId)
+    if (cachedUserSnsEndpointArn === undefined) {
+      const userSnsEndpointArn = await userService.getDeviceSnsEndpointArn(userId)
+      userDeviceToSnsEndpointMap.set(userId, userSnsEndpointArn)
+      return userSnsEndpointArn
+    } else {
+      return cachedUserSnsEndpointArn
+    }
   }
 
   async publishNotification(
