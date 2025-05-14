@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Card, Form, Button } from 'react-bootstrap';
+import { Card, Form, Button, Spinner } from 'react-bootstrap';
 import { DonationStatus } from '../../../../commons/dto/DonationDTO'
 
 export type Data = {
@@ -10,17 +10,19 @@ export type Data = {
   status: DonationStatus;
 }
 
-type InfoCardProps = {
+type SearchRequestsCardProps = {
   data: Data;
+  loading: boolean;
   onCenterHashChange?: (geohash: string) => void;
   onDataSubmit?: (data: Data) => void | Promise<(data: Data) => void>;
 }
 
-const InfoCard = ({
+const SearchRequestsCard = ({
   data,
+  loading,
   onCenterHashChange,
   onDataSubmit
-}: InfoCardProps) => {
+}: SearchRequestsCardProps) => {
   const startTimeRef = useRef<HTMLInputElement>(null);
   const endTimeRef = useRef<HTMLInputElement>(null);
   const centerHashRef = useRef<HTMLInputElement>(null);
@@ -107,12 +109,15 @@ const InfoCard = ({
         </Form.Group>
         <Button
           onClick={handleSubmit}
-          variant="primary">
-          Search
+          disabled={loading}
+          variant={loading ? 'warning' : 'primary'}>
+          search
+          {loading && (<Spinner size="sm"
+            as="span" animation="grow" />)}
         </Button>
       </Card.Body>
     </Card>
   );
 };
 
-export default InfoCard;
+export default SearchRequestsCard;

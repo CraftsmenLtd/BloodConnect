@@ -1,6 +1,6 @@
 const Trace = () => {
 
-  return <div>Not Implemented</div>
+  return 'Not Implemented'
 };
 
 

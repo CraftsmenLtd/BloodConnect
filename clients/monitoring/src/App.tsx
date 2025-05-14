@@ -6,6 +6,7 @@ import NavBar from './components/NavBar'
 import Requests from './pages/Requests'
 import Trace from './pages/Trace'
 import { AwsProvider, useAws } from './hooks/AwsContext'
+import { DataProvider } from './hooks/DataContext';
 import { Container, Spinner } from 'react-bootstrap'
 
 Amplify.configure({
@@ -78,7 +79,9 @@ const App = () => {
       <Router>
         <NavBar />
         <AwsProvider>
-          <AwsProviderWrapper />
+          <DataProvider>
+            <AwsProviderWrapper />
+          </DataProvider>
         </AwsProvider>
       </Router>
     </Authenticator>
