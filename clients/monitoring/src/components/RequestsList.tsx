@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 
 type RequestsListProps = {
-    data: unknown[];
+    data: {PK: string}[];
     onDataSubmit: (id: string) => void;
 }
 
