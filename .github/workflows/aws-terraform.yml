@@ -69,7 +69,6 @@ jobs:
       TF_VAR_facebook_client_secret: ${{ secrets.FACEBOOK_CLIENT_SECRET  }}
       TF_VAR_firebase_token_s3_url: ${{ secrets.FIREBASE_TOKEN_S3_URL }}
       TF_VAR_google_maps_api_key: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-      TF_VAR_mapbox_public_key : ${{ secrets.MAPBOX_PUBLIC_KEY }}
     steps:
       - name: 📥 Checkout Branch
         uses: actions/checkout@v4
