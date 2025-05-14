@@ -28,7 +28,7 @@ type QueryDonationsInput = {
   nextPageToken?: Record<string, AttributeValue>;
 };
 
-const Requests = () => {
+const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
 
@@ -47,7 +47,7 @@ const Requests = () => {
   const [_, setGlobalData] = useGlobalData();
 
   const dynamodbClient = useMemo(() => new DynamoDBClient({
-    region: import.meta.env.VITE_AWS_S3_REGION as string,
+    region: import.meta.env.VITE_AWS_REGION as string,
     credentials: credentials!,
   }), [credentials]);
 
@@ -65,7 +65,7 @@ const Requests = () => {
     const gsi1pk = `LOCATION#${country}-${geoPartition}#STATUS#${status}`;
 
     const input: QueryCommandInput = {
-      TableName: 'stage-bloodConnect-table',
+      TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
       IndexName: 'GSI1',
       KeyConditionExpression: 'GSI1PK = :gsi1pk',
       FilterExpression: 'donationDateTime BETWEEN :end AND :start',
@@ -184,4 +184,4 @@ const Requests = () => {
   );
 };
 
-export default Requests;
+export default Home;

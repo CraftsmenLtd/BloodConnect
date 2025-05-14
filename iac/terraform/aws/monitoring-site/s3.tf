@@ -44,6 +44,9 @@ locals {
   }
 }
 
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 resource "null_resource" "vite_build" {
   triggers = {
     directory_sha1 = sha1(join("", [
@@ -51,10 +54,7 @@ resource "null_resource" "vite_build" {
       filesha1("${local.client_path}/${f}") if !strcontains(f, "node_modules")
     ]))
 
-    VITE_AWS_S3_BUCKET           = aws_s3_bucket.monitoring_site.id
-    VITE_BUCKET_PATH_PREFIX      = local.monitor_donation_request_s3_path_prefix
-    VITE_AWS_S3_REGION           = aws_s3_bucket.monitoring_site.region
-    VITE_MAPBOX_PUBLIC_KEY       = var.mapbox_public_key
+    VITE_AWS_REGION              = data.aws_region.current.name
     VITE_BASE_ROUTE              = var.site_path
     VITE_AWS_USER_POOL_ID        = var.cognito_user_pool_id
     VITE_AWS_USER_POOL_CLIENT_ID = var.cognito_app_client_id
@@ -70,10 +70,8 @@ resource "null_resource" "vite_build" {
     working_dir = local.client_path
 
     environment = {
-      VITE_AWS_S3_BUCKET           = aws_s3_bucket.monitoring_site.id
-      VITE_BUCKET_PATH_PREFIX      = local.monitor_donation_request_s3_path_prefix
-      VITE_AWS_S3_REGION           = aws_s3_bucket.monitoring_site.region
-      VITE_MAPBOX_PUBLIC_KEY       = var.mapbox_public_key
+      VITE_AWS_REGION              = data.aws_region.current.name
+      VITE_AWS_DYNAMODB_TABLE      = var.dynamodb_table_name
       VITE_BASE_ROUTE              = var.site_path
       VITE_AWS_USER_POOL_ID        = var.cognito_user_pool_id
       VITE_AWS_USER_POOL_CLIENT_ID = var.cognito_app_client_id
@@ -99,9 +97,18 @@ resource "aws_iam_policy" "data_access_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = "s3:GetObject"
-        Resource = "${aws_s3_bucket.monitoring_site.arn}/${local.monitor_donation_request_s3_path_prefix}/*"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:BatchGetItem",
+          "dynamodb:DescribeTable",
+          "dynamodb:GetItem",
+          "dynamodb:Query",
+          "dynamodb:Scan"
+        ]
+        Resource = [
+          "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_table_name}",
+          "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${var.dynamodb_table_name}/index/*",
+        ]
       }
     ]
   })

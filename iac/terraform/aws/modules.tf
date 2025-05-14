@@ -23,8 +23,8 @@ module "web_client" {
 module "monitoring_site" {
   source                     = "./monitoring-site"
   environment                = var.environment
-  mapbox_public_key          = var.mapbox_public_key
   site_path                  = "monitoring"
+  dynamodb_table_name        = module.database.dynamodb_table_name
   cognito_user_pool_id       = module.cognito.user_pool_id
   cognito_app_client_id      = module.cognito.monitoring_user_pool_app_client_id
   maintainers_role           = module.cognito.maintainers_role

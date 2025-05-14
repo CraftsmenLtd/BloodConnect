@@ -3,28 +3,10 @@ variable "environment" {
   description = "Deployment environment"
 }
 
-variable "max_geohash_length" {
-  type        = number
-  description = "geohash length for calculation"
-  default     = 8
-}
-
 variable "max_geohash_prefix_length" {
   type        = number
   description = "geohash length for calculation"
   default     = 4
-}
-
-variable "max_geohash_storage" {
-  type        = number
-  description = "total geohash to store per file"
-  default     = 582542
-}
-
-variable "mapbox_public_key" {
-  type        = string
-  description = "mapbox public key"
-  sensitive   = true
 }
 
 variable "site_path" {
@@ -60,4 +42,9 @@ variable "maintainers_role" {
 variable "bloodconnect_domain" {
   type        = string
   description = "domain for app hosted"
+}
+
+variable "dynamodb_table_name" {
+  type        = string
+  description = "table name"
 }
