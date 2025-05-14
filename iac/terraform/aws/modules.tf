@@ -87,8 +87,6 @@ module "eventbridge" {
   donation_request_queue_arn          = module.donor_search.donation_request_queue_arn
   donation_status_manager_queue_arn   = module.donor_search.donation_status_manager_queue_arn
   dynamodb_table_arn                  = module.database.dynamodb_table_arn
-  monitor_donation_request_lambda_arn = module.monitoring_site.donation_request_lambda_arn
-
 }
 
 module "notification" {
