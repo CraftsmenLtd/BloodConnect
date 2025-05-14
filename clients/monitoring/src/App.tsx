@@ -71,18 +71,27 @@ const AwsProviderWrapper = () => {
 
 const App = () => {
   return (
-    <Authenticator
-      socialProviders={['google']}
-      hideSignUp>
-      <Router>
-        <NavBar />
-        <AwsProvider>
-          <DataProvider>
-            <AwsProviderWrapper />
-          </DataProvider>
-        </AwsProvider>
-      </Router>
-    </Authenticator>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
+      justifyContent: 'center'
+    }}
+    className="bg-dark text-light"
+    >
+      <Authenticator
+        socialProviders={['google']}
+        hideSignUp>
+        <Router>
+          <NavBar />
+          <AwsProvider>
+            <DataProvider>
+              <AwsProviderWrapper />
+            </DataProvider>
+          </AwsProvider>
+        </Router>
+      </Authenticator>
+    </div>
   )
 }
 

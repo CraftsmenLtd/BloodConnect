@@ -137,9 +137,9 @@ const Requests = () => {
     <Container
       fluid
       className="position-relative p-0"
-      style={{ width: '100%', height: '95.8vh' }}>
+      style={{ flexGrow: 1 }}>
       <div
-        className="position-absolute top-0 start-0 m-2"
+        className="position-absolute top-0 start-0"
         style={{ zIndex: 1000 }}>
         <SearchRequestsCard
           loading={loading}
