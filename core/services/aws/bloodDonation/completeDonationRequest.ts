@@ -24,6 +24,7 @@ import SQSOperations from '../commons/sqs/SQSOperations'
 const config = new Config<{
   dynamodbTableName: string;
   awsRegion: string;
+  notificationQueueUrl: string;
   minMonthsBetweenDonations: number;
 }>().getConfig()
 
@@ -74,7 +75,8 @@ async function completeDonationRequest(
       notificationService,
       locationService,
       config.minMonthsBetweenDonations,
-      new SQSOperations()
+      new SQSOperations(config.awsRegion),
+      config.notificationQueueUrl
     )
 
     return generateApiGatewayResponse(

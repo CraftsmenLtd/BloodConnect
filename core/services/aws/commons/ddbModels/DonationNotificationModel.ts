@@ -54,9 +54,7 @@ export default class DonationNotificationModel implements
     return this.getIndexDefinitions()[indexType]?.[indexName]
   }
 
-  fromDto(
-    DonationNotificationDTO: DonationNotificationDTO
-  ): DonationNotificationFields {
+  fromDto(DonationNotificationDTO: DonationNotificationDTO): DonationNotificationFields {
     const { id, userId, type, ...remainingNotificationFields } = DonationNotificationDTO
 
     const data: DonationNotificationFields = {
@@ -65,7 +63,13 @@ export default class DonationNotificationModel implements
       ...remainingNotificationFields
     }
 
-    if ([NotificationType.BLOOD_REQ_POST, NotificationType.REQ_ACCEPTED].includes(type)) {
+    if (
+      [
+        NotificationType.BLOOD_REQ_POST,
+        NotificationType.REQ_ACCEPTED,
+        NotificationType.REQ_IGNORED
+      ].includes(type)
+    ) {
       data.GSI1PK = `${id}`
       data.GSI1SK = `${NOTIFICATION_PK_PREFIX}#${remainingNotificationFields.status}#${userId}`
     }

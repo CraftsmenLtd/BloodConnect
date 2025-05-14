@@ -293,7 +293,8 @@ export class BloodDonationService {
     notificationService: NotificationService,
     locationService: LocationService,
     minMonthsBetweenDonations: number,
-    queueModel: QueueModel
+    queueModel: QueueModel,
+    notificationQueueUrl: string
   ): Promise<void> {
     const donationPost = await this.getDonationRequest(seekerId, requestPostId, requestCreatedAt)
 
@@ -355,7 +356,11 @@ export class BloodDonationService {
           }
         }
 
-        await notificationService.sendNotification(notificationAttributes, queueModel)
+        await notificationService.sendNotification(
+          notificationAttributes,
+          queueModel,
+          notificationQueueUrl
+        )
       })
     )
   }

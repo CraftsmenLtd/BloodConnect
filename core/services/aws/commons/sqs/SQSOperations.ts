@@ -5,8 +5,8 @@ import type { DTO } from 'commons/dto/DTOCommon'
 export default class SQSOperations implements QueueModel {
   private readonly client: SQS
 
-  constructor() {
-    this.client = new SQS({ region: process.env.AWS_REGION })
+  constructor(region: string) {
+    this.client = new SQS({ region })
   }
 
   async queue(messageBody: DTO, queueUrl: string, delaySeconds?: number): Promise<void> {
