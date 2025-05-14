@@ -3,7 +3,7 @@ import { Amplify } from 'aws-amplify'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import NavBar from './components/NavBar'
-import Requests from './pages/Requests'
+import Home from './pages/Home'
 import Trace from './pages/Trace'
 import { AwsProvider, useAws } from './hooks/AwsContext'
 import { DataProvider } from './hooks/DataContext';
@@ -61,7 +61,7 @@ const AwsProviderWrapper = () => {
   return <Routes>
     <Route
       path='/'
-      element={<Requests />} />
+      element={<Home />} />
     <Route
       path='/trace'
       element={<Trace />} />

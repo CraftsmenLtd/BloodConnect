@@ -1,5 +1,5 @@
 import { useAuthenticator } from '@aws-amplify/ui-react';
-import { Button, Navbar, Container, Nav } from 'react-bootstrap';
+import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
 
 const NavBar = () => {
   const { signOut, user } = useAuthenticator((context) => [context.user]);
@@ -15,9 +15,11 @@ const NavBar = () => {
             <Nav.Link href="#/trace">Trace</Nav.Link>
           </Nav>
           <Nav>
-            <Button variant="outline-danger" onClick={signOut}>
-              Sign out {user.signInDetails?.loginId}
-            </Button>
+            <NavDropdown title={user.signInDetails?.loginId}>
+              <NavDropdown.Item onClick={signOut}>
+                sign out
+              </NavDropdown.Item>
+            </NavDropdown>
           </Nav>
         </Navbar.Collapse>
       </Container>
