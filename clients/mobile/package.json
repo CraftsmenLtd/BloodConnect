@@ -20,7 +20,7 @@
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.0.1",
     "@react-native-community/masked-view": "^0.1.11",
-    "@react-native-community/netinfo": "^11.4.1",
+    "@react-native-community/netinfo": "11.3.1",
     "@react-native-firebase/analytics": "^21.12.3",
     "@react-native-firebase/app": "^21.12.2",
     "@react-native-firebase/crashlytics": "^21.10.1",
