@@ -60,7 +60,7 @@ const AwsProviderWrapper = () => {
 
   return <Routes>
     <Route
-      path='/requests'
+      path='/'
       element={<Requests />} />
     <Route
       path='/trace'
@@ -77,7 +77,7 @@ const App = () => {
       height: '100vh',
       justifyContent: 'center'
     }}
-    className="bg-dark text-light"
+    className="bg-dark"
     >
       <Authenticator
         socialProviders={['google']}
