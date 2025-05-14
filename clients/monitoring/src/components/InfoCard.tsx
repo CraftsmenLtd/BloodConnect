@@ -12,12 +12,14 @@ export type Data = {
 
 type InfoCardProps = {
   data: Data;
-  onDataChange?: (data: Data) => void;
+  onCenterHashChange?: (geohash: string) => void;
+  onDataSubmit?: (data: Data) => void | Promise<(data: Data) => void>;
 }
 
 const InfoCard = ({
   data,
-  onDataChange
+  onCenterHashChange,
+  onDataSubmit
 }: InfoCardProps) => {
   const startTimeRef = useRef<HTMLInputElement>(null);
   const endTimeRef = useRef<HTMLInputElement>(null);
@@ -29,7 +31,7 @@ const InfoCard = ({
     if (
       !startTimeRef.current?.value
       && !endTimeRef.current?.value
-      && !centerHashRef.current?.value 
+      && !centerHashRef.current?.value
       && !countryRef.current?.value
       && !statusRef.current?.value
     ) {
@@ -39,7 +41,7 @@ const InfoCard = ({
     const startTimeUnix = new Date(startTimeRef.current!.value).getTime();
     const endTimeUnix = new Date(endTimeRef.current!.value).getTime();
 
-    onDataChange?.({
+    onDataSubmit?.({
       startTime: startTimeUnix,
       endTime: endTimeUnix,
       centerHash: centerHashRef.current!.value,
@@ -57,13 +59,10 @@ const InfoCard = ({
           <Form.Label>Geohash</Form.Label>
           <Form.Control
             type="text"
-            aria-describedby="enter data"
             value={data.centerHash}
             ref={centerHashRef}
             onChange={(e) => {
-              onDataChange?.({
-                ...data, centerHash: e.target.value
-              })
+              onCenterHashChange?.(e.target.value)
             }}
           />
         </Form.Group>
@@ -71,7 +70,6 @@ const InfoCard = ({
           <Form.Label>Country Code</Form.Label>
           <Form.Control
             type="text"
-            aria-describedby="enter data"
             defaultValue={data.country}
             ref={countryRef}
           />
@@ -110,7 +108,7 @@ const InfoCard = ({
         <Button
           onClick={handleSubmit}
           variant="primary">
-          Submit
+          Search
         </Button>
       </Card.Body>
     </Card>

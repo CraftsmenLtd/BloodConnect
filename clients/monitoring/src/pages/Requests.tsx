@@ -1,6 +1,6 @@
 import type { LatLong, MapDataPoint } from '../components/GeohashMap';
 import GeohashMap from '../components/GeohashMap'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { encode, decode } from 'ngeohash'
 import { Container } from 'react-bootstrap';
 import type { Data } from '../components/InfoCard';
@@ -25,12 +25,13 @@ type QueryDonationsInput = {
 
 
 const Requests = () => {
-  const [queryInput, setQueryInput] = useState<Omit<Data, 'centerHash'>>({
+  const queryInput = {
     startTime: Date.now(),
     endTime: Date.now() - FIVE_MIN_IN_MS,
     country: 'BD',
     status: DonationStatus.PENDING
-  })
+  }
+
   const [mapDataPoints, setMapDataPoints] = useState<MapDataPoint[]>([])
 
   const [centerHash, setCenterHash] = useState('wh0r3mw8')
@@ -82,7 +83,7 @@ const Requests = () => {
     };
   }
 
-  const parseToMapDataPoints = (records:Record<string, AttributeValue>[]) => records.reduce(
+  const parseToMapDataPoints = (records: Record<string, AttributeValue>[]) => records.reduce(
     (acc, item) => {
       const geohash = item.geohash?.S;
       const bloodType = item.requestedBloodGroup?.S;
@@ -114,20 +115,14 @@ const Requests = () => {
       return acc;
     }, [] as MapDataPoint[])
 
-  useEffect(() => {
+  const searchDonations = (data: Data) => {
     queryDonations({
-      ...queryInput,
-      geoPartition: centerHashPrefix
-    }).then(response => response.items).then(parseToMapDataPoints).then(setMapDataPoints)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    centerHashPrefix,
-    queryInput,
-    queryInput.country,
-    queryInput.endTime,
-    queryInput.startTime
-  ])
+      ...data, geoPartition: centerHashPrefix
+    })
+      .then(response => response.items)
+      .then(parseToMapDataPoints)
+      .then(setMapDataPoints)
+  }
 
   return (
     <Container
@@ -145,15 +140,8 @@ const Requests = () => {
             country: queryInput.country,
             status: queryInput.status,
           }}
-          onDataChange={(arg: Data) => {
-            setQueryInput({
-              startTime: arg.startTime,
-              endTime: arg.endTime,
-              country: arg.country,
-              status: arg.status,
-            })
-            setCenterHash(arg.centerHash)
-          }}
+          onCenterHashChange={setCenterHash}
+          onDataSubmit={searchDonations}
         />
       </div>
 
