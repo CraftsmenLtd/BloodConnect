@@ -1,18 +1,23 @@
-import type { LatLong, MapDataPoint } from '../components/GeohashMap';
-import GeohashMap from '../components/GeohashMap'
-import { useMemo, useState } from 'react'
-import { encode, decode } from 'ngeohash'
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { encode, decode } from 'ngeohash';
 import { Container } from 'react-bootstrap';
-import type { Data } from '../components/InfoCard';
-import InfoCard from '../components/InfoCard';
+import GeohashMap from '../components/GeohashMap';
+import SearchRequestsCard from '../components/SearchRequestsCard';
 import { useAws } from '../hooks/AwsContext';
+import { useGlobalData } from '../hooks/DataContext';
+import {
+  DynamoDBClient,
+  QueryCommand,
+} from '@aws-sdk/client-dynamodb';
 import type {
   AttributeValue,
   QueryCommandInput,
 } from '@aws-sdk/client-dynamodb';
-import { DynamoDBClient, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { FIVE_MIN_IN_MS } from '../constants/constants';
 import { DonationStatus } from '../../../../commons/dto/DonationDTO';
+import type { LatLong, MapDataPoint } from '../components/GeohashMap';
+import type { Data } from '../components/SearchRequestsCard';
 
 type QueryDonationsInput = {
   startTime: number;
@@ -21,30 +26,30 @@ type QueryDonationsInput = {
   country: string;
   status: DonationStatus;
   nextPageToken?: Record<string, AttributeValue>;
-}
-
+};
 
 const Requests = () => {
-  const queryInput = {
-    startTime: Date.now(),
-    endTime: Date.now() - FIVE_MIN_IN_MS,
-    country: 'BD',
-    status: DonationStatus.PENDING
-  }
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [loading, setLoading] = useState(false);
 
-  const [mapDataPoints, setMapDataPoints] = useState<MapDataPoint[]>([])
+  const centerHash = searchParams.get('centerHash') ?? 'wh0r3mw8';
+  const country = searchParams.get('country') ?? 'BD';
+  const status = (searchParams.get('status') as DonationStatus) ?? DonationStatus.PENDING;
+  const startTime = Number(searchParams.get('startTime') ?? Date.now());
+  const endTime = Number(searchParams.get('endTime') ?? startTime as number - FIVE_MIN_IN_MS);
 
-  const [centerHash, setCenterHash] = useState('wh0r3mw8')
-  const centerLatLng = decode(centerHash)
+  const centerLatLng = decode(centerHash);
   const centerHashPrefix = centerHash.substring(0,
-    Number(import.meta.env.VITE_MAX_GEOHASH_PREFIX_SIZE))
+    Number(import.meta.env.VITE_MAX_GEOHASH_PREFIX_SIZE));
 
-  const { credentials } = useAws()!
+  const [mapDataPoints, setMapDataPoints] = useState<MapDataPoint[]>([]);
+  const { credentials } = useAws()!;
+  const [_, setGlobalData] = useGlobalData();
 
   const dynamodbClient = useMemo(() => new DynamoDBClient({
     region: import.meta.env.VITE_AWS_S3_REGION as string,
     credentials: credentials!,
-  }), [credentials])
+  }), [credentials]);
 
   const queryDonations = async({
     startTime,
@@ -81,10 +86,10 @@ const Requests = () => {
       items: response.Items ?? [],
       nextPageToken: response.LastEvaluatedKey,
     };
-  }
+  };
 
-  const parseToMapDataPoints = (records: Record<string, AttributeValue>[]) => records.reduce(
-    (acc, item) => {
+  const parseToMapDataPoints = (records: Record<string, AttributeValue>[]) =>
+    records.reduce((acc, item) => {
       const geohash = item.geohash?.S;
       const bloodType = item.requestedBloodGroup?.S;
 
@@ -113,16 +118,20 @@ const Requests = () => {
       }
 
       return acc;
-    }, [] as MapDataPoint[])
+    }, [] as MapDataPoint[]);
 
-  const searchDonations = (data: Data) => {
-    queryDonations({
-      ...data, geoPartition: centerHashPrefix
+  const searchDonations = (data: Data) => queryDonations({
+    ...data,
+    geoPartition: centerHashPrefix,
+  })
+    .then(response => response.items)
+    .then(items => {
+      setGlobalData(prev => ({ ...prev, requests: items }));
+      return items;
     })
-      .then(response => response.items)
-      .then(parseToMapDataPoints)
-      .then(setMapDataPoints)
-  }
+    .then(parseToMapDataPoints)
+    .then(setMapDataPoints);
+  
 
   return (
     <Container
@@ -132,16 +141,31 @@ const Requests = () => {
       <div
         className="position-absolute top-0 start-0 m-2"
         style={{ zIndex: 1000 }}>
-        <InfoCard
+        <SearchRequestsCard
+          loading={loading}
           data={{
-            startTime: queryInput.startTime,
-            endTime: queryInput.endTime,
-            centerHash: centerHash,
-            country: queryInput.country,
-            status: queryInput.status,
+            startTime: startTime,
+            endTime: endTime,
+            centerHash,
+            country,
+            status,
           }}
-          onCenterHashChange={setCenterHash}
-          onDataSubmit={searchDonations}
+          onCenterHashChange={(hash) => {
+            setSearchParams(prev => ({ ...prev, centerHash: hash }));
+          }}
+          onDataSubmit={(data) => {
+            setSearchParams(prev => {
+              const current = Object.fromEntries(prev.entries());
+              return {
+                ...current, 
+                ...data, 
+                startTime: data.startTime.toString(),
+                endTime: data.endTime.toString(),
+              };
+            });
+            setLoading(true);
+            searchDonations(data).finally(()=> { setLoading(false) })
+          }}
         />
       </div>
 
@@ -149,13 +173,15 @@ const Requests = () => {
         center={centerLatLng}
         data={mapDataPoints}
         onCenterChange={(arg: LatLong) => {
-          setCenterHash(
-            encode(arg.latitude, arg.longitude))
+          const newHash = encode(arg.latitude, arg.longitude);
+          setSearchParams(prev => {
+            const current = Object.fromEntries(prev.entries());
+            return { ...current, centerHash: newHash };
+          });
         }}
       />
     </Container>
-  )
-}
+  );
+};
 
-
-export default Requests
+export default Requests;
