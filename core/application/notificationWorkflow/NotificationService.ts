@@ -84,8 +84,14 @@ export class NotificationService {
             distance: notificationAttributes.payload.distance as number
           }
         }
-        this.logger.info('creating donation notification record')
+
+        this.logger.info({
+          seekerId: notificationAttributes.payload.seekerId,
+          requestPostId: notificationAttributes.payload.requestPostId,
+          createdAt: notificationAttributes.payload.createdAt
+        }, 'creating donation notification record')
         await this.createBloodDonationNotification(notificationData)
+
         this.logger.info('publishing notification')
         await this.publishNotification(notificationAttributes, cachedUserSnsEndpointArn, snsModel)
       }
@@ -105,13 +111,22 @@ export class NotificationService {
         }
       }
 
-      this.logger.info('creating donation response notification record')
+      this.logger.info({
+        seekerId: notificationAttributes.payload.seekerId,
+        requestPostId: notificationAttributes.payload.requestPostId,
+        createdAt: notificationAttributes.payload.createdAt
+      }, 'creating donation response notification record')
       await this.createBloodDonationNotification(notificationData)
+
       this.logger.info('publishing notification')
       await this.publishNotification(notificationAttributes, cachedUserSnsEndpointArn, snsModel)
     } else {
-      this.logger.info('creating common notification record')
+      this.logger.info({
+        type: notificationAttributes.type,
+        userId: notificationAttributes.userId
+      }, 'creating common notification record')
       await this.createNotification(notificationAttributes)
+
       this.logger.info('publishing notification')
       await this.publishNotification(notificationAttributes, cachedUserSnsEndpointArn, snsModel)
     }
