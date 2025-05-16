@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { encode, decode } from 'ngeohash';
 import { Container } from 'react-bootstrap';
-import GeohashMap from '../components/GeohashMap';
+import GeohashMap, { MapDataPointType } from '../components/GeohashMap';
 import SearchRequestsCard from '../components/SearchRequestsCard';
 import { useAws } from '../hooks/AwsContext';
 import { useGlobalData } from '../hooks/DataContext';
@@ -15,9 +15,12 @@ import type {
   QueryCommandInput,
 } from '@aws-sdk/client-dynamodb';
 import { FIVE_MIN_IN_MS } from '../constants/constants';
+import type { BloodGroup } from '../../../../commons/dto/DonationDTO';
 import { DonationStatus } from '../../../../commons/dto/DonationDTO';
 import type { LatLong, MapDataPoint } from '../components/GeohashMap';
 import type { Data } from '../components/SearchRequestsCard';
+import SidePanel from '../components/SidePanel';
+import type { BloodRequestDynamoDBUnmarshaledItem } from '../constants/types';
 
 type QueryDonationsInput = {
   startTime: number;
@@ -30,9 +33,18 @@ type QueryDonationsInput = {
 
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [loading, setLoading] = useState(false);
+  const [searchRequestsLoading, setSearchRequestsLoading] = useState(false);
 
   const centerHash = searchParams.get('centerHash') ?? 'wh0r3mw8';
+  const [sidePanelProps, setSidePanelProps] = useState<{
+    show: boolean;
+    bloodGroup?: BloodGroup;
+    geohash: string;
+  }>({
+    show: false,
+    bloodGroup: undefined,
+    geohash: centerHash
+  });
   const country = searchParams.get('country') ?? 'BD';
   const status = (searchParams.get('status') as DonationStatus) ?? DonationStatus.PENDING;
   const startTime = Number(searchParams.get('startTime') ?? Date.now());
@@ -44,7 +56,7 @@ const Home = () => {
 
   const [mapDataPoints, setMapDataPoints] = useState<MapDataPoint[]>([]);
   const { credentials } = useAws()!;
-  const [_, setGlobalData] = useGlobalData();
+  const [globalData, setGlobalData] = useGlobalData();
 
   const dynamodbClient = useMemo(() => new DynamoDBClient({
     region: import.meta.env.VITE_AWS_REGION as string,
@@ -58,7 +70,10 @@ const Home = () => {
     country,
     status,
     nextPageToken,
-  }: QueryDonationsInput) => {
+  }: QueryDonationsInput): Promise<{
+    items: BloodRequestDynamoDBUnmarshaledItem[];
+    nextPageToken?: Record<string, AttributeValue>;
+  }> => {
     const nowIso = new Date(startTime).toISOString();
     const endIso = new Date(endTime).toISOString();
 
@@ -83,19 +98,27 @@ const Home = () => {
     const response = await dynamodbClient.send(command);
 
     return {
-      items: response.Items ?? [],
+      items: (response.Items ?? []) as BloodRequestDynamoDBUnmarshaledItem[],
       nextPageToken: response.LastEvaluatedKey,
     };
   };
 
-  const parseToMapDataPoints = (records: Record<string, AttributeValue>[]) =>
+  const handleBloodTypePopupClick = (bloodGroup: BloodGroup, geohash: string) => {
+    setSidePanelProps({
+      show: true,
+      bloodGroup,
+      geohash
+    })
+  }
+  const parseToMapDataPopupPoints = (records: Record<string, AttributeValue>[]) =>
     records.reduce((acc, item) => {
       const geohash = item.geohash?.S;
-      const bloodType = item.requestedBloodGroup?.S;
+      const bloodGroup = item.requestedBloodGroup?.S as BloodGroup;
 
-      if (!geohash || !bloodType) return acc;
+      if (!geohash || !bloodGroup) return acc;
 
-      const existing = acc.find((dp) => dp.id === geohash);
+      const existing = acc.find((dp) => dp.id === geohash) as
+        MapDataPoint & { type: MapDataPointType.POPUP }
 
       if (!existing) {
         const { latitude, longitude } = decode(geohash);
@@ -103,18 +126,15 @@ const Home = () => {
           id: geohash,
           latitude,
           longitude,
-          content: `${bloodType}: 1`,
+          content: {
+            [bloodGroup]: 1
+          },
+          type: MapDataPointType.POPUP,
+          onBloodGroupCountClick: (...arg) => { handleBloodTypePopupClick(...arg) }
         });
       } else {
-        const regex = new RegExp(`^${bloodType}:\\s*(\\d+)$`, 'm');
-        const match = existing.content.match(regex);
-
-        if (match) {
-          const count = parseInt(match[1], 10);
-          existing.content = existing.content.replace(regex, `${bloodType}: ${count + 1}`);
-        } else {
-          existing.content += `\n${bloodType}: 1`;
-        }
+        const count = existing.content[bloodGroup] ?? 0
+        existing.content[bloodGroup] = count + 1
       }
 
       return acc;
@@ -123,15 +143,24 @@ const Home = () => {
   const searchDonations = (data: Data) => queryDonations({
     ...data,
     geoPartition: centerHashPrefix,
-  })
+  }).
+    catch((err) => {
+      alert(err);
+      return [{ items: [] }]
+    })
     .then(response => response.items)
     .then(items => {
-      setGlobalData(prev => ({ ...prev, requests: items }));
+      setGlobalData(prev => ({ ...prev, requests: items as BloodRequestDynamoDBUnmarshaledItem[] }));
       return items;
     })
-    .then(parseToMapDataPoints)
+    .then(parseToMapDataPopupPoints)
     .then(setMapDataPoints);
-  
+
+
+  const sidePanelRquests = globalData.requests.filter(
+    request => request.requestedBloodGroup.S === sidePanelProps.bloodGroup &&
+      request.geohash.S === sidePanelProps.geohash)
+
 
   return (
     <Container
@@ -139,10 +168,10 @@ const Home = () => {
       className="position-relative p-0"
       style={{ flexGrow: 1 }}>
       <div
-        className="position-absolute top-0 start-0"
+        className="position-absolute top-0 start-0 m-2"
         style={{ zIndex: 1000 }}>
         <SearchRequestsCard
-          loading={loading}
+          loading={searchRequestsLoading}
           data={{
             startTime: startTime,
             endTime: endTime,
@@ -157,14 +186,14 @@ const Home = () => {
             setSearchParams(prev => {
               const current = Object.fromEntries(prev.entries());
               return {
-                ...current, 
-                ...data, 
+                ...current,
+                ...data,
                 startTime: data.startTime.toString(),
                 endTime: data.endTime.toString(),
               };
             });
-            setLoading(true);
-            searchDonations(data).finally(()=> { setLoading(false) })
+            setSearchRequestsLoading(true);
+            searchDonations(data).finally(() => { setSearchRequestsLoading(false) })
           }}
         />
       </div>
@@ -180,6 +209,18 @@ const Home = () => {
           });
         }}
       />
+      <div
+        className="position-absolute top-0 end-0"
+        style={{ zIndex: 1000 }}>
+        {
+          sidePanelProps.show && sidePanelProps.bloodGroup &&
+          <SidePanel
+            bloodGroup={sidePanelProps!.bloodGroup}
+            geohash={sidePanelProps.geohash}
+            onClose={() => { setSidePanelProps((prev) => ({ ...prev, show: false })) }}
+            requests={sidePanelRquests} />
+        }
+      </div>
     </Container>
   );
 };

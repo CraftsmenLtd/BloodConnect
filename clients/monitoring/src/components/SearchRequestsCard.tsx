@@ -54,7 +54,7 @@ const SearchRequestsCard = ({
 
   return (
     <Card
-      style={{ width: '18rem', zIndex: 1, margin: '4px', position: 'relative' }}
+      style={{ width: '18rem', zIndex: 1, position: 'relative' }}
       data-bs-theme="dark">
       <Card.Body>
         <Form.Group className="mb-2">
