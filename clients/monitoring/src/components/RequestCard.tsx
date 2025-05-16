@@ -15,6 +15,7 @@ const RequestCard = ({ data }: RequestCardProps) => {
     'LSI1SK', 'GSI1SK',
     'PK', 'SK', 'GSI1PK', 'latitude', 'longitude',
     'patientName', 'shortDescription', 'transportationInfo',
+    'geohash'
   ]);
 
   return (
@@ -33,7 +34,9 @@ const RequestCard = ({ data }: RequestCardProps) => {
                   return (
                     <tr key={key}>
                       <td><strong>{displayKey}</strong></td>
-                      <td>{value.S ?? value.N}</td>
+                      <td>{key === 'createdAt' ||
+                       key === 'donationDateTime' ?
+                        new Date(value.S as string).toLocaleString() : value.S ?? value.N}</td>
                     </tr>
                   );
                 })}
