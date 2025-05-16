@@ -1,10 +1,10 @@
-import type { 
-  AttributeValue, 
-  QueryCommandInput, 
-  GetItemCommandInput, 
+import type {
+  AttributeValue,
+  QueryCommandInput,
+  GetItemCommandInput,
   DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { QueryCommand, GetItemCommand } from '@aws-sdk/client-dynamodb';
-import type { 
+import type {
   BloodRequestDynamoDBUnmarshaledItem,
   NotificationDynamoDBUnmarshaledItem,
   UserLocationDynamoDBUnmarshaledItem } from '../../constants/types';

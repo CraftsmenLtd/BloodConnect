@@ -39,7 +39,7 @@ const RequestList = ({
             requests.map((request, index) => (
               <RequestCard
                 activeOnMap={request.SK.S.split('#')[2] === activeRequestOnMap}
-                data={request} key={index} onHeaderClickToOpen={onCardClickToOpen} 
+                data={request} key={index} onHeaderClickToOpen={onCardClickToOpen}
                 onHeaderClickToClose={onCardClickToClose}/>
             ))
           }
