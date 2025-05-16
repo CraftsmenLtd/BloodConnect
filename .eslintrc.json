@@ -68,6 +68,7 @@
       }
     ],
     "no-multi-spaces": "error",
+    "no-trailing-spaces": "error",
     "indent": [
       "error",
       2

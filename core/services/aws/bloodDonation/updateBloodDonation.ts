@@ -2,11 +2,11 @@ import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import {
-  BloodDonationService 
+  BloodDonationService
 } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import type {
-  UpdateBloodDonationAttributes 
+  UpdateBloodDonationAttributes
 } from '../../../application/bloodDonationWorkflow/Types'
 import BloodDonationDynamoDbOperations
   from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
@@ -20,7 +20,7 @@ import { Config } from '../../../../commons/libs/config/config'
 import DonationNotificationDynamoDbOperations
   from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
 import {
-  AcceptDonationService 
+  AcceptDonationService
 } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import AcceptDonationDynamoDbOperations
   from '../commons/ddbOperations/AcceptedDonationDynamoDbOperations'

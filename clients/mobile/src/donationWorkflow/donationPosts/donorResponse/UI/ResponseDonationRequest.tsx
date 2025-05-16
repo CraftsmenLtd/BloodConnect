@@ -73,7 +73,7 @@ const ResponseDonationRequest = () => {
                     {
                       formatBloodQuantity(
                         bloodRequest.bloodQuantity) ?? 0
-                    } 
+                    }
                     {
                       bloodRequest.requestedBloodGroup
                     }(ve) blood
@@ -97,11 +97,11 @@ const ResponseDonationRequest = () => {
                   <Text style={styles.label}>Donation point</Text>
                 </View>
                 {bloodRequest.location !== ''
-                  ? <TouchableOpacity 
-                    onPress={() => { 
-                      openMapLocation({ 
-                        location: bloodRequest.location 
-                      }) 
+                  ? <TouchableOpacity
+                    onPress={() => {
+                      openMapLocation({
+                        location: bloodRequest.location
+                      })
                     }}>
                     <Text style={[styles.value, styles.link]}>{bloodRequest.location}</Text>
                   </TouchableOpacity>
@@ -183,7 +183,7 @@ const ResponseDonationRequest = () => {
 
       {error !== null && <Text style={styles.error}>{error}</Text>}
       {
-        userProfile.userId !== bloodRequest.seekerId && 
+        userProfile.userId !== bloodRequest.seekerId &&
         userProfile.bloodGroup === bloodRequest.requestedBloodGroup &&
         <View style={styles.buttonContainer}>
           {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
@@ -196,7 +196,7 @@ const ResponseDonationRequest = () => {
               }} />}
           <Button
             text={
-              isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' : 
+              isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' :
                 'Accept Request'
             }
             loading={isLoading}

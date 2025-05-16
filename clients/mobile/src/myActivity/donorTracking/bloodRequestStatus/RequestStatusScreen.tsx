@@ -10,13 +10,13 @@ import { commonStyles } from '../../../components/inputElement/commonStyles'
 
 const RequestStatusScreen = () => {
   const styles = createStyles(useTheme())
-  const { 
-    bloodRequest, 
-    notYetHandler, 
-    yesManagedHandler, 
-    loading, 
-    error, 
-    completeDonationError, 
+  const {
+    bloodRequest,
+    notYetHandler,
+    yesManagedHandler,
+    loading,
+    error,
+    completeDonationError,
     completeDonationLoading
   } = useRequestStatus()
 
