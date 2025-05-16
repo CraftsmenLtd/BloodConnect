@@ -1,14 +1,29 @@
 import { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import type { BloodGroup } from '../../../../commons/dto/DonationDTO';
 
 export type LatLong = { latitude: number; longitude: number }
 
+export enum MapDataPointType {
+  MARKER = 'marker',
+  POPUP = 'popup'
+}
 export type MapDataPoint = {
   id: string;
   longitude: number;
   latitude: number;
-  content: string;
+  type: MapDataPointType.POPUP;
+  content: Partial<{
+    [K in BloodGroup]: number;
+  }>;
+  onBloodGroupCountClick: (type: BloodGroup, geohash: string) => void;
+} | {
+  id: string;
+  longitude: number;
+  latitude: number;
+  type: MapDataPointType.MARKER;
+  color: string;
 };
 
 type GeohashMapProps = {
@@ -100,16 +115,40 @@ const GeohashMap = ({
   }, []);
 
   data.forEach((point) => {
-    const popupId = `popup-${point.id}`;
-    document.getElementById(popupId)?.remove()
+    const type = point.type
+    if (type === MapDataPointType.MARKER) {
+      //
+    } else {
+      const popupId = `popup-${point.id}`;
+      const identifyingClassName = 'blood-group-count'
+      document.getElementById(popupId)?.remove()
+      const contentHtml = `${Object.entries(point.content || {})
+        .map(([bloodGroup, value]) => {
 
-    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
-      .setLngLat([point.longitude, point.latitude])
-      .setHTML(`<div>${point.content}</div><div><strong>${point.id}</strong></div>`)
-      .addTo(mapRef.current!);
+          return `<div class="${identifyingClassName}" data-blood-group=${
+            bloodGroup} style="cursor: pointer;">
+              ${bloodGroup}: <text style="color: red;">${value}</text>
+            </div>`;
+        })
+        .join('')}<strong>${point.id}</strong>`;
 
-    popup.getElement().id = popupId;
-  });
+      const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
+        .setLngLat([point.longitude, point.latitude])
+        .setHTML(contentHtml)
+        .addTo(mapRef.current!);
+
+      popup.getElement().id = popupId;
+
+      popup.getElement()
+        .querySelectorAll(`.${identifyingClassName}`)
+        .forEach(el => {
+          const bloodGroup = el.getAttribute('data-blood-group') as BloodGroup;
+          el.addEventListener('click', () => {
+            point.onBloodGroupCountClick(bloodGroup, point.id)
+          });
+        })
+    }
+  })
 
   return (
     <div

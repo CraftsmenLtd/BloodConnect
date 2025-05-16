@@ -1,7 +1,8 @@
 import type { ReactNode, Dispatch, SetStateAction } from 'react';
 import { useState, useContext, createContext } from 'react';
+import type { BloodRequestDynamoDBUnmarshaledItem } from '../constants/types';
 
-type Data = { requests: unknown[] }
+type Data = { requests: BloodRequestDynamoDBUnmarshaledItem[] }
 type DataContextType = [Data, Dispatch<SetStateAction<Data>>]
 
 const defaultData: Data = { requests: [] }

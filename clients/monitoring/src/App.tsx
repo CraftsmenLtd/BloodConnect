@@ -4,7 +4,6 @@ import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import NavBar from './components/NavBar'
 import Home from './pages/Home'
-import Trace from './pages/Trace'
 import { AwsProvider, useAws } from './hooks/AwsContext'
 import { DataProvider } from './hooks/DataContext';
 import { Container, Spinner } from 'react-bootstrap'
@@ -52,7 +51,7 @@ const AwsProviderWrapper = () => {
       }
       {
         loading && ( 
-          <Spinner animation="border" role="status" />
+          <Spinner animation="border" role="status" variant='primary'/>
         )
       }
     </Container>
@@ -62,10 +61,6 @@ const AwsProviderWrapper = () => {
     <Route
       path='/'
       element={<Home />} />
-    <Route
-      path='/trace'
-      element={<Trace />} />
-
   </Routes>
 }
 
@@ -75,7 +70,7 @@ const App = () => {
       display: 'flex',
       flexDirection: 'column',
       height: '100vh',
-      justifyContent: 'center'
+      justifyContent: 'center',
     }}
     className="bg-dark"
     >
