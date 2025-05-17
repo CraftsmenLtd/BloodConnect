@@ -22,7 +22,7 @@ const SidePanel = ({
     <Offcanvas
       show
       placement='end'
-      backdrop={false} 
+      backdrop={false}
       className="bg-dark text-white"
       onHide={onClose}
     >
