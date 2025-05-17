@@ -1,8 +1,12 @@
-import GeohashMap from './components/GeohashMap'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { Amplify } from 'aws-amplify'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
+import NavBar from './components/NavBar'
+import Home from './pages/Home'
+import { AwsProvider, useAws } from './hooks/AwsContext'
+import { DataProvider } from './hooks/DataContext'
+import { Container, Spinner } from 'react-bootstrap'
 
 Amplify.configure({
   Auth: {
@@ -26,19 +30,63 @@ Amplify.configure({
   }
 })
 
+const AwsProviderWrapper = () => {
+  const { loading, error, credentials } = useAws()
+
+  if (!credentials) {
+    return <Container style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '95.8vh',
+    }}>
+      {
+        error && (
+          <>
+            <div>{error.name}</div>
+            <div>{error.message}</div>
+            <div>{error.stack}</div>
+          </>
+        )
+      }
+      {
+        loading && ( 
+          <Spinner animation="border" role="status" variant='primary'/>
+        )
+      }
+    </Container>
+  }
+
+  return <Routes>
+    <Route
+      path='/'
+      element={<Home />} />
+  </Routes>
+}
+
 const App = () => {
   return (
-    <Authenticator
-      socialProviders={['google']}
-      hideSignUp>
-      <Router>
-        <Routes>
-          <Route
-            path='/'
-            element={<GeohashMap />} />
-        </Routes>
-      </Router>
-    </Authenticator>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
+      justifyContent: 'center',
+    }}
+    className="bg-dark"
+    >
+      <Authenticator
+        socialProviders={['google']}
+        hideSignUp>
+        <Router>
+          <NavBar />
+          <AwsProvider>
+            <DataProvider>
+              <AwsProviderWrapper />
+            </DataProvider>
+          </AwsProvider>
+        </Router>
+      </Authenticator>
+    </div>
   )
 }
 

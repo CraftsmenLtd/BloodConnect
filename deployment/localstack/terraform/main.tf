@@ -8,7 +8,6 @@ module "aws" {
   facebook_client_secret = var.facebook_client_secret
   firebase_token_s3_url  = "s3://${aws_s3_object.google_services.bucket}/${aws_s3_object.google_services.key}"
   google_maps_api_key    = var.google_maps_api_key
-  mapbox_public_key      = var.mapbox_public_key
 
   providers = {
     aws.us-east-1 = aws.us-east-1
