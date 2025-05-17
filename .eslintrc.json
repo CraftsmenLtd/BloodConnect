@@ -130,10 +130,6 @@
     "block-spacing": [
       "error",
       "always"
-    ],
-    "semi": [
-      "error",
-      "never"
     ]
   }
 }

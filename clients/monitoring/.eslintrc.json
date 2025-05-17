@@ -1,8 +1,8 @@
 {
   "extends": [
+    "../../.eslintrc.json",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "../../.eslintrc.json"
+    "plugin:react-hooks/recommended"
   ],
   "ignorePatterns": [
     "vite.config.ts",
