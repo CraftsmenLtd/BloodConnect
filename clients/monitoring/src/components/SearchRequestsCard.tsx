@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Card, Form, Button, Spinner } from 'react-bootstrap';
+import { useRef } from 'react'
+import { Card, Form, Button, Spinner } from 'react-bootstrap'
 import { DonationStatus } from '../../../../commons/dto/DonationDTO'
 
 export type Data = {
@@ -23,10 +23,10 @@ const SearchRequestsCard = ({
   onCenterHashChange,
   onDataSubmit
 }: SearchRequestsCardProps) => {
-  const startTimeRef = useRef<HTMLInputElement>(null);
-  const endTimeRef = useRef<HTMLInputElement>(null);
-  const centerHashRef = useRef<HTMLInputElement>(null);
-  const countryRef = useRef<HTMLInputElement>(null);
+  const startTimeRef = useRef<HTMLInputElement>(null)
+  const endTimeRef = useRef<HTMLInputElement>(null)
+  const centerHashRef = useRef<HTMLInputElement>(null)
+  const countryRef = useRef<HTMLInputElement>(null)
   const statusRef = useRef<HTMLSelectElement>(null)
 
   const handleSubmit = () => {
@@ -40,8 +40,8 @@ const SearchRequestsCard = ({
       return
     }
 
-    const startTimeUnix = new Date(startTimeRef.current!.value).getTime();
-    const endTimeUnix = new Date(endTimeRef.current!.value).getTime();
+    const startTimeUnix = new Date(startTimeRef.current!.value).getTime()
+    const endTimeUnix = new Date(endTimeRef.current!.value).getTime()
 
     onDataSubmit?.({
       startTime: startTimeUnix,
@@ -49,8 +49,8 @@ const SearchRequestsCard = ({
       centerHash: centerHashRef.current!.value,
       country: countryRef.current!.value,
       status: statusRef.current!.value as DonationStatus,
-    });
-  };
+    })
+  }
 
   return (
     <Card
@@ -117,7 +117,7 @@ const SearchRequestsCard = ({
         </Button>
       </Card.Body>
     </Card>
-  );
-};
+  )
+}
 
-export default SearchRequestsCard;
+export default SearchRequestsCard
