@@ -1,13 +1,14 @@
-import { Offcanvas, } from 'react-bootstrap';
-import type { BloodGroup } from '../../../../commons/dto/DonationDTO';
-import RequestCard from './RequestCard';
-import type { BloodRequestDynamoDBUnmarshaledItem } from '../constants/types';
+import { Offcanvas, Stack, } from 'react-bootstrap'
+import type { BloodGroup } from '../../../../commons/dto/DonationDTO'
+import RequestCard from './RequestCard'
+import type { BloodRequestDynamoDBUnmarshaledItem } from '../constants/types'
 
 export type SidePanelProps = {
   onClose: () => void;
   requests: BloodRequestDynamoDBUnmarshaledItem[];
   geohash: string;
   bloodGroup: BloodGroup;
+  onCardClick: (requestId: string) => void;
 }
 
 const SidePanel = ({
@@ -15,9 +16,10 @@ const SidePanel = ({
   requests,
   geohash,
   bloodGroup,
+  onCardClick
 }: SidePanelProps) => {
   return (
-    <Offcanvas 
+    <Offcanvas
       show
       placement='end'
       backdrop={false} 
@@ -28,13 +30,17 @@ const SidePanel = ({
         <Offcanvas.Title>{bloodGroup} requests in {geohash}</Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body>
-        {
-          requests.map((request, index) => (<RequestCard data={request} key={index}/>))
-        }
-        
+        <Stack gap={2}>
+          {
+            requests.map((request, index) => (
+              <RequestCard
+                data={request} key={index} onHeaderClick={onCardClick}/>
+            ))
+          }
+        </Stack>
       </Offcanvas.Body>
     </Offcanvas>
-  );
-};
+  )
+}
 
-export default SidePanel;
+export default SidePanel

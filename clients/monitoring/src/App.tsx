@@ -5,7 +5,7 @@ import '@aws-amplify/ui-react/styles.css'
 import NavBar from './components/NavBar'
 import Home from './pages/Home'
 import { AwsProvider, useAws } from './hooks/AwsContext'
-import { DataProvider } from './hooks/DataContext';
+import { DataProvider } from './hooks/DataContext'
 import { Container, Spinner } from 'react-bootstrap'
 
 Amplify.configure({

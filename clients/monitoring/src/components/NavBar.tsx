@@ -1,8 +1,8 @@
-import { useAuthenticator } from '@aws-amplify/ui-react';
-import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
+import { useAuthenticator } from '@aws-amplify/ui-react'
+import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 
 const NavBar = () => {
-  const { signOut, user } = useAuthenticator((context) => [context.user]);
+  const { signOut, user } = useAuthenticator((context) => [context.user])
 
   return (
     <Navbar bg="dark" expand="lg" data-bs-theme="dark">
@@ -20,7 +20,7 @@ const NavBar = () => {
         </Navbar.Collapse>
       </Container>
     </Navbar>
-  );
-};
+  )
+}
 
-export default NavBar;
+export default NavBar
