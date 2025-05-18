@@ -6,7 +6,7 @@ import { vscodeTheme } from '@uiw/react-json-view/vscode';
 type RequestCardProps = {
   data: CompleteRequest;
   onHeaderClickToOpen: (requestId: string) => void;
-  onHeaderClickToClose: () => void;
+  onHeaderClickToClose: (requestId: string) => void;
 };
 
 const RequestCard = ({ data, onHeaderClickToOpen, onHeaderClickToClose }: RequestCardProps) => {
@@ -19,7 +19,7 @@ const RequestCard = ({ data, onHeaderClickToOpen, onHeaderClickToClose }: Reques
         <Accordion.Body
           className="bg-dark text-light p-0 border-0"
           onEnter={() => onHeaderClickToOpen(requestId)}
-          onExit={onHeaderClickToClose}
+          onExit={() => { onHeaderClickToClose(requestId) }}
         >
           <JsonView 
             value={data} 

@@ -22,7 +22,7 @@ const Home = () => {
   const [searchRequestsLoading, setSearchRequestsLoading] = useState(false)
 
   const centerHash = searchParams.get('centerHash') ?? 'wh0r3mw8'
-  const [sidePanelProps, setSidePanelProps] = useState<{
+  const [requestListProps, setRequestListProps] = useState<{
     show: boolean;
     bloodGroup?: BloodGroup;
     geohash: string;
@@ -51,7 +51,7 @@ const Home = () => {
   }), [credentials])
 
   const handleBloodTypePopupClick = (bloodGroup: BloodGroup, geohash: string) => {
-    setSidePanelProps({
+    setRequestListProps({
       show: true,
       bloodGroup,
       geohash,
@@ -64,8 +64,8 @@ const Home = () => {
       const geohash = item.geohash.S
       const bloodGroup = item.requestedBloodGroup?.S as BloodGroup
       const detailsShownOnMap = item.SK.S.split('#')[2] ===
-        sidePanelProps.detailsShownOnMapForRequestId ||
-        sidePanelProps.detailsShownOnMapForRequestId === null
+        requestListProps.detailsShownOnMapForRequestId ||
+        requestListProps.detailsShownOnMapForRequestId === null
 
 
       if (!geohash || !bloodGroup || !detailsShownOnMap) return acc
@@ -82,7 +82,7 @@ const Home = () => {
           longitude,
           onBloodGroupCountClick: (...arg) => { handleBloodTypePopupClick(...arg) },
           content: {
-            [bloodGroup]: sidePanelProps.detailsShownOnMapForRequestId === null ?
+            [bloodGroup]: requestListProps.detailsShownOnMapForRequestId === null ?
               1 : item.bloodQuantity.N,
           },
         })
@@ -96,7 +96,8 @@ const Home = () => {
 
   const parsedDonorsToMapDataPoints =
     globalData.requests
-      .find(request => request.SK.S.split('#')[2] === sidePanelProps.detailsShownOnMapForRequestId)
+      .find(
+        request => request.SK.S.split('#')[2] === requestListProps.detailsShownOnMapForRequestId)
       ?.notifiedDonors?.reduce((acc, notifiedDonor) => {
         const latitude = Number(notifiedDonor.location.latitude.N)
         const longitude = Number(notifiedDonor.location.longitude.N)
@@ -175,8 +176,8 @@ const Home = () => {
     })
 
   const sidePanelRequests = globalData.requests.filter(
-    request => request.requestedBloodGroup.S === sidePanelProps.bloodGroup &&
-      request.geohash.S === sidePanelProps.geohash)
+    request => request.requestedBloodGroup.S === requestListProps.bloodGroup &&
+      request.geohash.S === requestListProps.geohash)
 
   return (
     <Container
@@ -234,18 +235,20 @@ const Home = () => {
       <div
         className="position-absolute top-0 end-0">
         {
-          sidePanelProps.show && sidePanelProps.bloodGroup &&
+          requestListProps.show && requestListProps.bloodGroup &&
           <RequestList
-            onCardClickToClose={() => setSidePanelProps(prev => (
-              { ...prev, detailsShownOnMapForRequestId: null }))}
+            onCardClickToClose={(requestId) => setRequestListProps(prev => (
+              { ...prev, detailsShownOnMapForRequestId: 
+                requestId === requestListProps.detailsShownOnMapForRequestId ?
+                  null : requestListProps.detailsShownOnMapForRequestId }))}
             onCardClickToOpen={(requestId) => {
-              setSidePanelProps(prev => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
+              setRequestListProps(prev => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
               setSearchRequestsLoading(true)
               searchNotifiedDonors(requestId).finally(() => { setSearchRequestsLoading(false) })
             }}
-            bloodGroup={sidePanelProps!.bloodGroup}
-            geohash={sidePanelProps.geohash}
-            onClose={() => { setSidePanelProps((prev) => ({
+            bloodGroup={requestListProps!.bloodGroup}
+            geohash={requestListProps.geohash}
+            onClose={() => { setRequestListProps((prev) => ({
               ...prev, show: false,
               detailsShownOnMapForRequestId: null })) }}
             requests={sidePanelRequests} />

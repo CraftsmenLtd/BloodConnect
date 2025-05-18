@@ -9,7 +9,7 @@ export type RequestListProps = {
   geohash: string;
   bloodGroup: BloodGroup;
   onCardClickToOpen: (requestId: string) => void;
-  onCardClickToClose: () => void;
+  onCardClickToClose: (requestId: string) => void;
 }
 
 const RequestList = ({
