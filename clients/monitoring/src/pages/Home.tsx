@@ -82,7 +82,8 @@ const Home = () => {
           longitude,
           onBloodGroupCountClick: (...arg) => { handleBloodTypePopupClick(...arg) },
           content: {
-            [bloodGroup]: 1
+            [bloodGroup]: sidePanelProps.detailsShownOnMapForRequestId === null ?
+              1 : item.bloodQuantity.N,
           },
         })
       } else {

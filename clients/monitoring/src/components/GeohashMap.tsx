@@ -188,24 +188,21 @@ const GeohashMap = ({
     properties: {}
   }));
     
-  linesToDraw 
-    && mapRef.current 
-    && mapRef.current!.addSource('lines', {
-      type: 'geojson',
-      data: {
-        type: 'FeatureCollection',
-        features: linesToDraw as Feature<LineString, GeoJsonProperties>[]
-      }
-    }) 
-    && mapRef.current.addLayer({
-      id: 'line-layer',
-      type: 'line',
-      source: 'lines',
-      paint: {
-        'line-color': '#ff0000',
-        'line-width': 2
-      }
-    });
+  linesToDraw && mapRef.current?.addSource('lines', {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: linesToDraw as Feature<LineString, GeoJsonProperties>[]
+    }
+  }).addLayer({
+    id: 'line-layer',
+    type: 'line',
+    source: 'lines',
+    paint: {
+      'line-color': '#ff0000',
+      'line-width': 2
+    }
+  });
 
   return (
     <div
