@@ -42,7 +42,7 @@ const Home = () => {
   const centerHashPrefix = centerHash.substring(0,
     Number(import.meta.env.VITE_MAX_GEOHASH_PREFIX_SIZE))
 
-  const { credentials } = useAws()!
+  const { credentials } = useAws()
   const [globalData, setGlobalData] = useGlobalData()
 
   const dynamodbClient = useMemo(() => new DynamoDBClient({
@@ -195,7 +195,9 @@ const Home = () => {
             status,
           }}
           onCenterHashChange={(hash) => {
-            setSearchParams(prev => ({ ...prev, centerHash: hash }))
+            setSearchParams(prev => {
+              const current = Object.fromEntries(prev.entries())
+              return { ...current, centerHash: hash } })
           }}
           onDataSubmit={(data) => {
             setSearchParams(prev => {
@@ -222,6 +224,7 @@ const Home = () => {
         data={[...parsedRequestsToMapDataPoints, ...parsedDonorsToMapDataPoints]}
         onCenterChange={(arg: LatLong) => {
           const newHash = encode(arg.latitude, arg.longitude)
+
           setSearchParams(prev => {
             const current = Object.fromEntries(prev.entries())
             return { ...current, centerHash: newHash }
