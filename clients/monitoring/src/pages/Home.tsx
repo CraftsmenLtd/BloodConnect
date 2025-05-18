@@ -213,6 +213,10 @@ const Home = () => {
       </div>
 
       <GeohashMap
+        lines={{
+          from: parsedRequestsToMapDataPoints?.[0],
+          to: parsedDonorsToMapDataPoints
+        }}
         center={centerLatLng}
         data={[...parsedRequestsToMapDataPoints, ...parsedDonorsToMapDataPoints]}
         onCenterChange={(arg: LatLong) => {
@@ -237,7 +241,9 @@ const Home = () => {
             }}
             bloodGroup={sidePanelProps!.bloodGroup}
             geohash={sidePanelProps.geohash}
-            onClose={() => { setSidePanelProps((prev) => ({ ...prev, show: false })) }}
+            onClose={() => { setSidePanelProps((prev) => ({
+              ...prev, show: false,
+              detailsShownOnMapForRequestId: null })) }}
             requests={sidePanelRequests} />
         }
       </div>

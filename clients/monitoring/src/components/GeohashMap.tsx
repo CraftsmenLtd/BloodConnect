@@ -6,6 +6,8 @@ import { HTML_DATA_BLOOD_GROUP_KEY,
   DONOR_CONTROL_CLASS, 
   MARKER_POINT_COLOR_STATUS_MAP, 
   REQUEST_CONTROL_CLASS } from '../constants/constants'
+import type { Feature, GeoJsonProperties, LineString } from 'geojson';
+
 
 export type LatLong = { latitude: number; longitude: number }
 
@@ -37,12 +39,17 @@ type GeohashMapProps = {
   initialCenter?: [number, number];
   onCenterChange?: (arg: LatLong) => void;
   center: LatLong;
+  lines?: {
+    from: LatLong;
+    to: LatLong[];
+  };
 };
 
 const GeohashMap = ({
   data,
   onCenterChange,
-  center
+  center,
+  lines
 }: GeohashMapProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
@@ -163,6 +170,42 @@ const GeohashMap = ({
         })
     }
   } )
+
+  if (mapRef.current?.getLayer('line-layer')) {
+    mapRef.current.removeLayer('line-layer');
+  }
+
+  if (mapRef.current?.getSource('lines')) {
+    mapRef.current.removeSource('lines');
+  }
+
+  const linesToDraw = lines?.to.map((to) => ({
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: [[lines.from.longitude, lines.from.latitude], [to.longitude, to.latitude]]
+    },
+    properties: {}
+  }));
+    
+  linesToDraw 
+    && mapRef.current 
+    && mapRef.current!.addSource('lines', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: linesToDraw as Feature<LineString, GeoJsonProperties>[]
+      }
+    }) 
+    && mapRef.current.addLayer({
+      id: 'line-layer',
+      type: 'line',
+      source: 'lines',
+      paint: {
+        'line-color': '#ff0000',
+        'line-width': 2
+      }
+    });
 
   return (
     <div
