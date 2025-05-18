@@ -1,6 +1,6 @@
 import { Accordion } from 'react-bootstrap'
 import JsonView from '@uiw/react-json-view';
-import type { CompleteRequest } from '../constants/types'
+import type { CompleteRequest } from '../../constants/types'
 import { vscodeTheme } from '@uiw/react-json-view/vscode';
 
 type RequestCardProps = {

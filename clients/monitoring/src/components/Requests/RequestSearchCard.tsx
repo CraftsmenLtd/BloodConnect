@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Card, Form, Button, Spinner } from 'react-bootstrap'
-import { DonationStatus } from '../../../../commons/dto/DonationDTO'
+import { DonationStatus } from '../../../../../commons/dto/DonationDTO'
 
 export type Data = {
   startTime: number;
@@ -10,19 +10,19 @@ export type Data = {
   status: DonationStatus;
 }
 
-type SearchRequestsCardProps = {
+type RequestSearchCardProps = {
   data: Data;
   loading: boolean;
   onCenterHashChange?: (geohash: string) => void;
   onDataSubmit?: (data: Data) => void | Promise<(data: Data) => void>;
 }
 
-const SearchRequestsCard = ({
+const RequestSearchCard = ({
   data,
   loading,
   onCenterHashChange,
   onDataSubmit
-}: SearchRequestsCardProps) => {
+}: RequestSearchCardProps) => {
   const startTimeRef = useRef<HTMLInputElement>(null)
   const endTimeRef = useRef<HTMLInputElement>(null)
   const centerHashRef = useRef<HTMLInputElement>(null)
@@ -120,4 +120,4 @@ const SearchRequestsCard = ({
   )
 }
 
-export default SearchRequestsCard
+export default RequestSearchCard

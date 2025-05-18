@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { encode, decode } from 'ngeohash'
 import { Container } from 'react-bootstrap'
 import GeohashMap, { MapDataPointType } from '../components/GeohashMap'
-import SearchRequestsCard from '../components/SearchRequestsCard'
+import RequestSearchCard from '../components/Requests/RequestSearchCard'
 import { useAws } from '../hooks/AwsContext'
 import { useGlobalData } from '../hooks/DataContext'
 import {
@@ -21,8 +21,8 @@ import type { BloodGroup } from '../../../../commons/dto/DonationDTO'
 import { AcceptDonationStatus } from '../../../../commons/dto/DonationDTO'
 import { DonationStatus } from '../../../../commons/dto/DonationDTO'
 import type { LatLong, MapDataPoint } from '../components/GeohashMap'
-import type { Data } from '../components/SearchRequestsCard'
-import SidePanel from '../components/SidePanel'
+import type { Data } from '../components/Requests/RequestSearchCard'
+import RequestList from '../components/Requests/RequestList'
 import type {
   BloodRequestDynamoDBUnmarshaledItem,
   NotificationDynamoDBUnmarshaledItem,
@@ -255,7 +255,7 @@ const Home = () => {
       style={{ flexGrow: 1 }}>
       <div
         className="position-absolute top-0 start-0 m-2">
-        <SearchRequestsCard
+        <RequestSearchCard
           loading={searchRequestsLoading}
           data={{
             startTime: startTime,
@@ -298,7 +298,7 @@ const Home = () => {
         className="position-absolute top-0 end-0">
         {
           sidePanelProps.show && sidePanelProps.bloodGroup &&
-          <SidePanel
+          <RequestList
             onCardClick={(requestId) => {
               setSidePanelProps(prev => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
               setSearchRequestsLoading(true)

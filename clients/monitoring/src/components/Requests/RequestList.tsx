@@ -1,9 +1,9 @@
 import { Offcanvas, Stack, } from 'react-bootstrap'
-import type { BloodGroup } from '../../../../commons/dto/DonationDTO'
+import type { BloodGroup } from '../../../../../commons/dto/DonationDTO'
 import RequestCard from './RequestCard'
-import type { BloodRequestDynamoDBUnmarshaledItem } from '../constants/types'
+import type { BloodRequestDynamoDBUnmarshaledItem } from '../../constants/types'
 
-export type SidePanelProps = {
+export type RequestListProps = {
   onClose: () => void;
   requests: BloodRequestDynamoDBUnmarshaledItem[];
   geohash: string;
@@ -11,13 +11,13 @@ export type SidePanelProps = {
   onCardClick: (requestId: string) => void;
 }
 
-const SidePanel = ({
+const RequestList = ({
   onClose,
   requests,
   geohash,
   bloodGroup,
   onCardClick
-}: SidePanelProps) => {
+}: RequestListProps) => {
   return (
     <Offcanvas
       show
@@ -43,4 +43,4 @@ const SidePanel = ({
   )
 }
 
-export default SidePanel
+export default RequestList
