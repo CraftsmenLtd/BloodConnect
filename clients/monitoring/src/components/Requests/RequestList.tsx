@@ -29,7 +29,7 @@ const RequestList = ({
       onHide={onClose}
     >
       <Offcanvas.Header closeButton closeVariant="white">
-        <Offcanvas.Title>{bloodGroup} requests in {geohash}</Offcanvas.Title>
+        <Offcanvas.Title>{requests.length} {bloodGroup} requests in {geohash}</Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body>
         <Stack gap={2}>

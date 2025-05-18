@@ -151,18 +151,18 @@ const Home = () => {
     .then(notificationResponse => {
       return notificationResponse.items
     })
+    .then(notificationItems => notificationItems.filter(
+      item => item.payload.M?.locationId?.S))
     .then(notificationItems => Promise.all(notificationItems.map(
-      async notification => {
-        console.log(notification)
-        return {
-          ...notification,
-          location: await queryUserLocation(dynamodbClient,
-            {
-              locationId: notification.payload.M.locationId.S,
-              userId: notification.PK.S.split('#')[1]
-            })
-        }
-      })))
+      async notification => ({
+        ...notification,
+        location: await queryUserLocation(dynamodbClient,
+          {
+            locationId: notification.payload.M.locationId.S,
+            userId: notification.PK.S.split('#')[1]
+          })
+      })
+    )))
     .then(notificationsWithLocation => notificationsWithLocation
       .filter(notificationWithLocation => notificationWithLocation.location))
     .then(notificationsWithLocation => {
