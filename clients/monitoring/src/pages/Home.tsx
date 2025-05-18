@@ -6,37 +6,16 @@ import GeohashMap, { MapDataPointType } from '../components/GeohashMap'
 import RequestSearchCard from '../components/Requests/RequestSearchCard'
 import { useAws } from '../hooks/AwsContext'
 import { useGlobalData } from '../hooks/DataContext'
-import {
-  DynamoDBClient,
-  GetItemCommand,
-  QueryCommand,
-} from '@aws-sdk/client-dynamodb'
-import type {
-  AttributeValue,
-  GetItemCommandInput,
-  QueryCommandInput,
-} from '@aws-sdk/client-dynamodb'
-import { FIVE_MIN_IN_MS } from '../constants/constants'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { FIVE_MIN_IN_MS, MARKER_POINT_COLOR_STATUS_MAP } from '../constants/constants'
 import type { BloodGroup } from '../../../../commons/dto/DonationDTO'
-import { AcceptDonationStatus } from '../../../../commons/dto/DonationDTO'
+import type { AcceptDonationStatus } from '../../../../commons/dto/DonationDTO'
 import { DonationStatus } from '../../../../commons/dto/DonationDTO'
 import type { LatLong, MapDataPoint } from '../components/GeohashMap'
 import type { Data } from '../components/Requests/RequestSearchCard'
 import RequestList from '../components/Requests/RequestList'
-import type {
-  BloodRequestDynamoDBUnmarshaledItem,
-  NotificationDynamoDBUnmarshaledItem,
-  UserLocationDynamoDBUnmarshaledItem
-} from '../constants/types'
-
-type QueryDonationsInput = {
-  startTime: number;
-  endTime: number;
-  geoPartition: string;
-  country: string;
-  status: DonationStatus;
-  nextPageToken?: Record<string, AttributeValue>;
-};
+import type { BloodRequestDynamoDBUnmarshaledItem } from '../constants/types'
+import { queryRequests, queryUserLocation, queryNotifiedDonors } from '../queries/Requests'
 
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -109,108 +88,24 @@ const Home = () => {
       return acc
     }, [] as MapDataPoint[])
 
-  const markerPointColorMap = {
-    [AcceptDonationStatus.ACCEPTED]: 'amber',
-    [AcceptDonationStatus.IGNORED]: 'red',
-    [AcceptDonationStatus.PENDING]: 'yellow',
-    [AcceptDonationStatus.COMPLETED]: 'green'
-  }
-
-  const parsedToMapDataMarkerPoints = 
-  globalData.requests
-    .find(request => request.SK.S.split('#')[2] === sidePanelProps.detailsShownOnMapForRequestId)
-    ?.notifiedDonors?.map((notifiedDonor) :MapDataPoint => ({
-      type: MapDataPointType.MARKER,
-      id: notifiedDonor.GSI1SK.S,
-      latitude: Number(notifiedDonor.location.latitude.N),
-      longitude: Number(notifiedDonor.location.longitude.N),
-      color: markerPointColorMap[notifiedDonor.status.S as AcceptDonationStatus],
-    })) ?? []
-
-  const queryRequests = async({
-    startTime,
-    endTime,
-    geoPartition,
-    country,
-    status,
-    nextPageToken,
-  }: QueryDonationsInput): Promise<{
-    items: BloodRequestDynamoDBUnmarshaledItem[];
-    nextPageToken?: Record<string, AttributeValue>;
-  }> => {
-    const nowIso = new Date(startTime).toISOString()
-    const endIso = new Date(endTime).toISOString()
-
-    const gsi1pk = `LOCATION#${country}-${geoPartition}#STATUS#${status}`
-
-    const input: QueryCommandInput = {
-      TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
-      IndexName: 'GSI1',
-      KeyConditionExpression: 'GSI1PK = :gsi1pk',
-      FilterExpression: 'donationDateTime BETWEEN :end AND :start',
-      ExpressionAttributeValues: {
-        ':gsi1pk': { S: gsi1pk },
-        ':start': { S: nowIso },
-        ':end': { S: endIso },
-      },
-      ScanIndexForward: false,
-      Limit: 1,
-      ExclusiveStartKey: nextPageToken,
-    }
-
-    const command = new QueryCommand(input)
-    const response = await dynamodbClient.send(command)
-
-    return {
-      items: (response.Items ?? []) as BloodRequestDynamoDBUnmarshaledItem[],
-      nextPageToken: response.LastEvaluatedKey,
-    }
-  }
 
 
-  const queryNotifiedDonors = async(
-    requestId: string,
-    nextPageToken?: Record<string, AttributeValue>) => {
-    const input: QueryCommandInput = {
-      TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
-      IndexName: 'GSI1',
-      KeyConditionExpression: 'GSI1PK = :gsi1pk AND begins_with(GSI1SK, :prefix)',
-      ExpressionAttributeValues: {
-        ':gsi1pk': { S: requestId },
-        ':prefix': { S: 'NOTIFICATION#' }
-      },
-      ScanIndexForward: false,
-      Limit: 100,
-      ExclusiveStartKey: nextPageToken,
-    }
+  const parsedToMapDataMarkerPoints =
+    globalData.requests
+      .find(request => request.SK.S.split('#')[2] === sidePanelProps.detailsShownOnMapForRequestId)
+      ?.notifiedDonors?.map((notifiedDonor): MapDataPoint => ({
+        type: MapDataPointType.MARKER,
+        id: notifiedDonor.GSI1SK.S,
+        latitude: Number(notifiedDonor.location.latitude.N),
+        longitude: Number(notifiedDonor.location.longitude.N),
+        color: MARKER_POINT_COLOR_STATUS_MAP[notifiedDonor.status.S as AcceptDonationStatus],
+      })) ?? []
 
-    const command = new QueryCommand(input)
-    const response = await dynamodbClient.send(command)
-    return {
-      items: (response.Items ?? []) as NotificationDynamoDBUnmarshaledItem[],
-      nextPageToken: response.LastEvaluatedKey,
-    }
-  }
-
-  const queryUserLocation = async(locationId: string, userId: string) => {
-    const input: GetItemCommandInput = {
-      TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
-      Key: {
-        PK: { S: `USER#${userId}` },
-        SK: { S: `LOCATION#${locationId}` },
-      },
-    }
-
-    const command = new GetItemCommand(input)
-    const response = await dynamodbClient.send(command)
-
-    return response.Item as UserLocationDynamoDBUnmarshaledItem
-  }
-
-  const searchRequests = (data: Data) => queryRequests({
-    ...data,
-    geoPartition: centerHashPrefix,
-  }).
+  const searchRequests = (data: Data) => queryRequests(dynamodbClient,
+    {
+      ...data,
+      geoPartition: centerHashPrefix,
+    }).
     catch((err) => {
       alert(err)
       return { items: [] }
@@ -223,7 +118,8 @@ const Home = () => {
       return items
     })
 
-  const searchNotifiedDonors = (requestId: string) => queryNotifiedDonors(requestId)
+  const searchNotifiedDonors = (requestId: string) => queryNotifiedDonors(dynamodbClient,
+    { requestId })
     .catch((err) => {
       alert(err)
       return { items: [] }
@@ -232,8 +128,10 @@ const Home = () => {
     .then(notificationItems => Promise.all(notificationItems.map(async notification => ({
       ...notification,
       location: await queryUserLocation(
-        notification.payload.M.locationId.S,
-        notification.PK.S.split('#')[1],
+        dynamodbClient,
+        { 
+          locationId: notification.payload.M.locationId.S,
+          userId: notification.PK.S.split('#')[1], }
       )
     }))))
     .then(notificationWithLocation => {
