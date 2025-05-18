@@ -8,7 +8,8 @@ export type RequestListProps = {
   requests: BloodRequestDynamoDBUnmarshaledItem[];
   geohash: string;
   bloodGroup: BloodGroup;
-  onCardClick: (requestId: string) => void;
+  onCardClickToOpen: (requestId: string) => void;
+  onCardClickToClose: () => void;
 }
 
 const RequestList = ({
@@ -16,7 +17,8 @@ const RequestList = ({
   requests,
   geohash,
   bloodGroup,
-  onCardClick
+  onCardClickToOpen,
+  onCardClickToClose
 }: RequestListProps) => {
   return (
     <Offcanvas
@@ -34,7 +36,8 @@ const RequestList = ({
           {
             requests.map((request, index) => (
               <RequestCard
-                data={request} key={index} onHeaderClick={onCardClick}/>
+                data={request} key={index} onHeaderClickToOpen={onCardClickToOpen} 
+                onHeaderClickToClose={onCardClickToClose}/>
             ))
           }
         </Stack>

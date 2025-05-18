@@ -1,20 +1,23 @@
 import { useEffect, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import type { BloodGroup } from '../../../../commons/dto/DonationDTO'
-import { MARKER_CONTROL_CLASS, POPUP_CONTROL_CLASS } from '../constants/constants'
+import type { AcceptDonationStatus, BloodGroup } from '../../../../commons/dto/DonationDTO'
+import { HTML_DATA_BLOOD_GROUP_KEY, 
+  DONOR_CONTROL_CLASS, 
+  MARKER_POINT_COLOR_STATUS_MAP, 
+  REQUEST_CONTROL_CLASS } from '../constants/constants'
 
 export type LatLong = { latitude: number; longitude: number }
 
 export enum MapDataPointType {
-  MARKER = 'marker',
-  POPUP = 'popup'
+  DONOR = 'donor',
+  REQUEST = 'request'
 }
 export type MapDataPoint = {
   id: string;
   longitude: number;
   latitude: number;
-  type: MapDataPointType.POPUP;
+  type: MapDataPointType.REQUEST;
   content: Partial<{
     [K in BloodGroup]: number;
   }>;
@@ -23,9 +26,11 @@ export type MapDataPoint = {
   id: string;
   longitude: number;
   latitude: number;
-  type: MapDataPointType.MARKER;
-  color: string;
-};
+  type: MapDataPointType.DONOR;
+  content: Partial<{
+    [K in AcceptDonationStatus]: number;
+  }>;
+}
 
 type GeohashMapProps = {
   data: MapDataPoint[];
@@ -81,7 +86,7 @@ const GeohashMap = ({
       zoom: 15,
     })
 
-    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right')
+    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-left')
 
     map.addControl(
       new maplibregl.GeolocateControl({
@@ -90,7 +95,7 @@ const GeohashMap = ({
         },
         trackUserLocation: true,
       }),
-      'bottom-right'
+      'bottom-left'
     )
 
     const centerMarker = new maplibregl.Marker({ color: 'black' })
@@ -115,124 +120,49 @@ const GeohashMap = ({
     }
   }, [])
 
-  document.querySelectorAll(`.${MARKER_CONTROL_CLASS}`).forEach(el => el.remove())
-  document.querySelectorAll(`.${POPUP_CONTROL_CLASS}`).forEach(el => el.remove())
+  document.querySelectorAll(`.${REQUEST_CONTROL_CLASS}`).forEach(el => el.remove())
+  document.querySelectorAll(`.${DONOR_CONTROL_CLASS}`).forEach(el => el.remove())
 
   data.forEach((point) => {
-    if (point.type === MapDataPointType.MARKER) {
-      const markerId = `marker-${point.id}`
-      // Remove marker with current id if exists
-      document.getElementById(markerId)?.remove()
+    const popupId = `${point.type === MapDataPointType.REQUEST ? 'request' : 'donor' }-${point.id}`
 
-      // Get all markers at the same lat/lng, regardless of color
-      const allMarkersAtLocation = document.querySelectorAll(
-        `[data-lat="${point.latitude}"][data-lng="${point.longitude}"]`
-      )
+    document.getElementById(popupId)?.remove()
+    const contentHtml = `${Object.entries(point.content || {})
+      .map(([contentKey, value]) => {
 
-      // Among those, filter markers with the same color
-      const sameColorMarkers = Array.from(allMarkersAtLocation).filter(
-        (el) => el.getAttribute('data-color') === point.color
-      )
+        return `<div class="${point.type === MapDataPointType.REQUEST ? 
+          REQUEST_CONTROL_CLASS : DONOR_CONTROL_CLASS}" ${HTML_DATA_BLOOD_GROUP_KEY}=${
+          contentKey} style="cursor: ${
+          point.type === MapDataPointType.REQUEST ? 'pointer' : 'inherit'};">
+              ${contentKey}: <span style="vertical-align: middle;  background-color: ${
+  point.type === MapDataPointType.REQUEST
+    ? 'black' : 
+    MARKER_POINT_COLOR_STATUS_MAP[
+      contentKey as AcceptDonationStatus]}" class="badge pill text-white">${value}</span></div>`
+      })
+      .join('')}<strong>${point.id}</strong>`
 
-      // Remove all same-color markers at this lat/lng to avoid duplicates
-      sameColorMarkers.forEach((el) => el.remove())
+    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
+      .setLngLat([point.longitude, point.latitude])
+      .setHTML(contentHtml)
+      .addTo(mapRef.current!)
 
-      // Count how many markers of same color+lat/lng exist in your `data` array
-      const sameColorCount = data.filter(
-        (p) =>
-          p.type === MapDataPointType.MARKER &&
-      p.latitude === point.latitude &&
-      p.longitude === point.longitude &&
-      p.color === point.color
-      ).length
+    const popUpElement = popup.getElement()
 
-      // Add one marker for this color+location
-      const marker = new maplibregl.Marker({ color: point.color })
-        .setLngLat([point.longitude, point.latitude])
-        .addTo(mapRef.current!)
+    popUpElement.id = popupId
+    popUpElement.classList.add(REQUEST_CONTROL_CLASS)
 
-      const markerElement = marker.getElement()
-      markerElement.id = markerId
-      markerElement.setAttribute('data-lat', point.latitude.toString())
-      markerElement.setAttribute('data-lng', point.longitude.toString())
-      markerElement.setAttribute('data-color', point.color)
-      markerElement.classList.add(MARKER_CONTROL_CLASS)
-
-      // If more than one marker of this color at this location, add/update badge
-      if (sameColorCount > 1) {
-        const existingBadge = markerElement.querySelector('.marker-counter')
-        if (!existingBadge) {
-          const badge = document.createElement('div')
-          badge.className = 'marker-counter'
-          Object.assign(badge.style, {
-            background: 'rgba(0,0,0,0.7)',
-            color: 'white',
-            borderRadius: '50%',
-            width: '18px',
-            height: '18px',
-            fontSize: '12px',
-            lineHeight: '18px',
-            textAlign: 'center',
-            pointerEvents: 'none',
-            userSelect: 'none',
-            fontWeight: 'bold',
-            fontFamily: 'Arial, sans-serif',
-            boxShadow: '0 0 4px rgba(0,0,0,0.6)',
-            position: 'absolute',
-            top: '-8px',
-            right: '16pxpx',
-          })
-          markerElement.appendChild(badge)
-          badge.textContent = (2).toString()
-        }
-        else {
-          existingBadge.textContent = sameColorCount.toString()
-        }
-      }
-
-      // Now check if there are other markers at same lat/lng but different color
-      const otherColorMarkers = Array.from(allMarkersAtLocation).filter(
-        (el) => el.getAttribute('data-color') !== point.color
-      )
-
-      if (otherColorMarkers.length > 0) {
-        // Rotate and offset this new marker a bit to avoid perfect overlap
-        const randomRotation = (Math.random() - 0.5) * 30 // -15deg to +15deg
-        markerElement.style.transform += ` rotate(${randomRotation}deg) translate(2px, 2px)`
-      }
-    } else {
-      const popupId = `popup-${point.id}`
-      const identifyingClassName = 'blood-group-count'
-      document.getElementById(popupId)?.remove()
-      const contentHtml = `${Object.entries(point.content || {})
-        .map(([bloodGroup, value]) => {
-
-          return `<div class="${identifyingClassName}" data-blood-group=${
-            bloodGroup} style="cursor: pointer;">
-              ${bloodGroup}: <text style="color: red;">${value}</text>
-            </div>`
-        })
-        .join('')}<strong>${point.id}</strong>`
-
-      const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
-        .setLngLat([point.longitude, point.latitude])
-        .setHTML(contentHtml)
-        .addTo(mapRef.current!)
-
-      const popUpElement = popup.getElement()
-
-      popUpElement.id = popupId
-      popUpElement.classList.add(POPUP_CONTROL_CLASS)
+    if ( point.type === MapDataPointType.REQUEST ) {
       popUpElement
-        .querySelectorAll(`.${identifyingClassName}`)
+        .querySelectorAll(`.${REQUEST_CONTROL_CLASS}`)
         .forEach(el => {
-          const bloodGroup = el.getAttribute('data-blood-group') as BloodGroup
+          const bloodGroup = el.getAttribute(HTML_DATA_BLOOD_GROUP_KEY) as BloodGroup
           el.addEventListener('click', () => {
             point.onBloodGroupCountClick(bloodGroup, point.id)
           })
         })
     }
-  })
+  } )
 
   return (
     <div

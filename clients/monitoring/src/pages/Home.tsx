@@ -7,7 +7,7 @@ import RequestSearchCard from '../components/Requests/RequestSearchCard'
 import { useAws } from '../hooks/AwsContext'
 import { useGlobalData } from '../hooks/DataContext'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { FIVE_MIN_IN_MS, MARKER_POINT_COLOR_STATUS_MAP } from '../constants/constants'
+import { FIVE_MIN_IN_MS } from '../constants/constants'
 import type { BloodGroup } from '../../../../commons/dto/DonationDTO'
 import type { AcceptDonationStatus } from '../../../../commons/dto/DonationDTO'
 import { DonationStatus } from '../../../../commons/dto/DonationDTO'
@@ -58,21 +58,26 @@ const Home = () => {
       detailsShownOnMapForRequestId: null
     })
   }
-  const parsedToMapDataPopupPoints =
+
+  const parsedRequestsToMapDataPoints =
     globalData.requests.reduce((acc, item) => {
-      const geohash = item.geohash?.S
+      const geohash = item.geohash.S
       const bloodGroup = item.requestedBloodGroup?.S as BloodGroup
+      const detailsShownOnMap = item.SK.S.split('#')[2] ===
+        sidePanelProps.detailsShownOnMapForRequestId ||
+        sidePanelProps.detailsShownOnMapForRequestId === null
 
-      if (!geohash || !bloodGroup) return acc
 
-      const existing = acc.find((dp) => dp.id === geohash) as
-        MapDataPoint & { type: MapDataPointType.POPUP }
+      if (!geohash || !bloodGroup || !detailsShownOnMap) return acc
+
+      const existing = acc.find(
+        (dp) => dp.id === geohash) as MapDataPoint & { type: MapDataPointType.REQUEST }
 
       if (!existing) {
         const { latitude, longitude } = decode(geohash)
         acc.push({
-          type: MapDataPointType.POPUP,
-          id: geohash,
+          type: MapDataPointType.REQUEST,
+          id: item.geohash.S,
           latitude,
           longitude,
           onBloodGroupCountClick: (...arg) => { handleBloodTypePopupClick(...arg) },
@@ -88,18 +93,37 @@ const Home = () => {
       return acc
     }, [] as MapDataPoint[])
 
-
-
-  const parsedToMapDataMarkerPoints =
+  const parsedDonorsToMapDataPoints =
     globalData.requests
       .find(request => request.SK.S.split('#')[2] === sidePanelProps.detailsShownOnMapForRequestId)
-      ?.notifiedDonors?.map((notifiedDonor): MapDataPoint => ({
-        type: MapDataPointType.MARKER,
-        id: notifiedDonor.GSI1SK.S,
-        latitude: Number(notifiedDonor.location.latitude.N),
-        longitude: Number(notifiedDonor.location.longitude.N),
-        color: MARKER_POINT_COLOR_STATUS_MAP[notifiedDonor.status.S as AcceptDonationStatus],
-      })) ?? []
+      ?.notifiedDonors?.reduce((acc, notifiedDonor) => {
+        const latitude = Number(notifiedDonor.location.latitude.N)
+        const longitude = Number(notifiedDonor.location.longitude.N)
+        const status = notifiedDonor.status.S as AcceptDonationStatus
+
+        const existing = acc.find((dp) =>
+          dp.latitude === latitude &&
+          dp.longitude === longitude
+        ) as MapDataPoint & { type: MapDataPointType.DONOR }
+
+        if (!existing) {
+          acc.push({
+            type: MapDataPointType.DONOR,
+            id: encode(latitude, longitude),
+            latitude,
+            longitude,
+            content: {
+              [status]: 1
+            },
+          })
+        } else {
+          const count = existing.content[status] ?? 0
+          existing.content[status] = count + 1
+        }
+
+        return acc
+      }, [] as MapDataPoint[]) ?? []
+
 
   const searchRequests = (data: Data) => queryRequests(dynamodbClient,
     {
@@ -124,20 +148,27 @@ const Home = () => {
       alert(err)
       return { items: [] }
     })
-    .then(notificationResponse => notificationResponse.items)
-    .then(notificationItems => Promise.all(notificationItems.map(async notification => ({
-      ...notification,
-      location: await queryUserLocation(
-        dynamodbClient,
-        { 
-          locationId: notification.payload.M.locationId.S,
-          userId: notification.PK.S.split('#')[1], }
-      )
-    }))))
-    .then(notificationWithLocation => {
+    .then(notificationResponse => {
+      return notificationResponse.items
+    })
+    .then(notificationItems => Promise.all(notificationItems.map(
+      async notification => {
+        console.log(notification)
+        return {
+          ...notification,
+          location: await queryUserLocation(dynamodbClient,
+            {
+              locationId: notification.payload.M.locationId.S,
+              userId: notification.PK.S.split('#')[1]
+            })
+        }
+      })))
+    .then(notificationsWithLocation => notificationsWithLocation
+      .filter(notificationWithLocation => notificationWithLocation.location))
+    .then(notificationsWithLocation => {
       setGlobalData(prev => {
         const request = prev.requests.find(request => requestId === request.SK.S.split('#')[2])
-        request!.notifiedDonors = notificationWithLocation
+        request!.notifiedDonors = notificationsWithLocation
         return { ...prev }
       })
     })
@@ -183,7 +214,7 @@ const Home = () => {
 
       <GeohashMap
         center={centerLatLng}
-        data={[...parsedToMapDataPopupPoints, ...parsedToMapDataMarkerPoints]}
+        data={[...parsedRequestsToMapDataPoints, ...parsedDonorsToMapDataPoints]}
         onCenterChange={(arg: LatLong) => {
           const newHash = encode(arg.latitude, arg.longitude)
           setSearchParams(prev => {
@@ -197,7 +228,9 @@ const Home = () => {
         {
           sidePanelProps.show && sidePanelProps.bloodGroup &&
           <RequestList
-            onCardClick={(requestId) => {
+            onCardClickToClose={() => setSidePanelProps(prev => (
+              { ...prev, detailsShownOnMapForRequestId: null }))}
+            onCardClickToOpen={(requestId) => {
               setSidePanelProps(prev => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
               setSearchRequestsLoading(true)
               searchNotifiedDonors(requestId).finally(() => { setSearchRequestsLoading(false) })

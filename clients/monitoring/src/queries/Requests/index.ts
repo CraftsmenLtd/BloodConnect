@@ -71,7 +71,9 @@ export const queryNotifiedDonors = async(
     TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :gsi1pk AND begins_with(GSI1SK, :prefix)',
+    FilterExpression: 'SK = :sk',
     ExpressionAttributeValues: {
+      ':sk': { S: `BLOOD_REQ_POST#${requestId}` },
       ':gsi1pk': { S: requestId },
       ':prefix': { S: 'NOTIFICATION#' }
     },

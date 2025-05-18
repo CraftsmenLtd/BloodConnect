@@ -5,10 +5,11 @@ import { vscodeTheme } from '@uiw/react-json-view/vscode';
 
 type RequestCardProps = {
   data: CompleteRequest;
-  onHeaderClick: (requestId: string) => void;
+  onHeaderClickToOpen: (requestId: string) => void;
+  onHeaderClickToClose: () => void;
 };
 
-const RequestCard = ({ data, onHeaderClick }: RequestCardProps) => {
+const RequestCard = ({ data, onHeaderClickToOpen, onHeaderClickToClose }: RequestCardProps) => {
   const requestId = data.SK.S.split('#')[2]
 
   return (
@@ -17,7 +18,8 @@ const RequestCard = ({ data, onHeaderClick }: RequestCardProps) => {
         <Accordion.Header className="border-0">{requestId}</Accordion.Header>
         <Accordion.Body
           className="bg-dark text-light p-0 border-0"
-          onEnter={() => onHeaderClick(requestId)}
+          onEnter={() => onHeaderClickToOpen(requestId)}
+          onExit={onHeaderClickToClose}
         >
           <JsonView 
             value={data} 
