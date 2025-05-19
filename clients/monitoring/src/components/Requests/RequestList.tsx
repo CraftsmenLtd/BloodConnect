@@ -10,6 +10,7 @@ export type RequestListProps = {
   bloodGroup: BloodGroup;
   onCardClickToOpen: (requestId: string) => void;
   onCardClickToClose: (requestId: string) => void;
+  activeRequestOnMap: string | null;
 }
 
 const RequestList = ({
@@ -18,7 +19,8 @@ const RequestList = ({
   geohash,
   bloodGroup,
   onCardClickToOpen,
-  onCardClickToClose
+  onCardClickToClose,
+  activeRequestOnMap,
 }: RequestListProps) => {
   return (
     <Offcanvas
@@ -36,6 +38,7 @@ const RequestList = ({
           {
             requests.map((request, index) => (
               <RequestCard
+                activeOnMap={request.SK.S.split('#')[2] === activeRequestOnMap}
                 data={request} key={index} onHeaderClickToOpen={onCardClickToOpen} 
                 onHeaderClickToClose={onCardClickToClose}/>
             ))

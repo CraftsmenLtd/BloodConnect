@@ -237,6 +237,7 @@ const Home = () => {
         {
           requestListProps.show && requestListProps.bloodGroup &&
           <RequestList
+            activeRequestOnMap={requestListProps.detailsShownOnMapForRequestId}
             onCardClickToClose={(requestId) => setRequestListProps(prev => (
               { ...prev, detailsShownOnMapForRequestId: 
                 requestId === requestListProps.detailsShownOnMapForRequestId ?
