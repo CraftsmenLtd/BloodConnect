@@ -42,7 +42,7 @@ export const queryRequests = async(
     TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :gsi1pk',
-    FilterExpression: 'donationDateTime BETWEEN :end AND :start',
+    FilterExpression: 'donationDateTime BETWEEN :start AND :end',
     ExpressionAttributeValues: {
       ':gsi1pk': { S: gsi1pk },
       ':start': { S: nowIso },
