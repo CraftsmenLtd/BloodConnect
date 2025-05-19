@@ -35,8 +35,8 @@ const Home = () => {
   })
   const country = searchParams.get('country') ?? 'BD'
   const status = (searchParams.get('status') as DonationStatus) ?? DonationStatus.PENDING
-  const startTime = Number(searchParams.get('startTime') ?? Date.now())
-  const endTime = Number(searchParams.get('endTime') ?? startTime as number - FIVE_MIN_IN_MS)
+  const endTime = Number(searchParams.get('endTime') ?? Date.now())
+  const startTime = Number(searchParams.get('startTime') ?? endTime as number - FIVE_MIN_IN_MS)
 
   const centerLatLng = decode(centerHash)
   const centerHashPrefix = centerHash.substring(0,
@@ -189,8 +189,8 @@ const Home = () => {
         <RequestSearchCard
           loading={searchRequestsLoading}
           data={{
-            startTime: startTime,
-            endTime: endTime,
+            endTime,
+            startTime,
             centerHash,
             country,
             status,
@@ -206,8 +206,8 @@ const Home = () => {
               return {
                 ...current,
                 ...data,
-                startTime: data.startTime.toString(),
                 endTime: data.endTime.toString(),
+                startTime: data.startTime.toString(),
               }
             })
             setSearchRequestsLoading(true)
