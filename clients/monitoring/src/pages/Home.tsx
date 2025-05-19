@@ -197,18 +197,17 @@ const Home = () => {
           }}
           onCenterHashChange={(hash) => {
             setSearchParams(prev => {
-              const current = Object.fromEntries(prev.entries())
-              return { ...current, centerHash: hash } })
+              const newParams = new URLSearchParams(prev)
+              newParams.set('centerHash', hash)
+              return newParams 
+            })
           }}
           onDataSubmit={(data) => {
             setSearchParams(prev => {
-              const current = Object.fromEntries(prev.entries())
-              return {
-                ...current,
-                ...data,
-                endTime: data.endTime.toString(),
-                startTime: data.startTime.toString(),
-              }
+              const newParams = new URLSearchParams(prev)
+              newParams.set('startTime', data.startTime.toString())
+              newParams.set('endTime', data.endTime.toString())
+              return newParams
             })
             setSearchRequestsLoading(true)
             searchRequests(data).finally(() => { setSearchRequestsLoading(false) })
@@ -225,10 +224,10 @@ const Home = () => {
         data={[...parsedRequestsToMapDataPoints, ...parsedDonorsToMapDataPoints]}
         onCenterChange={(arg: LatLong) => {
           const newHash = encode(arg.latitude, arg.longitude)
-
           setSearchParams(prev => {
-            const current = Object.fromEntries(prev.entries())
-            return { ...current, centerHash: newHash }
+            const newParams = new URLSearchParams(prev)
+            newParams.set('centerHash', newHash)
+            return newParams
           })
         }}
       />
@@ -239,7 +238,7 @@ const Home = () => {
           <RequestList
             activeRequestOnMap={requestListProps.detailsShownOnMapForRequestId}
             onCardClickToClose={(requestId) => setRequestListProps(prev => (
-              { ...prev, detailsShownOnMapForRequestId: 
+              { ...prev, detailsShownOnMapForRequestId:
                 requestId === requestListProps.detailsShownOnMapForRequestId ?
                   null : requestListProps.detailsShownOnMapForRequestId }))}
             onCardClickToOpen={(requestId) => {
