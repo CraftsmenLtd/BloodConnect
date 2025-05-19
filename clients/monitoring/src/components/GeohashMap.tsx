@@ -1,223 +1,218 @@
-import type { LegacyRef } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import type { LngLat } from 'mapbox-gl';
-import mapboxgl from 'mapbox-gl'
-import geoHash from 'ngeohash'
-import 'mapbox-gl/dist/mapbox-gl.css'
-import { useAuthenticator } from '@aws-amplify/ui-react'
-import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import { useAws } from '../hooks/useAws'
-import { bloodTypes } from '../constants/constants'
-const centerMarker = new mapboxgl.Marker({ color: 'black' })
+import { useEffect, useRef } from 'react'
+import maplibregl from 'maplibre-gl'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import type { AcceptDonationStatus, BloodGroup } from '../../../../commons/dto/DonationDTO'
+import { HTML_DATA_BLOOD_GROUP_KEY, 
+  DONOR_CONTROL_CLASS, 
+  MARKER_POINT_COLOR_STATUS_MAP, 
+  REQUEST_CONTROL_CLASS } from '../constants/constants'
+import type { Feature, GeoJsonProperties, LineString } from 'geojson';
 
-import './GeohashMap.css'
 
-const GeoHashMap = () => {
-  const mapContainerRef = useRef<HTMLDivElement>()
-  const mapRef = useRef<mapboxgl.Map>()
-  const [currentGeoHashPrefix, setCurrentGeoHashPrefix] = useState<string>()
-  const [searchParams] = useSearchParams()
-  const refreshIntervalSeconds = Number(searchParams.get('refresh') ?? 60)
-  const [geoHashCount, setGeoHashCount] = useState(0)
-  const awsCredentials = useAws()
+export type LatLong = { latitude: number; longitude: number }
 
-  const { signOut } = useAuthenticator((context) => [context.user])
+export enum MapDataPointType {
+  DONOR = 'donor',
+  REQUEST = 'request'
+}
+export type MapDataPoint = {
+  id: string;
+  longitude: number;
+  latitude: number;
+  type: MapDataPointType.REQUEST;
+  content: Partial<{
+    [K in BloodGroup]: number;
+  }>;
+  onBloodGroupCountClick: (type: BloodGroup, geohash: string) => void;
+} | {
+  id: string;
+  longitude: number;
+  latitude: number;
+  type: MapDataPointType.DONOR;
+  content: Partial<{
+    [K in AcceptDonationStatus]: number;
+  }>;
+}
 
-  const getDataFromAws = useCallback(async(prefix: string) => {
-    const { accessKeyId, secretAccessKey, sessionToken } = awsCredentials!
-    const s3Client = new S3Client({
-      region: import.meta.env.VITE_AWS_S3_REGION,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-        sessionToken
-      }
-    })
+type GeohashMapProps = {
+  data: MapDataPoint[];
+  initialCenter?: [number, number];
+  onCenterChange?: (arg: LatLong) => void;
+  center: LatLong;
+  lines?: {
+    from: LatLong;
+    to: LatLong[];
+  };
+};
 
-    return Promise.all(
-      bloodTypes.map(async(type) =>
-        s3Client
-          .send(
-            new GetObjectCommand({
-              Bucket: import.meta.env.VITE_AWS_S3_BUCKET,
-              Key: `${import.meta.env.VITE_BUCKET_PATH_PREFIX
-              }/${prefix}-${type}.txt`
-            })
-          )
-          .then(async(
-            response
-          ) => 
-            response.Body ? response.Body.transformToString().then((content) =>
-              content.split('\n')
-            ) : [])
-          .catch(() => [])
-      )
-    )
-  }, [awsCredentials])
-
-  const getPrefix = (center: LngLat) =>
-    geoHash
-      .encode(center.lat, center.lng)
-      .substring(0, Number(import.meta.env.VITE_MAX_GEOHASH_PREFIX_SIZE))
-  const refreshMap = useCallback(async() => {
-    if (mapRef.current == null) return
-    document
-      .querySelectorAll('.mapboxgl-popup')
-      .forEach((popup) => { popup.remove() })
-
-    const center = mapRef.current.getCenter()
-    centerMarker.setLngLat(center).addTo(mapRef.current)
-    getDataFromAws(getPrefix(center)).then((data) => {
-      setGeoHashCount(0)
-      const mappedGeoHashes = data.reduce((geoHashMap, geoHashes, index) => {
-        const bloodType = bloodTypes[index]
-        geoHashes.forEach((key) => {
-          const { latitude, longitude } = geoHash.decode(key)
-          if (!geoHashMap.has(key)) {
-            geoHashMap.set(key, {
-              lat: latitude,
-              lng: longitude,
-              counter: {
-                [bloodType]: 0
-              },
-              totalCount: 0
-            })
-          }
-          const currentData = geoHashMap.get(key)!
-
-          currentData.counter[bloodType] = currentData.counter[bloodType] ?
-            currentData.counter[bloodType] + 1 :
-            1
-          currentData.totalCount += 1
-
-          geoHashMap.set(key, currentData)
-        })
-        return geoHashMap
-      }, new Map<string,
-        {
-          lat: number;
-          lng: number;
-          counter: { [k in (typeof bloodTypes)[number]]: number; };
-          totalCount: number;
-        }>())
-
-      mappedGeoHashes.forEach(({ counter, lat, lng, totalCount }) => {
-        const list = Object.entries(counter)
-          .map(([bloodType, count]) => `<text>${count} : ${bloodType}</text>`)
-          .join('<br/>')
-
-        new mapboxgl.Popup({ closeOnClick: false, closeButton: false })
-          .setHTML(`<div style="color: red; font-weight: bold; font-size: small">${list}</div>`)
-          .setLngLat([lng, lat])
-          .addTo(mapRef.current!)
-
-        setGeoHashCount((prev) => prev + totalCount)
-      })
-
-      // eslint-disable-next-line no-console
-    }).catch(console.error)
-  }, [getDataFromAws])
-
-  const moveHandler = useCallback(() => {
-    if (mapRef.current != null) {
-      const center = mapRef.current.getCenter()
-      centerMarker.setLngLat(center).addTo(mapRef.current)
-      const prefix = getPrefix(center)
-
-      setCurrentGeoHashPrefix((prev) => {
-        if (prefix !== prev) {
-          void refreshMap()
-          return prefix
-        }
-        return prev
-      })
-    }
-  }, [refreshMap])
+const GeohashMap = ({
+  data,
+  onCenterChange,
+  center,
+  lines
+}: GeohashMapProps) => {
+  const mapContainerRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<maplibregl.Map | null>(null)
+  const markerRef = useRef<maplibregl.Marker | null>(null)
 
   useEffect(() => {
-    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_PUBLIC_KEY
-
-    mapRef.current = new mapboxgl.Map({
-      container: mapContainerRef.current!,
-      center: [90.4125, 23.8103],
-      zoom: 13,
-      pitch: 20,
-    })
-    mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right')
-
-    const setCenterMarker = () => {
-      centerMarker
-        .setLngLat(mapRef.current!.getCenter())
-        .addTo(mapRef.current!)
+    if (markerRef.current && mapRef.current) {
+      markerRef.current.setLngLat([center.longitude, center.latitude])
+      mapRef.current.setCenter([center.longitude, center.latitude])
     }
+  }, [center.latitude, center.longitude])
 
-    mapRef.current.on('move', setCenterMarker)
-    mapRef.current.on('moveend', moveHandler)
-    mapRef.current.on('load', () => {
-      const center = mapRef.current!.getCenter()
-      const prefix = getPrefix(center)
-      setCurrentGeoHashPrefix(prefix)
-      void refreshMap()
+
+  useEffect(() => {
+    if (!mapContainerRef.current) return
+
+    const map = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style: {
+        version: 8,
+        sources: {
+          osm: {
+            type: 'raster',
+            tiles: [
+              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            ],
+            tileSize: 256,
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          },
+        },
+        layers: [
+          {
+            id: 'osm',
+            type: 'raster',
+            source: 'osm',
+          },
+        ],
+      },
+      center: [center.longitude, center.latitude],
+      zoom: 15,
     })
+
+    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-left')
+
+    map.addControl(
+      new maplibregl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+      }),
+      'bottom-left'
+    )
+
+    const centerMarker = new maplibregl.Marker({ color: 'black' })
+      .setLngLat([center.longitude, center.latitude])
+      .addTo(map)
+
+    map.on('drag', () => {
+      const newCenter = mapRef.current!.getCenter()
+      centerMarker.setLngLat(newCenter)
+    })
+
+    map.on('dragend', () => {
+      const stableCenter = mapRef.current!.getCenter()
+      onCenterChange?.({ latitude: stableCenter.lat, longitude: stableCenter.lng })
+    })
+
+    mapRef.current = map
+    markerRef.current = centerMarker
 
     return () => {
-      mapRef.current?.off('move', setCenterMarker)
-      mapRef.current?.off('moveend', moveHandler)
-      mapRef.current?.off('load', () => { void refreshMap() })
-      mapRef.current?.remove()
+      map.remove()
     }
-  }, [awsCredentials, moveHandler, refreshMap])
+  }, [])
 
-  useEffect(() => {
-    if (refreshIntervalSeconds !== 0) {
-      const refreshIntervalInMS = refreshIntervalSeconds * 1000
-      const refreshIntervalId = setInterval(() => {
-        centerMarker.remove()
-        void refreshMap()
-      }, refreshIntervalInMS)
+  document.querySelectorAll(`.${REQUEST_CONTROL_CLASS}`).forEach(el => el.remove())
+  document.querySelectorAll(`.${DONOR_CONTROL_CLASS}`).forEach(el => el.remove())
 
-      return () => {
-        clearInterval(refreshIntervalId)
-      }
+  data.forEach((point) => {
+    const popupId = `${point.type === MapDataPointType.REQUEST ? 'request' : 'donor' }-${point.id}`
+
+    document.getElementById(popupId)?.remove()
+    const contentHtml = `${Object.entries(point.content || {})
+      .map(([contentKey, value]) => {
+
+        return `<div class="${point.type === MapDataPointType.REQUEST ? 
+          REQUEST_CONTROL_CLASS : DONOR_CONTROL_CLASS}" ${HTML_DATA_BLOOD_GROUP_KEY}=${
+          contentKey} style="cursor: ${
+          point.type === MapDataPointType.REQUEST ? 'pointer' : 'inherit'};">
+              ${contentKey}: <span style="vertical-align: middle;  background-color: ${
+  point.type === MapDataPointType.REQUEST
+    ? 'black' : 
+    MARKER_POINT_COLOR_STATUS_MAP[
+      contentKey as AcceptDonationStatus]}" class="badge pill text-white">${value}</span></div>`
+      })
+      .join('')}<strong>${point.id}</strong>`
+
+    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
+      .setLngLat([point.longitude, point.latitude])
+      .setHTML(contentHtml)
+      .addTo(mapRef.current!)
+
+    const popUpElement = popup.getElement()
+
+    popUpElement.id = popupId
+    popUpElement.classList.add(REQUEST_CONTROL_CLASS)
+
+    if ( point.type === MapDataPointType.REQUEST ) {
+      popUpElement
+        .querySelectorAll(`.${REQUEST_CONTROL_CLASS}`)
+        .forEach(el => {
+          const bloodGroup = el.getAttribute(HTML_DATA_BLOOD_GROUP_KEY) as BloodGroup
+          el.addEventListener('click', () => {
+            point.onBloodGroupCountClick(bloodGroup, point.id)
+          })
+        })
     }
-  }, [refreshIntervalSeconds, refreshMap])
+  } )
+
+  if (mapRef.current?.getLayer('line-layer')) {
+    mapRef.current.removeLayer('line-layer');
+  }
+
+  if (mapRef.current?.getSource('lines')) {
+    mapRef.current.removeSource('lines');
+  }
+
+  const linesToDraw = lines?.to.map((to) => ({
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: [[lines.from.longitude, lines.from.latitude], [to.longitude, to.latitude]]
+    },
+    properties: {}
+  }));
+    
+  linesToDraw && mapRef.current?.addSource('lines', {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: linesToDraw as Feature<LineString, GeoJsonProperties>[]
+    }
+  }).addLayer({
+    id: 'line-layer',
+    type: 'line',
+    source: 'lines',
+    paint: {
+      'line-color': '#ff0000',
+      'line-width': 2
+    }
+  });
 
   return (
     <div
-      style={{ height: '100vh', width: '100vw' }}
-      ref={mapContainerRef as LegacyRef<HTMLDivElement>}
-      className='map-container'
-    >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'absolute',
-          top: 10,
-          left: 10,
-          background: 'white',
-          padding: '10px',
-          borderRadius: '5px',
-          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
-          color: 'black',
-          zIndex: 1
-        }}
-      >
-        <div>
-          <strong style={{ color: 'red' }}>{geoHashCount}</strong> locations
-          displayed
-        </div>
-        <div>
-          <strong style={{ color: 'red' }}>{currentGeoHashPrefix}</strong> area
-          displayed
-        </div>
-        <div>
-          <button onClick={signOut}>Sign Out</button>
-        </div>
-      </div>
-    </div>
+      ref={mapContainerRef}
+      style={{
+        width: '100%',
+        height: '100%'
+      }}
+    />
   )
 }
 
-export default GeoHashMap
+export default GeohashMap

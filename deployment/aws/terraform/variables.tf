@@ -40,9 +40,3 @@ variable "google_maps_api_key" {
   type        = string
   sensitive   = true
 }
-
-variable "mapbox_public_key" {
-  description = "mapbox public key"
-  type        = string
-  sensitive   = true
-}
