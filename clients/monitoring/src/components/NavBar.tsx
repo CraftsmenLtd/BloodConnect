@@ -12,7 +12,7 @@ const NavBar = () => {
   return (
     <Navbar bg="dark" expand="lg" data-bs-theme="dark">
       <Container>
-        <Navbar.Brand href="/">Bloodconnect</Navbar.Brand>
+        <Navbar.Brand href="/">BloodConnect</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
