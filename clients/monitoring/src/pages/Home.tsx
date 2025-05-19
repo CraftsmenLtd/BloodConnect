@@ -11,7 +11,7 @@ import { FIVE_MIN_IN_MS } from '../constants/constants'
 import type { BloodGroup } from '../../../../commons/dto/DonationDTO'
 import type { AcceptDonationStatus } from '../../../../commons/dto/DonationDTO'
 import { DonationStatus } from '../../../../commons/dto/DonationDTO'
-import type { LatLong, MapDataPoint } from '../components/GeohashMap'
+import type { MapDataPoint } from '../components/GeohashMap'
 import type { Data } from '../components/Requests/RequestSearchCard'
 import RequestList from '../components/Requests/RequestList'
 import type { BloodRequestDynamoDBUnmarshaledItem } from '../constants/types'
@@ -71,7 +71,7 @@ const Home = () => {
       if (!geohash || !bloodGroup || !detailsShownOnMap) return acc
 
       const existing = acc.find(
-        (dp) => dp.id === geohash) as MapDataPoint & { type: MapDataPointType.REQUEST }
+        dp => dp.id === geohash) as MapDataPoint & { type: MapDataPointType.REQUEST }
 
       if (!existing) {
         const { latitude, longitude } = decode(geohash)
@@ -103,7 +103,7 @@ const Home = () => {
         const longitude = Number(notifiedDonor.location.longitude.N)
         const status = notifiedDonor.status.S as AcceptDonationStatus
 
-        const existing = acc.find((dp) =>
+        const existing = acc.find(dp =>
           dp.latitude === latitude &&
           dp.longitude === longitude
         ) as MapDataPoint & { type: MapDataPointType.DONOR }
@@ -146,7 +146,7 @@ const Home = () => {
 
   const searchNotifiedDonors = (requestId: string) => queryNotifiedDonors(dynamodbClient,
     { requestId })
-    .catch((err) => {
+    .catch(err => {
       alert(err)
       return { items: [] }
     })
@@ -195,20 +195,19 @@ const Home = () => {
             country,
             status,
           }}
-          onCenterHashChange={(hash) => {
+          onCenterHashChange={hash => {
             setSearchParams(prev => {
               const newParams = new URLSearchParams(prev)
               newParams.set('centerHash', hash)
-              return newParams 
-            })
-          }}
-          onDataSubmit={(data) => {
-            setSearchParams(prev => {
-              const newParams = new URLSearchParams(prev)
-              newParams.set('startTime', data.startTime.toString())
-              newParams.set('endTime', data.endTime.toString())
               return newParams
             })
+          }}
+          onDataSubmit={data => {
+            setSearchParams(new URLSearchParams({
+              ...data,
+              startTime: data.startTime.toString(),
+              endTime: data.endTime.toString(),
+            }))
             setSearchRequestsLoading(true)
             searchRequests(data).finally(() => { setSearchRequestsLoading(false) })
           }}
@@ -222,11 +221,10 @@ const Home = () => {
         }}
         center={centerLatLng}
         data={[...parsedRequestsToMapDataPoints, ...parsedDonorsToMapDataPoints]}
-        onCenterChange={(arg: LatLong) => {
-          const newHash = encode(arg.latitude, arg.longitude)
+        onCenterChange={arg => {
           setSearchParams(prev => {
             const newParams = new URLSearchParams(prev)
-            newParams.set('centerHash', newHash)
+            newParams.set('centerHash', encode(arg.latitude, arg.longitude))
             return newParams
           })
         }}
@@ -237,18 +235,18 @@ const Home = () => {
           requestListProps.show && requestListProps.bloodGroup &&
           <RequestList
             activeRequestOnMap={requestListProps.detailsShownOnMapForRequestId}
-            onCardClickToClose={(requestId) => setRequestListProps(prev => (
+            onCardClickToClose={requestId => setRequestListProps(prev => (
               { ...prev, detailsShownOnMapForRequestId:
                 requestId === requestListProps.detailsShownOnMapForRequestId ?
                   null : requestListProps.detailsShownOnMapForRequestId }))}
-            onCardClickToOpen={(requestId) => {
+            onCardClickToOpen={requestId => {
               setRequestListProps(prev => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
               setSearchRequestsLoading(true)
               searchNotifiedDonors(requestId).finally(() => { setSearchRequestsLoading(false) })
             }}
             bloodGroup={requestListProps!.bloodGroup}
             geohash={requestListProps.geohash}
-            onClose={() => { setRequestListProps((prev) => ({
+            onClose={() => { setRequestListProps(prev => ({
               ...prev, show: false,
               detailsShownOnMapForRequestId: null })) }}
             requests={sidePanelRequests} />
