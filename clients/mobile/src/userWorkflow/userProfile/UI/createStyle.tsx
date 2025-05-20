@@ -1,7 +1,9 @@
+import { commonStyles } from '../../../components/inputElement/commonStyles'
 import type { Theme } from '../../../setup/theme'
 import { StyleSheet } from 'react-native'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
+  ...commonStyles(theme),
   container: {
     flex: 1,
     backgroundColor: theme.colors.white
@@ -23,12 +25,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   lastRow: {
     borderBottomWidth: 0
-  },
-  label: {
-    fontSize: 14,
-    color: theme.colors.textSecondary,
-    textTransform: 'capitalize',
-    marginBottom: 4
   },
   value: {
     fontSize: 14,
@@ -69,6 +65,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   mapViewContainer: {
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10
+  },
+  dividerContainer: {
+    marginBottom: 2
+  },
+  dividerLine: {
+    backgroundColor: theme.colors.primary
   }
 })
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type {
   ValidationRule
 } from '../../../utility/validator'
@@ -34,6 +34,7 @@ type ProfileData = {
   ? (string extends K ? never : K) : never]: EditProfileData[K];
 } & {
   weight: string | undefined;
+  availableForDonation: boolean;
 }
 
 type ProfileDataErrors = {
@@ -49,7 +50,8 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   phone: [validateRequired],
   preferredDonationLocations: [validateRequired],
   lastDonationDate: [validatePastOrTodayDate],
-  locations: []
+  locations: [],
+  availableForDonation: []
 }
 
 export const useEditProfile = () => {
@@ -68,6 +70,7 @@ export const useEditProfile = () => {
       phone: userDetails.phoneNumbers[0]
     }
   })
+  const [pendingAvailableForDonationSave, setPendingAvailableForDonationSave] = useState(false)
   const [errors, setErrors] = useState<ProfileDataErrors>(
     initializeState<ProfileDataErrors>(Object.keys(validationRules) as ProfileFields[], null)
   )
@@ -85,13 +88,13 @@ export const useEditProfile = () => {
     }
   )
 
-  const handleInputChange = (field: ProfileFields, value: string): void => {
+  const handleInputChange = (field: ProfileFields, value: unknown): void => {
     setProfileData((prev) => ({
       ...prev,
       [field]: value
     }))
 
-    handleInputValidation(field, value)
+    handleInputValidation(field, value as string)
   }
 
   const handleInputValidation = (field: ProfileFields, value: string): void => {
@@ -146,6 +149,24 @@ export const useEditProfile = () => {
     }
   }
 
+  useEffect(() => {
+    if (pendingAvailableForDonationSave) {
+      void handleUpdateAvailableForDonation()
+      setPendingAvailableForDonationSave(false)
+    }
+  }, [profileData.availableForDonation])
+
+  const handleUpdateAvailableForDonation = async(): Promise<void> => {
+    const requestPayload = {
+      availableForDonation: profileData.availableForDonation
+    }
+
+    await executeUpdateProfile(requestPayload)
+    if (updateError !== null) {
+      Alert.alert('Error', 'Could not update available for donation value.')
+    }
+  }
+
   const isButtonDisabled = !validateRequiredFieldsTruthy<ProfileData>(
     validationRules, profileData)
 
@@ -155,6 +176,7 @@ export const useEditProfile = () => {
     errors,
     handleInputChange,
     handleSave,
-    isButtonDisabled
+    isButtonDisabled,
+    setPendingAvailableForDonationSave
   }
 }
