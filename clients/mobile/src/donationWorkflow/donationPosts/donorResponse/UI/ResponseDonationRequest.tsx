@@ -52,9 +52,9 @@ const ResponseDonationRequest = () => {
           <Text style={styles.header}>Blood Request</Text>
           <Text style={styles.name}>{bloodRequest.seekerName ?? 'Seeker Name'}</Text>
           <Text style={styles.subText}>Posted on {
-            bloodRequest?.donationDateTime !== null &&
-            bloodRequest?.donationDateTime !== undefined
-              ? new Date(bloodRequest.donationDateTime).toLocaleString()
+            bloodRequest?.createdAt !== null &&
+            bloodRequest?.createdAt !== undefined
+              ? new Date(bloodRequest.createdAt).toLocaleString()
               : 'N/A'
           }
           </Text>
@@ -130,7 +130,8 @@ const ResponseDonationRequest = () => {
                     </Text>
                     : <Text style={styles.hiddenNumber}>
                       {
-                        `${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`
+                        `${bloodRequest.contactNumber.slice(0, 4)}********
+                          ${bloodRequest.contactNumber.slice(-2)}`
                       }
                     </Text>
                   }
