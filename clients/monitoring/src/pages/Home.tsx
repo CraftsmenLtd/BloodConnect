@@ -59,73 +59,80 @@ const Home = () => {
     })
   }
 
-  const parsedRequestsToMapDataPoints =
-    globalData.requests.reduce((acc, item) => {
-      const geohash = item.geohash.S
-      const bloodGroup = item.requestedBloodGroup?.S as BloodGroup
-      const detailsShownOnMap = item.SK.S.split('#')[2] ===
+  const parsedRequestsToMapDataPoints = useMemo(() => globalData.requests.reduce((acc, item) => {
+    const geohash = item.geohash.S
+    const bloodGroup = item.requestedBloodGroup?.S as BloodGroup
+    const detailsShownOnMap = item.SK.S.split('#')[2] ===
         requestListProps.detailsShownOnMapForRequestId ||
         requestListProps.detailsShownOnMapForRequestId === null
 
+    if (!geohash || !bloodGroup || !detailsShownOnMap) return acc
 
-      if (!geohash || !bloodGroup || !detailsShownOnMap) return acc
+    const existing = acc.find(
+      dp => dp.id === geohash) as MapDataPoint & { type: MapDataPointType.REQUEST }
 
-      const existing = acc.find(
-        dp => dp.id === geohash) as MapDataPoint & { type: MapDataPointType.REQUEST }
+    if (!existing) {
+      const { latitude, longitude } = decode(geohash)
+      acc.push({
+        type: MapDataPointType.REQUEST,
+        id: item.geohash.S,
+        latitude,
+        longitude,
+        onBloodGroupCountClick: (...arg) => { handleBloodTypePopupClick(...arg) },
+        content: {
+          [bloodGroup]: requestListProps.detailsShownOnMapForRequestId === null ?
+            1 : item.bloodQuantity.N,
+        },
+      })
+    } else {
+      const count = existing.content[bloodGroup] ?? 0
+      existing.content[bloodGroup] = count + 1
+    }
+
+    return acc
+  }, [] as MapDataPoint[]), [globalData.requests, requestListProps.detailsShownOnMapForRequestId])
+
+  const parsedDonorsToMapDataPoints = useMemo(() => globalData.requests
+    .find(
+      request => request.SK.S.split('#')[2] === requestListProps.detailsShownOnMapForRequestId)
+    ?.notifiedDonors?.reduce((acc, notifiedDonor) => {
+      const latitude = Number(notifiedDonor.location.latitude.N)
+      const longitude = Number(notifiedDonor.location.longitude.N)
+      const status = notifiedDonor.status.S as AcceptDonationStatus
+
+      const existing = acc.find(dp =>
+        dp.latitude === latitude &&
+          dp.longitude === longitude
+      ) as MapDataPoint & { type: MapDataPointType.DONOR }
 
       if (!existing) {
-        const { latitude, longitude } = decode(geohash)
         acc.push({
-          type: MapDataPointType.REQUEST,
-          id: item.geohash.S,
+          type: MapDataPointType.DONOR,
+          id: encode(latitude, longitude),
           latitude,
           longitude,
-          onBloodGroupCountClick: (...arg) => { handleBloodTypePopupClick(...arg) },
           content: {
-            [bloodGroup]: requestListProps.detailsShownOnMapForRequestId === null ?
-              1 : item.bloodQuantity.N,
+            [status]: 1
           },
         })
       } else {
-        const count = existing.content[bloodGroup] ?? 0
-        existing.content[bloodGroup] = count + 1
+        const count = existing.content[status] ?? 0
+        existing.content[status] = count + 1
       }
 
       return acc
-    }, [] as MapDataPoint[])
+    }, [] as MapDataPoint[]) ?? [],
+  [globalData.requests, requestListProps.detailsShownOnMapForRequestId])
 
-  const parsedDonorsToMapDataPoints =
-    globalData.requests
-      .find(
-        request => request.SK.S.split('#')[2] === requestListProps.detailsShownOnMapForRequestId)
-      ?.notifiedDonors?.reduce((acc, notifiedDonor) => {
-        const latitude = Number(notifiedDonor.location.latitude.N)
-        const longitude = Number(notifiedDonor.location.longitude.N)
-        const status = notifiedDonor.status.S as AcceptDonationStatus
+  const data = useMemo(() => ([
+    ...parsedRequestsToMapDataPoints,
+    ...parsedDonorsToMapDataPoints]), 
+  [parsedDonorsToMapDataPoints, parsedRequestsToMapDataPoints])
 
-        const existing = acc.find(dp =>
-          dp.latitude === latitude &&
-          dp.longitude === longitude
-        ) as MapDataPoint & { type: MapDataPointType.DONOR }
-
-        if (!existing) {
-          acc.push({
-            type: MapDataPointType.DONOR,
-            id: encode(latitude, longitude),
-            latitude,
-            longitude,
-            content: {
-              [status]: 1
-            },
-          })
-        } else {
-          const count = existing.content[status] ?? 0
-          existing.content[status] = count + 1
-        }
-
-        return acc
-      }, [] as MapDataPoint[]) ?? []
-
+  const lines = useMemo(() => ({
+    from: parsedRequestsToMapDataPoints?.[0],
+    to: parsedDonorsToMapDataPoints
+  }), [parsedDonorsToMapDataPoints, parsedRequestsToMapDataPoints])
 
   const searchRequests = (data: Data) => queryRequests(dynamodbClient,
     {
@@ -169,9 +176,10 @@ const Home = () => {
       .filter(notificationWithLocation => notificationWithLocation.location))
     .then(notificationsWithLocation => {
       setGlobalData(prev => {
-        const request = prev.requests.find(request => requestId === request.SK.S.split('#')[2])
+        const requests = [...prev.requests]
+        const request = requests.find(request => requestId === request.SK.S.split('#')[2])
         request!.notifiedDonors = notificationsWithLocation
-        return { ...prev }
+        return { requests }
       })
     })
 
@@ -213,14 +221,10 @@ const Home = () => {
           }}
         />
       </div>
-
       <GeohashMap
-        lines={{
-          from: parsedRequestsToMapDataPoints?.[0],
-          to: parsedDonorsToMapDataPoints
-        }}
+        lines={lines}
         center={centerLatLng}
-        data={[...parsedRequestsToMapDataPoints, ...parsedDonorsToMapDataPoints]}
+        data={data}
         onCenterChange={arg => {
           setSearchParams(prev => {
             const newParams = new URLSearchParams(prev)
@@ -240,8 +244,8 @@ const Home = () => {
                 requestId === requestListProps.detailsShownOnMapForRequestId ?
                   null : requestListProps.detailsShownOnMapForRequestId }))}
             onCardClickToOpen={requestId => {
-              setRequestListProps(prev => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
               setSearchRequestsLoading(true)
+              setRequestListProps(prev => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
               searchNotifiedDonors(requestId).finally(() => { setSearchRequestsLoading(false) })
             }}
             bloodGroup={requestListProps!.bloodGroup}

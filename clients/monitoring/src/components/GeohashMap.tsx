@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import type { AcceptDonationStatus, BloodGroup } from '../../../../commons/dto/DonationDTO'
-import { HTML_DATA_BLOOD_GROUP_KEY, 
-  DONOR_CONTROL_CLASS, 
-  MARKER_POINT_COLOR_STATUS_MAP, 
-  REQUEST_CONTROL_CLASS } from '../constants/constants'
+import {
+  HTML_DATA_BLOOD_GROUP_KEY,
+  DONOR_CONTROL_CLASS,
+  MARKER_POINT_COLOR_STATUS_MAP,
+  REQUEST_CONTROL_CLASS
+} from '../constants/constants'
 import type { Feature, GeoJsonProperties, LineString } from 'geojson';
 
 
@@ -127,82 +129,91 @@ const GeohashMap = ({
     }
   }, [])
 
-  document.querySelectorAll(`.${REQUEST_CONTROL_CLASS}`).forEach(el => el.remove())
-  document.querySelectorAll(`.${DONOR_CONTROL_CLASS}`).forEach(el => el.remove())
+  useEffect(() => {
+    document.querySelectorAll(`.${REQUEST_CONTROL_CLASS}`).forEach(el => el.remove())
+    document.querySelectorAll(`.${DONOR_CONTROL_CLASS}`).forEach(el => el.remove())
 
-  data.forEach((point) => {
-    const popupId = `${point.type === MapDataPointType.REQUEST ? 'request' : 'donor' }-${point.id}`
+    data.forEach((point) => {
+      const popupId = `${point.type === MapDataPointType.REQUEST ? 'request' : 'donor'}-${point.id}`
 
-    document.getElementById(popupId)?.remove()
-    const contentHtml = `${Object.entries(point.content || {})
-      .map(([contentKey, value]) => {
-
-        return `<div class="${point.type === MapDataPointType.REQUEST ? 
-          REQUEST_CONTROL_CLASS : DONOR_CONTROL_CLASS}" ${HTML_DATA_BLOOD_GROUP_KEY}=${
-          contentKey} style="cursor: ${
-          point.type === MapDataPointType.REQUEST ? 'pointer' : 'inherit'};">
-              ${contentKey}: <span style="vertical-align: middle;  background-color: ${
-  point.type === MapDataPointType.REQUEST
-    ? 'black' : 
-    MARKER_POINT_COLOR_STATUS_MAP[
-      contentKey as AcceptDonationStatus]}" class="badge pill text-white">${value}</span></div>`
-      })
-      .join('')}<strong>${point.id}</strong>`
-
-    const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
-      .setLngLat([point.longitude, point.latitude])
-      .setHTML(contentHtml)
-      .addTo(mapRef.current!)
-
-    const popUpElement = popup.getElement()
-
-    popUpElement.id = popupId
-    popUpElement.classList.add(REQUEST_CONTROL_CLASS)
-
-    if ( point.type === MapDataPointType.REQUEST ) {
-      popUpElement
-        .querySelectorAll(`.${REQUEST_CONTROL_CLASS}`)
-        .forEach(el => {
-          const bloodGroup = el.getAttribute(HTML_DATA_BLOOD_GROUP_KEY) as BloodGroup
-          el.addEventListener('click', () => {
-            point.onBloodGroupCountClick(bloodGroup, point.id)
-          })
+      document.getElementById(popupId)?.remove()
+      const contentHtml = `${Object.entries(point.content || {})
+        .map(([contentKey, value]) => {
+          const statusColor = MARKER_POINT_COLOR_STATUS_MAP[contentKey as AcceptDonationStatus]
+          return `<div class="${point.type === MapDataPointType.REQUEST ?
+            REQUEST_CONTROL_CLASS :
+            DONOR_CONTROL_CLASS}" ${HTML_DATA_BLOOD_GROUP_KEY}=${contentKey} style="cursor: ${
+            point.type === MapDataPointType.REQUEST ? 'pointer' : 
+              'inherit'};">${contentKey}: <span style="vertical-align: middle;  background-color: ${
+            point.type === MapDataPointType.REQUEST ? 
+              'black' : statusColor }" class="badge pill text-white">${value}</span></div>`
         })
-    }
-  } )
+        .join('')}<strong>${point.id}</strong>`
 
-  if (mapRef.current?.getLayer('line-layer')) {
-    mapRef.current.removeLayer('line-layer');
-  }
+      const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
+        .setLngLat([point.longitude, point.latitude])
+        .setHTML(contentHtml)
+        .addTo(mapRef.current!)
 
-  if (mapRef.current?.getSource('lines')) {
-    mapRef.current.removeSource('lines');
-  }
+      const popUpElement = popup.getElement()
 
-  const linesToDraw = lines?.to.map((to) => ({
-    type: 'Feature',
-    geometry: {
-      type: 'LineString',
-      coordinates: [[lines.from.longitude, lines.from.latitude], [to.longitude, to.latitude]]
-    },
-    properties: {}
-  }));
-    
-  linesToDraw && mapRef.current?.addSource('lines', {
-    type: 'geojson',
-    data: {
-      type: 'FeatureCollection',
-      features: linesToDraw as Feature<LineString, GeoJsonProperties>[]
+      popUpElement.id = popupId
+      popUpElement.classList.add(REQUEST_CONTROL_CLASS)
+
+      if (point.type === MapDataPointType.REQUEST) {
+        popUpElement
+          .querySelectorAll(`.${REQUEST_CONTROL_CLASS}`)
+          .forEach(el => {
+            const bloodGroup = el.getAttribute(HTML_DATA_BLOOD_GROUP_KEY) as BloodGroup
+            el.addEventListener('click', () => {
+              point.onBloodGroupCountClick(bloodGroup, point.id)
+            })
+          })
+      }
+    })
+  }, [data])
+
+
+
+  useEffect(() => {
+    if (!mapRef.current?.isStyleLoaded()) { return }
+
+    const linesToDraw = lines?.to.map((to) => ({
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: [[lines.from.longitude, lines.from.latitude], [to.longitude, to.latitude]]
+      },
+      properties: {}
+    }));
+
+    mapRef.current.addSource('lines', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: linesToDraw as Feature<LineString, GeoJsonProperties>[]
+      }
+    }).addLayer({
+      id: 'line-layer',
+      type: 'line',
+      source: 'lines',
+      paint: {
+        'line-color': '#ff0000',
+        'line-width': 2
+      }
+    });
+
+    return () => {
+      if (mapRef.current?.getLayer('line-layer')) {
+        mapRef.current.removeLayer('line-layer');
+      }
+
+      if (mapRef.current?.getSource('lines')) {
+        mapRef.current.removeSource('lines');
+      }
     }
-  }).addLayer({
-    id: 'line-layer',
-    type: 'line',
-    source: 'lines',
-    paint: {
-      'line-color': '#ff0000',
-      'line-width': 2
-    }
-  });
+  }, [lines])
+
 
   return (
     <div
