@@ -31,6 +31,7 @@ export type MapDataPoint = {
   longitude: number;
   latitude: number;
   type: MapDataPointType.DONOR;
+  distance: number;
   content: Partial<{
     [K in AcceptDonationStatus]: number;
   }>;
@@ -43,7 +44,7 @@ type GeohashMapProps = {
   center: LatLong;
   lines?: {
     from: LatLong;
-    to: LatLong[];
+    to: (LatLong & {distance: number})[];
   };
 };
 
@@ -71,6 +72,7 @@ const GeohashMap = ({
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: {
+        glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
         version: 8,
         sources: {
           osm: {
@@ -156,6 +158,7 @@ const GeohashMap = ({
         .addTo(mapRef.current!)
 
       const popUpElement = popup.getElement()
+      popUpElement.style.opacity = '0.85'
 
       popUpElement.id = popupId
       popUpElement.classList.add(REQUEST_CONTROL_CLASS)
@@ -184,7 +187,9 @@ const GeohashMap = ({
         type: 'LineString',
         coordinates: [[lines.from.longitude, lines.from.latitude], [to.longitude, to.latitude]]
       },
-      properties: {}
+      properties: {
+        distance: `${to.distance} km`
+      }
     }));
 
     mapRef.current.addSource('lines', {
@@ -198,8 +203,23 @@ const GeohashMap = ({
       type: 'line',
       source: 'lines',
       paint: {
-        'line-color': '#ff0000',
-        'line-width': 2
+        'line-color': 'red',
+        'line-width': 2,
+      }
+    }).addLayer({
+      id: 'labels-layer',
+      type: 'symbol',
+      source: 'lines',
+      layout: {
+        'symbol-placement': 'line',
+        'text-field': ['get', 'distance'],
+        'text-size': 16
+      },
+      paint: {
+        'text-color': '#000',
+        'text-halo-color': '#fff',
+        'text-halo-width': 2,
+        'text-halo-blur': 1
       }
     });
 
@@ -207,7 +227,9 @@ const GeohashMap = ({
       if (mapRef.current?.getLayer('line-layer')) {
         mapRef.current.removeLayer('line-layer');
       }
-
+      if (mapRef.current?.getLayer('labels-layer')) {
+        mapRef.current.removeLayer('labels-layer');
+      }
       if (mapRef.current?.getSource('lines')) {
         mapRef.current.removeSource('lines');
       }

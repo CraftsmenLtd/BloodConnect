@@ -103,7 +103,7 @@ const Home = () => {
       const existing = acc.find(dp =>
         dp.latitude === latitude &&
           dp.longitude === longitude
-      ) as MapDataPoint & { type: MapDataPointType.DONOR }
+      )
 
       if (!existing) {
         acc.push({
@@ -111,6 +111,7 @@ const Home = () => {
           id: encode(latitude, longitude),
           latitude,
           longitude,
+          distance: Number(notifiedDonor.payload.M.distance.N),
           content: {
             [status]: 1
           },
@@ -121,7 +122,7 @@ const Home = () => {
       }
 
       return acc
-    }, [] as MapDataPoint[]) ?? [],
+    }, [] as (MapDataPoint & { type: MapDataPointType.DONOR })[]) ?? [],
   [globalData.requests, requestListProps.detailsShownOnMapForRequestId])
 
   const data = useMemo(() => ([
