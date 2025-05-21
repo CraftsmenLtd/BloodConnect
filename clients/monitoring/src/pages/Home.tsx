@@ -205,18 +205,16 @@ const Home = () => {
             status,
           }}
           onCenterHashChange={hash => {
-            setSearchParams(prev => {
-              const newParams = new URLSearchParams(prev)
-              newParams.set('centerHash', hash)
-              return newParams
-            })
+            searchParams.set('centerHash', hash)
+            setSearchParams(searchParams)
           }}
           onDataSubmit={data => {
-            setSearchParams(new URLSearchParams({
-              ...data,
-              startTime: data.startTime.toString(),
-              endTime: data.endTime.toString(),
-            }))
+            searchParams.set('centerHash', data.centerHash)
+            searchParams.set('country', data.country)
+            searchParams.set('startTime', data.startTime.toString())
+            searchParams.set('endTime', data.endTime.toString())
+            searchParams.set('status', data.status)
+            setSearchParams(searchParams)
             setSearchRequestsLoading(true)
             searchRequests(data).finally(() => { setSearchRequestsLoading(false) })
           }}
@@ -227,11 +225,8 @@ const Home = () => {
         center={centerLatLng}
         data={data}
         onCenterChange={arg => {
-          setSearchParams(prev => {
-            const newParams = new URLSearchParams(prev)
-            newParams.set('centerHash', encode(arg.latitude, arg.longitude))
-            return newParams
-          })
+          searchParams.set('centerHash', encode(arg.latitude, arg.longitude))
+          setSearchParams(searchParams)
         }}
       />
       <div
