@@ -71,14 +71,16 @@ export class UserService {
     )
 
     this.logger.info('updating user locations')
-    await locationService
-      .updateUserLocation(userId, preferredDonationLocations, updateData)
-      .catch((error) => {
-        throw new UserOperationError(
-          `Failed to update user location. Error: ${error}`,
-          GENERIC_CODES.ERROR
-        )
-      })
+    if (preferredDonationLocations != undefined) {
+      await locationService
+        .updateUserLocation(userId, preferredDonationLocations, updateData)
+        .catch((error) => {
+          throw new UserOperationError(
+            `Failed to update user location. Error: ${error}`,
+            GENERIC_CODES.ERROR
+          )
+        })
+    }
   }
 
   async updateUser(
@@ -87,9 +89,7 @@ export class UserService {
     minMonthsBetweenDonations: number
   ): Promise<void> {
     const { userId, preferredDonationLocations } = userAttributes
-    const userProfile = await this.getUser(
-      userId
-    )
+    const userProfile = await this.getUser(userId)
     const updateData: Partial<UserDetailsDTO> = await this.updateUserProfile(
       userId,
       {
@@ -100,14 +100,16 @@ export class UserService {
     )
 
     this.logger.info('updating user locations')
-    await locationService
-      .updateUserLocation(userId, preferredDonationLocations, updateData)
-      .catch((error) => {
-        throw new UserOperationError(
-          `Failed to update user location. Error: ${error}`,
-          GENERIC_CODES.ERROR
-        )
-      })
+    if (preferredDonationLocations != undefined) {
+      await locationService
+        .updateUserLocation(userId, preferredDonationLocations, updateData)
+        .catch((error) => {
+          throw new UserOperationError(
+            `Failed to update user location. Error: ${error}`,
+            GENERIC_CODES.ERROR
+          )
+        })
+    }
   }
 
   async updateUserProfile(
@@ -122,13 +124,16 @@ export class UserService {
     }
 
     this.logger.info('validating user attributes')
-    updateData.age = this.calculateAge(userAttributes.dateOfBirth)
-    updateData.availableForDonation = this.checkLastDonationDate(
-      userAttributes.lastDonationDate,
-      userAttributes.availableForDonation,
-      minMonthsBetweenDonations
-    )
-
+    if (userAttributes.dateOfBirth != undefined) {
+      updateData.age = this.calculateAge(userAttributes.dateOfBirth)
+    }
+    if (userAttributes.availableForDonation != undefined) {
+      updateData.availableForDonation = this.checkLastDonationDate(
+        userAttributes.lastDonationDate,
+        userAttributes.availableForDonation,
+        minMonthsBetweenDonations
+      )
+    }
     this.logger.info('updating user profile')
     await this.userRepository.update(updateData).catch((error) => {
       throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
@@ -142,10 +147,12 @@ export class UserService {
     locationService: LocationService,
     minMonthsBetweenDonations: number
   ): Promise<void> {
-    const userProfile: UserDetailsDTO = await this.getUser(userId)
-    const userLocations: LocationDTO[] = await locationService.queryUserLocations(userId)
+    const { preferredDonationLocations } = userAttributes
+    const userLocations: LocationDTO[] =
+      preferredDonationLocations == undefined
+        ? await locationService.queryUserLocations(userId)
+        : preferredDonationLocations
     const updatedUserAttributes: UpdateUserAttributes = {
-      ...userProfile,
       ...userAttributes,
       preferredDonationLocations: userLocations,
       userId
@@ -181,10 +188,7 @@ export class UserService {
     }
   }
 
-  async updateUserNotificationEndPoint(
-    userId: string,
-    snsEndpointArn: string,
-  ): Promise<void> {
+  async updateUserNotificationEndPoint(userId: string, snsEndpointArn: string): Promise<void> {
     const updateData: Partial<StoreNotificationEndPoint> = {
       id: userId,
       snsEndpointArn,

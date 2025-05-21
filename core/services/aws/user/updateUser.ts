@@ -3,16 +3,16 @@ import { UserService } from '../../../application/userWorkflow/UserService'
 import type { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import {
   UNKNOWN_ERROR_MESSAGE,
   UPDATE_PROFILE_SUCCESS
 } from '../../../../commons/libs/constants/ApiResponseMessages'
 import LocationDynamoDbOperations from '../commons/ddbOperations/LocationDynamoDbOperations'
-import { Config } from '../../../../commons/libs/config/config';
-import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations';
-import { LocationService } from '../../../application/userWorkflow/LocationService';
+import { Config } from '../../../../commons/libs/config/config'
+import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
+import { LocationService } from '../../../application/userWorkflow/LocationService'
 
 const config = new Config<{
   dynamodbTableName: string;
@@ -39,22 +39,31 @@ async function updateUserLambda(
   try {
     const userAttributes: UpdateUserAttributes = {
       userId: event.userId,
-      bloodGroup: event.bloodGroup,
-      gender: event.gender,
-      dateOfBirth: event.dateOfBirth,
-      age: event.age,
-      preferredDonationLocations: event.preferredDonationLocations,
-      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation,
+      availableForDonation:
+        `${event.availableForDonation}` === 'true' ? true : event.availableForDonation,
       ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
+      ...(event.dateOfBirth !== undefined && { dateOfBirth: event.dateOfBirth }),
+      ...(event.gender !== undefined && { gender: event.gender }),
+      ...(event.bloodGroup !== undefined && { bloodGroup: event.bloodGroup }),
+      ...(event.preferredDonationLocations !== undefined && {
+        preferredDonationLocations: event.preferredDonationLocations
+      }),
       ...(event.height !== undefined && { height: event.height }),
       ...(event.weight !== undefined && { weight: event.weight }),
       ...(event.lastDonationDate !== undefined && { lastDonationDate: event.lastDonationDate }),
-      ...(event.lastVaccinatedDate !== undefined && { lastVaccinatedDate: event.lastVaccinatedDate }),
+      ...(event.lastVaccinatedDate !== undefined && {
+        lastVaccinatedDate: event.lastVaccinatedDate
+      }),
       ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
-      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
+      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack })
     }
 
-    await userService.updateUser(userAttributes, locationService, config.minMonthsBetweenDonations)
+    await userService.updateUserAttributes(
+      event.userId,
+      userAttributes,
+      locationService,
+      config.minMonthsBetweenDonations
+    )
 
     return generateApiGatewayResponse(
       { message: UPDATE_PROFILE_SUCCESS, success: true },
