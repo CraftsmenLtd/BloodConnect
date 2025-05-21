@@ -116,7 +116,7 @@ export default class DynamoDbTableOperations<
     queryCommandInput: QueryCommandInput,
     options?: QueryInput<DbFields>['options']
   ): void {
-    if (options === null) return
+    if (options === null || options === undefined) return
 
     const {
       indexName,
