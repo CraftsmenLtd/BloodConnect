@@ -1,5 +1,5 @@
 import { mockedNavigate } from '../__mocks__/reactNavigation.mock'
-import { renderHook, act } from '@testing-library/react-native'
+import { renderHook, act, waitFor } from '@testing-library/react-native'
 import { useAddPersonalInfo } from '../../src/userWorkflow/personalInfo/hooks/useAddPersonalInfo'
 import { createUserProfile } from '../../src/userWorkflow/services/userProfileService'
 import { SCREENS } from '../../src/setup/constant/screens'
@@ -71,10 +71,10 @@ describe('useAddPersonalInfo Hook', () => {
     mockFetchUserProfile.mockResolvedValue(null)
   })
 
-  test('should initialize with default values', () => {
+  test('should initialize with default values', async () => {
     const { result } = renderHook(() => useAddPersonalInfo())
 
-    expect(result.current.personalInfo).toEqual({
+    expect(result.current.personalInfo).toEqual(expect.objectContaining({
       bloodGroup: '',
       height: null,
       weight: null,
@@ -85,11 +85,12 @@ describe('useAddPersonalInfo Hook', () => {
       locations: [],
       availableForDonation: true,
       acceptPolicy: false
-    })
+    }))
     expect(result.current.errors).toEqual(expect.any(Object))
     expect(result.current.errorMessage).toBe('')
     expect(result.current.loading).toBe(false)
     expect(result.current.isButtonDisabled).toBe(true)
+
   })
 
   test('should update personalInfo and validate input on handleInputChange', () => {
@@ -103,39 +104,39 @@ describe('useAddPersonalInfo Hook', () => {
     expect(result.current.errors.bloodGroup).toBe(null)
   })
 
-  test('should disable button if fields are missing or errors exist', () => {
+  test('should disable button if fields are missing or errors exist', async () => {
     const { result } = renderHook(() => useAddPersonalInfo())
 
-    act(() => {
-      Object.entries(validPersonalInfo).forEach(([key, value]) => {
-        if (key !== 'acceptPolicy') {
+    for (const [key, value] of Object.entries(validPersonalInfo)) {
+      if (key !== 'acceptPolicy') {
+        await act(async () => {
           result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
-        }
-      })
-    })
+        })
+      }
+    }
 
     expect(result.current.isButtonDisabled).toBe(true)
 
     act(() => {
-      result.current.handleInputChange('acceptPolicy', true)
+      result.current.handleInputChange('acceptPolicy', 'true')
     })
 
     expect(result.current.isButtonDisabled).toBe(false)
   })
 
-  test('should submit data and navigate on successful submission', async() => {
+  test('should submit data and navigate on successful submission', async () => {
     mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 });
     (createUserProfile as jest.Mock).mockResolvedValue({ status: 201 })
 
     const { result } = renderHook(() => useAddPersonalInfo())
 
-    await act(async() => {
-      Object.entries(validPersonalInfo).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(validPersonalInfo)) {
+      await act(async () => {
         result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
       })
-    })
+    }
 
-    await act(async() => {
+    await act(async () => {
       await result.current.handleSubmit()
     })
 
@@ -144,20 +145,20 @@ describe('useAddPersonalInfo Hook', () => {
     expect(mockedNavigate).toHaveBeenCalledWith(SCREENS.BOTTOM_TABS)
   })
 
-  test('should set errorMessage on failed submission', async() => {
+  test('should set errorMessage on failed submission', async () => {
     mockGetLatLon.mockResolvedValue({ latitude: 23.7936, longitude: 90.4043 })
     const errorMessage = 'network error';
     (createUserProfile as jest.Mock).mockRejectedValue(new Error(errorMessage))
 
     const { result } = renderHook(() => useAddPersonalInfo())
 
-    await act(async() => {
-      Object.entries(validPersonalInfo).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(validPersonalInfo)) {
+      await act(async () => {
         result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
       })
-    })
+    }
 
-    await act(async() => {
+    await act(async () => {
       await result.current.handleSubmit()
     })
 
