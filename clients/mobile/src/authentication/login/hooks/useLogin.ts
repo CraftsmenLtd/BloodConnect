@@ -46,7 +46,7 @@ export const useLogin = (): unknown => {
   } = useSocialAuth()
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
-    setLoginCredential(prevState => ({
+    setLoginCredential((prevState) => ({
       ...prevState,
       [name]: value
     }))

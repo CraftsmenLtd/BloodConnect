@@ -1,14 +1,14 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
 import type {
   QueryInput
-} from '../../../../application/models/policies/repositories/QueryTypes';
+} from '../../../../application/models/policies/repositories/QueryTypes'
 import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 import type { LocationDTO } from 'commons/dto/UserDTO'
-import type { LocationFields } from '../ddbModels/LocationModel';
+import type { LocationFields } from '../ddbModels/LocationModel'
 import LocationModel from '../ddbModels/LocationModel'
-import type LocationRepository from './../../../../application/models/policies/repositories/LocationRepository';
+import type LocationRepository from './../../../../application/models/policies/repositories/LocationRepository'
 
 export default class LocationDynamoDbOperations extends DynamoDbTableOperations<
   LocationDTO,
@@ -37,6 +37,7 @@ export default class LocationDynamoDbOperations extends DynamoDbTableOperations<
       }
     }
     const queryResult = await super.query(query as QueryInput<Record<string, unknown>>)
+
     return queryResult.items
   }
 

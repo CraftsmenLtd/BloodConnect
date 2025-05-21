@@ -31,15 +31,14 @@ export default function Navigator() {
     )
   }
 
-  const filteredRoutes = routes.filter(route => {
-    return !route.protected || isAuthenticated
-  })
+  const filteredRoutes = routes.filter((route) => !route.protected || isAuthenticated)
 
   const getInitialRoute = () => {
     if (!isAuthenticated) {
       return SCREENS.WELCOME
     }
     const hasProfile = Boolean(userProfile?.bloodGroup)
+
     return hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO
   }
 

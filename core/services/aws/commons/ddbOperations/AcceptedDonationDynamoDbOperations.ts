@@ -1,22 +1,22 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
 import type {
   QueryInput
-} from '../../../../application/models/policies/repositories/QueryTypes';
+} from '../../../../application/models/policies/repositories/QueryTypes'
 import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 import type {
   AcceptDonationFields
-} from '../ddbModels/AcceptDonationModel';
+} from '../ddbModels/AcceptDonationModel'
 import {
   AcceptDonationRequestModel
-} from '../ddbModels/AcceptDonationModel';
+} from '../ddbModels/AcceptDonationModel'
 import {
   ACCEPTED_DONATION_PK_PREFIX,
   ACCEPTED_DONATION_SK_PREFIX
 } from '../ddbModels/AcceptDonationModel'
-import type { AcceptDonationDTO } from 'commons/dto/DonationDTO';
-import type AcceptDonationRepository from '../../../../application/models/policies/repositories/AcceptDonationRepository';
+import type { AcceptDonationDTO } from 'commons/dto/DonationDTO'
+import type AcceptDonationRepository from '../../../../application/models/policies/repositories/AcceptDonationRepository'
 
 export default class AcceptDonationDynamoDbOperations extends DynamoDbTableOperations<
   AcceptDonationDTO,
@@ -36,6 +36,7 @@ export default class AcceptDonationDynamoDbOperations extends DynamoDbTableOpera
       `${ACCEPTED_DONATION_PK_PREFIX}#${seekerId}`,
       `${ACCEPTED_DONATION_SK_PREFIX}#${requestPostId}#${donorId}`
     )
+
     return item
   }
 
@@ -57,6 +58,7 @@ export default class AcceptDonationDynamoDbOperations extends DynamoDbTableOpera
       }
     }
     const queryResult = await super.query(query as QueryInput<Record<string, unknown>>)
+
     return queryResult.items
   }
 

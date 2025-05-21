@@ -3,7 +3,7 @@ import type {
   ViewStyle,
   StyleProp,
   ImageStyle
-} from 'react-native';
+} from 'react-native'
 import {
   View,
   Text,
@@ -78,7 +78,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   const { height: windowHeight } = Dimensions.get('window')
 
   const handleToggleDropdown = useCallback(() => {
-    if (!showDropdown && (iconRef.current != null)) {
+    if (!showDropdown && (iconRef.current !== null)) {
       iconRef.current.measureInWindow((_, pageY, __, height) => {
         const top = pageY + height
         const adjustedTop = Math.min(top, windowHeight - 100)
@@ -88,7 +88,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         })
       })
     }
-    setShowDropdown(prev => !prev)
+    setShowDropdown((prev) => !prev)
   }, [showDropdown, windowHeight])
 
   const handleCloseDropdown = useCallback(() => {
@@ -164,16 +164,16 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
 
   return (
     <View style={styles.card}>
-      {showHeader &&
-        <View style={styles.cardHeader}>
+      {showHeader
+        && <View style={styles.cardHeader}>
           <View>
             <Text style={styles.userName}>{post.seekerName}</Text>
             <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {showStatus && <StatusBadge status={statusValue ?? post.status} />}
-            {showOptions &&
-              <View style={styles.menuContainer}>
+            {showOptions
+              && <View style={styles.menuContainer}>
                 <View ref={iconRef} collapsable={false}>
                   <TouchableOpacity
                     onPress={handleToggleDropdown}
@@ -280,27 +280,27 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             </View>
           </View>
         </View>
-        {post.contactNumber !== '' && showContactNumber &&
-          <View style={styles.descriptionContainer}>
+        {post.contactNumber !== '' && showContactNumber
+          && <View style={styles.descriptionContainer}>
             <Text style={styles.donationInfoPlaceholder}>Contact Number</Text>
             <Text style={styles.description}>{post.contactNumber}</Text>
           </View>
         }
-        {post.patientName !== '' && showPatientName &&
-          <View style={styles.descriptionContainer}>
+        {post.patientName !== '' && showPatientName
+          && <View style={styles.descriptionContainer}>
             <Text style={styles.donationInfoPlaceholder}>Name of the Patient</Text>
             <Text style={styles.description}>{post.patientName}</Text>
           </View>
         }
 
-        {post.shortDescription !== '' && showDescription &&
-          <View style={styles.descriptionContainer}>
+        {post.shortDescription !== '' && showDescription
+          && <View style={styles.descriptionContainer}>
             <Text style={styles.donationInfoPlaceholder}>Short Description of the Problem</Text>
             <Text style={styles.description}>{post.shortDescription}</Text>
           </View>
         }
-        {post.transportationInfo !== '' && showTransportInfo &&
-          <View style={styles.descriptionContainer}>
+        {post.transportationInfo !== '' && showTransportInfo
+          && <View style={styles.descriptionContainer}>
             <Text style={styles.donationInfoPlaceholder}>Transportation Facility for the Donor</Text>
             <Text style={styles.description}>{post.transportationInfo}</Text>
           </View>

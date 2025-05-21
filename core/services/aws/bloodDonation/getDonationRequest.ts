@@ -4,7 +4,7 @@ import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import type { GetDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
-import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
@@ -44,6 +44,7 @@ async function getDonationRequestLambda(
       createdAt,
       acceptDonationService
     )
+
     return generateApiGatewayResponse(
       {
         success: true,
@@ -55,8 +56,9 @@ async function getDonationRequestLambda(
   } catch (error) {
     httpLogger.error(error)
     const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
-    const errorCode =
-      error instanceof DonationRecordOperationError ? error.errorCode : HTTP_CODES.ERROR
+    const errorCode
+      = error instanceof DonationRecordOperationError ? error.errorCode : HTTP_CODES.ERROR
+
     return generateApiGatewayResponse(`Error: ${errorMessage}`, errorCode)
   }
 }

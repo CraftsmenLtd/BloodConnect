@@ -14,6 +14,7 @@ api.interceptors.request.use(
     if (idToken !== undefined && idToken !== null) {
       config.headers.Authorization = `Bearer ${idToken}`
     }
+
     return config
   },
   async(error) => Promise.reject(error)

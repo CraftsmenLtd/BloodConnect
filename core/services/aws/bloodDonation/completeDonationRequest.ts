@@ -12,13 +12,13 @@ import DonationRecordOperationError from '../../../application/bloodDonationWork
 import { UserService } from '../../../application/userWorkflow/UserService'
 import LocationDynamoDbOperations from '../commons/ddbOperations/LocationDynamoDbOperations'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
-import { UNKNOWN_ERROR_MESSAGE } from 'commons/libs/constants/ApiResponseMessages';
-import { Config } from 'commons/libs/config/config';
-import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations';
-import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations';
-import { LocationService } from 'core/application/userWorkflow/LocationService';
+import { UNKNOWN_ERROR_MESSAGE } from 'commons/libs/constants/ApiResponseMessages'
+import { Config } from 'commons/libs/config/config'
+import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
+import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
+import { LocationService } from 'core/application/userWorkflow/LocationService'
 import SQSOperations from '../commons/sqs/SQSOperations'
 
 const config = new Config<{
@@ -86,8 +86,9 @@ async function completeDonationRequest(
   } catch (error) {
     httpLogger.error(error)
     const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
-    const errorCode =
-      error instanceof DonationRecordOperationError ? error.errorCode : HTTP_CODES.ERROR
+    const errorCode
+      = error instanceof DonationRecordOperationError ? error.errorCode : HTTP_CODES.ERROR
+
     return generateApiGatewayResponse(`Error: ${errorMessage}`, errorCode)
   }
 }

@@ -30,6 +30,7 @@ const useRequestStatus = (): unknown => {
     const { acceptedDonors } = bloodRequest
     if (acceptedDonors?.length === 0) {
       void executeFunction([], requestPostId, createdAt)
+
       return
     }
 

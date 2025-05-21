@@ -31,10 +31,10 @@ export const useLogin = (): UseLoginReturn => {
   const [fetchUser, , user] = useFetchData(getUser, true)
 
   useEffect(() => {
-    if (user != null) {
+    if (user !== null) {
       navigate(DashboardPath)
     }
-    if (signInError != null) {
+    if (signInError !== null) {
       handleError(signInError)
     }
   }, [user, signInError])

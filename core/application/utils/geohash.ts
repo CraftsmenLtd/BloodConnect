@@ -12,6 +12,7 @@ export function decodeGeohash(geohash: string): { latitude: number; longitude: n
 
   try {
     const { latitude, longitude } = ngeohash.decode(geohash)
+
     return { latitude, longitude }
   } catch (error) {
     return null
@@ -44,6 +45,7 @@ export function getGeohashNthNeighbors(geohash: string, neighborLevel: number): 
       }
     }
   }
+
   return nthLevelNeighbors
 }
 
@@ -57,11 +59,12 @@ export function getDistanceBetweenGeohashes(geohash1: string, geohash2: string):
   const deltaLat = toRadians(lat2 - lat1)
   const deltaLon = toRadians(lon2 - lon1)
 
-  const centralAngle =
-    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-    Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2)
+  const centralAngle
+    = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2)
+    + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2))
+    * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2)
 
   const angularDistance = 2 * Math.atan2(Math.sqrt(centralAngle), Math.sqrt(1 - centralAngle))
+
   return parseFloat((radiusOfEarth * angularDistance).toFixed(2))
 }

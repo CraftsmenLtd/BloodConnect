@@ -57,6 +57,7 @@ implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFi
     } = locationDto
 
     const geoPartition = geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
+
     return {
       PK: `USER#${userId}`,
       SK: `LOCATION#${locationId}`,

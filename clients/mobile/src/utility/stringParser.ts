@@ -3,5 +3,6 @@ export function stringToNumber(str: string): number {
   if (isNaN(num)) {
     throw new Error('Invalid number string')
   }
+
   return num
 }

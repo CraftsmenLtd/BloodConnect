@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 import React, { createContext, useState, useContext } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
-import type { UserProfile } from '../services/userProfileService';
+import type { UserProfile } from '../services/userProfileService'
 import { fetchUserProfileFromApi } from '../services/userProfileService'
 import { ProfileError } from '../../utility/errors'
 import storageService from '../../utility/storageService'
@@ -61,7 +61,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       NIDFront: profile.NIDFront ?? '',
       NIDBack: profile.NIDBack ?? '',
       phoneNumbers: profile.phoneNumbers ?? [],
-      preferredDonationLocations: profile.preferredDonationLocations?.map(location => ({
+      preferredDonationLocations: profile.preferredDonationLocations?.map((location) => ({
         area: location.area ?? '',
         geoHash: location.geoHash ?? '',
         geoPartition: location.geoPartition ?? '',
@@ -69,7 +69,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
         longitude: location.longitude ?? 0
       })) ?? [],
       uniqueGeoPartitions: [
-        ...new Set(profile.preferredDonationLocations?.map(loc => loc.geoPartition))
+        ...new Set(profile.preferredDonationLocations?.map((loc) => loc.geoPartition))
       ]
     }
   }
@@ -111,5 +111,6 @@ export const useUserProfile = (): UserProfileContextData => {
   if (context === undefined) {
     throw new Error('useUserProfile must be used within a UserProfileProvider')
   }
+
   return context
 }

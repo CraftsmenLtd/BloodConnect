@@ -1,11 +1,11 @@
 import Constants from 'expo-constants'
-import React from 'react';
+import React from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Linking } from 'react-native'
 import Dropdown from '../../../components/inputElement/Dropdown'
 import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
-import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput';
+import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
 import { useAddPersonalInfo } from '../hooks/useAddPersonalInfo'

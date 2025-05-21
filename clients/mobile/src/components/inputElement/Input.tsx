@@ -1,5 +1,5 @@
 import React from 'react'
-import type { KeyboardTypeOptions, StyleProp, ViewStyle } from 'react-native';
+import type { KeyboardTypeOptions, StyleProp, ViewStyle } from 'react-native'
 import { View, TextInput, Text, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'

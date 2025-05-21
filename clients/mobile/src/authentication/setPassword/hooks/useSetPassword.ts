@@ -8,7 +8,7 @@ import type {
   SetPasswordScreenNavigationProp
 } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
-import type { UserRegistrationCredentials } from '../../services/authService';
+import type { UserRegistrationCredentials } from '../../services/authService'
 import { confirmResetPasswordHandler, registerUser } from '../../services/authService'
 
 export const PASSWORD_INPUT_NAME = 'password'
@@ -56,18 +56,16 @@ export const useSetPassword = (): unknown => {
       ? validateInput(value, validationRules[name])
       : (newPassword.password !== value ? 'Passwords do not match.' : null)
 
-    setErrors(prevErrors => ({
+    setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: errorMsg
     }))
   }
 
-  const isButtonDisabled = useMemo(() => {
-    return !(
-      Object.values(newPassword).every(value => value !== '') &&
-      Object.values(errors).every(error => error === null)
-    )
-  }, [newPassword, errors])
+  const isButtonDisabled = useMemo(() => !(
+    Object.values(newPassword).every((value) => value !== '')
+      && Object.values(errors).every((error) => error === null)
+  ), [newPassword, errors])
 
   const handleRegister = async(): Promise<void> => {
     const isSuccess = await registerUser({

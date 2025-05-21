@@ -71,7 +71,7 @@ export class NotificationService {
         notificationAttributes.payload.requestPostId as string,
         NotificationType.BLOOD_REQ_POST
       )
-      if (existingNotification == null) {
+      if (existingNotification === null) {
         const notificationData: DonationNotificationAttributes = {
           ...donationNotificationData,
           payload: {
@@ -126,6 +126,7 @@ export class NotificationService {
     if (cachedUserSnsEndpointArn === undefined) {
       const userSnsEndpointArn = await userService.getDeviceSnsEndpointArn(userId)
       userDeviceToSnsEndpointMap.set(userId, userSnsEndpointArn)
+
       return userSnsEndpointArn
     } else {
       return cachedUserSnsEndpointArn
@@ -208,6 +209,7 @@ export class NotificationService {
 
   async getRejectedDonorsCount(requestPostId: string): Promise<number> {
     const rejectedDonors = await this.getIgnoredDonorList(requestPostId)
+
     return rejectedDonors.length
   }
 
@@ -216,8 +218,8 @@ export class NotificationService {
     notificationPayload: Partial<DonationRequestPayloadAttributes>
   ): Promise<void> {
     try {
-      const existingNotifications =
-        await this.notificationRepository.queryBloodDonationNotifications(requestPostId)
+      const existingNotifications
+        = await this.notificationRepository.queryBloodDonationNotifications(requestPostId)
 
       if (existingNotifications === null) {
         throw new NotificationOperationError(
@@ -269,6 +271,7 @@ export class NotificationService {
       requestPostId,
       type
     )
+
     return existingItem
   }
 
@@ -290,6 +293,7 @@ export class NotificationService {
         throw new Error('Item not found.')
       }
       await userService.updateUserNotificationEndPoint(userId, snsEndpointArn)
+
       return 'Device registration successful.'
     } catch (error: unknown) {
       const typedError = error as Error
@@ -298,7 +302,7 @@ export class NotificationService {
         const existingArn = arnMatch !== null ? arnMatch[0] : null
 
         if (existingArn !== null) {
-          return await this.handleExistingSnsEndpoint(
+          return this.handleExistingSnsEndpoint(
             snsModel,
             userService,
             existingArn,
@@ -321,6 +325,7 @@ export class NotificationService {
 
     await snsModel.setEndpointAttributes(existingArn, registrationAttributes)
     await userService.updateUserNotificationEndPoint(registrationAttributes.userId, existingArn)
+
     return 'Device registration successful with existing endpoint.'
   }
 

@@ -21,32 +21,30 @@ const RequestList = ({
   onCardClickToOpen,
   onCardClickToClose,
   activeRequestOnMap,
-}: RequestListProps) => {
-  return (
-    <Offcanvas
-      show
-      placement='end'
-      backdrop={false}
-      className="bg-dark text-white"
-      onHide={onClose}
-    >
-      <Offcanvas.Header closeButton closeVariant="white">
-        <Offcanvas.Title>{requests.length} {bloodGroup} requests in {geohash}</Offcanvas.Title>
-      </Offcanvas.Header>
-      <Offcanvas.Body>
-        <Stack gap={2}>
-          {
-            requests.map((request, index) => (
-              <RequestCard
-                activeOnMap={request.SK.S.split('#')[2] === activeRequestOnMap}
-                data={request} key={index} onHeaderClickToOpen={onCardClickToOpen}
-                onHeaderClickToClose={onCardClickToClose}/>
-            ))
-          }
-        </Stack>
-      </Offcanvas.Body>
-    </Offcanvas>
-  )
-}
+}: RequestListProps) => (
+  <Offcanvas
+    show
+    placement='end'
+    backdrop={false}
+    className="bg-dark text-white"
+    onHide={onClose}
+  >
+    <Offcanvas.Header closeButton closeVariant="white">
+      <Offcanvas.Title>{requests.length} {bloodGroup} requests in {geohash}</Offcanvas.Title>
+    </Offcanvas.Header>
+    <Offcanvas.Body>
+      <Stack gap={2}>
+        {
+          requests.map((request, index) => (
+            <RequestCard
+              activeOnMap={request.SK.S.split('#')[2] === activeRequestOnMap}
+              data={request} key={index} onHeaderClickToOpen={onCardClickToOpen}
+              onHeaderClickToClose={onCardClickToClose}/>
+          ))
+        }
+      </Stack>
+    </Offcanvas.Body>
+  </Offcanvas>
+)
 
 export default RequestList

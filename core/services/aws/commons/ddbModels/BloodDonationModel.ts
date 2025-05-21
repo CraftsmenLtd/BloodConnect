@@ -54,9 +54,9 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
     }
 
     if (
-      remainingData.status !== undefined &&
-      remainingData.countryCode !== undefined &&
-      remainingData.geohash !== undefined
+      remainingData.status !== undefined
+      && remainingData.countryCode !== undefined
+      && remainingData.geohash !== undefined
     ) {
       const geoPartition = remainingData.geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
       data.GSI1PK = `LOCATION#${remainingData.countryCode}-${geoPartition}#STATUS#${remainingData.status}`
@@ -67,12 +67,14 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
     if (remainingData.status !== undefined) {
       data.LSI1SK = `${BLOOD_REQUEST_LSI1SK_PREFIX}#${remainingData.status}#${requestPostId}`
     }
+
     return data
   }
 
   toDto(dbFields: DonationFields): DonationDTO {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { PK, SK, LSI1SK, createdAt, ...remainingDonationFields } = dbFields
+
     return {
       ...remainingDonationFields,
       requestPostId: SK.replace(`${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#`, ''),

@@ -70,12 +70,13 @@ export class GoogleMapsProvider implements MapsProvider {
 
   handleError(error: unknown): APIResponse<never> {
     const axiosError = error as { response?: { data?: { error_message?: string; status?: string } }; message?: string }
+
     return {
       success: false,
       error: {
-        message: axiosError.response?.data?.error_message ??
-                (axiosError.message as string) ??
-                'An error occurred',
+        message: axiosError.response?.data?.error_message
+                ?? (axiosError.message as string)
+                ?? 'An error occurred',
         code: axiosError.response?.data?.status ?? 'UNKNOWN_ERROR'
       }
     }

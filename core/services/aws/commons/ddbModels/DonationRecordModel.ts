@@ -35,6 +35,7 @@ implements
   fromDto(DonationRecordDTO: DonationRecordDTO): DonationRecordFields {
     const { donorId, requestPostId, ...remainingDonationRecordData } = DonationRecordDTO
     const postCreationDate = remainingDonationRecordData.createdAt ?? new Date().toISOString()
+
     return {
       PK: `${DONATION_RECORD_PK_PREFIX}#${donorId}`,
       SK: `${DONATION_RECORD_PK_PREFIX}#${requestPostId}`,
@@ -45,6 +46,7 @@ implements
 
   toDto(dbFields: DonationRecordFields): DonationRecordDTO {
     const { PK, SK, createdAt, ...remainingDonationRecordFields } = dbFields
+
     return {
       ...remainingDonationRecordFields,
       donorId: PK.replace(`${DONATION_RECORD_PK_PREFIX}#`, ''),

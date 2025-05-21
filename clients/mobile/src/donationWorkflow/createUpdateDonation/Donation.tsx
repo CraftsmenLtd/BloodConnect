@@ -160,8 +160,8 @@ const CreateBloodRequest = () => {
           />
         </View>
 
-        {errorMessage !== '' &&
-            <Text style={styles.errorMessage}>{errorMessage}</Text>
+        {errorMessage !== ''
+            && <Text style={styles.errorMessage}>{errorMessage}</Text>
         }
 
         <View style={styles.buttonContainer}>
