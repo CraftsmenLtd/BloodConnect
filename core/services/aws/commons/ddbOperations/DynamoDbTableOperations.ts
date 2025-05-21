@@ -9,7 +9,7 @@ import type {
   GetCommandInput,
   QueryCommandInput,
   DeleteCommandInput
-} from '@aws-sdk/lib-dynamodb';
+} from '@aws-sdk/lib-dynamodb'
 import {
   DynamoDBDocumentClient,
   PutCommand,
@@ -21,7 +21,7 @@ import {
 import type {
   QueryInput,
   QueryCondition
-} from '../../../../application/models/policies/repositories/QueryTypes';
+} from '../../../../application/models/policies/repositories/QueryTypes'
 import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
@@ -88,13 +88,14 @@ export default class DynamoDbTableOperations<
         queryCommandInput.IndexName = indexName
       }
 
-      if (requestedAttributes != null && requestedAttributes.length > 0) {
+      if (requestedAttributes !== null && requestedAttributes.length > 0) {
         queryCommandInput.ProjectionExpression = requestedAttributes.join(', ')
       }
 
       this.applyQueryOptions(queryCommandInput, queryInput.options)
 
       const result = await this.client.send(new QueryCommand(queryCommandInput))
+
       return {
         items: (result.Items ?? []).map((item) =>
           this.modelAdapter.toDto(item as DbFields)
@@ -103,8 +104,8 @@ export default class DynamoDbTableOperations<
       }
     } catch (error) {
       throw new DatabaseError(
-        `Failed to query items from DynamoDB: ${error instanceof Error ?
-          error.message : 'Unknown error'
+        `Failed to query items from DynamoDB: ${error instanceof Error
+          ? error.message : 'Unknown error'
         }`,
         GENERIC_CODES.ERROR
       )
@@ -115,7 +116,7 @@ export default class DynamoDbTableOperations<
     queryCommandInput: QueryCommandInput,
     options?: QueryInput<DbFields>['options']
   ): void {
-    if (options == null) return
+    if (options === null) return
 
     const {
       indexName,
@@ -126,26 +127,26 @@ export default class DynamoDbTableOperations<
       filterExpressionValues
     } = options
 
-    if (indexName?.trim() != null) {
+    if (indexName?.trim() !== null) {
       queryCommandInput.IndexName = indexName
     }
-    if (limit != null && limit > 0) {
+    if (limit !== null && limit > 0) {
       queryCommandInput.Limit = limit
     }
     if (scanIndexForward !== undefined) {
       queryCommandInput.ScanIndexForward = scanIndexForward
     }
     if (
-      exclusiveStartKey != null &&
-      Object.keys(exclusiveStartKey).length > 0
+      exclusiveStartKey !== null
+      && Object.keys(exclusiveStartKey).length > 0
     ) {
       queryCommandInput.ExclusiveStartKey = exclusiveStartKey
     }
-    if (filterExpression?.trim() != null) {
+    if (filterExpression?.trim() !== null) {
       queryCommandInput.FilterExpression = filterExpression
       if (
-        filterExpressionValues != null &&
-        Object.keys(filterExpressionValues).length > 0
+        filterExpressionValues !== null
+        && Object.keys(filterExpressionValues).length > 0
       ) {
         queryCommandInput.ExpressionAttributeValues = {
           ...queryCommandInput.ExpressionAttributeValues,
@@ -187,51 +188,52 @@ export default class DynamoDbTableOperations<
       }
     }
 
-    expressionAttributeNames[`#${String(sortKeyCondition.attributeName)}`] =
-      String(sortKeyCondition.attributeName)
-    expressionAttributeValues[`:${String(sortKeyCondition.attributeName)}`] =
-      sortKeyCondition.attributeValue
+    expressionAttributeNames[`#${String(sortKeyCondition.attributeName)}`]
+      = String(sortKeyCondition.attributeName)
+    expressionAttributeValues[`:${String(sortKeyCondition.attributeName)}`]
+      = sortKeyCondition.attributeValue
 
     switch (sortKeyCondition.operator) {
-    case QueryConditionOperator.BEGINS_WITH:
-      return {
-        keyConditionExpression: `${baseKeyConditionExpression} AND begins_with(#${String(
-          sortKeyCondition.attributeName
-        )}, :${String(sortKeyCondition.attributeName)})`,
-        expressionAttributeValues,
-        expressionAttributeNames
+      case QueryConditionOperator.BEGINS_WITH:
+        return {
+          keyConditionExpression: `${baseKeyConditionExpression} AND begins_with(#${String(
+            sortKeyCondition.attributeName
+          )}, :${String(sortKeyCondition.attributeName)})`,
+          expressionAttributeValues,
+          expressionAttributeNames
+        }
+      case QueryConditionOperator.BETWEEN: {
+        const value2 = sortKeyCondition.attributeValue2
+        if (value2 === undefined || value2 === null || value2 === '') {
+          throw new DatabaseError(
+            'BETWEEN operator requires a non-empty second value',
+            GENERIC_CODES.ERROR
+          )
+        }
+        expressionAttributeValues[
+          `:${String(sortKeyCondition.attributeName)}2`
+        ] = value2
+
+        return {
+          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
+            sortKeyCondition.attributeName
+          )} BETWEEN :${String(sortKeyCondition.attributeName)} AND :${String(
+            sortKeyCondition.attributeName
+          )}2`,
+          expressionAttributeValues,
+          expressionAttributeNames
+        }
       }
-    case QueryConditionOperator.BETWEEN: {
-      const value2 = sortKeyCondition.attributeValue2
-      if (value2 === undefined || value2 === null || value2 === '') {
-        throw new DatabaseError(
-          'BETWEEN operator requires a non-empty second value',
-          GENERIC_CODES.ERROR
-        )
-      }
-      expressionAttributeValues[
-        `:${String(sortKeyCondition.attributeName)}2`
-      ] = value2
-      return {
-        keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
-          sortKeyCondition.attributeName
-        )} BETWEEN :${String(sortKeyCondition.attributeName)} AND :${String(
-          sortKeyCondition.attributeName
-        )}2`,
-        expressionAttributeValues,
-        expressionAttributeNames
-      }
-    }
-    default:
-      return {
-        keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
-          sortKeyCondition.attributeName
-        )} ${sortKeyCondition.operator} :${String(
-          sortKeyCondition.attributeName
-        )}`,
-        expressionAttributeValues,
-        expressionAttributeNames
-      }
+      default:
+        return {
+          keyConditionExpression: `${baseKeyConditionExpression} AND #${String(
+            sortKeyCondition.attributeName
+          )} ${sortKeyCondition.operator} :${String(
+            sortKeyCondition.attributeName
+          )}`,
+          expressionAttributeValues,
+          expressionAttributeNames
+        }
     }
   }
 
@@ -277,12 +279,12 @@ export default class DynamoDbTableOperations<
         return this.modelAdapter.toDto(items)
       }
       throw new Error(
-        'Failed to update item in DynamoDB. HTTP Status Code: ' +
-        updateCommandOutput.$metadata?.httpStatusCode
+        'Failed to update item in DynamoDB. HTTP Status Code: '
+        + updateCommandOutput.$metadata?.httpStatusCode
       )
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
+      const errorMessage
+        = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
       throw new Error(
         `Failed to update item in ${this.tableName}. Error: ${errorMessage}`
       )
@@ -308,6 +310,7 @@ export default class DynamoDbTableOperations<
       if (result.Item === null || result.Item === undefined) {
         return null
       }
+
       return this.modelAdapter.toDto(result.Item as DbFields)
     } catch (error) {
       throw new DatabaseError(
@@ -335,8 +338,8 @@ export default class DynamoDbTableOperations<
 
       await this.client.send(new DeleteCommand(input))
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
+      const errorMessage
+        = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
       throw new Error(
         `Failed to delete item in ${this.tableName}. Error: ${errorMessage}`
       )
@@ -363,6 +366,7 @@ export default class DynamoDbTableOperations<
         expressionAttribute[placeholder] = value
       }
     }
+
     return { updateExpression, expressionAttribute, expressionAttributeNames, removeExpression }
   }
 
@@ -373,13 +377,15 @@ export default class DynamoDbTableOperations<
   ): Record<string, unknown> {
     const { [partitionKeyName]: _, ...rest } = { ...item }
     if (
-      sortKeyName != null &&
-      sortKeyName !== '' &&
-      sortKeyName !== undefined
+      sortKeyName !== null
+      && sortKeyName !== ''
+      && sortKeyName !== undefined
     ) {
       const { [sortKeyName]: _, ...itemWithoutPrimaryKey } = rest
+
       return itemWithoutPrimaryKey
     }
+
     return rest
   }
 }

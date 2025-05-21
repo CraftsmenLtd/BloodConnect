@@ -30,7 +30,7 @@ export const NetInfoProvider = (
   }
 
   useEffect((): (() => void) => {
-    const unsubscribe = NetInfo.addEventListener(state => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
       const connectionStatus = !!state.isConnected
       setIsConnected(connectionStatus)
     })
@@ -50,5 +50,6 @@ export const useNetInfo = (): NetInfoContextType => {
   if (!context) {
     throw new Error('useNetInfo must be used within a NetInfoProvider')
   }
+
   return context
 }

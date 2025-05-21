@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import type {
   StyleProp,
   ImageStyle
-} from 'react-native';
+} from 'react-native'
 import {
   Text,
   View,
@@ -43,8 +43,8 @@ const ResponseDonationRequest = () => {
 
   const isRequestAlreadyAccepted = myResponses.some(
     (response) =>
-      response.requestPostId === bloodRequest.requestPostId &&
-      response.status === STATUS.ACCEPTED
+      response.requestPostId === bloodRequest.requestPostId
+      && response.status === STATUS.ACCEPTED
   )
 
   return (

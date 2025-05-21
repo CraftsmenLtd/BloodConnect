@@ -29,8 +29,8 @@ export async function updateCognitoUserInfo({
     const command = new AdminUpdateUserAttributesCommand(updateParams)
     await cognitoClient.send(command)
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
+    const errorMessage
+      = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
     throw new Error(
       `Failed to update user attributes in Cognito: ${errorMessage}`
     )

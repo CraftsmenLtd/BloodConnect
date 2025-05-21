@@ -34,7 +34,7 @@ const Profile: React.FC = () => {
   const { t } = useTranslation()
   const { userDetails } = useProfile()
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(
-    userDetails?.preferredDonationLocations.map(location => location.area) ?? []
+    userDetails?.preferredDonationLocations.map((location) => location.area) ?? []
   )
   const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
@@ -59,9 +59,7 @@ const Profile: React.FC = () => {
         name: userDetails.name ?? '',
         lastDonationDate: userDetails.lastDonationDate ?? '',
         preferredDonationLocations: userDetails.preferredDonationLocations ?? [],
-        locations: userDetails?.preferredDonationLocations?.map(location => {
-          return location.area
-        }) ?? []
+        locations: userDetails?.preferredDonationLocations?.map((location) => location.area) ?? []
       }
     })
   }

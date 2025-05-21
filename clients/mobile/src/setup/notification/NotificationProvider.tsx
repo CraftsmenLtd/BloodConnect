@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 import { useState, useEffect, createContext, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
 import type { NavigationContainerRef, ParamListBase } from '@react-navigation/native'
@@ -46,6 +46,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
     })
 
     navigationStateUnsubscribe.current = unsubscribe
+
     return () => { responseListener.remove() }
   }, [])
 
@@ -66,12 +67,10 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
     navigationStateUnsubscribe.current !== null && navigationStateUnsubscribe.current()
   }
 
-  const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => {
-    return (
-      Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0 &&
-      response?.notification.request.identifier !== null
-    )
-  }
+  const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => (
+    Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0
+      && response?.notification.request.identifier !== null
+  )
 
   const handleNotificationNavigation = (response: Notifications.NotificationResponse | null) => {
     if (response === null) return

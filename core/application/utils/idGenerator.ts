@@ -1,5 +1,3 @@
 import { ulid } from 'ulid'
 
-export const generateUniqueID = (): string => {
-  return ulid()
-}
+export const generateUniqueID = (): string => ulid()

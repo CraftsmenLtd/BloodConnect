@@ -1,12 +1,12 @@
-import React from 'clients/commons/platform/node_modules/@types/react';
-import { Link } from 'react-router-dom';
-import Button from '../../../components/button';
-import InputField from '../../../components/input-fields';
-import PasswordField from '../../../components/input-fields/PasswordInput';
-import { Toast } from '../../../components/toast';
-import { LoginPath } from '../../../../constants/routeConsts';
-import { MdOutlineMail, HiOutlinePhone } from '../../../assets/icons';
-import { useSignUp } from './useSignUp';
+import React from 'clients/commons/platform/node_modules/@types/react'
+import { Link } from 'react-router-dom'
+import Button from '../../../components/button'
+import InputField from '../../../components/input-fields'
+import PasswordField from '../../../components/input-fields/PasswordInput'
+import { Toast } from '../../../components/toast'
+import { LoginPath } from '../../../../constants/routeConsts'
+import { MdOutlineMail, HiOutlinePhone } from '../../../assets/icons'
+import { useSignUp } from './useSignUp'
 
 const SignUp: React.FC = () => {
   const {
@@ -26,9 +26,9 @@ const SignUp: React.FC = () => {
     toastClass,
     passwordValidation,
     loading,
-  } = useSignUp();
+  } = useSignUp()
 
-  const { passwordResults, confirmPasswordResult } = passwordValidation;
+  const { passwordResults, confirmPasswordResult } = passwordValidation
 
   return (
     <div className="flex items-center justify-center my-4">
@@ -37,8 +37,8 @@ const SignUp: React.FC = () => {
 
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            void handleSignUp();
+            e.preventDefault()
+            void handleSignUp()
           }}
         >
           <InputField
@@ -47,7 +47,7 @@ const SignUp: React.FC = () => {
             placeholder="Enter your organization name"
             value={organizationName}
             onChange={(e) => {
-              setOrganizationName(e.target.value);
+              setOrganizationName(e.target.value)
             }}
           />
 
@@ -57,7 +57,7 @@ const SignUp: React.FC = () => {
             placeholder="Enter your contact number"
             value={phoneNumber}
             onChange={(e) => {
-              setPhoneNumber(e.target.value);
+              setPhoneNumber(e.target.value)
             }}
             icon={<HiOutlinePhone />}
           />
@@ -68,7 +68,7 @@ const SignUp: React.FC = () => {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => {
-              setEmail(e.target.value);
+              setEmail(e.target.value)
             }}
             icon={<MdOutlineMail />}
           />
@@ -110,7 +110,7 @@ const SignUp: React.FC = () => {
       </div>
       <Toast msg={toastMsg} className={toastClass} visible={toastVisible} />
     </div>
-  );
-};
+  )
+}
 
-export default SignUp;
+export default SignUp

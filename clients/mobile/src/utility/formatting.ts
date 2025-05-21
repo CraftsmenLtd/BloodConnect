@@ -25,20 +25,20 @@ export function formatErrorMessage(error: unknown): string {
     }
 
     switch (errorMessage.trim()) {
-    case 'user already exists':
-      return 'User already exists, Please Login.'
-    case 'invalid request body':
-      return 'Please check your input and try again.'
-    case 'network error':
-      return 'Please check your internet connection.'
-    case 'network request failed':
-      return 'Please check your internet connection.'
-    case 'timeout':
-      return 'Request timed out, please try again later.'
-    case 'error: you\'ve reached today\'s limit of 10 requests. please try tomorrow.':
-      return 'You have reached the daily request limit. Please try again tomorrow.'
-    default:
-      return 'Something went wrong.'
+      case 'user already exists':
+        return 'User already exists, Please Login.'
+      case 'invalid request body':
+        return 'Please check your input and try again.'
+      case 'network error':
+        return 'Please check your internet connection.'
+      case 'network request failed':
+        return 'Please check your internet connection.'
+      case 'timeout':
+        return 'Request timed out, please try again later.'
+      case 'error: you\'ve reached today\'s limit of 10 requests. please try tomorrow.':
+        return 'You have reached the daily request limit. Please try again tomorrow.'
+      default:
+        return 'Something went wrong.'
     }
   }
 
@@ -59,14 +59,11 @@ export function formatErrorMessage(error: unknown): string {
 
 export const formatToTwoDecimalPlaces = (value: string): number => {
   const numValue = parseFloat(value)
+
   return isNaN(numValue) ? 0 : parseFloat(numValue.toFixed(2))
 }
 
-export const replaceTemplatePlaceholders = (template: string, ...values: string[]): string => {
-  return template.replace(/{(\d+)}/g, (_match, index) => {
-    return typeof values[index] !== 'undefined' ? values[index] : ''
-  })
-}
+export const replaceTemplatePlaceholders = (template: string, ...values: string[]): string => template.replace(/{(\d+)}/g, (_match, index) => typeof values[index] !== 'undefined' ? values[index] : '')
 
 export const formatLocations = async(
   locations: string[],
@@ -80,10 +77,11 @@ export const formatLocations = async(
         .then((location) => {
           if (location !== null) {
             const { latitude, longitude } = location
+
             return { area, latitude, longitude }
           }
         })
-        .catch(() => { return null })
+        .catch(() => null)
     )
   )
 

@@ -41,10 +41,10 @@ export const useSignUp = (): UseSignUpReturnType => {
   const [, , user] = useFetchData(getUser, true)
 
   useEffect(() => {
-    if (user != null) {
+    if (user !== null) {
       navigate(DashboardPath)
     }
-    if (error != null) {
+    if (error !== null) {
       handleError(error)
     }
   }, [user, navigate, error])
@@ -69,6 +69,7 @@ export const useSignUp = (): UseSignUpReturnType => {
 
     if (!isPasswordValid || !confirmPasswordResult.isValid) {
       handleError('Please fix the validation errors.')
+
       return
     }
 

@@ -70,10 +70,10 @@ export class DonorSearchService {
 
     const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
 
-    const shouldRestartSearch =
-      donorSearchRecord?.status === DonorSearchStatus.COMPLETED &&
-      eventName === DynamoDBEventName.MODIFY &&
-      donationStatus === DonationStatus.PENDING
+    const shouldRestartSearch
+      = donorSearchRecord?.status === DonorSearchStatus.COMPLETED
+      && eventName === DynamoDBEventName.MODIFY
+      && donationStatus === DonationStatus.PENDING
 
     if (donorSearchRecord === null) {
       this.logger.info('inserting donor search record')
@@ -151,10 +151,11 @@ export class DonorSearchService {
     )
 
     if (
-      donationPost.status === DonationStatus.COMPLETED ||
-      donationPost.status === DonationStatus.CANCELLED
+      donationPost.status === DonationStatus.COMPLETED
+      || donationPost.status === DonationStatus.CANCELLED
     ) {
       this.logger.info(`terminating process as donation status is ${donationPost.status}`)
+
       return
     }
 
@@ -166,8 +167,9 @@ export class DonorSearchService {
     await this.handleVisibilityTimeout(queueModel, targetedExecutionTime, receiptHandle)
 
     const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
-    if (donorSearchRecord == null) {
+    if (donorSearchRecord === null) {
       this.logger.info('terminating process as no search record found')
+
       return
     }
 
@@ -195,14 +197,14 @@ export class DonorSearchService {
       ? 0
       : await notificationService.getRejectedDonorsCount(requestPostId)
 
-    const totalDonorsToFind =
-      remainingDonorsToFind !== undefined && remainingDonorsToFind > 0
+    const totalDonorsToFind
+      = remainingDonorsToFind !== undefined && remainingDonorsToFind > 0
         ? remainingDonorsToFind + rejectedDonorsCount
         : calculateTotalDonorsToFind(remainingBagsNeeded, urgencyLevel)
 
     this.logger.info(`querying geohash to find ${totalDonorsToFind} eligible donors`)
-    const { eligibleDonors, updatedNeighborSearchLevel, geohashesForNextIteration } =
-      await this.queryEligibleDonors(
+    const { eligibleDonors, updatedNeighborSearchLevel, geohashesForNextIteration }
+      = await this.queryEligibleDonors(
         geohashService,
         geohashCache,
         seekerId,
@@ -225,9 +227,9 @@ export class DonorSearchService {
       this.options.notificationQueueUrl
     )
 
-    const hasMaxGeohashLevelReached =
-      updatedNeighborSearchLevel >= this.options.maxGeohashNeighborSearchLevel &&
-      geohashesForNextIteration.length === 0
+    const hasMaxGeohashLevelReached
+      = updatedNeighborSearchLevel >= this.options.maxGeohashNeighborSearchLevel
+      && geohashesForNextIteration.length === 0
 
     const nextRemainingDonorsToFind = totalDonorsToFind - eligibleDonorsCount
 
@@ -259,11 +261,12 @@ export class DonorSearchService {
         queueModel,
         this.options.donorSearchDelayBetweenExecution
       )
+
       return
     }
 
-    const hasDonorSearchMaxInstantiatedRetryReached =
-      initiationCount >= this.options.donorSearchMaxInitiatingRetryCount
+    const hasDonorSearchMaxInstantiatedRetryReached
+      = initiationCount >= this.options.donorSearchMaxInitiatingRetryCount
 
     if (hasDonorSearchMaxInstantiatedRetryReached) {
       this.logger.info(
@@ -276,6 +279,7 @@ export class DonorSearchService {
         notifiedEligibleDonors: updatedNotifiedEligibleDonors,
         status: DonorSearchStatus.COMPLETED
       })
+
       return
     }
 
@@ -373,15 +377,15 @@ export class DonorSearchService {
     updatedNeighborSearchLevel: number;
     geohashesForNextIteration: string[];
   }> {
-    const { updatedGeohashesToProcess, updatedNeighborSearchLevel } =
-      geohashService.getNeighborGeohashes(
+    const { updatedGeohashesToProcess, updatedNeighborSearchLevel }
+      = geohashService.getNeighborGeohashes(
         geohash.slice(0, this.options.neighborSearchGeohashPrefixLength),
         currentNeighborSearchLevel,
         remainingGeohashesToProcess
       )
 
-    const { updatedEligibleDonors, processedGeohashCount } =
-      await this.getNewDonorsInNeighborGeohash(
+    const { updatedEligibleDonors, processedGeohashCount }
+      = await this.getNewDonorsInNeighborGeohash(
         geohashService,
         geohashCache,
         seekerId,
@@ -417,9 +421,9 @@ export class DonorSearchService {
     processedGeohashCount: number;
   }> {
     if (
-      geohashesToProcess.length === 0 ||
-      processedGeohashCount >= this.options.maxGeohashesPerExecution ||
-      Object.keys(eligibleDonors).length >= totalDonorsToFind
+      geohashesToProcess.length === 0
+      || processedGeohashCount >= this.options.maxGeohashesPerExecution
+      || Object.keys(eligibleDonors).length >= totalDonorsToFind
     ) {
       return { updatedEligibleDonors: eligibleDonors, processedGeohashCount }
     }
@@ -438,9 +442,9 @@ export class DonorSearchService {
         const donorDistance = getDistanceBetweenGeohashes(seekerGeohash, geohashToProcess)
 
         const isDonorTheSeeker = donor.userId === seekerId
-        const isDonorCloserOrNew =
-          donorAccumulator[donor.userId] === undefined ||
-          donorAccumulator[donor.userId].distance > donorDistance
+        const isDonorCloserOrNew
+          = donorAccumulator[donor.userId] === undefined
+          || donorAccumulator[donor.userId].distance > donorDistance
         const isDonorAlreadyNotified = notifiedEligibleDonors[donor.userId] !== undefined
 
         if (!isDonorTheSeeker && isDonorCloserOrNew && !isDonorAlreadyNotified) {
@@ -449,6 +453,7 @@ export class DonorSearchService {
             distance: donorDistance
           }
         }
+
         return donorAccumulator
       },
       { ...eligibleDonors }
@@ -492,6 +497,7 @@ export class DonorSearchService {
     }
 
     const cachedDonorMap = geohashCache.get(cacheKey) as GeohashDonorMap
+
     return cachedDonorMap[geohashToProcess] ?? []
   }
 }

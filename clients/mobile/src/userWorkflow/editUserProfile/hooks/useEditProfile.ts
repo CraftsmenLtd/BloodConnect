@@ -137,6 +137,7 @@ export const useEditProfile = () => {
     setErrors((prevErrors) => {
       const errorMsg = validateInput(value, validationRules[field])
       if (prevErrors[field] === errorMsg) return prevErrors
+
       return { ...prevErrors, [field]: errorMsg }
     })
   }
@@ -144,7 +145,7 @@ export const useEditProfile = () => {
   const handleSave = async(): Promise<void> => {
     const newErrors: Record<string, string | null> = {}
     const validationFields = Object.keys(validationRules) as ProfileFields[]
-    validationFields.forEach(field => {
+    validationFields.forEach((field) => {
       const value = profileData[field]
       const rules = validationRules[field]
       newErrors[field] = validateInput(value, rules)
@@ -154,6 +155,7 @@ export const useEditProfile = () => {
 
     if (Object.values(newErrors).some((error) => error)) {
       Alert.alert('Please fix the highlighted errors.')
+
       return
     }
 

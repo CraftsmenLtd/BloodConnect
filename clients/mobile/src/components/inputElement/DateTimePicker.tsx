@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import type { StyleProp, ViewStyle } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native'
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { formattedDate } from '../../utility/formatting'
@@ -29,6 +29,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
     if (event.type === 'dismissed') {
       setShowDatePicker(false)
       setIsPickingTime(false)
+
       return
     }
 
@@ -36,7 +37,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
       if (!isPickingTime) {
         setShowDatePicker(false)
         if (!isOnlyDate) {
-          setIsPickingTime(prevState => !prevState)
+          setIsPickingTime((prevState) => !prevState)
           setTimeout(() => { setShowDatePicker(true) }, 20)
         }
         onChange(new Date(selectedDate.toISOString()))

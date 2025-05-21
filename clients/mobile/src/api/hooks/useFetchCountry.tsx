@@ -39,7 +39,7 @@ const useFetchCountry = (): {
       } finally {
         setLoading(false)
       }
-    };
+    }
 
     void fetchCountryAvailability()
   }, [])

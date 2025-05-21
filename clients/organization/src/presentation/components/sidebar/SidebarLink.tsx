@@ -1,6 +1,6 @@
-import { NavLink, useLocation } from 'react-router-dom';
-import type { ReactNode } from 'clients/commons/platform/node_modules/@types/react';
-import { cn } from '../../../utils';
+import { NavLink, useLocation } from 'react-router-dom'
+import type { ReactNode } from 'clients/commons/platform/node_modules/@types/react'
+import { cn } from '../../../utils'
 
 type SidebarLinkProps = {
   to?: string | null;
@@ -19,14 +19,14 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
   sidebarExpanded,
   onClick,
 }) => {
-  const { pathname } = useLocation();
+  const { pathname } = useLocation()
 
   const commonClasses = cn(
     'group relative flex items-center gap-2 rounded-sm py-2 px-2.5 transition-all duration-300 ease-in-out',
     { 'bg-primary': active }
-  );
+  )
 
-  const labelClasses = `transition-opacity duration-300 ${sidebarExpanded ? 'opacity-100' : 'opacity-0'} ${sidebarExpanded ? 'visible' : 'invisible'} whitespace-nowrap`;
+  const labelClasses = `transition-opacity duration-300 ${sidebarExpanded ? 'opacity-100' : 'opacity-0'} ${sidebarExpanded ? 'visible' : 'invisible'} whitespace-nowrap`
 
   return (
     <li>
@@ -62,7 +62,7 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
         </button>
       )}
     </li>
-  );
-};
+  )
+}
 
-export default SidebarLink;
+export default SidebarLink

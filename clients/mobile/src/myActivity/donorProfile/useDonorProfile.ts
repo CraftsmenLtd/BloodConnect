@@ -2,7 +2,7 @@ import { useRoute } from '@react-navigation/native'
 import type { DonorProfileRouteProp } from '../../setup/navigation/navigationTypes'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { Alert, Linking } from 'react-native'
-import type { DonorProfile } from '../../userWorkflow/services/userServices';
+import type { DonorProfile } from '../../userWorkflow/services/userServices'
 import { getDonorProfile } from '../../userWorkflow/services/userServices'
 import useFetchData from '../../setup/clients/useFetchData'
 
@@ -18,22 +18,20 @@ const useDonorProfile = () => {
   const fetchClient = useFetchClient()
   const { donorId } = useRoute<DonorProfileRouteProp>().params
 
-  const formatDonorProfile = (donorProfile: DonorProfile): FormattedDonorProfile => {
-    return {
-      age: donorProfile.age ?? 0,
-      bloodGroup: donorProfile.bloodGroup ?? '',
-      donorName: donorProfile.donorName ?? '',
-      gender: donorProfile.gender ?? '',
-      height: donorProfile.height ?? 0,
-      weight: donorProfile.weight ?? 0,
-      phoneNumbers: Array.isArray(donorProfile.phoneNumbers) ? donorProfile.phoneNumbers : [],
-      preferredDonationLocations: Array.isArray(donorProfile.preferredDonationLocations)
-        ? donorProfile.preferredDonationLocations.map((location) => ({
-          area: location?.area ?? ''
-        }))
-        : []
-    }
-  }
+  const formatDonorProfile = (donorProfile: DonorProfile): FormattedDonorProfile => ({
+    age: donorProfile.age ?? 0,
+    bloodGroup: donorProfile.bloodGroup ?? '',
+    donorName: donorProfile.donorName ?? '',
+    gender: donorProfile.gender ?? '',
+    height: donorProfile.height ?? 0,
+    weight: donorProfile.weight ?? 0,
+    phoneNumbers: Array.isArray(donorProfile.phoneNumbers) ? donorProfile.phoneNumbers : [],
+    preferredDonationLocations: Array.isArray(donorProfile.preferredDonationLocations)
+      ? donorProfile.preferredDonationLocations.map((location) => ({
+        area: location?.area ?? ''
+      }))
+      : []
+  })
 
   const [, loading, donorProfile, error] = useFetchData<FormattedDonorProfile>(async() => {
     const response = await getDonorProfile(donorId, fetchClient)
@@ -46,6 +44,7 @@ const useDonorProfile = () => {
   const handleCall = (): void => {
     if (!Array.isArray(donorProfile?.phoneNumbers) || donorProfile.phoneNumbers.length === 0) {
       Alert.alert('No Phone Number', 'No phone number available for this donor.')
+
       return
     }
 

@@ -21,7 +21,7 @@ export function withRegisterPushOnFocus<P>(WrappedComponent: ComponentType<P>): 
           })
         });
 
-        return () => task.cancel();
+        return () => task.cancel()
       }, [fetchClient])
     )
 

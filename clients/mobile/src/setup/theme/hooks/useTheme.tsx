@@ -7,5 +7,6 @@ export const useTheme = (): Theme => {
   if (context === null) {
     throw new Error('useTheme must be used within a ThemeProvider')
   }
+
   return context
 }
