@@ -10,7 +10,7 @@ type RequestCardProps = {
   activeOnMap: boolean;
 };
 
-const RequestCard = ({ 
+const RequestCard = ({
   data, onHeaderClickToOpen, onHeaderClickToClose, activeOnMap }: RequestCardProps) => {
   const requestId = data.SK.S.split('#')[2]
 
@@ -26,8 +26,8 @@ const RequestCard = ({
           onEnter={() => onHeaderClickToOpen(requestId)}
           onExit={() => { onHeaderClickToClose(requestId) }}
         >
-          <JsonView 
-            value={data} 
+          <JsonView
+            value={data}
             style={{ ...vscodeTheme, overflowX: 'scroll' }}
             displayDataTypes={false}
             collapsed={1}

@@ -5,7 +5,6 @@ import {
 import { SCREENS } from '../../../setup/constant/screens'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
-import { useRegisterPushOnFocus } from '../../../utility/deviceRegistration'
 import createStyles from './createStyle'
 import { useNavigation } from '@react-navigation/native'
 import { useAccount } from '../hooks/useAccount'
@@ -17,7 +16,6 @@ export const Account = () => {
   const styles = createStyles(useTheme())
   const { userProfileData, loading, handleSignOut } = useAccount()
   const navigation = useNavigation<ProfileScreenNavigationProp>()
-  useRegisterPushOnFocus()
 
   if (loading) {
     return <Loader />

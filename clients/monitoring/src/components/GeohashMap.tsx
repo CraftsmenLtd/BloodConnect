@@ -145,9 +145,9 @@ const GeohashMap = ({
           return `<div class="${point.type === MapDataPointType.REQUEST ?
             REQUEST_CONTROL_CLASS :
             DONOR_CONTROL_CLASS}" ${HTML_DATA_BLOOD_GROUP_KEY}=${contentKey} style="cursor: ${
-            point.type === MapDataPointType.REQUEST ? 'pointer' : 
+            point.type === MapDataPointType.REQUEST ? 'pointer' :
               'inherit'};">${contentKey}: <span style="vertical-align: middle;  background-color: ${
-            point.type === MapDataPointType.REQUEST ? 
+            point.type === MapDataPointType.REQUEST ?
               'black' : statusColor }" class="badge pill text-white">${value}</span></div>`
         })
         .join('')}<strong>${point.id}</strong>`

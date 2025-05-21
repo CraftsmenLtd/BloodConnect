@@ -17,8 +17,8 @@ export const NetInfoModal = (): React.ReactElement => {
 
   if (isConnected && !visible) return null
 
-  return <GenericModal 
-    visible={visible} 
+  return <GenericModal
+    visible={visible}
     title={!isConnected ? 'No Internet Connection' : 'Back Online!'}
     message={!isConnected
       ? 'Please check your network settings.'

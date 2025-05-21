@@ -127,7 +127,7 @@ const Home = () => {
 
   const data = useMemo(() => ([
     ...parsedRequestsToMapDataPoints,
-    ...parsedDonorsToMapDataPoints]), 
+    ...parsedDonorsToMapDataPoints]),
   [parsedDonorsToMapDataPoints, parsedRequestsToMapDataPoints])
 
   const lines = useMemo(() => ({

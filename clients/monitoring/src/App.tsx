@@ -50,7 +50,7 @@ const AwsProviderWrapper = () => {
         )
       }
       {
-        loading && ( 
+        loading && (
           <Spinner animation="border" role="status" variant='primary'/>
         )
       }

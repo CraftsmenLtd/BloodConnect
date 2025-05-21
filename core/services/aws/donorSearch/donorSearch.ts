@@ -12,14 +12,14 @@ import {
   DonorSearchOperationalError
 } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
 import {
-  AcceptDonationService 
+  AcceptDonationService
 } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 import type { GeohashDonorMap } from '../../../application/utils/GeohashCacheMapManager'
 import { GeohashCacheManager } from '../../../application/utils/GeohashCacheMapManager'
 import GeohashDynamoDbOperations from '../commons/ddbOperations/GeohashDynamoDbOperations'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import {
-  BloodDonationService 
+  BloodDonationService
 } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations
   from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
@@ -30,7 +30,7 @@ import DonationNotificationDynamoDbOperations
 import AcceptDonationDynamoDbOperations
   from '../commons/ddbOperations/AcceptedDonationDynamoDbOperations'
 import {
-  GeohashService 
+  GeohashService
 } from 'core/application/bloodDonationWorkflow/GeohashService'
 
 const config = new Config<DonorSearchConfig>().getConfig()
