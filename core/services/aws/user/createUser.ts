@@ -46,7 +46,10 @@ async function createUserLambda(
       dateOfBirth: event.dateOfBirth,
       age: event.age,
       preferredDonationLocations: event.preferredDonationLocations,
-      availableForDonation: `${event.availableForDonation}` === 'true' ? true : event.availableForDonation,
+      availableForDonation: 
+        `${event.availableForDonation}` === 'true' || event.availableForDonation == true
+          ? true
+          : false,
       ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
       ...(event.height !== undefined && { height: event.height }),
       ...(event.weight !== undefined && { weight: event.weight }),

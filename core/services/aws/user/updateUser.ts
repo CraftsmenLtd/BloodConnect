@@ -40,7 +40,9 @@ async function updateUserLambda(
     const userAttributes: UpdateUserAttributes = {
       userId: event.userId,
       availableForDonation:
-        `${event.availableForDonation}` === 'true' ? true : event.availableForDonation,
+        `${event.availableForDonation}` === 'true' || event.availableForDonation == true
+          ? true
+          : false,
       ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
       ...(event.dateOfBirth !== undefined && { dateOfBirth: event.dateOfBirth }),
       ...(event.gender !== undefined && { gender: event.gender }),

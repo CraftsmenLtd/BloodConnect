@@ -147,12 +147,15 @@ export class UserService {
     locationService: LocationService,
     minMonthsBetweenDonations: number
   ): Promise<void> {
+    const userProfile: UserDetailsDTO = await this.getUser(userId)
     const { preferredDonationLocations } = userAttributes
     const userLocations: LocationDTO[] =
       preferredDonationLocations == undefined
         ? await locationService.queryUserLocations(userId)
         : preferredDonationLocations
+
     const updatedUserAttributes: UpdateUserAttributes = {
+      ...userProfile,
       ...userAttributes,
       preferredDonationLocations: userLocations,
       userId
