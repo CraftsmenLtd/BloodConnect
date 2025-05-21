@@ -29,6 +29,7 @@ import type { DTO } from '../../../../../commons/dto/DTOCommon'
 import { GENERIC_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import DatabaseError from '../../../../../commons/libs/errors/DatabaseError'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
+import { isNullOrUndefined } from '../../../../../commons/libs/nullOrUndefined'
 
 type CreateUpdateExpressionsReturnType = {
   updateExpression: string[];
@@ -88,7 +89,7 @@ export default class DynamoDbTableOperations<
         queryCommandInput.IndexName = indexName
       }
 
-      if (requestedAttributes !== null && requestedAttributes.length > 0) {
+      if (!isNullOrUndefined(requestedAttributes) && requestedAttributes.length > 0) {
         queryCommandInput.ProjectionExpression = requestedAttributes.join(', ')
       }
 
@@ -116,7 +117,7 @@ export default class DynamoDbTableOperations<
     queryCommandInput: QueryCommandInput,
     options?: QueryInput<DbFields>['options']
   ): void {
-    if (options === null || options === undefined) return
+    if (isNullOrUndefined(options)) return
 
     const {
       indexName,
@@ -127,25 +128,25 @@ export default class DynamoDbTableOperations<
       filterExpressionValues
     } = options
 
-    if (indexName?.trim() !== null) {
+    if (!isNullOrUndefined(indexName)) {
       queryCommandInput.IndexName = indexName
     }
-    if (limit !== null && limit > 0) {
+    if (!isNullOrUndefined(limit) && limit > 0) {
       queryCommandInput.Limit = limit
     }
     if (scanIndexForward !== undefined) {
       queryCommandInput.ScanIndexForward = scanIndexForward
     }
     if (
-      exclusiveStartKey !== null
+      !isNullOrUndefined(exclusiveStartKey)
       && Object.keys(exclusiveStartKey).length > 0
     ) {
       queryCommandInput.ExclusiveStartKey = exclusiveStartKey
     }
-    if (filterExpression?.trim() !== null) {
+    if (!isNullOrUndefined(filterExpression)) {
       queryCommandInput.FilterExpression = filterExpression
       if (
-        filterExpressionValues !== null
+        !isNullOrUndefined(filterExpressionValues)
         && Object.keys(filterExpressionValues).length > 0
       ) {
         queryCommandInput.ExpressionAttributeValues = {
