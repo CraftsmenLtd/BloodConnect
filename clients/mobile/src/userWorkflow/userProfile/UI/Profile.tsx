@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, ScrollView } from 'react-native'
+import Badge from '../../../components/badge'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
 import CustomToggle from '../../../components/toogleButton'
@@ -100,15 +101,15 @@ const Profile: React.FC = () => {
             formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
           <View style={[styles.row, styles.lastRow]}>
             <Text style={styles.label}>{'Locations'}</Text>
-            {userDetails?.preferredDonationLocations?.map(location => {
-              return (
-                <View key={location.area} style={styles.selectedItem}>
-                  <Text style={styles.selectedItemText}>
-                    {location.area}
-                  </Text>
-                </View>
-              )
-            })}
+            <View style={styles.selectedItemContainer}>
+              {userDetails?.preferredDonationLocations?.map(location => {
+                return (
+                  <View key={location.area} style={styles.selectedItem}>
+                    <Badge text={location.area} containerStyle={styles.selectedItemText} />
+                  </View>
+                )
+              })}
+            </View>
           </View>
           <MapView
             style={styles.mapViewContainer}
