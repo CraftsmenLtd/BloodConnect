@@ -12,6 +12,7 @@ export type WelcomeScreenProps = {
 
 const Welcome = ({ navigation }: WelcomeScreenProps) => {
   const styles = createStyles(useTheme())
+
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/bloodBag.png')} style={styles.image} />
@@ -29,6 +30,7 @@ const Welcome = ({ navigation }: WelcomeScreenProps) => {
 
 const createStyles = (theme: Theme) => {
   const { width } = useWindowDimensions()
+
   return StyleSheet.create({
     container: {
       flex: 1,

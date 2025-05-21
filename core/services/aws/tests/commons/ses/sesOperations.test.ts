@@ -19,16 +19,16 @@ const assertEmailParams = (params: SendEmailCommandInput, expectedParams: Partia
     params.Message?.Body?.Html?.Data !== undefined &&
     params.Destination?.ToAddresses !== undefined
   ) {
-    if ((expectedParams.Message?.Subject?.Data) != null) {
+    if ((expectedParams.Message?.Subject?.Data) !== null) {
       expect(params.Message.Subject.Data).toBe(expectedParams.Message.Subject.Data)
     }
-    if ((expectedParams.Message?.Body?.Html?.Data) != null) {
+    if ((expectedParams.Message?.Body?.Html?.Data) !== null) {
       expect(params.Message.Body.Html.Data).toEqual(expectedParams.Message.Body.Html.Data)
     }
-    if ((expectedParams.Destination?.ToAddresses) != null) {
+    if ((expectedParams.Destination?.ToAddresses) !== null) {
       expect(params.Destination.ToAddresses).toEqual(expectedParams.Destination.ToAddresses)
     }
-    if (expectedParams.Source != null && params.Source != null) {
+    if (expectedParams.Source !== null && params.Source !== null) {
       expect(params.Source).toBe(expectedParams.Source)
     }
   }

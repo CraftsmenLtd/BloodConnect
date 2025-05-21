@@ -25,7 +25,7 @@ export const PasswordInput = ({ name, label, value, onChangeText, isVisible, set
           value={value}
           onChangeText={(text) => { onChangeText(name, text) }}
         />
-        <TouchableOpacity onPress={() => { setIsVisible((prevState) => { return !prevState }) }} style={styles.eyeIcon}>
+        <TouchableOpacity onPress={() => { setIsVisible((prevState) => !prevState) }} style={styles.eyeIcon}>
           <FontAwesome name={isVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
         </TouchableOpacity>
       </View>

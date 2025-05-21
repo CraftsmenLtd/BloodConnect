@@ -1,5 +1,5 @@
 import React from 'react'
-import type { StyleProp, ViewStyle, TextStyle } from 'react-native';
+import type { StyleProp, ViewStyle, TextStyle } from 'react-native'
 import { View, Text, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -13,6 +13,7 @@ type DividerProps = {
 
 export const Divider = ({ text, containerStyle, lineStyle, textStyle }: DividerProps) => {
   const styles = createStyles(useTheme())
+
   return (
     <View style={[styles.container, containerStyle]}>
       <View style={[styles.line, lineStyle]} />

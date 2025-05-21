@@ -79,6 +79,7 @@ async function acceptDonationRequestLambda(
   } catch (error) {
     httpLogger.error(error)
     const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
+
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
 }

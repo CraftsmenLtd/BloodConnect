@@ -41,6 +41,7 @@ const getNotificationPermissions = async(): Promise<Notifications.PermissionStat
 
   if (existingStatus !== 'granted') {
     const { status } = await Notifications.requestPermissionsAsync()
+
     return status
   }
 

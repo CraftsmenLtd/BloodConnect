@@ -113,8 +113,8 @@ const PhoneNumberInput = ({
         placeholder={placeholder}
       />
       {!isValid && <Text style={styles.error}>Please enter a valid phone number</Text>}
-      {showWarning &&
-        <Warning
+      {showWarning
+        && <Warning
           text={WARNINGS.PHONE_NUMBER_VISIBLE}
           showWarning={value !== ''}
         />

@@ -1,4 +1,4 @@
-import type { LocationDTO } from 'commons/dto/UserDTO';
+import type { LocationDTO } from 'commons/dto/UserDTO'
 import type Repository from './Repository'
 
 type GeohashRepository = {

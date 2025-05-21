@@ -1,7 +1,7 @@
 import type {
   StyleProp,
   ImageStyle
-} from 'react-native';
+} from 'react-native'
 import {
   Text,
   View,
@@ -41,8 +41,8 @@ const ResponseDonationRequest = () => {
 
   const isRequestAlreadyAccepted = myResponses.some(
     (response) =>
-      response.requestPostId === bloodRequest.requestPostId &&
-      response.status === STATUS.ACCEPTED
+      response.requestPostId === bloodRequest.requestPostId
+      && response.status === STATUS.ACCEPTED
   )
 
   return (
@@ -52,8 +52,8 @@ const ResponseDonationRequest = () => {
           <Text style={styles.header}>Blood Request</Text>
           <Text style={styles.name}>{bloodRequest.seekerName ?? 'Seeker Name'}</Text>
           <Text style={styles.subText}>Posted on {
-            bloodRequest?.donationDateTime !== null &&
-            bloodRequest?.donationDateTime !== undefined
+            bloodRequest?.donationDateTime !== null
+            && bloodRequest?.donationDateTime !== undefined
               ? new Date(bloodRequest.donationDateTime).toLocaleString()
               : 'N/A'
           }
@@ -153,24 +153,24 @@ const ResponseDonationRequest = () => {
                 )}
               </View>
             </View>
-            {bloodRequest.patientName !== '' &&
-              <View style={styles.infoRow}>
+            {bloodRequest.patientName !== ''
+              && <View style={styles.infoRow}>
                 <Text style={styles.label}>Name of the Patient</Text>
                 <Text style={styles.value}>
                   {bloodRequest.patientName ?? 'Patient Name not provided'}
                 </Text>
               </View>
             }
-            {bloodRequest.shortDescription !== '' &&
-              <View style={styles.infoRow}>
+            {bloodRequest.shortDescription !== ''
+              && <View style={styles.infoRow}>
                 <Text style={styles.label}>Short Description of the Problem</Text>
                 <Text style={styles.value}>
                   {bloodRequest.shortDescription ?? 'No description provided'}
                 </Text>
               </View>
             }
-            {bloodRequest.transportationInfo !== '' &&
-              <View style={styles.infoRow}>
+            {bloodRequest.transportationInfo !== ''
+              && <View style={styles.infoRow}>
                 <Text style={styles.label}>Transportation Facility for the Donor</Text>
                 <Text style={styles.value}>
                   {bloodRequest.transportationInfo ?? 'No transportation info'}
@@ -183,11 +183,11 @@ const ResponseDonationRequest = () => {
 
       {error !== null && <Text style={styles.error}>{error}</Text>}
       {
-        userProfile.userId !== bloodRequest.seekerId &&
-        userProfile.bloodGroup === bloodRequest.requestedBloodGroup &&
-        <View style={styles.buttonContainer}>
-          {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
-            <Button
+        userProfile.userId !== bloodRequest.seekerId
+        && userProfile.bloodGroup === bloodRequest.requestedBloodGroup
+        && <View style={styles.buttonContainer}>
+          {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted)
+            && <Button
               text="Ignore"
               buttonStyle={styles.ignoreButton}
               textStyle={{ color: theme.colors.black }}
@@ -196,8 +196,8 @@ const ResponseDonationRequest = () => {
               }} />}
           <Button
             text={
-              isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' :
-                'Accept Request'
+              isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted'
+                : 'Accept Request'
             }
             loading={isLoading}
             disabled={isRequestAccepted || isRequestAlreadyAccepted}

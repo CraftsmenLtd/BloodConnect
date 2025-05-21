@@ -23,6 +23,7 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
 
   fromDto(notificationDto: NotificationDTO): NotificationFields {
     const { id, userId, type, ...remainingNotificationFields } = notificationDto
+
     return {
       PK: `${NOTIFICATION_PK_PREFIX}#${userId}`,
       SK: `${type}#${id}`,
@@ -33,6 +34,7 @@ export default class NotificationModel implements NosqlModel<NotificationFields>
   toDto(dbFields: NotificationFields): NotificationDTO {
     const { PK, SK, ...remainingNotificationFields } = dbFields
     const userId = PK.replace('NOTIFICATION#', '')
+
     return {
       ...remainingNotificationFields,
       userId,

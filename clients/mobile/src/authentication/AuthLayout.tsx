@@ -10,6 +10,7 @@ type AuthLayoutProps = {
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   const styles = createStyles(useTheme())
+
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1 }}>
       <ScrollView

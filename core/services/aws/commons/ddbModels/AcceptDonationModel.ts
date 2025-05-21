@@ -38,6 +38,7 @@ implements
 
   fromDto(acceptedDonationDto: AcceptDonationDTO): AcceptDonationFields {
     const { seekerId, requestPostId, donorId, ...remainingData } = acceptedDonationDto
+
     return {
       PK: `${ACCEPTED_DONATION_PK_PREFIX}#${seekerId}`,
       SK: `${ACCEPTED_DONATION_SK_PREFIX}#${requestPostId}#${donorId}`,
@@ -47,6 +48,7 @@ implements
 
   toDto(dbFields: AcceptDonationFields): AcceptDonationDTO {
     const { PK, SK, ...remainingFields } = dbFields
+
     return {
       ...remainingFields,
       seekerId: PK.replace(`${ACCEPTED_DONATION_PK_PREFIX}#`, ''),

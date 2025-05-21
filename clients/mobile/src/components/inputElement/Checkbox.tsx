@@ -14,6 +14,7 @@ type CheckboxProps = {
 
 const Checkbox: React.FC<CheckboxProps> = ({ isChecked, onCheckboxChange, name, children, checkboxColor = 'red' }) => {
   const styles = createStyles(useTheme())
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => { onCheckboxChange(name, !isChecked) }} style={styles.checkboxContainer}>

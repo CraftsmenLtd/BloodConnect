@@ -1,15 +1,15 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
 import type {
   QueryInput
-} from '../../../../application/models/policies/repositories/QueryTypes';
+} from '../../../../application/models/policies/repositories/QueryTypes'
 import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 import { NOTIFICATION_PK_PREFIX } from '../ddbModels/NotificationModel'
-import DonationNotificationModel from '../ddbModels/DonationNotificationModel';
-import type { DonationNotificationFields } from '../ddbModels/DonationNotificationModel';
-import type NotificationRepository from '../../../../application/models/policies/repositories/NotificationRepository';
-import type { DonationNotificationDTO, NotificationDTO } from 'commons/dto/NotificationDTO';
+import DonationNotificationModel from '../ddbModels/DonationNotificationModel'
+import type { DonationNotificationFields } from '../ddbModels/DonationNotificationModel'
+import type NotificationRepository from '../../../../application/models/policies/repositories/NotificationRepository'
+import type { DonationNotificationDTO, NotificationDTO } from 'commons/dto/NotificationDTO'
 
 export default class DonationNotificationDynamoDbOperations extends DynamoDbTableOperations<
   NotificationDTO | DonationNotificationDTO,
@@ -49,6 +49,7 @@ export default class DonationNotificationDynamoDbOperations extends DynamoDbTabl
       query as QueryInput<Record<string, unknown>>,
       'GSI1'
     )
+
     return queryResult.items
   }
 
@@ -58,6 +59,7 @@ export default class DonationNotificationDynamoDbOperations extends DynamoDbTabl
     type: string
   ): Promise<(NotificationDTO | DonationNotificationDTO) | null> {
     const item = await super.getItem(`${NOTIFICATION_PK_PREFIX}#${userId}`, `${type}#${requestPostId}`)
+
     return item
   }
 }

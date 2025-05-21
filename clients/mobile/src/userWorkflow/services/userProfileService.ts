@@ -36,6 +36,7 @@ type APIResponse = {
 export const fetchUserProfileFromApi = async(httpClient: HttpClient): Promise<APIResponse> => {
   try {
     const response = await httpClient.get<APIResponse>('/users')
+
     return {
       data: response.data,
       status: response.status
@@ -53,6 +54,7 @@ export const createUserProfile = async(payload: Record<string, unknown>, httpCli
 Promise<APIResponse> => {
   try {
     const response = await httpClient.post<APIResponse>('/users', payload)
+
     return {
       message: response.message,
       status: response.status
@@ -67,6 +69,7 @@ export const updateUserProfile = async(payload: Record<string, unknown>, httpCli
 Promise<APIResponse> => {
   try {
     const response = await httpClient.patch<APIResponse>('/users', payload)
+
     return {
       message: response.message,
       status: response.status

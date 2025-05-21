@@ -28,12 +28,12 @@ const useDonationStatus = (): {
     status
   }: DonationStatusPayload): Promise<void> => {
     if (
-      !requestPostId ||
-      !seekerId ||
-      !createdAt ||
-      !status
+      !requestPostId
+      || !seekerId
+      || !createdAt
+      || !status
     ) {
-      throw new Error('Missing some required data. Please try again');
+      throw new Error('Missing some required data. Please try again')
     }
 
     const requestPayload: DonationStatusPayload = {
@@ -49,8 +49,8 @@ const useDonationStatus = (): {
         requestPayload
       )
       if (response.status !== 200) {
-        const errorMessage = `Error: ${response.status} ${response.statusText ?? 'Unknown error'}`;
-        throw new Error(errorMessage);
+        const errorMessage = `Error: ${response.status} ${response.statusText ?? 'Unknown error'}`
+        throw new Error(errorMessage)
       }
     } catch (error) {
       throw new Error(extractErrorMessage(error))

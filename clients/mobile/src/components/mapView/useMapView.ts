@@ -29,8 +29,8 @@ const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 const locationService = new LocationService(API_BASE_URL)
 
 const getBoundingBox = (coordinates: [number, number][]): BoundingBox => {
-  const lats = coordinates.map(c => c[1])
-  const lons = coordinates.map(c => c[0])
+  const lats = coordinates.map((c) => c[1])
+  const lons = coordinates.map((c) => c[0])
 
   const minLat = Math.min(...lats)
   const maxLat = Math.max(...lats)
@@ -57,6 +57,7 @@ const getZoomLevel = (
 ): number => {
   const latRad = (lat: number): number => {
     const sin = Math.sin((lat * Math.PI) / 180)
+
     return Math.log((1 + sin) / (1 - sin)) / 2
   }
 
@@ -68,12 +69,12 @@ const getZoomLevel = (
   const lngFraction = (lngDiff + 360) % 360 / 360
 
   const latZoom = Math.log(
-    mapHeight * (1 - padding / mapHeight) /
-    WORLD_DIM.height / latFraction
+    mapHeight * (1 - padding / mapHeight)
+    / WORLD_DIM.height / latFraction
   ) / Math.LN2
   const lngZoom = Math.log(
-    mapWidth * (1 - padding / mapWidth) /
-    WORLD_DIM.width / lngFraction
+    mapWidth * (1 - padding / mapWidth)
+    / WORLD_DIM.width / lngFraction
   ) / Math.LN2
 
   return Math.min(Math.floor(Math.min(latZoom, lngZoom)) - 1, MAX_ZOOM_LEVEL)
@@ -104,6 +105,7 @@ const useMapView = (
     const fetchMarkers = async(): Promise<void> => {
       if (!stableLocations || stableLocations.length === 0) {
         setMapMarkers([])
+
         return
       }
 
@@ -147,12 +149,14 @@ const useMapView = (
       if (coords.length === 0) {
         setZoomLevel(DEFAULT_ZOOM_LEVEL)
         setCenterCoordinate(DEFAULT_CENTER_COORDINATES)
+
         return
       }
 
       if (coords.length === 1) {
         setZoomLevel(DEFAULT_ZOOM_LEVEL)
         setCenterCoordinate(coords[0])
+
         return
       }
 

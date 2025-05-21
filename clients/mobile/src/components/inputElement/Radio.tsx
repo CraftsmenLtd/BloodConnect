@@ -13,6 +13,7 @@ type RadioButtonProps = {
 
 const RadioButton: React.FC<RadioButtonProps> = ({ name, options, value, onPress, label, error, isRequired = false, extraInfo = '' }) => {
   const styles = createStyles(useTheme())
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>
@@ -20,7 +21,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({ name, options, value, onPress
         {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
       <View style={styles.wrapper}>
-        {options.map(item => (
+        {options.map((item) => (
           <TouchableOpacity
             key={item}
             style={styles.option}

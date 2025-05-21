@@ -1,14 +1,14 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
 import type {
   QueryInput
-} from '../../../../application/models/policies/repositories/QueryTypes';
+} from '../../../../application/models/policies/repositories/QueryTypes'
 import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
-import type { LocationDTO } from 'commons/dto/UserDTO';
-import type GeohashRepository from 'core/application/models/policies/repositories/GeohashRepository';
-import type { LocationFields } from '../ddbModels/LocationModel';
-import LocationModel from '../ddbModels/LocationModel';
+import type { LocationDTO } from 'commons/dto/UserDTO'
+import type GeohashRepository from 'core/application/models/policies/repositories/GeohashRepository'
+import type { LocationFields } from '../ddbModels/LocationModel'
+import LocationModel from '../ddbModels/LocationModel'
 
 export default class GeohashDynamoDbOperations extends DynamoDbTableOperations<
   LocationDTO,
@@ -56,6 +56,7 @@ export default class GeohashDynamoDbOperations extends DynamoDbTableOperations<
       'GSI1',
       requestedAttributes
     )
+
     return queryResult
   }
 }

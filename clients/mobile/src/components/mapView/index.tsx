@@ -182,8 +182,8 @@ const ResetToInitialView = ({ cameraRef, centerCoordinate, zoomLevel }): React.R
 }
 
 const MapAttribution = (): React.ReactElement => {
-  const theme = useTheme();
-  const styles = createStyles(theme);
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   return (
     <View style={styles.attributionContainer}>

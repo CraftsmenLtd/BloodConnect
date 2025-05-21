@@ -40,8 +40,8 @@ export function calculateDelayPeriod(
     maxGeohashesPerExecution
   )
 
-  const delayPeriodInSeconds = (totalTimeAvailableInSeconds / maxInitiatingRetryCount) -
-    (totalExecutionPerInitiation * delayBetweenExecution)
+  const delayPeriodInSeconds = (totalTimeAvailableInSeconds / maxInitiatingRetryCount)
+    - (totalExecutionPerInitiation * delayBetweenExecution)
 
   const boundedDelayHours = Math.max(MIN_DELAY_HOURS, delayPeriodInSeconds / 3600)
 

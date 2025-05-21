@@ -55,6 +55,7 @@ export class UserService {
     if (userProfile === null) {
       throw new Error('User not found')
     }
+
     return userProfile
   }
 
@@ -71,7 +72,7 @@ export class UserService {
     )
 
     this.logger.info('updating user locations')
-    if (preferredDonationLocations != undefined) {
+    if (preferredDonationLocations !== undefined) {
       await locationService
         .updateUserLocation(userId, preferredDonationLocations, updateData)
         .catch((error) => {
@@ -100,7 +101,7 @@ export class UserService {
     )
 
     this.logger.info('updating user locations')
-    if (preferredDonationLocations != undefined) {
+    if (preferredDonationLocations !== undefined) {
       await locationService
         .updateUserLocation(userId, preferredDonationLocations, updateData)
         .catch((error) => {
@@ -124,10 +125,10 @@ export class UserService {
     }
 
     this.logger.info('validating user attributes')
-    if (userAttributes.dateOfBirth != undefined) {
+    if (userAttributes.dateOfBirth !== undefined) {
       updateData.age = this.calculateAge(userAttributes.dateOfBirth)
     }
-    if (userAttributes.availableForDonation != undefined) {
+    if (userAttributes.availableForDonation !== undefined) {
       updateData.availableForDonation = this.checkLastDonationDate(
         userAttributes.lastDonationDate,
         userAttributes.availableForDonation,
@@ -138,6 +139,7 @@ export class UserService {
     await this.userRepository.update(updateData).catch((error) => {
       throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     })
+
     return updateData
   }
 
@@ -149,8 +151,8 @@ export class UserService {
   ): Promise<void> {
     const userProfile: UserDetailsDTO = await this.getUser(userId)
     const { preferredDonationLocations } = userAttributes
-    const userLocations: LocationDTO[] =
-      preferredDonationLocations == undefined
+    const userLocations: LocationDTO[]
+      = preferredDonationLocations === undefined
         ? await locationService.queryUserLocations(userId)
         : preferredDonationLocations
 
@@ -174,9 +176,11 @@ export class UserService {
 
       if (!isNaN(donationDate.getTime())) {
         const donationMonths = differenceInMonths(currentDate, donationDate)
+
         return donationMonths > minMonthsBetweenDonations
       }
     }
+
     return availableForDonation
   }
 
@@ -203,7 +207,7 @@ export class UserService {
   async getDeviceSnsEndpointArn(userId: string): Promise<string> {
     try {
       const userProfile = await this.userRepository.getUser(userId)
-      if (userProfile?.snsEndpointArn == null) {
+      if (userProfile?.snsEndpointArn === null) {
         throw new Error('User has no registered device for notifications')
       }
 

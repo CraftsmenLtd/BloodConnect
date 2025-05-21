@@ -1,5 +1,5 @@
 import React from 'react'
-import type { ImageStyle, StyleProp } from 'react-native';
+import type { ImageStyle, StyleProp } from 'react-native'
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import useDonorProfile from './useDonorProfile'
@@ -18,6 +18,7 @@ const DonorProfile = () => {
     const heightInFeet = typeof heightFeet === 'string' ? parseFloat(heightFeet) : heightFeet
     const heightInMeters = heightInFeet * 0.3048
     const bmi = weightKg / (heightInMeters ** 2)
+
     return parseFloat(bmi.toFixed(2))
   }
   const ViewToRender = () => <View style={styles.container}>
@@ -35,8 +36,8 @@ const DonorProfile = () => {
 
     <Text style={styles.name}>{donorProfile?.donorName ?? ''}</Text>
     <View>
-      {Array.isArray(donorProfile?.preferredDonationLocations) &&
-        donorProfile.preferredDonationLocations.map(
+      {Array.isArray(donorProfile?.preferredDonationLocations)
+        && donorProfile.preferredDonationLocations.map(
           (location: preferredDonationLocations, index: number) => (
             <View style={styles.locationRow} key={index}>
               <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
@@ -49,8 +50,8 @@ const DonorProfile = () => {
 
     <View style={styles.detailsRow}>
       <Text style={styles.detailsText}>BMI: {
-        donorProfile.weight && donorProfile.height ?
-          calculateBMI(donorProfile.weight, donorProfile.height) : 'Not Available'}</Text>
+        donorProfile.weight && donorProfile.height
+          ? calculateBMI(donorProfile.weight, donorProfile.height) : 'Not Available'}</Text>
     </View>
 
     <View style={{ width: '100%' }}>

@@ -1,4 +1,4 @@
-import type { FetchUserAttributesOutput, AuthSession, SignInOutput } from 'aws-amplify/auth';
+import type { FetchUserAttributesOutput, AuthSession, SignInOutput } from 'aws-amplify/auth'
 import { signOut, signIn, fetchUserAttributes, fetchAuthSession } from 'aws-amplify/auth'
 
 export const userSignOut = async(): Promise<void> => signOut()
