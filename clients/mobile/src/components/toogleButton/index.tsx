@@ -29,6 +29,7 @@ type CustomToggleProps = {
  * Defaults to `"Available For Donation"`.
  * @param direction - Optional. Layout direction of the label and toggle.
  * Can be `'row'` or `'column'`. Defaults to `'column'`.
+ * @param isRequired - Optional. If required, value should be true, false otherwise.
  *
  * Returns:
  * --------

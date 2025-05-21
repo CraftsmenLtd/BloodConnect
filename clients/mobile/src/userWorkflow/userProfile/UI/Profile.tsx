@@ -71,6 +71,7 @@ const Profile: React.FC = () => {
         <ProfileSection
           name={userDetails.name ?? ''}
           location={userDetails.location ?? ''}
+          age={userDetails.age}
           isEditing={false}
         />
       )}
@@ -88,7 +89,6 @@ const Profile: React.FC = () => {
           </View>
           {renderDetailRow('Name', userDetails.name ?? '')}
           {renderDetailRow('Date of Birth', formattedDate(userDetails.dateOfBirth ?? '', true))}
-          {renderDetailRow('Age', userDetails.age.toString())}
           {renderDetailRow('Weight (kg)', userDetails.weight !== null ?
             userDetails.weight.toString() : '')}
           {renderDetailRow('Height (feet)', userDetails.height !== undefined
@@ -96,7 +96,7 @@ const Profile: React.FC = () => {
           {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined &&
             userDetails.phoneNumbers.length > 0 ?
             userDetails.phoneNumbers[0] : '')}
-          {renderDetailRow('Gender', userDetails.gender)}
+          {renderDetailRow('Gender', userDetails.gender.toUpperCase())}
           {userDetails?.lastDonationDate !== '' && renderDetailRow('Last Donation Date',
             formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
           <View style={[styles.row, styles.lastRow]}>
