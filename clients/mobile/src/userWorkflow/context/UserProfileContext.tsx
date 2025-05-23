@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import React, { createContext, useState, useContext } from 'react'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
-import type { UserProfile } from '../services/userProfileService';
+import { noopAsync } from '../../utility/noop'
+import type { UserProfile } from '../services/userProfileService'
 import { fetchUserProfileFromApi } from '../services/userProfileService'
 import { ProfileError } from '../../utility/errors'
 import storageService from '../../utility/storageService'
@@ -12,6 +13,7 @@ type UserProfileContextData = {
   loading: boolean;
   error: string;
   fetchUserProfile: () => Promise<void>;
+  updateUserProfileContext: (partialProfile: Partial<UserProfile>) => Promise<void>;
 }
 
 const defaultProfile: UserProfile = {
@@ -36,8 +38,8 @@ const UserProfileContext = createContext<UserProfileContextData | undefined>({
   userProfile: defaultProfile,
   loading: true,
   error: '',
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  fetchUserProfile: async() => { }
+  fetchUserProfile: noopAsync,
+  updateUserProfileContext: noopAsync,
 })
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -94,12 +96,31 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     }
   }
 
+  const updateUserProfileContext = async(partialProfile: Partial<UserProfile>): Promise<void> => {
+    const updatedProfile: UserProfile = {
+      ...userProfile,
+      ...partialProfile,
+      preferredDonationLocations: partialProfile.preferredDonationLocations ??
+        userProfile.preferredDonationLocations,
+      uniqueGeoPartitions: [
+        ...new Set(
+          (partialProfile.preferredDonationLocations ?? userProfile.preferredDonationLocations)
+            .map(loc => loc.geoPartition)
+        )
+      ]
+    }
+
+    setUserProfile(updatedProfile)
+    await storageService.storeItem<UserProfile>(LOCAL_STORAGE_KEYS.USER_PROFILE, updatedProfile)
+  }
+
   return (
     <UserProfileContext.Provider value={{
       userProfile,
       loading,
       error,
-      fetchUserProfile
+      fetchUserProfile,
+      updateUserProfileContext
     }}>
       {children}
     </UserProfileContext.Provider>

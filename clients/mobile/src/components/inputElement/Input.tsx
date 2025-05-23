@@ -1,6 +1,15 @@
 import React from 'react'
-import type { KeyboardTypeOptions, StyleProp, ViewStyle } from 'react-native';
-import { View, TextInput, Text, StyleSheet } from 'react-native'
+import type {
+  KeyboardTypeOptions,
+  StyleProp,
+  ViewStyle
+} from 'react-native'
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet
+} from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
@@ -12,7 +21,18 @@ type InputElementProps = {
   inputStyle?: StyleProp<ViewStyle>;
 } & InputProps
 
-export const Input = ({ name, label, value, onChangeText, placeholder, error, keyboardType = 'default', isRequired = false, readOnly = false, inputStyle }: InputElementProps) => {
+export const Input = ({ 
+  name, 
+  label, 
+  value, 
+  onChangeText, 
+  placeholder, 
+  error, 
+  keyboardType = 'default', 
+  isRequired = false, 
+  readOnly = false, 
+  inputStyle
+}: InputElementProps): React.ReactElement => {
   const styles = createStyles(useTheme())
 
   return (
@@ -29,7 +49,7 @@ export const Input = ({ name, label, value, onChangeText, placeholder, error, ke
         keyboardType={keyboardType}
         editable={!readOnly}
       />
-      {error !== null && <Text style={styles.error}>{error}</Text>}
+      {error !== null && error !== undefined && <Text style={styles.error}>{error}</Text>}
     </View>
   )
 }

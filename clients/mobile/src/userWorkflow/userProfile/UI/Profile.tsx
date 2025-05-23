@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, ScrollView } from 'react-native'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
+import CustomToggle from '../../../components/toogleButton'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
 import type { LocationData } from '../../../utility/formatting'
@@ -23,6 +24,7 @@ export type EditProfileData = {
   lastDonationDate: string;
   preferredDonationLocations: LocationData[];
   locations: string[];
+  availableForDonation: boolean;
   [key: string]: unknown;
 }
 
@@ -76,6 +78,13 @@ const Profile: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.card}>
+          <View style={styles.row}>
+            <CustomToggle
+              value={userDetails.availableForDonation}
+              isReadOnly={true}
+              direction="row"
+            />
+          </View>
           {renderDetailRow('Name', userDetails.name ?? '')}
           {renderDetailRow('Date of Birth', formattedDate(userDetails.dateOfBirth ?? '', true))}
           {renderDetailRow('Age', userDetails.age.toString())}
