@@ -43,6 +43,7 @@ const EditProfile = () => {
         <ProfileSection
           name={profileData.name}
           location={profileData?.location}
+          age={profileData.age}
           isEditing={true}
         />
 
@@ -83,18 +84,6 @@ const EditProfile = () => {
                 isOnlyDate={true}
                 inputStyle={[styles.inputStyle, styles.dobMarginBottom]}
                 error={errors.dateOfBirth}
-              />
-            </View>
-
-            <View style={styles.inputFieldStyle}>
-              <Input
-                name="age"
-                label="Age"
-                value={profileData.age.toString()}
-                onChangeText={null}
-                placeholder="Enter your name"
-                readOnly={true}
-                inputStyle={styles.inputStyle}
               />
             </View>
 

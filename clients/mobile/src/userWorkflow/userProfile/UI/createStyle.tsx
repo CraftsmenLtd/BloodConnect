@@ -49,15 +49,20 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: 16,
     fontWeight: 'bold'
   },
+  selectedItemContainer: {
+    gap: 4,
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
   selectedItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.greyBG,
     borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginRight: 5,
-    marginBottom: 6
+    paddingHorizontal: 1,
+    paddingVertical: 3,
+    marginBottom: 5,
+    justifyContent: 'space-between',
   },
   selectedItemText: {
     marginRight: 5

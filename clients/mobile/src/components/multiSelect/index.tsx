@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import type { Theme } from '../../setup/theme'
+import Badge from '../badge'
 import { commonStyles } from '../inputElement/commonStyles'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
@@ -224,18 +225,20 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         />
       </TouchableOpacity>
 
-      {(minRequiredLabel != null) &&
+      {(minRequiredLabel != null && selectedValues.length === 0) &&
         <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
       }
       {error !== null && <Text style={styles.error}>{error}</Text>}
+
       <View style={styles.selectedItemContainer}>
         {
           selectedValues.map((value) =>
             <View key={value} style={styles.selectedItem}>
-              <Text style={styles.selectedItemText}>
-                {value}
-              </Text>
-              <TouchableOpacity onPress={() => { removeSelectedValue(value) }}>
+              <Badge text={value} containerStyle={styles.selectedItemText} />
+              <TouchableOpacity
+                style={styles.selectedItemText}
+                onPress={() => { removeSelectedValue(value) }}
+              >
                 <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
               </TouchableOpacity>
             </View>)
@@ -300,8 +303,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     backgroundColor: theme.colors.greyBG,
     borderRadius: 20,
     paddingHorizontal: 1,
-    paddingVertical: 5,
-    marginRight: 5
+    paddingVertical: 3,
+    marginBottom: 5,
+    justifyContent: 'space-between',
   },
   selectedItemText: {
     marginRight: 5

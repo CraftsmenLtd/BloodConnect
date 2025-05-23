@@ -9,6 +9,7 @@ import { COMMON_URLS } from '../../setup/constant/commonUrls'
 type UserData = {
   name: string;
   location: string;
+  age: number;
   isEditing?: boolean;
   onImageUpload?: () => void;
 }
@@ -17,6 +18,7 @@ const ProfileSection: React.FC<UserData> = (
   {
     name,
     location,
+    age,
     isEditing = false,
     onImageUpload
   }) => {
@@ -40,7 +42,7 @@ const ProfileSection: React.FC<UserData> = (
         </View>
       </View>
       <View style={styles.profileInfo}>
-        <Text style={styles.profileName}>{name}</Text>
+        <Text style={styles.profileName}>{name} {age && `(${age})`}</Text>
         <View style={styles.profileLocationSection}>
           <MaterialIcons name="location-on" size={16} style={styles.iconStyle} />
           <Text style={styles.profileLocation}>{location}</Text>
@@ -131,10 +133,14 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   profileLocationSection: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   profileLocation: {
     fontSize: 14,
     color: 'gray'
+  },
+  iconStyle: {
+    color: 'gray',
+    marginRight: 4
   }
 })

@@ -130,8 +130,7 @@ const ResponseDonationRequest = () => {
                     </Text>
                     : <Text style={styles.hiddenNumber}>
                       {
-                        `${bloodRequest.contactNumber.slice(0, 4)}********
-                          ${bloodRequest.contactNumber.slice(-2)}`
+                        `${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`
                       }
                     </Text>
                   }

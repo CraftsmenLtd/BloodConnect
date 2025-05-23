@@ -42,7 +42,7 @@ export type PersonalInfo = {
   dateOfBirth: Date;
   lastVaccinatedDate: null | Date;
   locations: string[];
-  availableForDonation: string;
+  availableForDonation: boolean;
   acceptPolicy: boolean;
   phoneNumber?: string;
 }
@@ -102,26 +102,29 @@ export const useAddPersonalInfo = () => {
     dateOfBirth: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
     lastVaccinatedDate: null,
     locations: [],
-    availableForDonation: 'yes',
+    availableForDonation: true,
     acceptPolicy: false,
     ...(isSSO ? { phoneNumber: '' } : {})
   })
 
   const [errors, setErrors] = useState<PersonalInfoErrors>(
-    initializeState<PersonalInfo>(Object.keys(getValidationRules()) as PersonalInfoKeys[], null)
+    initializeState<PersonalInfo>(
+      Object.keys(getValidationRules()) as PersonalInfoKeys[],
+      null
+    )
   )
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [isVisible, setIsVisible] = useState('')
 
-  const handleInputChange = (name: PersonalInfoKeys, value: string): void => {
+  const handleInputChange = (name: PersonalInfoKeys, value: unknown): void => {
     setPersonalInfo(prevState => ({
       ...prevState,
       [name]: value
     }))
     setShowDatePicker(false)
-    handleInputValidation(name, value)
+    handleInputValidation(name, value as string | boolean)
   }
 
   const handleInputValidation = (name: PersonalInfoKeys, value: string | boolean): void => {
@@ -188,7 +191,7 @@ export const useAddPersonalInfo = () => {
         ...(weight !== null && { weight: formatToTwoDecimalPlaces(weight) }),
         preferredDonationLocations,
         ...(isSSO && phoneNumber != null ? { phoneNumbers: [phoneNumber] } : {}),
-        availableForDonation: rest.availableForDonation === 'yes'
+        availableForDonation: rest.availableForDonation
       }
 
       const response = await createUserProfile(finalData, fetchClient)

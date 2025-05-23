@@ -83,7 +83,7 @@ describe('useAddPersonalInfo Hook', () => {
       dateOfBirth: expect.any(Date),
       lastVaccinatedDate: null,
       locations: [],
-      availableForDonation: 'yes',
+      availableForDonation: true,
       acceptPolicy: false
     })
     expect(result.current.errors).toEqual(expect.any(Object))

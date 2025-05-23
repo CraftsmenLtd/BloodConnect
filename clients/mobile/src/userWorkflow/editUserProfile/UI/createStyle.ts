@@ -17,7 +17,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   scrollContent: {
     flexGrow: 1,
-    backgroundColor: theme.colors.greyBG
+    backgroundColor: theme.colors.white
   },
   infoContainer: {
     padding: 16
