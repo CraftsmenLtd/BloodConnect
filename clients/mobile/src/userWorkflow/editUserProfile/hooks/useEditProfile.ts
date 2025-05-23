@@ -55,7 +55,7 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
 }
 
 export const useEditProfile = () => {
-  const { fetchUserProfile } = useUserProfile()
+  const { fetchUserProfile, updateUserProfileContext } = useUserProfile()
   const route = useRoute<EditProfileRouteProp>()
   const fetchClient = useFetchClient()
   const { userDetails } = route.params
@@ -82,6 +82,18 @@ export const useEditProfile = () => {
         throw new Error('Failed to update profile')
       }
       await fetchUserProfile()
+    },
+    {
+      parseError: (error) => (error instanceof Error ? error.message : 'Unknown error')
+    }
+  )
+
+  const [executeUserAvailableForDonationProfile] = useFetchData(
+    async(payload: Partial<ProfileData>) => {
+      const response = await updateUserProfile(payload, fetchClient)
+      if (response.status !== 200) {
+        throw new Error('Failed to update user available for donation status')
+      }
     },
     {
       parseError: (error) => (error instanceof Error ? error.message : 'Unknown error')
@@ -161,10 +173,12 @@ export const useEditProfile = () => {
       availableForDonation: profileData.availableForDonation
     }
 
-    await executeUpdateProfile(requestPayload)
+    await executeUserAvailableForDonationProfile(requestPayload)
     if (updateError !== null) {
       Alert.alert('Error', 'Could not update available for donation value.')
     }
+
+    void updateUserProfileContext({ availableForDonation: requestPayload.availableForDonation })
   }
 
   const isButtonDisabled = !validateRequiredFieldsTruthy<ProfileData>(
