@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import type {
   ViewStyle,
   StyleProp,
@@ -70,6 +71,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   statusValue = null
 }) => {
   const theme = useTheme()
+  const { t } = useTranslation()
   const styles = createStyles(theme)
   const [showDropdown, setShowDropdown] = useState(false)
   const [isModalOpen, setModalOpen] = useState(false)
@@ -168,7 +170,9 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         <View style={styles.cardHeader}>
           <View>
             <Text style={styles.userName}>{post.seekerName}</Text>
-            <Text style={styles.postTime}>Posted on {formatDateTime(post.createdAt)}</Text>
+            <Text style={styles.postTime}>
+              {t('donationPosts.postedOn')} {formatDateTime(post.createdAt)}
+            </Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {showStatus && <StatusBadge status={statusValue ?? post.status} />}
@@ -198,7 +202,10 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                               key={item.text}
                               text={item.text}
                               onPress={item.onPress}
-                              disabled={post.status === STATUS.CANCELLED || post.status === STATUS.COMPLETED}
+                              disabled={
+                                post.status === STATUS.CANCELLED ||
+                                post.status === STATUS.COMPLETED
+                              }
                               isLastItem={index === dropdownItems.length - 1}
                             />
                           ))}
@@ -209,8 +216,8 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                 </Modal>
                 <GenericModal
                   visible={isModalOpen}
-                  title="Confirmation"
-                  message="Are you sure you want to cancel?"
+                  title={t('modal.confirmation')}
+                  message={t('modal.areYouSureYouWantToCancel')}
                   buttons={[
                     {
                       onPress: closeModal,
@@ -218,14 +225,14 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                         backgroundColor: theme.colors.greyBG,
                         color: theme.colors.textPrimary
                       },
-                      text: 'Close'
+                      text: t('btn.close')
                     },
                     {
                       onPress: handleCancel,
                       style: {
                         backgroundColor: theme.colors.primary
                       },
-                      text: 'OK',
+                      text: t('btn.ok'),
                       loading: isLoading
                     }
                   ]}
@@ -244,8 +251,14 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
               size={32}
             />
             <View style={styles.bloodText}>
-              <Text style={styles.lookingForText}>Looking for</Text>
-              <Text style={styles.bloodAmount}>{formatBloodQuantity(post.bloodQuantity)} {post.requestedBloodGroup} (ve) blood</Text>
+              <Text style={styles.lookingForText}>
+                {t('donationPosts.lookingFor')}
+              </Text>
+              <Text style={styles.bloodAmount}>
+                {
+                  formatBloodQuantity(post.bloodQuantity)} {post.requestedBloodGroup} (ve) {t('common.blood')
+                }
+              </Text>
             </View>
           </View>
           {post.urgencyLevel === UrgencyLevel.URGENT && (
@@ -263,7 +276,9 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             <View style={styles.infoSection}>
               <View style={styles.infoHeader}>
                 <Ionicons name="location-outline" size={16} color={theme.colors.grey} />
-                <Text style={styles.donationInfoPlaceholder}>Donation point</Text>
+                <Text style={styles.donationInfoPlaceholder}>
+                  {t('donationPosts.donationPoint')}
+                </Text>
               </View>
               <TouchableOpacity onPress={() => { openMapLocation({ location: post.location }) }}>
                 <Text style={[styles.description, styles.link]}>{post.location}</Text>
@@ -274,7 +289,9 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             <View style={styles.infoSection}>
               <View style={styles.infoHeader}>
                 <Ionicons name="time-outline" size={16} color={theme.colors.grey} />
-                <Text style={styles.donationInfoPlaceholder}>Time & Date</Text>
+                <Text style={styles.donationInfoPlaceholder}>
+                  {t('donationPosts.timeDate')}
+                </Text>
               </View>
               <Text style={styles.description}>{formatDateTime(post.donationDateTime)}</Text>
             </View>
@@ -282,43 +299,60 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         </View>
         {post.contactNumber !== '' && showContactNumber &&
           <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>Contact Number</Text>
+            <Text style={styles.donationInfoPlaceholder}>
+              {t('donationPosts.contactNumber')}
+            </Text>
             <Text style={styles.description}>{post.contactNumber}</Text>
           </View>
         }
         {post.patientName !== '' && showPatientName &&
           <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>Name of the Patient</Text>
+            <Text style={styles.donationInfoPlaceholder}>
+              {t('donationPosts.nameOfThePatient')}
+            </Text>
             <Text style={styles.description}>{post.patientName}</Text>
           </View>
         }
 
         {post.shortDescription !== '' && showDescription &&
           <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>Short Description of the Problem</Text>
+            <Text style={styles.donationInfoPlaceholder}>
+              {t('donationPosts.shortDescription')}
+            </Text>
             <Text style={styles.description}>{post.shortDescription}</Text>
           </View>
         }
         {post.transportationInfo !== '' && showTransportInfo &&
           <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>Transportation Facility for the Donor</Text>
+            <Text style={styles.donationInfoPlaceholder}>
+              {t('donationPosts.transportationFacilityForTheDonor')}
+            </Text>
             <Text style={styles.description}>{post.transportationInfo}</Text>
           </View>
         }
       </View>
-      {Array.isArray(post.acceptedDonors) && post.acceptedDonors.length > 0 && showPostUpdatedOption && <>
-        <Text style={styles.bloodAmount}>Request Update</Text>
-        <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
-          <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
-          <View>
-            <Text style={styles.donationInfoPlaceholder}>Number of Donors</Text>
-            <Text style={styles.bloodAmount}>{post.acceptedDonors.length} donors accepted your request</Text>
+      {
+        Array.isArray(post.acceptedDonors) &&
+        post.acceptedDonors.length > 0 &&
+        showPostUpdatedOption &&
+        <>
+          <Text style={styles.bloodAmount}>Request Update</Text>
+          <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
+            <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
+            <View>
+              <Text style={styles.donationInfoPlaceholder}>
+                {t('donationPosts.numberOfDonors')}
+              </Text>
+              <Text style={styles.bloodAmount}>
+                {post.acceptedDonors.length} {t('donationPosts.donorsAcceptedYourRequest')}
+              </Text>
+            </View>
           </View>
-        </View>
-      </>}
+        </>
+      }
       {showButton && <View style={styles.buttonContainer}>
         <Button
-          text='View details'
+          text={t('common.viewDetails')}
           buttonStyle={styles.buttonStyle}
           textStyle={styles.textStyle}
           onPress={() => { detailHandler !== undefined && detailHandler(post) }}

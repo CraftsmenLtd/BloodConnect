@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { View, Text, ScrollView } from 'react-native'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
@@ -28,6 +29,7 @@ export type EditProfileData = {
 
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
+  const { t } = useTranslation()
   const { userDetails } = useProfile()
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(
     userDetails?.preferredDonationLocations.map(location => location.area) ?? []
@@ -76,21 +78,21 @@ const Profile: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.card}>
-          {renderDetailRow('Name', userDetails.name ?? '')}
-          {renderDetailRow('Date of Birth', formattedDate(userDetails.dateOfBirth ?? '', true))}
+          {renderDetailRow(t('fromLabel.name'), userDetails.name ?? '')}
+          {renderDetailRow(t('fromLabel.dob'), formattedDate(userDetails.dateOfBirth ?? '', true))}
           {renderDetailRow('Age', userDetails.age.toString())}
-          {renderDetailRow('Weight (kg)', userDetails.weight !== null ?
+          {renderDetailRow(t('fromLabel.weight'), userDetails.weight !== null ?
             userDetails.weight.toString() : '')}
-          {renderDetailRow('Height (feet)', userDetails.height !== undefined
+          {renderDetailRow(t('fromLabel.height'), userDetails.height !== undefined
             ? userDetails.height.toString() : '')}
-          {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined &&
+          {renderDetailRow(t('fromLabel.phone'), userDetails.phoneNumbers !== undefined &&
             userDetails.phoneNumbers.length > 0 ?
             userDetails.phoneNumbers[0] : '')}
-          {renderDetailRow('Gender', userDetails.gender)}
-          {userDetails?.lastDonationDate !== '' && renderDetailRow('Last Donation Date',
+          {renderDetailRow(t('fromLabel.gender'), userDetails.gender)}
+          {userDetails?.lastDonationDate !== '' && renderDetailRow(t('fromLabel.lLastDonationDate'),
             formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
           <View style={[styles.row, styles.lastRow]}>
-            <Text style={styles.label}>{'Locations'}</Text>
+            <Text style={styles.label}>{t('fromLabel.locations')}</Text>
             {userDetails?.preferredDonationLocations?.map(location => {
               return (
                 <View key={location.area} style={styles.selectedItem}>

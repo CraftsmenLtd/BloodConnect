@@ -21,8 +21,14 @@ const Welcome = ({ navigation }: WelcomeScreenProps) => {
       <Text style={styles.title}>{t('home.title')}</Text>
       <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
 
-      <Button text={t('common.createAccount')} onPress={() => { navigation.navigate(SCREENS.REGISTER) }} />
-      <Button text={t('common.logIn')} onPress={() => { navigation.navigate(SCREENS.LOGIN) }} buttonStyle={styles.loginButton} textStyle={styles.loginText} />
+      <Button
+        text={t('common.createAccount')}
+        onPress={() => { navigation.navigate(SCREENS.REGISTER) }}
+      />
+      <Button
+        text={t('common.logIn')}
+        onPress={() => { navigation.navigate(SCREENS.LOGIN) }}
+        buttonStyle={styles.loginButton} textStyle={styles.loginText} />
     </View>
   )
 }

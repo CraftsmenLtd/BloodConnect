@@ -51,26 +51,26 @@ export default function App() {
 
   return (
     <I18nextProvider i18n={i18n} >
-    <SafeAreaProvider>
-      <NavigationContainer ref={navigationRef}>
-        <NetInfoProvider>
-          <NotificationProvider navigationRef={navigationRef}>
-            <AuthProvider>
-              <UserProfileProvider>
-                <MyActivityProvider>
-                  <ThemeProvider>
-                    {/* TODO: need to use themes' primary color but it's not working. */}
-                    <StatusBar hidden={false} backgroundColor='#FF4D4D' />
-                    <Navigator />
-                    <NetInfoModal />
-                  </ThemeProvider>
-                </MyActivityProvider>
-              </UserProfileProvider>
-            </AuthProvider>
-          </NotificationProvider>
-        </NetInfoProvider>
-      </NavigationContainer>
-    </SafeAreaProvider>
+      <SafeAreaProvider>
+        <NavigationContainer ref={navigationRef}>
+          <NetInfoProvider>
+            <NotificationProvider navigationRef={navigationRef}>
+              <AuthProvider>
+                <UserProfileProvider>
+                  <MyActivityProvider>
+                    <ThemeProvider>
+                      {/* TODO: need to use themes' primary color but it's not working. */}
+                      <StatusBar hidden={false} backgroundColor='#FF4D4D' />
+                      <Navigator />
+                      <NetInfoModal />
+                    </ThemeProvider>
+                  </MyActivityProvider>
+                </UserProfileProvider>
+              </AuthProvider>
+            </NotificationProvider>
+          </NetInfoProvider>
+        </NavigationContainer>
+      </SafeAreaProvider>
     </I18nextProvider>
   )
 }

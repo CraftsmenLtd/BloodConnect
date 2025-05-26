@@ -10,7 +10,15 @@ import { useTranslation } from 'react-i18next'
 export default function ForgotPassword(): JSX.Element {
   const { t } = useTranslation()
   const styles = createStyles(useTheme())
-  const { credentials, handleInputChange, errors, isButtonDisabled, handleForgotPassword, error, loading } = useForgotPassword()
+  const {
+    credentials,
+    handleInputChange,
+    errors,
+    isButtonDisabled,
+    handleForgotPassword,
+    error,
+    loading
+  } = useForgotPassword()
 
   return (
     <AuthLayout>
@@ -27,7 +35,12 @@ export default function ForgotPassword(): JSX.Element {
         {error !== '' && <Text style={styles.error}>{error}</Text>}
       </View>
       <View style={{ marginTop: 15 }}>
-        <Button text={t('common.continue')} onPress={handleForgotPassword} disabled={isButtonDisabled} loading={loading} />
+        <Button
+          text={t('common.continue')}
+          onPress={handleForgotPassword}
+          disabled={isButtonDisabled}
+          loading={loading}
+        />
       </View>
     </AuthLayout>
   )

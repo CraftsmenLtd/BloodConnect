@@ -18,7 +18,12 @@
     "setPassword": "পাসওয়ার্ড সেট করুন",
     "name": "নাম",
     "email": "ইমেইল",
-    "phoneNumber": "ফোন নম্বর"
+    "phoneNumber": "ফোন নম্বর",
+    "all": "সব",
+    "filterBy": "ফিল্টার করুন",
+    "viewDetails": "বিস্তারিত দেখুন",
+    "blood": "রক্ত",
+    "urgent": "জরুরী"
   },
   "otp": {
     "enterAuthenticationCode": "প্রমাণীকরণ কোড প্রবেশ করুন",
@@ -44,5 +49,69 @@
     "otpCodeExpired": "OTP কোডের মেয়াদ শেষ হয়ে গেছে। একটি নতুন কোড অনুরোধ করুন।",
     "noAccountFound": "এই ইমেইল দিয়ে কোন একাউন্ট পাওয়া যায়নি।",
     "somethingWentWrong": "কিছু ভুল হয়েছে।"
+  },
+  "donationPosts": {
+    "bloodNeeded": "রক্তের প্রয়োজন?",
+    "createRequest": "আবেদন করুন",
+    "postedOn": "পোস্ট করা হয়েছে",
+    "lookingFor": "আমি খুঁজছি",
+    "donationPoint": "অনুদানের স্থান",
+    "timeDate": "সময় ও তারিখ",
+    "contactNumber": "যোগাযোগের ফোন নম্বর",
+    "nameOfThePatient": "রোগীর নাম",
+    "shortDescription": "সমস্যার সংক্ষিপ্ত বিবরণ",
+    "transportationFacilityForTheDonor": "অনুদানকারীর জন্য পরিবহন সুবিধা",
+    "numberOfDonors": "অনুদানকারীর সংখ্যা",
+    "donorsAcceptedYourRequest": "জন আপনার অনুরোধ গ্রহণ করেছেন",
+    "emptyDonationPosts": "কোনও অনুদানের আবেদন পাওয়া যায়নি। রিফ্রেশ করতে উপর থেকে নীচে টানুন।",
+    "emptyMyDonationPosts": "আপনি কোনও অনুরোধের উত্তর দেননি।. রিফ্রেশ করতে উপর থেকে নীচে টানুন।"
+  },
+  "modal": {
+    "areYouSureYouWantToCancel": "আপনি কি নিশ্চিত যে আপনি বাতিল করতে চান?",
+    "confirmation": "নিশ্চিত",
+    "ok": "ওকে",
+    "close": "বাতিল করুন"
+  },
+  "btn": {
+    "ignore": "উপেক্ষা করুন",
+    "acceptRequest": "অনুরোধ গ্রহণ করুন",
+    "requestAccepted": "অনুরোধ গৃহীত হয়েছে",
+    "completeRequest": "অনুরোধ সম্পূর্ণ হয়েছে",
+    "requestNow": "অনুরোধ করুন",
+    "updateRequest": "আপডেট করুন",
+    "call": "কল করুন",
+    "ok": "ওকে",
+    "close": "বাতিল করুন",
+    "edit": "এডিট করুন",
+    "save": "সংরক্ষণ করুন"
+  },
+  "fromLabel": {
+    "urgency": "অনুরোধের ধরণ",
+    "bloodGroup": "রক্তের গ্রুপ",
+    "unit": "কয় ব্যাগ",
+    "donationDateTime": "অনুদানের সময় ও তারিখ",
+    "name": "নাম",
+    "dob": "জন্ম তারিখ",
+    "weight": "ওজন(কেজি)",
+    "height": "উচ্চতা(ফিট)",
+    "phone": "ফোন",
+    "gender": "লিঙ্গ",
+    "lastDonationDate": "সর্বশেষ অনুদানের তারিখ",
+    "locations": "রক্তদানের জন্য পছন্দের স্থান"
+  },
+  "placeholders": {
+    "selectBloodGroup": "রক্তের গ্রুপ নির্বাচন করুন",
+    "selectUnit": "কয় ব্যাগ নির্বাচন করুন",
+    "searchPreferredHospitalHealthCare": "রোগীর হাসপাতাল/স্বাস্থ্য সেবা সংস্থা অনুসন্ধান করুন",
+    "enterYourContactNumber": "আপনার ফোন নম্বর লিখুন",
+    "enterPatientsName": "রোগীর নাম লিখুন",
+    "writeAShortDescription": "সংক্ষিপ্ত বিবরণ লিখুন",
+    "selectTransportationOption": "পরিবহন সুবিধা নির্বাচন করুন",
+    "urgentExtraInfo": "২৪ ঘন্টার মধ্যে রক্তের প্রয়োজন হলে \"Urgent\" নির্বাচন করুন।"
+  },
+  "account": {
+    "profile": "প্রোফাইল",
+    "about": "অ্যাপ সম্পর্কে জানুন",
+    "logout": "লগআউট"
   }
 }

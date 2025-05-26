@@ -18,7 +18,12 @@
     "setPassword": "Set Password",
     "name": "Name",
     "email": "Email",
-    "phoneNumber": "Phone Number"
+    "phoneNumber": "Phone Number",
+    "all": "All",
+    "filterBy": "Filter By",
+    "viewDetails": "View Details",
+    "blood": "blood",
+    "urgent": "URGENT"
   },
   "otp": {
     "enterAuthenticationCode": "Enter authentication code",
@@ -44,5 +49,69 @@
     "otpCodeExpired": "OTP code has expired. Request a new one.",
     "noAccountFound": "No account found with this email.",
     "somethingWentWrong": "Something went wrong."
+  },
+  "donationPosts": {
+    "bloodNeeded": "Blood Needed?",
+    "createRequest": "Create Request",
+    "postedOn": "Posted on",
+    "lookingFor": "Looking for",
+    "donationPoint": "Donation Point",
+    "timeDate": "Time & Date",
+    "contactNumber": "Concat Number",
+    "nameOfThePatient": "Name Of The Patient",
+    "shortDescription": "Short Description Of The Problem",
+    "transportationFacilityForTheDonor": "Transportation Facility For The Donor",
+    "numberOfDonors": "Number Of Donors",
+    "donorsAcceptedYourRequest": "Donors accepted your request",
+    "emptyDonationPosts": "No donation requests available. Pull to refresh.",
+    "emptyMyDonationPosts": "You haven't responded to any of the posts. Pull to refresh."
+  },
+  "modal": {
+    "areYouSureYouWantToCancel": "Are you sure you want to cancel",
+    "confirmation": "Confirmation",
+    "ok": "Ok",
+    "close": "Close"
+  },
+  "btn": {
+    "ignore": "Ignore",
+    "acceptRequest": "Accept Request",
+    "requestAccepted": "Request Accepted",
+    "completeRequest": "Complete Request",
+    "requestNow": "Request Now",
+    "updateRequest": "Update Request",
+    "call": "Call",
+    "ok": "Ok",
+    "close": "Close",
+    "edit": "Edit",
+    "save": "Save"
+  },
+  "fromLabel": {
+    "urgency": "Urgency",
+    "bloodGroup": "Blood Group",
+    "unit": "Unit",
+    "donationDateTime": "Donation Date & Time",
+    "name": "Name",
+    "dob": "Date Of Birth",
+    "weight": "Weight(Kg)",
+    "height": "Height(Feet)",
+    "phone": "Phone",
+    "gender": "Gender",
+    "lastDonationDate": "Last Donation Date",
+    "locations": "Locations"
+  },
+  "placeholders": {
+    "selectBloodGroup": "Select Blood Group",
+    "selectUnit": "Select Unit",
+    "searchPreferredHospitalHealthCare": "Search Preferred Hospital/Health Care",
+    "enterYourContactNumber": "Enter Your Contact Number",
+    "enterPatientsName": "Enter patient's name",
+    "writeAShortDescription": "Write a short description",
+    "selectTransportationOption": "Select Transportation Option",
+    "urgentExtraInfo": "Select \"Urgent\" if the blood is needed within 24 hours."
+  },
+  "account": {
+    "profile": "Profile",
+    "about": "About",
+    "logout": "Logout"
   }
 }

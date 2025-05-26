@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -14,8 +15,18 @@ type HeaderProps = {
   isFilteredByBloodGroup: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ profileImageUri, title, buttonLabel, onButtonPress, handleRefresh, onFilterButtonPress, bloodGroup, isFilteredByBloodGroup }) => {
+const Header: React.FC<HeaderProps> = ({
+  profileImageUri,
+  title,
+  buttonLabel,
+  onButtonPress,
+  handleRefresh,
+  onFilterButtonPress,
+  bloodGroup,
+  isFilteredByBloodGroup
+}) => {
   const theme = useTheme()
+  const { t } = useTranslation()
   const styles = createStyles(theme)
 
   return (
@@ -30,11 +41,23 @@ const Header: React.FC<HeaderProps> = ({ profileImageUri, title, buttonLabel, on
         </TouchableOpacity>
       </View>
       <View style={styles.filter}>
-        <TouchableOpacity style={[styles.filterButton, !isFilteredByBloodGroup ? styles.filterSelected : styles.filterNotSelected]} onPress={handleRefresh} >
-          <Text style={styles.buttonText}>{'All'}</Text>
+        <TouchableOpacity
+          style={[styles.filterButton, !isFilteredByBloodGroup ?
+            styles.filterSelected :
+            styles.filterNotSelected
+          ]}
+          onPress={handleRefresh}
+        >
+          <Text style={styles.buttonText}>{t('common.all')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.filterButton, isFilteredByBloodGroup ? styles.filterSelected : styles.filterNotSelected]} onPress={onFilterButtonPress}>
-          <Text style={styles.buttonText}>{'Filter by ' + bloodGroup}</Text>
+        <TouchableOpacity
+          style={[styles.filterButton, isFilteredByBloodGroup ?
+            styles.filterSelected :
+            styles.filterNotSelected
+          ]}
+          onPress={onFilterButtonPress}
+        >
+          <Text style={styles.buttonText}>{t('common.filterBy') + ' ' + bloodGroup}</Text>
         </TouchableOpacity>
       </View>
     </View>

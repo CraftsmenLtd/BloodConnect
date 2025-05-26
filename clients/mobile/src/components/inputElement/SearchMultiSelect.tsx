@@ -20,9 +20,25 @@ type MultiSelectProps = {
   multiSelect?: boolean;
   extraInfo?: string;
   initialValue?: string;
+  placeholder?: string;
 }
 
-const SearchMultiSelect = ({ name, label, isVisible, setIsVisible, error, onChange, editable = true, isRequired = false, options: initialOptions = [], fetchOptions, multiSelect = false, extraInfo = '', initialValue = '' }: MultiSelectProps) => {
+const SearchMultiSelect = ({
+  name,
+  label,
+  isVisible,
+  setIsVisible,
+  error,
+  onChange,
+  editable = true,
+  isRequired = false,
+  options: initialOptions = [],
+  fetchOptions,
+  multiSelect = false,
+  extraInfo = '',
+  initialValue = '',
+  placeholder = 'Search Preferred Hospital/Health Care'
+}: MultiSelectProps) => {
   const theme = useTheme()
   const styles = createStyles(theme)
   const [value, setValue] = useState(initialValue)
@@ -99,7 +115,7 @@ const SearchMultiSelect = ({ name, label, isVisible, setIsVisible, error, onChan
       <View style={{ position: 'relative' }}>
         <View style={styles.dropdown}>
           <TextInput
-            placeholder='Search Preferred Hospital/Health Care'
+            placeholder={placeholder}
             value={value}
             editable={editable}
             onChangeText={handleInputChange}

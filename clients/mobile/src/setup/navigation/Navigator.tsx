@@ -52,7 +52,8 @@ export default function Navigator() {
           key={name}
           name={name}
           component={withRegisterPushOnFocus(component)}
-          options={options} />
+          options={options}
+        />
       ))}
     </Stack.Navigator>
   )

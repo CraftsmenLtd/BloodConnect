@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Constants from 'expo-constants'
+import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
 import PhoneNumberInput from '../../components/inputElement/PhoneNumberInput'
 import RadioButton from '../../components/inputElement/Radio'
@@ -24,6 +25,7 @@ const locationService = new LocationService(API_BASE_URL)
 
 const CreateBloodRequest = () => {
   const styles = createStyles(useTheme())
+  const { t } = useTranslation()
   const [isVisible, setIsVisible] = useState<string>('')
   const {
     isUpdating,
@@ -48,16 +50,16 @@ const CreateBloodRequest = () => {
           options={['regular', 'urgent']}
           value={bloodRequestData.urgencyLevel}
           onPress={handleInputChange}
-          label="Urgency"
+          label={t('fromLabel.urgency')}
           isRequired={true}
-          extraInfo='Select "urgent" if the blood is needed within 24 hours.'
+          extraInfo={t('placeholders.urgentExtraInfo')}
         />
 
         <View style={styles.fieldSpacing}>
           <Dropdown
-            label='Blood Group'
+            label={t('fromLabel.bloodGroup')}
             isRequired={true}
-            placeholder='Select Blood Group'
+            placeholder={t('placeholders.selectBloodGroup')}
             options={bloodGroupOptions}
             readonly={isUpdating}
             name='requestedBloodGroup'
@@ -69,9 +71,9 @@ const CreateBloodRequest = () => {
 
         <View style={styles.fieldSpacing}>
           <Dropdown
-            label='Unit'
+            label={t('fromLabel.unit')}
             isRequired={true}
-            placeholder='Select Unit'
+            placeholder={t('placeholders.selectUnit')}
             options={bloodBagOptions}
             name='bloodQuantity'
             selectedValue={bloodRequestData.bloodQuantity}
@@ -82,7 +84,7 @@ const CreateBloodRequest = () => {
 
         <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
           <DateTimePickerComponent
-            label="Donation Date and Time"
+            label={t('fromLabel.donationDateTime')}
             value={new Date(bloodRequestData.donationDateTime)}
             onChange={(date) => handleInputChange(DONATION_DATE_TIME_INPUT_NAME, date)}
             error={errors.donationDateTime}
@@ -94,7 +96,7 @@ const CreateBloodRequest = () => {
         <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
           <SearchMultiSelect
             name="location"
-            label="Donation Point"
+            label={t('donationPosts.donationPoint')}
             isVisible={isVisible}
             setIsVisible={setIsVisible}
             onChange={handleInputChange}
@@ -103,7 +105,11 @@ const CreateBloodRequest = () => {
             error={errors.location}
             multiSelect={false}
             isRequired={true}
-            fetchOptions={async(searchText) => locationService.healthLocationAutocomplete(searchText)}
+            fetchOptions={
+              async(searchText) =>
+                locationService.healthLocationAutocomplete(searchText)
+            }
+            placeholder={t('placeholders.searchPreferredHospitalHealthCare')}
           />
           { bloodRequestData.location !== '' && (
             <MapView
@@ -117,6 +123,8 @@ const CreateBloodRequest = () => {
 
         <View style={styles.fieldSpacing}>
           <PhoneNumberInput
+            label={t('donationPosts.contactNumber')}
+            placeholder={t('placeholders.enterYourContactNumber')}
             value={bloodRequestData.contactNumber}
             onChange={handleInputChange}
             showWarning={bloodRequestData.contactNumber !== ''}
@@ -126,10 +134,10 @@ const CreateBloodRequest = () => {
         <View style={[styles.fieldSpacing, styles.reducedSpacing]}>
           <Input
             name="patientName"
-            label="Name of the Patient"
+            label={t('donationPosts.nameOfThePatient')}
             value={bloodRequestData.patientName}
             onChangeText={handleInputChange}
-            placeholder="Enter patient's name"
+            placeholder={t('placeholders.enterPatientsName')}
             keyboardType="twitter"
             error=''
           />
@@ -138,8 +146,8 @@ const CreateBloodRequest = () => {
         <View style={styles.fieldSpacing}>
           <TextArea
             name='shortDescription'
-            placeholder="Write a short description"
-            label='Short Description of the Problem'
+            placeholder={t('placeholders.writeAShortDescription')}
+            label={t('donationPosts.shortDescription')}
             value={bloodRequestData.shortDescription}
             error={errors.shortDescription}
             onChangeText={handleInputChange}
@@ -149,9 +157,9 @@ const CreateBloodRequest = () => {
 
         <View style={styles.fieldSpacing}>
           <Dropdown
-            label='Transportation Facility for the Donor'
+            label={t('donationPosts.transportationFacilityForTheDonor')}
             isRequired={false}
-            placeholder='Select Transportation Option'
+            placeholder={t('placeholders.selectTransportationOption')}
             options={transportationOptions}
             name='transportationInfo'
             selectedValue={bloodRequestData.transportationInfo}
@@ -166,7 +174,7 @@ const CreateBloodRequest = () => {
 
         <View style={styles.buttonContainer}>
           <Button
-            text={isUpdating === true ? 'Update Request' : 'Request Now'}
+            text={isUpdating === true ? t('btn.updateRequest') : t('btn.requestNow')}
             onPress={handlePostNow}
             disabled={isButtonDisabled}
             loading={loading}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text } from 'react-native'
 import useDonationStatus from '../../../api/hooks/useDonationStatus'
 import ToggleTabs from '../../../components/tab/ToggleTabs'
@@ -35,6 +36,7 @@ const DETAIL_POST_TAB_CONFIG: TabConfig = {
 
 const Detail = ({ navigation, route }: DetailProps) => {
   const styles = createStyles(useTheme())
+  const { t } = useTranslation()
   const {
     cancelPost,
     cancelPostError,
@@ -140,7 +142,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
           {!isDetailsPage &&
             <View style={styles.buttonContainer}>
               <Button
-                text="Complete Request"
+                text={t('btn.completeRequest')}
                 disabled={
                   localStatus === STATUS.COMPLETED ||
                   localStatus === STATUS.CANCELLED ||
@@ -154,7 +156,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
             <View style={styles.buttonContainer}>
               {statusError !== '' && <Text style={styles.errorMessage}>{statusError}</Text>}
               <Button
-                text={ localStatus === STATUS.ACCEPTED ? 'Ignore Request' : 'Accept Request' }
+                text={ localStatus === STATUS.ACCEPTED ? t('btn.ignore') : t('btn.acceptRequest') }
                 onPress={() =>
                   handleStatusChange(
                     localStatus === STATUS.ACCEPTED ? STATUS.IGNORED : STATUS.ACCEPTED
