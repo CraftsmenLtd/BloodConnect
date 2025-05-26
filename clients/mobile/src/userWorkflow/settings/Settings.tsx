@@ -9,7 +9,7 @@ import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import storageService from '../../utility/storageService'
 
-const SettingsPage: React.FC = (): JSX.Element => {
+const SettingsPage: React.FC = (): React.ReactElement => {
   const styles = createStyles(useTheme())
   const { t, i18n } = useTranslation()
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null)
@@ -28,7 +28,7 @@ const SettingsPage: React.FC = (): JSX.Element => {
       }
     }
 
-    loadLanguage()
+    void loadLanguage()
   }, [])
 
 
