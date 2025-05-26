@@ -1,8 +1,10 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, Text, ScrollView } from 'react-native'
+import Badge from '../../../components/badge'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
+import CustomToggle from '../../../components/toogleButton'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
 import type { LocationData } from '../../../utility/formatting'
@@ -24,6 +26,7 @@ export type EditProfileData = {
   lastDonationDate: string;
   preferredDonationLocations: LocationData[];
   locations: string[];
+  availableForDonation: boolean;
   [key: string]: unknown;
 }
 
@@ -70,6 +73,7 @@ const Profile: React.FC = () => {
         <ProfileSection
           name={userDetails.name ?? ''}
           location={userDetails.location ?? ''}
+          age={userDetails.age}
           isEditing={false}
         />
       )}
@@ -78,9 +82,15 @@ const Profile: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.card}>
+          <View style={styles.row}>
+            <CustomToggle
+              value={userDetails.availableForDonation}
+              isReadOnly={true}
+              direction="row"
+            />
+          </View>
           {renderDetailRow(t('fromLabel.name'), userDetails.name ?? '')}
           {renderDetailRow(t('fromLabel.dob'), formattedDate(userDetails.dateOfBirth ?? '', true))}
-          {renderDetailRow('Age', userDetails.age.toString())}
           {renderDetailRow(t('fromLabel.weight'), userDetails.weight !== null ?
             userDetails.weight.toString() : '')}
           {renderDetailRow(t('fromLabel.height'), userDetails.height !== undefined
@@ -88,20 +98,20 @@ const Profile: React.FC = () => {
           {renderDetailRow(t('fromLabel.phone'), userDetails.phoneNumbers !== undefined &&
             userDetails.phoneNumbers.length > 0 ?
             userDetails.phoneNumbers[0] : '')}
-          {renderDetailRow(t('fromLabel.gender'), userDetails.gender)}
+          {renderDetailRow(t('fromLabel.gender'), userDetails.gender.toUpperCase())}
           {userDetails?.lastDonationDate !== '' && renderDetailRow(t('fromLabel.lLastDonationDate'),
             formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
           <View style={[styles.row, styles.lastRow]}>
             <Text style={styles.label}>{t('fromLabel.locations')}</Text>
-            {userDetails?.preferredDonationLocations?.map(location => {
-              return (
-                <View key={location.area} style={styles.selectedItem}>
-                  <Text style={styles.selectedItemText}>
-                    {location.area}
-                  </Text>
-                </View>
-              )
-            })}
+            <View style={styles.selectedItemContainer}>
+              {userDetails?.preferredDonationLocations?.map(location => {
+                return (
+                  <View key={location.area} style={styles.selectedItem}>
+                    <Badge text={location.area} containerStyle={styles.selectedItemText} />
+                  </View>
+                )
+              })}
+            </View>
           </View>
           <MapView
             style={styles.mapViewContainer}

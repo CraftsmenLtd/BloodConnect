@@ -1,7 +1,9 @@
+import { commonStyles } from '../../../components/inputElement/commonStyles'
 import type { Theme } from '../../../setup/theme'
 import { StyleSheet } from 'react-native'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
+  ...commonStyles(theme),
   container: {
     flex: 1,
     backgroundColor: theme.colors.white
@@ -23,12 +25,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   lastRow: {
     borderBottomWidth: 0
-  },
-  label: {
-    fontSize: 14,
-    color: theme.colors.textSecondary,
-    textTransform: 'capitalize',
-    marginBottom: 4
   },
   value: {
     fontSize: 14,
@@ -53,15 +49,20 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: 16,
     fontWeight: 'bold'
   },
+  selectedItemContainer: {
+    gap: 4,
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
   selectedItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.greyBG,
     borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginRight: 5,
-    marginBottom: 6
+    paddingHorizontal: 1,
+    paddingVertical: 3,
+    marginBottom: 5,
+    justifyContent: 'space-between',
   },
   selectedItemText: {
     marginRight: 5
@@ -69,6 +70,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   mapViewContainer: {
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10
+  },
+  dividerContainer: {
+    marginBottom: 2
+  },
+  dividerLine: {
+    backgroundColor: theme.colors.primary
   }
 })
 

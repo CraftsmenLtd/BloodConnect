@@ -1,19 +1,26 @@
 import Constants from 'expo-constants'
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback, Linking } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Linking
+} from 'react-native'
 import Dropdown from '../../../components/inputElement/Dropdown'
 import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
-import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput';
+import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput'
+import RadioButton from '../../../components/inputElement/Radio';
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
+import CustomToggle from '../../../components/toogleButton'
 import { useAddPersonalInfo } from '../hooks/useAddPersonalInfo'
-import { bloodGroupOptions, genderOptions } from '../options'
-import { Input } from '../../../components/inputElement/Input'
+import { bloodGroupOptions } from '../options'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
-import RadioButton from '../../../components/inputElement/Radio'
 import { LocationService } from '../../../LocationService/LocationService'
 import { POLICY_URLS } from '../../../setup/constant/urls'
 import MultiSelect from '../../../components/multiSelect'
@@ -46,7 +53,7 @@ const AddPersonalInfo = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
+        <View style={styles.fieldSpacing}>
           <Dropdown
             label='Blood Group'
             isRequired={true}
@@ -98,45 +105,17 @@ const AddPersonalInfo = () => {
         </View>
 
         <View style={styles.fieldSpacing}>
-          <Dropdown
-            label='Gender'
+          <RadioButton
+            name="gender"
+            label="Gender"
+            options={['female', 'male', 'other']}
+            value={personalInfo.gender}
+            onPress={handleInputChange}
             isRequired={true}
-            placeholder='Select Gender'
-            options={genderOptions}
-            name='gender'
-            selectedValue={personalInfo.gender}
-            onChange={handleInputChange}
-            error={errors.gender}
           />
         </View>
 
         <View style={styles.fieldSpacing}>
-          <Input
-            name="height"
-            label="Height"
-            value={personalInfo.height}
-            onChangeText={handleInputChange}
-            placeholder="Enter height in feet (e.g., 5.8)"
-            keyboardType="numeric"
-            isRequired={false}
-            error={errors.height}
-          />
-        </View>
-
-        <View style={styles.fieldSpacing}>
-          <Input
-            name="weight"
-            label="Weight"
-            value={personalInfo.weight}
-            onChangeText={handleInputChange}
-            placeholder="Enter weight in kg (e.g., 70)"
-            keyboardType="numeric"
-            isRequired={false}
-            error={errors.weight}
-          />
-        </View>
-
-        <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
           <DateTimePickerComponent
             isOnlyDate={true}
             label="Date of Birth"
@@ -147,38 +126,16 @@ const AddPersonalInfo = () => {
           />
         </View>
 
-        <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
-          <DateTimePickerComponent
-            isOnlyDate={true}
-            label="Last Donation Date"
-            value={personalInfo.lastDonationDate !== null
-              ? new Date(personalInfo.lastDonationDate) : null}
-            onChange={(date) => handleInputChange('lastDonationDate', date)}
-            error={errors.lastDonationDate}
-          />
-        </View>
-
-        <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
-          <DateTimePickerComponent
-            isOnlyDate={true}
-            label="Last Vaccinated Date"
-            value={personalInfo.lastVaccinatedDate !== null
-              ? new Date(personalInfo.lastVaccinatedDate) : null}
-            onChange={(date) => handleInputChange('lastVaccinatedDate', date)}
-            error={errors.lastVaccinatedDate}
-          />
-        </View>
-
-        <View style={[styles.fieldSpacing, styles.extraBottomMargin, styles.extraTopMargin]}>
-          <RadioButton
-            name='availableForDonation'
-            options={['yes', 'no']}
+        <View style={[styles.fieldSpacing, styles.extraTopMargin, styles.extraBottomMargin]}>
+          <CustomToggle
             value={personalInfo.availableForDonation}
-            onPress={handleInputChange}
-            label="Available For Donation"
+            label={'Are you available for a donation?'}
+            isReadOnly={false}
+            onToggle={(val) => {
+              handleInputChange('availableForDonation', val)
+            }}
+            direction="row"
             isRequired={true}
-            extraInfo='Choose "Yes" if you are prepared to donate blood.'
-            error={errors.availableForDonation}
           />
         </View>
 
@@ -238,7 +195,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     backgroundColor: theme.colors.white
   },
   fieldSpacing: {
-    marginBottom: 7
+    marginBottom: 0
   },
   reducedSpacing: {
     marginTop: 12,
@@ -277,7 +234,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   mapViewContainer: {
     borderRadius: 6,
-    borderWidth: 1.5
+    borderWidth: 1.5,
+    marginBottom: 15
   }
 })
 

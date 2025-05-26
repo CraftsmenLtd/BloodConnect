@@ -17,7 +17,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   scrollContent: {
     flexGrow: 1,
-    backgroundColor: theme.colors.greyBG
+    backgroundColor: theme.colors.white
   },
   infoContainer: {
     padding: 16
@@ -51,6 +51,15 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   mapViewContainer: {
     borderRadius: 6,
     borderWidth: 1.5
+  },
+  dividerContainer: {
+    marginBottom: 15
+  },
+  dividerLine: {
+    backgroundColor: theme.colors.primary
+  },
+  inputFieldStyle: {
+    padding: 1
   }
 })
 

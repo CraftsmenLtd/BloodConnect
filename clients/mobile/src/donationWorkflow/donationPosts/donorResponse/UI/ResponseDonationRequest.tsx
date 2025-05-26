@@ -54,9 +54,9 @@ const ResponseDonationRequest = () => {
           <Text style={styles.header}>Blood Request</Text>
           <Text style={styles.name}>{bloodRequest.seekerName ?? 'Seeker Name'}</Text>
           <Text style={styles.subText}>{t('donationPosts.postedOn')} {
-            bloodRequest?.donationDateTime !== null &&
-            bloodRequest?.donationDateTime !== undefined
-              ? new Date(bloodRequest.donationDateTime).toLocaleString()
+            bloodRequest?.createdAt !== null &&
+            bloodRequest?.createdAt !== undefined
+              ? new Date(bloodRequest.createdAt).toLocaleString()
               : 'N/A'
           }
           </Text>
