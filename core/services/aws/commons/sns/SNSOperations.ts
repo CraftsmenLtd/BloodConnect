@@ -5,20 +5,22 @@ import {
   SetEndpointAttributesCommand,
   SNS
 } from '@aws-sdk/client-sns'
-import { SNSModel } from '../../../../application/models/sns/SNSModel'
-import {
+import type { SNSModel } from '../../../../application/models/sns/SNSModel'
+import type {
   NotificationAttributes,
   SnsRegistrationAttributes
 } from '../../../../application/notificationWorkflow/Types'
 
-const PLATFORM_ARN_APNS = process.env.PLATFORM_ARN_APNS
-const PLATFORM_ARN_FCM = process.env.PLATFORM_ARN_FCM
 
 export default class SNSOperations implements SNSModel {
   private readonly client: SNS
 
-  constructor() {
-    this.client = new SNS({ region: process.env.AWS_REGION })
+  constructor(
+    protected readonly region: string,
+    protected readonly platformArnApns: string,
+    protected readonly platformArnFcm: string
+  ) {
+    this.client = new SNS({ region })
   }
 
   async publish(message: NotificationAttributes, snsEndpointArn: string): Promise<void> {
@@ -56,7 +58,7 @@ export default class SNSOperations implements SNSModel {
 
     if (platform === 'APNS') {
       const createEndpointCommand = new CreatePlatformEndpointCommand({
-        PlatformApplicationArn: PLATFORM_ARN_APNS,
+        PlatformApplicationArn: this.platformArnApns,
         Token: deviceToken,
         CustomUserData: userId
       })
@@ -65,7 +67,7 @@ export default class SNSOperations implements SNSModel {
       return { snsEndpointArn: `${response.EndpointArn}` }
     } else if (platform === 'FCM') {
       const createEndpointCommand = new CreatePlatformEndpointCommand({
-        PlatformApplicationArn: PLATFORM_ARN_FCM,
+        PlatformApplicationArn: this.platformArnFcm,
         Token: deviceToken,
         CustomUserData: userId
       })
@@ -74,7 +76,7 @@ export default class SNSOperations implements SNSModel {
       return { snsEndpointArn: `${response.EndpointArn}` }
     } else {
       throw new Error(
-        "Unsupported platform. Use 'APNS' for iOS or 'FCM' for Android."
+        'Unsupported platform. Use "APNS" for iOS or "FCM" for Android.'
       )
     }
   }

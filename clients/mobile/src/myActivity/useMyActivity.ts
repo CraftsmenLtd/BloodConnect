@@ -1,25 +1,26 @@
-import { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { BloodDonationRecord, STATUS } from '../donationWorkflow/types'
+import { useCallback, useState } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import type { BloodDonationRecord } from '../donationWorkflow/types'
+import { STATUS } from '../donationWorkflow/types'
 import { SCREENS } from '../setup/constant/screens'
-import { DonationPostsScreenNavigationProp } from '../setup/navigation/navigationTypes'
+import type { DonationPostsScreenNavigationProp } from '../setup/navigation/navigationTypes'
 import { cancelDonation } from '../donationWorkflow/donationService'
 import { useFetchClient } from '../setup/clients/useFetchClient'
 import { extractErrorMessage } from '../donationWorkflow/donationHelpers'
-import { TabConfig } from './types'
+import type { TabConfig } from './types'
 import useToast from '../components/toast/useToast'
 import { useMyActivityContext } from './context/useMyActivityContext'
 
 export const MY_ACTIVITY_TAB_CONFIG: TabConfig = {
-  tabs: ['My Posts', 'My Responses'],
-  initialTab: 'My Posts'
+  tabs: ['My Requests', 'My Responses'],
+  initialTab: 'My Requests'
 }
 
-export interface DonationData extends Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> {
+export type DonationData = {
   requestPostId: string;
-}
+} & Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'>
 
-export const useMyActivity = (): any => {
+export const useMyActivity = () => {
   const fetchClient = useFetchClient()
   const { fetchDonationPosts, getMyResponses } = useMyActivityContext()
   const { showToastMessage, showToast, toastAnimationFinished } = useToast()
@@ -29,13 +30,24 @@ export const useMyActivity = (): any => {
   const [isLoading, setIsLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
 
+  useFocusEffect(
+    useCallback(() => {
+      void refreshPosts()
+    }, [])
+  )
+
   const updatePost = (donationData: DonationData): void => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { status, acceptedDonors, ...rest } = donationData
     navigation.navigate(SCREENS.DONATION, { data: rest, isUpdating: true })
   }
 
   const detailHandler = (donationData: DonationData): void => {
     navigation.navigate(SCREENS.DETAIL_POST, { data: { ...donationData } })
+  }
+
+  const myResponsesDetailHandler = (data: DonationData): void => {
+    navigation.navigate(SCREENS.DETAIL_POST, { data: { ...data }, useAsDetailsPage: true })
   }
 
   const cancelPost = async(donationData: DonationData): Promise<void> => {
@@ -51,7 +63,13 @@ export const useMyActivity = (): any => {
     try {
       const response = await cancelDonation(payload, fetchClient)
       if (response.success === true) {
-        showToastMessage({ message: response.message ?? '', type: 'success', toastAnimationFinished })
+        showToastMessage(
+          {
+            message: response.message ?? '',
+            type: 'success',
+            toastAnimationFinished
+          }
+        )
         void fetchDonationPosts()
       }
     } catch (error) {
@@ -78,11 +96,13 @@ export const useMyActivity = (): any => {
     handleTabPress,
     updatePost,
     detailHandler,
+    myResponsesDetailHandler,
     cancelPost,
     cancelPostError,
     isLoading,
     showToast,
     handleRefresh: refreshPosts,
-    refreshing
+    refreshing,
+    toastAnimationFinished
   }
 }

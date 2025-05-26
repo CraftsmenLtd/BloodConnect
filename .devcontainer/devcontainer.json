@@ -1,13 +1,33 @@
 {
-    "name": "BloodConnect",
-    "image": "dev-image",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-python.python",
-                "dbaeumer.vscode-eslint",
-                "hashicorp.terraform"
-            ]
-        }
+  "name": "BloodConnect",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "options": [
+      "-t",
+      "dev-image"
+    ]
+  },
+  "postCreateCommand": {
+    "apt": "apt install -y openssh-client less"
+  },
+  "runArgs": [
+    "--env-file",
+    ".devcontainer/.env",
+    "--name",
+    "bloodconnect-dev",
+    "--rm",
+    "--network=host"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "dbaeumer.vscode-eslint",
+        "hashicorp.terraform",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "visualstudioexptteam.vscodeintellicode-completions"
+      ]
     }
+  }
 }

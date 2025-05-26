@@ -7,7 +7,7 @@
     ],
     "parameters": [
       {
-        "name": "city",
+        "name": "geoPartition",
         "in": "path",
         "required": true,
         "schema": {
@@ -41,11 +41,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          "Cache-Control": {
-            "schema": {
-              "type": "string"
-            }
           }
         },
         "content": {}
@@ -64,7 +59,7 @@
   "options": {
     "parameters": [
       {
-        "name": "city",
+        "name": "geoPartition",
         "in": "path",
         "required": true,
         "schema": {

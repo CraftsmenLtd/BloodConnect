@@ -1,9 +1,15 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
+import type {
+  ValidationRule
+} from '../../../utility/validator'
 import {
   validateDateOfBirth,
-  validateHeight, validateInput, validatePhoneNumber,
-  validateRequired, validateWeight,
-  ValidationRule
+  validateHeight,
+  validateInput,
+  validatePastOrTodayDate,
+  validateRequired,
+  validateRequiredFieldsTruthy,
+  validateWeight
 } from '../../../utility/validator'
 import { useRoute } from '@react-navigation/native'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
@@ -12,13 +18,20 @@ import { Alert } from 'react-native'
 import { useUserProfile } from '../../context/UserProfileContext'
 import useFetchData from '../../../setup/clients/useFetchData'
 import { updateUserProfile } from '../../services/userProfileService'
-import { EditProfileRouteProp } from '../../../setup/navigation/navigationTypes'
-import { EditProfileData } from '../../userProfile/UI/Profile'
+import type {
+  EditProfileRouteProp,
+} from '../../../setup/navigation/navigationTypes'
+import type { EditProfileData } from '../../userProfile/UI/Profile'
+import Constants from 'expo-constants'
+import { formatLocations } from '../../../utility/formatting'
+
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type ProfileFields = keyof Omit<ProfileData, 'location'>
 
 type ProfileData = {
-  [K in keyof EditProfileData as K extends string ? (string extends K ? never : K) : never]: EditProfileData[K];
+  [K in keyof EditProfileData as K extends string
+  ? (string extends K ? never : K) : never]: EditProfileData[K];
 } & {
   weight: string | undefined;
 }
@@ -30,13 +43,16 @@ type ProfileDataErrors = {
 const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRule[]> = {
   name: [validateRequired],
   dateOfBirth: [validateDateOfBirth, validateRequired],
-  weight: [validateRequired, validateWeight],
-  height: [validateRequired, validateHeight],
+  weight: [validateWeight],
+  height: [validateHeight],
   gender: [validateRequired],
-  phone: [validateRequired, validatePhoneNumber]
+  phone: [validateRequired],
+  preferredDonationLocations: [validateRequired],
+  lastDonationDate: [validatePastOrTodayDate],
+  locations: []
 }
 
-export const useEditProfile = (): any => {
+export const useEditProfile = () => {
   const { fetchUserProfile } = useUserProfile()
   const route = useRoute<EditProfileRouteProp>()
   const fetchClient = useFetchClient()
@@ -56,10 +72,9 @@ export const useEditProfile = (): any => {
     initializeState<ProfileDataErrors>(Object.keys(validationRules) as ProfileFields[], null)
   )
 
-  const [executeUpdateProfile, loading, , updateError] = useFetchData(
+  const [executeUpdateProfile, loading, updateError] = useFetchData(
     async(payload: Partial<ProfileData>) => {
       const response = await updateUserProfile(payload, fetchClient)
-
       if (response.status !== 200) {
         throw new Error('Failed to update profile')
       }
@@ -105,39 +120,34 @@ export const useEditProfile = (): any => {
 
     const { phone, ...rest } = profileData
     userDetails.phoneNumbers[0] = phone
+    const filteredLocations = rest.locations.filter(
+      (location) => !rest.preferredDonationLocations.some(
+        (preferred) => preferred.area === location)
+    )
+    const updatedPreferredDonationLocations = rest.preferredDonationLocations.filter(
+      (preferred) => rest.locations.includes(preferred.area)
+    )
 
-    try {
-      const requestPayload = {
-        ...rest,
-        weight: parseFloat(profileData.weight)
-      }
+    const requestPayload = {
+      ...rest,
 
-      await executeUpdateProfile(requestPayload)
-      if (updateError !== null) {
-        throw new Error('Failed to update profile')
-      } else {
-        await fetchUserProfile()
-      }
-    } catch (error) {
+      weight: Number.isNaN(parseFloat(rest.weight)) ? 0 : parseFloat(rest.weight),
+      height: rest.height !== '' ? rest.height : '0.0',
+
+      preferredDonationLocations: [
+        ...updatedPreferredDonationLocations,
+        ...await formatLocations(filteredLocations, API_BASE_URL)
+      ]
+    }
+
+    await executeUpdateProfile(requestPayload)
+    if (updateError !== null) {
       Alert.alert('Error', 'Could not update profile.')
     }
   }
 
-  const hasErrors = useMemo(
-    () => Object.values(errors).some((error) => error),
-    [errors]
-  )
-
-  const areRequiredFieldsFilled = useMemo(
-    () =>
-      Object.keys(validationRules).every((key) => {
-        const value = profileData[key as keyof ProfileData]
-        return value !== null && value !== undefined && value.toString().trim() !== ''
-      }),
-    [profileData]
-  )
-
-  const isButtonDisabled = hasErrors || !areRequiredFieldsFilled
+  const isButtonDisabled = !validateRequiredFieldsTruthy<ProfileData>(
+    validationRules, profileData)
 
   return {
     profileData,

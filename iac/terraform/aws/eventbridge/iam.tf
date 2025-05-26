@@ -21,14 +21,15 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
       "dynamodb:DescribeStream",
       "dynamodb:GetRecords",
       "dynamodb:GetShardIterator",
-      "dynamodb:ListStreams"
+      "dynamodb:ListStreams",
+      "dynamodb:DeleteItem"
     ]
     resources = [var.dynamodb_table_stream_arn]
   }
   statement {
     effect    = "Allow"
     actions   = ["sqs:SendMessage"]
-    resources = [var.donor_search_queue_arn, var.donation_status_manager_queue_arn]
+    resources = [var.donation_request_queue_arn, var.donation_status_manager_queue_arn]
   }
   statement {
     effect = "Allow"

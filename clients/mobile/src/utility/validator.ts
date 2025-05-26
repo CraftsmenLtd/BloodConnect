@@ -1,6 +1,10 @@
-import { ACCOUNT_CREATION_MINIMUM_AGE } from '../setup/constant/consts'
+import {
+  ACCOUNT_CREATION_MINIMUM_AGE,
+  SHORT_DESCRIPTION_MAX_LENGTH
+} from '../setup/constant/consts'
+import { formattedDate } from './formatting'
 
-interface PasswordPolicy {
+type PasswordPolicy = {
   minimum_length: number;
   require_lowercase: boolean;
   require_numbers: boolean;
@@ -16,7 +20,8 @@ const passwordPolicy: PasswordPolicy = {
   require_symbols: true
 }
 
-export const validateAndReturnRequiredFieldError = (value: string | string[] | boolean): string | null => {
+export const validateAndReturnRequiredFieldError = (
+  value: string | string[] | boolean): string | null => {
   if (typeof value === 'string') {
     return value.trim().length === 0 ? 'This field is required' : null
   } else if (Array.isArray(value)) {
@@ -80,6 +85,25 @@ export const validateDonationDateTime = (donationDateTime: string): string | nul
   return null
 }
 
+export const validateDonationDateTimeWithin24Hours = (donationDateTime: string): string | null => {
+  const now = new Date()
+  const donationDate = new Date(donationDateTime)
+
+  const maxAllowedDate = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+
+  const endOfNextDay = new Date(now)
+  endOfNextDay.setDate(endOfNextDay.getDate() + 1)
+  endOfNextDay.setHours(23, 59, 59, 999)
+
+  const actualMaxAllowedDate = maxAllowedDate < endOfNextDay ? endOfNextDay : maxAllowedDate
+
+  if (donationDate > actualMaxAllowedDate) {
+    return `Donation date & time must be before ${formattedDate(actualMaxAllowedDate)}.`
+  }
+
+  return null
+}
+
 export const validatePastOrTodayDate = (date: string): string | null => {
   const today = new Date()
   const inputDate = new Date(date)
@@ -113,6 +137,10 @@ export const validateDateOfBirth = (dateOfBirth: string): string | null => {
 }
 
 export const validateHeight = (height: string): string | null => {
+  if (height === '' || height === null || height === undefined || height === '0.0') {
+    return null
+  }
+
   const heightValue = parseFloat(height)
 
   if (isNaN(heightValue)) {
@@ -127,6 +155,10 @@ export const validateHeight = (height: string): string | null => {
 }
 
 export const validateWeight = (weight: string): string | null => {
+  if (weight === '' || weight === null || weight === undefined || weight === '0') {
+    return null
+  }
+
   const weightValue = parseFloat(weight)
 
   if (isNaN(weightValue)) {
@@ -138,6 +170,19 @@ export const validateWeight = (weight: string): string | null => {
   }
 
   return null
+}
+
+const validateShortDescription = (value: string): string | null => {
+  const tests = [
+    {
+      test: value.length > SHORT_DESCRIPTION_MAX_LENGTH,
+      error: `Short description must not exceed ${SHORT_DESCRIPTION_MAX_LENGTH} characters.`
+    }
+  ]
+
+  const error = tests.find(({ test }) => test)?.error
+
+  return error ?? null
 }
 
 export type ValidationRule = (value: string) => string | null
@@ -152,10 +197,27 @@ export const validateInput = (value: string, rules: ValidationRule[]): string | 
   return null
 }
 
+const validateRequiredFieldsTruthy = <D>(
+  validationRules: Record<string, ValidationRule[]>,
+  data: D): boolean => {
+  for (const key in validationRules) {
+    const validationFailed = validationRules[key].some(
+      func => func(data[key]) !== null)
+    if (validationFailed) {
+      return false
+    }
+  }
+
+  return true
+}
+
+
 export {
+  validateShortDescription,
   validateAndReturnRequiredFieldError as validateRequired,
   validateEmailAndGetErrorMessage as validateEmail,
   validatePhoneNumberAndGetErrorMessage as validatePhoneNumber,
   checkErrorsInPassword as validatePassword,
-  validateDonationDateTime as validateDateTime
+  validateDonationDateTime as validateDateTime,
+  validateRequiredFieldsTruthy
 }

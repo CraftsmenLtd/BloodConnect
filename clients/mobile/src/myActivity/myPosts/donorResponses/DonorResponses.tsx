@@ -1,15 +1,16 @@
 import React from 'react'
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet, ImageStyle, StyleProp } from 'react-native'
+import type { ImageStyle, StyleProp } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import { COMMON_URLS } from '../../../setup/constant/commonUrls'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 
-export interface DonorItem {
+export type DonorItem = {
   donorId: string;
   donorName: string;
 }
 
-interface DonorResponsesProps {
+type DonorResponsesProps = {
   acceptedDonors: DonorItem[];
   handlePressDonor: (item: string) => void;
 }
@@ -21,34 +22,34 @@ const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProp
     <View style={styles.rootContainer}>
       {acceptedDonors.length === 0
         ? <View style={styles.centeredContainer}>
-            <Text style={styles.noDonorText}>No donors have responded yet.</Text>
-          </View>
+          <Text style={styles.noDonorText}>No donors have responded yet.</Text>
+        </View>
         : <View style={styles.responseContainer}>
-            <View style={styles.container}>
-              <Text style={styles.title}>Donors Who Responded</Text>
-              <FlatList
-                data={acceptedDonors}
-                keyExtractor={(item) => item.donorId}
-                renderItem={({ item, index }) => (
-                  <TouchableOpacity
-                    style={[
-                      styles.donorItem,
-                      index === acceptedDonors.length - 1 && styles.donorItemLast
-                    ]}
-                    onPress={() => { handlePressDonor(item.donorId) }}>
-                    <Image
-                      source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-                      style={styles.avatar as StyleProp<ImageStyle>} />
-                    <View style={styles.textContainer}>
-                      <Text style={styles.name}>{item.donorName}</Text>
-                      <Text style={styles.status}>New blood donor</Text>
-                    </View>
-                    <Text style={styles.arrow}>&gt;</Text>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
+          <View style={styles.container}>
+            <Text style={styles.title}>Donors Who Responded</Text>
+            <FlatList
+              data={acceptedDonors}
+              keyExtractor={(item) => item.donorId}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.donorItem,
+                    index === acceptedDonors.length - 1 && styles.donorItemLast
+                  ]}
+                  onPress={() => { handlePressDonor(item.donorId) }}>
+                  <Image
+                    source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
+                    style={styles.avatar as StyleProp<ImageStyle>} />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.name}>{item.donorName}</Text>
+                    <Text style={styles.status}>New blood donor</Text>
+                  </View>
+                  <Text style={styles.arrow}>&gt;</Text>
+                </TouchableOpacity>
+              )}
+            />
           </View>
+        </View>
       }
     </View>
   )

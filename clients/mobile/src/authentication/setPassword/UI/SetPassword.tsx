@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Text, StyleSheet } from 'react-native'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 import { Button } from '../../../components/button/Button'
 import { PASSWORD_INPUT_NAME, useSetPassword } from '../hooks/useSetPassword'
 import AuthLayout from '../../AuthLayout'

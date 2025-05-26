@@ -7,8 +7,8 @@ on:
         description: "The runner image to be used"
         required: true
         type: string
-      github_environment:
-        description: "Defines the GitHub environment for secrets"
+      deployment_environment_group:
+        description: "Defines the Deployment Environment Group for secrets"
         required: true
         type: string
       deployment_environment:
@@ -17,14 +17,13 @@ on:
         type: string
       tf_action:
         description: "Terraform action to perform"
-        required: true
         type: string
       tf_backend_bucket_name:
         description: "Terraform backend bucket name. If empty, will default to 'TERRAFORM_BACKEND_BUCKET_NAME' from repository variables."
         required: false
         type: string
       tf_backend_bucket_key:
-        description: "Terraform backend bucket key. If empty, will default to value '{github_environment}/{deployment_environment}.tfstate'."
+        description: "Terraform backend bucket key. If empty, will default to value '{deployment_environment_group}/{deployment_environment}.tfstate'."
         required: false
         type: string
       tf_backend_bucket_region:
@@ -52,12 +51,13 @@ jobs:
   aws-terraform-env:
     name: Aws Environment Terraform
     runs-on: ${{ vars.RUNNER_OS }}
-    environment: ${{ inputs.github_environment }}
+    environment: ${{ inputs.deployment_environment_group }}
     env:
       RUNNER_IMAGE_NAME: ${{ inputs.docker_image }}
+      DEPLOYMENT_ENVIRONMENT_GROUP: ${{ inputs.deployment_environment_group }}
       DEPLOYMENT_ENVIRONMENT: ${{ inputs.deployment_environment }}
       TF_BACKEND_BUCKET_NAME: ${{ inputs.tf_backend_bucket_name || vars.TERRAFORM_BACKEND_BUCKET_NAME }}
-      TF_BACKEND_BUCKET_KEY: ${{ inputs.tf_backend_bucket_key || format('{0}/{1}.tfstate', inputs.github_environment, inputs.deployment_environment) }}
+      TF_BACKEND_BUCKET_KEY: ${{ inputs.tf_backend_bucket_key || format('{0}/{1}.tfstate', inputs.deployment_environment_group, inputs.deployment_environment) }}
       TF_BACKEND_BUCKET_REGION: ${{ inputs.tf_backend_bucket_region || inputs.aws_region }}
       AWS_REGION: ${{ inputs.aws_region }}
       AWS_DEFAULT_REGION: ${{ inputs.aws_region }}
@@ -68,6 +68,7 @@ jobs:
       TF_VAR_facebook_client_id: ${{ secrets.FACEBOOK_CLIENT_ID  }}
       TF_VAR_facebook_client_secret: ${{ secrets.FACEBOOK_CLIENT_SECRET  }}
       TF_VAR_firebase_token_s3_url: ${{ secrets.FIREBASE_TOKEN_S3_URL }}
+      TF_VAR_google_maps_api_key: ${{ secrets.GOOGLE_MAPS_API_KEY }}
     steps:
       - name: 📥 Checkout Branch
         uses: actions/checkout@v4
@@ -83,7 +84,7 @@ jobs:
         run: make run-command-install-node-packages
 
       - name: 🎁 Package Code
-        run: make run-command-package-all
+        run: make run-command-build-node-all
 
       - name: 🔑 Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -97,6 +98,8 @@ jobs:
 
       - name: 🗓️ Terraform Plan ${{ inputs.tf_action }}
         run: make run-command-tf-plan-${{ inputs.tf_action }}
+        if: ${{ inputs.tf_action && inputs.tf_action != '' }}
 
       - name: 🚀 Terraform ${{ inputs.tf_action }}
         run: make run-command-tf-${{ inputs.tf_action }}
+        if: ${{ inputs.tf_action && inputs.tf_action != '' }}

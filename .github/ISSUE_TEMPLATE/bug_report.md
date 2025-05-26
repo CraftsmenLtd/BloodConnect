@@ -1,15 +1,14 @@
 ---
 name: Bug Report
 about: Create a report to help us improve
-title: ""
+title: "BUG: "
 labels: "bug"
 assignees: ""
 ---
 
-## Bug Report
+# Bug Report
 
-**Describe the bug:**
-A clear and concise description of the bug you encountered.
+## Scenario: User tries to create a ____.
 
 **Severity:**
 
@@ -18,35 +17,18 @@ A clear and concise description of the bug you encountered.
 - [ ] P2 (Medium Priority)
 - [ ] P3 (Low Priority)
 
-## Impact (optional)
+## Platform: Windows 11, Chrome v123
+### Steps to reproduce:
+1. Go to ____ page
+2. Select ____
+3. Pick a ____
+4. Select a ____ and click "____"
 
-Describe the impact of the bug or feature being addressed, based on the bug reporter's judgment or your own assessment.
+## Expected Behaviour
+User should be redirected to the payment page
 
-**Steps to Reproduce:**
-Outline the steps to reproduce the bug. Provide a list of actions that led to the bug occurring.
+## Actual Behaviour
+Clicking the button shows a loading spinner, then the whole page hangs
 
-**Screenshots/Code Snippets:**
-If applicable, add screenshots or code snippets to help explain the problem.
-
-**Additional Context:**
-Add any other context about the problem here, such as relevant logs, error messages, or any troubleshooting steps you have already taken.
-
-## Reproducible Demo (optional)
-
-If possible, provide a link to a minimal, reproducible demo of the bug. This can be a GitHub repository, a CodePen, or any other publicly accessible code example that demonstrates the issue.
-
-## Impact Analysis (optional)
-
-If you have considered the potential impact or severity of this bug on the system or users, please provide an analysis here. This could include any specific areas affected or potential risks associated with the bug.
-
-## Possible Solution (optional)
-
-If you have any ideas or suggestions on how to fix the bug, please provide them here.
-
-## Related Issues/PRs (optional)
-
-If you know of any related issues or pull requests that might be helpful for understanding or fixing this bug, please list them here.
-
-## Additional Notes (optional)
-
-Add any additional notes or comments you think are relevant to this bug report.
+## Note
+Network tab shows a 500 Internal Server Error on POST /api/donations

@@ -1,8 +1,5 @@
-import { DTO } from '../../../../../commons/dto/DTOCommon'
-import Repository from './Repository'
+import type { DonationRecordDTO } from 'commons/dto/DonationDTO'
+import type Repository from './Repository'
 
-export default interface BloodDonationRepository<
-  T extends DTO,
-  DbFields extends Record<string, unknown> = Record<string, unknown>
-> extends Repository<T, DbFields> {
-}
+type DonationRecordRepository = Repository<DonationRecordDTO, Record<string, unknown>>
+export default DonationRecordRepository

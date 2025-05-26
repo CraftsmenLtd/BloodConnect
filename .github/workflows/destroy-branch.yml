@@ -16,7 +16,7 @@ jobs:
   setup-environment:
     name: 🌱 Setup Environment
     runs-on: ${{ vars.RUNNER_OS }}
-    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    environment: ${{ vars.DEV_GITHUB_ENVIRONMENT_GROUP }}
     steps:
       - name: Get Branch Name
         id: set_branch_name
@@ -33,7 +33,7 @@ jobs:
     name: 🔥 Terraform Destruction
     needs: [setup-environment, build-push-docker-image]
     runs-on: ${{ vars.RUNNER_OS }}
-    environment: ${{ vars.ENVIRONMENT_GITHUB_DEV }}
+    environment: ${{ vars.DEV_GITHUB_ENVIRONMENT_GROUP }}
     container:
       image: ${{ needs.build-push-docker-image.outputs.runner_image_name }}
     steps:
@@ -55,7 +55,7 @@ jobs:
           terraform {
             backend "s3" {
               bucket         = "${{ vars.TERRAFORM_BACKEND_BUCKET_NAME }}"
-              key            = "${{ vars.ENVIRONMENT_GITHUB_DEV }}/${{ needs.setup-environment.outputs.branch_name }}.tfstate"
+              key            = "${{ vars.DEV_GITHUB_ENVIRONMENT_GROUP }}/${{ needs.setup-environment.outputs.branch_name }}.tfstate"
               region         = "${{ secrets.AWS_DEFAULT_REGION }}"
             }
           }

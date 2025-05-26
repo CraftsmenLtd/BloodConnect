@@ -1,3 +1,7 @@
+import type {
+  StyleProp,
+  ImageStyle
+} from 'react-native';
 import {
   Text,
   View,
@@ -5,13 +9,12 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Linking,
-  StyleProp,
-  ImageStyle
+  Linking
 } from 'react-native'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
+import { formatBloodQuantity } from '../../../donationHelpers'
 import createStyles from './createStyles'
 import { useResponseDonationRequest } from '../hooks/useResponseDonationRequest'
 import React from 'react'
@@ -25,6 +28,7 @@ const ResponseDonationRequest = () => {
   const { myResponses } = useMyActivityContext()
   const {
     bloodRequest,
+    userProfile,
     error,
     isLoading,
     handleAcceptRequest,
@@ -46,7 +50,7 @@ const ResponseDonationRequest = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.card}>
           <Text style={styles.header}>Blood Request</Text>
-          <Text style={styles.name}>{bloodRequest.patientName ?? 'Patient Name'}</Text>
+          <Text style={styles.name}>{bloodRequest.seekerName ?? 'Seeker Name'}</Text>
           <Text style={styles.subText}>Posted on {
             bloodRequest?.donationDateTime !== null &&
             bloodRequest?.donationDateTime !== undefined
@@ -59,13 +63,21 @@ const ResponseDonationRequest = () => {
             <View style={styles.frameBloodType}>
               <View style={styles.requestSection}>
                 <MaterialIcons
-                name='bloodtype'
-                style={styles.bloodtypeImage as StyleProp<ImageStyle>}
-                size={32}
+                  name='bloodtype'
+                  style={styles.bloodtypeImage as StyleProp<ImageStyle>}
+                  size={32}
                 />
                 <View style={styles.requestText}>
                   <Text style={styles.primaryCaption}>Looking for</Text>
-                  <Text style={styles.highlightedText}>{bloodRequest.bloodQuantity ?? 0} {bloodRequest.requestedBloodGroup}(ve) blood</Text>
+                  <Text style={styles.highlightedText}>
+                    {
+                      formatBloodQuantity(
+                        bloodRequest.bloodQuantity) ?? 0
+                    }
+                    {
+                      bloodRequest.requestedBloodGroup
+                    }(ve) blood
+                  </Text>
                 </View>
               </View>
               {bloodRequest.urgencyLevel === 'urgent' && (
@@ -85,9 +97,14 @@ const ResponseDonationRequest = () => {
                   <Text style={styles.label}>Donation point</Text>
                 </View>
                 {bloodRequest.location !== ''
-                  ? <TouchableOpacity onPress={() => { openMapLocation({ location: bloodRequest.location }) }}>
-                      <Text style={[styles.value, styles.link]}>{bloodRequest.location}</Text>
-                    </TouchableOpacity>
+                  ? <TouchableOpacity
+                    onPress={() => {
+                      openMapLocation({
+                        location: bloodRequest.location
+                      })
+                    }}>
+                    <Text style={[styles.value, styles.link]}>{bloodRequest.location}</Text>
+                  </TouchableOpacity>
                   : <Text style={styles.value}>Location not provided</Text>}
 
               </View>
@@ -111,7 +128,11 @@ const ResponseDonationRequest = () => {
                     ? <Text style={styles.phoneNumber}>
                       {bloodRequest.contactNumber ?? 'Contact Not Shared'}
                     </Text>
-                    : <Text style={styles.hiddenNumber}>{`${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`}</Text>
+                    : <Text style={styles.hiddenNumber}>
+                      {
+                        `${bloodRequest.contactNumber.slice(0, 4)}********${bloodRequest.contactNumber.slice(-2)}`
+                      }
+                    </Text>
                   }
                 </View>
                 {isRequestAlreadyAccepted && (
@@ -135,7 +156,9 @@ const ResponseDonationRequest = () => {
             {bloodRequest.patientName !== '' &&
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Name of the Patient</Text>
-                <Text style={styles.value}>{bloodRequest.patientName ?? 'Patient Name not provided'}</Text>
+                <Text style={styles.value}>
+                  {bloodRequest.patientName ?? 'Patient Name not provided'}
+                </Text>
               </View>
             }
             {bloodRequest.shortDescription !== '' &&
@@ -149,7 +172,9 @@ const ResponseDonationRequest = () => {
             {bloodRequest.transportationInfo !== '' &&
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Transportation Facility for the Donor</Text>
-                <Text style={styles.value}>{bloodRequest.transportationInfo ?? 'No transportation info'}</Text>
+                <Text style={styles.value}>
+                  {bloodRequest.transportationInfo ?? 'No transportation info'}
+                </Text>
               </View>
             }
           </View>
@@ -157,11 +182,32 @@ const ResponseDonationRequest = () => {
       </ScrollView>
 
       {error !== null && <Text style={styles.error}>{error}</Text>}
-
-      <View style={styles.buttonContainer}>
-        {!isLoading && !(isRequestAccepted || (Boolean(isRequestAlreadyAccepted))) && <Button text="Ignore" buttonStyle={styles.ignoreButton} textStyle={{ color: theme.colors.black }} onPress={handleIgnore} />}
-        <Button text={isRequestAccepted || (Boolean(isRequestAlreadyAccepted)) ? 'Request Accepted' : 'Accept Request'} loading={isLoading} disabled={isRequestAccepted || isRequestAlreadyAccepted} buttonStyle={styles.acceptButton} textStyle={styles.acceptButtonText} onPress={() => { void handleAcceptRequest() }} />
-      </View>
+      {
+        userProfile.userId !== bloodRequest.seekerId &&
+        userProfile.bloodGroup === bloodRequest.requestedBloodGroup &&
+        <View style={styles.buttonContainer}>
+          {!isLoading && !(isRequestAccepted || isRequestAlreadyAccepted) &&
+            <Button
+              text="Ignore"
+              buttonStyle={styles.ignoreButton}
+              textStyle={{ color: theme.colors.black }}
+              onPress={() => {
+                void handleIgnore()
+              }} />}
+          <Button
+            text={
+              isRequestAccepted || isRequestAlreadyAccepted ? 'Request Accepted' :
+                'Accept Request'
+            }
+            loading={isLoading}
+            disabled={isRequestAccepted || isRequestAlreadyAccepted}
+            buttonStyle={styles.acceptButton}
+            textStyle={styles.acceptButtonText}
+            onPress={() => {
+              void handleAcceptRequest()
+            }} />
+        </View>
+      }
     </SafeAreaView>
   )
 }

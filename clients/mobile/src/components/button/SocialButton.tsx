@@ -1,9 +1,10 @@
 import React from 'react'
-import { TouchableOpacity, Text, StyleSheet, Image, View, ImageSourcePropType, StyleProp, ViewStyle, TextStyle, ActivityIndicator } from 'react-native'
+import type { ImageSourcePropType, StyleProp, ViewStyle, TextStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, Image, View, ActivityIndicator } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 
-interface SocialButtonProps {
+type SocialButtonProps = {
   text: string;
   onPress: () => void;
   icon: ImageSourcePropType;

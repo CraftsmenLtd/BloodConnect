@@ -1,27 +1,20 @@
 import { useMemo } from 'react'
 import { useUserProfile } from '../../context/UserProfileContext'
-import { UserProfile } from '../../services/userProfileService'
+import type { UserProfile } from '../../services/userProfileService'
 
-export interface DonationLocation {
-  area: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-}
-
-export interface UserProfileDetails extends UserProfile {
+export type UserProfileDetails = {
   age: number;
   location: string;
   phone: string;
-}
+} & UserProfile
 
 export const useProfile = (): { userDetails: UserProfileDetails } => {
   const { userProfile } = useUserProfile()
 
-  const getLocation = (preferredDonationLocations: Array<{ city: string; area: string }>): string => {
+  const getLocation = (preferredDonationLocations: Array<{ area: string }>): string => {
     if (preferredDonationLocations.length > 0) {
-      const { city = '', area = '' } = preferredDonationLocations[0]
-      return `${city}, ${area}`
+      const { area = '' } = preferredDonationLocations[0]
+      return `${area}`
     }
     return ''
   }
@@ -42,15 +35,20 @@ export const useProfile = (): { userDetails: UserProfileDetails } => {
   }
 
   const userDetails = useMemo(() => {
-    const location = userProfile.preferredDonationLocations !== undefined ? getLocation(userProfile.preferredDonationLocations) : ''
+    const location = userProfile.preferredDonationLocations !== undefined ?
+      getLocation(userProfile.preferredDonationLocations) : ''
     const age = userProfile.dateOfBirth !== undefined ? calculateAge(userProfile.dateOfBirth) : 0
     const phone = userProfile.phoneNumbers?.[0] ?? ''
+    const height = userProfile?.height ? userProfile?.height : '0.0'
+    const weight = userProfile.weight ?? 0
 
     return {
       ...userProfile,
       location,
       age,
-      phone
+      phone,
+      height,
+      weight
     }
   }, [userProfile])
 

@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Keyboard, ScrollView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
-import { Option } from './types'
+import type { Theme } from '../../setup/theme'
+import type { Option } from './types'
 import { commonStyles } from './commonStyles'
 
-interface MultiSelectProps {
+type MultiSelectProps = {
   name: string;
   label: string;
   isVisible: string;
@@ -48,9 +48,8 @@ const SearchMultiSelect = ({ name, label, isVisible, setIsVisible, error, onChan
       }
 
       typingTimeoutRef.current = setTimeout(() => {
-        fetchOptions(text).then((newOptions) => { setOptions(newOptions) }).catch(error => {
+        fetchOptions(text).then((newOptions) => { setOptions(newOptions) }).catch(() => {
           setOptions([])
-          console.error(error)
         })
       }, 500)
     } else {
@@ -100,7 +99,7 @@ const SearchMultiSelect = ({ name, label, isVisible, setIsVisible, error, onChan
       <View style={{ position: 'relative' }}>
         <View style={styles.dropdown}>
           <TextInput
-            placeholder='Search Preferred Location'
+            placeholder='Search Preferred Hospital/Health Care'
             value={value}
             editable={editable}
             onChangeText={handleInputChange}

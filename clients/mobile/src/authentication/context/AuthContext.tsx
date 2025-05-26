@@ -1,7 +1,8 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react'
+import type { ReactNode } from 'react';
+import React, { createContext, useState, useEffect } from 'react'
 import authService from '../services/authService'
 
-interface AuthContextProps {
+type AuthContextProps = {
   accessToken: string | null;
   idToken: string | null;
   isAuthenticated: boolean;
@@ -18,8 +19,11 @@ const initialAuthContext = {
   isAuthenticated: false,
   loading: true,
   logoutUser: async() => Promise.resolve(),
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setAccessToken: () => { },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setIdToken: () => { },
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setIsAuthenticated: () => { }
 }
 
@@ -33,7 +37,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const loadTokens = async() => {
     const tokens = await authService.loadTokens()
-    if (tokens.storedAccessToken !== null && tokens.storedIdToken !== null) {
+    if (tokens.storedAccessToken !== undefined && tokens.storedIdToken !== undefined) {
       const { storedAccessToken, storedIdToken } = tokens
       const payload = authService.decodeAccessToken(storedAccessToken)
       if (payload.exp !== undefined && payload.exp > Math.floor(Date.now() / 1000)) {

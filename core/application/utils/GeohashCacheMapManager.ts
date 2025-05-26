@@ -1,3 +1,12 @@
+import type { LocationDTO } from 'commons/dto/UserDTO'
+
+export type DonorInfo = {
+  userId: string;
+  locationId: string;
+}
+
+export type GeohashDonorMap = Record<string, DonorInfo[]>
+
 export class GeohashCacheManager<K, V> {
   private readonly cache: Map<K, { data: V; timestamp: number }>
   private readonly maxEntries: number
@@ -6,9 +15,11 @@ export class GeohashCacheManager<K, V> {
   private currentByteSize: number
 
   constructor(maxEntries: number, maxMBSize: number, cacheTimeoutMinutes: number) {
-    if (!Number.isInteger(maxEntries) ||
+    if (
+      !Number.isInteger(maxEntries) ||
       !Number.isInteger(maxMBSize) ||
-      !Number.isInteger(cacheTimeoutMinutes)) {
+      !Number.isInteger(cacheTimeoutMinutes)
+    ) {
       throw new Error('All parameters must be integers!')
     }
 
@@ -19,7 +30,7 @@ export class GeohashCacheManager<K, V> {
     this.currentByteSize = 0
   }
 
-  private calculateByteSize(value: any): number {
+  private calculateByteSize(value: unknown): number {
     return new TextEncoder().encode(JSON.stringify(value)).length
   }
 
@@ -27,7 +38,8 @@ export class GeohashCacheManager<K, V> {
     const dataByteSize = this.calculateByteSize(data)
 
     while (
-      (this.cache.size >= this.maxEntries || this.currentByteSize + dataByteSize > this.maxByteSize) &&
+      (this.cache.size >= this.maxEntries ||
+        this.currentByteSize + dataByteSize > this.maxByteSize) &&
       this.cache.size > 0
     ) {
       const oldestKey = this.cache.keys().next().value
@@ -61,4 +73,31 @@ export class GeohashCacheManager<K, V> {
     }
     return undefined
   }
+}
+
+export function updateGroupedGeohashCache(
+  geohashCacheManager: GeohashCacheManager<string, GeohashDonorMap>,
+  queriedDonors: LocationDTO[],
+  cacheKey: string,
+  neighborSearchGeohashPrefixLength: number
+): void {
+  const donorMap = groupDonorsByGeohash(queriedDonors, neighborSearchGeohashPrefixLength)
+  geohashCacheManager.set(cacheKey, donorMap)
+}
+
+function groupDonorsByGeohash(
+  queriedDonors: LocationDTO[],
+  neighborSearchGeohashPrefixLength: number
+): GeohashDonorMap {
+  return queriedDonors.reduce<GeohashDonorMap>((groups, donor) => {
+    const donorGeohash = donor.geohash.slice(0, neighborSearchGeohashPrefixLength)
+    if (groups[donorGeohash] == null) {
+      groups[donorGeohash] = []
+    }
+    groups[donorGeohash].push({
+      userId: donor.userId,
+      locationId: donor.locationId
+    })
+    return groups
+  }, {})
 }

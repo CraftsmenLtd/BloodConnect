@@ -1,4 +1,4 @@
-import { formattedDate, formatPhoneNumber, formatErrorMessage, formatToTwoDecimalPlaces } from '../../src/utility/formatting'
+import { formattedDate, formatErrorMessage, formatToTwoDecimalPlaces } from '../../src/utility/formatting'
 
 describe('Utility Functions', () => {
   describe('formattedDate', () => {
@@ -30,37 +30,6 @@ describe('Utility Functions', () => {
     test('should handle empty string as input', () => {
       const expected = 'Invalid Date'
       expect(formattedDate('')).toBe(expected)
-    })
-  })
-
-  describe('formatPhoneNumber', () => {
-    test('should format phone number starting with 01', () => {
-      const input = '0123456789'
-      const expected = '+880123456789'
-      expect(formatPhoneNumber(input)).toBe(expected)
-    })
-
-    test('should return unmodified phone number if it does not start with 01', () => {
-      const input = '+880123456789'
-      const expected = '+880123456789'
-      expect(formatPhoneNumber(input)).toBe(expected)
-    })
-
-    test('should trim whitespace from phone number', () => {
-      const input = ' 0123456789 '
-      const expected = '+880123456789'
-      expect(formatPhoneNumber(input)).toBe(expected)
-    })
-
-    test('should handle empty string', () => {
-      const expected = ''
-      expect(formatPhoneNumber('')).toBe(expected)
-    })
-
-    test('should handle invalid phone number format', () => {
-      const input = 'abcdefg'
-      const expected = 'abcdefg'
-      expect(formatPhoneNumber(input)).toBe(expected)
     })
   })
 

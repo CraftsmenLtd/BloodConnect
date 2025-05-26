@@ -1,9 +1,9 @@
-import { HttpClient } from '../../setup/clients/HttpClient'
-import { ApiResponse } from '../../setup/clients/response'
+import type { HttpClient } from '../../setup/clients/HttpClient'
+import type { ApiResponse } from '../../setup/clients/response'
 
-export type preferredDonationLocations = { area: string; city: string }
+export type preferredDonationLocations = { area: string }
 
-export interface DonorProfile {
+export type DonorProfile = {
   phoneNumbers?: string[];
   donorName?: string;
   bloodGroup?: string;
@@ -12,19 +12,6 @@ export interface DonorProfile {
   weight?: number;
   gender?: string;
   preferredDonationLocations?: preferredDonationLocations[];
-}
-
-export const addPersonalInfoHandler = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<ApiResponse> => {
-  try {
-    const response = await httpClient.patch<ApiResponse>('/users', payload)
-    return {
-      message: response.message,
-      status: response.status
-    }
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
-    throw new Error(errorMessage)
-  }
 }
 
 export const getDonorProfile = async(donorId: string, httpClient: HttpClient): Promise<ApiResponse<DonorProfile>> => {

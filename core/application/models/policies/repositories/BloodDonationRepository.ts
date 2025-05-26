@@ -1,9 +1,8 @@
-import { DTO } from '../../../../../commons/dto/DTOCommon'
-import Repository from './Repository'
+import type { DonationDTO } from 'commons/dto/DonationDTO';
+import type Repository from './Repository'
 
-export default interface BloodDonationRepository<
-  T extends DTO,
-  DbFields extends Record<string, unknown> = Record<string, unknown>
-> extends Repository<T, DbFields> {
-  getDonationRequest(seekerId: string, requestPostId: string, createdAt: string): Promise<T | null>;
-}
+type BloodDonationRepository = {
+  getDonationRequest(seekerId: string, requestPostId: string, createdAt: string): Promise<DonationDTO | null>;
+  getDonationRequestsByDate(seekerId: string, datePrefix: string): Promise<DonationDTO[] | null>;
+} & Repository<DonationDTO, Record<string, unknown>>
+export default BloodDonationRepository

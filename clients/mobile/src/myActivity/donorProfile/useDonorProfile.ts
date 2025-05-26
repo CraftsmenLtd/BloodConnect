@@ -1,19 +1,20 @@
 import { useRoute } from '@react-navigation/native'
-import { DonorProfileRouteProp } from '../../setup/navigation/navigationTypes'
+import type { DonorProfileRouteProp } from '../../setup/navigation/navigationTypes'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { Alert, Linking } from 'react-native'
-import { DonorProfile, getDonorProfile } from '../../userWorkflow/services/userServices'
+import type { DonorProfile } from '../../userWorkflow/services/userServices';
+import { getDonorProfile } from '../../userWorkflow/services/userServices'
 import useFetchData from '../../setup/clients/useFetchData'
 
 type FormattedDonorProfile = Required<{
   [K in keyof DonorProfile]: DonorProfile[K] extends Array<infer U>
-    ? U extends object
-      ? Array<Required<U>>
-      : DonorProfile[K]
-    : DonorProfile[K];
+  ? U extends object
+  ? Array<Required<U>>
+  : DonorProfile[K]
+  : DonorProfile[K];
 }>
 
-const useDonorProfile = (): any => {
+const useDonorProfile = () => {
   const fetchClient = useFetchClient()
   const { donorId } = useRoute<DonorProfileRouteProp>().params
 
@@ -28,8 +29,7 @@ const useDonorProfile = (): any => {
       phoneNumbers: Array.isArray(donorProfile.phoneNumbers) ? donorProfile.phoneNumbers : [],
       preferredDonationLocations: Array.isArray(donorProfile.preferredDonationLocations)
         ? donorProfile.preferredDonationLocations.map((location) => ({
-          area: location?.area ?? '',
-          city: location?.city ?? ''
+          area: location?.area ?? ''
         }))
         : []
     }

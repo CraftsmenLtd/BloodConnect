@@ -29,16 +29,13 @@ $seconds + "." + $milliseconds + "Z")
   "TableName": "${DYNAMODB_TABLE_NAME}",
   "IndexName": "GSI1",
   "KeyConditionExpression": "GSI1PK = :gsi1pk",
-  "FilterExpression": "PK <> :PK AND donationDateTime > :donationDateTime",
+  "FilterExpression": "donationDateTime > :donationDateTime",
   "ExpressionAttributeValues": {
     ":gsi1pk": {
-      "S": "CITY#$input.params('city')#STATUS#PENDING"
+      "S": "LOCATION#$input.params().header.get('CloudFront-Viewer-Country')-$input.params('geoPartition')#STATUS#PENDING"
     },
     ":donationDateTime": {
       "S": "$nowIsoDate"
-    },
-    ":PK": {
-      "S": "BLOOD_REQ#$context.authorizer.claims['custom:userId']"
     }
   },
   "ScanIndexForward": false

@@ -1,10 +1,7 @@
-import { DTO } from '../../../../../commons/dto/DTOCommon'
+import type { UserDetailsDTO } from 'commons/dto/UserDTO';
+import type Repository from './Repository';
 
-export interface UserProfileDTO extends DTO {
-  userId: string;
-  deviceToken?: string;
-}
-
-export interface UserRepository {
-  getUserProfile(userId: string): Promise<UserProfileDTO | null>;
-}
+type UserRepository = {
+  getUser(userId: string): Promise<UserDetailsDTO | null>;
+} & Repository<UserDetailsDTO, Record<string, unknown>>
+export default UserRepository

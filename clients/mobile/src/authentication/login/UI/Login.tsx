@@ -1,12 +1,12 @@
 import { Text, StyleSheet } from 'react-native'
 import { Input } from '../../../components/inputElement/Input'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 import { PasswordInput } from '../../../components/inputElement/PasswordInput'
 import { Button } from '../../../components/button/Button'
 import { useLogin } from '../hooks/useLogin'
 import LinkWithText from '../../../components/button/LinkWithText'
-import { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { LoginScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import AuthLayout from '../../AuthLayout'
 import { SocialButton } from '../../../components/button/SocialButton'
@@ -15,14 +15,26 @@ import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
 import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
 import { useTranslation } from 'react-i18next'
 
-interface LoginScreenProps {
+type LoginScreenProps = {
   navigation: LoginScreenNavigationProp;
 }
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const { t } = useTranslation()
   const styles = createStyles(useTheme())
-  const { loginLoading, socialLoading, loginCredential, handleInputChange, isPasswordVisible, setIsPasswordVisible, handleLogin, loginError, handleGoogleSignIn, handleFacebookSignIn, socialLoginError } = useLogin()
+  const {
+    loginLoading,
+    socialLoading,
+    loginCredential,
+    handleInputChange,
+    isPasswordVisible,
+    setIsPasswordVisible,
+    handleLogin,
+    loginError,
+    handleGoogleSignIn,
+    handleFacebookSignIn,
+    socialLoginError
+  } = useLogin()
 
   return (
     <AuthLayout>

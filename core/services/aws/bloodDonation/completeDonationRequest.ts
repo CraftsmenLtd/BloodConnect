@@ -1,49 +1,54 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 import { DonationRecordService } from '../../../application/bloodDonationWorkflow/DonationRecordService'
-import { DonationRecordEventAttributes } from '../../../application/bloodDonationWorkflow/Types'
-import {
-  AcceptDonationStatus,
-  DonationDTO,
-  DonationRecordDTO,
-  DonationStatus
-} from '../../../../commons/dto/DonationDTO'
-import {
-  DonationRecordModel,
-  DonationRecordFields
-} from '../../../application/models/dbModels/DonationRecordModel'
+import type {
+  DonationRecordEventAttributes
+} from '../../../application/bloodDonationWorkflow/Types'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
-import BloodDonationDynamoDbOperations from '../commons/ddb/BloodDonationDynamoDbOperations'
-import {
-  BloodDonationModel,
-  DonationFields
-} from '../../../application/models/dbModels/BloodDonationModel'
-import DonationRecordDynamoDbOperations from '../commons/ddb/DonationRecordDynamoDbOperations'
+import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
+import DonationRecordDynamoDbOperations from '../commons/ddbOperations/DonationRecordDynamoDbOperations'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
-import {
-  BloodDonationNotificationDTO,
-  NotificationType
-} from '../../../../commons/dto/NotificationDTO'
-import DonationNotificationModel, {
-  BloodDonationNotificationFields
-} from '../../../application/models/dbModels/DonationNotificationModel'
-import NotificationDynamoDbOperations from '../commons/ddb/NotificationDynamoDbOperations'
 import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
-import { createHTTPLogger, HttpLoggerAttributes } from '../commons/httpLogger/HttpLogger'
 import { UserService } from '../../../application/userWorkflow/UserService'
-import { UpdateUserAttributes } from '../../../application/userWorkflow/Types'
-import { UserDetailsDTO } from '../../../../commons/dto/UserDTO'
-import LocationModel from '../../../application/models/dbModels/LocationModel'
-import UserModel, { UserFields } from '../../../application/models/dbModels/UserModel'
-import DynamoDbTableOperations from '../commons/ddb/DynamoDbTableOperations'
-import LocationDynamoDbOperations from '../commons/ddb/LocationDynamoDbOperations'
-import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
+import LocationDynamoDbOperations from '../commons/ddbOperations/LocationDynamoDbOperations'
+import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import { createHTTPLogger } from '../commons/logger/HttpLogger'
+import { UNKNOWN_ERROR_MESSAGE } from 'commons/libs/constants/ApiResponseMessages';
+import { Config } from 'commons/libs/config/config';
+import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations';
+import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations';
+import { LocationService } from 'core/application/userWorkflow/LocationService';
+import SQSOperations from '../commons/sqs/SQSOperations'
 
-const bloodDonationService = new BloodDonationService()
-const donationRecordService = new DonationRecordService()
-const notificationService = new NotificationService()
-const userService = new UserService()
+const config = new Config<{
+  dynamodbTableName: string;
+  awsRegion: string;
+  notificationQueueUrl: string;
+  minMonthsBetweenDonations: number;
+}>().getConfig()
+
+const userDynamoDbOperations = new UserDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const notificationDynamoDbOperations = new DonationNotificationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const donationRecordDynamoDbOperations = new DonationRecordDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const locationDynamoDbOperations = new LocationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+
 
 async function completeDonationRequest(
   event: DonationRecordEventAttributes & HttpLoggerAttributes
@@ -53,66 +58,26 @@ async function completeDonationRequest(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
+  const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
+  const notificationService = new NotificationService(notificationDynamoDbOperations, httpLogger)
+  const userService = new UserService(userDynamoDbOperations, httpLogger)
+  const donationRecordService = new DonationRecordService(donationRecordDynamoDbOperations, httpLogger)
+  const locationService = new LocationService(locationDynamoDbOperations, httpLogger)
   try {
     const { donorIds, seekerId, requestPostId, requestCreatedAt } = event
-    const donationPost = await bloodDonationService.getDonationRequest(
+    await bloodDonationService.completeDonationRequest(
       seekerId,
       requestPostId,
       requestCreatedAt,
-      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
-        new BloodDonationModel()
-      )
+      donorIds,
+      donationRecordService,
+      userService,
+      notificationService,
+      locationService,
+      config.minMonthsBetweenDonations,
+      new SQSOperations(config.awsRegion),
+      config.notificationQueueUrl
     )
-
-    await bloodDonationService.updateDonationStatus(
-      seekerId,
-      requestPostId,
-      requestCreatedAt,
-      DonationStatus.COMPLETED,
-      new BloodDonationDynamoDbOperations<DonationDTO, DonationFields, BloodDonationModel>(
-        new BloodDonationModel()
-      )
-    )
-    for (const donorId of donorIds) {
-      await donationRecordService.createDonationRecord(
-        {
-          donorId,
-          seekerId,
-          requestPostId,
-          requestCreatedAt,
-          requestedBloodGroup: donationPost.requestedBloodGroup,
-          location: donationPost.location,
-          donationDateTime: donationPost.donationDateTime
-        },
-        new DonationRecordDynamoDbOperations<
-        DonationRecordDTO,
-        DonationRecordFields,
-        DonationRecordModel
-        >(new DonationRecordModel())
-      )
-
-      await notificationService.updateBloodDonationNotificationStatus(
-        donorId,
-        event.requestPostId,
-        NotificationType.BLOOD_REQ_POST,
-        AcceptDonationStatus.COMPLETED,
-        new NotificationDynamoDbOperations<
-        BloodDonationNotificationDTO,
-        BloodDonationNotificationFields,
-        DonationNotificationModel
-        >(new DonationNotificationModel())
-      )
-
-      const userAttributes = {
-        lastDonationDate: new Date().toISOString()
-      }
-      await userService.UpdateUserAttributes(
-        donorId,
-        userAttributes as UpdateUserAttributes,
-        new DynamoDbTableOperations<UserDetailsDTO, UserFields, UserModel>(new UserModel()),
-        new LocationDynamoDbOperations(new LocationModel())
-      )
-    }
 
     return generateApiGatewayResponse(
       { message: 'Donation completed and donation record added successfully' },

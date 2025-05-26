@@ -2,9 +2,9 @@ import React from 'react'
 import { Text, StyleSheet } from 'react-native'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import Loader from './loaders/loader'
-import { Theme } from '../setup/theme'
+import type { Theme } from '../setup/theme'
 
-interface StateAwareRendererProps {
+type StateAwareRendererProps = {
   loading?: boolean;
   errorMessage: string | null;
   showEmptyMessageForEmptyArray?: boolean;

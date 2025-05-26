@@ -1,48 +1,57 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { useNavigation } from '@react-navigation/native'
-import { validateRequired, ValidationRule, validateInput, validateDateOfBirth, validatePastOrTodayDate, validateHeight, validateWeight, validatePhoneNumber } from '../../../utility/validator'
+import type {
+  ValidationRule
+} from '../../../utility/validator';
+import {
+  validateRequired,
+  validateInput,
+  validateDateOfBirth,
+  validatePastOrTodayDate,
+  validateHeight,
+  validateWeight,
+  validateRequiredFieldsTruthy
+} from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
-import { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { AddPersonalInfoNavigationProp } from '../../../setup/navigation/navigationTypes'
 import { SCREENS } from '../../../setup/constant/screens'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
-import { addPersonalInfoHandler } from '../../services/userServices'
-import { LocationService } from '../../../LocationService/LocationService'
-import { formatErrorMessage, formatToTwoDecimalPlaces, formatPhoneNumber } from '../../../utility/formatting'
-import { useUserProfile } from '../../../userWorkflow/context/UserProfileContext'
+import { createUserProfile } from '../../services/userProfileService'
+import type {
+  LocationData
+} from '../../../utility/formatting';
+import {
+  formatErrorMessage,
+  formatToTwoDecimalPlaces
+} from '../../../utility/formatting'
+import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
+import { LocationService } from '../../../LocationService/LocationService';
 
-const { GOOGLE_MAP_API } = Constants.expoConfig?.extra ?? {}
+const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 type PersonalInfoKeys = keyof PersonalInfo
 
-interface LocationData {
-  area: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-}
-
-export interface PersonalInfo {
+export type PersonalInfo = {
   bloodGroup: string;
-  height: string;
-  weight: string;
+  height?: string;
+  weight?: string;
   gender: string;
   lastDonationDate: null | Date;
   dateOfBirth: Date;
   lastVaccinatedDate: null | Date;
-  city: string;
   locations: string[];
   availableForDonation: string;
   acceptPolicy: boolean;
   phoneNumber?: string;
 }
 
-interface PersonalInfoErrors extends Omit<PersonalInfo, 'phoneNumber'> {
+type PersonalInfoErrors = {
   phoneNumber?: string | null;
-}
+} & Omit<PersonalInfo, 'phoneNumber'>
 
-export const useAddPersonalInfo = (): any => {
+export const useAddPersonalInfo = () => {
   const fetchClient = useFetchClient()
   const { fetchUserProfile } = useUserProfile()
   const navigation = useNavigation<AddPersonalInfoNavigationProp>()
@@ -52,7 +61,8 @@ export const useAddPersonalInfo = (): any => {
     const checkAuthProvider = async(): Promise<void> => {
       try {
         const user = await getCurrentUser()
-        setIsSSO(((user?.username?.includes('Google')) ?? false) || ((user?.username?.includes('Facebook')) ?? false) || false)
+        setIsSSO(((user?.username?.includes('Google')) ?? false) ||
+          ((user?.username?.includes('Facebook')) ?? false) || false)
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
         setIsSSO(false)
@@ -66,19 +76,18 @@ export const useAddPersonalInfo = (): any => {
   const getValidationRules = (): Record<PersonalInfoKeys, ValidationRule[]> => {
     const rules: Partial<Record<PersonalInfoKeys, ValidationRule[]>> = {
       availableForDonation: [validateRequired],
-      city: [validateRequired],
       locations: [validateRequired],
       bloodGroup: [validateRequired],
       lastDonationDate: [validatePastOrTodayDate],
-      height: [validateRequired, validateHeight],
-      weight: [validateRequired, validateWeight],
+      height: [validateHeight],
+      weight: [validateWeight],
       gender: [validateRequired],
       dateOfBirth: [validateRequired, validateDateOfBirth],
       lastVaccinatedDate: [validatePastOrTodayDate],
       acceptPolicy: [validateRequired]
     }
     if (isSSO) {
-      rules.phoneNumber = [validateRequired, validatePhoneNumber]
+      rules.phoneNumber = [validateRequired]
     }
 
     return rules as Record<PersonalInfoKeys, ValidationRule[]>
@@ -86,13 +95,12 @@ export const useAddPersonalInfo = (): any => {
 
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     bloodGroup: '',
-    height: '',
-    weight: '',
+    height: null,
+    weight: null,
     gender: '',
     lastDonationDate: null,
     dateOfBirth: new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
     lastVaccinatedDate: null,
-    city: '',
     locations: [],
     availableForDonation: 'yes',
     acceptPolicy: false,
@@ -127,19 +135,11 @@ export const useAddPersonalInfo = (): any => {
     }
   }
 
-  const isButtonDisabled = useMemo(() => {
-    const requiredFields = Object.keys(getValidationRules()) as PersonalInfoKeys[]
-    return !(
-      requiredFields.every(field => {
-        const value = personalInfo[field]
-        return value !== '' && !(Array.isArray(value) && value.length === 0)
-      }) &&
-      Object.values(errors).every(error => error === null)
-    ) || !personalInfo.acceptPolicy
-  }, [personalInfo, errors, isSSO])
+  const isButtonDisabled = !validateRequiredFieldsTruthy<PersonalInfo>(
+    getValidationRules(), personalInfo)
 
   async function formatLocations(locations: string[], city: string): Promise<LocationData[]> {
-    const locationService = new LocationService(GOOGLE_MAP_API)
+    const locationService = new LocationService(API_BASE_URL)
 
     const formattedLocations = await Promise.all(
       locations.map(async(area) =>
@@ -159,8 +159,17 @@ export const useAddPersonalInfo = (): any => {
   const handleSubmit = async(): Promise<void> => {
     try {
       setLoading(true)
-      const { locations, dateOfBirth, lastDonationDate, lastVaccinatedDate, phoneNumber, ...rest } = personalInfo
-      const preferredDonationLocations = await formatLocations(locations, personalInfo.city)
+      const {
+        locations,
+        dateOfBirth,
+        lastDonationDate,
+        lastVaccinatedDate,
+        phoneNumber,
+        height,
+        weight,
+        ...rest
+      } = personalInfo
+      const preferredDonationLocations = await formatLocations(locations, API_BASE_URL)
 
       if (preferredDonationLocations.length === 0) {
         setErrorMessage('No valid locations were found. Please verify your input.')
@@ -171,15 +180,19 @@ export const useAddPersonalInfo = (): any => {
       const finalData = {
         ...rest,
         dateOfBirth: dateOfBirth.toISOString().substring(0, 10),
-        ...(lastDonationDate !== null && { lastDonationDate: lastDonationDate.toISOString().substring(0, 10) }),
-        ...(lastVaccinatedDate !== null && { lastVaccinatedDate: lastVaccinatedDate.toISOString().substring(0, 10) }),
-        height: personalInfo.height,
-        weight: formatToTwoDecimalPlaces(personalInfo.weight),
+        ...(lastDonationDate !== null &&
+          { lastDonationDate: lastDonationDate.toISOString().substring(0, 10) }),
+        ...(lastVaccinatedDate !== null &&
+          { lastVaccinatedDate: lastVaccinatedDate.toISOString().substring(0, 10) }),
+        ...(height !== null && { height }),
+        ...(weight !== null && { weight: formatToTwoDecimalPlaces(weight) }),
         preferredDonationLocations,
-        ...(isSSO && phoneNumber != null ? { phoneNumbers: [formatPhoneNumber(phoneNumber)] } : {})
+        ...(isSSO && phoneNumber != null ? { phoneNumbers: [phoneNumber] } : {}),
+        availableForDonation: rest.availableForDonation === 'yes'
       }
-      const response = await addPersonalInfoHandler(finalData, fetchClient)
-      if (response.status === 200) {
+
+      const response = await createUserProfile(finalData, fetchClient)
+      if (response.status === 201) {
         await fetchUserProfile()
         navigation.navigate(SCREENS.BOTTOM_TABS)
       }

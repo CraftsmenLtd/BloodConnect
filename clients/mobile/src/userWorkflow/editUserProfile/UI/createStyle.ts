@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { Theme } from '../../../setup/theme'
+import type { Theme } from '../../../setup/theme'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
@@ -47,6 +47,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderTopWidth: 1,
     borderTopColor: theme.colors.lightGrey,
     backgroundColor: theme.colors.white
+  },
+  mapViewContainer: {
+    borderRadius: 6,
+    borderWidth: 1.5
   }
 })
 

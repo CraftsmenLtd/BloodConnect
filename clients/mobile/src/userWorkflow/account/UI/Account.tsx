@@ -8,7 +8,7 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import createStyles from './createStyle'
 import { useNavigation } from '@react-navigation/native'
 import { useAccount } from '../hooks/useAccount'
-import { ProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { ProfileScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
 import Loader from '../../../components/loaders/loader'
 import ProfileSection from '../../components/ProfileSection'
 
@@ -29,7 +29,10 @@ export const Account = () => {
       ></ProfileSection>}
 
       <View style={styles.optionsSection}>
-        <TouchableOpacity style={styles.optionItem} onPress={() => { navigation.navigate(SCREENS.PROFILE) }}>
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => { navigation.navigate(SCREENS.PROFILE) }}
+        >
           <MaterialIcons name="person-outline" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Profile</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
@@ -46,10 +49,19 @@ export const Account = () => {
           <Text style={styles.optionText}>Notifications</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity> */}
+
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => { navigation.navigate(SCREENS.ABOUT) }}
+        >
+          <MaterialIcons name="info-outline" size={24} style={styles.iconStyle} />
+          <Text style={styles.optionText}>About</Text>
+          <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.moreSection}>
-        <Text style={styles.moreText}>More</Text>
+        {/* <Text style={styles.moreText}>More</Text> */}
         {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="star-border" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>Rate & Review</Text>

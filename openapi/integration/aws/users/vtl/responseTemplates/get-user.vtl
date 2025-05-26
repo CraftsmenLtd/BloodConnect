@@ -16,17 +16,22 @@
             "$phone.S"#if($foreach.hasNext),#end
           #end
         ],
+        "userId": "$item.PK.S.split('#')[1]",
         "name": "$item.name.S",
         "bloodGroup": "$item.bloodGroup.S",
         "lastDonationDate": "$item.lastDonationDate.S",
-        "city": "$item.city.S",
+        "countryCode": "$item.countryCode.S",
         "height": "$item.height.S",
         #if($item.weight && $item.weight.S != "")
           "weight": $item.weight.S,
         #end
         "gender": "$item.gender.S",
         "dateOfBirth": "$item.dateOfBirth.S",
-        "availableForDonation": "$item.availableForDonation.S",
+        #if($item.availableForDonation && $item.availableForDonation.BOOL == true)
+          "availableForDonation": $item.availableForDonation.BOOL,
+        #else
+          "availableForDonation": false,
+        #end
         "NIDFront": "$item.NIDFront.S",
         "NIDBack": "$item.NIDBack.S",
         "lastVaccinatedDate": "$item.lastVaccinatedDate.S",
@@ -40,7 +45,8 @@
           #set($isFirstIter = false)
           {
             "area": "$location.area.S",
-            "city": "Dhaka",
+            "geohash": "$location.GSI1SK.S",
+            "geoPartition": "$location.GSI1PK.S.split('#')[1].split('-')[1]",
             "latitude": $location.latitude.N,
             "longitude": $location.longitude.N
           }

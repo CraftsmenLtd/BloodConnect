@@ -5,18 +5,17 @@ import { useAuth } from '../../../authentication/context/useAuth'
 import { Platform } from 'react-native'
 import { Cache } from 'aws-amplify/utils'
 import { SCREENS } from '../../../setup/constant/screens'
-import { FetchResponse } from '../../../setup/clients/FetchClient'
-import { AccountScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
-import { LocationDTO, UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
+import type { FetchResponse } from '../../../setup/clients/FetchClient'
+import type { AccountScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
+import type { LocationDTO, UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
 import storageService from '../../../utility/storageService'
 import { TOKEN } from '../../../setup/constant/token'
 
-export interface User extends
-  Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'> {
+export type User = {
   location: string;
-}
+} & Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'>
 
-export interface UserResponseData {
+export type UserResponseData = {
   success: boolean;
   data: {
     preferredDonationLocations: Array<Omit<LocationDTO, 'userId' | 'locationId' | 'geohash' | 'createdAt'>>;
@@ -24,7 +23,7 @@ export interface UserResponseData {
   } & Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'>;
 }
 
-interface UseAccountReturnType {
+type UseAccountReturnType = {
   userProfileData: User | null;
   loading: boolean;
   error: string | null;
@@ -68,8 +67,8 @@ export const useAccount = (): UseAccountReturnType => {
       const { preferredDonationLocations, ...userData } = response.data
 
       if (preferredDonationLocations.length > 0) {
-        const { city = '', area = '' } = preferredDonationLocations[0]
-        const location = `${city}, ${area}`
+        const { area = '' } = preferredDonationLocations[0]
+        const location = `${area}`
         setUserProfileData({ ...userData, location })
       }
     } catch (err) {

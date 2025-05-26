@@ -1,4 +1,4 @@
-export interface DonorResponseNotification {
+export type DonorResponseNotification = {
   createdAt: string;
   donationDateTime: string;
   donorId: string;

@@ -1,9 +1,9 @@
-import { HttpClient } from '../setup/clients/HttpClient'
-import { ApiResponse } from '../setup/clients/response'
-import { BloodDonationRecord } from './types'
+import type { HttpClient } from '../setup/clients/HttpClient'
+import type { ApiResponse } from '../setup/clients/response'
+import type { BloodDonationRecord } from './types'
 
-export interface DonationResponse extends ApiResponse<BloodDonationRecord[]> {}
-export interface DonationCreateUpdateResponse extends ApiResponse<{ requestPostId: string; createdAt: string }> {}
+export type DonationResponse = ApiResponse<BloodDonationRecord[]>
+export type DonationCreateUpdateResponse = ApiResponse<{ requestPostId: string; createdAt: string }>
 
 export const createDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationCreateUpdateResponse> => {
   try {
@@ -33,9 +33,16 @@ export const updateDonation = async(payload: Record<string, unknown>, httpClient
   }
 }
 
-export const fetchDonationPublicPosts = async(city: string, httpClient: HttpClient): Promise<DonationResponse> => {
+export const fetchDonationPublicPosts = async(
+  geoPartition: string,
+  httpClient: HttpClient,
+  bloodGroup: string = ''
+): Promise<DonationResponse> => {
   try {
-    const response = await httpClient.get<DonationResponse>(`/donations/posts/${city}`, {})
+    const response = await httpClient.get<DonationResponse>(
+      `/donations/posts/${geoPartition}`,
+      { bloodGroup: (bloodGroup !== '' ? bloodGroup : '') }
+    )
     return {
       data: response.data,
       status: response.status
@@ -88,6 +95,19 @@ export const completeDonation = async(payload: Record<string, unknown>, httpClie
 export const fetchMyResponses = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.get<DonationResponse>('/donations/responses', payload)
+    return {
+      data: response.data,
+      status: response.status
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.'
+    throw new Error(errorMessage)
+  }
+}
+
+export const updateMyResponses = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
+  try {
+    const response = await httpClient.patch<DonationResponse>('/donations/responses', payload)
     return {
       data: response.data,
       status: response.status

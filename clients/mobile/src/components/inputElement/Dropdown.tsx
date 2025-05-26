@@ -3,15 +3,15 @@ import { View, Text, StyleSheet } from 'react-native'
 import { Dropdown as CustomDropdown } from 'react-native-element-dropdown'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 
-interface Option {
+type Option = {
   label: string;
   value: string;
 }
 
-interface DropdownComponentProps {
+type DropdownComponentProps = {
   label: string;
   options: Option[];
   name: string;
@@ -21,9 +21,10 @@ interface DropdownComponentProps {
   selectedValue: string;
   error?: string | null;
   readonly?: boolean;
+  allowSearch?: boolean;
 }
 
-const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, selectedValue, placeholder, isRequired, onChange, error = '', readonly = false }) => {
+const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, selectedValue, placeholder, isRequired, onChange, error = '', readonly = false, allowSearch = false }) => {
   const styles = createStyles(useTheme())
 
   const renderItem = (item: Option) => (
@@ -55,6 +56,8 @@ const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, sele
         renderItem={(item: Option) => renderItem(item)}
         disable={readonly}
         activeColor={readonly ? 'transparent' : '#F8F8F8'}
+        search={allowSearch}
+        searchPlaceholder='Type to Search...'
       />
       {error !== null && <Text style={styles.error}>{error}</Text>}
     </View>

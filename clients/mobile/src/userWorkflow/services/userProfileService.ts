@@ -1,23 +1,32 @@
-import { HttpClient } from '../../setup/clients/HttpClient'
+import type { HttpClient } from '../../setup/clients/HttpClient'
 import { ProfileError } from '../../utility/errors'
-import { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
+import type { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
 
-interface UserPreferedLocation {
+type UserPreferredLocation = {
   area: string;
-  city: string;
+  geoHash: string;
+  geoPartition: string;
   latitude: number;
   longitude: number;
 }
 
-export interface UserProfile extends Partial<Omit<UserDetailsDTO, 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn' | 'bloodGroup' | 'gender' | 'availableForDonation'>> {
-  preferredDonationLocations?: UserPreferedLocation[];
-  city: string;
+export type UserProfile = {
+  preferredDonationLocations?: UserPreferredLocation[];
+  uniqueGeoPartitions: string[];
+  userId: string;
   bloodGroup: string;
   gender: string;
-  availableForDonation: string;
-}
+  availableForDonation: boolean;
+} & Partial<Omit<UserDetailsDTO,
+  'createdAt'
+  | 'updatedAt'
+  | 'deviceToken'
+  | 'snsEndpointArn'
+  | 'bloodGroup'
+  | 'gender'
+  | 'availableForDonation'>>
 
-interface APIResponse {
+type APIResponse = {
   success?: boolean;
   data?: UserProfile;
   message?: string;
@@ -40,18 +49,30 @@ export const fetchUserProfileFromApi = async(httpClient: HttpClient): Promise<AP
   }
 }
 
-export const updateUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<APIResponse> => {
+export const createUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
+Promise<APIResponse> => {
   try {
-    const response = await httpClient.patch<APIResponse>('/users', payload)
+    const response = await httpClient.post<APIResponse>('/users', payload)
     return {
-      data: response.data,
+      message: response.message,
       status: response.status
     }
   } catch (error) {
-    if (error instanceof ProfileError) {
-      throw error
-    }
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
-    throw new ProfileError(errorMessage)
+    throw new Error(errorMessage)
+  }
+}
+
+export const updateUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
+Promise<APIResponse> => {
+  try {
+    const response = await httpClient.patch<APIResponse>('/users', payload)
+    return {
+      message: response.message,
+      status: response.status
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    throw new Error(errorMessage)
   }
 }

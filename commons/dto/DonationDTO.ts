@@ -1,4 +1,4 @@
-import { DTO, HasIdentifier } from './DTOCommon'
+import type { DTO, HasIdentifier } from './DTOCommon'
 
 export type BloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 export type UrgencyType = 'regular' | 'urgent'
@@ -22,7 +22,7 @@ export type DonationDTO = DTO & {
   requestedBloodGroup: BloodGroup;
   bloodQuantity: number;
   urgencyLevel: 'regular' | 'urgent';
-  city: string;
+  countryCode: string;
   location: string;
   latitude: number;
   longitude: number;
@@ -37,25 +37,22 @@ export type DonationDTO = DTO & {
   createdAt: string;
 }
 
+export enum DonorSearchStatus {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED'
+}
+
+export type EligibleDonorInfo = {
+  distance: number;
+  locationId: string;
+}
+
 export type DonorSearchDTO = DTO & {
-  requestPostId: string;
   seekerId: string;
-  requestedBloodGroup: BloodGroup;
-  bloodQuantity: number;
-  urgencyLevel: UrgencyType;
-  city: string;
-  location: string;
-  geohash: string;
-  donationDateTime: string;
-  status: DonationStatus;
-  contactNumber: string;
-  patientName?: string;
-  transportationInfo?: string;
-  shortDescription?: string;
+  requestPostId: string;
   createdAt: string;
-  retryCount: number;
-  currentNeighborSearchLevel?: number;
-  remainingGeohashesToProcess?: string[];
+  status: DonorSearchStatus;
+  notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 
 export enum AcceptDonationStatus {
@@ -65,7 +62,7 @@ export enum AcceptDonationStatus {
   IGNORED = 'IGNORED'
 }
 
-type BaseAcceptedDonationDTO = {
+type BaseAcceptDonationDTO = {
   donorId: string;
   requestPostId: string;
   acceptanceTime?: string;
@@ -74,7 +71,7 @@ type BaseAcceptedDonationDTO = {
   createdAt: string;
 }
 
-export type AcceptedDonationDTO = BaseAcceptedDonationDTO & DTO & {
+export type AcceptDonationDTO = BaseAcceptDonationDTO & DTO & {
   status?: string;
 }
 

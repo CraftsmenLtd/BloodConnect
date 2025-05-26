@@ -1,13 +1,15 @@
-import { JwtPayload } from '@aws-amplify/core/internals/utils'
-import {
+import type { JwtPayload } from '@aws-amplify/core/internals/utils'
+import type {
   AuthSession,
+  ResetPasswordOutput
+} from 'aws-amplify/auth'
+import {
   confirmResetPassword,
   confirmSignUp,
   decodeJWT,
   fetchAuthSession,
   resendSignUpCode,
   resetPassword,
-  ResetPasswordOutput,
   signIn,
   signInWithRedirect,
   signOut,
@@ -17,23 +19,23 @@ import { TOKEN } from '../../setup/constant/token'
 import StorageService from '../../utility/storageService'
 import { handleAuthError } from './authErrorHandler'
 
-export interface User {
+export type User = {
   email: string;
   userId: string;
   phoneNumber: string;
   name: string;
 }
 
-export interface UserRegistrationCredentials {
+export type UserRegistrationCredentials = {
   name: string;
   email: string;
   phoneNumber: string;
   password: string;
 }
 
-interface FetchSessionResponse {
-  accessToken: string;
-  idToken: string;
+type FetchSessionResponse = {
+  accessToken: string | undefined;
+  idToken: string | undefined;
 }
 
 export const decodeAccessToken = (token: string | null): JwtPayload => {
@@ -44,23 +46,14 @@ export const decodeAccessToken = (token: string | null): JwtPayload => {
   return payload
 }
 
-export const loadTokens = async(): Promise<{ storedAccessToken: string | null; storedIdToken: string | null }> => {
+export const loadTokens = async():
+  Promise<{
+  storedAccessToken: string | undefined;
+  storedIdToken: string | undefined;
+}> => {
   try {
-    const storedAccessToken = await StorageService.getItem<string>(TOKEN.ACCESS_TOKEN)
-    const storedIdToken = await StorageService.getItem<string>(TOKEN.ID_TOKEN)
-    if (storedIdToken === null) {
-      const session = await fetchSession()
-      return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
-    }
-
-    const payload = decodeAccessToken(storedIdToken)
-
-    if (payload.exp !== undefined && payload.exp < Math.floor(Date.now() / 1000)) {
-      const session = await fetchSession()
-      return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
-    } else {
-      return { storedAccessToken, storedIdToken }
-    }
+    const session = await fetchSession()
+    return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
   } catch (error) {
     throw new Error('Failed to load tokes.')
   }
@@ -115,18 +108,11 @@ export const fetchSession = async(): Promise<FetchSessionResponse> => {
   try {
     const session: AuthSession = await fetchAuthSession()
     if (session?.tokens === undefined) {
-      throw new Error('Session or tokens are undefined')
+      return { accessToken: undefined, idToken: undefined }
     }
 
     const accessToken = session.tokens.accessToken?.toString()
     const idToken = session.tokens.idToken?.toString()
-
-    if (accessToken === undefined || idToken === undefined) {
-      throw new Error('Access token or ID token is missing')
-    }
-
-    await StorageService.storeItem<string>(TOKEN.ACCESS_TOKEN, accessToken)
-    await StorageService.storeItem<string>(TOKEN.ID_TOKEN, idToken)
     return { accessToken, idToken }
   } catch (error) {
     throw new Error('Failed to fetch session')
@@ -158,7 +144,9 @@ export const loginUser = async(email: string, password: string): Promise<boolean
     })
     return isSignedIn
   } catch (error) {
-    throw new Error(`Error logging in user: ${error instanceof Error ? error.message : error}`)
+    throw new Error(
+      `Error logging in user: ${error instanceof Error ? error.message : error}`
+    )
   }
 }
 
@@ -167,7 +155,9 @@ export const googleLogin = async(): Promise<void> => {
     await signInWithRedirect({ provider: 'Google' })
     await fetchSession()
   } catch (error) {
-    throw new Error(`Error logging with google: ${error instanceof Error ? error.message : error}`)
+    throw new Error(
+      `Error logging with google: ${error instanceof Error ? error.message : error}`
+    )
   }
 }
 
@@ -176,11 +166,15 @@ export const facebookLogin = async(): Promise<void> => {
     await signInWithRedirect({ provider: 'Facebook' })
     await fetchSession()
   } catch (error) {
-    throw new Error(`Error logging with facebook: ${error instanceof Error ? error.message : error}`)
+    throw new Error(
+      `Error logging with facebook: ${error instanceof Error ? error.message : error}`
+    )
   }
 }
 
-export const resetPasswordHandler = async(email: string): Promise<ResetPasswordOutput['nextStep']> => {
+export const resetPasswordHandler = async(
+  email: string
+): Promise<ResetPasswordOutput['nextStep']> => {
   try {
     const { nextStep } = await resetPassword({ username: email })
     return nextStep
@@ -204,7 +198,11 @@ const handleConfirmPasswordError = (error: unknown): string => {
   }
 }
 
-export const confirmResetPasswordHandler = async(email: string, otp: string, password: string): Promise<boolean> => {
+export const confirmResetPasswordHandler = async(
+  email: string,
+  otp: string,
+  password: string
+): Promise<boolean> => {
   try {
     await confirmResetPassword({ username: email, confirmationCode: otp, newPassword: password })
     return true

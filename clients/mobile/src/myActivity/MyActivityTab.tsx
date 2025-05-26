@@ -2,7 +2,7 @@ import { View, StyleSheet, RefreshControl } from 'react-native'
 import ToggleTabs from '../components/tab/ToggleTabs'
 import { MY_ACTIVITY_TAB_CONFIG, useMyActivity } from './useMyActivity'
 import { useTheme } from '../setup/theme/hooks/useTheme'
-import { Theme } from '../setup/theme'
+import type { Theme } from '../setup/theme'
 import Posts from '../components/donation/Posts'
 import { useMyActivityContext } from './context/useMyActivityContext'
 import Toast from '../components/toast'
@@ -25,6 +25,7 @@ const MyActivityTab = () => {
     handleTabPress,
     updatePost,
     detailHandler,
+    myResponsesDetailHandler,
     cancelPost,
     refreshing,
     handleRefresh,
@@ -43,49 +44,49 @@ const MyActivityTab = () => {
       </View>
       {currentTab === MY_ACTIVITY_TAB_CONFIG.initialTab
         ? <>
-            <Posts
-              donationPosts={donationPosts}
-              loading={loading}
-              updatePost={updatePost}
-              errorMessage={errorMessage}
-              detailHandler={detailHandler}
-              emptyDataMessage="No posts found."
-              displayOptions={{
-                showStatus: true
-              }}
-              cancelPost={cancelPost}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={() => {
-                    void fetchDonationPosts()
-                  }}
-                  colors={[theme.colors.primary]}
-                  tintColor={theme.colors.primary}
-                />
-              }
-            />
-            {showToast != null && <Toast
-                message={showToast?.message}
-                type={showToast?.type}
-                toastAnimationFinished={toastAnimationFinished}
-            />}
-          </>
-        : <Posts
-            donationPosts={myResponses}
-            loading={myResponsesLoading}
-            errorMessage={myResponsesError}
-            emptyDataMessage="You haven't responded to any of the posts. Pull to refresh."
+          <Posts
+            donationPosts={donationPosts}
+            loading={loading}
+            updatePost={updatePost}
+            errorMessage={errorMessage}
             detailHandler={detailHandler}
-            displayOptions={{ showOptions: false, showButton: false, showStatus: true }}
+            emptyDataMessage="No requests found."
+            displayOptions={{
+              showStatus: true
+            }}
+            cancelPost={cancelPost}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
-                onRefresh={handleRefresh}
+                onRefresh={() => {
+                  void fetchDonationPosts()
+                }}
                 colors={[theme.colors.primary]}
                 tintColor={theme.colors.primary}
-              />}
+              />
+            }
           />
+          {showToast != null && <Toast
+            message={showToast?.message}
+            type={showToast?.type}
+            toastAnimationFinished={toastAnimationFinished}
+          />}
+        </>
+        : <Posts
+          donationPosts={myResponses}
+          loading={myResponsesLoading}
+          errorMessage={myResponsesError}
+          emptyDataMessage="You haven't responded to any of the posts. Pull to refresh."
+          detailHandler={myResponsesDetailHandler}
+          displayOptions={{ showOptions: false, showButton: true, showStatus: true }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={[theme.colors.primary]}
+              tintColor={theme.colors.primary}
+            />}
+        />
       }
     </View>
   )

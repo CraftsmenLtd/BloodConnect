@@ -1,23 +1,33 @@
-import { SQS } from '@aws-sdk/client-sqs'
-import {
-  DonationNotificationAttributes,
-  NotificationAttributes
-} from '../../../../application/notificationWorkflow/Types'
-import { QueueModel } from '../../../../application/models/queue/QueueModel'
+import { ChangeMessageVisibilityCommand, SQS } from '@aws-sdk/client-sqs'
+import type { QueueModel } from '../../../../application/models/queue/QueueModel'
+import type { DTO } from 'commons/dto/DTOCommon'
 
 export default class SQSOperations implements QueueModel {
   private readonly client: SQS
 
-  constructor() {
-    this.client = new SQS({ region: process.env.AWS_REGION })
+  constructor(region: string) {
+    this.client = new SQS({ region })
   }
 
-  async queue(
-    notification: NotificationAttributes | DonationNotificationAttributes
-  ): Promise<void> {
+  async queue(messageBody: DTO, queueUrl: string, delaySeconds?: number): Promise<void> {
     await this.client.sendMessage({
-      QueueUrl: `${process.env.NOTIFICATION_QUEUE_URL}`,
-      MessageBody: JSON.stringify(notification)
+      QueueUrl: queueUrl,
+      MessageBody: JSON.stringify(messageBody),
+      ...(delaySeconds !== undefined ? { DelaySeconds: delaySeconds } : {})
     })
+  }
+
+  async updateVisibilityTimeout(
+    receiptHandle: string,
+    queueUrl: string,
+    visibilityTimeout: number
+  ): Promise<void> {
+    await this.client.send(
+      new ChangeMessageVisibilityCommand({
+        QueueUrl: queueUrl,
+        ReceiptHandle: receiptHandle,
+        VisibilityTimeout: Number(visibilityTimeout)
+      })
+    )
   }
 }

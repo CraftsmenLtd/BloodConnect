@@ -2,14 +2,9 @@
   "CreateUserRequestModel": {
     "type": "object",
     "required": [
-      "phoneNumbers",
-      "name",
       "bloodGroup",
-      "height",
-      "weight",
       "gender",
       "dateOfBirth",
-      "city",
       "preferredDonationLocations",
       "availableForDonation"
     ],
@@ -19,9 +14,6 @@
         "items": {
           "$ref": "./../common-schemas.json#/PhoneNumberEnum"
         }
-      },
-      "name": {
-        "type": "string"
       },
       "bloodGroup": {
         "$ref": "./../common-schemas.json#/BloodGroupEnum"
@@ -48,9 +40,6 @@
         "type": "string",
         "format": "date"
       },
-      "city": {
-        "type": "string"
-      },
       "preferredDonationLocations": {
         "type": "array",
         "items": {
@@ -73,11 +62,7 @@
         }
       },
       "availableForDonation": {
-        "type": "string",
-        "enum": [
-          "yes",
-          "no"
-        ]
+        "type": "boolean"
       },
       "NIDFront": {
         "type": "string"
@@ -95,14 +80,12 @@
         "+8801834567890",
         "+8801755567822"
       ],
-      "name": "John Doe",
       "bloodGroup": "O-",
       "lastDonationDate": "2023-09-15",
       "height": "5.10",
       "weight": 70,
       "gender": "male",
       "dateOfBirth": "1990-05-15",
-      "city": "Dhaka",
       "preferredDonationLocations": [
         {
           "area": "Banani",
@@ -115,7 +98,7 @@
           "longitude": 90.4043
         }
       ],
-      "availableForDonation": "yes",
+      "availableForDonation": true,
       "NIDFront": "https://cdn.bloodconnect.net/nid/1a2b3c4d5e-front.jpg",
       "NIDBack": "https://cdn.bloodconnect.net/nid/1a2b3c4d5e-back.jpg",
       "lastVaccinatedDate": "2023-03-01"

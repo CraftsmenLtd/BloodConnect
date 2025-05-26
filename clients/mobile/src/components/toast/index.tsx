@@ -1,9 +1,9 @@
 import React from 'react'
 import { Animated, StyleSheet, Text } from 'react-native'
-import { Theme } from '../../setup/theme'
+import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
-interface ToastProps {
+type ToastProps = {
   message: string;
   type?: 'success' | 'error' | 'info';
   toastAnimationFinished: Animated.Value;

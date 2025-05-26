@@ -1,6 +1,13 @@
-import { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
 
-export type StatusType = 'ACCEPTED' | 'IGNORED' | 'PENDING' | 'CANCELLED' | 'EXPIRED' | 'MANAGED' | 'COMPLETED'
+export type StatusType =
+  'ACCEPTED' |
+  'IGNORED' |
+  'PENDING' |
+  'CANCELLED' |
+  'EXPIRED' |
+  'MANAGED' |
+  'COMPLETED'
 
 export const STATUS: Record<string, StatusType> = {
   ACCEPTED: 'ACCEPTED',
@@ -22,7 +29,6 @@ DonationDTO,
 | 'contactNumber'
 | 'transportationInfo'
 | 'shortDescription'
-| 'city'
 | 'seekerId'
 > & {
   requestPostId: string;

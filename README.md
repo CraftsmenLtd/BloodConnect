@@ -1,5 +1,7 @@
 # BloodConnect
 
+https://bloodconnect.net
+
 ![stack deployment](https://github.com/CraftsmenLtd/BloodConnect/actions/workflows/deploy-prod.yml/badge.svg) ![stack deployment](https://github.com/CraftsmenLtd/BloodConnect/actions/workflows/deploy-docs.yml/badge.svg)
 
 In a poor healthcare management ecosystem, getting access to blood for patients in case of need is a hassle and time consuming process; time that we don’t always have in emergency situations. `BloodConnect` tries to improve the blood donation process through connecting donors, blood banks and existing organizations who are assisting finding donors in times of need, by providing a platform.
@@ -79,10 +81,3 @@ Check out the [emoji key](https://allcontributors.org/docs/en/emoji-key) for con
 ## Get Involved
 
 Want to contribute? The source code is available under [Apache 2.0](./LICENSE) License. Please go through our [Developer Docs](https://craftsmenltd.github.io/BloodConnect) for more details.
-
-<br/>
-
-Opensource supported by    
-<a href="https://jb.gg/OpenSourceSupport">
-  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" alt="JetBrains" width="100"/>
-</a>
