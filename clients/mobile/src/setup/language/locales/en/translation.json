@@ -97,7 +97,8 @@
     "phone": "Phone",
     "gender": "Gender",
     "lastDonationDate": "Last Donation Date",
-    "locations": "Locations"
+    "locations": "Locations",
+    "chooseLanguage": "Choose Language"
   },
   "placeholders": {
     "selectBloodGroup": "Select Blood Group",
@@ -107,11 +108,13 @@
     "enterPatientsName": "Enter patient's name",
     "writeAShortDescription": "Write a short description",
     "selectTransportationOption": "Select Transportation Option",
-    "urgentExtraInfo": "Select \"Urgent\" if the blood is needed within 24 hours."
+    "urgentExtraInfo": "Select \"Urgent\" if the blood is needed within 24 hours.",
+    "selectAppLanguage": "Select App Language"
   },
   "account": {
     "profile": "Profile",
     "about": "About",
-    "logout": "Logout"
+    "logout": "Logout",
+    "settings": "Settings"
   }
 }

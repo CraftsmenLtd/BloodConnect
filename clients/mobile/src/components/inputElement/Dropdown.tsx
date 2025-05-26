@@ -24,7 +24,18 @@ type DropdownComponentProps = {
   allowSearch?: boolean;
 }
 
-const Dropdown: React.FC<DropdownComponentProps> = ({ label, options, name, selectedValue, placeholder, isRequired, onChange, error = '', readonly = false, allowSearch = false }) => {
+const Dropdown: React.FC<DropdownComponentProps> = ({
+  label,
+  options,
+  name,
+  selectedValue,
+  placeholder,
+  isRequired,
+  onChange,
+  error = '',
+  readonly = false,
+  allowSearch = false
+}) => {
   const styles = createStyles(useTheme())
 
   const renderItem = (item: Option) => (

@@ -2,6 +2,7 @@ import Register from '../../authentication/register/UI/Register'
 import OTP from '../../authentication/otp/UI/OTP'
 import Login from '../../authentication/login/UI/Login'
 import AboutPage from '../../userWorkflow/about/About'
+import SettingsPage from '../../userWorkflow/settings/Settings'
 import { SCREENS } from '../constant/screens'
 import Welcome from '../../welcome/WelcomeScreen'
 import SetPassword from '../../authentication/setPassword/UI/SetPassword'
@@ -132,6 +133,12 @@ export const routes = [
     name: SCREENS.ABOUT,
     component: AboutPage,
     options: { headerShown: true, headerTitle: 'About' },
+    protected: true
+  },
+  {
+    name: SCREENS.SETTINGS,
+    component: SettingsPage,
+    options: { headerShown: true, headerTitle: 'Settings' },
     protected: true
   }
 ]

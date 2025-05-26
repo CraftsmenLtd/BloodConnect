@@ -34,6 +34,7 @@ export type RootStackParamList = {
   [SCREENS.REQUEST_STATUS]: { requestPostId: string; createdAt: string };
   [SCREENS.DONOR_CONFIRMATION]: { requestPostId: string; donors: DonorItem[]; createdAt: string };
   [SCREENS.ABOUT]: undefined;
+  [SCREENS.SETTINGS]: undefined;
   [SCREENS.NO_INTERNET]: undefined;
 }
 
@@ -72,4 +73,5 @@ export type DonorProfileRouteProp = RouteProp<RootStackParamList, SCREENS.DONOR_
 export type RequestStatusRouteProp = RouteProp<RootStackParamList, SCREENS.REQUEST_STATUS>
 export type DonorConfirmationRouteProp = RouteProp<RootStackParamList, SCREENS.DONOR_CONFIRMATION>
 export type About = RouteProp<RootStackParamList, SCREENS.ABOUT>
+export type Settings = RouteProp<RootStackParamList, SCREENS.SETTINGS>
 export type NoInternetRouteProp = RouteProp<RootStackParamList, SCREENS.NO_INTERNET>

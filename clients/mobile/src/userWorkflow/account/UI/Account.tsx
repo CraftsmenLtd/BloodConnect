@@ -60,6 +60,15 @@ export const Account = () => {
           <Text style={styles.optionText}>{t('account.about')}</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => { navigation.navigate(SCREENS.SETTINGS) }}
+        >
+          <MaterialIcons name="settings" size={24} style={styles.iconStyle} />
+          <Text style={styles.optionText}>{t('account.settings')}</Text>
+          <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.moreSection}>

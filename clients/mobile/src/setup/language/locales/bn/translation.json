@@ -97,7 +97,8 @@
     "phone": "ফোন",
     "gender": "লিঙ্গ",
     "lastDonationDate": "সর্বশেষ অনুদানের তারিখ",
-    "locations": "রক্তদানের জন্য পছন্দের স্থান"
+    "locations": "রক্তদানের জন্য পছন্দের স্থান",
+    "chooseLanguage": "ভাষা নির্বাচন করুন"
   },
   "placeholders": {
     "selectBloodGroup": "রক্তের গ্রুপ নির্বাচন করুন",
@@ -107,11 +108,13 @@
     "enterPatientsName": "রোগীর নাম লিখুন",
     "writeAShortDescription": "সংক্ষিপ্ত বিবরণ লিখুন",
     "selectTransportationOption": "পরিবহন সুবিধা নির্বাচন করুন",
-    "urgentExtraInfo": "২৪ ঘন্টার মধ্যে রক্তের প্রয়োজন হলে \"Urgent\" নির্বাচন করুন।"
+    "urgentExtraInfo": "২৪ ঘন্টার মধ্যে রক্তের প্রয়োজন হলে \"Urgent\" নির্বাচন করুন।",
+    "selectAppLanguage": "যে কোন একটি ভাষা নির্বাচন করুন"
   },
   "account": {
     "profile": "প্রোফাইল",
     "about": "অ্যাপ সম্পর্কে জানুন",
-    "logout": "লগআউট"
+    "logout": "লগআউট",
+    "settings": "সেটিংস"
   }
 }
