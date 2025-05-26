@@ -62,6 +62,7 @@ const EditProfile = () => {
                   setPendingAvailableForDonationSave(true)
                 }}
                 direction="row"
+                label={t('fromLabel.availableForDonation')}
               />
               <Divider containerStyle={styles.dividerContainer} lineStyle={styles.dividerLine} />
             </View>

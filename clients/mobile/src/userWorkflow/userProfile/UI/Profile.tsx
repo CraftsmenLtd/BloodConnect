@@ -85,6 +85,7 @@ const Profile: React.FC = () => {
           <View style={styles.row}>
             <CustomToggle
               value={userDetails.availableForDonation}
+              label={t('fromLabel.availableForDonation')}
               isReadOnly={true}
               direction="row"
             />

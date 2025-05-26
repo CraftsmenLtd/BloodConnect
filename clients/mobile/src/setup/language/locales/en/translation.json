@@ -98,7 +98,8 @@
     "gender": "Gender",
     "lastDonationDate": "Last Donation Date",
     "locations": "Locations",
-    "chooseLanguage": "Choose Language"
+    "chooseLanguage": "Choose Language",
+    "availableForDonation": "Available For Donation"
   },
   "placeholders": {
     "selectBloodGroup": "Select Blood Group",

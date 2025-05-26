@@ -98,7 +98,8 @@
     "gender": "লিঙ্গ",
     "lastDonationDate": "সর্বশেষ অনুদানের তারিখ",
     "locations": "রক্তদানের জন্য পছন্দের স্থান",
-    "chooseLanguage": "ভাষা নির্বাচন করুন"
+    "chooseLanguage": "ভাষা নির্বাচন করুন",
+    "availableForDonation": "আপনি কি রক্ত দান করতে পাড়বেন?"
   },
   "placeholders": {
     "selectBloodGroup": "রক্তের গ্রুপ নির্বাচন করুন",
