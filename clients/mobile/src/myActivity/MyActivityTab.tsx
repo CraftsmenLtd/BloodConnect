@@ -1,4 +1,4 @@
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, RefreshControl } from 'react-native'
 import ToggleTabs from '../components/tab/ToggleTabs'
 import { MY_ACTIVITY_TAB_CONFIG, useMyActivity } from './useMyActivity'

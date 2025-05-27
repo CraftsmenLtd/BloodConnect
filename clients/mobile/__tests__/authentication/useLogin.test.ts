@@ -18,6 +18,17 @@ jest.mock('@react-navigation/native', () => ({
   }
 }))
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'error.invalidEmailOrPassword': 'Invalid Email or Password.',
+      };
+      return translations[key] || key;
+    },
+  }),
+}))
+
 jest.mock('../../src/authentication/services/authService', () => ({
   loginUser: jest.fn(),
   googleLogin: jest.fn(),

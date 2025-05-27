@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import { routes } from './routes'
+import { useAppRoutes } from './routes'
 import { SCREENS } from '../constant/screens'
 import { useAuth } from '../../authentication/context/useAuth'
 import Loader from '../../components/loaders/loader'
@@ -16,6 +16,7 @@ export default function Navigator() {
   const { isAuthenticated, loading } = useAuth()
   const { userProfile, fetchUserProfile, loading: profileLoading } = useUserProfile()
   const styles = createStyles(useTheme())
+  const routes = useAppRoutes()
 
   useEffect(() => {
     if (isAuthenticated) {

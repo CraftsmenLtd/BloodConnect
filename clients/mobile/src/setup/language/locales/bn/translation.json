@@ -52,7 +52,7 @@
   },
   "donationPosts": {
     "bloodNeeded": "রক্তের প্রয়োজন?",
-    "createRequest": "আবেদন করুন",
+    "createRequest": "অনুরোধ করুন",
     "postedOn": "পোস্ট করা হয়েছে",
     "lookingFor": "আমি খুঁজছি",
     "donationPoint": "অনুদানের স্থান",
@@ -117,5 +117,17 @@
     "about": "অ্যাপ সম্পর্কে জানুন",
     "logout": "লগআউট",
     "settings": "সেটিংস"
+  },
+  "headers": {
+    "createNewAccount": "নতুন অ্যাকাউন্ট তৈরি করুন",
+    "createBloodRequest": "রক্তের জন্য অনুরোধ করুন",
+    "updateBloodRequest": "রক্তের অনুরোধ আপডেট করুন"
+  },
+  "navBar": {
+    "requests": "অনুরোধসমূহ",
+    "myActivity" : "আমার কার্যকলাপ",
+    "myRequest": "আমার অনুরোধসমূহ",
+    "myResponses": "আমার উত্তরসমূহ",
+    "account": "আমার অ্যাকাউন্ট"
   }
 }

@@ -117,5 +117,16 @@
     "about": "About",
     "logout": "Logout",
     "settings": "Settings"
+  },
+  "headers": {
+    "createNewAccount": "Create New Account",
+    "createBloodRequest": "Create Blood Request"
+  },
+  "navBar": {
+    "requests": "Requests",
+    "myActivity" : "My Activity",
+    "myRequests": "My Requests",
+    "myResponses": "My Responses",
+    "account": "Account"
   }
 }
