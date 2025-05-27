@@ -16,9 +16,6 @@ BUILD_PROFILE?=development
 APP_NAME?=net.bloodconnect.app
 APP_VERSION?=1.1.2
 
-install-native-packages:
-	@npm install --prefix $(DIR)
-
 install-binaries:
 	@npm install -g expo-cli eas-cli
 

@@ -43,11 +43,6 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
       "${aws_cloudwatch_log_group.donation_accept_pipe_log_group.arn}:*"
     ]
   }
-  statement {
-    effect    = "Allow"
-    actions   = ["lambda:InvokeFunction"]
-    resources = [var.monitor_donation_request_lambda_arn]
-  }
 }
 
 resource "aws_iam_role_policy" "eventbridge_pipe_policy" {

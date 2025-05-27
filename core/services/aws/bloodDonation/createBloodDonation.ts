@@ -43,7 +43,7 @@ async function createBloodDonationLambda(
   )
   const userService = new UserService(userDynamoDbOperations, httpLogger)
   const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
-  
+
   try {
     const bloodDonationAttributes: BloodDonationEventAttributes = {
       seekerId: event.seekerId,

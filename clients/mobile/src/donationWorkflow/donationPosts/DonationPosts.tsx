@@ -1,6 +1,5 @@
 import { View, StyleSheet, RefreshControl } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
-import { useRegisterPushOnFocus } from '../../utility/deviceRegistration'
 import { useDonationPosts } from './useDonationPosts'
 import Header from './DonationHeader'
 import Posts from '../../components/donation/Posts'
@@ -14,7 +13,6 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
 const DonationPosts = () => {
   const theme = useTheme()
   const styles = createStyles()
-  useRegisterPushOnFocus()
   const {
     errorMessage,
     createPost,

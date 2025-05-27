@@ -47,6 +47,7 @@ jobs:
         run: make run-command-build-node-all
 
       - name: 🐬 Start Localstack
+        if: ${{ inputs.deploy_localstack }}
         run: make localstack-start
 
       - name: 🛡️ Terraform Security

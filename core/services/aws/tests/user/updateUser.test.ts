@@ -45,6 +45,7 @@ describe('updateUserLambda', () => {
 
   beforeEach(() => {
     mockedUserService.prototype.updateUser = jest.fn()
+    mockedUserService.prototype.updateUserAttributes = jest.fn()
     mockedGenerateApiGatewayResponse.mockClear()
   })
 
@@ -62,13 +63,12 @@ describe('updateUserLambda', () => {
       NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
       NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
       lastVaccinatedDate: '2023-05-01',
-      age: 34,
       preferredDonationLocations: []
     }
 
     const mockResponse = UPDATE_PROFILE_SUCCESS
 
-    mockedUserService.prototype.updateUser.mockResolvedValue()
+    mockedUserService.prototype.updateUserAttributes.mockResolvedValue()
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.OK,
       body: JSON.stringify({ message: mockResponse })
@@ -78,7 +78,8 @@ describe('updateUserLambda', () => {
       mockEvent as UpdateUserAttributes & HttpLoggerAttributes
     )
 
-    expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
+    expect(mockedUserService.prototype.updateUserAttributes).toHaveBeenCalledWith(
+      mockEvent.userId,
       expect.objectContaining(mockEvent),
       expect.any(LocationService),
       minMonthsBetweenDonations
@@ -105,12 +106,11 @@ describe('updateUserLambda', () => {
       NIDFront: 's3://bucket/nid/1a2b3c4d5e-front.jpg',
       NIDBack: 's3://bucket/nid/1a2b3c4d5e-back.jpg',
       lastVaccinatedDate: '2023-05-01',
-      age: 34,
       preferredDonationLocations: []
     }
     const mockError = new Error('Failed to update user')
 
-    mockedUserService.prototype.updateUser.mockRejectedValue(mockError)
+    mockedUserService.prototype.updateUserAttributes.mockRejectedValue(mockError)
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.ERROR,
       body: `Error: ${mockError.message}`
@@ -120,7 +120,8 @@ describe('updateUserLambda', () => {
       mockEvent as UpdateUserAttributes & HttpLoggerAttributes
     )
 
-    expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
+    expect(mockedUserService.prototype.updateUserAttributes).toHaveBeenCalledWith(
+      mockEvent.userId,
       expect.objectContaining(mockEvent),
       expect.any(LocationService),
       minMonthsBetweenDonations
@@ -150,7 +151,7 @@ describe('updateUserLambda', () => {
     }
     const mockError = new Error('Failed to update user')
 
-    mockedUserService.prototype.updateUser.mockRejectedValue(mockError)
+    mockedUserService.prototype.updateUserAttributes.mockRejectedValue(mockError)
     mockedGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.ERROR,
       body: `Error: ${mockError.message}`
@@ -160,7 +161,8 @@ describe('updateUserLambda', () => {
       mockEvent as UpdateUserAttributes & HttpLoggerAttributes
     )
 
-    expect(mockedUserService.prototype.updateUser).toHaveBeenCalledWith(
+    expect(mockedUserService.prototype.updateUserAttributes).toHaveBeenCalledWith(
+      mockEvent.userId,
       expect.objectContaining(mockEvent),
       expect.any(LocationService),
       minMonthsBetweenDonations
