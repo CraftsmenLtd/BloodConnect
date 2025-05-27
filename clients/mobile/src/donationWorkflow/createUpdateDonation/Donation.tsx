@@ -104,7 +104,7 @@ const CreateBloodRequest = () => {
             multiSelect={false}
             isRequired={true}
             fetchOptions={
-              async(searchText) => 
+              async(searchText) =>
                 locationService.healthLocationAutocomplete(searchText)
             }
           />
