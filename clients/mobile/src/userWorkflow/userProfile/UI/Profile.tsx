@@ -4,7 +4,6 @@ import { View, Text, ScrollView } from 'react-native'
 import Badge from '../../../components/badge'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
-import CustomToggle from '../../../components/toogleButton'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
 import type { LocationData } from '../../../utility/formatting'
@@ -82,14 +81,6 @@ const Profile: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.card}>
-          <View style={styles.row}>
-            <CustomToggle
-              value={userDetails.availableForDonation}
-              label={t('fromLabel.availableForDonation')}
-              isReadOnly={true}
-              direction="row"
-            />
-          </View>
           {renderDetailRow(t('fromLabel.name'), userDetails.name ?? '')}
           {renderDetailRow(t('fromLabel.dob'), formattedDate(userDetails.dateOfBirth ?? '', true))}
           {renderDetailRow(t('fromLabel.weight'), userDetails.weight !== null ?
@@ -100,7 +91,7 @@ const Profile: React.FC = () => {
             userDetails.phoneNumbers.length > 0 ?
             userDetails.phoneNumbers[0] : '')}
           {renderDetailRow(t('fromLabel.gender'), userDetails.gender.toUpperCase())}
-          {userDetails?.lastDonationDate !== '' && renderDetailRow(t('fromLabel.lLastDonationDate'),
+          {userDetails?.lastDonationDate !== '' && renderDetailRow(t('fromLabel.lastDonationDate'),
             formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
           <View style={[styles.row, styles.lastRow]}>
             <Text style={styles.label}>{t('fromLabel.locations')}</Text>
