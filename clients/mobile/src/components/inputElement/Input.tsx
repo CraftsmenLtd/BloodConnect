@@ -21,16 +21,16 @@ type InputElementProps = {
   inputStyle?: StyleProp<ViewStyle>;
 } & InputProps
 
-export const Input = ({ 
-  name, 
-  label, 
-  value, 
-  onChangeText, 
-  placeholder, 
-  error, 
-  keyboardType = 'default', 
-  isRequired = false, 
-  readOnly = false, 
+export const Input = ({
+  name,
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  error,
+  keyboardType = 'default',
+  isRequired = false,
+  readOnly = false,
   inputStyle
 }: InputElementProps): React.ReactElement => {
   const styles = createStyles(useTheme())

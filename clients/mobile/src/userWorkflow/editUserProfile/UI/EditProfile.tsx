@@ -163,7 +163,7 @@ const EditProfile = () => {
               <DateTimePickerComponent
                 label="Last Donation Date"
                 value={
-                  profileData.lastDonationDate !== null && 
+                  profileData.lastDonationDate !== null &&
                   profileData.lastDonationDate !== '' ?
                     new Date(profileData.lastDonationDate) :
                     null
