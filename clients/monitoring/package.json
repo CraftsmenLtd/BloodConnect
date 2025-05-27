@@ -11,11 +11,15 @@
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.9.4",
+    "@aws-sdk/client-dynamodb": "^3.808.0",
     "@aws-sdk/client-s3": "^3.772.0",
+    "@uiw/react-json-view": "^2.0.0-alpha.32",
     "aws-amplify": "^6.13.6",
-    "mapbox-gl": "^3.9.2",
+    "bootstrap": "^5.3.6",
+    "maplibre-gl": "^5.5.0",
     "ngeohash": "^0.6.3",
     "react": "^18.3.1",
+    "react-bootstrap": "^2.10.10",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.1"
   },
@@ -29,6 +33,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.14.0",
+    "react-devtools": "^6.1.2",
     "vite": "^6.0.5"
   }
 }

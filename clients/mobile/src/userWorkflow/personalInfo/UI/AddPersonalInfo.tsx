@@ -103,7 +103,7 @@ const AddPersonalInfo = () => {
             />
           )}
         </View>
-        
+
         <View style={styles.fieldSpacing}>
           <RadioButton
             name="gender"

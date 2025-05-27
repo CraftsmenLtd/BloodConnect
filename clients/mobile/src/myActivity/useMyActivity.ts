@@ -20,7 +20,7 @@ export type DonationData = {
   requestPostId: string;
 } & Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'>
 
-export const useMyActivity = (): unknown => {
+export const useMyActivity = () => {
   const fetchClient = useFetchClient()
   const { fetchDonationPosts, getMyResponses } = useMyActivityContext()
   const { showToastMessage, showToast, toastAnimationFinished } = useToast()
@@ -102,6 +102,7 @@ export const useMyActivity = (): unknown => {
     isLoading,
     showToast,
     handleRefresh: refreshPosts,
-    refreshing
+    refreshing,
+    toastAnimationFinished
   }
 }

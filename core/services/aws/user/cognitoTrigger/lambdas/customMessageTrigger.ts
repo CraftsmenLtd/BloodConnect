@@ -29,7 +29,7 @@ function customEmailTemplateLambda(
     name: event.request.userAttributes.name
   }) as Logger
   const userService = new UserService(userDynamoDbOperations, logger)
-  
+
   let emailContent: GenericMessage
   switch (event.triggerSource) {
   case 'CustomMessage_SignUp':
