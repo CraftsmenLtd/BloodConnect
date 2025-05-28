@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native'
-import { LanguageSwitcher } from '../components/common/LanguageSwitcher'
+import { LanguageSwitcher } from '../components/languageSwitcher'
 import { languageOptions } from '../setup/constant/language'
 import type { WelcomeScreenNavigationProp } from '../setup/navigation/navigationTypes'
 import { SCREENS } from '../setup/constant/screens'
@@ -13,7 +13,7 @@ export type WelcomeScreenProps = {
   navigation: WelcomeScreenNavigationProp;
 }
 
-const Welcome = ({ navigation }: WelcomeScreenProps) => {
+const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
   const { t } = useTranslation()
   const styles = createStyles(useTheme())
   return (
@@ -21,6 +21,7 @@ const Welcome = ({ navigation }: WelcomeScreenProps) => {
       <LanguageSwitcher
         languages={languageOptions}
         position="bottom-right"
+        size="sm"
       />
 
       <Image source={require('../../assets/images/bloodBag.png')} style={styles.image} />

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import React from 'react'
-import { LanguageSwitcher } from '../components/common/LanguageSwitcher'
+import { LanguageSwitcher } from '../components/languageSwitcher'
 import { languageOptions } from '../setup/constant/language'
 import type { Theme } from '../setup/theme'
 import { useTheme } from '../setup/theme/hooks/useTheme'
@@ -24,6 +24,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
         <LanguageSwitcher
           languages={languageOptions}
           position="bottom-right"
+          size="sm"
         />
       </ScrollView>
     </SafeAreaView>

@@ -12,7 +12,7 @@ type Option = {
 }
 
 type DropdownComponentProps = {
-  label: string;
+  label?: string;
   options: Option[];
   name: string;
   placeholder: string;
