@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { Input } from '../../../components/inputElement/Input'
 import { Button } from '../../../components/button/Button'
 import { SocialButton } from '../../../components/button/SocialButton'
@@ -57,14 +57,16 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
         error={errors.email}
       />
 
-      <PhoneNumberInput
-        name="phoneNumber"
-        label={t('common.phoneNumber')}
-        value={registerCredential.phoneNumber}
-        onChange={handleInputChange}
-        showWarning={registerCredential.phoneNumber !== ''}
-        isRequired={false}
-      />
+      <View style={styles.phoneWrapper}>
+        <PhoneNumberInput
+          name="phoneNumber"
+          label={t('common.phoneNumber')}
+          value={registerCredential.phoneNumber}
+          onChange={handleInputChange}
+          showWarning={registerCredential.phoneNumber !== ''}
+          isRequired={false}
+        />
+      </View>
 
       <Button text={t('common.continue')} onPress={handleRegister} disabled={isButtonDisabled} />
 
@@ -100,5 +102,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     color: theme.colors.primary,
     fontSize: theme.typography.errorFontSize,
     textAlign: 'center'
+  },
+  phoneWrapper: {
+    minHeight: 64,
+    justifyContent: 'center'
   }
 })

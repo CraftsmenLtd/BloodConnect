@@ -132,6 +132,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     active: {
       fontWeight: 'bold',
       textDecorationLine: 'underline',
+      color: theme.colors.primary,
     },
     separator: {
       color: theme.colors.textPrimary,
