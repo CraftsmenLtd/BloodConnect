@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react'
+import React from 'react'
+import { LanguageSwitcher } from '../components/common/LanguageSwitcher'
+import { languageOptions } from '../setup/constant/language'
 import type { Theme } from '../setup/theme'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,6 +21,10 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
         showsVerticalScrollIndicator={false}
       >
         {children}
+        <LanguageSwitcher
+          languages={languageOptions}
+          position="bottom-right"
+        />
       </ScrollView>
     </SafeAreaView>
   )
@@ -30,7 +37,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     backgroundColor: theme.colors.white,
     paddingTop: '10%',
     paddingHorizontal: 20
-
   }
 })
 

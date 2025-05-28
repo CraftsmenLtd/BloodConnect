@@ -1,5 +1,7 @@
 import React from 'react'
 import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native'
+import { LanguageSwitcher } from '../components/common/LanguageSwitcher'
+import { languageOptions } from '../setup/constant/language'
 import type { WelcomeScreenNavigationProp } from '../setup/navigation/navigationTypes'
 import { SCREENS } from '../setup/constant/screens'
 import { Button } from '../components/button/Button'
@@ -16,6 +18,11 @@ const Welcome = ({ navigation }: WelcomeScreenProps) => {
   const styles = createStyles(useTheme())
   return (
     <View style={styles.container}>
+      <LanguageSwitcher
+        languages={languageOptions}
+        position="bottom-right"
+      />
+
       <Image source={require('../../assets/images/bloodBag.png')} style={styles.image} />
 
       <Text style={styles.title}>{t('home.title')}</Text>
