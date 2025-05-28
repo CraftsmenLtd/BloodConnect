@@ -40,6 +40,48 @@ const sizeToWidth = (size: Size): number | 'auto' => {
   }
 }
 
+/**
+ * LanguageSwitcher Component
+ * ---------------------------
+ * A reusable language selector component using a dropdown.
+ * Built for use with `react-i18next` to change the application's active language.
+ * Allows specifying dropdown size, position, and custom labels.
+ *
+ * Props:
+ * -------
+ * @param label - Optional label displayed above the dropdown.
+ * @param placeholder - Optional placeholder text shown when no language is selected.
+ * @param languages - Array of language options where each option includes:
+ *                    - `label`: Display name (e.g., "English")
+ *                    - `value`: Language code (e.g., "en")
+ * @param position - Optional fixed position of the dropdown on screen. Possible values:
+ *                   - 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'
+ *                   If not provided, no absolute positioning is applied.
+ * @param size - Optional dropdown size preset that determines width. Possible values:
+ *               - 'sm' = 120px, 'md' = 150px (default), 'lg' = 220px, 'auto' = auto width
+ *
+ * Example Usage:
+ * ---------------
+ * ```tsx
+ * import { LanguageSwitcher } from './components/LanguageSwitcher'
+ *
+ * const languages = [
+ *   { label: 'English', value: 'en' },
+ *   { label: 'Bangla', value: 'bn' }
+ * ]
+ *
+ * <LanguageSwitcher
+ *   label="Select Language"
+ *   placeholder="Choose..."
+ *   languages={languages}
+ *   size="sm"
+ *   position="top-right"
+ * />
+ * ```
+ *
+ * Dependencies:
+ * - react-i18next
+ */
 export const LanguageSwitcher = ({
   label,
   placeholder,
