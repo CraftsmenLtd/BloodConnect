@@ -6,8 +6,8 @@
     "submit": "সাবমিট",
     "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন?",
     "orText": "অথবা",
-    "continueWithGoogle": "গুগলের মাধ্যমে চালিয়ে যান",
-    "continueWithFacebook": "ফেসবুকের মাধ্যমে চালিয়ে যান",
+    "continueWithGoogle": "গুগল দিয়ে লগইন করুন",
+    "continueWithFacebook": "ফেসবুক দিয়ে লগইন করুন",
     "noAccount": "অ্যাকাউন্ট নেই? ",
     "continue": "চালিয়ে যান",
     "namePlaceholder": "আপনার নাম লিখুন",
@@ -33,7 +33,7 @@
     "resendOtpIn": "${countdown} সেকেন্ডে OTP পুনরায় পাঠান"
   },
   "home": {
-    "title": "রক্তদাতা এবং রক্তপ্রত্যাশীর জন্য একটি সাধারণ প্ল্যাটফর্ম",
+    "title": "রক্তদাতা এবং রক্তপ্রত্যাশীদের জন্য একটি সমন্বয়ক প্ল্যাটফর্ম",
     "subtitle": "রক্ত অনুসন্ধান এবং রক্ত দান এখন BloodConnect অ্যাপের মাধ্যমে আরও সহজ"
   },
   "error": {
@@ -44,11 +44,11 @@
     "accountAlreadyExists": "একাউন্ট ইতিমধ্যে বিদ্যমান।",
     "weakPassword": "দুর্বল পাসওয়ার্ড। একটি শক্তিশালী পাসওয়ার্ড ব্যবহার করুন।",
     "invalidInput": "ভুল ইনপুট। আপনার বিবরণ চেক করুন।",
-    "tooManyRequests": "অনেক অনুরোধ। পরে আবার চেষ্টা করুন।",
+    "tooManyRequests": "অনেক বেশি অনুরোধ করা হচ্ছে। একটু পর আবার চেষ্টা করুন।",
     "invalidOtpCode": "ভুল OTP কোড। দয়া করে আবার চেষ্টা করুন।",
     "otpCodeExpired": "OTP কোডের মেয়াদ শেষ হয়ে গেছে। একটি নতুন কোড অনুরোধ করুন।",
     "noAccountFound": "এই ইমেইল দিয়ে কোন একাউন্ট পাওয়া যায়নি।",
-    "somethingWentWrong": "কিছু ভুল হয়েছে।"
+    "somethingWentWrong": "যান্ত্রিক ত্রুটি হয়েছে। আমরা দুঃখিত।"
   },
   "donationPosts": {
     "bloodNeeded": "রক্তের প্রয়োজন?",
@@ -63,8 +63,8 @@
     "transportationFacilityForTheDonor": "অনুদানকারীর জন্য পরিবহন সুবিধা",
     "numberOfDonors": "অনুদানকারীর সংখ্যা",
     "donorsAcceptedYourRequest": "জন আপনার অনুরোধ গ্রহণ করেছেন",
-    "emptyDonationPosts": "কোনও অনুদানের আবেদন পাওয়া যায়নি। রিফ্রেশ করতে উপর থেকে নীচে টানুন।",
-    "emptyMyDonationPosts": "আপনি কোনও অনুরোধের উত্তর দেননি।. রিফ্রেশ করতে উপর থেকে নীচে টানুন।"
+    "emptyDonationPosts": "কোন অনুদানের আবেদন পাওয়া যায়নি। রিফ্রেশ করতে উপর থেকে নীচে টানুন।",
+    "emptyMyDonationPosts": "আপনি কোন অনুরোধের উত্তর দেননি।. রিফ্রেশ করতে উপর থেকে নীচে টানুন।"
   },
   "modal": {
     "areYouSureYouWantToCancel": "আপনি কি নিশ্চিত যে আপনি বাতিল করতে চান?",
