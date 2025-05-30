@@ -163,8 +163,9 @@ export const useEditProfile = () => {
 
   useEffect(() => {
     if (pendingAvailableForDonationSave) {
-      void handleUpdateAvailableForDonation()
-      setPendingAvailableForDonationSave(false)
+      void handleUpdateAvailableForDonation().finally(() =>
+        setPendingAvailableForDonationSave(false)
+      )
     }
   }, [profileData.availableForDonation])
 
