@@ -15,13 +15,15 @@ DIR:=$(dir $(ENV_FILE))
 BUILD_PROFILE?=development
 APP_NAME?=net.bloodconnect.app
 APP_VERSION?=1.1.2
-
-install-binaries:
-	@npm install -g expo-cli eas-cli
+export ANDROID_HOME?=/opt/android-sdk
+export GRADLE_OPTS="-Djava.net.preferIPv4Stack=true"
 
 # Build the APK with the specified profile
 build-android:
 	@eas build --profile $(BUILD_PROFILE) --platform android --non-interactive --no-wait
+
+build-android-local:
+	@eas build --profile $(BUILD_PROFILE) --platform android --local --output "$(APP_NAME)_$(APP_VERSION).apk"
 
 clean:
 	@rm -rf build .expo
