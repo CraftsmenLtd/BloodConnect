@@ -23,6 +23,7 @@ AWS_SECRET_ACCESS_KEY?=aws-secret-access-key
 AWS_SESSION_TOKEN?=aws-session-token
 DEPLOYMENT_ENVIRONMENT_GROUP?=localstack
 DEPLOYMENT_ENVIRONMENT?=$(shell git rev-parse --abbrev-ref HEAD | tr '[:upper:]' '[:lower:]')
+
 # Docker Environment Variables
 TF_VARS=$(shell env | grep '^TF_VAR_' | awk '{print "-e", $$1}')
 DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
@@ -44,8 +45,8 @@ DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
             -e AWS_USER_POOL_CLIENT_ID \
             -e AWS_USER_POOL_ID \
             -e API_BASE_URL \
-            -e AWS_COGNITO_DOMAIN
-
+            -e AWS_COGNITO_DOMAIN \
+            -e HOME=/app
 
 # Checkov Skip Rules
 # CKV_AWS_117 - Ensure that AWS Lambda function is configured inside a VPC
@@ -129,17 +130,16 @@ lint: lint-code tf-validate lint-api
 
 lint-fix: lint-code-fix
 
-
 # Docker dev environment
 build-runner-image:
 	docker build -t $(RUNNER_IMAGE_NAME) .
 
 run-command-%:
-	docker rm -f $(DOCKER_DEV_CONTAINER_NAME)
+	docker rm -f $(DOCKER_DEV_CONTAINER_NAME) || true
 	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
+	           --user $(HOST_UID):$(HOST_GID) \
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
 	           make $* NPM_TEST_ARGS=$(NPM_TEST_ARGS) NPM_ARGS=$(NPM_ARGS)
-
 
 # Swagger UI
 swagger-ui:
@@ -184,3 +184,10 @@ prepare-mobile-env:
 
 fetch-google-service-file:
 	@aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/$(BUILD_PROFILE)/google-services.json clients/mobile/
+
+build-mobile-android-local:
+	$(MAKE) -C clients/mobile build-android-local
+
+build-mobile-android-eas:
+	$(MAKE) -C clients/mobile upload-env
+	$(MAKE) -C clients/mobile build-android
