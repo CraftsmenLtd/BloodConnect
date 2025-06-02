@@ -198,7 +198,10 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                               key={item.text}
                               text={item.text}
                               onPress={item.onPress}
-                              disabled={post.status === STATUS.CANCELLED || post.status === STATUS.COMPLETED}
+                              disabled={
+                                post.status === STATUS.CANCELLED
+                                || post.status === STATUS.COMPLETED
+                              }
                               isLastItem={index === dropdownItems.length - 1}
                             />
                           ))}
@@ -245,7 +248,9 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             />
             <View style={styles.bloodText}>
               <Text style={styles.lookingForText}>Looking for</Text>
-              <Text style={styles.bloodAmount}>{formatBloodQuantity(post.bloodQuantity)} {post.requestedBloodGroup} (ve) blood</Text>
+              <Text style={styles.bloodAmount}>
+                {formatBloodQuantity(post.bloodQuantity)} {post.requestedBloodGroup} (ve) blood
+              </Text>
             </View>
           </View>
           {post.urgencyLevel === UrgencyLevel.URGENT && (
@@ -301,21 +306,28 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         }
         {post.transportationInfo !== '' && showTransportInfo &&
           <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>Transportation Facility for the Donor</Text>
+            <Text style={styles.donationInfoPlaceholder}>
+              Transportation Facility for the Donor
+            </Text>
             <Text style={styles.description}>{post.transportationInfo}</Text>
           </View>
         }
       </View>
-      {Array.isArray(post.acceptedDonors) && post.acceptedDonors.length > 0 && showPostUpdatedOption && <>
-        <Text style={styles.bloodAmount}>Request Update</Text>
-        <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
-          <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
-          <View>
-            <Text style={styles.donationInfoPlaceholder}>Number of Donors</Text>
-            <Text style={styles.bloodAmount}>{post.acceptedDonors.length} donors accepted your request</Text>
+      {Array.isArray(post.acceptedDonors)
+        && post.acceptedDonors.length > 0
+        && showPostUpdatedOption
+        && <>
+          <Text style={styles.bloodAmount}>Request Update</Text>
+          <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
+            <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
+            <View>
+              <Text style={styles.donationInfoPlaceholder}>Number of Donors</Text>
+              <Text style={styles.bloodAmount}>
+                {post.acceptedDonors.length} donors accepted your request
+              </Text>
+            </View>
           </View>
-        </View>
-      </>}
+        </>}
       {showButton && <View style={styles.buttonContainer}>
         <Button
           text='View details'
@@ -365,7 +377,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   bloodImage: {
     width: 28,
-    height: 28,
+    height: 30,
     color: theme.colors.bloodRed
   },
   dropdownContainer: {

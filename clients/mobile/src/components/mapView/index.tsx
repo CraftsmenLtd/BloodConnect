@@ -1,9 +1,13 @@
-import React, { useRef } from 'react'
+import React, {
+  useEffect,
+  useRef
+} from 'react'
 import {
   View,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated,
 } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import type {
@@ -129,7 +133,9 @@ const MapView: React.FC<MapViewProps> = ({
 
           return (
             <MarkerView key={index} coordinate={marker.coordinate}>
-              {markerContent}
+              {marker.ripple ? (
+                <RippleMarker />
+              ) : markerContent}
             </MarkerView>
           )
         })}
@@ -182,12 +188,54 @@ const ResetToInitialView = ({ cameraRef, centerCoordinate, zoomLevel }): React.R
 }
 
 const MapAttribution = (): React.ReactElement => {
-  const theme = useTheme();
-  const styles = createStyles(theme);
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   return (
     <View style={styles.attributionContainer}>
       <Text style={styles.attributionText}>© OpenStreetMap Contributors</Text>
+    </View>
+  )
+}
+
+export const RippleMarker = () => {
+  const theme = useTheme()
+  const styles = createStyles(theme)
+  const scale = useRef(new Animated.Value(0)).current
+  const opacity = useRef(new Animated.Value(1)).current
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.parallel([
+        Animated.timing(scale, {
+          toValue: 2,
+          duration: 1200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 1200,
+          useNativeDriver: true,
+        }),
+      ])
+    )
+
+    loop.start()
+    return () => loop.stop()
+  }, [])
+
+  return (
+    <View style={styles.rippleContainer}>
+      <Animated.View
+        style={[
+          styles.ripple,
+          {
+            transform: [{ scale }],
+            opacity,
+          },
+        ]}
+      />
+      <DefaultMarker />
     </View>
   )
 }
@@ -226,7 +274,21 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       padding: 10,
       borderRadius: 25,
       elevation: 5
-    }
+    },
+    rippleContainer: {
+      width: 70,
+      height: 70,
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 999
+    },
+    ripple: {
+      position: 'absolute',
+      width: 50,
+      height: 50,
+      borderRadius: 150,
+      backgroundColor: 'rgba(172,12,68,0.3)',
+    },
   })
 
 export default MapView

@@ -17,12 +17,18 @@ const screenWidth = Dimensions.get('window').width
 export type Marker = {
   coordinate: [number, number];
   component?: React.ReactElement;
+  ripple?: boolean;
 }
 
 type BoundingBox = {
   center: [number, number];
   ne: [number, number]; // northeast [lon, lat]
   sw: [number, number]; // southwest [lon, lat]
+}
+
+type LocationWithOptions = {
+  location: string;
+  ripple?: boolean;
 }
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
@@ -80,7 +86,7 @@ const getZoomLevel = (
 }
 
 const useMapView = (
-  locations: string[],
+  locations: (string | LocationWithOptions)[],
   markerComponent?: React.ReactElement
 ): {
   centerCoordinate: [number, number];
@@ -92,11 +98,15 @@ const useMapView = (
   const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>(
     DEFAULT_CENTER_COORDINATES
   )
-  const [stableLocations, setStableLocations] = useState(locations)
+  const [stableLocations, setStableLocations] = useState<LocationWithOptions[]>([])
 
   useEffect(() => {
-    if (JSON.stringify(stableLocations) !== JSON.stringify(locations)) {
-      setStableLocations(locations)
+    const normalized = locations.map(loc =>
+      typeof loc === 'string' ? { location: loc } : loc
+    )
+
+    if (JSON.stringify(stableLocations) !== JSON.stringify(normalized)) {
+      setStableLocations(normalized)
     }
   }, [locations])
 
@@ -108,8 +118,9 @@ const useMapView = (
       }
 
       const coords: [number, number][] = []
+
       const newMarkers: Marker[] = await Promise.all(
-        stableLocations.reduce<Promise<Marker>[]>((acc, location) => {
+        stableLocations.reduce<Promise<Marker>[]>((acc, { location, ripple }) => {
           if (location.trim() === '') {
             return acc
           }
@@ -134,6 +145,7 @@ const useMapView = (
               return {
                 coordinate,
                 component: markerComponent,
+                ripple: ripple ?? false,
               }
             })()
           )
