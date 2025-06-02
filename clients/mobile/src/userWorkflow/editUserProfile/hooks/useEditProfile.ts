@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type {
   ValidationRule
 } from '../../../utility/validator'
@@ -34,6 +34,7 @@ type ProfileData = {
   ? (string extends K ? never : K) : never]: EditProfileData[K];
 } & {
   weight: string | undefined;
+  availableForDonation: boolean;
 }
 
 type ProfileDataErrors = {
@@ -49,11 +50,12 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
   phone: [validateRequired],
   preferredDonationLocations: [validateRequired],
   lastDonationDate: [validatePastOrTodayDate],
-  locations: []
+  locations: [],
+  availableForDonation: []
 }
 
 export const useEditProfile = () => {
-  const { fetchUserProfile } = useUserProfile()
+  const { fetchUserProfile, updateUserProfileContext } = useUserProfile()
   const route = useRoute<EditProfileRouteProp>()
   const fetchClient = useFetchClient()
   const { userDetails } = route.params
@@ -68,6 +70,7 @@ export const useEditProfile = () => {
       phone: userDetails.phoneNumbers[0]
     }
   })
+  const [pendingAvailableForDonationSave, setPendingAvailableForDonationSave] = useState(false)
   const [errors, setErrors] = useState<ProfileDataErrors>(
     initializeState<ProfileDataErrors>(Object.keys(validationRules) as ProfileFields[], null)
   )
@@ -85,13 +88,25 @@ export const useEditProfile = () => {
     }
   )
 
-  const handleInputChange = (field: ProfileFields, value: string): void => {
+  const [executeUserAvailableForDonationProfile] = useFetchData(
+    async(payload: Partial<ProfileData>) => {
+      const response = await updateUserProfile(payload, fetchClient)
+      if (response.status !== 200) {
+        throw new Error('Failed to update user available for donation status')
+      }
+    },
+    {
+      parseError: (error) => (error instanceof Error ? error.message : 'Unknown error')
+    }
+  )
+
+  const handleInputChange = (field: ProfileFields, value: unknown): void => {
     setProfileData((prev) => ({
       ...prev,
       [field]: value
     }))
 
-    handleInputValidation(field, value)
+    handleInputValidation(field, value as string)
   }
 
   const handleInputValidation = (field: ProfileFields, value: string): void => {
@@ -146,6 +161,27 @@ export const useEditProfile = () => {
     }
   }
 
+  useEffect(() => {
+    if (pendingAvailableForDonationSave) {
+      void handleUpdateAvailableForDonation().finally(() =>
+        setPendingAvailableForDonationSave(false)
+      )
+    }
+  }, [profileData.availableForDonation])
+
+  const handleUpdateAvailableForDonation = async(): Promise<void> => {
+    const requestPayload = {
+      availableForDonation: profileData.availableForDonation
+    }
+
+    await executeUserAvailableForDonationProfile(requestPayload)
+    if (updateError !== null) {
+      Alert.alert('Error', 'Could not update available for donation value.')
+    }
+
+    void updateUserProfileContext({ availableForDonation: requestPayload.availableForDonation })
+  }
+
   const isButtonDisabled = !validateRequiredFieldsTruthy<ProfileData>(
     validationRules, profileData)
 
@@ -155,6 +191,7 @@ export const useEditProfile = () => {
     errors,
     handleInputChange,
     handleSave,
-    isButtonDisabled
+    isButtonDisabled,
+    setPendingAvailableForDonationSave
   }
 }

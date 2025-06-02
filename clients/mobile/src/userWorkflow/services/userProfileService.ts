@@ -4,8 +4,8 @@ import type { UserDetailsDTO } from '../../../../../commons/dto/UserDTO'
 
 type UserPreferredLocation = {
   area: string;
-  geoHash: string;
-  geoPartition: string;
+  geoHash?: string;
+  geoPartition?: string;
   latitude: number;
   longitude: number;
 }

@@ -1,6 +1,7 @@
 import Constants from 'expo-constants'
 import React from 'react'
 import { ScrollView, TouchableWithoutFeedback, View } from 'react-native'
+import { Divider } from '../../../components/button/Divider'
 import { Input } from '../../../components/inputElement/Input'
 import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput'
 import RadioButton from '../../../components/inputElement/Radio'
@@ -9,6 +10,7 @@ import DateTimePickerComponent from '../../../components/inputElement/DateTimePi
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
 import MultiSelect from '../../../components/multiSelect'
+import CustomToggle from '../../../components/toogleButton'
 import { LocationService } from '../../../LocationService/LocationService'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import ProfileSection from '../../components/ProfileSection'
@@ -27,7 +29,8 @@ const EditProfile = () => {
     handleInputChange,
     loading,
     isButtonDisabled,
-    handleSave
+    handleSave,
+    setPendingAvailableForDonationSave
   } = useEditProfile()
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(profileData?.locations)
 
@@ -47,6 +50,19 @@ const EditProfile = () => {
         <View style={styles.gradientBottom} />
         <View style={styles.scrollContent}>
           <View style={styles.infoContainer}>
+            <View >
+              <CustomToggle
+                value={profileData.availableForDonation}
+                isReadOnly={false}
+                onToggle={(val) => {
+                  handleInputChange('availableForDonation', val)
+                  setPendingAvailableForDonationSave(true)
+                }}
+                direction="row"
+              />
+              <Divider containerStyle={styles.dividerContainer} lineStyle={styles.dividerLine} />
+            </View>
+
             <View style={styles.inputFieldStyle}>
               <Input
                 name="name"
@@ -65,7 +81,7 @@ const EditProfile = () => {
                 value={new Date(profileData.dateOfBirth)}
                 onChange={(date) => handleInputChange('dateOfBirth', date)}
                 isOnlyDate={true}
-                inputStyle={styles.inputStyle}
+                inputStyle={[styles.inputStyle, styles.dobMarginBottom]}
                 error={errors.dateOfBirth}
               />
             </View>
@@ -75,8 +91,7 @@ const EditProfile = () => {
                 name="age"
                 label="Age"
                 value={profileData.age.toString()}
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                onChangeText={() => { }}
+                onChangeText={null}
                 placeholder="Enter your name"
                 readOnly={true}
                 inputStyle={styles.inputStyle}
@@ -147,7 +162,12 @@ const EditProfile = () => {
             <View style={styles.inputFieldStyle}>
               <DateTimePickerComponent
                 label="Last Donation Date"
-                value={profileData.lastDonationDate !== null && profileData.lastDonationDate !== '' ? new Date(profileData.lastDonationDate) : null}
+                value={
+                  profileData.lastDonationDate !== null &&
+                  profileData.lastDonationDate !== '' ?
+                    new Date(profileData.lastDonationDate) :
+                    null
+                }
                 onChange={(date) => handleInputChange('lastDonationDate', date)}
                 isOnlyDate={true}
                 inputStyle={styles.inputStyle}

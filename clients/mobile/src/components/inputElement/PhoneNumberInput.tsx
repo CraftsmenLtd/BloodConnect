@@ -56,7 +56,7 @@ const PhoneNumberInput = ({
   showWarning = false
 }: {
   value: string;
-  onChange: (text: string) => void;
+  onChange: (name: string, text: string) => void;
   placeholder?: string;
   name?: string;
   label?: string;
