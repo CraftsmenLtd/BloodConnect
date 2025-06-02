@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, RefreshControl } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { useDonationPosts } from './useDonationPosts'
@@ -12,6 +13,7 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
 
 const DonationPosts = () => {
   const theme = useTheme()
+  const { t } = useTranslation()
   const styles = createStyles()
   const {
     errorMessage,
@@ -30,8 +32,8 @@ const DonationPosts = () => {
     <View style={styles.container}>
       <Header
         profileImageUri={COMMON_URLS.PROFILE_AVATAR}
-        title="Blood needed?"
-        buttonLabel="Create Request"
+        title={t('donationPosts.bloodNeeded')}
+        buttonLabel={t('donationPosts.createRequest')}
         onButtonPress={createPost}
         handleRefresh={handleRefresh}
         onFilterButtonPress={filterWithBloodGroup}
@@ -41,7 +43,7 @@ const DonationPosts = () => {
       <Posts
         errorMessage={errorMessage}
         loading={loading}
-        emptyDataMessage='No donation requests available. Pull to refresh.'
+        emptyDataMessage={t('donationPosts.emptyDonationPosts')}
         donationPosts={donationPosts}
         detailHandler={viewDetailsHandler}
         displayOptions={{ showOptions: false, showPostUpdatedOption: false }}

@@ -13,12 +13,14 @@ import { SocialButton } from '../../../components/button/SocialButton'
 import { Divider } from '../../../components/button/Divider'
 import { SOCIAL_TYPES } from '../../socialAuth/constants/socialTypes'
 import { SOCIAL_BUTTON_UI } from '../../socialAuth/constants/socialButtonUI'
+import { useTranslation } from 'react-i18next'
 
 type LoginScreenProps = {
   navigation: LoginScreenNavigationProp;
 }
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
+  const { t } = useTranslation()
   const styles = createStyles(useTheme())
   const {
     loginLoading,
@@ -38,7 +40,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     <AuthLayout>
       <Input
         name="email"
-        label="Email"
+        label={t('common.email')}
         value={loginCredential.email}
         onChangeText={handleInputChange}
         placeholder="example@gmail.com"
@@ -47,7 +49,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
       <PasswordInput
         name="password"
-        label="Password"
+        label={t('common.password')}
         value={loginCredential.password}
         onChangeText={handleInputChange}
         isVisible={isPasswordVisible}
@@ -57,37 +59,37 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
       <LinkWithText
         staticText=""
-        linkText="Forgot Password?"
+        linkText={t('common.forgotPassword')}
         onPress={() => { navigation.navigate(SCREENS.FORGOT_PASSWORD) }}
       />
 
       <Button
-        text="Login"
+        text={t('common.logIn')}
         onPress={handleLogin}
         loading={loginLoading}
       />
 
-      <Divider text="Or" />
+      <Divider text={t('common.orText')} />
 
       {socialLoginError !== '' && <Text style={styles.error}>{socialLoginError}</Text>}
 
       <SocialButton
-        text={SOCIAL_BUTTON_UI.GOOGLE.text}
+        text={t('common.continueWithGoogle')}
         onPress={handleGoogleSignIn}
         loading={socialLoading === SOCIAL_TYPES.GOOGLE}
         icon={SOCIAL_BUTTON_UI.GOOGLE.icon}
       />
 
       <SocialButton
-        text={SOCIAL_BUTTON_UI.FACEBOOK.text}
+        text={t('common.continueWithFacebook')}
         onPress={handleFacebookSignIn}
         loading={socialLoading === SOCIAL_TYPES.FACEBOOK}
         icon={SOCIAL_BUTTON_UI.FACEBOOK.icon}
       />
 
       <LinkWithText
-        staticText="Don't have an account? "
-        linkText=" Register"
+        staticText={t('common.noAccount')}
+        linkText={t('common.createAccount')}
         onPress={() => { navigation.navigate(SCREENS.REGISTER) }}
       />
     </AuthLayout>

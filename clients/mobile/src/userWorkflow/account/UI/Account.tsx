@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Text, View, TouchableOpacity
 } from 'react-native'
@@ -14,6 +15,7 @@ import ProfileSection from '../../components/ProfileSection'
 
 export const Account = () => {
   const styles = createStyles(useTheme())
+  const { t } = useTranslation()
   const { userProfileData, loading, handleSignOut } = useAccount()
   const navigation = useNavigation<ProfileScreenNavigationProp>()
 
@@ -34,7 +36,7 @@ export const Account = () => {
           onPress={() => { navigation.navigate(SCREENS.PROFILE) }}
         >
           <MaterialIcons name="person-outline" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>Profile</Text>
+          <Text style={styles.optionText}>{t('account.profile')}</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
 
@@ -55,7 +57,16 @@ export const Account = () => {
           onPress={() => { navigation.navigate(SCREENS.ABOUT) }}
         >
           <MaterialIcons name="info-outline" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>About</Text>
+          <Text style={styles.optionText}>{t('account.about')}</Text>
+          <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => { navigation.navigate(SCREENS.SETTINGS) }}
+        >
+          <MaterialIcons name="settings" size={24} style={styles.iconStyle} />
+          <Text style={styles.optionText}>{t('account.settings')}</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
       </View>
@@ -76,7 +87,7 @@ export const Account = () => {
 
         <TouchableOpacity style={styles.optionItem} onPress={() => { void handleSignOut() }}>
           <MaterialIcons name="logout" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>Logout</Text>
+          <Text style={styles.optionText}>{t('account.logout')}</Text>
         </TouchableOpacity>
       </View>
     </View>

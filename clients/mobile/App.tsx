@@ -18,6 +18,8 @@ import Constants from 'expo-constants'
 import { MyActivityProvider } from './src/myActivity/context/MyActivityProvider'
 import useBackPressHandler from './src/hooks/useBackPressHandler'
 import Monitoring from './src/setup/monitoring/MonitoringService'
+import { I18nextProvider, useTranslation } from 'react-i18next'
+import i18n from './src/setup/language/i18n'
 
 const { APP_ENV } = Constants.expoConfig?.extra ?? {}
 
@@ -43,29 +45,32 @@ ErrorUtils.setGlobalHandler((error, isFatal) => {
 })
 
 export default function App() {
+  useTranslation()
   useBackPressHandler()
   const navigationRef = useNavigationContainerRef<RootStackParamList>()
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer ref={navigationRef}>
-        <NetInfoProvider>
-          <NotificationProvider navigationRef={navigationRef}>
-            <AuthProvider>
-              <UserProfileProvider>
-                <MyActivityProvider>
-                  <ThemeProvider>
-                    {/* TODO: need to use themes' primary color but it's not working. */}
-                    <StatusBar hidden={false} backgroundColor='#FF4D4D' />
-                    <Navigator />
-                    <NetInfoModal />
-                  </ThemeProvider>
-                </MyActivityProvider>
-              </UserProfileProvider>
-            </AuthProvider>
-          </NotificationProvider>
-        </NetInfoProvider>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <I18nextProvider i18n={i18n} >
+      <SafeAreaProvider>
+        <NavigationContainer ref={navigationRef}>
+          <NetInfoProvider>
+            <NotificationProvider navigationRef={navigationRef}>
+              <AuthProvider>
+                <UserProfileProvider>
+                  <MyActivityProvider>
+                    <ThemeProvider>
+                      {/* TODO: need to use themes' primary color but it's not working. */}
+                      <StatusBar hidden={false} backgroundColor='#FF4D4D' />
+                      <Navigator />
+                      <NetInfoModal />
+                    </ThemeProvider>
+                  </MyActivityProvider>
+                </UserProfileProvider>
+              </AuthProvider>
+            </NotificationProvider>
+          </NetInfoProvider>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </I18nextProvider>
   )
 }

@@ -43,8 +43,8 @@ const Posts: React.FC<PostsProps> = ({
         {...displayOptions}
       />)}
     ListEmptyComponent={
-      <View style={styles.emptyDataMessage}>
-        <Text>{emptyDataMessage}</Text>
+      <View style={styles.centeredContainer}>
+        <Text style={styles.noResultText}>{emptyDataMessage}</Text>
       </View>
     }
     keyExtractor={(item) => item.requestPostId}
@@ -76,7 +76,8 @@ const Posts: React.FC<PostsProps> = ({
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   postList: {
-    paddingBottom: 10
+    paddingBottom: 10,
+    flexGrow: 1
   },
   loadingIndicator: {
     marginTop: 20,
@@ -103,6 +104,16 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   emptyDataMessage: {
     padding: 20,
     alignItems: 'center'
+  },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  noResultText: {
+    fontSize: 16,
+    color: theme.colors.grey,
+    textAlign: 'center'
   },
   errorMessage: {
     color: theme.colors.primary

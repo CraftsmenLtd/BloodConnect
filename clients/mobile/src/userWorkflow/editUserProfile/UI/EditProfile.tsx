@@ -1,5 +1,6 @@
 import Constants from 'expo-constants'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { ScrollView, TouchableWithoutFeedback, View } from 'react-native'
 import { Divider } from '../../../components/button/Divider'
 import { Input } from '../../../components/inputElement/Input'
@@ -23,6 +24,7 @@ const locationService = new LocationService(API_BASE_URL)
 
 const EditProfile = () => {
   const styles = createStyles(useTheme())
+  const { t } = useTranslation()
   const {
     profileData,
     errors,
@@ -60,6 +62,7 @@ const EditProfile = () => {
                   setPendingAvailableForDonationSave(true)
                 }}
                 direction="row"
+                label={t('fromLabel.availableForDonation')}
               />
               <Divider containerStyle={styles.dividerContainer} lineStyle={styles.dividerLine} />
             </View>
@@ -67,7 +70,7 @@ const EditProfile = () => {
             <View style={styles.inputFieldStyle}>
               <Input
                 name="name"
-                label="Name"
+                label={t('fromLabel.name')}
                 value={profileData.name}
                 onChangeText={handleInputChange}
                 placeholder="Enter your name"
@@ -78,7 +81,7 @@ const EditProfile = () => {
 
             <View style={styles.inputFieldStyle}>
               <DateTimePickerComponent
-                label="Date of Birth"
+                label={t('fromLabel.dob')}
                 value={new Date(profileData.dateOfBirth)}
                 onChange={(date) => handleInputChange('dateOfBirth', date)}
                 isOnlyDate={true}
@@ -90,7 +93,7 @@ const EditProfile = () => {
             <View style={styles.inputFieldStyle}>
               <Input
                 name="weight"
-                label="Weight (kg)"
+                label={t('fromLabel.weight')}
                 value={profileData.weight.toString()}
                 onChangeText={handleInputChange}
                 placeholder="Enter your weight"
@@ -103,7 +106,7 @@ const EditProfile = () => {
             <View style={styles.inputFieldStyle}>
               <Input
                 name="height"
-                label="Height (feet)"
+                label={t('fromLabel.height')}
                 value={profileData.height.toString()}
                 onChangeText={handleInputChange}
                 placeholder="Enter your height"
@@ -116,7 +119,7 @@ const EditProfile = () => {
             <View style={styles.inputFieldStyle}>
               <PhoneNumberInput
                 name='phone'
-                label='Phone'
+                label={t('fromLabel.phone')}
                 value={profileData.phone}
                 onChange={handleInputChange}
                 showWarning={profileData.phone !== ''}
@@ -127,7 +130,7 @@ const EditProfile = () => {
             <View style={styles.inputFieldStyle}>
               <MultiSelect
                 name="locations"
-                label="Select Preferred Location"
+                label={t('fromLabel.locations')}
                 options={[]}
                 selectedValues={profileData?.locations}
                 onSelect={handleInputChange}
@@ -150,7 +153,7 @@ const EditProfile = () => {
 
             <View style={styles.inputFieldStyle}>
               <DateTimePickerComponent
-                label="Last Donation Date"
+                label={t('fromLabel.lastDonationDate')}
                 value={
                   profileData.lastDonationDate !== null &&
                   profileData.lastDonationDate !== '' ?
@@ -167,7 +170,7 @@ const EditProfile = () => {
             <View style={styles.inputFieldStyle}>
               <RadioButton
                 name="gender"
-                label="Gender"
+                label={t('fromLabel.gender')}
                 options={['female', 'male', 'other']}
                 value={profileData.gender}
                 onPress={handleInputChange}
@@ -177,7 +180,7 @@ const EditProfile = () => {
 
           <View style={styles.buttonContainer}>
             <Button
-              text="Save"
+              text={t('btn.save')}
               loading={loading}
               onPress={handleSave}
               disabled={isButtonDisabled}

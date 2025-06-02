@@ -1,0 +1,132 @@
+{
+  "common": {
+    "createAccount": "Create account",
+    "logIn": "Log in",
+    "register": "Register",
+    "submit": "Submit",
+    "forgotPassword": "Forgot Password?",
+    "orText": "Or",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithFacebook": "Continue with Facebook",
+    "noAccount": "Don't have an account? ",
+    "continue": "Continue",
+    "namePlaceholder": "Enter your name",
+    "alreadyHaveAccount": "Already have an account? Login",
+    "new": "new",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "setPassword": "Set Password",
+    "name": "Name",
+    "email": "Email",
+    "phoneNumber": "Phone Number",
+    "all": "All",
+    "filterBy": "Filter By",
+    "viewDetails": "View Details",
+    "blood": "blood",
+    "urgent": "URGENT"
+  },
+  "otp": {
+    "enterAuthenticationCode": "Enter authentication code",
+    "enter6DigitCodeSent": "Enter the 6-digit code sent to your",
+    "didntGetCode": "Didn't get the code?",
+    "resendOtp": "Resend OTP",
+    "resendOtpIn": "Resend OTP in ${countdown}s"
+  },
+  "home": {
+    "title": "A common platform for blood donor and seeker",
+    "subtitle": "Blood searching and blood donating is now easier with BloodConnect app"
+  },
+  "error": {
+    "userNotConfirmed": "User is not confirmed. Please verify your email.",
+    "invalidEmailOrPassword": "Invalid Email or Password.",
+    "accountNotConfirmed": "Your account is not confirmed. Please confirm your account first.",
+    "networkError": "Network error. Check your connection.",
+    "accountAlreadyExists": "Account already exists.",
+    "weakPassword": "Weak password. Use a stronger one.",
+    "invalidInput": "Invalid input. Check your details.",
+    "tooManyRequests": "Too many requests. Try again later.",
+    "invalidOtpCode": "Invalid OTP code. Please try again.",
+    "otpCodeExpired": "OTP code has expired. Request a new one.",
+    "noAccountFound": "No account found with this email.",
+    "somethingWentWrong": "Something went wrong."
+  },
+  "donationPosts": {
+    "bloodNeeded": "Blood Needed?",
+    "createRequest": "Create Request",
+    "postedOn": "Posted on",
+    "lookingFor": "Looking for",
+    "donationPoint": "Donation Point",
+    "timeDate": "Time & Date",
+    "contactNumber": "Concat Number",
+    "nameOfThePatient": "Name Of The Patient",
+    "shortDescription": "Short Description Of The Problem",
+    "transportationFacilityForTheDonor": "Transportation Facility For The Donor",
+    "numberOfDonors": "Number Of Donors",
+    "donorsAcceptedYourRequest": "Donors accepted your request",
+    "emptyDonationPosts": "No donation requests available. Pull to refresh.",
+    "emptyMyDonationPosts": "You haven't responded to any of the posts. Pull to refresh."
+  },
+  "modal": {
+    "areYouSureYouWantToCancel": "Are you sure you want to cancel",
+    "confirmation": "Confirmation",
+    "ok": "Ok",
+    "close": "Close"
+  },
+  "btn": {
+    "ignore": "Ignore",
+    "acceptRequest": "Accept Request",
+    "requestAccepted": "Request Accepted",
+    "completeRequest": "Complete Request",
+    "requestNow": "Request Now",
+    "updateRequest": "Update Request",
+    "call": "Call",
+    "ok": "Ok",
+    "close": "Close",
+    "edit": "Edit",
+    "save": "Save"
+  },
+  "fromLabel": {
+    "urgency": "Urgency",
+    "bloodGroup": "Blood Group",
+    "unit": "Unit",
+    "donationDateTime": "Donation Date & Time",
+    "name": "Name",
+    "dob": "Date Of Birth",
+    "weight": "Weight(Kg)",
+    "height": "Height(Feet)",
+    "phone": "Phone",
+    "gender": "Gender",
+    "lastDonationDate": "Last Donation Date",
+    "locations": "Locations",
+    "chooseLanguage": "Choose Language",
+    "availableForDonation": "Available For Donation"
+  },
+  "placeholders": {
+    "selectBloodGroup": "Select Blood Group",
+    "selectUnit": "Select Unit",
+    "searchPreferredHospitalHealthCare": "Search Preferred Hospital/Health Care",
+    "enterYourContactNumber": "Enter Your Contact Number",
+    "enterPatientsName": "Enter patient's name",
+    "writeAShortDescription": "Write a short description",
+    "selectTransportationOption": "Select Transportation Option",
+    "urgentExtraInfo": "Select \"Urgent\" if the blood is needed within 24 hours.",
+    "selectAppLanguage": "Select App Language"
+  },
+  "account": {
+    "profile": "Profile",
+    "about": "About",
+    "logout": "Logout",
+    "settings": "Settings"
+  },
+  "headers": {
+    "createNewAccount": "Create New Account",
+    "createBloodRequest": "Create Blood Request"
+  },
+  "navBar": {
+    "requests": "Requests",
+    "myActivity" : "My Activity",
+    "myRequests": "My Requests",
+    "myResponses": "My Responses",
+    "account": "Account"
+  }
+}

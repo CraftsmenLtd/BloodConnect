@@ -1,9 +1,9 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { View, Text, ScrollView } from 'react-native'
 import Badge from '../../../components/badge'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
-import CustomToggle from '../../../components/toogleButton'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
 import type { LocationData } from '../../../utility/formatting'
@@ -31,6 +31,7 @@ export type EditProfileData = {
 
 const Profile: React.FC = () => {
   const styles = createStyles(useTheme())
+  const { t } = useTranslation()
   const { userDetails } = useProfile()
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(
     userDetails?.preferredDonationLocations.map(location => location.area) ?? []
@@ -80,27 +81,20 @@ const Profile: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.card}>
-          <View style={styles.row}>
-            <CustomToggle
-              value={userDetails.availableForDonation}
-              isReadOnly={true}
-              direction="row"
-            />
-          </View>
-          {renderDetailRow('Name', userDetails.name ?? '')}
-          {renderDetailRow('Date of Birth', formattedDate(userDetails.dateOfBirth ?? '', true))}
-          {renderDetailRow('Weight (kg)', userDetails.weight !== null ?
+          {renderDetailRow(t('fromLabel.name'), userDetails.name ?? '')}
+          {renderDetailRow(t('fromLabel.dob'), formattedDate(userDetails.dateOfBirth ?? '', true))}
+          {renderDetailRow(t('fromLabel.weight'), userDetails.weight !== null ?
             userDetails.weight.toString() : '')}
-          {renderDetailRow('Height (feet)', userDetails.height !== undefined
+          {renderDetailRow(t('fromLabel.height'), userDetails.height !== undefined
             ? userDetails.height.toString() : '')}
-          {renderDetailRow('Phone', userDetails.phoneNumbers !== undefined &&
+          {renderDetailRow(t('fromLabel.phone'), userDetails.phoneNumbers !== undefined &&
             userDetails.phoneNumbers.length > 0 ?
             userDetails.phoneNumbers[0] : '')}
-          {renderDetailRow('Gender', userDetails.gender.toUpperCase())}
-          {userDetails?.lastDonationDate !== '' && renderDetailRow('Last Donation Date',
+          {renderDetailRow(t('fromLabel.gender'), userDetails.gender.toUpperCase())}
+          {userDetails?.lastDonationDate !== '' && renderDetailRow(t('fromLabel.lastDonationDate'),
             formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
           <View style={[styles.row, styles.lastRow]}>
-            <Text style={styles.label}>{'Locations'}</Text>
+            <Text style={styles.label}>{t('fromLabel.locations')}</Text>
             <View style={styles.selectedItemContainer}>
               {userDetails?.preferredDonationLocations?.map(location => {
                 return (

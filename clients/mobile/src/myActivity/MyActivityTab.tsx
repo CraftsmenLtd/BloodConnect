@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, RefreshControl } from 'react-native'
 import ToggleTabs from '../components/tab/ToggleTabs'
 import { MY_ACTIVITY_TAB_CONFIG, useMyActivity } from './useMyActivity'
@@ -10,6 +11,7 @@ import React from 'react'
 
 const MyActivityTab = () => {
   const theme = useTheme()
+  const { t } = useTranslation()
   const styles = createStyles(useTheme())
   const {
     donationPosts,
@@ -50,7 +52,7 @@ const MyActivityTab = () => {
             updatePost={updatePost}
             errorMessage={errorMessage}
             detailHandler={detailHandler}
-            emptyDataMessage="No requests found."
+            emptyDataMessage={t('donationPosts.emptyDonationPosts')}
             displayOptions={{
               showStatus: true
             }}
@@ -76,7 +78,7 @@ const MyActivityTab = () => {
           donationPosts={myResponses}
           loading={myResponsesLoading}
           errorMessage={myResponsesError}
-          emptyDataMessage="You haven't responded to any of the posts. Pull to refresh."
+          emptyDataMessage={t('donationPosts.emptyMyDonationPosts')}
           detailHandler={myResponsesDetailHandler}
           displayOptions={{ showOptions: false, showButton: true, showStatus: true }}
           refreshControl={

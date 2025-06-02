@@ -25,16 +25,16 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
   const [socialLoginError, setSocialLoginError] = useState<string>('')
   const navigation = useNavigation<LoginScreenNavigationProp>()
 
-  const handleSocialSignIn = async(
-    loginFunction: () =>
-      Promise<void>,
-    socialMedia: string
-  ): Promise<void> => {
+  const handleSocialSignIn = async(loginFunction: () =>
+  Promise<void>,
+  socialMedia: string
+  ):
+    Promise<void> => {
     try {
       setSocialLoading(socialMedia.toLowerCase() as SocialLoading)
       await loginFunction()
       setIsAuthenticated(true)
-      registerUserDeviceForNotification(fetchClient)
+      void registerUserDeviceForNotification(fetchClient)
       const hasProfile = Boolean(userProfile?.bloodGroup)
       navigation.dispatch(
         CommonActions.reset({
