@@ -10,6 +10,7 @@ type CustomToggleProps = {
   isReadOnly?: boolean;
   label?: string;
   direction?: 'row' | 'column';
+  isRequired?: boolean;
 }
 
 /**
@@ -28,6 +29,7 @@ type CustomToggleProps = {
  * Defaults to `"Available For Donation"`.
  * @param direction - Optional. Layout direction of the label and toggle.
  * Can be `'row'` or `'column'`. Defaults to `'column'`.
+ * @param isRequired - Optional. If required, value should be true, false otherwise.
  *
  * Returns:
  * --------
@@ -46,11 +48,13 @@ type CustomToggleProps = {
  *     onToggle={setIsEnabled}
  *     label="Enable Notifications"
  *     direction="row"
+ *     isRequired={true}
  *   />
  * )
  * ```
  *
  * Dependencies:
+ * @param isRequired
  */
 const CustomToggle: React.FC<CustomToggleProps> = ({
   value = false,
@@ -58,6 +62,7 @@ const CustomToggle: React.FC<CustomToggleProps> = ({
   isReadOnly = false,
   label = 'Available For Donation',
   direction = 'column',
+  isRequired = false
 }): React.ReactElement => {
   const theme = useTheme()
   const styles = createStyles(theme)
@@ -78,7 +83,12 @@ const CustomToggle: React.FC<CustomToggleProps> = ({
 
   return (
     <View style={[styles.wrapper, { flexDirection: direction }]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Text style={styles.label}>
+          {label}
+          {isRequired && <Text style={styles.asterisk}> *</Text>}
+        </Text>
+      )}
       <TouchableOpacity
         style={[
           styles.toggleContainer,
