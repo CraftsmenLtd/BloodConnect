@@ -154,18 +154,16 @@ export const validateHeight = (height: string): string | null => {
   return null
 }
 
-export const validateWeight = (weight: string): string | null => {
-  if (weight === '' || weight === null || weight === undefined || weight === '0') {
+export const validateWeight = (weight: number): string | null => {
+  if (weight === 0.0 || weight === null || weight === undefined) {
     return null
   }
 
-  const weightValue = parseFloat(weight)
-
-  if (isNaN(weightValue)) {
+  if (isNaN(weight)) {
     return 'Weight must be a valid number'
   }
 
-  if (weightValue < 30 || weightValue > 300) {
+  if (weight < 30 || weight > 300) {
     return 'Weight must be between 30 and 300 kg'
   }
 
@@ -185,9 +183,9 @@ const validateShortDescription = (value: string): string | null => {
   return error ?? null
 }
 
-export type ValidationRule = (value: string) => string | null
+export type ValidationRule = (value: unknown) => string | null
 
-export const validateInput = (value: string, rules: ValidationRule[]): string | null => {
+export const validateInput = (value: unknown, rules: ValidationRule[]): string | null => {
   for (const rule of rules) {
     const error = rule(value)
     if (error !== null) {

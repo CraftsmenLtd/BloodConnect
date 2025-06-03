@@ -33,7 +33,7 @@ type ProfileData = {
   [K in keyof EditProfileData as K extends string
   ? (string extends K ? never : K) : never]: EditProfileData[K];
 } & {
-  weight: string | undefined;
+  weight: number | undefined;
   availableForDonation: boolean;
 }
 
@@ -55,25 +55,49 @@ const validationRules: Record<keyof Omit<ProfileData, 'location'>, ValidationRul
 }
 
 export const useEditProfile = () => {
-  const { fetchUserProfile, updateUserProfileContext } = useUserProfile()
+  const { fetchUserProfile, updateUserProfileContext, userProfile } = useUserProfile()
   const route = useRoute<EditProfileRouteProp>()
   const fetchClient = useFetchClient()
   const { userDetails } = route.params
 
-  const [profileData, setProfileData] = useState(() => {
-    if (!Array.isArray(userDetails.phoneNumbers) || userDetails.phoneNumbers.length === 0) {
-      throw new Error('userDetails.phoneNumbers must contain at least one value')
+  const [profileData, setProfileData] = useState<ProfileData>(() => {
+    if (!userProfile) {
+      throw new Error('User profile not loaded');
+    }
+
+    if (!Array.isArray(userProfile.phoneNumbers) || userProfile.phoneNumbers.length === 0) {
+      throw new Error('userProfile.phoneNumbers must contain at least one value');
     }
 
     return {
-      ...userDetails,
-      phone: userDetails.phoneNumbers[0]
+      phone: userProfile.phoneNumbers[0],
+      weight: userProfile.weight ?? 0, // Provide defaults for optional fields
+      height: userProfile.height ?? '',
+      dateOfBirth: userProfile.dateOfBirth ?? '',
+      name: userProfile.name ?? '',
+      gender: userProfile.gender,
+      lastDonationDate: userProfile.lastDonationDate ?? '',
+      preferredDonationLocations: userProfile.preferredDonationLocations ?? [],
+      locations: userProfile.locations ?? [],
+      availableForDonation: userProfile.availableForDonation,
+      ...userProfile
     }
   })
+
   const [pendingAvailableForDonationSave, setPendingAvailableForDonationSave] = useState(false)
   const [errors, setErrors] = useState<ProfileDataErrors>(
     initializeState<ProfileDataErrors>(Object.keys(validationRules) as ProfileFields[], null)
   )
+
+  useEffect(() => {
+    if (userProfile) {
+      setProfileData(prev => ({
+        ...prev,
+        ...userProfile,
+        phone: prev.phone
+      }))
+    }
+  }, [userProfile])
 
   const [executeUpdateProfile, loading, updateError] = useFetchData(
     async(payload: Partial<ProfileData>) => {
@@ -146,7 +170,7 @@ export const useEditProfile = () => {
     const requestPayload = {
       ...rest,
 
-      weight: Number.isNaN(parseFloat(rest.weight)) ? 0 : parseFloat(rest.weight),
+      weight: Number.isNaN(rest.weight) ? 0 : rest.weight,
       height: rest.height !== '' ? rest.height : '0.0',
 
       preferredDonationLocations: [

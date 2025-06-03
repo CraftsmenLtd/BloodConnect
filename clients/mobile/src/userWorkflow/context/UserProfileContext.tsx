@@ -31,6 +31,7 @@ const defaultProfile: UserProfile = {
   NIDBack: '',
   phoneNumbers: [],
   preferredDonationLocations: [],
+  locations: [],
   uniqueGeoPartitions: []
 }
 
@@ -70,6 +71,9 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
         latitude: location.latitude ?? 0,
         longitude: location.longitude ?? 0
       })) ?? [],
+      locations: profile?.preferredDonationLocations?.map(location => {
+        return location.area
+      }) ?? [],
       uniqueGeoPartitions: [
         ...new Set(profile.preferredDonationLocations?.map(loc => loc.geoPartition))
       ]

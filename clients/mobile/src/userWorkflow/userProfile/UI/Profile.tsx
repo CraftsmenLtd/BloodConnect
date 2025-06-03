@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native'
 
 export type EditProfileData = {
   phone: string;
-  weight: string;
+  weight: number;
   height: string;
   dateOfBirth: string;
   name: string;
@@ -39,11 +39,11 @@ const Profile: React.FC = () => {
   const navigation = useNavigation<EditProfileScreenNavigationProp>()
 
   const renderDetailRow = (label: string,
-    value: string = '',
+    value: unknown,
     isLast: boolean = false): JSX.Element => (
     <View style={[styles.row, isLast && styles.lastRow]}>
       <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value}>{value}</Text>
+      <Text style={styles.value}>{value as string}</Text>
     </View>
   )
 
@@ -53,7 +53,7 @@ const Profile: React.FC = () => {
     navigation.navigate(SCREENS.EDIT_PROFILE, {
       userDetails: {
         ...userDetails,
-        weight: userDetails.weight?.toString() ?? '',
+        weight: userDetails.weight ?? 0,
         height: userDetails.height?.toString() ?? '',
         dateOfBirth: userDetails.dateOfBirth ?? '',
         name: userDetails.name ?? '',
@@ -84,7 +84,7 @@ const Profile: React.FC = () => {
           {renderDetailRow(t('fromLabel.name'), userDetails.name ?? '')}
           {renderDetailRow(t('fromLabel.dob'), formattedDate(userDetails.dateOfBirth ?? '', true))}
           {renderDetailRow(t('fromLabel.weight'), userDetails.weight !== null ?
-            userDetails.weight.toString() : '')}
+            userDetails.weight : 0)}
           {renderDetailRow(t('fromLabel.height'), userDetails.height !== undefined
             ? userDetails.height.toString() : '')}
           {renderDetailRow(t('fromLabel.phone'), userDetails.phoneNumbers !== undefined &&
