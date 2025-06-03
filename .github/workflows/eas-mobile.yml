@@ -100,11 +100,11 @@ jobs:
             sudo tee clients/mobile/google-services.json > /dev/null
 
       - name: ⏳ Start Expo Eas Build Job
-        run: make run-command-build-mobile-android-eas
+        run: make run-command-build-android
         if: ${{ inputs.build_type == 'eas' }}
 
       - name: ⚙️ Build Expo Locally
-        run: make run-command-build-mobile-android-local
+        run: make run-command-build-android-local
         if: ${{ inputs.build_type == 'local' }}
 
       - name: 📁 Upload apk
