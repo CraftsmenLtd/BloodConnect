@@ -12,6 +12,7 @@ type UserPreferredLocation = {
 
 export type UserProfile = {
   preferredDonationLocations?: UserPreferredLocation[];
+  locations: string[];
   uniqueGeoPartitions: string[];
   userId: string;
   bloodGroup: string;
