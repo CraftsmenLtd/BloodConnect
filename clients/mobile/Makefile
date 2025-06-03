@@ -15,23 +15,23 @@ export ANDROID_HOME?=/opt/android-sdk
 export GRADLE_OPTS="-Djava.net.preferIPv4Stack=true"
 
 build-android:
-	@eas build --profile $(BUILD_PROFILE) --platform android --non-interactive --no-wait
+	@cd $(MAKEFILE_DIR) && eas build --profile $(BUILD_PROFILE) --platform android --non-interactive --no-wait
 
 start-expo:
 	@npm start --prefix $(MAKEFILE_DIR)
 
 # Build the APK with the specified profile
 build-android-local:
-	@eas build --profile $(BUILD_PROFILE) --platform android --local --output "$(APP_NAME)_$(APP_VERSION).apk"
+	@cd $(MAKEFILE_DIR) && eas build --profile $(BUILD_PROFILE) --platform android --local --output "$(APP_NAME)_$(APP_VERSION).apk"
 
 clean:
 	@rm -rf build .expo
 
 upload-env:
-	@eas env:create --environment $(BUILD_PROFILE) --name APP_NAME --value $(APP_NAME) --type string --visibility plaintext --force --scope project --non-interactive
-	@eas env:create --environment $(BUILD_PROFILE) --name EAS_PROJECT_ID --value $(EAS_PROJECT_ID) --type string --visibility plaintext --force --scope project --non-interactive
-	@eas env:create --environment $(BUILD_PROFILE) --name APP_VERSION --value $(APP_VERSION) --type string --visibility plaintext --force --scope project --non-interactive
-	@eas env:create --environment $(BUILD_PROFILE) --name AWS_USER_POOL_CLIENT_ID --value $(AWS_USER_POOL_CLIENT_ID) --type string --visibility plaintext --force --scope project --non-interactive
-	@eas env:create --environment $(BUILD_PROFILE) --name AWS_USER_POOL_ID --value $(AWS_USER_POOL_ID) --type string --visibility plaintext --force --scope project --non-interactive
-	@eas env:create --environment $(BUILD_PROFILE) --name API_BASE_URL --value $(API_BASE_URL) --type string --visibility plaintext --force --scope project --non-interactive
-	@eas env:create --environment $(BUILD_PROFILE) --name AWS_COGNITO_DOMAIN --value $(AWS_COGNITO_DOMAIN) --type string --visibility plaintext --force --scope project --non-interactive
+	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name APP_NAME --value $(APP_NAME) --type string --visibility plaintext --force --scope project --non-interactive
+	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name EAS_PROJECT_ID --value $(EAS_PROJECT_ID) --type string --visibility plaintext --force --scope project --non-interactive
+	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name APP_VERSION --value $(APP_VERSION) --type string --visibility plaintext --force --scope project --non-interactive
+	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name AWS_USER_POOL_CLIENT_ID --value $(AWS_USER_POOL_CLIENT_ID) --type string --visibility plaintext --force --scope project --non-interactive
+	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name AWS_USER_POOL_ID --value $(AWS_USER_POOL_ID) --type string --visibility plaintext --force --scope project --non-interactive
+	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name API_BASE_URL --value $(API_BASE_URL) --type string --visibility plaintext --force --scope project --non-interactive
+	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name AWS_COGNITO_DOMAIN --value $(AWS_COGNITO_DOMAIN) --type string --visibility plaintext --force --scope project --non-interactive
