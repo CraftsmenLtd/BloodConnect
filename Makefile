@@ -60,18 +60,15 @@ DOCKER_CHECKOV_SKIP?=--skip-check CKV_DOCKER_9
 # Container Names
 DOCKER_LOCALSTACK_CONTAINER_NAME?=bloodconnect-dev-localstack
 DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
-DOCKER_MOBILE_CONTAINER_NAME?=bloodconnect-mobile
 
 # Documentation
 sphinx-html: bundle-openapi
 	rm -rf docs/_build
-	(cd docs && make html)
-
+	$(MAKE) -C docs html
 
 # API
 bundle-openapi:
 	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json --config openapi/configs/redocly.yaml
-
 
 # Terraform base command:
 # Depending on the deployment environment, we choose the appropriate Terraform command and directory.
@@ -146,14 +143,6 @@ swagger-ui:
 	./openapi/swagger-ui/setup-swagger.sh $(branch) $(email) $(password)
 	docker compose -f openapi/docker-compose.yml up -d --build
 
-# Mobile
-start-mobile:
-	docker rm -f $(DOCKER_MOBILE_CONTAINER_NAME)
-	docker run --rm -t --name $(DOCKER_MOBILE_CONTAINER_NAME) --network host -p 8081:8081 \
-			$(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) \
-			$(RUNNER_IMAGE_NAME) npm run start --prefix clients/mobile
-
-
 # Deploy Dev Branch from Local Machine
 deploy-dev-branch:
 	$(MAKE) build-node-all
@@ -176,6 +165,7 @@ start-dev: build-runner-image localstack-start run-command-install-node-packages
 run-dev: run-command-build-node-all run-command-tf-init \
          run-command-tf-plan-apply run-command-tf-apply
 
+# Mobile
 prepare-mobile-env:
 	@echo AWS_USER_POOL_CLIENT_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_client_id) >> clients/mobile/.env
 	@echo AWS_USER_POOL_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_id) >> clients/mobile/.env
@@ -185,9 +175,3 @@ prepare-mobile-env:
 fetch-google-service-file:
 	@aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/$(BUILD_PROFILE)/google-services.json clients/mobile/
 
-build-mobile-android-local:
-	$(MAKE) -C clients/mobile build-android-local
-
-build-mobile-android-eas:
-	$(MAKE) -C clients/mobile upload-env
-	$(MAKE) -C clients/mobile build-android

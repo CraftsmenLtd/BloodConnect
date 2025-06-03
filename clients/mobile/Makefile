@@ -1,15 +1,11 @@
 # Auto import env file
-ENV_FILE:=.env
-ifneq ("$(findstring clients/mobile/, $(shell pwd))", "")
-  ENV_FILE:=clients/mobile/.env
-endif
+MAKEFILE_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+ENV_FILE := $(MAKEFILE_DIR).env
 
 ifneq ("$(wildcard $(ENV_FILE))", "")
   include $(ENV_FILE)
   export
 endif
-
-DIR:=$(dir $(ENV_FILE))
 
 # Default build profile (can be overridden via CLI)
 BUILD_PROFILE?=development
@@ -18,10 +14,13 @@ APP_VERSION?=1.1.2
 export ANDROID_HOME?=/opt/android-sdk
 export GRADLE_OPTS="-Djava.net.preferIPv4Stack=true"
 
-# Build the APK with the specified profile
 build-android:
 	@eas build --profile $(BUILD_PROFILE) --platform android --non-interactive --no-wait
 
+start-expo:
+	@npm start --prefix $(MAKEFILE_DIR)
+
+# Build the APK with the specified profile
 build-android-local:
 	@eas build --profile $(BUILD_PROFILE) --platform android --local --output "$(APP_NAME)_$(APP_VERSION).apk"
 
