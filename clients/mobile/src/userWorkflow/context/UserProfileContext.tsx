@@ -71,9 +71,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
         latitude: location.latitude ?? 0,
         longitude: location.longitude ?? 0
       })) ?? [],
-      locations: profile?.preferredDonationLocations?.map(location => {
-        return location.area
-      }) ?? [],
+      locations: profile?.preferredDonationLocations?.map((location) => location.area) ?? [],
       uniqueGeoPartitions: [
         ...new Set(profile.preferredDonationLocations?.map((loc) => loc.geoPartition))
       ]
@@ -104,12 +102,12 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     const updatedProfile: UserProfile = {
       ...userProfile,
       ...partialProfile,
-      preferredDonationLocations: partialProfile.preferredDonationLocations ??
-        userProfile.preferredDonationLocations,
+      preferredDonationLocations: partialProfile.preferredDonationLocations
+        ?? userProfile.preferredDonationLocations,
       uniqueGeoPartitions: [
         ...new Set(
           (partialProfile.preferredDonationLocations ?? userProfile.preferredDonationLocations)
-            .map(loc => loc.geoPartition)
+            .map((loc) => loc.geoPartition)
         )
       ]
     }

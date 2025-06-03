@@ -119,7 +119,7 @@ export const useAddPersonalInfo = () => {
   const [isVisible, setIsVisible] = useState('')
 
   const handleInputChange = (name: PersonalInfoKeys, value: unknown): void => {
-    setPersonalInfo(prevState => ({
+    setPersonalInfo((prevState) => ({
       ...prevState,
       [name]: value
     }))
@@ -193,7 +193,7 @@ export const useAddPersonalInfo = () => {
         ...(height !== null && { height }),
         ...(weight !== null && { weight: formatToTwoDecimalPlaces(weight) }),
         preferredDonationLocations,
-        ...(isSSO && phoneNumber != null ? { phoneNumbers: [phoneNumber] } : {}),
+        ...(isSSO && phoneNumber !== null ? { phoneNumbers: [phoneNumber] } : {}),
         availableForDonation: rest.availableForDonation
       }
 

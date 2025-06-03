@@ -28,15 +28,15 @@ type LanguageSwitcherProps = {
 
 const sizeToWidth = (size: Size): number | 'auto' => {
   switch (size) {
-  case 'sm':
-    return 120
-  case 'md':
-    return 150
-  case 'lg':
-    return 220
-  case 'auto':
-  default:
-    return 'auto'
+    case 'sm':
+      return 120
+    case 'md':
+      return 150
+    case 'lg':
+      return 220
+    case 'auto':
+    default:
+      return 'auto'
   }
 }
 
@@ -100,18 +100,18 @@ export const LanguageSwitcher = ({
 
     const base: ViewStyle = { position: 'absolute' }
     switch (position) {
-    case 'top-right':
-      return { ...base, top: 20, right: 20 }
-    case 'top-left':
-      return { ...base, top: 20, left: 20 }
-    case 'bottom-right':
-      return { ...base, bottom: 20, right: 20 }
-    case 'bottom-left':
-      return { ...base, bottom: 20, left: 20 }
-    case 'center':
-      return { ...base, top: 20, alignSelf: 'center' }
-    default:
-      return base
+      case 'top-right':
+        return { ...base, top: 20, right: 20 }
+      case 'top-left':
+        return { ...base, top: 20, left: 20 }
+      case 'bottom-right':
+        return { ...base, bottom: 20, right: 20 }
+      case 'bottom-left':
+        return { ...base, bottom: 20, left: 20 }
+      case 'center':
+        return { ...base, top: 20, alignSelf: 'center' }
+      default:
+        return base
     }
   }
 

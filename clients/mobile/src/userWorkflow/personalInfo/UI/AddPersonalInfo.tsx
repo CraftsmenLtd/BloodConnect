@@ -1,5 +1,5 @@
 import Constants from 'expo-constants'
-import React from 'react';
+import React from 'react'
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
 import DateTimePickerComponent from '../../../components/inputElement/DateTimePicker'
 import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput'
-import RadioButton from '../../../components/inputElement/Radio';
+import RadioButton from '../../../components/inputElement/Radio'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
 import CustomToggle from '../../../components/toogleButton'

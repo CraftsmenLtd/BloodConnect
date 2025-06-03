@@ -206,11 +206,11 @@ const Home = () => {
             country,
             status,
           }}
-          onCenterHashChange={hash => {
+          onCenterHashChange={(hash) => {
             searchParams.set('centerHash', hash)
             setSearchParams(searchParams)
           }}
-          onDataSubmit={data => {
+          onDataSubmit={(data) => {
             searchParams.set('centerHash', data.centerHash)
             searchParams.set('country', data.country)
             searchParams.set('startTime', data.startTime.toString())
@@ -226,7 +226,7 @@ const Home = () => {
         lines={lines}
         center={centerLatLng}
         data={data}
-        onCenterChange={arg => {
+        onCenterChange={(arg) => {
           searchParams.set('centerHash', encode(arg.latitude, arg.longitude))
           setSearchParams(searchParams)
         }}

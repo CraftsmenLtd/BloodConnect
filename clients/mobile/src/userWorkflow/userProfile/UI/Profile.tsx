@@ -81,26 +81,24 @@ const Profile: React.FC = () => {
         <View style={styles.card}>
           {renderDetailRow(t('fromLabel.name'), userDetails.name ?? '')}
           {renderDetailRow(t('fromLabel.dob'), formattedDate(userDetails.dateOfBirth ?? '', true))}
-          {renderDetailRow(t('fromLabel.weight'), userDetails.weight !== null ?
-            userDetails.weight : 0)}
+          {renderDetailRow(t('fromLabel.weight'), userDetails.weight !== null
+            ? userDetails.weight : 0)}
           {renderDetailRow(t('fromLabel.height'), userDetails.height !== undefined
             ? userDetails.height.toString() : '')}
-          {renderDetailRow(t('fromLabel.phone'), userDetails.phoneNumbers !== undefined &&
-            userDetails.phoneNumbers.length > 0 ?
-            userDetails.phoneNumbers[0] : '')}
+          {renderDetailRow(t('fromLabel.phone'), userDetails.phoneNumbers !== undefined
+            && userDetails.phoneNumbers.length > 0
+            ? userDetails.phoneNumbers[0] : '')}
           {renderDetailRow(t('fromLabel.gender'), userDetails.gender.toUpperCase())}
           {userDetails?.lastDonationDate !== '' && renderDetailRow(t('fromLabel.lastDonationDate'),
             formattedDate(userDetails?.lastDonationDate ?? '', true), false)}
           <View style={[styles.row, styles.lastRow]}>
             <Text style={styles.label}>{t('fromLabel.locations')}</Text>
             <View style={styles.selectedItemContainer}>
-              {userDetails?.preferredDonationLocations?.map(location => {
-                return (
-                  <View key={location.area} style={styles.selectedItem}>
-                    <Badge text={location.area} containerStyle={styles.selectedItemText} />
-                  </View>
-                )
-              })}
+              {userDetails?.preferredDonationLocations?.map((location) => (
+                <View key={location.area} style={styles.selectedItem}>
+                  <Badge text={location.area} containerStyle={styles.selectedItemText} />
+                </View>
+              ))}
             </View>
           </View>
           <MapView

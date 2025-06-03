@@ -223,8 +223,8 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         />
       </TouchableOpacity>
 
-      {(minRequiredLabel != null && selectedValues.length === 0) &&
-        <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
+      {(minRequiredLabel !== null && selectedValues.length === 0)
+        && <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
       }
       {error !== null && <Text style={styles.error}>{error}</Text>}
 
