@@ -8,7 +8,7 @@ const useDonorConfirmation = (): unknown => {
 
   const selectDonorHandler = (donorId: string): void => {
     if (selectedDonor.includes(donorId)) {
-      setSelectedDonor(selectedDonor.filter(id => id !== donorId))
+      setSelectedDonor(selectedDonor.filter((id) => id !== donorId))
     } else {
       setSelectedDonor([...selectedDonor, donorId])
     }

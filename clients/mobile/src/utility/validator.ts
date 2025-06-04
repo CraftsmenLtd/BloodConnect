@@ -29,16 +29,19 @@ export const validateAndReturnRequiredFieldError = (
   } else if (typeof value === 'boolean') {
     return value ? null : 'This field is required'
   }
+
   return null
 }
 
 export const validateEmailAndGetErrorMessage = (value: string): string | null => {
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+
   return !emailRegex.test(value) ? 'Invalid email address' : null
 }
 
 export const validatePhoneNumberAndGetErrorMessage = (value: string): string | null => {
   const phoneRegex = /^(?:\+8801[3-9]\d{8}|01[3-9]\d{8})$/
+
   return !phoneRegex.test(value) ? 'Invalid phone number' : null
 }
 
@@ -123,9 +126,9 @@ export const validateDateOfBirth = (dateOfBirth: string): string | null => {
   const dob = new Date(dateOfBirth)
 
   const age = today.getFullYear() - dob.getFullYear()
-  const hasBirthdayPassedThisYear =
-    today.getMonth() > dob.getMonth() ||
-    (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate())
+  const hasBirthdayPassedThisYear
+    = today.getMonth() > dob.getMonth()
+    || (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate())
 
   const actualAge = hasBirthdayPassedThisYear ? age : age - 1
 
@@ -192,6 +195,7 @@ export const validateInput = (value: unknown, rules: ValidationRule[]): string |
       return error
     }
   }
+
   return null
 }
 
@@ -200,7 +204,7 @@ const validateRequiredFieldsTruthy = <D>(
   data: D): boolean => {
   for (const key in validationRules) {
     const validationFailed = validationRules[key].some(
-      func => func(data[key]) !== null)
+      (func) => func(data[key]) !== null)
     if (validationFailed) {
       return false
     }

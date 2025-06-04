@@ -28,13 +28,14 @@ export const useDonationPosts = () => {
     const results = await Promise.allSettled(
       userProfile.uniqueGeoPartitions.map(async(eachPartition) => {
         const response = await fetchDonationPublicPosts(eachPartition, fetchClient, bloodGroup)
-        return (response.data != null) ? formatDonations(response.data) : []
+
+        return (response.data !== null) ? formatDonations(response.data) : []
       })
     )
 
     const formattedDonations = results
-      .filter(result => result.status === 'fulfilled')
-      .flatMap(result => (result as PromiseFulfilledResult<DonationData[]>).value)
+      .filter((result) => result.status === 'fulfilled')
+      .flatMap((result) => (result as PromiseFulfilledResult<DonationData[]>).value)
 
     formattedDonations.sort((a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()

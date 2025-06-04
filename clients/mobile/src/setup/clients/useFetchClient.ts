@@ -7,5 +7,6 @@ const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
 export const useFetchClient = (): HttpClient => {
   const { logoutUser } = useContext(AuthContext)
+
   return new FetchClient(API_BASE_URL, logoutUser)
 }

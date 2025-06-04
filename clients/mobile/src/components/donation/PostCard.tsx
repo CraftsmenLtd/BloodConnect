@@ -4,7 +4,7 @@ import type {
   ViewStyle,
   StyleProp,
   ImageStyle
-} from 'react-native';
+} from 'react-native'
 import {
   View,
   Text,
@@ -80,7 +80,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   const { height: windowHeight } = Dimensions.get('window')
 
   const handleToggleDropdown = useCallback(() => {
-    if (!showDropdown && (iconRef.current != null)) {
+    if (!showDropdown && (iconRef.current !== null)) {
       iconRef.current.measureInWindow((_, pageY, __, height) => {
         const top = pageY + height
         const adjustedTop = Math.min(top, windowHeight - 100)
@@ -90,7 +90,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         })
       })
     }
-    setShowDropdown(prev => !prev)
+    setShowDropdown((prev) => !prev)
   }, [showDropdown, windowHeight])
 
   const handleCloseDropdown = useCallback(() => {
@@ -166,8 +166,8 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
 
   return (
     <View style={styles.card}>
-      {showHeader &&
-        <View style={styles.cardHeader}>
+      {showHeader
+        && <View style={styles.cardHeader}>
           <View>
             <Text style={styles.userName}>{post.seekerName}</Text>
             <Text style={styles.postTime}>
@@ -176,8 +176,8 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {showStatus && <StatusBadge status={statusValue ?? post.status} />}
-            {showOptions &&
-              <View style={styles.menuContainer}>
+            {showOptions
+              && <View style={styles.menuContainer}>
                 <View ref={iconRef} collapsable={false}>
                   <TouchableOpacity
                     onPress={handleToggleDropdown}
@@ -203,8 +203,8 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                               text={item.text}
                               onPress={item.onPress}
                               disabled={
-                                post.status === STATUS.CANCELLED ||
-                                post.status === STATUS.COMPLETED
+                                post.status === STATUS.CANCELLED
+                                || post.status === STATUS.COMPLETED
                               }
                               isLastItem={index === dropdownItems.length - 1}
                             />
@@ -297,16 +297,16 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             </View>
           </View>
         </View>
-        {post.contactNumber !== '' && showContactNumber &&
-          <View style={styles.descriptionContainer}>
+        {post.contactNumber !== '' && showContactNumber
+          && <View style={styles.descriptionContainer}>
             <Text style={styles.donationInfoPlaceholder}>
               {t('donationPosts.contactNumber')}
             </Text>
             <Text style={styles.description}>{post.contactNumber}</Text>
           </View>
         }
-        {post.patientName !== '' && showPatientName &&
-          <View style={styles.descriptionContainer}>
+        {post.patientName !== '' && showPatientName
+          && <View style={styles.descriptionContainer}>
             <Text style={styles.donationInfoPlaceholder}>
               {t('donationPosts.nameOfThePatient')}
             </Text>
@@ -314,16 +314,16 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
           </View>
         }
 
-        {post.shortDescription !== '' && showDescription &&
-          <View style={styles.descriptionContainer}>
+        {post.shortDescription !== '' && showDescription
+          && <View style={styles.descriptionContainer}>
             <Text style={styles.donationInfoPlaceholder}>
               {t('donationPosts.shortDescription')}
             </Text>
             <Text style={styles.description}>{post.shortDescription}</Text>
           </View>
         }
-        {post.transportationInfo !== '' && showTransportInfo &&
-          <View style={styles.descriptionContainer}>
+        {post.transportationInfo !== '' && showTransportInfo
+          && <View style={styles.descriptionContainer}>
             <Text style={styles.donationInfoPlaceholder}>
               {t('donationPosts.transportationFacilityForTheDonor')}
             </Text>
@@ -332,10 +332,10 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         }
       </View>
       {
-        Array.isArray(post.acceptedDonors) &&
-        post.acceptedDonors.length > 0 &&
-        showPostUpdatedOption &&
-        <>
+        Array.isArray(post.acceptedDonors)
+        && post.acceptedDonors.length > 0
+        && showPostUpdatedOption
+        && <>
           <Text style={styles.bloodAmount}>Request Update</Text>
           <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
             <Ionicons name='time-outline' size={20} color={theme.colors.grey} />

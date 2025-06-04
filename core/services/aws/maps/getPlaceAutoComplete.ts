@@ -5,7 +5,7 @@ import { MapsHandler } from '../../maps/MapsHandler'
 import type { PlaceAutocompleteRequest } from '../../../application/maps/dto/Maps'
 import { MapsService } from '../../../application/maps/MapsService'
 import { GoogleMapsProvider } from '../../maps/providers/GoogleMaps'
-import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger';
+import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
 
@@ -33,6 +33,7 @@ async function placeAutocomplete(
     )
   } catch (error) {
     httpLogger.error(error)
+
     return generateApiGatewayResponse({
       success: false,
       error: {

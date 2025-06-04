@@ -81,6 +81,7 @@ const SearchMultiSelect = ({
       setIsVisible('')
       setValue(item.label)
       onChange(name, item.label)
+
       return
     }
     const itemExists = selectedValues.some(
@@ -141,8 +142,8 @@ const SearchMultiSelect = ({
       </View>
       {extraInfo.trim().length > 0 && <Text style={styles.extraInfo}>{extraInfo}</Text>}
       {error !== null && <Text style={styles.error}>{error}</Text>}
-      {multiSelect &&
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
+      {multiSelect
+        && <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
           {selectedValues.map((item, index) => (
             <View key={`${index}-${item.value}`} style={styles.selectedItem}>
               <Text>{item.label}</Text>

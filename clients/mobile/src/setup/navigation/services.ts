@@ -10,6 +10,7 @@ type CountryAvailabilityData = {
 export const countryAvailability = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<ApiResponse<CountryAvailabilityData>> => {
   try {
     const response = await httpClient.get<ApiResponse<CountryAvailabilityData>>('/country-availability', payload)
+
     return {
       message: response.message,
       data: response.data,

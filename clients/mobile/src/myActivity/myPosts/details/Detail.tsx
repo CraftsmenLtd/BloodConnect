@@ -101,12 +101,12 @@ const Detail = ({ navigation, route }: DetailProps) => {
 
   return (
     <View style={styles.container}>
-      {!isDetailsPage &&
-        <View style={[
+      {!isDetailsPage
+        && <View style={[
           styles.tabHeader,
-          currentTab === DETAIL_POST_TAB_CONFIG.initialTab ?
-            { marginBottom: -18.5 } :
-            {}
+          currentTab === DETAIL_POST_TAB_CONFIG.initialTab
+            ? { marginBottom: -18.5 }
+            : {}
         ]}>
           <ToggleTabs
             tabs={DETAIL_POST_TAB_CONFIG.tabs}
@@ -132,28 +132,28 @@ const Detail = ({ navigation, route }: DetailProps) => {
             statusValue={localStatus}
           />
           {cancelPostError !== '' && <Text style={styles.errorMessage}>{cancelPostError}</Text>}
-          {showToast != null && (
+          {showToast !== null && (
             <Toast
               message={showToast?.message}
               type={showToast?.type}
               toastAnimationFinished={toastAnimationFinished}
             />
           )}
-          {!isDetailsPage &&
-            <View style={styles.buttonContainer}>
+          {!isDetailsPage
+            && <View style={styles.buttonContainer}>
               <Button
                 text={t('btn.completeRequest')}
                 disabled={
-                  localStatus === STATUS.COMPLETED ||
-                  localStatus === STATUS.CANCELLED ||
-                  localStatus === STATUS.EXPIRED
+                  localStatus === STATUS.COMPLETED
+                  || localStatus === STATUS.CANCELLED
+                  || localStatus === STATUS.EXPIRED
                 }
                 onPress={handleCompleteRequest} />
             </View>
           }
-          {isDetailsPage &&
-            [STATUS.ACCEPTED, STATUS.IGNORED].includes(localStatus) &&
-            <View style={styles.buttonContainer}>
+          {isDetailsPage
+            && [STATUS.ACCEPTED, STATUS.IGNORED].includes(localStatus)
+            && <View style={styles.buttonContainer}>
               {statusError !== '' && <Text style={styles.errorMessage}>{statusError}</Text>}
               <Button
                 text={ localStatus === STATUS.ACCEPTED ? t('btn.ignore') : t('btn.acceptRequest') }
@@ -166,8 +166,8 @@ const Detail = ({ navigation, route }: DetailProps) => {
               />
             </View>
           }
-        </View> :
-        <DonorResponses
+        </View>
+        : <DonorResponses
           acceptedDonors={data.acceptedDonors}
           handlePressDonor={handlePressDonor}
         />

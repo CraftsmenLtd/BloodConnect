@@ -15,13 +15,13 @@ export function withRegisterPushOnFocus<P>(WrappedComponent: ComponentType<P>): 
       useCallback(() => {
         const task = InteractionManager.runAfterInteractions(() => {
           if (!isAuthenticated) return
-          void registerUserDeviceForNotification(fetchClient).catch(error => {
+          void registerUserDeviceForNotification(fetchClient).catch((error) => {
             // eslint-disable-next-line no-console
             console.error('Failed to register device:', error)
           })
-        });
+        })
 
-        return () => task.cancel();
+        return () => task.cancel()
       }, [fetchClient])
     )
 

@@ -24,6 +24,7 @@ export default class BloodDonationDynamoDbOperations extends DynamoDbTableOperat
       `${BLOOD_REQUEST_PK_PREFIX}#${seekerId}`,
       `${BLOOD_REQUEST_PK_PREFIX}#${createdAt}#${requestPostId}`
     )
+
     return item
   }
 
@@ -46,6 +47,7 @@ export default class BloodDonationDynamoDbOperations extends DynamoDbTableOperat
       }
     }
     const queryResult = await super.query(query)
+
     return queryResult.items
   }
 }

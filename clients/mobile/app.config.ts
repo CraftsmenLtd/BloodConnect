@@ -20,6 +20,7 @@ const ensureEnvVars = (vars: Record<string, string | undefined>): EnvVars => {
       `Missing required environment variables: ${missing.map(([key]) => key).join(', ')}`
     )
   }
+
   return vars as EnvVars
 }
 

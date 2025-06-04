@@ -13,7 +13,7 @@ export class LocalCacheMapManager<K, V> {
   set(key: K, value: V): void {
     if (this.cache.size === this.maxSize) {
       const oldestKey = this.cache.keys().next().value
-      oldestKey != null && this.cache.delete(oldestKey)
+      oldestKey !== null && this.cache.delete(oldestKey)
     }
     this.cache.set(key, value)
   }

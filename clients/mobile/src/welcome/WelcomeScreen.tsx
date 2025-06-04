@@ -16,6 +16,7 @@ export type WelcomeScreenProps = {
 const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
   const { t } = useTranslation()
   const styles = createStyles(useTheme())
+
   return (
     <View style={styles.container}>
       <LanguageSwitcher
@@ -43,6 +44,7 @@ const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
 
 const createStyles = (theme: Theme) => {
   const { width } = useWindowDimensions()
+
   return StyleSheet.create({
     container: {
       flex: 1,

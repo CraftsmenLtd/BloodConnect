@@ -62,11 +62,11 @@ export const useEditProfile = () => {
 
   const [profileData, setProfileData] = useState<ProfileData>(() => {
     if (!userProfile) {
-      throw new Error('User profile not loaded');
+      throw new Error('User profile not loaded')
     }
 
     if (!Array.isArray(userProfile.phoneNumbers) || userProfile.phoneNumbers.length === 0) {
-      throw new Error('userProfile.phoneNumbers must contain at least one value');
+      throw new Error('userProfile.phoneNumbers must contain at least one value')
     }
 
     return {
@@ -91,7 +91,7 @@ export const useEditProfile = () => {
 
   useEffect(() => {
     if (userProfile) {
-      setProfileData(prev => ({
+      setProfileData((prev) => ({
         ...prev,
         ...userProfile,
         phone: prev.phone
@@ -137,6 +137,7 @@ export const useEditProfile = () => {
     setErrors((prevErrors) => {
       const errorMsg = validateInput(value, validationRules[field])
       if (prevErrors[field] === errorMsg) return prevErrors
+
       return { ...prevErrors, [field]: errorMsg }
     })
   }
@@ -144,7 +145,7 @@ export const useEditProfile = () => {
   const handleSave = async(): Promise<void> => {
     const newErrors: Record<string, string | null> = {}
     const validationFields = Object.keys(validationRules) as ProfileFields[]
-    validationFields.forEach(field => {
+    validationFields.forEach((field) => {
       const value = profileData[field]
       const rules = validationRules[field]
       newErrors[field] = validateInput(value, rules)
@@ -154,6 +155,7 @@ export const useEditProfile = () => {
 
     if (Object.values(newErrors).some((error) => error)) {
       Alert.alert('Please fix the highlighted errors.')
+
       return
     }
 

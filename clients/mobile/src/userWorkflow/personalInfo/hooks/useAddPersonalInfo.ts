@@ -3,7 +3,7 @@ import Constants from 'expo-constants'
 import { useNavigation } from '@react-navigation/native'
 import type {
   ValidationRule
-} from '../../../utility/validator';
+} from '../../../utility/validator'
 import {
   validateRequired,
   validateInput,
@@ -20,14 +20,14 @@ import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import { createUserProfile } from '../../services/userProfileService'
 import type {
   LocationData
-} from '../../../utility/formatting';
+} from '../../../utility/formatting'
 import {
   formatErrorMessage,
   formatToTwoDecimalPlaces
 } from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
-import { LocationService } from '../../../LocationService/LocationService';
+import { LocationService } from '../../../LocationService/LocationService'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
@@ -61,8 +61,8 @@ export const useAddPersonalInfo = () => {
     const checkAuthProvider = async(): Promise<void> => {
       try {
         const user = await getCurrentUser()
-        setIsSSO(((user?.username?.includes('Google')) ?? false) ||
-          ((user?.username?.includes('Facebook')) ?? false) || false)
+        setIsSSO(((user?.username?.includes('Google')) ?? false)
+          || ((user?.username?.includes('Facebook')) ?? false) || false)
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
         setIsSSO(false)
@@ -119,7 +119,7 @@ export const useAddPersonalInfo = () => {
   const [isVisible, setIsVisible] = useState('')
 
   const handleInputChange = (name: PersonalInfoKeys, value: unknown): void => {
-    setPersonalInfo(prevState => ({
+    setPersonalInfo((prevState) => ({
       ...prevState,
       [name]: value
     }))
@@ -131,7 +131,7 @@ export const useAddPersonalInfo = () => {
     const validationRules = getValidationRules()
     if (name in validationRules && Array.isArray(validationRules[name])) {
       const errorMsg = validateInput(value as string, validationRules[name])
-      setErrors(prevErrors => ({
+      setErrors((prevErrors) => ({
         ...prevErrors,
         [name]: errorMsg
       }))
@@ -150,12 +150,14 @@ export const useAddPersonalInfo = () => {
           .then((location) => {
             if (location !== null) {
               const { latitude, longitude } = location
+
               return { area, city, latitude, longitude }
             }
           })
-          .catch(() => { return null })
+          .catch(() => null)
       )
     )
+
     return formattedLocations.filter((location): location is LocationData => location !== null)
   }
 
@@ -177,20 +179,21 @@ export const useAddPersonalInfo = () => {
       if (preferredDonationLocations.length === 0) {
         setErrorMessage('No valid locations were found. Please verify your input.')
         setLoading(false)
+
         return
       }
 
       const finalData = {
         ...rest,
         dateOfBirth: dateOfBirth.toISOString().substring(0, 10),
-        ...(lastDonationDate !== null &&
-          { lastDonationDate: lastDonationDate.toISOString().substring(0, 10) }),
-        ...(lastVaccinatedDate !== null &&
-          { lastVaccinatedDate: lastVaccinatedDate.toISOString().substring(0, 10) }),
+        ...(lastDonationDate !== null
+          && { lastDonationDate: lastDonationDate.toISOString().substring(0, 10) }),
+        ...(lastVaccinatedDate !== null
+          && { lastVaccinatedDate: lastVaccinatedDate.toISOString().substring(0, 10) }),
         ...(height !== null && { height }),
         ...(weight !== null && { weight: formatToTwoDecimalPlaces(weight) }),
         preferredDonationLocations,
-        ...(isSSO && phoneNumber != null ? { phoneNumbers: [phoneNumber] } : {}),
+        ...(isSSO && phoneNumber !== null ? { phoneNumbers: [phoneNumber] } : {}),
         availableForDonation: rest.availableForDonation
       }
 

@@ -37,6 +37,7 @@ export function validateInputWithRules<T extends Record<string, unknown>>(
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
+
         return errorMessage
       }
     }

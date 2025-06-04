@@ -10,13 +10,13 @@ import {
 import StorageService from './storageService'
 
 const registerUserDeviceForNotification = (fetchClient: HttpClient): Promise<void> =>
-  registerForPushNotificationsAsync().then(async token => {
+  registerForPushNotificationsAsync().then(async(token) => {
     const loggedInUser = await authService.currentLoggedInUser()
 
     if (!await isDeviceAlreadyRegisteredForUser(token, loggedInUser.userId)) {
       await saveDeviceTokenOnSNS(token as string, fetchClient)
     }
-  }).catch(error => {
+  }).catch((error) => {
     throw new Error(
       `Failed to register user device for notifications: ${
         error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -32,9 +32,10 @@ export const isDeviceAlreadyRegisteredForUser = async(
   const registeredDevice = await StorageService.getItem<
     { deviceToken: string; userId: string }
   >(TOKEN.DEVICE_TOKEN)
-  return (registeredDevice != null) &&
-    registeredDevice.deviceToken === deviceToken &&
-    registeredDevice.userId === userId
+
+  return (registeredDevice !== null)
+    && registeredDevice.deviceToken === deviceToken
+    && registeredDevice.userId === userId
 }
 
 

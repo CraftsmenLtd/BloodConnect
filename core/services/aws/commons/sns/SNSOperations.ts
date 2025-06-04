@@ -64,6 +64,7 @@ export default class SNSOperations implements SNSModel {
       })
 
       const response = await this.client.send(createEndpointCommand)
+
       return { snsEndpointArn: `${response.EndpointArn}` }
     } else if (platform === 'FCM') {
       const createEndpointCommand = new CreatePlatformEndpointCommand({
@@ -73,6 +74,7 @@ export default class SNSOperations implements SNSModel {
       })
 
       const response = await this.client.send(createEndpointCommand)
+
       return { snsEndpointArn: `${response.EndpointArn}` }
     } else {
       throw new Error(
@@ -89,6 +91,7 @@ export default class SNSOperations implements SNSModel {
         EndpointArn: existingArn
       })
       const response = await this.client.send(command)
+
       return response.Attributes ?? {}
     } catch (error) {
       throw new Error(`Failed to get endpoint attributes: ${error}`)

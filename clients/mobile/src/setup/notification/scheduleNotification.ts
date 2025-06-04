@@ -1,4 +1,4 @@
-import * as Notifications from 'expo-notifications';
+import * as Notifications from 'expo-notifications'
 import { replaceTemplatePlaceholders } from '../../utility/formatting'
 import storageService from '../../utility/storageService'
 import {
@@ -17,12 +17,10 @@ type NotificationTrigger =
 export const scheduleNotification = async(
   trigger: NotificationTrigger,
   content: Notifications.NotificationContentInput
-): Promise<string> => {
-  return await Notifications.scheduleNotificationAsync({
-    content,
-    trigger: notificationTrigger(trigger)
-  })
-}
+): Promise<string> => Notifications.scheduleNotificationAsync({
+  content,
+  trigger: notificationTrigger(trigger)
+})
 
 const notificationTrigger = (
   trigger: NotificationTrigger
@@ -44,24 +42,22 @@ const notificationTrigger = (
 
 const calculateIntervalInSeconds = (interval: 'minute' | 'hour' | 'day' | 'week'): number => {
   switch (interval) {
-  case 'minute':
-    return 60
-  case 'hour':
-    return 60 * 60
-  case 'day':
-    return 24 * 60 * 60
-  case 'week':
-    return 7 * 24 * 60 * 60
-  default:
-    throw new Error('Invalid interval provided.')
+    case 'minute':
+      return 60
+    case 'hour':
+      return 60 * 60
+    case 'day':
+      return 24 * 60 * 60
+    case 'week':
+      return 7 * 24 * 60 * 60
+    default:
+      throw new Error('Invalid interval provided.')
   }
 }
 
 export const fetchScheduledNotifications = async():
   Promise<Notifications.NotificationRequest[]> =>
-{
-  return Notifications.getAllScheduledNotificationsAsync()
-}
+  Notifications.getAllScheduledNotificationsAsync()
 
 export const cancelNotificationById = async(identifier: string): Promise<void> => {
   await Notifications.cancelScheduledNotificationAsync(identifier)

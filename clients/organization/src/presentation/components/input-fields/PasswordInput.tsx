@@ -1,8 +1,8 @@
-import type { ChangeEvent } from 'clients/commons/platform/node_modules/@types/react';
-import React, { useState } from 'clients/commons/platform/node_modules/@types/react';
-import { FaRegEye, FaRegEyeSlash } from '../../assets/icons';
-import InputField from './index';
-import PasswordCriteriaChecker from '../validators/Password';
+import type { ChangeEvent } from 'clients/commons/platform/node_modules/@types/react'
+import React, { useState } from 'clients/commons/platform/node_modules/@types/react'
+import { FaRegEye, FaRegEyeSlash } from '../../assets/icons'
+import InputField from './index'
+import PasswordCriteriaChecker from '../validators/Password'
 
 type ValidationResult = {
   message: string;
@@ -24,12 +24,12 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
   placeholder,
   validationResults,
 }) => {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    onChange(newValue);
-  };
+    const newValue = e.target.value
+    onChange(newValue)
+  }
 
   return (
     <div className="relative">
@@ -43,14 +43,14 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
           showPassword ? (
             <FaRegEyeSlash
               onClick={() => {
-                setShowPassword(!showPassword);
+                setShowPassword(!showPassword)
               }}
               size={22}
             />
           ) : (
             <FaRegEye
               onClick={() => {
-                setShowPassword(!showPassword);
+                setShowPassword(!showPassword)
               }}
               size={22}
             />
@@ -61,7 +61,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
         <PasswordCriteriaChecker validationResults={validationResults} />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default PasswordField;
+export default PasswordField

@@ -1,5 +1,5 @@
-import type { UserDetailsDTO } from 'commons/dto/UserDTO';
-import type Repository from './Repository';
+import type { UserDetailsDTO } from 'commons/dto/UserDTO'
+import type Repository from './Repository'
 
 type UserRepository = {
   getUser(userId: string): Promise<UserDetailsDTO | null>;

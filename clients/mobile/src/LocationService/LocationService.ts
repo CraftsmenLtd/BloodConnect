@@ -52,6 +52,7 @@ export class LocationService {
       const hasFirstResult = Object.prototype.hasOwnProperty.call(response, '0')
       if (hasFirstResult) {
         const { lat, lon } = response['0']
+
         return { latitude: stringToNumber(lat), longitude: stringToNumber(lon) }
       }
       throw new Error(`Failed to retrieve coordinates for "${location}."`)
@@ -71,6 +72,7 @@ export class LocationService {
           value: prediction.description
         })
       }
+
       return acc
     }, [])
   }
@@ -98,6 +100,7 @@ export class LocationService {
 
       if (response.results.length > 0) {
         const { lat, lng } = response.results[0].geometry.location
+
         return { latitude: lat, longitude: lng }
       }
       throw new Error(`Failed to retrieve coordinates for "${location}."`)

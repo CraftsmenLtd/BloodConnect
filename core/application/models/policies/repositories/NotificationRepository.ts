@@ -1,4 +1,4 @@
-import type { DonationNotificationDTO, NotificationDTO } from '../../../../../commons/dto/NotificationDTO';
+import type { DonationNotificationDTO, NotificationDTO } from '../../../../../commons/dto/NotificationDTO'
 import type Repository from './Repository'
 
 type NotificationRepository = {
