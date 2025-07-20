@@ -22,7 +22,9 @@ export const SocialButton = ({ text, onPress, icon, loading, buttonStyle, textSt
     <TouchableOpacity style={[styles.socialButton, buttonStyle]} onPress={onPress} disabled={loading}>
       <View style={styles.socialButtonContent}>
         <Image source={icon} style={styles.socialIcon} />
-        {isLoading ? (<ActivityIndicator size="small" color={theme.colors.primary}/>) : (<Text style={[styles.socialButtonText, textStyle]}>{text}</Text>)}
+        {isLoading
+          ? (<ActivityIndicator size="small" color={theme.colors.primary}/>)
+          : (<Text style={[styles.socialButtonText, textStyle]}>{text}</Text>)}
       </View>
     </TouchableOpacity>
   )

@@ -70,7 +70,11 @@ export const fetchDonationList = async(payload: Record<string, unknown>, httpCli
   }
 }
 
-export const fetchSingleDonationPost = async(requestPostId: string, createdAt: string, httpClient: HttpClient): Promise<ApiResponse<BloodDonationRecord>> => {
+export const fetchSingleDonationPost = async(
+  requestPostId: string,
+  createdAt: string,
+  httpClient: HttpClient
+): Promise<ApiResponse<BloodDonationRecord>> => {
   try {
     const response = await httpClient.get<ApiResponse<BloodDonationRecord>>(`/donations/${requestPostId}/${createdAt}`, {})
 

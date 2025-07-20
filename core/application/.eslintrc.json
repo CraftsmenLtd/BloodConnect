@@ -1,8 +1,5 @@
 {
   "extends": [
     "../../.eslintrc.json"
-  ],
-  "ignorePatterns": [
-    "tests/" // FIXME: this should not be ignored
   ]
 }

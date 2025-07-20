@@ -10,7 +10,8 @@ const AboutPage: React.FC = () => {
   const styles = createStyles(useTheme())
   const [displayedText, setDisplayedText] = useState<string>('')
 
-  const fullText = 'Tries to improve the blood donation process through connecting donors, blood banks and existing organizations who are assisting finding donors in times of need, by providing a platform.'
+  const fullText = 'Tries to improve the blood donation process through connecting donors, blood banks'
+    + ' and existing organizations who are assisting finding donors in times of need, by providing a platform.'
   const typingSpeed = 5
 
   useEffect(() => {

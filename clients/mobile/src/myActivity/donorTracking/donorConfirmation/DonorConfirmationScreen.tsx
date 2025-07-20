@@ -30,7 +30,12 @@ const DonorConfirmationScreen = () => {
 
       <View style={styles.footerContainer}>
         {error !== null && <Text style={styles.errorText}>{error}</Text>}
-        <Button text="Confirm" onPress={() => { void executeFunction(selectedDonor, requestPostId, createdAt) }} loading={loading} disabled={loading} />
+        <Button
+          text="Confirm"
+          onPress={() => { void executeFunction(selectedDonor, requestPostId, createdAt) }}
+          loading={loading}
+          disabled={loading}
+        />
       </View>
     </View>
 

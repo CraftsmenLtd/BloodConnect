@@ -1,12 +1,16 @@
 import StorageService from '../../src/utility/storageService'
-import { signUp, confirmSignUp, signIn, signInWithRedirect, decodeJWT, fetchAuthSession, signOut, confirmResetPassword, resetPassword } from 'aws-amplify/auth'
+import {
+  signUp, confirmSignUp, signIn, signInWithRedirect, decodeJWT,
+  fetchAuthSession, signOut, confirmResetPassword, resetPassword
+} from 'aws-amplify/auth'
+import type {
+  UserRegistrationCredentials } from '../../src/authentication/services/authService'
 import {
   registerUser,
   submitOtp,
   loginUser,
   googleLogin,
   facebookLogin,
-  UserRegistrationCredentials,
   decodeAccessToken,
   logoutUser,
   fetchSession,

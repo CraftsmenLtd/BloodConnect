@@ -21,6 +21,7 @@
     ".build/",
     ".idea/",
     ".vscode/",
+    "clients/organization/",
     ".github/"
   ],
   "overrides": [
@@ -40,7 +41,7 @@
       "warn",
       "type"
     ],
-    "@typescript-eslint/explicit-function-return-type": "warn",
+    "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-empty-function": "error",
     "@typescript-eslint/return-await": "off",
@@ -54,6 +55,7 @@
         "asyncArrow": "never"
       }
     ],
+    "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/member-delimiter-style": [
       "error",
       {
@@ -72,14 +74,15 @@
       {
         "argsIgnorePattern": "^_",
         "varsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_"
+        "caughtErrorsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
       }
     ],
     "no-console": "warn",
     "max-len": [
       "warn",
       {
-        "code": 100
+        "code": 150
       }
     ],
     "arrow-parens": [

@@ -7,13 +7,13 @@ import {
 } from '../../userWorkflow/userMessages'
 import { mockUserWithStringId } from '../mocks/mockUserData'
 import { mockRepository } from '../mocks/mockRepositories'
-import Repository from '../../models/policies/repositories/Repository'
-import {
+import type Repository from '../../models/policies/repositories/Repository'
+import type {
   UserDTO,
 } from '../../../../commons/dto/UserDTO'
-import { UpdateUserAttributes } from '../../userWorkflow/Types'
+import type { UpdateUserAttributes } from '../../userWorkflow/Types'
 import { mockLogger } from '../mocks/mockLogger'
-import { LocationService } from '../../userWorkflow/LocationService'
+import type { LocationService } from '../../userWorkflow/LocationService'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflow/userMessages')
@@ -21,7 +21,8 @@ jest.mock('../../userWorkflow/LocationService')
 const userMockRepository = {
   ...mockRepository,
   queryUserLocations: jest.fn(),
-  deleteUserLocations: jest.fn()
+  deleteUserLocations: jest.fn(),
+  getUser: jest.fn()
 }
 describe('UserService Tests', () => {
   const userService = new UserService(userMockRepository, mockLogger)
@@ -44,7 +45,7 @@ describe('UserService Tests', () => {
     })
   })
 
-  test('should create a new user successfully', async () => {
+  test('should create a new user successfully', async() => {
     userRepository.create.mockResolvedValue(mockUserWithStringId)
     const result = await userService.createNewUser(
       mockUserAttributes,
@@ -58,7 +59,7 @@ describe('UserService Tests', () => {
     })
   })
 
-  test('should throw an error on failure', async () => {
+  test('should throw an error on failure', async() => {
     const errorMessage = 'Database error'
     const originalError = new Error(errorMessage)
 
@@ -97,7 +98,7 @@ describe('UserService Tests', () => {
     )
     expect(result).toEqual(mockMessage)
   })
-  test('should update user successfully', async () => {
+  test('should update user successfully', async() => {
     const mockUpdateAttributes = {
       userId: '12345',
       name: 'Updated Ebrahim',
@@ -199,8 +200,8 @@ describe('UserService Tests', () => {
     })
 
     test('should handle very long usernames', () => {
-      const longUserName =
-        'VeryLongUserNameThatMightCauseIssuesIfNotHandledProperly'
+      const longUserName
+        = 'VeryLongUserNameThatMightCauseIssuesIfNotHandledProperly'
       const mockMessage = {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'

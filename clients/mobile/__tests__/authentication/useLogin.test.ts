@@ -23,8 +23,9 @@ jest.mock('react-i18next', () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
         'error.invalidEmailOrPassword': 'Invalid Email or Password.',
-      };
-      return translations[key] || key;
+      }
+
+      return translations[key] || key
     },
   }),
 }))
@@ -118,23 +119,23 @@ describe('useLogin Hook', () => {
     expect(result.current.loginCredential.email).toBe('test@example.com')
   })
 
-  test('should set loginError on login failure', async () => {
+  test('should set loginError on login failure', async() => {
     const { result } = renderHook(() => useLogin());
 
     (loginUser as jest.Mock).mockRejectedValue(new Error('Login failed'))
 
-    await act(async () => {
+    await act(async() => {
       await result.current.handleLogin()
     })
 
     expect(result.current.loginError).toBe('Invalid Email or Password.')
   })
 
-  test('should navigate to BOTTOM_TABS on successful login', async () => {
+  test('should navigate to BOTTOM_TABS on successful login', async() => {
     const { result } = renderHook(() => useLogin());
     (loginUser as jest.Mock).mockResolvedValue(true)
 
-    await act(async () => {
+    await act(async() => {
       await result.current.handleLogin()
       jest.runAllTimers()
     })
@@ -147,11 +148,11 @@ describe('useLogin Hook', () => {
   })
 
   describe('handleGoogleSignIn', () => {
-    test('should fail gracefully when Google sign-in has session error', async () => {
+    test('should fail gracefully when Google sign-in has session error', async() => {
       const { result } = renderHook(() => useLogin());
       (googleLogin as jest.Mock).mockRejectedValue(new Error('Failed to fetch session'))
 
-      await act(async () => {
+      await act(async() => {
         await result.current.handleGoogleSignIn()
       })
 
@@ -160,11 +161,11 @@ describe('useLogin Hook', () => {
       expect(result.current.socialLoginError).toBe('google login failed. Please try again.')
     })
 
-    test('should set socialLoginError on Google sign-in failure', async () => {
+    test('should set socialLoginError on Google sign-in failure', async() => {
       const { result } = renderHook(() => useLogin());
       (googleLogin as jest.Mock).mockRejectedValue(new Error('Google sign-in failed'))
 
-      await act(async () => {
+      await act(async() => {
         await result.current.handleGoogleSignIn()
       })
 
@@ -172,13 +173,13 @@ describe('useLogin Hook', () => {
       expect(result.current.socialLoginError).toBe('google login failed. Please try again.')
     })
 
-    test('should navigate to ADD_PERSONAL_INFO when no profile exists', async () => {
+    test('should navigate to ADD_PERSONAL_INFO when no profile exists', async() => {
       mockUserProfile = null;
       (googleLogin as jest.Mock).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useLogin())
 
-      await act(async () => {
+      await act(async() => {
         await result.current.handleGoogleSignIn()
         jest.runAllTimers()
       })
@@ -190,13 +191,13 @@ describe('useLogin Hook', () => {
       })
     })
 
-    test('should navigate to BOTTOM_TABS when profile exists', async () => {
+    test('should navigate to BOTTOM_TABS when profile exists', async() => {
       mockUserProfile = { bloodGroup: 'A+' };
       (googleLogin as jest.Mock).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useLogin())
 
-      await act(async () => {
+      await act(async() => {
         await result.current.handleGoogleSignIn()
         jest.runAllTimers()
       })
@@ -210,11 +211,11 @@ describe('useLogin Hook', () => {
   })
 
   describe('handleFacebookSignIn', () => {
-    test('should fail gracefully when Facebook sign-in has session error', async () => {
+    test('should fail gracefully when Facebook sign-in has session error', async() => {
       const { result } = renderHook(() => useLogin());
       (facebookLogin as jest.Mock).mockRejectedValue(new Error('Failed to fetch session'))
 
-      await act(async () => {
+      await act(async() => {
         await result.current.handleFacebookSignIn()
       })
 
@@ -223,11 +224,11 @@ describe('useLogin Hook', () => {
       expect(result.current.socialLoginError).toBe('facebook login failed. Please try again.')
     })
 
-    test('should set socialLoginError on Facebook sign-in failure', async () => {
+    test('should set socialLoginError on Facebook sign-in failure', async() => {
       const { result } = renderHook(() => useLogin());
       (facebookLogin as jest.Mock).mockRejectedValue(new Error('Facebook sign-in failed'))
 
-      await act(async () => {
+      await act(async() => {
         await result.current.handleFacebookSignIn()
       })
 
@@ -235,13 +236,13 @@ describe('useLogin Hook', () => {
       expect(result.current.socialLoginError).toBe('facebook login failed. Please try again.')
     })
 
-    test('should navigate to ADD_PERSONAL_INFO when no profile exists', async () => {
+    test('should navigate to ADD_PERSONAL_INFO when no profile exists', async() => {
       mockUserProfile = null;
       (facebookLogin as jest.Mock).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useLogin())
 
-      await act(async () => {
+      await act(async() => {
         await result.current.handleFacebookSignIn()
         jest.runAllTimers()
       })
@@ -253,13 +254,13 @@ describe('useLogin Hook', () => {
       })
     })
 
-    test('should navigate to BOTTOM_TABS when profile exists', async () => {
+    test('should navigate to BOTTOM_TABS when profile exists', async() => {
       mockUserProfile = { bloodGroup: 'A+' };
       (facebookLogin as jest.Mock).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useLogin())
 
-      await act(async () => {
+      await act(async() => {
         await result.current.handleFacebookSignIn()
         jest.runAllTimers()
       })

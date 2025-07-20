@@ -1,15 +1,17 @@
-import {
+import type {
   BloodDonationAttributes,
   UpdateBloodDonationAttributes
 } from '../../bloodDonationWorkflow/Types'
+import type {
+  DonationFields } from '../../../services/aws/commons/ddbModels/BloodDonationModel'
 import {
-  DonationFields,
   BLOOD_REQUEST_PK_PREFIX,
   BLOOD_REQUEST_LSI1SK_PREFIX
 } from '../../../services/aws/commons/ddbModels/BloodDonationModel'
-import {
+import type {
   BloodGroup,
-  DonationDTO,
+  DonationDTO } from '../../../../commons/dto/DonationDTO'
+import {
   DonationStatus
 } from '../../../../commons/dto/DonationDTO'
 

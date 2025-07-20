@@ -1,5 +1,7 @@
 /**
- * For a detailed explanation regarding each configuration property, visit:
+ * For     'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|'
+      + '@expo-google-fonts/.*|react-navigation|@react-navigation/.*|'
+      + '@sentry/react-native|native-base|react-native-svg)'detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/configuration
  */
 
@@ -9,7 +11,8 @@ const config: Config = {
   preset: 'jest-expo',
   setupFiles: ['./setupTests.js'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg)'
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|'
+    + '@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg)'
   ],
   testPathIgnorePatterns: [
     './__tests__/__mocks__'

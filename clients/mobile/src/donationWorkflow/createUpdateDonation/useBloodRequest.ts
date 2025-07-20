@@ -191,7 +191,9 @@ export const useBloodRequest = (): unknown => {
     return hasErrors || !requiredFieldsFilled
   }, [errors, bloodRequestData])
 
-  const removeEmptyAndNullProperty = (object: Record<string, unknown>): Record<string, unknown> => Object.fromEntries(Object.entries(object).filter(([_, v]) => v !== null && v !== ''))
+  const removeEmptyAndNullProperty = (object: Record<string, unknown>): Record<string, unknown> => Object.fromEntries(
+    Object.entries(object).filter(([_, v]) => v !== null && v !== '')
+  )
 
   const createBloodDonationRequest = async(): Promise<DonationCreateUpdateResponse> => {
     const { bloodQuantity, ...rest } = bloodRequestData

@@ -63,7 +63,13 @@ export const formatToTwoDecimalPlaces = (value: string): number => {
   return isNaN(numValue) ? 0 : parseFloat(numValue.toFixed(2))
 }
 
-export const replaceTemplatePlaceholders = (template: string, ...values: string[]): string => template.replace(/{(\d+)}/g, (_match, index) => typeof values[index] !== 'undefined' ? values[index] : '')
+export const replaceTemplatePlaceholders = (
+  template: string,
+  ...values: string[]
+): string => template.replace(
+  /{(\d+)}/g,
+  (_match, index) => (values[index] !== undefined ? values[index] : '')
+)
 
 export const formatLocations = async(
   locations: string[],

@@ -23,7 +23,17 @@ type MultiSelectDropdownComponentProps = {
   extraInfo?: string;
 }
 
-const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({ label, options, name, selectedValue, placeholder, isRequired, onChange, error, extraInfo = '' }) => {
+const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({
+  label,
+  options,
+  name,
+  selectedValue,
+  placeholder,
+  isRequired,
+  onChange,
+  error,
+  extraInfo = ''
+}) => {
   const styles = createStyles(useTheme())
   const [selectedValues, setSelectedValues] = useState<string[]>([])
 

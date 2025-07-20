@@ -1,9 +1,10 @@
 import { AcceptDonationStatus } from '../../../../commons/dto/DonationDTO'
-import { AcceptDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
+import type { AcceptDonationRequestAttributes } from '../../../application/bloodDonationWorkflow/Types'
 
 const getISODate = (daysToAdd: number = 0): string => {
   const date = new Date()
   date.setDate(date.getDate() + daysToAdd)
+
   return date.toISOString()
 }
 

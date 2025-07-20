@@ -6,56 +6,56 @@ describe('handleAuthError', () => {
   })
 
   it('should return a message for NotAuthorizedException', () => {
-    const error = new Error('Unauthorized');
-    (error as any).name = 'NotAuthorizedException'
+    const error = new Error('Unauthorized')
+    error.name = 'NotAuthorizedException'
     expect(handleAuthError(error)).toBe('Your account is not confirmed. Please confirm your account first.')
   })
 
   it('should return a message for NetworkError', () => {
-    const error = new Error('Network issue');
-    (error as any).name = 'NetworkError'
+    const error = new Error('Network issue')
+    error.name = 'NetworkError'
     expect(handleAuthError(error)).toBe('Network error. Check your connection.')
   })
 
   it('should return a message for UsernameExistsException', () => {
-    const error = new Error('User exists');
-    (error as any).name = 'UsernameExistsException'
+    const error = new Error('User exists')
+    error.name = 'UsernameExistsException'
     expect(handleAuthError(error)).toBe('Account already exists.')
   })
 
   it('should return a message for InvalidPasswordException', () => {
-    const error = new Error('Weak password');
-    (error as any).name = 'InvalidPasswordException'
+    const error = new Error('Weak password')
+    error.name = 'InvalidPasswordException'
     expect(handleAuthError(error)).toBe('Weak password. Use a stronger one.')
   })
 
   it('should return a message for InvalidParameterException', () => {
-    const error = new Error('Invalid input');
-    (error as any).name = 'InvalidParameterException'
+    const error = new Error('Invalid input')
+    error.name = 'InvalidParameterException'
     expect(handleAuthError(error)).toBe('Invalid input. Check your details.')
   })
 
   it('should return a message for LimitExceededException', () => {
-    const error = new Error('Limit exceeded');
-    (error as any).name = 'LimitExceededException'
+    const error = new Error('Limit exceeded')
+    error.name = 'LimitExceededException'
     expect(handleAuthError(error)).toBe('Too many requests. Try again later.')
   })
 
   it('should return a message for CodeMismatchException', () => {
-    const error = new Error('Code mismatch');
-    (error as any).name = 'CodeMismatchException'
+    const error = new Error('Code mismatch')
+    error.name = 'CodeMismatchException'
     expect(handleAuthError(error)).toBe('Invalid OTP code. Please try again.')
   })
 
   it('should return a message for ExpiredCodeException', () => {
-    const error = new Error('Code expired');
-    (error as any).name = 'ExpiredCodeException'
+    const error = new Error('Code expired')
+    error.name = 'ExpiredCodeException'
     expect(handleAuthError(error)).toBe('OTP code has expired. Request a new one.')
   })
 
   it('should return a message for UserNotFoundException', () => {
-    const error = new Error('User not found');
-    (error as any).name = 'UserNotFoundException'
+    const error = new Error('User not found')
+    error.name = 'UserNotFoundException'
     expect(handleAuthError(error)).toBe('No account found with this email.')
   })
 
