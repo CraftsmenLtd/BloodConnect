@@ -1,6 +1,7 @@
-import { createDonation, updateDonation, fetchDonationList, DonationResponse } from '../../src/donationWorkflow/donationService'
-import { BloodDonationRecord } from '../../src/donationWorkflow/types'
-import { FetchResponse } from '../../src/setup/clients/FetchClient'
+import type { DonationResponse } from '../../src/donationWorkflow/donationService'
+import { createDonation, updateDonation, fetchDonationList } from '../../src/donationWorkflow/donationService'
+import type { BloodDonationRecord } from '../../src/donationWorkflow/types'
+import type { FetchResponse } from '../../src/setup/clients/FetchClient'
 import { FetchClientError } from '../../src/setup/clients/FetchClientError'
 
 jest.mock('../../src/setup/clients/FetchClient')
@@ -57,7 +58,6 @@ describe('Donation Service', () => {
   describe('fetchDonationList', () => {
     it('should return data and status on success', async() => {
       const mockData: BloodDonationRecord[] = [{
-        reqPostId: '1',
         patientName: 'John Doe',
         requestedBloodGroup: 'O-',
         location: 'Baridhara, Dhaka',
@@ -68,7 +68,12 @@ describe('Donation Service', () => {
         transportationInfo: 'Car available',
         shortDescription: 'Need blood urgently for surgery.',
         latitude: 23.7936,
-        longitude: 90.4043
+        longitude: 90.4043,
+        seekerId: 'seeker-123',
+        acceptedDonors: [],
+        status: 'ACCEPTED', // or another valid StatusType value
+        requestPostId: 'post-456',
+        createdAt: '2024-10-27T12:00:00Z'
       }]
 
       const mockResponse: FetchResponse<DonationResponse> = { data: mockData, status: 200 }

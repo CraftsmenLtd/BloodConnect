@@ -1,13 +1,13 @@
-import React from 'clients/commons/platform/node_modules/@types/react';
+import React from 'clients/commons/platform/node_modules/@types/react'
 import {
   FaMoon,
   FaSun,
   MdDashboard,
   MdSettings,
   MdLogout,
-} from '../../assets/icons';
-import SidebarLink from './SidebarLink';
-import { useSidebar } from './useSidebar';
+} from '../../assets/icons'
+import SidebarLink from './SidebarLink'
+import { useSidebar } from './useSidebar'
 
 type SidebarProps = {
   sidebarExpanded: boolean;
@@ -25,7 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const { pathname, sidebar, handleToggleSidebar, handleSignOut } = useSidebar(
     sidebarExpanded,
     toggleSidebar
-  );
+  )
 
   return (
     <aside
@@ -88,14 +88,14 @@ const Sidebar: React.FC<SidebarProps> = ({
               label="Logout"
               sidebarExpanded={sidebarExpanded}
               onClick={() => {
-                void handleSignOut();
+                void handleSignOut()
               }}
             />
           </ul>
         </nav>
       </div>
     </aside>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

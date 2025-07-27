@@ -3,7 +3,7 @@ import { Navbar, Container, Nav, NavDropdown, Spinner } from 'react-bootstrap'
 
 const NavBar = () => {
   const { signOut, user, authStatus, error } = useAuthenticator()
-  const isLoading = authStatus != 'authenticated' || !user
+  const isLoading = authStatus !== 'authenticated' || !user
 
   if (error) {
     alert(error)

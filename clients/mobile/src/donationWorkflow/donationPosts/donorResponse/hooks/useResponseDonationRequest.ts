@@ -62,6 +62,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
 
     if (userProfile.bloodGroup !== bloodRequest.requestedBloodGroup) {
       ToastAndroid.showWithGravity('Blood group doesn\'t match', ToastAndroid.SHORT, ToastAndroid.CENTER)
+
       return
     }
     const isString = (value: unknown): value is string => typeof value === 'string'
@@ -78,10 +79,10 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
         throw new Error(errorMessage)
       }
 
-      if (bloodRequest === null ||
-        !(bloodRequest.donationDateTime instanceof Date ||
-          typeof bloodRequest.donationDateTime === 'string' ||
-          typeof bloodRequest.donationDateTime === 'number')) {
+      if (bloodRequest === null
+        || !(bloodRequest.donationDateTime instanceof Date
+          || typeof bloodRequest.donationDateTime === 'string'
+          || typeof bloodRequest.donationDateTime === 'number')) {
         return
       }
 
@@ -96,8 +97,8 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
 
   const [handleIgnore, isIgnoreLoading, , ignoreError] = useFetchData(async() => {
     if (
-      bloodRequest === null ||
-      ['requestPostId', 'seekerId', 'createdAt', 'requestedBloodGroup'].some(
+      bloodRequest === null
+      || ['requestPostId', 'seekerId', 'createdAt', 'requestedBloodGroup'].some(
         (key) => bloodRequest[key] === undefined
       )
     ) {
@@ -106,6 +107,7 @@ export const useResponseDonationRequest = (): useResponseDonationRequestReturnTy
 
     if (userProfile.bloodGroup !== bloodRequest.requestedBloodGroup) {
       navigation.navigate(SCREENS.POSTS)
+
       return
     }
     const { requestPostId, seekerId, createdAt } = bloodRequest

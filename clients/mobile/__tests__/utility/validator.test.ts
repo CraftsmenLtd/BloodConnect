@@ -114,7 +114,8 @@ describe('Validation Functions', () => {
       const today = new Date()
       const fourteenYearsAgo = new Date(today)
       fourteenYearsAgo.setFullYear(today.getFullYear() - 14)
-      expect(validateDateOfBirth(fourteenYearsAgo.toISOString().split('T')[0])).toBe(`User must be at least ${ACCOUNT_CREATION_MINIMUM_AGE} years old.`)
+      expect(validateDateOfBirth(fourteenYearsAgo.toISOString().split('T')[0]))
+        .toBe(`User must be at least ${ACCOUNT_CREATION_MINIMUM_AGE} years old.`)
     })
 
     it('should return null for ages 18 and over', () => {

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 import { useState, useEffect, createContext, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
 import type { NavigationContainerRef, ParamListBase } from '@react-navigation/native'
@@ -11,7 +11,12 @@ import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
 import { LOCAL_NOTIFICATION_TYPE } from '../constant/consts'
 
-const SCREEN_FOR_NOTIFICATION: Partial<Record<string, { screen: keyof RootStackParamList; getParams?: (data: Record<string, unknown>) => NotificationData }>> = {
+type NotificationScreenConfig = {
+  screen: keyof RootStackParamList;
+  getParams?: (data: Record<string, unknown>) => NotificationData;
+}
+
+const SCREEN_FOR_NOTIFICATION: Partial<Record<string, NotificationScreenConfig>> = {
   BLOOD_REQ_POST: { screen: SCREENS.BLOOD_REQUEST_PREVIEW, getParams: (data) => ({ notificationData: data }) },
   REQ_ACCEPTED: { screen: SCREENS.DONOR_RESPONSE, getParams: (data) => ({ notificationData: data }) },
   [LOCAL_NOTIFICATION_TYPE.REQUEST_STATUS]: { screen: SCREENS.REQUEST_STATUS, getParams: (data) => ({ ...data }) },
@@ -24,7 +29,15 @@ export const initialNotificationState: NotificationContextType = {
 
 export const NotificationContext = createContext<NotificationContextType>(initialNotificationState)
 
-export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef: NavigationContainerRef<ParamListBase> }> = ({ children, navigationRef }) => {
+type NotificationProviderProps = {
+  children: ReactNode;
+  navigationRef: NavigationContainerRef<ParamListBase>;
+}
+
+export const NotificationProvider: React.FC<NotificationProviderProps> = ({
+  children,
+  navigationRef
+}) => {
   const [notificationData, setNotificationData] = useState<NotificationData | null>(null)
   const navigationStateUnsubscribe = useRef<(() => void) | null>(null)
 
@@ -46,6 +59,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
     })
 
     navigationStateUnsubscribe.current = unsubscribe
+
     return () => { responseListener.remove() }
   }, [])
 
@@ -66,12 +80,10 @@ export const NotificationProvider: React.FC<{ children: ReactNode; navigationRef
     navigationStateUnsubscribe.current !== null && navigationStateUnsubscribe.current()
   }
 
-  const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => {
-    return (
-      Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0 &&
-      response?.notification.request.identifier !== null
-    )
-  }
+  const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => (
+    Object.keys(response?.notification.request.content.data.payload ?? {}).length > 0
+      && response?.notification.request.identifier !== null
+  )
 
   const handleNotificationNavigation = (response: Notifications.NotificationResponse | null) => {
     if (response === null) return

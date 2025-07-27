@@ -39,7 +39,7 @@ export const useRegister = (): unknown => {
   const { socialLoading, socialLoginError, handleGoogleSignIn, handleFacebookSignIn } = useSocialAuth()
 
   const handleInputChange = (name: CredentialKeys, value: string): void => {
-    setRegisterCredential(prevState => ({
+    setRegisterCredential((prevState) => ({
       ...prevState,
       [name]: value
     }))
@@ -48,18 +48,16 @@ export const useRegister = (): unknown => {
 
   const handleInputValidation = (name: CredentialKeys, value: string): void => {
     const errorMsg = validateInput(value, validationRules[name])
-    setErrors(prevErrors => ({
+    setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: errorMsg
     }))
   }
 
-  const isButtonDisabled = useMemo(() => {
-    return !(
-      Object.values(registerCredential).every(value => value !== '') &&
-      Object.values(errors).every(error => error === null)
-    )
-  }, [registerCredential, errors])
+  const isButtonDisabled = useMemo(() => !(
+    Object.values(registerCredential).every((value) => value !== '')
+      && Object.values(errors).every((error) => error === null)
+  ), [registerCredential, errors])
 
   const handleRegister = async(): Promise<void> => {
     navigation.navigate(SCREENS.SET_PASSWORD, {

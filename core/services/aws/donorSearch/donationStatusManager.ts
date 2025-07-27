@@ -28,6 +28,7 @@ async function donationStatusManager(event: SQSEvent): Promise<{ status: string 
     for (const record of event.Records) {
       await processSQSRecord(record)
     }
+
     return { status: 'Success' }
   } catch (error) {
     throw error instanceof Error ? error : new Error(UNKNOWN_ERROR_MESSAGE)
@@ -35,8 +36,8 @@ async function donationStatusManager(event: SQSEvent): Promise<{ status: string 
 }
 
 async function processSQSRecord(record: SQSRecord): Promise<void> {
-  const body =
-    typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
+  const body
+    = typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
   const primaryIndex: string = body?.PK
   const secondaryIndex: string = body?.SK

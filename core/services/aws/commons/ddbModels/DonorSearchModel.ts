@@ -36,6 +36,7 @@ implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, Dono
   fromDto(donationDto: DonorSearchDTO): DonorSearchFields {
     const { seekerId, requestPostId, ...remainingDonationData } = donationDto
     const postCreationDate = remainingDonationData.createdAt ?? new Date().toISOString()
+
     return {
       PK: `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
       SK: `${DONOR_SEARCH_PK_PREFIX}#${postCreationDate}#${requestPostId}`,
@@ -48,6 +49,7 @@ implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, Dono
   toDto(dbFields: DonorSearchFields): DonorSearchDTO {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { PK, SK, LSI1SK, createdAt, ...remainingDonorSearchFields } = dbFields
+
     return {
       ...remainingDonorSearchFields,
       requestPostId: SK.replace(`${DONOR_SEARCH_PK_PREFIX}#${createdAt}#`, ''),

@@ -8,6 +8,7 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
 export const parseErrorMessage = (message: string): string | null => {
   try {
     const parsedError = parseJsonData<{ message: string }>(message)
+
     return parsedError !== null && typeof parsedError.message === 'string' ? parsedError.message : null
   } catch (error) {
     return null
@@ -19,12 +20,14 @@ export const extractErrorMessage = (error: unknown): string => {
     if (error instanceof Error) {
       const parsedMessage = parseErrorMessage(error.message)
       if (parsedMessage !== null) return parsedMessage
+
       return error.message
     }
 
     if (typeof error === 'string') {
       const parsedMessage = parseErrorMessage(error)
       if (parsedMessage !== null) return parsedMessage
+
       return error
     }
 
@@ -32,6 +35,7 @@ export const extractErrorMessage = (error: unknown): string => {
       const message = (error as { message: string }).message
       const parsedMessage = parseErrorMessage(message)
       if (parsedMessage !== null) return parsedMessage
+
       return message
     }
 
@@ -44,27 +48,27 @@ export const extractErrorMessage = (error: unknown): string => {
 export const formatBloodQuantity = (bloodQuantity: string): string => {
   if (bloodQuantity !== '') {
     const quantity = +bloodQuantity
+
     return quantity === 1 ? `${quantity} Bag` : `${quantity} Bags`
   }
+
   return ''
 }
 
-export const formatDonations = (requests: BloodDonationRecord[], name?: string): DonationData[] => {
-  return requests.map(request => ({
-    requestPostId: request.requestPostId ?? '',
-    seekerId: request.seekerId ?? '',
-    seekerName: request.seekerName ?? name ?? '',
-    patientName: request.patientName ?? name ?? '',
-    requestedBloodGroup: request.requestedBloodGroup ?? '',
-    bloodQuantity: request.bloodQuantity,
-    urgencyLevel: request.urgencyLevel ?? '',
-    location: request.location ?? '',
-    donationDateTime: request.donationDateTime ?? new Date().toISOString(),
-    contactNumber: request.contactNumber ?? '',
-    transportationInfo: request.transportationInfo ?? '',
-    shortDescription: request.shortDescription ?? '',
-    status: request.status ?? '',
-    createdAt: request.createdAt ?? new Date().toISOString(),
-    acceptedDonors: request.acceptedDonors ?? []
-  }))
-}
+export const formatDonations = (requests: BloodDonationRecord[], name?: string): DonationData[] => requests.map((request) => ({
+  requestPostId: request.requestPostId ?? '',
+  seekerId: request.seekerId ?? '',
+  seekerName: request.seekerName ?? name ?? '',
+  patientName: request.patientName ?? name ?? '',
+  requestedBloodGroup: request.requestedBloodGroup ?? '',
+  bloodQuantity: request.bloodQuantity,
+  urgencyLevel: request.urgencyLevel ?? '',
+  location: request.location ?? '',
+  donationDateTime: request.donationDateTime ?? new Date().toISOString(),
+  contactNumber: request.contactNumber ?? '',
+  transportationInfo: request.transportationInfo ?? '',
+  shortDescription: request.shortDescription ?? '',
+  status: request.status ?? '',
+  createdAt: request.createdAt ?? new Date().toISOString(),
+  acceptedDonors: request.acceptedDonors ?? []
+}))

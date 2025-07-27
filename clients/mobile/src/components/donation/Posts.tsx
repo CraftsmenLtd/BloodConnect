@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, View, Text } from 'react-native'
-import type { PostCardDisplayOptions } from './PostCard';
+import type { PostCardDisplayOptions } from './PostCard'
 import { PostCard } from './PostCard'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -64,6 +64,7 @@ const Posts: React.FC<PostsProps> = ({
       </View>
     }
   />
+
   return (
     <StateAwareRenderer
       loading={loading}

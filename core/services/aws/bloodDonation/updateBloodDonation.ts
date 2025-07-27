@@ -77,6 +77,7 @@ async function updateBloodDonationLambda(
       notificationService,
       acceptDonationService
     )
+
     return generateApiGatewayResponse(
       {
         success: true,
@@ -88,6 +89,7 @@ async function updateBloodDonationLambda(
   } catch (error) {
     httpLogger.error(error)
     const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
+
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
 }

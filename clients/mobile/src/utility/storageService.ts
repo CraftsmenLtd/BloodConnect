@@ -19,6 +19,7 @@ const getItem = async <T>(key: string): Promise<T | null> => {
     if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
       return JSON.parse(value) as T
     }
+
     return value as T
   } catch (error) {
     throw new Error(`Failed to get ${key}`)
@@ -47,9 +48,7 @@ type KeySet = {
   remove(): Promise<void>;
 }
 const createKeySet = (keys: readonly string[]): KeySet => {
-  const filter = (key: string): KeySet => {
-    return createKeySet(keys.filter(k => k !== key))
-  }
+  const filter = (key: string): KeySet => createKeySet(keys.filter((k) => k !== key))
 
   const remove = async(): Promise<void> => {
     await removeKeys(keys)
@@ -65,6 +64,7 @@ const createKeySet = (keys: readonly string[]): KeySet => {
 const getAllKeys = async(): Promise<KeySet> => {
   try {
     const keys = await AsyncStorage.getAllKeys()
+
     return createKeySet(keys)
   } catch (error: unknown) {
     if (error instanceof Error) {

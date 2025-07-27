@@ -1,11 +1,11 @@
-import type { ReactNode } from 'clients/commons/platform/node_modules/@types/react';
-import React from 'clients/commons/platform/node_modules/@types/react';
-import Sidebar from '../../components/sidebar/sidebar';
-import { useDefaultLayout } from './useDefaultLayout';
+import type { ReactNode } from 'clients/commons/platform/node_modules/@types/react'
+import React from 'clients/commons/platform/node_modules/@types/react'
+import Sidebar from '../../components/sidebar/sidebar'
+import { useDefaultLayout } from './useDefaultLayout'
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { sidebarExpanded, handleSidebarToggle, theme, toggleTheme } =
-    useDefaultLayout();
+  const { sidebarExpanded, handleSidebarToggle, theme, toggleTheme }
+    = useDefaultLayout()
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -27,7 +27,7 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default DefaultLayout;
+export default DefaultLayout

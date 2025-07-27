@@ -42,8 +42,8 @@ async function sendPushNotification(event: SQSEvent): Promise<void> {
 }
 
 async function processSQSRecord(record: SQSRecord): Promise<void> {
-  const body: NotificationAttributes =
-    typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
+  const body: NotificationAttributes
+    = typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
   const { userId } = body
   const serviceLogger = createServiceLogger(userId)

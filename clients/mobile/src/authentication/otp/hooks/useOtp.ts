@@ -37,6 +37,7 @@ export const useOtp = (): unknown => {
       const timer = setInterval(() => {
         setCountdown((prev) => (prev !== null ? prev - 1 : null))
       }, 1000)
+
       return () => { clearInterval(timer) }
     } else if (countdown === 0) {
       setIsDisabled(false)
@@ -83,16 +84,16 @@ export const useOtp = (): unknown => {
   const resendForgotPasswordOtpHandler = async(email: string): Promise<void> => {
     const nextStep = await resetPasswordHandler(email)
     switch (nextStep.resetPasswordStep) {
-    case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
-      setCountdown(RESEND_CODE_COUNTDOWN);
-      setIsDisabled(true);
-      setCountdownStarted(true);
-      break;
-    case 'DONE':
-      setError('Password reset process already completed.');
-      break;
-    default:
-      setError('Password reset failed. Check your email or try again.');
+      case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
+        setCountdown(RESEND_CODE_COUNTDOWN)
+        setIsDisabled(true)
+        setCountdownStarted(true)
+        break
+      case 'DONE':
+        setError('Password reset process already completed.')
+        break
+      default:
+        setError('Password reset failed. Check your email or try again.')
     }
   }
 
@@ -129,7 +130,8 @@ export const useOtp = (): unknown => {
           SCREENS.SET_PASSWORD,
           {
             routeParams: {
-              email, otp:
+              email,
+              otp:
                 otp.join('')
             },
             fromScreen: SCREENS.OTP

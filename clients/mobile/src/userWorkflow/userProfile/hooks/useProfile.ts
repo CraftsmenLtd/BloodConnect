@@ -14,8 +14,10 @@ export const useProfile = (): { userDetails: UserProfileDetails } => {
   const getLocation = (preferredDonationLocations: Array<{ area: string }>): string => {
     if (preferredDonationLocations.length > 0) {
       const { area = '' } = preferredDonationLocations[0]
+
       return `${area}`
     }
+
     return ''
   }
 
@@ -26,17 +28,18 @@ export const useProfile = (): { userDetails: UserProfileDetails } => {
     const monthDifference = today.getMonth() - birthDate.getMonth()
 
     if (
-      monthDifference < 0 ||
-      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+      monthDifference < 0
+      || (monthDifference === 0 && today.getDate() < birthDate.getDate())
     ) {
       return age - 1
     }
+
     return age
   }
 
   const userDetails = useMemo(() => {
-    const location = userProfile.preferredDonationLocations !== undefined ?
-      getLocation(userProfile.preferredDonationLocations) : ''
+    const location = userProfile.preferredDonationLocations !== undefined
+      ? getLocation(userProfile.preferredDonationLocations) : ''
     const age = userProfile.dateOfBirth !== undefined ? calculateAge(userProfile.dateOfBirth) : 0
     const phone = userProfile.phoneNumbers?.[0] ?? ''
     const height = userProfile?.height ? userProfile?.height : '0.0'

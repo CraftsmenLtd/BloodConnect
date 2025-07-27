@@ -64,30 +64,28 @@ const AwsProviderWrapper = () => {
   </Routes>
 }
 
-const App = () => {
-  return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      justifyContent: 'center',
-    }}
-    className="bg-dark"
-    >
-      <Authenticator
-        socialProviders={['google']}
-        hideSignUp>
-        <Router>
-          <NavBar />
-          <AwsProvider>
-            <DataProvider>
-              <AwsProviderWrapper />
-            </DataProvider>
-          </AwsProvider>
-        </Router>
-      </Authenticator>
-    </div>
-  )
-}
+const App = () => (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    justifyContent: 'center',
+  }}
+  className="bg-dark"
+  >
+    <Authenticator
+      socialProviders={['google']}
+      hideSignUp>
+      <Router>
+        <NavBar />
+        <AwsProvider>
+          <DataProvider>
+            <AwsProviderWrapper />
+          </DataProvider>
+        </AwsProvider>
+      </Router>
+    </Authenticator>
+  </div>
+)
 
 export default App

@@ -16,9 +16,9 @@ export class GeohashCacheManager<K, V> {
 
   constructor(maxEntries: number, maxMBSize: number, cacheTimeoutMinutes: number) {
     if (
-      !Number.isInteger(maxEntries) ||
-      !Number.isInteger(maxMBSize) ||
-      !Number.isInteger(cacheTimeoutMinutes)
+      !Number.isInteger(maxEntries)
+      || !Number.isInteger(maxMBSize)
+      || !Number.isInteger(cacheTimeoutMinutes)
     ) {
       throw new Error('All parameters must be integers!')
     }
@@ -38,9 +38,9 @@ export class GeohashCacheManager<K, V> {
     const dataByteSize = this.calculateByteSize(data)
 
     while (
-      (this.cache.size >= this.maxEntries ||
-        this.currentByteSize + dataByteSize > this.maxByteSize) &&
-      this.cache.size > 0
+      (this.cache.size >= this.maxEntries
+        || this.currentByteSize + dataByteSize > this.maxByteSize)
+      && this.cache.size > 0
     ) {
       const oldestKey = this.cache.keys().next().value
       if (oldestKey !== undefined) {
@@ -67,10 +67,13 @@ export class GeohashCacheManager<K, V> {
       if (timeDifferenceMinutes > this.cacheTimeoutMinutes) {
         this.cache.delete(key)
         this.currentByteSize -= this.calculateByteSize(entry.data)
+
         return undefined
       }
+
       return entry.data
     }
+
     return undefined
   }
 }
@@ -91,13 +94,14 @@ function groupDonorsByGeohash(
 ): GeohashDonorMap {
   return queriedDonors.reduce<GeohashDonorMap>((groups, donor) => {
     const donorGeohash = donor.geohash.slice(0, neighborSearchGeohashPrefixLength)
-    if (groups[donorGeohash] == null) {
+    if (groups[donorGeohash] === null) {
       groups[donorGeohash] = []
     }
     groups[donorGeohash].push({
       userId: donor.userId,
       locationId: donor.locationId
     })
+
     return groups
   }, {})
 }

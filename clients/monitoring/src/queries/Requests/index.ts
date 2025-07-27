@@ -2,13 +2,13 @@ import type {
   AttributeValue,
   QueryCommandInput,
   GetItemCommandInput,
-  DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { QueryCommand, GetItemCommand } from '@aws-sdk/client-dynamodb';
+  DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { QueryCommand, GetItemCommand } from '@aws-sdk/client-dynamodb'
 import type {
   BloodRequestDynamoDBUnmarshaledItem,
   NotificationDynamoDBUnmarshaledItem,
-  UserLocationDynamoDBUnmarshaledItem } from '../../constants/types';
-import type { DonationStatus } from '../../../../../commons/dto/DonationDTO';
+  UserLocationDynamoDBUnmarshaledItem } from '../../constants/types'
+import type { DonationStatus } from '../../../../../commons/dto/DonationDTO'
 
 
 export type QueryDonationsInput = {
@@ -84,6 +84,7 @@ export const queryNotifiedDonors = async(
 
   const command = new QueryCommand(input)
   const response = await dynamodbClient.send(command)
+
   return {
     items: (response.Items ?? []) as NotificationDynamoDBUnmarshaledItem[],
     nextPageToken: response.LastEvaluatedKey,

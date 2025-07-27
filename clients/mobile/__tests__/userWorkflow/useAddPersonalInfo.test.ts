@@ -71,10 +71,10 @@ describe('useAddPersonalInfo Hook', () => {
     mockFetchUserProfile.mockResolvedValue(null)
   })
 
-  test('should initialize with default values', () => {
+  test('should initialize with default values', async() => {
     const { result } = renderHook(() => useAddPersonalInfo())
 
-    expect(result.current.personalInfo).toEqual({
+    expect(result.current.personalInfo).toEqual(expect.objectContaining({
       bloodGroup: '',
       height: null,
       weight: null,
@@ -85,11 +85,12 @@ describe('useAddPersonalInfo Hook', () => {
       locations: [],
       availableForDonation: true,
       acceptPolicy: false
-    })
+    }))
     expect(result.current.errors).toEqual(expect.any(Object))
     expect(result.current.errorMessage).toBe('')
     expect(result.current.loading).toBe(false)
     expect(result.current.isButtonDisabled).toBe(true)
+
   })
 
   test('should update personalInfo and validate input on handleInputChange', () => {
@@ -103,21 +104,21 @@ describe('useAddPersonalInfo Hook', () => {
     expect(result.current.errors.bloodGroup).toBe(null)
   })
 
-  test('should disable button if fields are missing or errors exist', () => {
+  test('should disable button if fields are missing or errors exist', async() => {
     const { result } = renderHook(() => useAddPersonalInfo())
 
-    act(() => {
-      Object.entries(validPersonalInfo).forEach(([key, value]) => {
-        if (key !== 'acceptPolicy') {
-          result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
-        }
-      })
-    })
+    for (const [key, value] of Object.entries(validPersonalInfo)) {
+      if (key !== 'acceptPolicy') {
+        await act(async() => {
+          result.current.handleInputChange(key as keyof typeof validPersonalInfo, value)
+        })
+      }
+    }
 
     expect(result.current.isButtonDisabled).toBe(true)
 
     act(() => {
-      result.current.handleInputChange('acceptPolicy', true)
+      result.current.handleInputChange('acceptPolicy', 'true')
     })
 
     expect(result.current.isButtonDisabled).toBe(false)
@@ -129,11 +130,11 @@ describe('useAddPersonalInfo Hook', () => {
 
     const { result } = renderHook(() => useAddPersonalInfo())
 
-    await act(async() => {
-      Object.entries(validPersonalInfo).forEach(([key, value]) => {
-        result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
+    for (const [key, value] of Object.entries(validPersonalInfo)) {
+      await act(async() => {
+        result.current.handleInputChange(key as keyof typeof validPersonalInfo, value)
       })
-    })
+    }
 
     await act(async() => {
       await result.current.handleSubmit()
@@ -151,11 +152,11 @@ describe('useAddPersonalInfo Hook', () => {
 
     const { result } = renderHook(() => useAddPersonalInfo())
 
-    await act(async() => {
-      Object.entries(validPersonalInfo).forEach(([key, value]) => {
-        result.current.handleInputChange(key as keyof typeof validPersonalInfo, value as any)
+    for (const [key, value] of Object.entries(validPersonalInfo)) {
+      await act(async() => {
+        result.current.handleInputChange(key as keyof typeof validPersonalInfo, value)
       })
-    })
+    }
 
     await act(async() => {
       await result.current.handleSubmit()

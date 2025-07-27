@@ -8,6 +8,7 @@ export type DonationCreateUpdateResponse = ApiResponse<{ requestPostId: string; 
 export const createDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationCreateUpdateResponse> => {
   try {
     const response = await httpClient.post<DonationCreateUpdateResponse>('/donations', payload)
+
     return {
       message: response.message,
       data: response.data,
@@ -22,6 +23,7 @@ export const createDonation = async(payload: Record<string, unknown>, httpClient
 export const updateDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationCreateUpdateResponse> => {
   try {
     const response = await httpClient.patch<DonationCreateUpdateResponse>('/donations', payload)
+
     return {
       message: response.message,
       data: response.data,
@@ -43,6 +45,7 @@ export const fetchDonationPublicPosts = async(
       `/donations/posts/${geoPartition}`,
       { bloodGroup: (bloodGroup !== '' ? bloodGroup : '') }
     )
+
     return {
       data: response.data,
       status: response.status
@@ -56,6 +59,7 @@ export const fetchDonationPublicPosts = async(
 export const fetchDonationList = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.get<DonationResponse>('/donations', payload)
+
     return {
       data: response.data,
       status: response.status
@@ -66,9 +70,14 @@ export const fetchDonationList = async(payload: Record<string, unknown>, httpCli
   }
 }
 
-export const fetchSingleDonationPost = async(requestPostId: string, createdAt: string, httpClient: HttpClient): Promise<ApiResponse<BloodDonationRecord>> => {
+export const fetchSingleDonationPost = async(
+  requestPostId: string,
+  createdAt: string,
+  httpClient: HttpClient
+): Promise<ApiResponse<BloodDonationRecord>> => {
   try {
     const response = await httpClient.get<ApiResponse<BloodDonationRecord>>(`/donations/${requestPostId}/${createdAt}`, {})
+
     return {
       data: response.data,
       status: response.status
@@ -82,6 +91,7 @@ export const fetchSingleDonationPost = async(requestPostId: string, createdAt: s
 export const completeDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.post<DonationResponse>('/donations/complete', payload)
+
     return {
       data: response.data,
       status: response.status
@@ -95,6 +105,7 @@ export const completeDonation = async(payload: Record<string, unknown>, httpClie
 export const fetchMyResponses = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.get<DonationResponse>('/donations/responses', payload)
+
     return {
       data: response.data,
       status: response.status
@@ -108,6 +119,7 @@ export const fetchMyResponses = async(payload: Record<string, unknown>, httpClie
 export const updateMyResponses = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.patch<DonationResponse>('/donations/responses', payload)
+
     return {
       data: response.data,
       status: response.status
@@ -121,6 +133,7 @@ export const updateMyResponses = async(payload: Record<string, unknown>, httpCli
 export const cancelDonation = async(payload: Record<string, unknown>, httpClient: HttpClient): Promise<DonationResponse> => {
   try {
     const response = await httpClient.patch<DonationResponse>('/donations/cancel', payload)
+
     return {
       message: response.message,
       status: response.status,

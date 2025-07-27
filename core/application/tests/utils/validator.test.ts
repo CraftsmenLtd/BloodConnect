@@ -1,4 +1,5 @@
-import { validateDonationDateTime, validateBloodQuantity, validateInputWithRules, ValidationRule } from '../../utils/validator'
+import type { ValidationRule } from '../../utils/validator'
+import { validateDonationDateTime, validateBloodQuantity, validateInputWithRules } from '../../utils/validator'
 
 describe('Validation Functions', () => {
   describe('validateDonationDateTime', () => {

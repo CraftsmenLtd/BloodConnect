@@ -19,7 +19,9 @@ const LinkWithText: React.FC<LinkWithTextProps> = ({ staticText, linkText, onPre
       <Text>{staticText}</Text>
       <TouchableOpacity onPress={onPress} disabled={isDisabled}>
         <Text style={[styles.linkText, isDisabled && styles.disabledLinkText]}>
-          {isDisabled && countdown !== null && countdown !== undefined ? `Resend OTP in ${Math.floor(countdown / 60)}:${('0' + (countdown % 60)).slice(-2)}` : linkText}
+          {isDisabled && countdown !== null ? (
+            `Resend OTP in ${Math.floor(countdown / 60)}:${('0' + (countdown % 60)).slice(-2)}`
+          ) : linkText}
         </Text>
       </TouchableOpacity>
     </View>

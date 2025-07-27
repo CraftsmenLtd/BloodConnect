@@ -14,7 +14,7 @@ const geocodeSchema = z.object({
   place_id: z.string().optional(),
   language: z.string().optional(),
   region: z.string().optional()
-}).refine(data => (
+}).refine((data) => (
   data?.address ?? data?.latlng ?? data?.place_id
 ), {
   message: 'At least one of address, latlng, or place_id must be provided'

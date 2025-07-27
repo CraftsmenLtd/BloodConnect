@@ -6,5 +6,6 @@ export function getDaysInSecs(dayCount: number): number {
   if (dayCount < 0) {
     return 0
   }
+
   return dayCount * 24 * 60 * 60
 }

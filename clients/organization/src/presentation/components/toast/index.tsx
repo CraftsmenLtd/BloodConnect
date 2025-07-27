@@ -5,12 +5,13 @@ type ToastProps = {
 };
 
 export function Toast({ msg, className, visible }: ToastProps) {
-  if (!visible) return null;
+  if (!visible) return null
+
   return (
     <div className="toast toast-top toast-end">
       <div className={`alert ${className}`}>
         <span>{msg}</span>
       </div>
     </div>
-  );
+  )
 }
