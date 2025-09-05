@@ -22,7 +22,7 @@ start-expo:
 
 # Build the APK with the specified profile
 build-android-local:
-	@cd $(MAKEFILE_DIR) && eas build --profile $(BUILD_PROFILE) --platform android --local --output "$(APP_NAME)_$(APP_VERSION).apk"
+	@cd $(MAKEFILE_DIR) && eas build --profile $(BUILD_PROFILE) --platform android --local --output "$(APP_NAME)_$(APP_VERSION)"
 
 clean:
 	@rm -rf build .expo
