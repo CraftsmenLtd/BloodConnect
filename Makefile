@@ -134,7 +134,6 @@ build-runner-image:
 run-command-%:
 	docker rm -f $(DOCKER_DEV_CONTAINER_NAME) || true
 	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
-	           --user $(HOST_UID):$(HOST_GID) \
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
 	           make $* NPM_TEST_ARGS=$(NPM_TEST_ARGS) NPM_ARGS=$(NPM_ARGS)
 
@@ -174,4 +173,3 @@ prepare-mobile-env:
 
 fetch-google-service-file:
 	@aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/$(BUILD_PROFILE)/google-services.json clients/mobile/
-
