@@ -4,7 +4,7 @@ FROM debian:bookworm-slim
 
 #checkov:skip=CKV_DOCKER_9: "Ensure that APT isn't used"
 RUN apt update && apt install -y \
-    ca-certificates curl openssh-client gnupg make gcc zip unzip apt-utils apt-transport-https software-properties-common \
+    ca-certificates curl openssh-client gnupg make gcc zip unzip apt-utils apt-transport-https software-properties-common sudo \
     python3 python3-pip python3-dev \
     python3-sphinx graphviz \
     git openjdk-17-jdk \
@@ -34,3 +34,10 @@ RUN pip3 install -r /tmp/requirements.txt --break-system-packages && \
 RUN rm -r /tmp/* && \
     rm -rf /var/lib/apt/lists/* && \
     apt update
+
+RUN groupadd -g 1000 bloodconnect && \
+    useradd -m -u 1000 -g bloodconnect -s /bin/bash bloodconnect && \
+    mkdir -p /app && chown bloodconnect:bloodconnect /app && \
+    echo "bloodconnect ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+USER bloodconnect

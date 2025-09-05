@@ -78,9 +78,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 🧰 Change ownership of checked-out files to root
-        run: sudo chown -R root:root $GITHUB_WORKSPACE
-
       - name: 🔐 Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:

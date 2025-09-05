@@ -6,18 +6,21 @@ Run the App
 ~~~~~~~~~~~
 Assuming 
 - you've built the docker image already
-- you've ran `run-command-install-node-modules`
-.. include:: ../clients/mobile/.env.example
-   :literal:
+- you've ran `run-command-install-node-packages`
 - you've setup the env variables in
+   .. include:: ../clients/mobile/.env.example
+      :literal:
 
-Run the following commands to use expo development mode
+   .. include:: ../.devcontainer/.env.example
+      :literal:
+
+From project root run the following commands to use expo development mode
 
  .. code-block:: bash
 
     make run-command-start-expo
 
-Run this if you want to build the android app locally
+From project root run this if you want to build the android app locally
 
  .. code-block:: bash
 
