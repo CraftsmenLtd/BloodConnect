@@ -108,4 +108,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_NAME }}-${{ env.APP_VERSION }}
-          path: clients/mobile/${{ env.APP_NAME }}-${{ env.APP_VERSION }}*
+          path: clients/mobile/${{ env.APP_NAME }}-${{ env.APP_VERSION }}.*
