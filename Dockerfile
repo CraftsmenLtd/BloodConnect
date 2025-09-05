@@ -40,6 +40,8 @@ ARG HOST_GID=1000
 RUN groupadd -g ${HOST_GID} bloodconnect && \
     useradd -m -u ${HOST_UID} -g bloodconnect -s /bin/bash bloodconnect && \
     mkdir -p /app && chown bloodconnect:bloodconnect /app && \
-    echo "bloodconnect ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    echo "bloodconnect ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    sudo chown -R bloodconnect:bloodconnect /opt/android-sdk
+
 
 USER bloodconnect
