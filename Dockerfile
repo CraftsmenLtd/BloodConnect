@@ -35,8 +35,10 @@ RUN rm -r /tmp/* && \
     rm -rf /var/lib/apt/lists/* && \
     apt update
 
-RUN groupadd -g 1000 bloodconnect && \
-    useradd -m -u 1000 -g bloodconnect -s /bin/bash bloodconnect && \
+ARG HOST_UID=1000
+ARG HOST_GID=1000
+RUN groupadd -g ${HOST_GID} bloodconnect && \
+    useradd -m -u ${HOST_UID} -g bloodconnect -s /bin/bash bloodconnect && \
     mkdir -p /app && chown bloodconnect:bloodconnect /app && \
     echo "bloodconnect ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 

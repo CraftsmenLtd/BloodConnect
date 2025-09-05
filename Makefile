@@ -129,7 +129,7 @@ lint-fix: lint-code-fix
 
 # Docker dev environment
 build-runner-image:
-	docker build -t $(RUNNER_IMAGE_NAME) .
+	docker build --build-arg HOST_UID=$(id -u) --build-arg HOST_GID=$(id -g) -t $(RUNNER_IMAGE_NAME) .
 
 run-command-%:
 	docker rm -f $(DOCKER_DEV_CONTAINER_NAME) || true
