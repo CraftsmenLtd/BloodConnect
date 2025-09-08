@@ -8,8 +8,10 @@
     ]
   },
   "postCreateCommand": {
-    "apt": "apt install -y openssh-client less"
+    "npm": "npm i"
   },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+  "workspaceFolder": "/app",
   "runArgs": [
     "--env-file",
     ".devcontainer/.env",

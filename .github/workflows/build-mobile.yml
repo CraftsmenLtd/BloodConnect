@@ -20,6 +20,14 @@ on:
         options:
           - 'preview'
           - 'production'
+      type_selection:
+        description: 'Select Expo Build Style'
+        required: true
+        default: 'local'
+        type: choice
+        options:
+          - 'local'
+          - 'eas'
 
 concurrency:
   group: ${{ github.ref }}
@@ -68,6 +76,8 @@ jobs:
     steps:
       - name: 📥 Checkout Branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 🔐 Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -124,3 +134,4 @@ jobs:
       api_base_url: ${{ needs.fetch-env-file.outputs.ap_base_url }}
       aws_cognito_domain: ${{ needs.fetch-env-file.outputs.aws_cognito_domain }}
       encoded_google_services_file: ${{ needs.fetch-env-file.outputs.encoded_google_services_file }}
+      build_type: ${{ github.event.inputs.type_selection }}

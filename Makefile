@@ -23,6 +23,7 @@ AWS_SECRET_ACCESS_KEY?=aws-secret-access-key
 AWS_SESSION_TOKEN?=aws-session-token
 DEPLOYMENT_ENVIRONMENT_GROUP?=localstack
 DEPLOYMENT_ENVIRONMENT?=$(shell git rev-parse --abbrev-ref HEAD | tr '[:upper:]' '[:lower:]')
+
 # Docker Environment Variables
 TF_VARS=$(shell env | grep '^TF_VAR_' | awk '{print "-e", $$1}')
 DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
@@ -44,8 +45,8 @@ DOCKER_ENV?=-e AWS_ACCESS_KEY_ID \
             -e AWS_USER_POOL_CLIENT_ID \
             -e AWS_USER_POOL_ID \
             -e API_BASE_URL \
-            -e AWS_COGNITO_DOMAIN
-
+            -e AWS_COGNITO_DOMAIN \
+            -e HOME=/app
 
 # Checkov Skip Rules
 # CKV_AWS_117 - Ensure that AWS Lambda function is configured inside a VPC
@@ -59,18 +60,15 @@ DOCKER_CHECKOV_SKIP?=--skip-check CKV_DOCKER_9
 # Container Names
 DOCKER_LOCALSTACK_CONTAINER_NAME?=bloodconnect-dev-localstack
 DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
-DOCKER_MOBILE_CONTAINER_NAME?=bloodconnect-mobile
 
 # Documentation
 sphinx-html: bundle-openapi
 	rm -rf docs/_build
-	(cd docs && make html)
-
+	$(MAKE) -C docs html
 
 # API
 bundle-openapi:
 	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json --config openapi/configs/redocly.yaml
-
 
 # Terraform base command:
 # Depending on the deployment environment, we choose the appropriate Terraform command and directory.
@@ -129,30 +127,20 @@ lint: lint-code tf-validate lint-api
 
 lint-fix: lint-code-fix
 
-
 # Docker dev environment
 build-runner-image:
-	docker build -t $(RUNNER_IMAGE_NAME) .
+	docker build --build-arg HOST_UID=$(shell id -u) --build-arg HOST_GID=$(shell id -g) -t $(RUNNER_IMAGE_NAME) .
 
 run-command-%:
-	docker rm -f $(DOCKER_DEV_CONTAINER_NAME)
+	docker rm -f $(DOCKER_DEV_CONTAINER_NAME) || true
 	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
 	           make $* NPM_TEST_ARGS=$(NPM_TEST_ARGS) NPM_ARGS=$(NPM_ARGS)
-
 
 # Swagger UI
 swagger-ui:
 	./openapi/swagger-ui/setup-swagger.sh $(branch) $(email) $(password)
 	docker compose -f openapi/docker-compose.yml up -d --build
-
-# Mobile
-start-mobile:
-	docker rm -f $(DOCKER_MOBILE_CONTAINER_NAME)
-	docker run --rm -t --name $(DOCKER_MOBILE_CONTAINER_NAME) --network host -p 8081:8081 \
-			$(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) \
-			$(RUNNER_IMAGE_NAME) npm run start --prefix clients/mobile
-
 
 # Deploy Dev Branch from Local Machine
 deploy-dev-branch:
@@ -176,6 +164,7 @@ start-dev: build-runner-image localstack-start run-command-install-node-packages
 run-dev: run-command-build-node-all run-command-tf-init \
          run-command-tf-plan-apply run-command-tf-apply
 
+# Mobile
 prepare-mobile-env:
 	@echo AWS_USER_POOL_CLIENT_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_client_id) >> clients/mobile/.env
 	@echo AWS_USER_POOL_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_id) >> clients/mobile/.env
