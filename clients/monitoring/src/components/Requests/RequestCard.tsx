@@ -1,7 +1,7 @@
 import { Accordion, Badge } from 'react-bootstrap'
-import JsonView from '@uiw/react-json-view';
+import JsonView from '@uiw/react-json-view'
 import type { CompleteRequest } from '../../constants/types'
-import { vscodeTheme } from '@uiw/react-json-view/vscode';
+import { vscodeTheme } from '@uiw/react-json-view/vscode'
 
 type RequestCardProps = {
   data: CompleteRequest;

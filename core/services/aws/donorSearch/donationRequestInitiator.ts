@@ -11,8 +11,8 @@ import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
   DonorSearchIntentionalError
 } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
-import { Config } from 'commons/libs/config/config';
-import DonorSearchDynamoDbOperations from '../commons/ddbOperations/DonorSearchDynamoDbOperations';
+import { Config } from 'commons/libs/config/config'
+import DonorSearchDynamoDbOperations from '../commons/ddbOperations/DonorSearchDynamoDbOperations'
 
 const config = new Config<DonorSearchConfig>().getConfig()
 
@@ -23,9 +23,9 @@ const donorSearchDynamoDbOperations = new DonorSearchDynamoDbOperations(
 
 async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
   for (const record of event.Records) {
-    const body =
-      typeof record.body === 'string' &&
-        record.body.trim() !== '' ? JSON.parse(record.body) : {}
+    const body
+      = typeof record.body === 'string'
+        && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
     const primaryIndex: string = body?.PK
     const secondaryIndex: string = body?.SK

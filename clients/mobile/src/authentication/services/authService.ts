@@ -43,6 +43,7 @@ export const decodeAccessToken = (token: string | null): JwtPayload => {
     throw new Error('Token Can\'t be null.')
   }
   const { payload } = decodeJWT(token)
+
   return payload
 }
 
@@ -53,6 +54,7 @@ export const loadTokens = async():
 }> => {
   try {
     const session = await fetchSession()
+
     return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
   } catch (error) {
     throw new Error('Failed to load tokes.')
@@ -84,6 +86,7 @@ export const registerUser = async(registerInfo: UserRegistrationCredentials): Pr
       }
 
     })
+
     return nextStep.signUpStep === 'CONFIRM_SIGN_UP'
   } catch (error) {
     const errorMessage = handleAuthError(error)
@@ -97,6 +100,7 @@ export const submitOtp = async(email: string, otp: string): Promise<boolean> => 
       username: email,
       confirmationCode: otp
     })
+
     return nextStep.signUpStep === 'DONE'
   } catch (error) {
     const errorMessage = handleAuthError(error)
@@ -113,6 +117,7 @@ export const fetchSession = async(): Promise<FetchSessionResponse> => {
 
     const accessToken = session.tokens.accessToken?.toString()
     const idToken = session.tokens.idToken?.toString()
+
     return { accessToken, idToken }
   } catch (error) {
     throw new Error('Failed to fetch session')
@@ -142,6 +147,7 @@ export const loginUser = async(email: string, password: string): Promise<boolean
         authFlowType: 'USER_PASSWORD_AUTH'
       }
     })
+
     return isSignedIn
   } catch (error) {
     throw new Error(
@@ -177,6 +183,7 @@ export const resetPasswordHandler = async(
 ): Promise<ResetPasswordOutput['nextStep']> => {
   try {
     const { nextStep } = await resetPassword({ username: email })
+
     return nextStep
   } catch (error) {
     const errorMessage = handleAuthError(error)
@@ -205,6 +212,7 @@ export const confirmResetPasswordHandler = async(
 ): Promise<boolean> => {
   try {
     await confirmResetPassword({ username: email, confirmationCode: otp, newPassword: password })
+
     return true
   } catch (error) {
     const errorMessage = handleConfirmPasswordError(error)
@@ -215,6 +223,7 @@ export const confirmResetPasswordHandler = async(
 export const resendSignUpOtp = async(email: string): Promise<boolean> => {
   try {
     const response = await resendSignUpCode({ username: email })
+
     return response.destination !== ''
   } catch (error) {
     const errorMessage = handleConfirmPasswordError(error)

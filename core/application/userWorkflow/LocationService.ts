@@ -17,8 +17,8 @@ export class LocationService {
     userAttributes: Partial<UserDetailsDTO>,
   ): Promise<void> {
     if (
-      preferredDonationLocations !== undefined &&
-      preferredDonationLocations.length !== 0
+      preferredDonationLocations !== undefined
+      && preferredDonationLocations.length !== 0
     ) {
       await this.locationRepository.deleteUserLocations(userId)
 
@@ -44,6 +44,6 @@ export class LocationService {
   async queryUserLocations(
     userId: string,
   ): Promise<LocationDTO[]> {
-    return await this.locationRepository.queryUserLocations(userId)
+    return this.locationRepository.queryUserLocations(userId)
   }
 }

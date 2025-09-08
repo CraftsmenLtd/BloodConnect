@@ -1,7 +1,7 @@
 import React from 'react'
 import type {
   ImageSourcePropType
-} from 'react-native';
+} from 'react-native'
 import {
   TouchableWithoutFeedback,
   Modal,
@@ -104,6 +104,7 @@ const GenericModal: React.FC<GenericModalProps> = ({
   onClose = () => { }
 }) => {
   const styles = createStyles(useTheme())
+
   return (
     <Modal
       transparent
@@ -117,7 +118,7 @@ const GenericModal: React.FC<GenericModalProps> = ({
           <TouchableWithoutFeedback>
             <View style={styles.modalContainer}>
               {/* Conditional Rendering for Icon */}
-              {icon != null && (
+              {icon !== null && (
                 <Image
                   source={icon}
                   style={{ width: iconSize, height: iconSize, marginBottom: 10 }}

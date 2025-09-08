@@ -31,6 +31,7 @@ export class FetchClient implements HttpClient {
     }
     const { idToken } = await authService.fetchSession()
     requestHeaders.Authorization = `Bearer ${idToken}`
+
     return requestHeaders
   }
 
@@ -40,6 +41,7 @@ export class FetchClient implements HttpClient {
     headers: Record<string, string> = {}
   ): Promise<FetchResponse<T>> {
     const queryString = new URLSearchParams(params).toString()
+
     return this.fetchWithAuth<T>(
       `${url}?${queryString}`,
       'GET',
@@ -94,6 +96,7 @@ export class FetchClient implements HttpClient {
       }
 
       const responseData = await response.json() as T
+
       return { ...responseData, status: response.status }
     } catch (error) {
       if (this.logoutUser !== undefined && error.status === HTTP_UNAUTHORIZED) {

@@ -60,12 +60,10 @@ const DonationPosts = () => {
   )
 }
 
-const createStyles = () => {
-  return StyleSheet.create({
-    container: {
-      flex: 1
-    }
-  })
-}
+const createStyles = () => StyleSheet.create({
+  container: {
+    flex: 1
+  }
+})
 
 export default DonationPosts

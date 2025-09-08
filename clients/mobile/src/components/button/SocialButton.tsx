@@ -1,5 +1,5 @@
 import React from 'react'
-import type { ImageSourcePropType, StyleProp, ViewStyle, TextStyle } from 'react-native';
+import type { ImageSourcePropType, StyleProp, ViewStyle, TextStyle } from 'react-native'
 import { TouchableOpacity, Text, StyleSheet, Image, View, ActivityIndicator } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -22,7 +22,9 @@ export const SocialButton = ({ text, onPress, icon, loading, buttonStyle, textSt
     <TouchableOpacity style={[styles.socialButton, buttonStyle]} onPress={onPress} disabled={loading}>
       <View style={styles.socialButtonContent}>
         <Image source={icon} style={styles.socialIcon} />
-        {isLoading ? (<ActivityIndicator size="small" color={theme.colors.primary}/>) : (<Text style={[styles.socialButtonText, textStyle]}>{text}</Text>)}
+        {isLoading
+          ? (<ActivityIndicator size="small" color={theme.colors.primary}/>)
+          : (<Text style={[styles.socialButtonText, textStyle]}>{text}</Text>)}
       </View>
     </TouchableOpacity>
   )

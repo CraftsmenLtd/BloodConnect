@@ -14,6 +14,6 @@ export default class UserDynamoDbOperations extends DynamoDbTableOperations<
   }
 
   async getUser(userId: string): Promise<UserDetailsDTO | null> {
-    return await super.getItem(`USER#${userId}`, 'PROFILE')
+    return super.getItem(`USER#${userId}`, 'PROFILE')
   }
 }

@@ -1,4 +1,4 @@
-import { UserDetailsDTO, UserDTO } from '../../../../commons/dto/UserDTO'
+import type { UserDetailsDTO, UserDTO } from '../../../../commons/dto/UserDTO'
 
 export const mockUserWithStringId: UserDTO = {
   id: '12345',

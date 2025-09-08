@@ -100,7 +100,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   const searchInputRef = useRef<TextInput>(null)
 
   useEffect(() => {
-    if (enableSearch && (fetchOptions != null) && (searchText.trim() !== '')) {
+    if (enableSearch && (fetchOptions !== null) && (searchText.trim() !== '')) {
       const fetchData = () => {
         setIsLoading(true)
         fetchOptions(searchText)
@@ -149,48 +149,46 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
     onSelect(name, updatedValues)
   }, [selectedValues, onSelect, name])
 
-  const dropdownContent = useMemo(() => {
-    return (
-      <View style={styles.dropdown}>
-        {enableSearch && (
-          <View style={styles.searchContainer}>
-            <Ionicons
-              name="search"
-              size={20}
-              color={theme.colors.textSecondary}
-              style={styles.searchIcon}
-            />
-            <TextInput
-              ref={searchInputRef}
-              style={styles.searchInput}
-              placeholder="Search..."
-              value={searchText}
-              onChangeText={handleSearch}
-              editable={editable}
-            />
-            <TouchableOpacity onPress={() => { setSearchText('') }}>
-              <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
-            </TouchableOpacity>
-          </View>
-        )}
-        {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
-        <ScrollView>
-          {filteredOptions.map((item) => (
-            <TouchableOpacity
-              key={item.value}
-              style={styles.option}
-              onPress={() => { handleSelect(item) }}
-            >
-              <Text style={styles.optionText}>{item.label}</Text>
-              {selectedValues.includes(item.value) && (
-                <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
-              )}
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-    )
-  }, [
+  const dropdownContent = useMemo(() => (
+    <View style={styles.dropdown}>
+      {enableSearch && (
+        <View style={styles.searchContainer}>
+          <Ionicons
+            name="search"
+            size={20}
+            color={theme.colors.textSecondary}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            ref={searchInputRef}
+            style={styles.searchInput}
+            placeholder="Search..."
+            value={searchText}
+            onChangeText={handleSearch}
+            editable={editable}
+          />
+          <TouchableOpacity onPress={() => { setSearchText('') }}>
+            <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+          </TouchableOpacity>
+        </View>
+      )}
+      {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
+      <ScrollView>
+        {filteredOptions.map((item) => (
+          <TouchableOpacity
+            key={item.value}
+            style={styles.option}
+            onPress={() => { handleSelect(item) }}
+          >
+            <Text style={styles.optionText}>{item.label}</Text>
+            {selectedValues.includes(item.value) && (
+              <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+            )}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  ), [
     enableSearch,
     searchText,
     isLoading,
@@ -203,7 +201,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
 
   return (
     <View style={styles.container}>
-      {(label != null) && (
+      {(label !== null) && (
         <Text style={styles.label}>
           {label}
           {isRequired && <Text style={styles.requiredStar}> *</Text>}
@@ -225,8 +223,8 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         />
       </TouchableOpacity>
 
-      {(minRequiredLabel != null && selectedValues.length === 0) &&
-        <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
+      {(minRequiredLabel !== null && selectedValues.length === 0)
+        && <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
       }
       {error !== null && <Text style={styles.error}>{error}</Text>}
 

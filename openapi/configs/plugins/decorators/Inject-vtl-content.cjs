@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs')
 const path = require('path')
 
@@ -6,6 +7,7 @@ const VTL_IMPORT_PREFIX = '#importVtl '
 const CONTENT_TYPE_JSON = 'application/json'
 
 function InjectVtlContent() {
+  // eslint-disable-next-line no-console
   console.log('Injecting VTL content...')
 
   return {
@@ -35,9 +37,9 @@ function InjectVtlContent() {
  */
 function processTemplates(templates) {
   if (
-    !templates ||
-    !templates[CONTENT_TYPE_JSON] ||
-    !templates[CONTENT_TYPE_JSON].startsWith(VTL_IMPORT_PREFIX)
+    !templates
+    || !templates[CONTENT_TYPE_JSON]
+    || !templates[CONTENT_TYPE_JSON].startsWith(VTL_IMPORT_PREFIX)
   ) {
     return
   }

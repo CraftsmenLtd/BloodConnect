@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text } from 'react-native'
 import useDonationStatus from '../../../api/hooks/useDonationStatus'
+import { JsonLogger } from '../../../../../../commons/libs/logger/JsonLogger'
 import ToggleTabs from '../../../components/tab/ToggleTabs'
 import type { StatusType } from '../../../donationWorkflow/types'
 import { STATUS } from '../../../donationWorkflow/types'
@@ -94,19 +95,19 @@ const Detail = ({ navigation, route }: DetailProps) => {
         void cancelNotification(new Date(data.donationDateTime))
       }
     } catch (err) {
-      console.error(err)
+      JsonLogger.error(err)
       setLocalStatus(previousStatus)
     }
   }
 
   return (
     <View style={styles.container}>
-      {!isDetailsPage &&
-        <View style={[
+      {!isDetailsPage
+        && <View style={[
           styles.tabHeader,
-          currentTab === DETAIL_POST_TAB_CONFIG.initialTab ?
-            { marginBottom: -18.5 } :
-            {}
+          currentTab === DETAIL_POST_TAB_CONFIG.initialTab
+            ? { marginBottom: -18.5 }
+            : {}
         ]}>
           <ToggleTabs
             tabs={DETAIL_POST_TAB_CONFIG.tabs}
@@ -132,28 +133,28 @@ const Detail = ({ navigation, route }: DetailProps) => {
             statusValue={localStatus}
           />
           {cancelPostError !== '' && <Text style={styles.errorMessage}>{cancelPostError}</Text>}
-          {showToast != null && (
+          {showToast !== null && (
             <Toast
               message={showToast?.message}
               type={showToast?.type}
               toastAnimationFinished={toastAnimationFinished}
             />
           )}
-          {!isDetailsPage &&
-            <View style={styles.buttonContainer}>
+          {!isDetailsPage
+            && <View style={styles.buttonContainer}>
               <Button
                 text={t('btn.completeRequest')}
                 disabled={
-                  localStatus === STATUS.COMPLETED ||
-                  localStatus === STATUS.CANCELLED ||
-                  localStatus === STATUS.EXPIRED
+                  localStatus === STATUS.COMPLETED
+                  || localStatus === STATUS.CANCELLED
+                  || localStatus === STATUS.EXPIRED
                 }
                 onPress={handleCompleteRequest} />
             </View>
           }
-          {isDetailsPage &&
-            [STATUS.ACCEPTED, STATUS.IGNORED].includes(localStatus) &&
-            <View style={styles.buttonContainer}>
+          {isDetailsPage
+            && [STATUS.ACCEPTED, STATUS.IGNORED].includes(localStatus)
+            && <View style={styles.buttonContainer}>
               {statusError !== '' && <Text style={styles.errorMessage}>{statusError}</Text>}
               <Button
                 text={ localStatus === STATUS.ACCEPTED ? t('btn.ignore') : t('btn.acceptRequest') }
@@ -166,8 +167,8 @@ const Detail = ({ navigation, route }: DetailProps) => {
               />
             </View>
           }
-        </View> :
-        <DonorResponses
+        </View>
+        : <DonorResponses
           acceptedDonors={data.acceptedDonors}
           handlePressDonor={handlePressDonor}
         />

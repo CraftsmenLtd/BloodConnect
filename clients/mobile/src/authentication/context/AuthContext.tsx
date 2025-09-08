@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 import React, { createContext, useState, useEffect } from 'react'
 import authService from '../services/authService'
 
@@ -76,6 +76,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setIsAuthenticated(false)
     })
   }, [])
+
   return (
     <AuthContext.Provider
       value={{

@@ -1,5 +1,6 @@
 import { BloodDonationService } from '../../bloodDonationWorkflow/BloodDonationService'
-import { DonationDTO, DonationStatus } from '../../../../commons/dto/DonationDTO'
+import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import { DonationStatus } from '../../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../../utils/idGenerator'
 import { generateGeohash } from '../../utils/geohash'
 import { validateInputWithRules } from '../../utils/validator'
@@ -7,12 +8,12 @@ import BloodDonationOperationError from '../../bloodDonationWorkflow/BloodDonati
 import ThrottlingError from '../../bloodDonationWorkflow/ThrottlingError'
 import { donationAttributesMock, donationDtoMock, updateDonationAttributesMock } from '../mocks/mockDonationRequestData'
 import { GENERIC_CODES } from '../../../../commons/libs/constants/GenericCodes'
-import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
+import type { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import { mockLogger } from '../mocks/mockLogger'
-import { UserService } from '../../userWorkflow/UserService'
+import type { UserService } from '../../userWorkflow/UserService'
 import { mockRepository } from '../mocks/mockRepositories'
 import { mockUserDetailsWithStringId } from '../mocks/mockUserData'
-import { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
+import type { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
 
 jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
@@ -45,7 +46,7 @@ describe('BloodDonationService', () => {
     updateBloodDonationNotifications: jest.fn()
   } as unknown as jest.Mocked<NotificationService>
 
-  const mockAcceptDonationService= {
+  const mockAcceptDonationService = {
     getAcceptedDonorList: jest.fn()
   } as unknown as jest.Mocked<AcceptDonationService>
 
@@ -66,7 +67,7 @@ describe('BloodDonationService', () => {
   })
 
   describe('createBloodDonation', () => {
-    test('should create a blood donation and return success message', async () => {
+    test('should create a blood donation and return success message', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -107,7 +108,7 @@ describe('BloodDonationService', () => {
       expect(result).toStrictEqual({ createdAt: expect.any(String), requestPostId: 'req123' })
     })
 
-    test('should throw BloodDonationOperationError if input is invalid', async () => {
+    test('should throw BloodDonationOperationError if input is invalid', async() => {
       (validateInputWithRules as jest.Mock).mockReturnValue('Validation error')
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -124,7 +125,7 @@ describe('BloodDonationService', () => {
       expect(mockBloodDonationRepository.create).not.toHaveBeenCalled()
     })
 
-    test('should throw BloodDonationOperationError when repository create fails', async () => {
+    test('should throw BloodDonationOperationError when repository create fails', async() => {
       // Arrange
       mockBloodDonationRepository.create.mockRejectedValue(new Error('Repository error'))
       mockBloodDonationRepository.getDonationRequestsByDate.mockResolvedValue([])
@@ -163,7 +164,7 @@ describe('BloodDonationService', () => {
       jest.useRealTimers()
     })
 
-    test('should allow request when under daily limit', async () => {
+    test('should allow request when under daily limit', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -188,7 +189,7 @@ describe('BloodDonationService', () => {
       )
     })
 
-    test('should throw ThrottlingError when daily limit is reached', async () => {
+    test('should throw ThrottlingError when daily limit is reached', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -214,7 +215,7 @@ describe('BloodDonationService', () => {
       ).rejects.toThrow(/You've reached today's limit/)
     })
 
-    test('should check throttling with correct date prefix', async () => {
+    test('should check throttling with correct date prefix', async() => {
       // Arrange
       jest.setSystemTime(new Date('2024-03-15T23:59:59Z'))
 
@@ -238,7 +239,7 @@ describe('BloodDonationService', () => {
       )
     })
 
-    test('should handle repository query errors during throttling check', async () => {
+    test('should handle repository query errors during throttling check', async() => {
       // Arrange
       mockBloodDonationRepository.getDonationRequestsByDate.mockRejectedValue(
         new Error('Database connection error')
@@ -266,7 +267,7 @@ describe('BloodDonationService', () => {
   })
 
   describe('getDonationRequest', () => {
-    test('should return donation request if it exists', async () => {
+    test('should return donation request if it exists', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -290,7 +291,7 @@ describe('BloodDonationService', () => {
       expect(result).toEqual(donationDtoMock)
     })
 
-    test('should throw error if donation request does not exist', async () => {
+    test('should throw error if donation request does not exist', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -310,7 +311,7 @@ describe('BloodDonationService', () => {
   })
 
   describe('updateBloodDonation', () => {
-    test('should update blood donation if request exists and not cancelled', async () => {
+    test('should update blood donation if request exists and not cancelled', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -353,19 +354,13 @@ describe('BloodDonationService', () => {
       expect(result).toStrictEqual({ createdAt: donationDtoMock.createdAt, requestPostId: 'req123' })
     })
 
-    test('should throw BloodDonationOperationError if request does not exist', async () => {
+    test('should throw BloodDonationOperationError if request does not exist', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
         mockLogger
       )
       mockBloodDonationRepository.getDonationRequest.mockResolvedValue(null)
-
-      const donationAttributes = {
-        seekerId: 'user123',
-        requestPostId: 'req123',
-        createdAt: mockCreatedAt
-      }
 
       // Act & Assert
       await expect(bloodDonationService.updateBloodDonation(
@@ -377,7 +372,7 @@ describe('BloodDonationService', () => {
       expect(mockBloodDonationRepository.update).not.toHaveBeenCalled()
     })
 
-    test('should throw Error when validating donationDateTime', async () => {
+    test('should throw Error when validating donationDateTime', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -416,7 +411,7 @@ describe('BloodDonationService', () => {
       expect(mockBloodDonationRepository.update).not.toHaveBeenCalled()
     })
 
-    test('should throw BloodDonationOperationError if blood donation is already cancelled', async () => {
+    test('should throw BloodDonationOperationError if blood donation is already cancelled', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -450,7 +445,7 @@ describe('BloodDonationService', () => {
       expect(mockBloodDonationRepository.update).not.toHaveBeenCalled()
     })
 
-    test('should throw BloodDonationOperationError when the update operation fails', async () => {
+    test('should throw BloodDonationOperationError when the update operation fails', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,
@@ -490,7 +485,7 @@ describe('BloodDonationService', () => {
       )).rejects.toThrow(/Failed to update blood donation post/)
     })
 
-    test('should throw BloodDonationOperationError directly if it is thrown during update', async () => {
+    test('should throw BloodDonationOperationError directly if it is thrown during update', async() => {
       // Arrange
       const bloodDonationService = new BloodDonationService(
         mockBloodDonationRepository,

@@ -1,12 +1,12 @@
-import React from 'clients/commons/platform/node_modules/@types/react';
-import { Link } from 'react-router-dom';
-import { FaRegEye, FaRegEyeSlash, MdOutlineMail } from '../../../assets/icons';
+import React from 'clients/commons/platform/node_modules/@types/react'
+import { Link } from 'react-router-dom'
+import { FaRegEye, FaRegEyeSlash, MdOutlineMail } from '../../../assets/icons'
 
-import InputField from '../../../components/input-fields';
-import { Toast } from '../../../components/toast';
-import { SignupPath } from '../../../../constants/routeConsts';
-import Button from '../../../components/button';
-import { useLogin } from './useLogin';
+import InputField from '../../../components/input-fields'
+import { Toast } from '../../../components/toast'
+import { SignupPath } from '../../../../constants/routeConsts'
+import Button from '../../../components/button'
+import { useLogin } from './useLogin'
 
 const Login: React.FC = () => {
   const {
@@ -21,7 +21,7 @@ const Login: React.FC = () => {
     showPassword,
     handleTogglePasswordVisibility,
     handleLogin,
-  } = useLogin();
+  } = useLogin()
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -30,8 +30,8 @@ const Login: React.FC = () => {
 
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            void handleLogin();
+            e.preventDefault()
+            void handleLogin()
           }}
         >
           <InputField
@@ -41,7 +41,7 @@ const Login: React.FC = () => {
             icon={<MdOutlineMail />}
             value={email}
             onChange={(e) => {
-              setEmail(e.target.value);
+              setEmail(e.target.value)
             }}
           />
 
@@ -67,7 +67,7 @@ const Login: React.FC = () => {
             }
             value={password}
             onChange={(e) => {
-              setPassword(e.target.value);
+              setPassword(e.target.value)
             }}
           />
 
@@ -109,7 +109,7 @@ const Login: React.FC = () => {
         <Toast msg={toastMsg} className={toastClass} visible={toastVisible} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

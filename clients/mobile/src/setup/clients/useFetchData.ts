@@ -1,4 +1,5 @@
 import { useCallback, useState, useRef, useEffect } from 'react'
+import { JsonLogger } from '../../../../../commons/libs/logger/JsonLogger'
 
 type UseFetchDataProps = {
   shouldExecuteOnMount?: boolean;
@@ -29,6 +30,7 @@ const useFetchData = <DataFetchType>(
       }
     }
     if (error instanceof Error) return error.message
+
     return 'An unknown error occurred'
   }
 
@@ -40,7 +42,7 @@ const useFetchData = <DataFetchType>(
         const result = await dataFetchFunctionRef.current(...args)
         setData(result)
       } catch (error) {
-        console.error(error)
+        JsonLogger.error(error)
         const message = getErrorMessage(error)
         setData(null)
         setError(message)

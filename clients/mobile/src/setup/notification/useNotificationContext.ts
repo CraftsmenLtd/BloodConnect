@@ -11,5 +11,6 @@ export const useNotificationContext = (): NotificationContextType => {
   if (context === null) {
     throw new Error('useNotificationContext must be used within a NotificationProvider')
   }
+
   return context
 }

@@ -8,7 +8,7 @@ import {
   MARKER_POINT_COLOR_STATUS_MAP,
   REQUEST_CONTROL_CLASS
 } from '../constants/constants'
-import type { Feature, GeoJsonProperties, LineString } from 'geojson';
+import type { Feature, GeoJsonProperties, LineString } from 'geojson'
 
 
 export type LatLong = { latitude: number; longitude: number }
@@ -129,11 +129,13 @@ const GeohashMap = ({
     return () => {
       map.remove()
     }
+  // Assuming not having exhaustive deps here is intentional
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    document.querySelectorAll(`.${REQUEST_CONTROL_CLASS}`).forEach(el => el.remove())
-    document.querySelectorAll(`.${DONOR_CONTROL_CLASS}`).forEach(el => el.remove())
+    document.querySelectorAll(`.${REQUEST_CONTROL_CLASS}`).forEach((el) => el.remove())
+    document.querySelectorAll(`.${DONOR_CONTROL_CLASS}`).forEach((el) => el.remove())
 
     data.forEach((point) => {
       const popupId = `${point.type === MapDataPointType.REQUEST ? 'request' : 'donor'}-${point.id}`
@@ -142,13 +144,14 @@ const GeohashMap = ({
       const contentHtml = `${Object.entries(point.content || {})
         .map(([contentKey, value]) => {
           const statusColor = MARKER_POINT_COLOR_STATUS_MAP[contentKey as AcceptDonationStatus]
-          return `<div class="${point.type === MapDataPointType.REQUEST ?
-            REQUEST_CONTROL_CLASS :
-            DONOR_CONTROL_CLASS}" ${HTML_DATA_BLOOD_GROUP_KEY}=${contentKey} style="cursor: ${
-            point.type === MapDataPointType.REQUEST ? 'pointer' :
-              'inherit'};">${contentKey}: <span style="vertical-align: middle;  background-color: ${
-            point.type === MapDataPointType.REQUEST ?
-              'black' : statusColor }" class="badge pill text-white">${value}</span></div>`
+
+          return `<div class="${point.type === MapDataPointType.REQUEST
+            ? REQUEST_CONTROL_CLASS
+            : DONOR_CONTROL_CLASS}" ${HTML_DATA_BLOOD_GROUP_KEY}=${contentKey} style="cursor: ${
+            point.type === MapDataPointType.REQUEST ? 'pointer'
+              : 'inherit'};">${contentKey}: <span style="vertical-align: middle;  background-color: ${
+            point.type === MapDataPointType.REQUEST
+              ? 'black' : statusColor}" class="badge pill text-white">${value}</span></div>`
         })
         .join('')}<strong>${point.id}</strong>`
 
@@ -166,7 +169,7 @@ const GeohashMap = ({
       if (point.type === MapDataPointType.REQUEST) {
         popUpElement
           .querySelectorAll(`.${REQUEST_CONTROL_CLASS}`)
-          .forEach(el => {
+          .forEach((el) => {
             const bloodGroup = el.getAttribute(HTML_DATA_BLOOD_GROUP_KEY) as BloodGroup
             el.addEventListener('click', () => {
               point.onBloodGroupCountClick(bloodGroup, point.id)
@@ -190,7 +193,7 @@ const GeohashMap = ({
       properties: {
         distance: `${to.distance} km`
       }
-    }));
+    }))
 
     mapRef.current.addSource('lines', {
       type: 'geojson',
@@ -221,17 +224,17 @@ const GeohashMap = ({
         'text-halo-width': 2,
         'text-halo-blur': 1
       }
-    });
+    })
 
     return () => {
       if (mapRef.current?.getLayer('line-layer')) {
-        mapRef.current.removeLayer('line-layer');
+        mapRef.current.removeLayer('line-layer')
       }
       if (mapRef.current?.getLayer('labels-layer')) {
-        mapRef.current.removeLayer('labels-layer');
+        mapRef.current.removeLayer('labels-layer')
       }
       if (mapRef.current?.getSource('lines')) {
-        mapRef.current.removeSource('lines');
+        mapRef.current.removeSource('lines')
       }
     }
   }, [lines])

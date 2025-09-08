@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { resetPasswordHandler } from '../../services/authService'
 import { useNavigation } from '@react-navigation/native'
-import type { ValidationRule } from '../../../utility/validator';
+import type { ValidationRule } from '../../../utility/validator'
 import { validateRequired, validateEmail, validateInput } from '../../../utility/validator'
 import { initializeState } from '../../../utility/stateUtils'
 import type { ForgotPasswordScreenNavigationProp } from '../../../setup/navigation/navigationTypes'
@@ -37,7 +37,7 @@ export const useForgotPassword = (): unknown => {
   const [loading, setLoading] = useState(false)
 
   const handleInputChange = (name: ForgotPasswordFields, value: string): void => {
-    setCredentials(prevState => ({
+    setCredentials((prevState) => ({
       ...prevState,
       [name]: value
     }))
@@ -46,39 +46,37 @@ export const useForgotPassword = (): unknown => {
 
   const handleInputValidation = (name: ForgotPasswordFields, value: string): void => {
     const errorMsg = validateInput(value, validationRules[name])
-    setErrors(prevErrors => ({
+    setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: errorMsg
     }))
   }
 
-  const isButtonDisabled = useMemo(() => {
-    return !(
-      Object.values(credentials).every(value => value !== '') &&
-      Object.values(errors).every(error => error === null)
-    )
-  }, [credentials, errors])
+  const isButtonDisabled = useMemo(() => !(
+    Object.values(credentials).every((value) => value !== '')
+      && Object.values(errors).every((error) => error === null)
+  ), [credentials, errors])
 
   const handleForgotPassword = async(): Promise<void> => {
     setLoading(true)
     try {
       const nextStep = await resetPasswordHandler(credentials.email)
       switch (nextStep.resetPasswordStep) {
-      case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
-        navigation.navigate(
-          SCREENS.OTP,
-          {
-            email: credentials.email,
-            password: '',
-            fromScreen: SCREENS.FORGOT_PASSWORD
-          }
-        )
-        break
-      case 'DONE':
-        setError('Password reset process already completed.')
-        break
-      default:
-        setError('Password reset failed. Check your email or try again.')
+        case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
+          navigation.navigate(
+            SCREENS.OTP,
+            {
+              email: credentials.email,
+              password: '',
+              fromScreen: SCREENS.FORGOT_PASSWORD
+            }
+          )
+          break
+        case 'DONE':
+          setError('Password reset process already completed.')
+          break
+        default:
+          setError('Password reset failed. Check your email or try again.')
       }
     } catch (error) {
       const errorMessage = `${error instanceof Error ? error.message : 'Unknown issue.'}`

@@ -30,7 +30,7 @@ export class GeohashService {
     const updatedDonors = [...foundDonors, ...(queryResult.items ?? [])]
     const nextLastEvaluatedKey = queryResult.lastEvaluatedKey
 
-    return nextLastEvaluatedKey != null
+    return nextLastEvaluatedKey !== null
       ? this.queryGeohash(
         countryCode,
         requestedBloodGroup,
@@ -47,8 +47,8 @@ export class GeohashService {
     currentGeohashes: string[] = []
   ): { updatedGeohashesToProcess: string[]; updatedNeighborSearchLevel: number } => {
     if (
-      currentGeohashes.length >= this.options.maxGeohashesPerExecution ||
-      neighborLevel >= this.options.maxGeohashNeighborSearchLevel
+      currentGeohashes.length >= this.options.maxGeohashesPerExecution
+      || neighborLevel >= this.options.maxGeohashNeighborSearchLevel
     ) {
       return {
         updatedGeohashesToProcess: currentGeohashes,

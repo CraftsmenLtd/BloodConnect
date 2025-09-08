@@ -1,6 +1,6 @@
 import type {
   DonationNotificationDTO
-} from '../../../../../commons/dto/NotificationDTO';
+} from '../../../../../commons/dto/NotificationDTO'
 import { NotificationType } from '../../../../../commons/dto/NotificationDTO'
 import type {
   DbIndex,
@@ -76,6 +76,7 @@ export default class DonationNotificationModel implements
     if (remainingNotificationFields.status !== undefined) {
       data.LSI1SK = `STATUS#${remainingNotificationFields.status}#${id}`
     }
+
     return data
   }
 
@@ -83,6 +84,7 @@ export default class DonationNotificationModel implements
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { PK, SK, GSI1PK, GSI1SK, LSI1SK, ...remainingDonationNotificationFields } = dbFields
     const userId = PK.replace(`${NOTIFICATION_PK_PREFIX}#`, '')
+
     return {
       ...remainingDonationNotificationFields,
       userId,

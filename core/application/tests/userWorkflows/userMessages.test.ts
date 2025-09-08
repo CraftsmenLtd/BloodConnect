@@ -3,7 +3,7 @@ import {
   getPasswordResetVerificationMessage,
   getAppUserWelcomeMailMessage
 } from '../../userWorkflow/userMessages'
-import { GenericMessage } from '../../../../commons/dto/MessageDTO'
+import type { GenericMessage } from '../../../../commons/dto/MessageDTO'
 import {
   EMAIL_VERIFICATION_TITLE,
   EMAIL_VERIFICATION_CONTENT,

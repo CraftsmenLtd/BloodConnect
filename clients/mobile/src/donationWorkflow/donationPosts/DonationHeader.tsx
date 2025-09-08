@@ -42,18 +42,18 @@ const Header: React.FC<HeaderProps> = ({
       </View>
       <View style={styles.filter}>
         <TouchableOpacity
-          style={[styles.filterButton, !isFilteredByBloodGroup ?
-            styles.filterSelected :
-            styles.filterNotSelected
+          style={[styles.filterButton, !isFilteredByBloodGroup
+            ? styles.filterSelected
+            : styles.filterNotSelected
           ]}
           onPress={handleRefresh}
         >
           <Text style={styles.buttonText}>{t('common.all')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.filterButton, isFilteredByBloodGroup ?
-            styles.filterSelected :
-            styles.filterNotSelected
+          style={[styles.filterButton, isFilteredByBloodGroup
+            ? styles.filterSelected
+            : styles.filterNotSelected
           ]}
           onPress={onFilterButtonPress}
         >

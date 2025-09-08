@@ -68,7 +68,7 @@ const MyActivityTab = () => {
               />
             }
           />
-          {showToast != null && <Toast
+          {showToast !== null && <Toast
             message={showToast?.message}
             type={showToast?.type}
             toastAnimationFinished={toastAnimationFinished}

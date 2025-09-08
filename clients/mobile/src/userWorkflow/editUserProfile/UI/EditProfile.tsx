@@ -155,10 +155,10 @@ const EditProfile = () => {
               <DateTimePickerComponent
                 label={t('fromLabel.lastDonationDate')}
                 value={
-                  profileData.lastDonationDate !== null &&
-                  profileData.lastDonationDate !== '' ?
-                    new Date(profileData.lastDonationDate) :
-                    null
+                  profileData.lastDonationDate !== null
+                  && profileData.lastDonationDate !== ''
+                    ? new Date(profileData.lastDonationDate)
+                    : null
                 }
                 onChange={(date) => handleInputChange('lastDonationDate', date)}
                 isOnlyDate={true}

@@ -20,6 +20,7 @@ const useBackPressHandler = () => {
         setBackPressedOnce(false)
       }, 2000)
     }
+
     return true
   }
 }

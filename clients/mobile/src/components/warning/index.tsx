@@ -10,6 +10,7 @@ type WarningProps = {
 
 const Warning: React.FC<WarningProps> = ({ text, showWarning }) => {
   const styles = createStyles(useTheme())
+
   return (
     <>
       {showWarning && text.trim() !== '' && (

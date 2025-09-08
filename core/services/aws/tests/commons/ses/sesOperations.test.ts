@@ -2,6 +2,7 @@ import { SESClient, SendEmailCommand, SendEmailCommandInput } from '@aws-sdk/cli
 import { mockClient } from 'aws-sdk-client-mock'
 import { sendAppUserWelcomeMail } from '../../../commons/ses/sesOperations'
 import { GenericMessage } from '../../../../../../commons/dto/MessageDTO'
+import { isNullOrUndefined } from '../../../../../../commons/libs/nullOrUndefined'
 
 const sesClientMock = mockClient(SESClient)
 
@@ -19,16 +20,16 @@ const assertEmailParams = (params: SendEmailCommandInput, expectedParams: Partia
     params.Message?.Body?.Html?.Data !== undefined &&
     params.Destination?.ToAddresses !== undefined
   ) {
-    if ((expectedParams.Message?.Subject?.Data) != null) {
+    if (!isNullOrUndefined(expectedParams.Message?.Subject?.Data) ) {
       expect(params.Message.Subject.Data).toBe(expectedParams.Message.Subject.Data)
     }
-    if ((expectedParams.Message?.Body?.Html?.Data) != null) {
+    if (!isNullOrUndefined(expectedParams.Message?.Body?.Html?.Data)) {
       expect(params.Message.Body.Html.Data).toEqual(expectedParams.Message.Body.Html.Data)
     }
-    if ((expectedParams.Destination?.ToAddresses) != null) {
+    if (!isNullOrUndefined(expectedParams.Destination?.ToAddresses)) {
       expect(params.Destination.ToAddresses).toEqual(expectedParams.Destination.ToAddresses)
     }
-    if (expectedParams.Source != null && params.Source != null) {
+    if (!isNullOrUndefined(expectedParams.Source) && isNullOrUndefined(params.Source)) {
       expect(params.Source).toBe(expectedParams.Source)
     }
   }

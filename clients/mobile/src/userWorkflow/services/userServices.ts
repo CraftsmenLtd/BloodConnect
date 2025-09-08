@@ -17,6 +17,7 @@ export type DonorProfile = {
 export const getDonorProfile = async(donorId: string, httpClient: HttpClient): Promise<ApiResponse<DonorProfile>> => {
   try {
     const response = await httpClient.get<ApiResponse<DonorProfile>>(`/donors/${donorId}`, {})
+
     return {
       message: response.message,
       status: response.status,

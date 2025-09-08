@@ -1,10 +1,10 @@
 import { UserService } from '../../../../../application/userWorkflow/UserService'
 import type { GenericMessage } from '../../../../../../commons/dto/MessageDTO'
 import type { Callback, Context, CustomMessageTriggerEvent } from 'aws-lambda'
-import UserDynamoDbOperations from '../../../commons/ddbOperations/UserDynamoDbOperations';
-import { JsonLogger } from '../../../../../../commons/libs/logger/JsonLogger';
-import type { Logger } from '../../../../../application/models/logger/Logger';
-import { Config } from '../../../../../../commons/libs/config/config';
+import UserDynamoDbOperations from '../../../commons/ddbOperations/UserDynamoDbOperations'
+import { JsonLogger } from '../../../../../../commons/libs/logger/JsonLogger'
+import type { Logger } from '../../../../../application/models/logger/Logger'
+import { Config } from '../../../../../../commons/libs/config/config'
 
 const config = new Config<{
   dynamodbTableName: string;
@@ -32,15 +32,16 @@ function customEmailTemplateLambda(
 
   let emailContent: GenericMessage
   switch (event.triggerSource) {
-  case 'CustomMessage_SignUp':
-    emailContent = userService.getPostSignUpMessage(name, codeParameter)
-    break
-  case 'CustomMessage_ForgotPassword':
-    emailContent = userService.getForgotPasswordMessage(name, codeParameter)
-    break
-  default:
-    callback(null, event)
-    return
+    case 'CustomMessage_SignUp':
+      emailContent = userService.getPostSignUpMessage(name, codeParameter)
+      break
+    case 'CustomMessage_ForgotPassword':
+      emailContent = userService.getForgotPasswordMessage(name, codeParameter)
+      break
+    default:
+      callback(null, event)
+
+      return
   }
   const { title, content } = emailContent
   event.response.emailSubject = title

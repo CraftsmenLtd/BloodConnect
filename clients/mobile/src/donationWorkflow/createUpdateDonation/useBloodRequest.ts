@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect, useRef } from 'react'
 import Constants from 'expo-constants'
 import type {
   ValidationRule
-} from '../../utility/validator';
+} from '../../utility/validator'
 import {
   validateInput,
   validateRequired,
@@ -13,7 +13,7 @@ import {
 } from '../../utility/validator'
 import { initializeState } from '../../utility/stateUtils'
 import { LocationService } from '../../LocationService/LocationService'
-import type { DonationCreateUpdateResponse } from '../donationService';
+import type { DonationCreateUpdateResponse } from '../donationService'
 import { createDonation, updateDonation } from '../donationService'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
@@ -102,7 +102,7 @@ export const useBloodRequest = (): unknown => {
 
   const onDateChange = (selectedDate: string | Date): void => {
     const currentDate = typeof selectedDate === 'string' ? new Date(selectedDate) : selectedDate
-    setBloodRequestData(prevState => ({
+    setBloodRequestData((prevState) => ({
       ...prevState,
       donationDateTime: currentDate
     }))
@@ -110,7 +110,7 @@ export const useBloodRequest = (): unknown => {
   }
   const handleInputChange = (name: CredentialKeys, value: string): void => {
     const updateErrors = (error: string | null): void => {
-      setErrors(prevErrors => ({
+      setErrors((prevErrors) => ({
         ...prevErrors,
         [DONATION_DATE_TIME_INPUT_NAME]: error ?? null
       }))
@@ -121,6 +121,7 @@ export const useBloodRequest = (): unknown => {
       if (bloodRequestData.urgencyLevel === UrgencyLevel.URGENT) {
         updateErrors(validateDonationDateTimeWithin24Hours(value))
       }
+
       return
     }
 
@@ -138,7 +139,7 @@ export const useBloodRequest = (): unknown => {
       }
     }
 
-    setBloodRequestData(prevState => ({
+    setBloodRequestData((prevState) => ({
       ...prevState,
       [name]: value
     }))
@@ -150,7 +151,7 @@ export const useBloodRequest = (): unknown => {
 
   const handleInputValidation = (name: keyof BloodRequestDataErrors, value: string): void => {
     const errorMsg = validateInput(value, validationRules[name])
-    setErrors(prevErrors => ({
+    setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: errorMsg
     }))
@@ -171,7 +172,7 @@ export const useBloodRequest = (): unknown => {
   }
 
   const isButtonDisabled = useMemo(() => {
-    const hasErrors = !Object.values(errors).every(error => error === null)
+    const hasErrors = !Object.values(errors).every((error) => error === null)
     const requiredFieldsFilled = Object.keys(validationRules).every((key: string) => {
       const value = bloodRequestData[key as CredentialKeys]
       const isRequired = validationRules[
@@ -183,14 +184,16 @@ export const useBloodRequest = (): unknown => {
       } else if (value instanceof Date) {
         return !isNaN(value.getTime())
       }
+
       return false
     })
+
     return hasErrors || !requiredFieldsFilled
   }, [errors, bloodRequestData])
 
-  const removeEmptyAndNullProperty = (object: Record<string, unknown>): Record<string, unknown> => {
-    return Object.fromEntries(Object.entries(object).filter(([_, v]) => v != null && v !== ''))
-  }
+  const removeEmptyAndNullProperty = (object: Record<string, unknown>): Record<string, unknown> => Object.fromEntries(
+    Object.entries(object).filter(([_, v]) => v !== null && v !== '')
+  )
 
   const createBloodDonationRequest = async(): Promise<DonationCreateUpdateResponse> => {
     const { bloodQuantity, ...rest } = bloodRequestData
@@ -207,6 +210,7 @@ export const useBloodRequest = (): unknown => {
       longitude: coordinates.longitude,
       shortDescription: rest.shortDescription.replaceAll(/\n/g, ' ')
     }
+
     return createDonation(finalData, fetchClient)
   }
 
@@ -227,6 +231,7 @@ export const useBloodRequest = (): unknown => {
       createdAt: bloodRequestData?.createdAt,
       bloodQuantity: Number(bloodQuantity)
     }
+
     return updateDonation(finalData, fetchClient)
   }
 
@@ -234,19 +239,19 @@ export const useBloodRequest = (): unknown => {
     notifications: NotificationRequest[],
     requestPostId: string): NotificationRequest | undefined =>
     notifications.find(
-      notification => notification.content?.data?.payload?.requestPostId === requestPostId
+      (notification) => notification.content?.data?.payload?.requestPostId === requestPostId
     )
 
   const updateNotificationTriggerTime = async(
     donationDateTime: string | Date,
     requestPostId: string
   ): Promise<void> => {
-    const notifications = await fetchScheduledNotifications();
-    const notificationToUpdate = findNotificationByRequestPostId(notifications, requestPostId);
-    if (notificationToUpdate == null) return;
-    await cancelNotificationById(notificationToUpdate.identifier);
-    const adjustedTime = adjustNotificationTime(donationDateTime);
-    void scheduleNotification({ date: adjustedTime }, notificationToUpdate.content?.data?.payload);
+    const notifications = await fetchScheduledNotifications()
+    const notificationToUpdate = findNotificationByRequestPostId(notifications, requestPostId)
+    if (notificationToUpdate === null) return
+    await cancelNotificationById(notificationToUpdate.identifier)
+    const adjustedTime = adjustNotificationTime(donationDateTime)
+    void scheduleNotification({ date: adjustedTime }, notificationToUpdate.content?.data?.payload)
   }
 
   const handleNotification = (
@@ -256,8 +261,8 @@ export const useBloodRequest = (): unknown => {
       createdAt: string;
     }): void => {
     if (
-      isUpdating &&
-      currentBloodRequestData.current?.donationDateTime === bloodRequestData.donationDateTime
+      isUpdating
+      && currentBloodRequestData.current?.donationDateTime === bloodRequestData.donationDateTime
     ) return
     if (isUpdating) {
       void updateNotificationTriggerTime(donationDateTime, donationResponse.requestPostId)
@@ -272,6 +277,7 @@ export const useBloodRequest = (): unknown => {
       )
       if (validateDonationDate !== null) {
         setErrorMessage(validateDonationDate)
+
         return
       }
 
@@ -281,6 +287,7 @@ export const useBloodRequest = (): unknown => {
         )
         if (validationError !== null) {
           setErrorMessage(validationError)
+
           return
         }
       }
@@ -302,6 +309,7 @@ export const useBloodRequest = (): unknown => {
       setLoading(false)
     }
   }
+
   return {
     isUpdating,
     errors,

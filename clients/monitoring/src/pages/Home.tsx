@@ -62,14 +62,14 @@ const Home = () => {
   const parsedRequestsToMapDataPoints = useMemo(() => globalData.requests.reduce((acc, item) => {
     const geohash = item.geohash.S
     const bloodGroup = item.requestedBloodGroup?.S as BloodGroup
-    const detailsShownOnMap = item.SK.S.split('#')[2] ===
-        requestListProps.detailsShownOnMapForRequestId ||
-        requestListProps.detailsShownOnMapForRequestId === null
+    const detailsShownOnMap = item.SK.S.split('#')[2]
+        === requestListProps.detailsShownOnMapForRequestId
+        || requestListProps.detailsShownOnMapForRequestId === null
 
     if (!geohash || !bloodGroup || !detailsShownOnMap) return acc
 
     const existing = acc.find(
-      dp => dp.id === geohash) as MapDataPoint & { type: MapDataPointType.REQUEST }
+      (dp) => dp.id === geohash) as MapDataPoint & { type: MapDataPointType.REQUEST }
 
     if (!existing) {
       const { latitude, longitude } = decode(geohash)
@@ -80,8 +80,8 @@ const Home = () => {
         longitude,
         onBloodGroupCountClick: (...arg) => { handleBloodTypePopupClick(...arg) },
         content: {
-          [bloodGroup]: requestListProps.detailsShownOnMapForRequestId === null ?
-            1 : item.bloodQuantity.N,
+          [bloodGroup]: requestListProps.detailsShownOnMapForRequestId === null
+            ? 1 : item.bloodQuantity.N,
         },
       })
     } else {
@@ -94,15 +94,15 @@ const Home = () => {
 
   const parsedDonorsToMapDataPoints = useMemo(() => globalData.requests
     .find(
-      request => request.SK.S.split('#')[2] === requestListProps.detailsShownOnMapForRequestId)
+      (request) => request.SK.S.split('#')[2] === requestListProps.detailsShownOnMapForRequestId)
     ?.notifiedDonors?.reduce((acc, notifiedDonor) => {
       const latitude = Number(notifiedDonor.location.latitude.N)
       const longitude = Number(notifiedDonor.location.longitude.N)
       const status = notifiedDonor.status.S as AcceptDonationStatus
 
-      const existing = acc.find(dp =>
-        dp.latitude === latitude &&
-          dp.longitude === longitude
+      const existing = acc.find((dp) =>
+        dp.latitude === latitude
+          && dp.longitude === longitude
       )
 
       if (!existing) {
@@ -142,29 +142,30 @@ const Home = () => {
     }).
     catch((err) => {
       alert(err)
+
       return { items: [] }
     })
-    .then(response => response.items)
-    .then(items => {
-      setGlobalData(prev => ({
+    .then((response) => response.items)
+    .then((items) => {
+      setGlobalData((prev) => ({
         ...prev, requests: items as BloodRequestDynamoDBUnmarshaledItem[]
       }))
+
       return items
     })
 
   const searchNotifiedDonors = (requestId: string) => queryNotifiedDonors(dynamodbClient,
     { requestId })
-    .catch(err => {
+    .catch((err) => {
       alert(err)
+
       return { items: [] }
     })
-    .then(notificationResponse => {
-      return notificationResponse.items
-    })
-    .then(notificationItems => notificationItems.filter(
-      item => item.payload.M?.locationId?.S))
-    .then(notificationItems => Promise.all(notificationItems.map(
-      async notification => ({
+    .then((notificationResponse) => notificationResponse.items)
+    .then((notificationItems) => notificationItems.filter(
+      (item) => item.payload.M?.locationId?.S))
+    .then((notificationItems) => Promise.all(notificationItems.map(
+      async(notification) => ({
         ...notification,
         location: await queryUserLocation(dynamodbClient,
           {
@@ -173,20 +174,21 @@ const Home = () => {
           })
       })
     )))
-    .then(notificationsWithLocation => notificationsWithLocation
-      .filter(notificationWithLocation => notificationWithLocation.location))
-    .then(notificationsWithLocation => {
-      setGlobalData(prev => {
+    .then((notificationsWithLocation) => notificationsWithLocation
+      .filter((notificationWithLocation) => notificationWithLocation.location))
+    .then((notificationsWithLocation) => {
+      setGlobalData((prev) => {
         const requests = [...prev.requests]
-        const request = requests.find(request => requestId === request.SK.S.split('#')[2])
+        const request = requests.find((request) => requestId === request.SK.S.split('#')[2])
         request!.notifiedDonors = notificationsWithLocation
+
         return { requests }
       })
     })
 
   const sidePanelRequests = globalData.requests.filter(
-    request => request.requestedBloodGroup.S === requestListProps.bloodGroup &&
-      request.geohash.S === requestListProps.geohash)
+    (request) => request.requestedBloodGroup.S === requestListProps.bloodGroup
+      && request.geohash.S === requestListProps.geohash)
 
   return (
     <Container
@@ -204,11 +206,11 @@ const Home = () => {
             country,
             status,
           }}
-          onCenterHashChange={hash => {
+          onCenterHashChange={(hash) => {
             searchParams.set('centerHash', hash)
             setSearchParams(searchParams)
           }}
-          onDataSubmit={data => {
+          onDataSubmit={(data) => {
             searchParams.set('centerHash', data.centerHash)
             searchParams.set('country', data.country)
             searchParams.set('startTime', data.startTime.toString())
@@ -224,7 +226,7 @@ const Home = () => {
         lines={lines}
         center={centerLatLng}
         data={data}
-        onCenterChange={arg => {
+        onCenterChange={(arg) => {
           searchParams.set('centerHash', encode(arg.latitude, arg.longitude))
           setSearchParams(searchParams)
         }}
@@ -232,22 +234,24 @@ const Home = () => {
       <div
         className="position-absolute top-0 end-0">
         {
-          requestListProps.show && requestListProps.bloodGroup &&
-          <RequestList
+          requestListProps.show && requestListProps.bloodGroup
+          && <RequestList
             activeRequestOnMap={requestListProps.detailsShownOnMapForRequestId}
-            onCardClickToClose={requestId => setRequestListProps(prev => (
-              { ...prev, detailsShownOnMapForRequestId:
-                requestId === requestListProps.detailsShownOnMapForRequestId ?
-                  null : requestListProps.detailsShownOnMapForRequestId }))}
-            onCardClickToOpen={requestId => {
+            onCardClickToClose={(requestId) => setRequestListProps((prev) => (
+              { ...prev,
+                detailsShownOnMapForRequestId:
+                requestId === requestListProps.detailsShownOnMapForRequestId
+                  ? null : requestListProps.detailsShownOnMapForRequestId }))}
+            onCardClickToOpen={(requestId) => {
               setSearchRequestsLoading(true)
-              setRequestListProps(prev => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
+              setRequestListProps((prev) => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
               searchNotifiedDonors(requestId).finally(() => { setSearchRequestsLoading(false) })
             }}
             bloodGroup={requestListProps!.bloodGroup}
             geohash={requestListProps.geohash}
-            onClose={() => { setRequestListProps(prev => ({
-              ...prev, show: false,
+            onClose={() => { setRequestListProps((prev) => ({
+              ...prev,
+              show: false,
               detailsShownOnMapForRequestId: null })) }}
             requests={sidePanelRequests} />
         }

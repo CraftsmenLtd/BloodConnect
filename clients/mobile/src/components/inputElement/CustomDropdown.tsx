@@ -77,7 +77,7 @@ export const CustomDropdown = ({
             ]}
           >
             <ScrollView style={styles.scrollView} nestedScrollEnabled={true}>
-              {options.map(item => (
+              {options.map((item) => (
                 <TouchableOpacity key={item.label} style={styles.option} onPress={() => { handleSelect(name, item.value) }}>
                   <Text style={styles.optionText}>{item.label}</Text>
                 </TouchableOpacity>

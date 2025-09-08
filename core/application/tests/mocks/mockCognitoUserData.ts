@@ -1,4 +1,4 @@
-import { UpdateCognitoAttributes } from '../../models/cognito/CognitoModel'
+import type { UpdateCognitoAttributes } from '../../models/cognito/CognitoModel'
 
 export const mockUpdateCognitoAttributes: UpdateCognitoAttributes = {
   userPoolId: 'us-east-1_testPoolId',

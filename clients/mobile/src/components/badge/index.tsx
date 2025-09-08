@@ -1,5 +1,5 @@
 import React from 'react'
-import type { ViewStyle, TextStyle, StyleProp } from 'react-native';
+import type { ViewStyle, TextStyle, StyleProp } from 'react-native'
 import { View, Text, StyleSheet } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { FontAwesome6 } from '@expo/vector-icons'

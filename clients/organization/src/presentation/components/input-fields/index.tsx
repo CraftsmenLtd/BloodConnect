@@ -1,4 +1,4 @@
-import React from 'clients/commons/platform/node_modules/@types/react';
+import React from 'clients/commons/platform/node_modules/@types/react'
 
 type InputFieldProps = {
   type: string;
@@ -22,28 +22,26 @@ const InputField: React.FC<InputFieldProps> = ({
   onChange,
   onFocus,
   onBlur,
-}) => {
-  return (
-    <div className="mb-4">
-      <label className="mb-2.5 block font-medium">{label}</label>
-      <div className="relative">
-        <input
-          type={type}
-          placeholder={placeholder}
-          className={className}
-          value={value}
-          onChange={onChange}
-          onFocus={onFocus}
-          onBlur={onBlur}
-        />
-        {icon != null && (
-          <span className="absolute right-4 top-4 text-primary text-xl">
-            {icon}
-          </span>
-        )}
-      </div>
+}) => (
+  <div className="mb-4">
+    <label className="mb-2.5 block font-medium">{label}</label>
+    <div className="relative">
+      <input
+        type={type}
+        placeholder={placeholder}
+        className={className}
+        value={value}
+        onChange={onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
+      />
+      {icon !== null && (
+        <span className="absolute right-4 top-4 text-primary text-xl">
+          {icon}
+        </span>
+      )}
     </div>
-  );
-};
+  </div>
+)
 
-export default InputField;
+export default InputField

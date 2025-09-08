@@ -47,7 +47,7 @@ async function createUserLambda(
       age: event.age,
       preferredDonationLocations: event.preferredDonationLocations,
       availableForDonation:
-        `${event.availableForDonation}` === 'true' || event.availableForDonation == true
+        `${event.availableForDonation}` === 'true' || event.availableForDonation === true
           ? true
           : false,
       ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
@@ -68,6 +68,7 @@ async function createUserLambda(
   } catch (error) {
     httpLogger.error(error)
     const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
+
     return generateApiGatewayResponse(`Error: ${errorMessage}`, HTTP_CODES.ERROR)
   }
 }
