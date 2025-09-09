@@ -95,7 +95,7 @@ localstack-start:
 
 # Nodejs
 install-node-packages:
-	npm i
+	npm ci
 
 build-node-%:
 	cd core/services/aws && npm run build-$* -- $(NPM_ARGS)
