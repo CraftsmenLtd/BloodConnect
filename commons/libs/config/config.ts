@@ -13,7 +13,7 @@ type AllConfig = {
   platformArnApns: string;
   platformArnFcm: string;
   notificationQueueUrl: string;
-  donorSearchQueueUrl: string;
+  donorSearchLambdaArn: string;
   maxGeohashCacheEntriesCount: number;
   maxGeohashCacheMbSize: number;
   maxGeohashCacheTimeoutMinutes: number;
@@ -23,6 +23,8 @@ type AllConfig = {
   donorSearchMaxInitiatingRetryCount: number;
   donorSearchDelayBetweenExecution: number;
   maxGeohashesPerExecution: number;
+  scheduleGroupName: string;
+  scheduleRoleArn: string;
 }
 
 type ConfigSubset<T> = { [K in keyof T]: K extends keyof AllConfig ? AllConfig[K] : never }
@@ -49,7 +51,7 @@ export class Config<T extends ConfigSubset<T>> {
       platformArnApns: process.env.PLATFORM_ARN_APNS as AllConfig['platformArnApns'],
       platformArnFcm: process.env.PLATFORM_ARN_FCM as AllConfig['platformArnFcm'],
       notificationQueueUrl: process.env.NOTIFICATION_QUEUE_URL as AllConfig['notificationQueueUrl'],
-      donorSearchQueueUrl: process.env.DONOR_SEARCH_QUEUE_URL as AllConfig['donorSearchQueueUrl'],
+      donorSearchLambdaArn: process.env.DONOR_SEARCH_LAMBDA_ARN as AllConfig['donorSearchLambdaArn'],
       maxGeohashCacheEntriesCount: Number(process.env.MAX_GEOHASH_CACHE_ENTRIES_COUNT) as
         AllConfig['maxGeohashCacheEntriesCount'],
       maxGeohashCacheMbSize: Number(process.env.MAX_GEOHASH_CACHE_MB_SIZE) as
@@ -70,6 +72,8 @@ export class Config<T extends ConfigSubset<T>> {
         AllConfig['donorSearchDelayBetweenExecution'],
       maxGeohashesPerExecution: Number(process.env.MAX_GEOHASHES_PER_EXECUTION) as
         AllConfig['maxGeohashesPerExecution'],
+      scheduleGroupName: process.env.SCHEDULE_GROUP_NAME as AllConfig['scheduleGroupName'],
+      scheduleRoleArn: process.env.SCHEDULE_ROLE_ARN as AllConfig['scheduleRoleArn'],
     }
   }
 

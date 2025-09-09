@@ -12,14 +12,15 @@ import {
   type DonorSearchAttributes,
   type DonorSearchQueueAttributes
 } from './Types'
+import { SchedulerService } from '../schedulerWorkflow/SchedulerService'
+import { TaskType } from '../schedulerWorkflow/Types'
+import type { SchedulerModel } from '../models/scheduler/SchedulerModel'
 import type { QueueModel } from '../models/queue/QueueModel'
 import {
-  GEO_PARTITION_PREFIX_LENGTH,
-  MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS
+  GEO_PARTITION_PREFIX_LENGTH
 } from '../../../commons/libs/constants/NoMagicNumbers'
 import type { Logger } from '../models/logger/Logger'
 import type DonorSearchRepository from '../models/policies/repositories/DonorSearchRepository'
-import { DonorSearchIntentionalError } from './DonorSearchOperationalError'
 import type {
   DonorInfo,
   GeohashCacheManager,
@@ -41,7 +42,7 @@ export class DonorSearchService {
 
   async initiateDonorSearchRequest(
     donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes,
-    queueModel: QueueModel,
+    schedulerModel: SchedulerModel,
     donationStatus: DonationStatus,
     eventName: DynamoDBEventName
   ): Promise<void> {
@@ -80,7 +81,7 @@ export class DonorSearchService {
       await this.createDonorSearchRecord(donorSearchAttributes)
 
       this.logger.info('starting donor search request')
-      await this.enqueueDonorSearchRequest(donorSearchQueueAttributes, queueModel)
+      await this.scheduleDonorSearchRequest(donorSearchQueueAttributes, schedulerModel)
     } else {
       this.logger.info('updating donor search record because the donation request has been updated')
       await this.updateDonorSearchRecord({
@@ -93,20 +94,34 @@ export class DonorSearchService {
     if (shouldRestartSearch) {
       donorSearchQueueAttributes.notifiedEligibleDonors = donorSearchRecord.notifiedEligibleDonors
       this.logger.info('restarting donor search request')
-      await this.enqueueDonorSearchRequest(donorSearchQueueAttributes, queueModel)
+      await this.scheduleDonorSearchRequest(donorSearchQueueAttributes, schedulerModel)
     }
   }
 
-  async enqueueDonorSearchRequest(
+  async scheduleDonorSearchRequest(
     donorSearchQueueAttributes: DonorSearchQueueAttributes,
-    queueModel: QueueModel,
+    schedulerModel: SchedulerModel,
     delayPeriod?: number
   ): Promise<void> {
-    await queueModel.queue(
-      donorSearchQueueAttributes,
-      this.options.donorSearchQueueUrl,
-      delayPeriod
+    const schedulerService = new SchedulerService(
+      schedulerModel,
+      this.logger,
+      {
+        scheduleGroupName: 'default',
+        scheduleRoleArn: 'default'
+      }
     )
+
+    const scheduleAt = delayPeriod
+      ? new Date(Date.now() + (delayPeriod * 1000))
+      : new Date(Date.now() + 1000)
+
+    await schedulerService.scheduleTask({
+      taskType: TaskType.DONOR_SEARCH,
+      payload: donorSearchQueueAttributes,
+      scheduleAt,
+      targetLambdaArn: this.options.donorSearchLambdaArn
+    })
   }
 
   async searchDonors({
@@ -119,11 +134,11 @@ export class DonorSearchService {
     remainingGeohashesToProcess,
     initiationCount,
     notifiedEligibleDonors,
-    receiptHandle,
     bloodDonationService,
     acceptDonationService,
     notificationService,
     geohashService,
+    schedulerModel,
     queueModel,
     geohashCache
   }: {
@@ -136,11 +151,11 @@ export class DonorSearchService {
     remainingGeohashesToProcess: string[];
     initiationCount: number;
     notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
-    receiptHandle: string;
     bloodDonationService: BloodDonationService;
     acceptDonationService: AcceptDonationService;
     notificationService: NotificationService;
     geohashService: GeohashService;
+    schedulerModel: SchedulerModel;
     queueModel: QueueModel;
     geohashCache: GeohashCacheManager<string, GeohashDonorMap>;
   }): Promise<void> {
@@ -164,7 +179,6 @@ export class DonorSearchService {
         targetedExecutionTime !== undefined ? ` ${targetedExecutionTime}` : ''
       }`
     )
-    await this.handleVisibilityTimeout(queueModel, targetedExecutionTime, receiptHandle)
 
     const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
     if (donorSearchRecord === null) {
@@ -247,7 +261,7 @@ export class DonorSearchService {
         `continuing donor search to find remaining ${nextRemainingDonorsToFind} donors`
       )
 
-      await this.enqueueDonorSearchRequest(
+      await this.scheduleDonorSearchRequest(
         {
           seekerId,
           requestPostId,
@@ -258,7 +272,7 @@ export class DonorSearchService {
           remainingDonorsToFind: nextRemainingDonorsToFind,
           initiationCount
         },
-        queueModel,
+        schedulerModel,
         this.options.donorSearchDelayBetweenExecution
       )
 
@@ -300,7 +314,7 @@ export class DonorSearchService {
       `initiating retry request ${initiationCount + 1}`
     )
 
-    await this.enqueueDonorSearchRequest(
+    await this.scheduleDonorSearchRequest(
       {
         seekerId,
         requestPostId,
@@ -314,30 +328,11 @@ export class DonorSearchService {
         remainingDonorsToFind: 0,
         targetedExecutionTime: Math.floor(Date.now() / 1000) + initiatingDelayPeriod
       },
-      queueModel,
+      schedulerModel,
       this.options.donorSearchDelayBetweenExecution
     )
   }
 
-  async handleVisibilityTimeout(
-    queueModel: QueueModel,
-    targetedExecutionTime: number | undefined,
-    receiptHandle: string
-  ): Promise<void> {
-    const currentUnixTime = Math.floor(Date.now() / 1000)
-    if (targetedExecutionTime !== undefined && targetedExecutionTime > currentUnixTime) {
-      const visibilityTimeout = Math.min(
-        targetedExecutionTime - currentUnixTime,
-        MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS
-      )
-      await queueModel.updateVisibilityTimeout(
-        receiptHandle,
-        this.options.donorSearchQueueUrl,
-        visibilityTimeout
-      )
-      throw new DonorSearchIntentionalError(`updated visibility timeout to ${visibilityTimeout}`)
-    }
-  }
 
   async createDonorSearchRecord(donorSearchAttributes: DonorSearchAttributes): Promise<void> {
     await this.donorSearchRepository.create(donorSearchAttributes)

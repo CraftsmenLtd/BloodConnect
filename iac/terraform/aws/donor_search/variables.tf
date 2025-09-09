@@ -21,3 +21,13 @@ variable "api_gateway_execution_arn" {
 variable "push_notification_queue" {
   description = "Push notification SQS queue"
 }
+
+variable "schedule_group_name" {
+  description = "EventBridge Scheduler group name"
+  type        = string
+}
+
+variable "schedule_role_arn" {
+  description = "EventBridge Scheduler execution role ARN"
+  type        = string
+}

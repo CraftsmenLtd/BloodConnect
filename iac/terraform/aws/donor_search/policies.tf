@@ -47,6 +47,30 @@ locals {
           var.push_notification_queue.arn
         ]
       }
+    ],
+    scheduler_policy = [
+      {
+        sid = "SchedulerPolicy"
+        actions = [
+          "scheduler:CreateSchedule",
+          "scheduler:GetSchedule",
+          "scheduler:ListSchedules"
+        ]
+        resources = [
+          "arn:aws:scheduler:*:*:schedule/${var.schedule_group_name}/*"
+        ]
+      }
+    ],
+    pass_role_policy = [
+      {
+        sid = "PassRolePolicy"
+        actions = [
+          "iam:PassRole"
+        ]
+        resources = [
+          var.schedule_role_arn
+        ]
+      }
     ]
   }
 }

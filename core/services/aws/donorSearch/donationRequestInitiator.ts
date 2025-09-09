@@ -6,7 +6,7 @@ import type {
   DonationRequestInitiatorAttributes,
   DonorSearchConfig,
 } from '../../../application/bloodDonationWorkflow/Types'
-import SQSOperations from '../commons/sqs/SQSOperations'
+import EventBridgeSchedulerOperations from '../commons/eventbridge/EventBridgeSchedulerOperations'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
   DonorSearchIntentionalError
@@ -48,9 +48,15 @@ async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
         geohash: body.geohash
       }
 
+      const schedulerOperations = new EventBridgeSchedulerOperations(
+        config.scheduleGroupName,
+        config.scheduleRoleArn,
+        config.awsRegion
+      )
+
       await donorSearchService.initiateDonorSearchRequest(
         donationRequestInitiatorAttributes,
-        new SQSOperations(config.awsRegion),
+        schedulerOperations,
         body.status,
         body.eventName
       )

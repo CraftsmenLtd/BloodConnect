@@ -78,6 +78,8 @@ module "donor_search" {
   push_notification_queue   = module.notification.push_notification_queue
   api_gateway_id            = aws_api_gateway_rest_api.rest_api.id
   api_gateway_execution_arn = aws_api_gateway_rest_api.rest_api.execution_arn
+  schedule_group_name       = module.scheduler.schedule_group_name
+  schedule_role_arn         = module.scheduler.schedule_role_arn
 }
 
 module "eventbridge" {
@@ -105,6 +107,13 @@ module "maps" {
 module "logger" {
   source      = "./logger"
   environment = var.environment
+}
+
+module "scheduler" {
+  source                 = "./scheduler"
+  environment            = var.environment
+  dynamodb_table_arn     = module.database.dynamodb_table_arn
+  donor_search_lambda_arn = module.donor_search.donor_search_lambda_arn
 }
 
 module "dashboard" {

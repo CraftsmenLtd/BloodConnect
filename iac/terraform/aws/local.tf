@@ -6,7 +6,8 @@ locals {
     module.notification.lambda_metadata,
     module.user.lambda_metadata,
     module.logger.lambda_metadata,
-    module.maps.lambda_metadata
+    module.maps.lambda_metadata,
+    module.scheduler.lambda_metadata
   )
 
   all_lambda_invoke_arns = merge({

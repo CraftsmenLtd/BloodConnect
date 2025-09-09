@@ -81,7 +81,7 @@ export type DonorSearchConfig = {
   donorSearchDelayBetweenExecution: number;
   maxGeohashPerProcessingBatch: number;
   maxGeohashesPerExecution: number;
-  donorSearchQueueUrl: string;
+  donorSearchLambdaArn: string;
   notificationQueueUrl: string;
 }
 
