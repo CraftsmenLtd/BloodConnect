@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - "master"
+      - "local-build"
 
 permissions:
   contents: read
