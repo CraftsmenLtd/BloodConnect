@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
 import NetInfo from '@react-native-community/netinfo'
-import { JsonLogger } from '../../../../../commons/libs/logger/JsonLogger'
+import { log } from '../../utility/logger'
 
 type NetInfoContextType = {
   isConnected: boolean;
@@ -10,7 +10,7 @@ type NetInfoContextType = {
 export const NetInfoContext = createContext<NetInfoContextType>({
   isConnected: true,
   refreshConnection: async() => {
-    JsonLogger.warn('refreshConnection called before initialization')
+    log.warn('refreshConnection called before initialization')
   }
 })
 
@@ -25,7 +25,7 @@ export const NetInfoProvider = (
       const state = await NetInfo.fetch()
       setIsConnected(!!state.isConnected)
     } catch (error) {
-      JsonLogger.error('Error checking connection:', error)
+      log.error('Error checking connection:', error)
       setIsConnected(false)
     }
   }

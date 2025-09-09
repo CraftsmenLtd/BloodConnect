@@ -173,8 +173,3 @@ prepare-mobile-env:
 
 fetch-google-service-file:
 	@aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/$(BUILD_PROFILE)/google-services.json clients/mobile/
-
-test:
-	sudo apt install -y tree
-	tree ./ -d
-	ls -la commons/libs/logger

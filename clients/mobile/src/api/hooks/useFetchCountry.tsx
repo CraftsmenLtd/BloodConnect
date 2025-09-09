@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { extractErrorMessage } from '../../donationWorkflow/donationHelpers'
 import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { countryAvailability } from '../../setup/navigation/services'
-import { JsonLogger } from '../../../../../commons/libs/logger/JsonLogger'
+import { log } from '../../utility/logger'
 
 type CountryInfo = {
   available: boolean;
@@ -35,7 +35,7 @@ const useFetchCountry = (): {
 
         setCountryInfo(data)
       } catch (err) {
-        JsonLogger.error(err)
+        log.error(err)
         setError(extractErrorMessage(err))
       } finally {
         setLoading(false)
