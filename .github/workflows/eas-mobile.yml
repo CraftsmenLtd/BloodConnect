@@ -96,9 +96,6 @@ jobs:
               -pass pass:${{ secrets.ENCRYPTION_KEY }} | \
             sudo tee clients/mobile/google-services.json > /dev/null
 
-      - name: ⏳ test
-        run: make run-command-test
-
       - name: ⏳ Start Expo Eas Build Job
         run: make run-command-build-android
         if: ${{ inputs.build_type == 'eas' }}
