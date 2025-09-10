@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, Text } from 'react-native'
 import useDonationStatus from '../../../api/hooks/useDonationStatus'
-import { JsonLogger } from '../../../../../../commons/libs/logger/JsonLogger'
 import ToggleTabs from '../../../components/tab/ToggleTabs'
 import type { StatusType } from '../../../donationWorkflow/types'
 import { STATUS } from '../../../donationWorkflow/types'
@@ -24,6 +23,7 @@ import type { Theme } from '../../../setup/theme'
 import { useMyActivity } from '../../useMyActivity'
 import Toast from '../../../components/toast'
 import Button from '../../../components/button/Button'
+import { log } from '../../../utility/logger'
 
 type DetailProps = {
   navigation: DetailPostScreenNavigationProp;
@@ -95,7 +95,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
         void cancelNotification(new Date(data.donationDateTime))
       }
     } catch (err) {
-      JsonLogger.error(err)
+      log.error(err)
       setLocalStatus(previousStatus)
     }
   }

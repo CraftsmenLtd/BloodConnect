@@ -95,7 +95,7 @@ localstack-start:
 
 # Nodejs
 install-node-packages:
-	npm i
+	npm ci
 
 build-node-%:
 	cd core/services/aws && npm run build-$* -- $(NPM_ARGS)
@@ -119,7 +119,7 @@ lint-code-fix:
 # Type Check
 type-check:
 	npm run type-check
-	
+
 lint-api: bundle-openapi
 	spectral lint docs/openapi/v1.json --ruleset openapi/.spectral.json
 

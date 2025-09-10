@@ -5,7 +5,7 @@ import { InteractionManager } from 'react-native'
 import { useAuth } from '../authentication/context/useAuth'
 import { useFetchClient } from '../setup/clients/useFetchClient'
 import registerUserDeviceForNotification from './deviceRegistration'
-import { JsonLogger } from '../../../../commons/libs/logger/JsonLogger'
+import { log } from './logger'
 
 export function withRegisterPushOnFocus<P>(WrappedComponent: ComponentType<P>): FC<P> {
   return function ComponentWithPushRegistration(props: P) {
@@ -17,7 +17,7 @@ export function withRegisterPushOnFocus<P>(WrappedComponent: ComponentType<P>): 
         const task = InteractionManager.runAfterInteractions(() => {
           if (!isAuthenticated) return
           void registerUserDeviceForNotification(fetchClient).catch((error) => {
-            JsonLogger.error('Failed to register device:', error)
+            log.error('Failed to register device:', error)
           })
         })
 
