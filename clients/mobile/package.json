@@ -57,7 +57,7 @@
     "@babel/core": "^7.20.0",
     "@expo/config-types": "^51.0.3",
     "@testing-library/react-native": "^12.7.2",
-    "@types/react": "~18.2.45",
+    "@types/react": "^19.1.0",
     "@types/react-native": "~0.67.6",
     "babel-preset-expo": "^11.0.14",
     "dotenv": "^16.4.5",
