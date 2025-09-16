@@ -69,13 +69,7 @@
           "android": {
             "minSdkVersion": 29,
             "compileSdkVersion": 35,
-            "targetSdkVersion": 35,
-            "buildToolsVersion": "35.0.0",
-            "enablePageSize16KbSupport": true,
-            "gradleVersion": "8.9",
-            "androidGradlePluginVersion": "8.5.1",
-            "ndkVersion": "28.0.12674087",
-            "distributionUrl": "https://services.gradle.org/distributions/gradle-8.9-all.zip"
+            "targetSdkVersion": 35
           }
         }
       ],
