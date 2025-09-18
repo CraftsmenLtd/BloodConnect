@@ -145,3 +145,4 @@ deployment/**/openapi.json
 
 # Mobile app expo
 .expo
+.config/eas-cli-nodejs/user-settings.json

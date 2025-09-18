@@ -19,6 +19,7 @@ on:
         type: choice
         options:
           - 'preview'
+          - 'development'
           - 'production'
       type_selection:
         description: 'Select Expo Build Style'
