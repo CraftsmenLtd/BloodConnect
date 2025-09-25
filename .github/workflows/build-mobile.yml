@@ -15,9 +15,10 @@ on:
       build_selection:
         description: 'Select Expo Build Type'
         required: true
-        default: 'preview'
+        default: 'development'
         type: choice
         options:
+          - 'development'
           - 'preview'
           - 'production'
       type_selection:
