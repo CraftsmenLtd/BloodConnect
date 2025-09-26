@@ -26,6 +26,7 @@ export type UserDetailsDTO = {
   updatedAt?: string;
   deviceToken?: string;
   snsEndpointArn?: string;
+  lastLogin?: string;
 } & UserDTO
 
 export type LocationDTO = {
