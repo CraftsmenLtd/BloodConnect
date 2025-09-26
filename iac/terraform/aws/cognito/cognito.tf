@@ -53,8 +53,9 @@ resource "aws_cognito_user_pool" "user_pool" {
   username_attributes      = ["email"]
 
   lambda_config {
-    custom_message    = module.lambda["cognito_custom_message_trigger"].lambda_arn
-    post_confirmation = module.lambda["cognito_post_confirmation_trigger"].lambda_arn
+    custom_message      = module.lambda["cognito_custom_message_trigger"].lambda_arn
+    post_confirmation   = module.lambda["cognito_post_confirmation_trigger"].lambda_arn
+    post_authentication = module.lambda["cognito_post_authentication_trigger"].lambda_arn
   }
 
   password_policy {

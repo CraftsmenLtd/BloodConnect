@@ -30,6 +30,7 @@ async function postAuthenticationLambda(
   const userId = event.request.userAttributes?.['custom:userId']
   if (!userId) {
     logger.warn('postAuthenticationTrigger: custom:userId missing; skipping lastLogin update')
+
     return event
   }
 
