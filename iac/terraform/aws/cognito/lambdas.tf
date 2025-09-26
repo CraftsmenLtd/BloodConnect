@@ -16,6 +16,15 @@ locals {
         DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1],
         EMAIL_SENDER        = "no-reply@${var.bloodconnect_domain}"
       }
+    },
+    cognito_post_authentication_trigger = {
+      name         = "post-authentication-trigger"
+      handler      = "postAuthenticationTrigger.default"
+      js_file_name = "postAuthenticationTrigger.js"
+      statement    = concat(local.policies.common_policies, local.policies.dynamodb_policy)
+      env_variables = {
+        DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
+      }
     }
   }
 }
