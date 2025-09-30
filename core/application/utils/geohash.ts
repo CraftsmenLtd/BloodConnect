@@ -14,6 +14,7 @@ export function decodeGeohash(geohash: string): { latitude: number; longitude: n
     const { latitude, longitude } = ngeohash.decode(geohash)
 
     return { latitude, longitude }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null
   }

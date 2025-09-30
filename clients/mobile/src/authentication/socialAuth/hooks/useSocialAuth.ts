@@ -42,6 +42,7 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
           routes: [{ name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO }]
         })
       )
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     } finally {

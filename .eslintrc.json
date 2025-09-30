@@ -45,30 +45,8 @@
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-empty-function": "error",
     "@typescript-eslint/return-await": "off",
-    "@typescript-eslint/no-extra-semi": "error",
     "@typescript-eslint/consistent-type-imports": "error",
-    "@typescript-eslint/space-before-function-paren": [
-      "error",
-      {
-        "anonymous": "never",
-        "named": "never",
-        "asyncArrow": "never"
-      }
-    ],
     "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/member-delimiter-style": [
-      "error",
-      {
-        "multiline": {
-          "delimiter": "semi",
-          "requireLast": true
-        },
-        "singleline": {
-          "delimiter": "semi",
-          "requireLast": false
-        }
-      }
-    ],
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
@@ -156,12 +134,12 @@
     ],
     "no-multi-spaces": "error",
     "no-trailing-spaces": "error",
-    "indent": "off",
-    "@typescript-eslint/indent": [
+    "indent": [
       "error",
       2,
       {
-        "SwitchCase": 1
+        "SwitchCase": 1,
+        "ignoredNodes": ["JSXElement", "JSXElement > *", "JSXAttribute", "JSXIdentifier", "JSXNamespacedName", "JSXMemberExpression", "JSXSpreadAttribute", "JSXExpressionContainer", "JSXOpeningElement", "JSXClosingElement", "JSXFragment", "JSXOpeningFragment", "JSXClosingFragment", "JSXText", "JSXEmptyExpression", "JSXSpreadChild"]
       }
     ],
     "quotes": [

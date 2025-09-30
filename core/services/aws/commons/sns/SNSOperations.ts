@@ -46,6 +46,7 @@ export default class SNSOperations implements SNSModel {
         TargetArn: snsEndpointArn
       })
       await this.client.send(command)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new Error('Failed to process messages')
     }

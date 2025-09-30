@@ -25,6 +25,7 @@ const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
         size="sm"
       />
 
+      {/* eslint-disable-next-line @typescript-eslint/no-require-imports */}
       <Image source={require('../../assets/images/bloodBag.png')} style={styles.image} />
 
       <Text style={styles.title}>{t('home.title')}</Text>

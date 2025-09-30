@@ -57,6 +57,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setAccessToken(null)
       setIdToken(null)
       setIsAuthenticated(false)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new Error('Failed to logout.')
     }
@@ -66,6 +67,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const loadTokensIIFE = async() => {
       try {
         await loadTokens()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setLoading(false)
         setIsAuthenticated(false)

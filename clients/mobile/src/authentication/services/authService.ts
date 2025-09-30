@@ -56,8 +56,9 @@ export const loadTokens = async():
     const session = await fetchSession()
 
     return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    throw new Error('Failed to load tokes.')
+    throw new Error('Failed to load tokens.')
   }
 }
 
@@ -119,6 +120,7 @@ export const fetchSession = async(): Promise<FetchSessionResponse> => {
     const idToken = session.tokens.idToken?.toString()
 
     return { accessToken, idToken }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     throw new Error('Failed to fetch session')
   }

@@ -21,6 +21,7 @@ const getItem = async <T>(key: string): Promise<T | null> => {
     }
 
     return value as T
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     throw new Error(`Failed to get ${key}`)
   }
@@ -29,6 +30,7 @@ const getItem = async <T>(key: string): Promise<T | null> => {
 const removeItem = async(key: string): Promise<void> => {
   try {
     await AsyncStorage.removeItem(key)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     throw new Error(`Failed to remove ${key}`)
   }
@@ -37,6 +39,7 @@ const removeItem = async(key: string): Promise<void> => {
 const clearStorage = async(): Promise<void> => {
   try {
     await AsyncStorage.clear()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     throw new Error('Failed to clear storage')
   }

@@ -25,6 +25,7 @@ const useFetchData = <DataFetchType>(
     if (parseError !== undefined) {
       try {
         return parseError(error)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (parseErrorException) {
         return 'Failed to parse error'
       }

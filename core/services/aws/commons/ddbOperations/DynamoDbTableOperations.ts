@@ -313,6 +313,7 @@ export default class DynamoDbTableOperations<
       }
 
       return this.modelAdapter.toDto(result.Item as DbFields)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new DatabaseError(
         'Failed to fetch item from DynamoDB',

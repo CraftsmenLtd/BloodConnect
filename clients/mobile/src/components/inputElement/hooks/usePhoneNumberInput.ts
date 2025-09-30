@@ -40,6 +40,7 @@ const usePhoneNumberInput = (
           const valid = phoneNumber.isValid()
           setIsValid(valid)
         }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         setParsedValue(value)
         setIsValid(false)

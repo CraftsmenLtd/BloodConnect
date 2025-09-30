@@ -20,6 +20,7 @@ export const saveDeviceTokenOnSNS = async(
       )
     }
     await saveDeviceTokenLocally(deviceToken)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     throw new Error(
       'An unexpected error occurred'

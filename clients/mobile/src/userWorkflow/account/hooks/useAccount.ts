@@ -51,6 +51,7 @@ export const useAccount = (): UseAccountReturnType => {
       await Promise.all([Cache.clear(), clearStorageExceptDeviceToken()])
       await auth.logoutUser()
       navigation.navigate(SCREENS.WELCOME)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new Error('Something went wrong')
     }
@@ -71,6 +72,7 @@ export const useAccount = (): UseAccountReturnType => {
         const location = `${area}`
         setUserProfileData({ ...userData, location })
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('An unknown error occurred')
     } finally {

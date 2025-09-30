@@ -77,7 +77,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   }
 
   const unsubscribeNavigationState = () => {
-    navigationStateUnsubscribe.current !== null && navigationStateUnsubscribe.current()
+    if (navigationStateUnsubscribe.current !== null) {
+      navigationStateUnsubscribe.current()
+    }
   }
 
   const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => (

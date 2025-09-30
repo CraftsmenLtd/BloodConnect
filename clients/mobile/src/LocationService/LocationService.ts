@@ -87,6 +87,7 @@ export class LocationService {
       )
 
       return this.filterAndFormatPredictions(response.predictions, ['neighborhood', 'political'])
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new Error('Failed to fetch preferred location suggestions')
     }
@@ -104,6 +105,7 @@ export class LocationService {
         return { latitude: lat, longitude: lng }
       }
       throw new Error(`Failed to retrieve coordinates for "${location}."`)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new Error(`Failed to retrieve coordinates for "${location}."`)
     }
@@ -119,6 +121,7 @@ export class LocationService {
         })
 
       return this.filterAndFormatPredictions(response.predictions, ['hospital', 'health', 'pharmacy', 'clinic'])
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       throw new Error('Failed to fetch health location suggestions')
     }

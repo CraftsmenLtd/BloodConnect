@@ -4,7 +4,7 @@ import * as SplashScreen from 'expo-splash-screen'
 
 const { width, height } = Dimensions.get('window')
 
-interface SplashScreenComponentProps {
+type SplashScreenComponentProps = {
   onFinish: () => void
 }
 
@@ -24,6 +24,7 @@ export default function SplashScreenComponent({ onFinish }: SplashScreenComponen
         }, 2000) // Show for 2 seconds
 
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.warn(e)
         setIsReady(true)
         onFinish()
@@ -40,6 +41,7 @@ export default function SplashScreenComponent({ onFinish }: SplashScreenComponen
   return (
     <View style={styles.container}>
       <Image
+        /* eslint-disable-next-line @typescript-eslint/no-require-imports */
         source={require('../../assets/splash.png')}
         style={styles.image}
         resizeMode="cover"

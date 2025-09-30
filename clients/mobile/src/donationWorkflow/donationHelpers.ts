@@ -10,6 +10,7 @@ export const parseErrorMessage = (message: string): string | null => {
     const parsedError = parseJsonData<{ message: string }>(message)
 
     return parsedError !== null && typeof parsedError.message === 'string' ? parsedError.message : null
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null
   }
@@ -40,6 +41,7 @@ export const extractErrorMessage = (error: unknown): string => {
     }
 
     return 'An unknown error occurred'
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return 'An unknown error occurred'
   }

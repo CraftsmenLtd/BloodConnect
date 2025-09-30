@@ -153,6 +153,7 @@ const ResponseDonationRequest = () => {
                     }}
                   >
                     <Image
+                      /* eslint-disable-next-line @typescript-eslint/no-require-imports */
                       source={require('../../../../../assets/images/call.png')}
                       style={styles.callIcon as StyleProp<ImageStyle>}
                     />

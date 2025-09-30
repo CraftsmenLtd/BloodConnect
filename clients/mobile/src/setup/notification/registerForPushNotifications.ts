@@ -22,6 +22,7 @@ export const registerForPushNotificationsAsync = async(): Promise<string | undef
     }
 
     return await getDevicePushToken()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     throw new Error('Failed device registration. Try again')
   }

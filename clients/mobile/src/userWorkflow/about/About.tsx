@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet } from 'react-native'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
-const currentYear = new Date().getFullYear();
+const currentYear = new Date().getFullYear()
 
 const AboutPage: React.FC = () => {
   const styles = createStyles(useTheme())
@@ -29,6 +29,7 @@ const AboutPage: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.logoTitleContainer}>
+        {/* eslint-disable-next-line @typescript-eslint/no-require-imports */}
         <Image source={require('../../../assets/icon.png')} style={styles.logo} />
         <Text style={styles.title}>BloodConnect</Text>
       </View>
@@ -39,6 +40,7 @@ const AboutPage: React.FC = () => {
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>© 2023-{currentYear}</Text>
+        {/* eslint-disable-next-line @typescript-eslint/no-require-imports */}
         <Image source={require('../../../assets/craftsmen-logo.png')} style={styles.companyLogo} />
         <Text style={styles.footerText}>Craftsmen Ltd.</Text>
       </View>

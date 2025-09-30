@@ -98,16 +98,20 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   }, [])
 
   const handleUpdate = useCallback(() => {
-    updateHandler !== undefined && updateHandler(post)
+    if (updateHandler !== undefined) {
+      updateHandler(post)
+    }
     handleCloseDropdown()
-  }, [post, updateHandler])
+  }, [post, updateHandler, handleCloseDropdown])
 
   const handleCancel = useCallback(() => {
-    cancelHandler !== undefined && cancelHandler(post)
+    if (cancelHandler !== undefined) {
+      cancelHandler(post)
+    }
     if (!isLoading) {
       closeModal()
     }
-  }, [post, cancelHandler])
+  }, [post, cancelHandler, isLoading])
 
   const openModal = () => {
     handleCloseDropdown()
@@ -355,7 +359,11 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
           text={t('common.viewDetails')}
           buttonStyle={styles.buttonStyle}
           textStyle={styles.textStyle}
-          onPress={() => { detailHandler !== undefined && detailHandler(post) }}
+          onPress={() => {
+            if (detailHandler !== undefined) {
+              detailHandler(post)
+            }
+          }}
         />
       </View>}
     </View>

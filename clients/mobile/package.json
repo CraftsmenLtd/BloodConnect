@@ -71,7 +71,7 @@
     "@types/react": "~19.1.1",
     "babel-preset-expo": "^54.0.3",
     "dotenv": "^17.2.2",
-    "eslint": "^9.25.0",
+    "eslint": "^8.57.1",
     "eslint-config-expo": "~10.0.0",
     "eslint-plugin-react-native": "^5.0.0",
     "jest-expo": "^54.0.12",
