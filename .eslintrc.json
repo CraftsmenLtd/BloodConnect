@@ -156,7 +156,8 @@
     ],
     "no-multi-spaces": "error",
     "no-trailing-spaces": "error",
-    "indent": [
+    "indent": "off",
+    "@typescript-eslint/indent": [
       "error",
       2,
       {
