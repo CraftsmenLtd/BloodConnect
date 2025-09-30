@@ -67,12 +67,14 @@
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@expo/config-types": "^54.0.8",
+    "@testing-library/react-native": "^13.3.3",
     "@types/react": "~19.1.0",
     "babel-preset-expo": "^54.0.3",
     "dotenv": "^17.2.2",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "eslint-plugin-react-native": "^5.0.0",
+    "jest-expo": "^54.0.12",
     "typescript": "~5.9.2"
   },
   "private": true
