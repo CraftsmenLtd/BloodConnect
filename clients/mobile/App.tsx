@@ -20,6 +20,8 @@ import useBackPressHandler from './src/hooks/useBackPressHandler'
 import Monitoring from './src/setup/monitoring/MonitoringService'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 import i18n from './src/setup/language/i18n'
+import React, { useState } from 'react'
+import SplashScreenComponent from './src/components/SplashScreen'
 
 const { APP_ENV } = Constants.expoConfig?.extra ?? {}
 
@@ -48,6 +50,11 @@ export default function App() {
   useTranslation()
   useBackPressHandler()
   const navigationRef = useNavigationContainerRef<RootStackParamList>()
+  const [isSplashReady, setIsSplashReady] = useState(false)
+
+  const handleSplashFinish = () => {
+    setIsSplashReady(true)
+  }
 
   return (
     <I18nextProvider i18n={i18n} >
@@ -70,6 +77,7 @@ export default function App() {
             </NotificationProvider>
           </NetInfoProvider>
         </NavigationContainer>
+        {!isSplashReady && <SplashScreenComponent onFinish={handleSplashFinish} />}
       </SafeAreaProvider>
     </I18nextProvider>
   )
