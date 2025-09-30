@@ -18,7 +18,7 @@ RUN apt update && apt install -y \
     unzip /tmp/terraform_1.10.4_linux_amd64.zip -d /usr/bin && \
     mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
     apt update && apt install -y nodejs --no-install-recommends && \
     npm install -g yarn @stoplight/spectral-cli @redocly/cli@latest eas-cli@16.19.3 && \
     mkdir -p /opt/android-sdk/cmdline-tools && \
