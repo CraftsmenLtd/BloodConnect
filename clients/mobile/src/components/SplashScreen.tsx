@@ -4,7 +4,7 @@ import * as SplashScreen from 'expo-splash-screen'
 
 const { width, height } = Dimensions.get('window')
 
-interface SplashScreenComponentProps {
+type SplashScreenComponentProps = {
   onFinish: () => void
 }
 

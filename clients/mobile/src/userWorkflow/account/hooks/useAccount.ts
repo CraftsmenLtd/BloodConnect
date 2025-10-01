@@ -51,7 +51,7 @@ export const useAccount = (): UseAccountReturnType => {
       await Promise.all([Cache.clear(), clearStorageExceptDeviceToken()])
       await auth.logoutUser()
       navigation.navigate(SCREENS.WELCOME)
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Something went wrong')
     }
   }
@@ -71,7 +71,7 @@ export const useAccount = (): UseAccountReturnType => {
         const location = `${area}`
         setUserProfileData({ ...userData, location })
       }
-    } catch (err) {
+    } catch (_err) {
       setError('An unknown error occurred')
     } finally {
       setLoading(false)

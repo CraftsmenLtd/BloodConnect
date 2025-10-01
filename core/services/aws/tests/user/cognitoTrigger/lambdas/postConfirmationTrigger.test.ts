@@ -5,7 +5,7 @@ import { mockDynamoDbOperations } from '../../../mock/dynamoDbMocks'
 import { mockUserWithStringId } from '../../../../../../application/tests/mocks/mockUserData'
 import { updateCognitoUserInfo } from '../../../../commons/cognito/CognitoOperations'
 import { sendAppUserWelcomeMail } from '../../../../commons/ses/sesOperations'
-import { GenericMessage } from '../../../../../../../commons/dto/MessageDTO'
+import type { GenericMessage } from '../../../../../../../commons/dto/MessageDTO'
 import { createPostConfirmationEvent } from '../../../mock/cognitoEventMocks'
 
 jest.mock('../../../../../../application/userWorkflow/UserService')

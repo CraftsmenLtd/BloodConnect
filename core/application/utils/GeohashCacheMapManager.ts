@@ -1,4 +1,5 @@
 import type { LocationDTO } from 'commons/dto/UserDTO'
+import { TextEncoder } from 'node:util'
 
 export type DonorInfo = {
   userId: string;
