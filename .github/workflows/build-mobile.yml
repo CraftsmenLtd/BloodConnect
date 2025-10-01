@@ -18,6 +18,7 @@ on:
         default: 'preview'
         type: choice
         options:
+          - 'development'
           - 'preview'
           - 'production'
       type_selection:
