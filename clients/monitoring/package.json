@@ -18,9 +18,9 @@
     "bootstrap": "^5.3.6",
     "maplibre-gl": "^5.5.0",
     "ngeohash": "^0.6.3",
-    "react": "^19.1.1",
+    "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
-    "react-dom": "^19.1.1",
+    "react-dom": "^19.1.0",
     "react-router-dom": "^7.1.1"
   },
   "devDependencies": {
