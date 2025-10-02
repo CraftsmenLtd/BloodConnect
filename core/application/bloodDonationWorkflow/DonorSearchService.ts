@@ -31,7 +31,7 @@ import type { BloodDonationService } from './BloodDonationService'
 import type { AcceptDonationService } from './AcceptDonationRequestService'
 import type { NotificationService } from '../notificationWorkflow/NotificationService'
 import { calculateDelayPeriod, calculateTotalDonorsToFind } from '../utils/calculateDonorsToNotify'
-import { SchedulerModel } from '../models/scheduler/SchedulerModel'
+import type { SchedulerModel } from '../models/scheduler/SchedulerModel'
 
 export class DonorSearchService {
   constructor(
@@ -78,7 +78,7 @@ export class DonorSearchService {
 
     if (donorSearchRecord === null) {
       this.logger.info('inserting donor search record')
-      await this.createDonorSearchRecord(donorSearchAttributes)
+      await this.createDonordefaultSearchRecord(donorSearchAttributes)
 
       this.logger.info('starting donor search request')
       await this.scheduleDonorSearchRequest(donorSearchQueueAttributes, schedulerModel)
@@ -109,7 +109,7 @@ export class DonorSearchService {
       delayPeriod
     )
   }
-  
+
   async scheduleDonorSearchRequest(
     donorSearchQueueAttributes: DonorSearchQueueAttributes,
     schedulerModel: SchedulerModel,

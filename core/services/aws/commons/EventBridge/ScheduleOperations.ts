@@ -1,7 +1,7 @@
 import { SchedulerClient, CreateScheduleCommand, DeleteScheduleCommand } from '@aws-sdk/client-scheduler'
 import type { DTO } from 'commons/dto/DTOCommon'
 import { randomUUID } from 'crypto'
-import { SchedulerModel } from 'core/application/models/scheduler/SchedulerModel'
+import type { SchedulerModel } from 'core/application/models/scheduler/SchedulerModel'
 
 export default class SchedulerOperations implements SchedulerModel {
   private readonly client: SchedulerClient
@@ -15,7 +15,7 @@ export default class SchedulerOperations implements SchedulerModel {
   async schedule(messageBody: DTO, lambdaArn: string, delaySeconds?: number): Promise<void> {
     const scheduleName = `schedule-${randomUUID()}`
     const scheduleTime = new Date()
-    
+
     if (delaySeconds !== undefined && delaySeconds > 0) {
       scheduleTime.setSeconds(scheduleTime.getSeconds() + delaySeconds)
     }
