@@ -23,8 +23,7 @@ export default function SplashScreenComponent({ onFinish }: SplashScreenComponen
           onFinish()
         }, 2000) // Show for 2 seconds
 
-      } catch (e) {
-        console.warn(e)
+      } catch (_error) {
         setIsReady(true)
         onFinish()
       }

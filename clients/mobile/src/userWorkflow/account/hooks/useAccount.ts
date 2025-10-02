@@ -71,7 +71,7 @@ export const useAccount = (): UseAccountReturnType => {
         const location = `${area}`
         setUserProfileData({ ...userData, location })
       }
-    } catch (_err) {
+    } catch (_error) {
       setError('An unknown error occurred')
     } finally {
       setLoading(false)
