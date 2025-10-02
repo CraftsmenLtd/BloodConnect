@@ -83,6 +83,8 @@ export type DonorSearchConfig = {
   maxGeohashesPerExecution: number;
   donorSearchQueueUrl: string;
   notificationQueueUrl: string;
+  schedulerRoleArn: string;
+  donorSearchLambdaArn: string;
 }
 
 export type DonationRequestInitiatorAttributes = {

@@ -31,6 +31,7 @@ import type { BloodDonationService } from './BloodDonationService'
 import type { AcceptDonationService } from './AcceptDonationRequestService'
 import type { NotificationService } from '../notificationWorkflow/NotificationService'
 import { calculateDelayPeriod, calculateTotalDonorsToFind } from '../utils/calculateDonorsToNotify'
+import { SchedulerModel } from '../models/scheduler/SchedulerModel'
 
 export class DonorSearchService {
   constructor(
@@ -41,7 +42,7 @@ export class DonorSearchService {
 
   async initiateDonorSearchRequest(
     donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes,
-    queueModel: QueueModel,
+    schedulerModel: SchedulerModel,
     donationStatus: DonationStatus,
     eventName: DynamoDBEventName
   ): Promise<void> {
@@ -80,7 +81,7 @@ export class DonorSearchService {
       await this.createDonorSearchRecord(donorSearchAttributes)
 
       this.logger.info('starting donor search request')
-      await this.enqueueDonorSearchRequest(donorSearchQueueAttributes, queueModel)
+      await this.scheduleDonorSearchRequest(donorSearchQueueAttributes, schedulerModel)
     } else {
       this.logger.info('updating donor search record because the donation request has been updated')
       await this.updateDonorSearchRecord({
@@ -93,7 +94,7 @@ export class DonorSearchService {
     if (shouldRestartSearch) {
       donorSearchQueueAttributes.notifiedEligibleDonors = donorSearchRecord.notifiedEligibleDonors
       this.logger.info('restarting donor search request')
-      await this.enqueueDonorSearchRequest(donorSearchQueueAttributes, queueModel)
+      await this.scheduleDonorSearchRequest(donorSearchQueueAttributes, schedulerModel)
     }
   }
 
@@ -108,6 +109,18 @@ export class DonorSearchService {
       delayPeriod
     )
   }
+  
+  async scheduleDonorSearchRequest(
+    donorSearchQueueAttributes: DonorSearchQueueAttributes,
+    schedulerModel: SchedulerModel,
+    delayPeriod?: number
+  ): Promise<void> {
+    await schedulerModel.schedule(
+      donorSearchQueueAttributes,
+      this.options.donorSearchLambdaArn,
+      delayPeriod
+    )
+  }
 
   async searchDonors({
     seekerId,
@@ -119,12 +132,12 @@ export class DonorSearchService {
     remainingGeohashesToProcess,
     initiationCount,
     notifiedEligibleDonors,
-    receiptHandle,
     bloodDonationService,
     acceptDonationService,
     notificationService,
     geohashService,
     queueModel,
+    schedulerModel,
     geohashCache
   }: {
     seekerId: string;
@@ -136,12 +149,12 @@ export class DonorSearchService {
     remainingGeohashesToProcess: string[];
     initiationCount: number;
     notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
-    receiptHandle: string;
     bloodDonationService: BloodDonationService;
     acceptDonationService: AcceptDonationService;
     notificationService: NotificationService;
     geohashService: GeohashService;
     queueModel: QueueModel;
+    schedulerModel: SchedulerModel;
     geohashCache: GeohashCacheManager<string, GeohashDonorMap>;
   }): Promise<void> {
     const donationPost = await bloodDonationService.getDonationRequest(
@@ -164,8 +177,6 @@ export class DonorSearchService {
         targetedExecutionTime !== undefined ? ` ${targetedExecutionTime}` : ''
       }`
     )
-    await this.handleVisibilityTimeout(queueModel, targetedExecutionTime, receiptHandle)
-
     const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
     if (donorSearchRecord === null) {
       this.logger.info('terminating process as no search record found')
@@ -247,7 +258,7 @@ export class DonorSearchService {
         `continuing donor search to find remaining ${nextRemainingDonorsToFind} donors`
       )
 
-      await this.enqueueDonorSearchRequest(
+      await this.scheduleDonorSearchRequest(
         {
           seekerId,
           requestPostId,
@@ -258,7 +269,7 @@ export class DonorSearchService {
           remainingDonorsToFind: nextRemainingDonorsToFind,
           initiationCount
         },
-        queueModel,
+        schedulerModel,
         this.options.donorSearchDelayBetweenExecution
       )
 
@@ -300,7 +311,7 @@ export class DonorSearchService {
       `initiating retry request ${initiationCount + 1}`
     )
 
-    await this.enqueueDonorSearchRequest(
+    await this.scheduleDonorSearchRequest(
       {
         seekerId,
         requestPostId,
@@ -314,7 +325,7 @@ export class DonorSearchService {
         remainingDonorsToFind: 0,
         targetedExecutionTime: Math.floor(Date.now() / 1000) + initiatingDelayPeriod
       },
-      queueModel,
+      schedulerModel,
       this.options.donorSearchDelayBetweenExecution
     )
   }

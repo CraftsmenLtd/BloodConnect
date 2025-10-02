@@ -8,3 +8,7 @@ module "donor_search_lambda" {
 module "environments" {
   source = "../environments"
 }
+
+module "eventbridge" {
+  source = "../eventbridge"
+}

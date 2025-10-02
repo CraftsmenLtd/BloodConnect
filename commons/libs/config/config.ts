@@ -23,6 +23,8 @@ type AllConfig = {
   donorSearchMaxInitiatingRetryCount: number;
   donorSearchDelayBetweenExecution: number;
   maxGeohashesPerExecution: number;
+  donorSearchLambdaArn: string;
+  schedulerRoleArn: string;
 }
 
 type ConfigSubset<T> = { [K in keyof T]: K extends keyof AllConfig ? AllConfig[K] : never }
@@ -70,6 +72,8 @@ export class Config<T extends ConfigSubset<T>> {
         AllConfig['donorSearchDelayBetweenExecution'],
       maxGeohashesPerExecution: Number(process.env.MAX_GEOHASHES_PER_EXECUTION) as
         AllConfig['maxGeohashesPerExecution'],
+      schedulerRoleArn: process.env.SCHEDULER_ROLE_ARN as AllConfig['schedulerRoleArn'],
+      donorSearchLambdaArn: process.env.DONOR_SEARCH_LAMBDA_ARN as AllConfig['donorSearchLambdaArn']
     }
   }
 

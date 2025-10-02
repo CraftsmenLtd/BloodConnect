@@ -37,6 +37,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@aws-sdk/client-scheduler": "^3.899.0",
     "pino": "^9.5.0"
   }
 }
