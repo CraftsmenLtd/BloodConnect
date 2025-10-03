@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet } from 'react-native'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
-const currentYear = new Date().getFullYear();
+const currentYear = new Date().getFullYear()
 
 const AboutPage: React.FC = () => {
   const styles = createStyles(useTheme())

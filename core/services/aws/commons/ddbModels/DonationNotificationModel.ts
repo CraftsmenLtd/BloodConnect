@@ -81,7 +81,7 @@ export default class DonationNotificationModel implements
   }
 
   toDto(dbFields: DonationNotificationFields): DonationNotificationDTO {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { PK, SK, GSI1PK, GSI1SK, LSI1SK, ...remainingDonationNotificationFields } = dbFields
     const userId = PK.replace(`${NOTIFICATION_PK_PREFIX}#`, '')
 

@@ -56,7 +56,7 @@ export const loadTokens = async():
     const session = await fetchSession()
 
     return { storedAccessToken: session.accessToken, storedIdToken: session.idToken }
-  } catch (error) {
+  } catch (_error) {
     throw new Error('Failed to load tokes.')
   }
 }
@@ -119,7 +119,7 @@ export const fetchSession = async(): Promise<FetchSessionResponse> => {
     const idToken = session.tokens.idToken?.toString()
 
     return { accessToken, idToken }
-  } catch (error) {
+  } catch (_error) {
     throw new Error('Failed to fetch session')
   }
 }

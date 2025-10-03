@@ -1,4 +1,4 @@
-import { CustomMessageTriggerEvent, PostConfirmationTriggerEvent, Context } from 'aws-lambda'
+import type { CustomMessageTriggerEvent, PostConfirmationTriggerEvent, Context } from 'aws-lambda'
 
 export const postConfirmationLambdaMockEvent: PostConfirmationTriggerEvent = {
   triggerSource: 'PostConfirmation_ConfirmSignUp',

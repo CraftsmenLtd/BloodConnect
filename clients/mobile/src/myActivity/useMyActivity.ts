@@ -37,7 +37,7 @@ export const useMyActivity = () => {
   )
 
   const updatePost = (donationData: DonationData): void => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { status, acceptedDonors, ...rest } = donationData
     navigation.navigate(SCREENS.DONATION, { data: rest, isUpdating: true })
   }

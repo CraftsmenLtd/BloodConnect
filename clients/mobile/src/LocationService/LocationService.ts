@@ -87,7 +87,7 @@ export class LocationService {
       )
 
       return this.filterAndFormatPredictions(response.predictions, ['neighborhood', 'political'])
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Failed to fetch preferred location suggestions')
     }
   }
@@ -104,7 +104,7 @@ export class LocationService {
         return { latitude: lat, longitude: lng }
       }
       throw new Error(`Failed to retrieve coordinates for "${location}."`)
-    } catch (error) {
+    } catch (_error) {
       throw new Error(`Failed to retrieve coordinates for "${location}."`)
     }
   }
@@ -119,7 +119,7 @@ export class LocationService {
         })
 
       return this.filterAndFormatPredictions(response.predictions, ['hospital', 'health', 'pharmacy', 'clinic'])
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Failed to fetch health location suggestions')
     }
   }

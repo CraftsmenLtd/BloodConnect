@@ -25,7 +25,7 @@ const useFetchData = <DataFetchType>(
     if (parseError !== undefined) {
       try {
         return parseError(error)
-      } catch (parseErrorException) {
+      } catch (_parseErrorException) {
         return 'Failed to parse error'
       }
     }

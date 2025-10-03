@@ -1,13 +1,13 @@
-import { UpdateUserAttributes } from '../../../../application/userWorkflow/Types'
+import type { UpdateUserAttributes } from '../../../../application/userWorkflow/Types'
 import { UserService } from '../../../../application/userWorkflow/UserService'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import updateUserLambda from '../../user/updateUser'
-import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
+import type { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 import { UPDATE_PROFILE_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
-import { BloodGroup } from 'commons/dto/DonationDTO'
-import { Gender } from 'commons/dto/UserDTO'
+import type { BloodGroup } from 'commons/dto/DonationDTO'
+import type { Gender } from 'commons/dto/UserDTO'
 import { LocationService } from '../../../../application/userWorkflow/LocationService'
 
 jest.mock('../../../../application/userWorkflow/UserService')
@@ -23,23 +23,19 @@ jest.mock('../../commons/logger/HttpLogger', () => ({
     debug: jest.fn()
   }))
 }))
-jest.mock('../../../../../commons/libs/config/config', () => {
-  return {
-    Config: jest.fn().mockImplementation(() => {
-      return {
-        getConfig: () => ({
-          dynamodbTableName: 'test-table',
-          awsRegion: 'us-east-1',
-          minMonthsBetweenDonations: 4
-        })
-      }
+jest.mock('../../../../../commons/libs/config/config', () => ({
+  Config: jest.fn().mockImplementation(() => ({
+    getConfig: () => ({
+      dynamodbTableName: 'test-table',
+      awsRegion: 'us-east-1',
+      minMonthsBetweenDonations: 4
     })
-  }
-})
+  }))
+}))
 
 describe('updateUserLambda', () => {
-  const mockedGenerateApiGatewayResponse =
-    generateApiGatewayResponse as jest.MockedFunction<typeof generateApiGatewayResponse>
+  const mockedGenerateApiGatewayResponse
+    = generateApiGatewayResponse as jest.MockedFunction<typeof generateApiGatewayResponse>
   const mockedUserService = UserService as jest.MockedClass<typeof UserService>
   const minMonthsBetweenDonations = 4
 
