@@ -13,7 +13,8 @@ provider "aws" {
   region = "us-east-1"
   default_tags {
     tags = {
-      group = "${var.aws_environment}"
+      environment = "${var.aws_environment}"
+      app         = "bloodconnect"
     }
   }
 }
