@@ -18,3 +18,12 @@ provider "aws" {
     }
   }
 }
+
+provider "aws" {
+  default_tags {
+    tags = {
+      environment = "${var.aws_environment}"
+      app         = "bloodconnect"
+    }
+  }
+}
