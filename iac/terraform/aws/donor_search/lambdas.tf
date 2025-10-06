@@ -14,6 +14,7 @@ locals {
         DONOR_SEARCH_QUEUE_URL                = module.donor_search_queue.queue_url
         NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH = local.neighbor_search_geohash_prefix_length
         DONOR_SEARCH_LAMBDA_ARN               = local.donor_search_lambda_arn
+        SCHEDULER_ROLE_ARN                    = local.eventbridge_scheduler_role_arn
        }
     },
     donor-search = {
@@ -41,6 +42,7 @@ locals {
         MAX_GEOHASHES_PER_EXECUTION             = local.max_geohashes_per_execution
         DONOR_SEARCH_DELAY_BETWEEN_EXECUTION    = local.donor_search_delay_between_execution
         DONOR_SEARCH_LAMBDA_ARN                 = local.donor_search_lambda_arn
+        SCHEDULER_ROLE_ARN                      = local.eventbridge_scheduler_role_arn
       }
     },
     donation-status-manager = {
