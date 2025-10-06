@@ -13,9 +13,8 @@ locals {
         DYNAMODB_TABLE_NAME                   = split("/", var.dynamodb_table_arn)[1]
         DONOR_SEARCH_QUEUE_URL                = module.donor_search_queue.queue_url
         NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH = local.neighbor_search_geohash_prefix_length
-        DONOR_SEARCH_LAMBDA_ARN               = module.donor_search_lambda["donor-search"].lambda_function_arn
-        SCHEDULER_ROLE_ARN                    = module.eventbridge.eventbridge_scheduler_role_arn
-        }
+        DONOR_SEARCH_LAMBDA_ARN               = local.donor_search_lambda_arn
+       }
     },
     donor-search = {
       name         = "donor-search"
@@ -41,8 +40,7 @@ locals {
         NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH   = local.neighbor_search_geohash_prefix_length
         MAX_GEOHASHES_PER_EXECUTION             = local.max_geohashes_per_execution
         DONOR_SEARCH_DELAY_BETWEEN_EXECUTION    = local.donor_search_delay_between_execution
-        DONOR_SEARCH_LAMBDA_ARN                 = module.donor_search_lambda["donor-search"].lambda_function_arn
-
+        DONOR_SEARCH_LAMBDA_ARN                 = local.donor_search_lambda_arn
       }
     },
     donation-status-manager = {
