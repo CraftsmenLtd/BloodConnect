@@ -7,7 +7,8 @@ locals {
       statement = concat(
         local.policies.common_policies,
         local.policies.dynamodb_policy,
-        local.policies.sqs_policy
+        local.policies.sqs_policy,
+        local.policies.scheduler_policy
       )
       env_variables = {
         DYNAMODB_TABLE_NAME                   = split("/", var.dynamodb_table_arn)[1]
