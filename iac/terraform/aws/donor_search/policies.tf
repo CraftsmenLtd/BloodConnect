@@ -50,7 +50,8 @@ locals {
     ],
     scheduler_policy = [
       {
-        sid = "EventBridgeSchedulerPolicy"
+        sid = "EventBridgeSchedulerPolicy",
+        Effect = "Allow",
         actions = [
           "scheduler:CreateSchedule",
           "scheduler:UpdateSchedule",
