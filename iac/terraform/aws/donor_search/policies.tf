@@ -50,7 +50,7 @@ locals {
     ],
     scheduler_policy = [
       {
-        sid = "EventBridgeSchedulerPolicy",
+        sid    = "EventBridgeSchedulerPolicy",
         Effect = "Allow",
         actions = [
           "scheduler:CreateSchedule",
@@ -63,6 +63,21 @@ locals {
           "arn:aws:scheduler:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:schedule/default/*"
         ]
       },
+      {
+        sid    = "AllowPassRoleToScheduler",
+        Effect = "Allow",
+        actions = [
+          "iam:PassRole"
+        ]
+        resources = [
+          local.eventbridge_scheduler_role_arn
+        ]
+        conditions = {
+          StringEquals = {
+            "iam:PassedToService" = "scheduler.amazonaws.com"
+          }
+        }
+      }
     ]
   }
 }
