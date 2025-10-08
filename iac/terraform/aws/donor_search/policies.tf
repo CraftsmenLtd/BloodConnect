@@ -47,6 +47,21 @@ locals {
           var.push_notification_queue.arn
         ]
       }
+    ],
+    scheduler_policy = [
+      {
+        sid = "EventBridgeSchedulerPolicy"
+        actions = [
+          "scheduler:CreateSchedule",
+          "scheduler:UpdateSchedule",
+          "scheduler:DeleteSchedule",
+          "scheduler:GetSchedule",
+          "scheduler:ListSchedules"
+        ]
+        resources = [
+          "arn:aws:scheduler:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:schedule/default/*"
+        ]
+      },
     ]
   }
 }
