@@ -78,7 +78,7 @@ export class DonorSearchService {
 
     if (donorSearchRecord === null) {
       this.logger.info('inserting donor search record')
-      await this.createDonordefaultSearchRecord(donorSearchAttributes)
+      await this.createDonorSearchRecord(donorSearchAttributes)
 
       this.logger.info('starting donor search request')
       await this.scheduleDonorSearchRequest(donorSearchQueueAttributes, schedulerModel)
