@@ -94,7 +94,7 @@ const EditProfile = () => {
               <Input
                 name="weight"
                 label={t('fromLabel.weight')}
-                value={profileData.weight.toString()}
+                value={profileData.weight?.toString() ?? ''}
                 onChangeText={handleInputChange}
                 placeholder="Enter your weight"
                 keyboardType="numeric"
@@ -107,7 +107,7 @@ const EditProfile = () => {
               <Input
                 name="height"
                 label={t('fromLabel.height')}
-                value={profileData.height.toString()}
+                value={profileData.height?.toString() ?? ''}
                 onChangeText={handleInputChange}
                 placeholder="Enter your height"
                 keyboardType="numeric"
