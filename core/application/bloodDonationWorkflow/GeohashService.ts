@@ -30,7 +30,7 @@ export class GeohashService {
     const updatedDonors = [...foundDonors, ...(queryResult.items ?? [])]
     const nextLastEvaluatedKey = queryResult.lastEvaluatedKey
 
-    return nextLastEvaluatedKey !== null
+    return (nextLastEvaluatedKey !== null && nextLastEvaluatedKey !== undefined)
       ? this.queryGeohash(
         countryCode,
         requestedBloodGroup,

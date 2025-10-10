@@ -4,7 +4,6 @@ on:
   push:
     branches-ignore:
       - "master"
-      - "fix-react-build"
 
 permissions:
   contents: read
