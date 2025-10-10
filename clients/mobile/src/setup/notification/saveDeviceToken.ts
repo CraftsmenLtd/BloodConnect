@@ -20,7 +20,7 @@ export const saveDeviceTokenOnSNS = async(
       )
     }
     await saveDeviceTokenLocally(deviceToken)
-  } catch (error) {
+  } catch (_error) {
     throw new Error(
       'An unexpected error occurred'
     )

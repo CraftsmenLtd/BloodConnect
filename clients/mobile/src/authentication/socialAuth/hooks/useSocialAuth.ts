@@ -42,7 +42,7 @@ export const useSocialAuth = (): UseSocialAuthOutput => {
           routes: [{ name: hasProfile ? SCREENS.BOTTOM_TABS : SCREENS.ADD_PERSONAL_INFO }]
         })
       )
-    } catch (error) {
+    } catch (_error) {
       setSocialLoginError(`${socialMedia} login failed. Please try again.`)
     } finally {
       setSocialLoading('idle')

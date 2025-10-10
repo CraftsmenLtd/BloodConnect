@@ -1,8 +1,9 @@
-import LocationModel, {
+import type {
   LocationFields
 } from '../../commons/ddbModels/LocationModel'
-import { LocationDTO } from '../../../../../commons/dto/UserDTO'
-import { BloodGroup } from '../../../../../commons/dto/DonationDTO'
+import LocationModel from '../../commons/ddbModels/LocationModel'
+import type { LocationDTO } from '../../../../../commons/dto/UserDTO'
+import type { BloodGroup } from '../../../../../commons/dto/DonationDTO'
 
 describe('LocationModel Tests', () => {
   const locationModel = new LocationModel()

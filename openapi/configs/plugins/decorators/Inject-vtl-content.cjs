@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
 const fs = require('fs')
 const path = require('path')
 
@@ -7,7 +7,7 @@ const VTL_IMPORT_PREFIX = '#importVtl '
 const CONTENT_TYPE_JSON = 'application/json'
 
 function InjectVtlContent() {
-  // eslint-disable-next-line no-console
+
   console.log('Injecting VTL content...')
 
   return {

@@ -249,7 +249,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
           onPress={toggleDropdown}
           activeOpacity={1}
         >
-          <View style={[styles.dropdownContainer, { top: 10 }]}>
+          <View style={[styles.dropdownContainer, { top: 50 }]}>
             {dropdownContent}
           </View>
         </TouchableOpacity>

@@ -71,7 +71,7 @@ export const useLogin = (): unknown => {
         setLoginError(t('error.userNotConfirmed'))
         setLoginLoading(false)
       }
-    } catch (error) {
+    } catch (_error) {
       setLoginError(t('error.invalidEmailOrPassword'))
     } finally {
       setLoginLoading(false)

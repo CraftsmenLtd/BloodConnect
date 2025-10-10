@@ -313,7 +313,7 @@ export default class DynamoDbTableOperations<
       }
 
       return this.modelAdapter.toDto(result.Item as DbFields)
-    } catch (error) {
+    } catch (_error) {
       throw new DatabaseError(
         'Failed to fetch item from DynamoDB',
         GENERIC_CODES.ERROR

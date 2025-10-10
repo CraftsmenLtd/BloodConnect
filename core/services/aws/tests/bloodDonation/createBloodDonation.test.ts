@@ -1,22 +1,18 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import createBloodDonationLambda from '../../bloodDonation/createBloodDonation'
 import { BloodDonationService } from '../../../../application/bloodDonationWorkflow/BloodDonationService'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
-import {
+import type {
   BloodDonationAttributes,
   BloodDonationEventAttributes
 } from '../../../../application/bloodDonationWorkflow/Types'
 import { donationAttributesMock } from '../../../../application/tests/mocks/mockDonationRequestData'
 import BloodDonationOperationError from '../../../../application/bloodDonationWorkflow/BloodDonationOperationError'
-import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
+import type { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 import { CREATE_DONATION_REQUEST_SUCCESS } from '../../../../../commons/libs/constants/ApiResponseMessages'
 import { UserService } from '../../../../application/userWorkflow/UserService'
 import { mockUserDetailsWithStringId } from '../../../../application/tests/mocks/mockUserData'
-import BloodDonationDynamoDbOperations from '../../commons/ddbOperations/BloodDonationDynamoDbOperations'
-import { BloodDonationModel } from '../../commons/ddbModels/BloodDonationModel'
-import DynamoDbTableOperations from '../../commons/ddbOperations/DynamoDbTableOperations'
-import { mockServiceLogger } from '../mock/loggerMock'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/userWorkflow/UserService')

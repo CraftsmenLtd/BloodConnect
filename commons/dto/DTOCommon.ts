@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type DTO = {}
+export type DTO = object
 
 export type IdType = string | number
 

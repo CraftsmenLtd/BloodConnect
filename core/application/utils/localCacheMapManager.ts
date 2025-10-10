@@ -13,7 +13,9 @@ export class LocalCacheMapManager<K, V> {
   set(key: K, value: V): void {
     if (this.cache.size === this.maxSize) {
       const oldestKey = this.cache.keys().next().value
-      oldestKey !== null && this.cache.delete(oldestKey)
+      if (oldestKey !== undefined) {
+        this.cache.delete(oldestKey)
+      }
     }
     this.cache.set(key, value)
   }

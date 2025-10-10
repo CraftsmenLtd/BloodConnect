@@ -40,7 +40,7 @@ const usePhoneNumberInput = (
           const valid = phoneNumber.isValid()
           setIsValid(valid)
         }
-      } catch (err) {
+      } catch (_error) {
         setParsedValue(value)
         setIsValid(false)
       }

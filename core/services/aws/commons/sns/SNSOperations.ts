@@ -46,7 +46,7 @@ export default class SNSOperations implements SNSModel {
         TargetArn: snsEndpointArn
       })
       await this.client.send(command)
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Failed to process messages')
     }
   }

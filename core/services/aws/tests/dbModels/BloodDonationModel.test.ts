@@ -1,8 +1,10 @@
+import type {
+  DonationFields
+} from '../../commons/ddbModels/BloodDonationModel'
 import {
   BloodDonationModel,
   BLOOD_REQUEST_PK_PREFIX,
-  BLOOD_REQUEST_LSI1SK_PREFIX,
-  DonationFields
+  BLOOD_REQUEST_LSI1SK_PREFIX
 } from '../../commons/ddbModels/BloodDonationModel'
 import {
   DonationStatus

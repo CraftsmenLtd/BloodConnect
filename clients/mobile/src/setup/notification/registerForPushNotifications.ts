@@ -22,7 +22,7 @@ export const registerForPushNotificationsAsync = async(): Promise<string | undef
     }
 
     return await getDevicePushToken()
-  } catch (error) {
+  } catch (_error) {
     throw new Error('Failed device registration. Try again')
   }
 }

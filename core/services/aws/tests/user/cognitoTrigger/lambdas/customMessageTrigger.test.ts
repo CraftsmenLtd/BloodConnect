@@ -1,6 +1,6 @@
 import customEmailTemplateLambda from '../../../../user/cognitoTrigger/lambdas/customMessageTrigger'
 import { UserService } from '../../../../../../application/userWorkflow/UserService'
-import { Callback, CustomMessageTriggerEvent } from 'aws-lambda'
+import type { Callback, CustomMessageTriggerEvent } from 'aws-lambda'
 import {
   customMessageLambdaMockEvent,
   lambdaMockContext

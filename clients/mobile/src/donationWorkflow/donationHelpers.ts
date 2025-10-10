@@ -10,7 +10,7 @@ export const parseErrorMessage = (message: string): string | null => {
     const parsedError = parseJsonData<{ message: string }>(message)
 
     return parsedError !== null && typeof parsedError.message === 'string' ? parsedError.message : null
-  } catch (error) {
+  } catch (_error) {
     return null
   }
 }
@@ -40,7 +40,7 @@ export const extractErrorMessage = (error: unknown): string => {
     }
 
     return 'An unknown error occurred'
-  } catch (e) {
+  } catch (_error) {
     return 'An unknown error occurred'
   }
 }

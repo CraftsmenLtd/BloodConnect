@@ -7,7 +7,7 @@ import {
   QueryCommand
 } from '@aws-sdk/lib-dynamodb'
 import { mockClient } from 'aws-sdk-client-mock'
-import { UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
+import type { UserDetailsDTO } from '../../../../../../commons/dto/UserDTO'
 import UserModel from '../../../commons/ddbModels/UserModel'
 import DatabaseError from '../../../../../../commons/libs/errors/DatabaseError'
 import { GENERIC_CODES } from '../../../../../../commons/libs/constants/GenericCodes'
@@ -21,9 +21,10 @@ describe('DynamoDbTableOperations Tests', () => {
   const ddbMock = mockClient(DynamoDBDocumentClient)
   const dynamoDbOperations = new DynamoDbTableOperations<
   UserDetailsDTO,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any,
   UserModel
-  >(new UserModel(), "TestTable", "ap-south-1")
+  >(new UserModel(), 'TestTable', 'ap-south-1')
 
   beforeEach(() => {
     ddbMock.reset()

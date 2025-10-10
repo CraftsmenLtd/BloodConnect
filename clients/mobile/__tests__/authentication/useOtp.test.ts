@@ -76,8 +76,24 @@ describe('useOtp Hook', () => {
     const mockEmail = 'test@example.com'
     const { result } = renderHook(() => useOtp())
 
-    result.current.otp = ['1', '2', '3', '4', '5', '6']
-    result.current.fromScreen = SCREENS.SET_PASSWORD;
+    await act(async() => {
+      result.current.handleOtpChange('1', 0)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('2', 1)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('3', 2)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('4', 3)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('5', 4)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('6', 5)
+    });
 
     (submitOtp as jest.Mock).mockResolvedValue(true);
     (loginUser as jest.Mock).mockResolvedValue(true)
@@ -88,7 +104,7 @@ describe('useOtp Hook', () => {
     })
 
     expect(submitOtp).toHaveBeenCalledTimes(1)
-    expect(submitOtp).toHaveBeenCalledWith(mockEmail, result.current.otp.join(''))
+    expect(submitOtp).toHaveBeenCalledWith(mockEmail, '123456')
 
     expect(mockDispatch).toHaveBeenCalledWith(
       CommonActions.reset({
@@ -100,7 +116,25 @@ describe('useOtp Hook', () => {
 
   test('should set error state on submission failure', async() => {
     const { result } = renderHook(() => useOtp())
-    result.current.otp = ['1', '2', '3', '4', '5', '6'];
+
+    await act(async() => {
+      result.current.handleOtpChange('1', 0)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('2', 1)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('3', 2)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('4', 3)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('5', 4)
+    })
+    await act(async() => {
+      result.current.handleOtpChange('6', 5)
+    });
 
     (submitOtp as jest.Mock).mockRejectedValue(new Error('Submission failed'))
 

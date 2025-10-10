@@ -34,7 +34,7 @@ export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdap
   }
 
   toDto(dbFields: UserFields): UserDetailsDTO {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { PK, SK, ...remainingUserFields } = dbFields
 
     return { ...remainingUserFields, id: PK.replace(`${USER_PK_PREFIX}#`, '') }

@@ -1,4 +1,4 @@
-import { APIGatewayProxyResult } from 'aws-lambda'
+import type { APIGatewayProxyResult } from 'aws-lambda'
 import generateApiGatewayResponse from '../../../commons/lambda/ApiGateway'
 
 describe('generateApiGatewayResponse', () => {

@@ -29,20 +29,20 @@ describe('UserModel Unit Tests', () => {
   describe('fromDto', () => {
     test('should transform UserDTO to UserFields correctly', () => {
       const resultUser = userModel.fromDto(mockUserDetailsWithStringId)
-      const { createdAt: resultCreatedAt, ...resultUserWithoutCreatedAt } =
-        resultUser
-      const { createdAt: expectedCreatedAt, ...expectedUserWithoutCreatedAt } =
-        expectedUser
+      const { createdAt: resultCreatedAt, ...resultUserWithoutCreatedAt }
+        = resultUser
+      const { createdAt: expectedCreatedAt, ...expectedUserWithoutCreatedAt }
+        = expectedUser
 
       expect(resultUserWithoutCreatedAt).toEqual(expectedUserWithoutCreatedAt)
     })
 
     test('should handle non-string id correctly in fromDto', () => {
       const resultUser = userModel.fromDto(mockUserDetailsWithStringId)
-      const { createdAt: resultCreatedAt, ...resultUserWithoutCreatedAt } =
-        resultUser
-      const { createdAt: expectedCreatedAt, ...expectedUserWithoutCreatedAt } =
-        expectedUser
+      const { createdAt: resultCreatedAt, ...resultUserWithoutCreatedAt }
+        = resultUser
+      const { createdAt: expectedCreatedAt, ...expectedUserWithoutCreatedAt }
+        = expectedUser
 
       expect(resultUserWithoutCreatedAt).toEqual(expectedUserWithoutCreatedAt)
     })

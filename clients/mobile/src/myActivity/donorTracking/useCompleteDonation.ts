@@ -25,7 +25,7 @@ const useCompleteDonation = (): UseCompleteDonationReturn => {
         {
           text: 'OK',
           onPress: () => {
-            navigation.navigate(SCREENS.MY_ACTIVITY)
+            navigation.navigate(SCREENS.BOTTOM_TABS, { screen: SCREENS.MY_ACTIVITY })
           }
         }
       ]
