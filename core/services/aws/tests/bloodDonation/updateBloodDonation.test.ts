@@ -3,9 +3,9 @@ import { BloodDonationService } from '../../../../application/bloodDonationWorkf
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import { mockEvent } from '../cannedData/updateBloodDonationLambdaEvent'
-import { UpdateBloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
+import type { UpdateBloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
 import { NotificationService } from '../../../../application/notificationWorkflow/NotificationService'
-import { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
+import type { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/notificationWorkflow/NotificationService')

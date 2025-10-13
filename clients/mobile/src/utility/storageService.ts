@@ -21,7 +21,7 @@ const getItem = async <T>(key: string): Promise<T | null> => {
     }
 
     return value as T
-  } catch (error) {
+  } catch (_error) {
     throw new Error(`Failed to get ${key}`)
   }
 }
@@ -29,7 +29,7 @@ const getItem = async <T>(key: string): Promise<T | null> => {
 const removeItem = async(key: string): Promise<void> => {
   try {
     await AsyncStorage.removeItem(key)
-  } catch (error) {
+  } catch (_error) {
     throw new Error(`Failed to remove ${key}`)
   }
 }
@@ -37,7 +37,7 @@ const removeItem = async(key: string): Promise<void> => {
 const clearStorage = async(): Promise<void> => {
   try {
     await AsyncStorage.clear()
-  } catch (error) {
+  } catch (_error) {
     throw new Error('Failed to clear storage')
   }
 }

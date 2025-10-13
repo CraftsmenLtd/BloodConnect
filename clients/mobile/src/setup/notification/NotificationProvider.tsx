@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type React from 'react'
 import { useState, useEffect, createContext, useRef } from 'react'
 import * as Notifications from 'expo-notifications'
 import type { NavigationContainerRef, ParamListBase } from '@react-navigation/native'
@@ -77,7 +78,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   }
 
   const unsubscribeNavigationState = () => {
-    navigationStateUnsubscribe.current !== null && navigationStateUnsubscribe.current()
+    navigationStateUnsubscribe.current?.()
   }
 
   const isNotificationValid = (response: Notifications.NotificationResponse | null): boolean => (

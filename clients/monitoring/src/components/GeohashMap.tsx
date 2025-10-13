@@ -130,7 +130,6 @@ const GeohashMap = ({
       map.remove()
     }
   // Assuming not having exhaustive deps here is intentional
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

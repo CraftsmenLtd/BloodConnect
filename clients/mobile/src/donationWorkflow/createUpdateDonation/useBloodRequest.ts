@@ -301,7 +301,7 @@ export const useBloodRequest = (): unknown => {
         handleNotification(bloodRequestData.donationDateTime, response.data)
       }
       void fetchDonationPosts()
-      navigation.navigate(SCREENS.MY_ACTIVITY)
+      navigation.navigate(SCREENS.BOTTOM_TABS, { screen: SCREENS.MY_ACTIVITY })
     } catch (error) {
       const errorMessage = formatErrorMessage(error)
       setErrorMessage(errorMessage)
