@@ -1,4 +1,4 @@
-import { PostConfirmationTriggerEvent, PostAuthenticationTriggerEvent } from 'aws-lambda'
+import type { PostConfirmationTriggerEvent, PostAuthenticationTriggerEvent } from 'aws-lambda'
 
 export const createPostConfirmationEvent = (
   triggerSource: 'PostConfirmation_ConfirmSignUp' | 'PostConfirmation_ConfirmForgotPassword',
