@@ -61,5 +61,114 @@ describe('Validation Functions', () => {
 
       expect(result).toBe('Donation date & time cannot be in the past.')
     })
+
+    test('should return formatted error when validator returns string instead of throwing', () => {
+      const stringValidationRule: ValidationRule<unknown> = (value: unknown) => {
+        if (typeof value === 'string' && value.length < 3) {
+          return 'must be at least 3 characters long'
+        }
+        return null
+      }
+
+      const customRules = {
+        name: [stringValidationRule]
+      }
+
+      const result = validateInputWithRules(
+        { name: 'ab' },
+        customRules
+      )
+
+      expect(result).toBe('name: must be at least 3 characters long')
+    })
+
+    test('should return null when all validators pass', () => {
+      const stringValidationRule: ValidationRule<unknown> = (value: unknown) => {
+        if (typeof value === 'string' && value.length < 3) {
+          return 'must be at least 3 characters long'
+        }
+        return null
+      }
+
+      const customRules = {
+        name: [stringValidationRule]
+      }
+
+      const result = validateInputWithRules(
+        { name: 'valid name' },
+        customRules
+      )
+
+      expect(result).toBeNull()
+    })
+
+    test('should handle non-Error exceptions with unknown error message', () => {
+      const throwingValidator: ValidationRule<unknown> = () => {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw 'not an Error object'
+      }
+
+      const customRules = {
+        field: [throwingValidator]
+      }
+
+      const result = validateInputWithRules(
+        { field: 'value' },
+        customRules
+      )
+
+      expect(result).toBe('An unknown error occurred')
+    })
+
+    test('should process all validators for a field in order', () => {
+      const firstValidator: ValidationRule<unknown> = (value: unknown) => {
+        if (typeof value === 'number' && value < 0) {
+          return 'must be positive'
+        }
+        return null
+      }
+
+      const secondValidator: ValidationRule<unknown> = (value: unknown) => {
+        if (typeof value === 'number' && value > 100) {
+          return 'must be less than 100'
+        }
+        return null
+      }
+
+      const customRules = {
+        score: [firstValidator, secondValidator]
+      }
+
+      const result = validateInputWithRules(
+        { score: 150 },
+        customRules
+      )
+
+      expect(result).toBe('score: must be less than 100')
+    })
+
+    test('should return first validation error encountered', () => {
+      const firstValidator: ValidationRule<unknown> = (value: unknown) => {
+        if (typeof value === 'number' && value < 0) {
+          return 'must be positive'
+        }
+        return null
+      }
+
+      const secondValidator: ValidationRule<unknown> = () => {
+        return 'second error'
+      }
+
+      const customRules = {
+        score: [firstValidator, secondValidator]
+      }
+
+      const result = validateInputWithRules(
+        { score: -5 },
+        customRules
+      )
+
+      expect(result).toBe('score: must be positive')
+    })
   })
 })

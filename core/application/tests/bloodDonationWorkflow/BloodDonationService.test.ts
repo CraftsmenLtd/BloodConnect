@@ -5,6 +5,7 @@ import { generateUniqueID } from '../../utils/idGenerator'
 import { generateGeohash } from '../../utils/geohash'
 import { validateInputWithRules } from '../../utils/validator'
 import BloodDonationOperationError from '../../bloodDonationWorkflow/BloodDonationOperationError'
+import ThrottlingError from '../../bloodDonationWorkflow/ThrottlingError'
 import { donationAttributesMock, donationDtoMock, updateDonationAttributesMock } from '../mocks/mockDonationRequestData'
 import { GENERIC_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import type { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
@@ -141,6 +142,28 @@ describe('BloodDonationService', () => {
       )
 
       expect(mockBloodDonationRepository.getDonationRequestsByDate).toHaveBeenCalled()
+      expect(mockBloodDonationRepository.create).toHaveBeenCalled()
+    })
+
+    test('should re-throw ThrottlingError when caught during repository create', async () => {
+      const throttlingError = new ThrottlingError(
+        'Too many requests',
+        GENERIC_CODES.TOO_MANY_REQUESTS
+      )
+      mockBloodDonationRepository.create.mockRejectedValue(throttlingError)
+      mockBloodDonationRepository.getDonationRequestsByDate.mockResolvedValue([])
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      await expect(
+        bloodDonationService.createBloodDonation(
+          donationAttributesMock,
+          mockUserService
+        )
+      ).rejects.toThrow(ThrottlingError)
+
       expect(mockBloodDonationRepository.create).toHaveBeenCalled()
     })
   })
@@ -508,6 +531,445 @@ describe('BloodDonationService', () => {
         mockNotificationService,
         mockAcceptDonationService
       )).rejects.toThrow(/Operation failed/)
+    })
+
+    test('should change status from MANAGED to PENDING when blood quantity increases', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      const existingDonation: DonationDTO = {
+        ...donationDtoMock,
+        requestPostId: 'req123',
+        status: DonationStatus.MANAGED,
+        bloodQuantity: 2,
+        createdAt: mockCreatedAt
+      }
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(existingDonation)
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue([
+        { donorId: 'donor1' },
+        { donorId: 'donor2' }
+      ])
+      mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
+
+      const donationAttributes = {
+        ...updateDonationAttributesMock,
+        seekerId: 'user123',
+        requestPostId: 'req123',
+        createdAt: mockCreatedAt,
+        bloodQuantity: 5
+      }
+
+      await bloodDonationService.updateBloodDonation(
+        donationAttributes,
+        mockNotificationService,
+        mockAcceptDonationService
+      )
+
+      expect(mockBloodDonationRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: DonationStatus.PENDING
+        })
+      )
+    })
+
+    test('should change status from PENDING to MANAGED when enough donors accept', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      const existingDonation: DonationDTO = {
+        ...donationDtoMock,
+        requestPostId: 'req123',
+        status: DonationStatus.PENDING,
+        bloodQuantity: 2,
+        createdAt: mockCreatedAt
+      }
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(existingDonation)
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue([
+        { donorId: 'donor1' },
+        { donorId: 'donor2' }
+      ])
+      mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
+
+      const donationAttributes = {
+        ...updateDonationAttributesMock,
+        seekerId: 'user123',
+        requestPostId: 'req123',
+        createdAt: mockCreatedAt,
+        bloodQuantity: 2
+      }
+
+      await bloodDonationService.updateBloodDonation(
+        donationAttributes,
+        mockNotificationService,
+        mockAcceptDonationService
+      )
+
+      expect(mockBloodDonationRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: DonationStatus.MANAGED
+        })
+      )
+    })
+  })
+
+  describe('updateDonationStatus', () => {
+    test('should update donation status successfully', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(donationDtoMock)
+      mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
+
+      await bloodDonationService.updateDonationStatus(
+        'user123',
+        'req123',
+        mockCreatedAt,
+        DonationStatus.COMPLETED
+      )
+
+      expect(mockBloodDonationRepository.getDonationRequest).toHaveBeenCalledWith(
+        'user123',
+        'req123',
+        mockCreatedAt
+      )
+      expect(mockBloodDonationRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          seekerId: 'user123',
+          requestPostId: 'req123',
+          createdAt: mockCreatedAt,
+          status: DonationStatus.COMPLETED
+        })
+      )
+    })
+
+    test('should throw error if donation not found', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(null)
+
+      await expect(
+        bloodDonationService.updateDonationStatus(
+          'user123',
+          'req123',
+          mockCreatedAt,
+          DonationStatus.CANCELLED
+        )
+      ).rejects.toThrow('Donation not found.')
+    })
+  })
+
+  describe('checkAndUpdateDonationStatus', () => {
+    test('should change status to MANAGED when enough donors accept', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      const pendingDonation: DonationDTO = {
+        ...donationDtoMock,
+        requestPostId: 'req123',
+        status: DonationStatus.PENDING,
+        bloodQuantity: 2,
+        createdAt: mockCreatedAt
+      }
+
+      mockBloodDonationRepository.getDonationRequest
+        .mockResolvedValueOnce(pendingDonation)
+        .mockResolvedValueOnce(pendingDonation)
+
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue([
+        { donorId: 'donor1' },
+        { donorId: 'donor2' }
+      ])
+      mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
+
+      await bloodDonationService.checkAndUpdateDonationStatus(
+        'user123',
+        'req123',
+        mockCreatedAt,
+        mockAcceptDonationService
+      )
+
+      expect(mockBloodDonationRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: DonationStatus.MANAGED
+        })
+      )
+    })
+
+    test('should change status to PENDING when not enough donors', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      const managedDonation: DonationDTO = {
+        ...donationDtoMock,
+        requestPostId: 'req123',
+        status: DonationStatus.MANAGED,
+        bloodQuantity: 3,
+        createdAt: mockCreatedAt
+      }
+
+      mockBloodDonationRepository.getDonationRequest
+        .mockResolvedValueOnce(managedDonation)
+        .mockResolvedValueOnce(managedDonation)
+
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue([
+        { donorId: 'donor1' }
+      ])
+      mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
+
+      await bloodDonationService.checkAndUpdateDonationStatus(
+        'user123',
+        'req123',
+        mockCreatedAt,
+        mockAcceptDonationService
+      )
+
+      expect(mockBloodDonationRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: DonationStatus.PENDING
+        })
+      )
+    })
+
+    test('should not update status when already correct', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      const pendingDonation: DonationDTO = {
+        ...donationDtoMock,
+        requestPostId: 'req123',
+        status: DonationStatus.PENDING,
+        bloodQuantity: 3,
+        createdAt: mockCreatedAt
+      }
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(pendingDonation)
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue([
+        { donorId: 'donor1' }
+      ])
+
+      await bloodDonationService.checkAndUpdateDonationStatus(
+        'user123',
+        'req123',
+        mockCreatedAt,
+        mockAcceptDonationService
+      )
+
+      expect(mockBloodDonationRepository.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getDonationRequestDetails', () => {
+    test('should return donation request with accepted donors', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(donationDtoMock)
+      const acceptedDonors = [
+        { donorId: 'donor1', status: 'ACCEPTED' },
+        { donorId: 'donor2', status: 'ACCEPTED' }
+      ]
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue(acceptedDonors)
+
+      const result = await bloodDonationService.getDonationRequestDetails(
+        'user123',
+        'req123',
+        mockCreatedAt,
+        mockAcceptDonationService
+      )
+
+      expect(mockBloodDonationRepository.getDonationRequest).toHaveBeenCalledWith(
+        'user123',
+        'req123',
+        mockCreatedAt
+      )
+      expect(mockAcceptDonationService.getAcceptedDonorList).toHaveBeenCalledWith(
+        'user123',
+        'req123'
+      )
+      expect(result).toEqual({
+        ...donationDtoMock,
+        acceptedDonors
+      })
+    })
+  })
+
+  describe('completeDonationRequest', () => {
+    const mockDonationRecordService = {
+      createDonationRecord: jest.fn()
+    }
+    const mockNotificationServiceComplete = {
+      updateBloodDonationNotificationStatus: jest.fn(),
+      sendNotification: jest.fn()
+    }
+    const mockUserServiceComplete = {
+      updateUserAttributes: jest.fn()
+    }
+    const mockLocationService = {
+      updateUserLocation: jest.fn()
+    }
+    const mockQueueModel = {
+      queue: jest.fn()
+    }
+
+    beforeEach(() => {
+      mockDonationRecordService.createDonationRecord.mockResolvedValue(undefined)
+      mockNotificationServiceComplete.updateBloodDonationNotificationStatus.mockResolvedValue(undefined)
+      mockNotificationServiceComplete.sendNotification.mockResolvedValue(undefined)
+      mockUserServiceComplete.updateUserAttributes.mockResolvedValue(undefined)
+    })
+
+    test('should complete donation request and update all donors', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(donationDtoMock)
+      mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
+
+      await bloodDonationService.completeDonationRequest(
+        'user123',
+        'req123',
+        mockCreatedAt,
+        ['donor1', 'donor2'],
+        mockDonationRecordService as any,
+        mockUserServiceComplete as any,
+        mockNotificationServiceComplete as any,
+        mockLocationService as any,
+        4,
+        mockQueueModel as any,
+        'https://queue-url'
+      )
+
+      expect(mockBloodDonationRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: DonationStatus.COMPLETED
+        })
+      )
+      expect(mockDonationRecordService.createDonationRecord).toHaveBeenCalledTimes(2)
+      expect(mockNotificationServiceComplete.updateBloodDonationNotificationStatus).toHaveBeenCalledTimes(2)
+      expect(mockUserServiceComplete.updateUserAttributes).toHaveBeenCalledTimes(2)
+    })
+
+    test('should create donation records for each donor', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(donationDtoMock)
+      mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
+
+      await bloodDonationService.completeDonationRequest(
+        'user123',
+        'req123',
+        mockCreatedAt,
+        ['donor1'],
+        mockDonationRecordService as any,
+        mockUserServiceComplete as any,
+        mockNotificationServiceComplete as any,
+        mockLocationService as any,
+        4,
+        mockQueueModel as any,
+        'https://queue-url'
+      )
+
+      expect(mockDonationRecordService.createDonationRecord).toHaveBeenCalledWith(
+        expect.objectContaining({
+          donorId: 'donor1',
+          seekerId: 'user123',
+          requestPostId: 'req123',
+          requestCreatedAt: mockCreatedAt
+        })
+      )
+    })
+
+    test('should update donor availability to false after completion', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(donationDtoMock)
+      mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
+
+      await bloodDonationService.completeDonationRequest(
+        'user123',
+        'req123',
+        mockCreatedAt,
+        ['donor1'],
+        mockDonationRecordService as any,
+        mockUserServiceComplete as any,
+        mockNotificationServiceComplete as any,
+        mockLocationService as any,
+        4,
+        mockQueueModel as any,
+        'https://queue-url'
+      )
+
+      expect(mockUserServiceComplete.updateUserAttributes).toHaveBeenCalledWith(
+        'donor1',
+        expect.objectContaining({
+          lastDonationDate: expect.any(String),
+          availableForDonation: false
+        }),
+        mockLocationService,
+        4
+      )
+    })
+
+    test('should send thank you notifications to all donors', async () => {
+      const bloodDonationService = new BloodDonationService(
+        mockBloodDonationRepository,
+        mockLogger
+      )
+
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(donationDtoMock)
+      mockBloodDonationRepository.update.mockResolvedValue(donationDtoMock)
+
+      await bloodDonationService.completeDonationRequest(
+        'user123',
+        'req123',
+        mockCreatedAt,
+        ['donor1', 'donor2'],
+        mockDonationRecordService as any,
+        mockUserServiceComplete as any,
+        mockNotificationServiceComplete as any,
+        mockLocationService as any,
+        4,
+        mockQueueModel as any,
+        'https://queue-url'
+      )
+
+      expect(mockNotificationServiceComplete.sendNotification).toHaveBeenCalledTimes(2)
+      expect(mockNotificationServiceComplete.sendNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'donor1',
+          title: 'Thank you for your donation',
+          body: expect.stringContaining('Thank you for your donation')
+        }),
+        mockQueueModel,
+        'https://queue-url'
+      )
     })
   })
 })
