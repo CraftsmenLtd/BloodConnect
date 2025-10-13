@@ -60,7 +60,7 @@ locals {
           "scheduler:ListSchedules"
         ]
         resources = [
-          "arn:aws:scheduler:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:schedule/default/*"
+          "arn:aws:scheduler:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:schedule/*"
         ]
       },
       {
@@ -77,7 +77,24 @@ locals {
             "iam:PassedToService" = "scheduler.amazonaws.com"
           }
         }
-      }
+      },
+      {
+        sid    = "AllowSchedulerServiceInvokeLambda"
+        Effect = "Allow"
+        actions = [
+          "lambda:InvokeFunction"
+        ]
+        resources = [
+          local.donor_search_lambda_arn
+        ]
+        principals = [
+          {
+            type        = "Service"
+            identifiers = ["scheduler.amazonaws.com"]
+          }
+        ]
+      },
+     
     ]
   }
 }

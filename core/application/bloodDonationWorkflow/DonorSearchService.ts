@@ -115,8 +115,13 @@ export class DonorSearchService {
     schedulerModel: SchedulerModel,
     delayPeriod?: number
   ): Promise<void> {
+
+    const body = JSON.stringify(donorSearchQueueAttributes)
+    const payload = {"Records": [{"body": body}]}
+    this.logger.info(`scheduling donor search request with delay period ${delayPeriod ?? 0} seconds with attributes`, payload)
+
     await schedulerModel.schedule(
-      donorSearchQueueAttributes,
+      payload,
       this.options.donorSearchLambdaArn,
       delayPeriod
     )
