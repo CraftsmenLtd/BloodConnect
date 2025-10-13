@@ -14,7 +14,7 @@ export function decodeGeohash(geohash: string): { latitude: number; longitude: n
     const { latitude, longitude } = ngeohash.decode(geohash)
 
     return { latitude, longitude }
-  } catch (error) {
+  } catch (_error) {
     return null
   }
 }

@@ -20,6 +20,7 @@ import useBackPressHandler from './src/hooks/useBackPressHandler'
 import Monitoring from './src/setup/monitoring/MonitoringService'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 import i18n from './src/setup/language/i18n'
+import React from 'react'
 
 const { APP_ENV } = Constants.expoConfig?.extra ?? {}
 

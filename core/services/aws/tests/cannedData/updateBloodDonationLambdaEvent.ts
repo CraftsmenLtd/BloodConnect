@@ -1,4 +1,4 @@
-import { UpdateBloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
+import type { UpdateBloodDonationAttributes } from '../../../../application/bloodDonationWorkflow/Types'
 
 export const mockEvent: UpdateBloodDonationAttributes = {
   requestPostId: 'requestPost123',

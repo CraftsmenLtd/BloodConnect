@@ -1,4 +1,5 @@
 import type { LocationDTO } from 'commons/dto/UserDTO'
+import { TextEncoder } from 'node:util'
 
 export type DonorInfo = {
   userId: string;
@@ -94,7 +95,7 @@ function groupDonorsByGeohash(
 ): GeohashDonorMap {
   return queriedDonors.reduce<GeohashDonorMap>((groups, donor) => {
     const donorGeohash = donor.geohash.slice(0, neighborSearchGeohashPrefixLength)
-    if (groups[donorGeohash] === null) {
+    if (groups[donorGeohash] === undefined) {
       groups[donorGeohash] = []
     }
     groups[donorGeohash].push({

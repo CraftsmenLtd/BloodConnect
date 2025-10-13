@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setAccessToken(null)
       setIdToken(null)
       setIsAuthenticated(false)
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Failed to logout.')
     }
   }
@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const loadTokensIIFE = async() => {
       try {
         await loadTokens()
-      } catch (error) {
+      } catch (_error) {
         setLoading(false)
         setIsAuthenticated(false)
       }

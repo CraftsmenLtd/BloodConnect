@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, Image, StyleSheet } from 'react-native'
-import dayjs from 'dayjs'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
-const currentYear = dayjs().year()
+const currentYear = new Date().getFullYear()
 
 const AboutPage: React.FC = () => {
   const styles = createStyles(useTheme())

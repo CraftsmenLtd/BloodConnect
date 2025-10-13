@@ -1,4 +1,4 @@
-import { UserFields } from "../../commons/ddbModels/UserModel";
+import type { UserFields } from '../../commons/ddbModels/UserModel'
 
 export const expectedUser: UserFields = {
   PK: 'USER#12345',
