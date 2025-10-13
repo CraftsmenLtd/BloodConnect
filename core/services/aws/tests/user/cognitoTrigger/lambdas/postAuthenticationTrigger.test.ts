@@ -2,6 +2,7 @@ import postAuthenticationLambda from '../../../../user/cognitoTrigger/lambdas/po
 import { UserService } from '../../../../../../application/userWorkflow/UserService'
 import { createPostAuthenticationEvent } from '../../../mock/cognitoEventMocks'
 import { ISO_TIMESTAMP_REGEX } from '../../../../../../../commons/libs/constants/Patterns'
+import type { PostAuthenticationTriggerEvent } from 'aws-lambda'
 
 jest.mock('../../../../../../application/userWorkflow/UserService')
 
@@ -15,7 +16,9 @@ describe('postAuthenticationLambda Tests', () => {
   })
 
   test('should return the event unchanged when triggerSource is not PostAuthentication_Authentication', async () => {
-    const mockEvent = createPostAuthenticationEvent({ triggerSource: "SomeOtherTrigger" as any })
+    const mockEvent = createPostAuthenticationEvent()
+
+    mockEvent.triggerSource = 'SomeOtherTrigger' as PostAuthenticationTriggerEvent['triggerSource']
 
     const result = await postAuthenticationLambda(mockEvent)
 
