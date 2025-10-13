@@ -202,7 +202,7 @@ describe('DonationRecordService', () => {
           seekerId: 'seeker-456',
           requestPostId: 'request-789',
           requestCreatedAt: '2025-01-15T09:00:00.000Z',
-          requestedBloodGroup: bloodGroup as any,
+          requestedBloodGroup: bloodGroup as DonationRecordAttributes['requestedBloodGroup'],
           location: 'Test Location',
           donationDateTime: '2025-01-20T14:00:00.000Z'
         }

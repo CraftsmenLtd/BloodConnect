@@ -135,10 +135,11 @@ describe('Geohash Utility Functions', () => {
       const geohash = '9q8yyzq'
       let callCount = 0;
 
-      (ngeohash.neighbors as jest.Mock).mockImplementation((hash: string) => {
+      (ngeohash.neighbors as jest.Mock).mockImplementation((_hash: string) => {
         // Return unique neighbors for each call to avoid Set deduplication
         const baseIndex = callCount * 3
         callCount++
+
         return [
           `neighbor_${baseIndex}_0`,
           `neighbor_${baseIndex}_1`,

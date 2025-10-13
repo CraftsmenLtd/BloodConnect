@@ -241,7 +241,16 @@ describe('GeohashCacheManager', () => {
     })
 
     test('should handle nested objects', () => {
-      const cacheManager = new GeohashCacheManager<string, any>(10, 10, 30)
+      type NestedObject = {
+        user: {
+          name: string
+          address: {
+            city: string
+            country: string
+          }
+        }
+      }
+      const cacheManager = new GeohashCacheManager<string, NestedObject>(10, 10, 30)
       const nested = {
         user: {
           name: 'John',

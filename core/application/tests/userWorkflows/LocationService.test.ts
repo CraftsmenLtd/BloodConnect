@@ -222,7 +222,7 @@ describe('LocationService', () => {
 
       await locationService.updateUserLocation(
         userId,
-        undefined as any,
+        undefined as unknown as LocationDTO[],
         userAttributes
       )
 

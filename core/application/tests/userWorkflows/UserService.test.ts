@@ -275,7 +275,7 @@ describe('UserService Tests', () => {
       mockLocationService.updateUserLocation.mockResolvedValue(undefined)
 
       await userService.createUser(
-        createUserAttributes as any,
+        createUserAttributes as UpdateUserAttributes,
         mockLocationService,
         minMonthsBetweenDonations
       )
@@ -307,7 +307,7 @@ describe('UserService Tests', () => {
       userMockRepository.update.mockResolvedValue(undefined)
 
       await userService.createUser(
-        createUserAttributes as any,
+        createUserAttributes as UpdateUserAttributes,
         mockLocationService,
         minMonthsBetweenDonations
       )
@@ -330,7 +330,7 @@ describe('UserService Tests', () => {
 
       await expect(
         userService.createUser(
-          createUserAttributes as any,
+          createUserAttributes as UpdateUserAttributes,
           mockLocationService,
           minMonthsBetweenDonations
         )
@@ -366,7 +366,7 @@ describe('UserService Tests', () => {
 
       await testUserService.updateUserAttributes(
         'user-123',
-        { name: 'Jane Doe' } as any,
+        { name: 'Jane Doe' } as UpdateUserAttributes,
         mockLocationService,
         minMonthsBetweenDonations
       )
@@ -395,7 +395,7 @@ describe('UserService Tests', () => {
 
       await testUserService.updateUserAttributes(
         'user-123',
-        { name: 'Jane Doe', preferredDonationLocations: newLocations } as any,
+        { name: 'Jane Doe', preferredDonationLocations: newLocations } as UpdateUserAttributes,
         mockLocationService,
         minMonthsBetweenDonations
       )
@@ -472,7 +472,7 @@ describe('UserService Tests', () => {
       await expect(
         userService['updateUserProfile'](
           'user-123',
-          { name: 'Test User' } as any,
+          { name: 'Test User' } as UpdateUserAttributes,
           minMonthsBetweenDonations
         )
       ).rejects.toThrow('Failed to update user')
@@ -502,7 +502,7 @@ describe('UserService Tests', () => {
             userId: 'user-123',
             name: 'Jane Doe',
             preferredDonationLocations: [{ id: 'loc-1', name: 'Location 1' }]
-          } as any,
+          } as UpdateUserAttributes,
           mockLocationService,
           minMonthsBetweenDonations
         )

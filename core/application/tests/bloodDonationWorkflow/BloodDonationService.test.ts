@@ -14,6 +14,9 @@ import type { UserService } from '../../userWorkflow/UserService'
 import { mockRepository } from '../mocks/mockRepositories'
 import { mockUserDetailsWithStringId } from '../mocks/mockUserData'
 import type { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
+import type { DonationRecordService } from '../../bloodDonationWorkflow/DonationRecordService'
+import type { LocationService } from '../../userWorkflow/LocationService'
+import type { QueueModel } from '../../models/queue/QueueModel'
 
 jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
@@ -851,12 +854,12 @@ describe('BloodDonationService', () => {
         'req123',
         mockCreatedAt,
         ['donor1', 'donor2'],
-        mockDonationRecordService as any,
-        mockUserServiceComplete as any,
-        mockNotificationServiceComplete as any,
-        mockLocationService as any,
+        mockDonationRecordService as unknown as DonationRecordService,
+        mockUserServiceComplete as unknown as UserService,
+        mockNotificationServiceComplete as unknown as NotificationService,
+        mockLocationService as unknown as LocationService,
         4,
-        mockQueueModel as any,
+        mockQueueModel as unknown as QueueModel,
         'https://queue-url'
       )
 
@@ -884,12 +887,12 @@ describe('BloodDonationService', () => {
         'req123',
         mockCreatedAt,
         ['donor1'],
-        mockDonationRecordService as any,
-        mockUserServiceComplete as any,
-        mockNotificationServiceComplete as any,
-        mockLocationService as any,
+        mockDonationRecordService as unknown as DonationRecordService,
+        mockUserServiceComplete as unknown as UserService,
+        mockNotificationServiceComplete as unknown as NotificationService,
+        mockLocationService as unknown as LocationService,
         4,
-        mockQueueModel as any,
+        mockQueueModel as unknown as QueueModel,
         'https://queue-url'
       )
 
@@ -917,12 +920,12 @@ describe('BloodDonationService', () => {
         'req123',
         mockCreatedAt,
         ['donor1'],
-        mockDonationRecordService as any,
-        mockUserServiceComplete as any,
-        mockNotificationServiceComplete as any,
-        mockLocationService as any,
+        mockDonationRecordService as unknown as DonationRecordService,
+        mockUserServiceComplete as unknown as UserService,
+        mockNotificationServiceComplete as unknown as NotificationService,
+        mockLocationService as unknown as LocationService,
         4,
-        mockQueueModel as any,
+        mockQueueModel as unknown as QueueModel,
         'https://queue-url'
       )
 
@@ -951,12 +954,12 @@ describe('BloodDonationService', () => {
         'req123',
         mockCreatedAt,
         ['donor1', 'donor2'],
-        mockDonationRecordService as any,
-        mockUserServiceComplete as any,
-        mockNotificationServiceComplete as any,
-        mockLocationService as any,
+        mockDonationRecordService as unknown as DonationRecordService,
+        mockUserServiceComplete as unknown as UserService,
+        mockNotificationServiceComplete as unknown as NotificationService,
+        mockLocationService as unknown as LocationService,
         4,
-        mockQueueModel as any,
+        mockQueueModel as unknown as QueueModel,
         'https://queue-url'
       )
 

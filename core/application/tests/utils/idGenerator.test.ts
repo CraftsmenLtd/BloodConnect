@@ -64,7 +64,7 @@ describe('idGenerator', () => {
     })
 
     test('should handle empty string from ulid', () => {
-      ;(ulid as jest.Mock).mockReturnValue('')
+      (ulid as jest.Mock).mockReturnValue('')
 
       const result = generateUniqueID()
 
@@ -85,8 +85,8 @@ describe('idGenerator', () => {
         `01HW5K${i.toString().padStart(20, '0')}`
       )
 
-      mockIds.forEach(id => {
-        ;(ulid as jest.Mock).mockReturnValueOnce(id)
+      mockIds.forEach((id) => {
+        (ulid as jest.Mock).mockReturnValueOnce(id)
       })
 
       const results = Array.from({ length: 100 }, () => generateUniqueID())
@@ -126,8 +126,8 @@ describe('idGenerator', () => {
         '7ZZZZZZZZZZZZZZZZZZZZZZZZZ'
       ]
 
-      testIds.forEach(mockId => {
-        ;(ulid as jest.Mock).mockReturnValueOnce(mockId)
+      testIds.forEach((mockId) => {
+        (ulid as jest.Mock).mockReturnValueOnce(mockId)
         const result = generateUniqueID()
         expect(result).toBe(mockId)
       })

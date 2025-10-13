@@ -67,6 +67,7 @@ describe('Validation Functions', () => {
         if (typeof value === 'string' && value.length < 3) {
           return 'must be at least 3 characters long'
         }
+
         return null
       }
 
@@ -87,6 +88,7 @@ describe('Validation Functions', () => {
         if (typeof value === 'string' && value.length < 3) {
           return 'must be at least 3 characters long'
         }
+
         return null
       }
 
@@ -104,7 +106,7 @@ describe('Validation Functions', () => {
 
     test('should handle non-Error exceptions with unknown error message', () => {
       const throwingValidator: ValidationRule<unknown> = () => {
-        // eslint-disable-next-line @typescript-eslint/only-throw-error
+
         throw 'not an Error object'
       }
 
@@ -125,6 +127,7 @@ describe('Validation Functions', () => {
         if (typeof value === 'number' && value < 0) {
           return 'must be positive'
         }
+
         return null
       }
 
@@ -132,6 +135,7 @@ describe('Validation Functions', () => {
         if (typeof value === 'number' && value > 100) {
           return 'must be less than 100'
         }
+
         return null
       }
 
@@ -152,12 +156,11 @@ describe('Validation Functions', () => {
         if (typeof value === 'number' && value < 0) {
           return 'must be positive'
         }
+
         return null
       }
 
-      const secondValidator: ValidationRule<unknown> = () => {
-        return 'second error'
-      }
+      const secondValidator: ValidationRule<unknown> = () => 'second error'
 
       const customRules = {
         score: [firstValidator, secondValidator]

@@ -140,7 +140,16 @@ describe('LocalCacheMapManager', () => {
     })
 
     test('should handle nested objects', () => {
-      const cacheManager = new LocalCacheMapManager<string, any>(5)
+      type NestedObject = {
+        user: {
+          name: string
+          profile: {
+            age: number
+            city: string
+          }
+        }
+      }
+      const cacheManager = new LocalCacheMapManager<string, NestedObject>(5)
       const nested = {
         user: {
           name: 'Bob',
