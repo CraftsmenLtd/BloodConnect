@@ -9,7 +9,7 @@ describe('Geohash Utility Functions', () => {
   })
 
   describe('generateGeohash', () => {
-    it('should generate a geohash with default precision (7)', () => {
+    test('should generate a geohash with default precision (7)', () => {
       const latitude = 37.7749
       const longitude = -122.4194
       const geohashMock = '9q8yyzq';
@@ -21,7 +21,7 @@ describe('Geohash Utility Functions', () => {
       expect(result).toEqual(geohashMock)
     })
 
-    it('should generate a geohash with custom precision', () => {
+    test('should generate a geohash with custom precision', () => {
       const latitude = 37.7749
       const longitude = -122.4194
       const precision = 9
@@ -34,7 +34,7 @@ describe('Geohash Utility Functions', () => {
       expect(result).toEqual(geohashMock)
     })
 
-    it('should handle extreme latitude and longitude values', () => {
+    test('should handle extreme latitude and longitude values', () => {
       const latitude = 90
       const longitude = 180
       const geohashMock = 'zzzzzzz';
@@ -48,7 +48,7 @@ describe('Geohash Utility Functions', () => {
   })
 
   describe('decodeGeohash', () => {
-    it('should decode a valid geohash to latitude and longitude', () => {
+    test('should decode a valid geohash to latitude and longitude', () => {
       const geohash = '9q8yyzq'
       const decodedMock = { latitude: 37.7749, longitude: -122.4194 };
 
@@ -59,7 +59,7 @@ describe('Geohash Utility Functions', () => {
       expect(result).toEqual(decodedMock)
     })
 
-    it('should return null for invalid geohash input', () => {
+    test('should return null for invalid geohash input', () => {
       const invalidGeohash = ''
       const result = decodeGeohash(invalidGeohash)
       expect(result).toBeNull()

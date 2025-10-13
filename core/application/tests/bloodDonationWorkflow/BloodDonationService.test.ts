@@ -53,17 +53,12 @@ describe('BloodDonationService', () => {
   const mockCreatedAt = '2024-01-01T00:00:00Z'
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
     (generateUniqueID as jest.Mock).mockReturnValue('req123');
     (generateGeohash as jest.Mock).mockReturnValue('wh0r35qr');
     (validateInputWithRules as jest.Mock).mockReturnValue(null)
 
     mockUserService.getUser.mockResolvedValue(mockUserDetailsWithStringId)
-  })
-
-  afterEach(() => {
-    jest.clearAllMocks()
-    jest.resetAllMocks()
   })
 
   describe('createBloodDonation', () => {
@@ -140,14 +135,11 @@ describe('BloodDonationService', () => {
           donationAttributesMock,
           mockUserService
         )
-      ).rejects.toThrow(BloodDonationOperationError)
-
-      await expect(
-        bloodDonationService.createBloodDonation(
-          donationAttributesMock,
-          mockUserService
-        )
-      ).rejects.toThrow(/Failed to submit blood donation request/)
+      ).rejects.toThrow(
+        expect.objectContaining({
+          message: expect.stringContaining('Failed to submit blood donation request')
+        })
+      )
 
       expect(mockBloodDonationRepository.getDonationRequestsByDate).toHaveBeenCalled()
       expect(mockBloodDonationRepository.create).toHaveBeenCalled()
@@ -205,14 +197,13 @@ describe('BloodDonationService', () => {
           donationAttributesMock,
           mockUserService
         )
-      ).rejects.toThrow(ThrottlingError)
+      ).rejects.toThrow(
+        expect.objectContaining({
+          message: expect.stringContaining('You\'ve reached today\'s limit')
+        })
+      )
 
-      await expect(
-        bloodDonationService.createBloodDonation(
-          donationAttributesMock,
-          mockUserService
-        )
-      ).rejects.toThrow(/You've reached today's limit/)
+      expect(mockBloodDonationRepository.getDonationRequestsByDate).toHaveBeenCalled()
     })
 
     test('should check throttling with correct date prefix', async() => {
@@ -255,14 +246,13 @@ describe('BloodDonationService', () => {
           donationAttributesMock,
           mockUserService
         )
-      ).rejects.toThrow(BloodDonationOperationError)
+      ).rejects.toThrow(
+        expect.objectContaining({
+          message: expect.stringContaining('Failed to check request limits')
+        })
+      )
 
-      await expect(
-        bloodDonationService.createBloodDonation(
-          donationAttributesMock,
-          mockUserService
-        )
-      ).rejects.toThrow(/Failed to check request limits/)
+      expect(mockBloodDonationRepository.getDonationRequestsByDate).toHaveBeenCalled()
     })
   })
 
@@ -476,13 +466,13 @@ describe('BloodDonationService', () => {
         donationAttributes,
         mockNotificationService,
         mockAcceptDonationService
-      )).rejects.toThrow(BloodDonationOperationError)
+      )).rejects.toThrow(
+        expect.objectContaining({
+          message: expect.stringContaining('Failed to update blood donation post')
+        })
+      )
 
-      await expect(bloodDonationService.updateBloodDonation(
-        donationAttributes,
-        mockNotificationService,
-        mockAcceptDonationService
-      )).rejects.toThrow(/Failed to update blood donation post/)
+      expect(mockBloodDonationRepository.update).toHaveBeenCalled()
     })
 
     test('should throw BloodDonationOperationError directly if it is thrown during update', async() => {

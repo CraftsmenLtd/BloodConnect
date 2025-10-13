@@ -170,9 +170,11 @@ describe('UserService Tests', () => {
 
       expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(userName)
       expect(result).toEqual(mockMessage)
+      expect(result.title).toBeTruthy()
+      expect(result.content).toBeTruthy()
     })
 
-    test('should handle empty username', () => {
+    test('should handle empty username and return valid message', () => {
       const mockMessage = {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
         content: 'Welcome to BloodConnect! We are excited to have you.'
@@ -183,9 +185,12 @@ describe('UserService Tests', () => {
 
       expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith('')
       expect(result).toEqual(mockMessage)
+      expect(result.title).not.toContain('undefined')
+      expect(result.content).not.toContain('undefined')
+      expect(result.content.length).toBeGreaterThan(0)
     })
 
-    test('should handle special characters in username', () => {
+    test('should handle special characters in username without errors', () => {
       const userName = 'John@123#$%'
       const mockMessage = {
         title: 'Welcome to BloodConnect: Thank You for Signing Up!',
@@ -197,9 +202,11 @@ describe('UserService Tests', () => {
 
       expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(userName)
       expect(result).toEqual(mockMessage)
+      expect(result.title).toBeTruthy()
+      expect(result.content).not.toContain('undefined')
     })
 
-    test('should handle very long usernames', () => {
+    test('should handle very long usernames without truncation', () => {
       const longUserName
         = 'VeryLongUserNameThatMightCauseIssuesIfNotHandledProperly'
       const mockMessage = {
@@ -212,6 +219,8 @@ describe('UserService Tests', () => {
 
       expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(longUserName)
       expect(result).toEqual(mockMessage)
+      expect(result.content.length).toBeGreaterThan(0)
+      expect(result.title).toBeTruthy()
     })
   })
 })
