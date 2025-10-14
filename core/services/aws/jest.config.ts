@@ -11,6 +11,10 @@ const config: Config = {
   ],
   transform: {
     '^.+\\.ts?$': 'ts-jest'
+  },
+  moduleNameMapper: {
+    '^commons/(.*)$': '<rootDir>/../../../commons/$1',
+    '^core/(.*)$': '<rootDir>/../../../core/$1'
   }
 }
 
