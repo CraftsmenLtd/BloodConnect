@@ -19,9 +19,12 @@ describe('SNSOperations', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockSend.mockClear()
-    mockSNS.mockImplementation(() => ({
-      send: mockSend
-    } as any))
+    mockSNS.mockImplementation(
+      () =>
+        ({
+          send: mockSend
+        }) as unknown as SNS
+    )
     snsOperations = new SNSOperations(mockRegion, mockPlatformArnApns, mockPlatformArnFcm)
   })
 
@@ -142,7 +145,7 @@ describe('SNSOperations', () => {
       const mockAttributes: SnsRegistrationAttributes = {
         userId: 'test-user-id',
         deviceToken: 'test-device-token',
-        platform: 'INVALID_PLATFORM' as any
+        platform: 'INVALID_PLATFORM' as unknown as 'APNS' | 'FCM'
       }
 
       await expect(snsOperations.createPlatformEndpoint(mockAttributes)).rejects.toThrow(

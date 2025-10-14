@@ -2,9 +2,7 @@ import type { SQSEvent } from 'aws-lambda'
 import sendPushNotification from '../../notification/sendPushNotification'
 import { NotificationService } from '../../../../application/notificationWorkflow/NotificationService'
 import { UserService } from '../../../../application/userWorkflow/UserService'
-import SNSOperations from '../../commons/sns/SNSOperations'
 import NotificationOperationError from '../../../../application/notificationWorkflow/NotificationOperationError'
-import { LocalCacheMapManager } from '../../../../application/utils/localCacheMapManager'
 
 jest.mock('../../../../application/notificationWorkflow/NotificationService')
 jest.mock('../../../../application/userWorkflow/UserService')
@@ -19,7 +17,6 @@ jest.mock('../../commons/logger/ServiceLogger', () => ({
 }))
 
 const mockNotificationService = NotificationService as jest.MockedClass<typeof NotificationService>
-const mockUserService = UserService as jest.MockedClass<typeof UserService>
 
 describe('sendPushNotification', () => {
   const mockSQSEvent: SQSEvent = {

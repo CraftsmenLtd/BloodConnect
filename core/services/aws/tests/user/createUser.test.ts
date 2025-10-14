@@ -24,7 +24,6 @@ jest.mock('../../commons/logger/HttpLogger', () => ({
 }))
 
 const mockUserService = UserService as jest.MockedClass<typeof UserService>
-const mockLocationService = LocationService as jest.MockedClass<typeof LocationService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('createUserLambda', () => {
@@ -79,7 +78,10 @@ describe('createUserLambda', () => {
   })
 
   it('should handle availableForDonation as string "true"', async () => {
-    const eventWithStringBool = { ...mockEvent, availableForDonation: 'true' as any }
+    const eventWithStringBool = {
+      ...mockEvent,
+      availableForDonation: 'true' as unknown as boolean
+    }
     mockUserService.prototype.createUser.mockResolvedValue(undefined)
     mockGenerateApiGatewayResponse.mockReturnValue({
       statusCode: HTTP_CODES.CREATED,

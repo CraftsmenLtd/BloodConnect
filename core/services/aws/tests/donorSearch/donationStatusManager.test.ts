@@ -16,9 +16,6 @@ jest.mock('../../commons/logger/ServiceLogger', () => ({
 }))
 
 const mockBloodDonationService = BloodDonationService as jest.MockedClass<typeof BloodDonationService>
-const mockAcceptDonationService = AcceptDonationService as jest.MockedClass<
-  typeof AcceptDonationService
->
 
 describe('donationStatusManager', () => {
   const mockSQSEvent: SQSEvent = {

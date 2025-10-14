@@ -24,9 +24,6 @@ jest.mock('../../commons/logger/HttpLogger', () => ({
 const mockBloodDonationService = BloodDonationService as jest.MockedClass<
   typeof BloodDonationService
 >
-const mockAcceptDonationService = AcceptDonationService as jest.MockedClass<
-  typeof AcceptDonationService
->
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('getDonationRequestLambda', () => {

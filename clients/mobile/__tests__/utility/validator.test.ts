@@ -90,9 +90,9 @@ describe('Validation Functions', () => {
   })
 
   describe('validatePastOrTodayDate', () => {
-    it('should return null for today\'s date', () => {
+    it('should return error message for today\'s date', () => {
       const today = new Date().toISOString().split('T')[0]
-      expect(validatePastOrTodayDate(today)).toBeNull()
+      expect(validatePastOrTodayDate(today)).toBe('The date must be today or in the past.')
     })
 
     it('should return null for past dates', () => {

@@ -295,8 +295,8 @@ describe('SQSOperations', () => {
     })
 
     it('should handle complex receipt handle strings', async () => {
-      const complexReceiptHandle =
-        'AQEBwJnKyrHigUMZBYhwLWZ+...[very-long-receipt-handle]...==|...'
+      const complexReceiptHandle
+        = 'AQEBwJnKyrHigUMZBYhwLWZ+...[very-long-receipt-handle]...==|...'
       const visibilityTimeout = 180
 
       mockSend.mockResolvedValue({})

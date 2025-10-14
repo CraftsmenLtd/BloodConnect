@@ -11,7 +11,6 @@ import type { DonationRecordEventAttributes } from '../../../../application/bloo
 import DonationRecordOperationError from '../../../../application/bloodDonationWorkflow/DonationRecordOperationError'
 import type { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
-import SQSOperations from '../../commons/sqs/SQSOperations'
 
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
 jest.mock('../../../../application/bloodDonationWorkflow/DonationRecordService')
@@ -32,12 +31,6 @@ jest.mock('../../commons/logger/HttpLogger', () => ({
 const mockBloodDonationService = BloodDonationService as jest.MockedClass<
   typeof BloodDonationService
 >
-const mockDonationRecordService = DonationRecordService as jest.MockedClass<
-  typeof DonationRecordService
->
-const mockNotificationService = NotificationService as jest.MockedClass<typeof NotificationService>
-const mockUserService = UserService as jest.MockedClass<typeof UserService>
-const mockLocationService = LocationService as jest.MockedClass<typeof LocationService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('completeDonationRequest', () => {

@@ -9,7 +9,6 @@ import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import type { AcceptDonationRequestAttributes } from '../../../../application/bloodDonationWorkflow/Types'
 import type { HttpLoggerAttributes } from '../../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../../commons/libs/constants/ApiResponseMessages'
-import SQSOperations from '../../commons/sqs/SQSOperations'
 
 jest.mock('../../../../application/bloodDonationWorkflow/AcceptDonationRequestService')
 jest.mock('../../../../application/bloodDonationWorkflow/BloodDonationService')
@@ -29,11 +28,6 @@ jest.mock('../../commons/logger/HttpLogger', () => ({
 const mockAcceptDonationService = AcceptDonationService as jest.MockedClass<
   typeof AcceptDonationService
 >
-const mockBloodDonationService = BloodDonationService as jest.MockedClass<
-  typeof BloodDonationService
->
-const mockNotificationService = NotificationService as jest.MockedClass<typeof NotificationService>
-const mockUserService = UserService as jest.MockedClass<typeof UserService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('acceptDonationRequestLambda', () => {

@@ -71,7 +71,7 @@ describe('NotificationModel', () => {
         const dto: NotificationDTO = {
           id: 'notif-123',
           userId: 'user-id',
-          type: type as any,
+          type: type as NotificationDTO['type'],
           title: 'Test',
           message: 'Test message',
           read: false,

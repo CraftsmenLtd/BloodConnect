@@ -116,10 +116,10 @@ describe('HttpLogger', () => {
 
     it('should handle long request IDs', () => {
       const userId = 'test-user-id'
-      const apiGwRequestId =
-        'very-long-api-gateway-request-id-with-many-characters-and-dashes-12345'
-      const cloudFrontRequestId =
-        'very-long-cloudfront-request-id-with-many-characters-and-dashes-67890'
+      const apiGwRequestId
+        = 'very-long-api-gateway-request-id-with-many-characters-and-dashes-12345'
+      const cloudFrontRequestId
+        = 'very-long-cloudfront-request-id-with-many-characters-and-dashes-67890'
 
       const mockLogger = {
         info: jest.fn(),

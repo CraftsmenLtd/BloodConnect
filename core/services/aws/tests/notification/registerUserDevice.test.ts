@@ -2,7 +2,6 @@ import type { APIGatewayProxyResult } from 'aws-lambda'
 import registerUserDeviceLambda from '../../notification/registerUserDevice'
 import { NotificationService } from '../../../../application/notificationWorkflow/NotificationService'
 import { UserService } from '../../../../application/userWorkflow/UserService'
-import SNSOperations from '../../commons/sns/SNSOperations'
 import generateApiGatewayResponse from '../../commons/lambda/ApiGateway'
 import { HTTP_CODES } from '../../../../../commons/libs/constants/GenericCodes'
 import type { SnsRegistrationAttributes } from '../../../../application/notificationWorkflow/Types'
@@ -24,7 +23,6 @@ jest.mock('../../commons/logger/HttpLogger', () => ({
 }))
 
 const mockNotificationService = NotificationService as jest.MockedClass<typeof NotificationService>
-const mockUserService = UserService as jest.MockedClass<typeof UserService>
 const mockGenerateApiGatewayResponse = generateApiGatewayResponse as jest.Mock
 
 describe('registerUserDeviceLambda', () => {

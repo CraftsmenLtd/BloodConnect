@@ -12,9 +12,12 @@ describe('DonorSearchModel', () => {
   beforeEach(() => {
     model = new DonorSearchModel()
     // Mock Date to have consistent timestamps in tests
-    jest.spyOn(global, 'Date').mockImplementation(() => ({
-      toISOString: () => '2024-01-01T00:00:00.000Z'
-    }) as any)
+    jest.spyOn(global, 'Date').mockImplementation(
+      () =>
+        ({
+          toISOString: () => '2024-01-01T00:00:00.000Z'
+        }) as unknown as Date
+    )
   })
 
   afterEach(() => {
