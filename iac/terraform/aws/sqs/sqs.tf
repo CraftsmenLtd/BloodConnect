@@ -20,6 +20,10 @@ resource "aws_lambda_event_source_mapping" "this" {
   function_name    = var.lambda_function_arn
   batch_size       = var.batch_size
   enabled          = true
+
+  scaling_config {
+    maximum_concurrency = 2
+  }
 }
 
 resource "aws_sqs_queue_policy" "this" {
