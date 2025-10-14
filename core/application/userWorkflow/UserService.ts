@@ -216,4 +216,18 @@ export class UserService {
       throw new UserOperationError(`Failed to update user. Error: ${error}`, GENERIC_CODES.ERROR)
     }
   }
+
+
+  async recordLastSuccessfulLoginTimestamp(userId: string, timestamp: string): Promise<void> {
+    this.logger.info('Recording last successful login', { userId, timestamp })
+    try {
+      await this.userRepository.update({
+        id: userId,
+        lastLogin: timestamp,
+        updatedAt: new Date().toISOString()
+      })
+    } catch (error) {
+      this.logger.error('Failed to record last successful login', { userId, error })
+    }
+  }
 }
