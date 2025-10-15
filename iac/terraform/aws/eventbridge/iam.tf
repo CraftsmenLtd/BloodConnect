@@ -60,6 +60,11 @@ data "aws_iam_policy_document" "eventbridge_scheduler_assume_role" {
       type        = "Service"
       identifiers = ["scheduler.amazonaws.com"]
     }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
   }
 }
 
