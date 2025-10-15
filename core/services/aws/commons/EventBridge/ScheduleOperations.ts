@@ -2,7 +2,7 @@ import { SchedulerClient, CreateScheduleCommand, DeleteScheduleCommand } from '@
 import type { DTO } from 'commons/dto/DTOCommon'
 import { randomUUID } from 'crypto'
 import type { SchedulerModel } from 'core/application/models/scheduler/SchedulerModel'
-import { Logger } from 'core/application/models/logger/Logger'
+import type { Logger } from 'core/application/models/logger/Logger'
 
 export default class SchedulerOperations implements SchedulerModel {
   private readonly client: SchedulerClient
@@ -16,19 +16,19 @@ export default class SchedulerOperations implements SchedulerModel {
   }
 
   private toISOStringWithoutMilliseconds(date: Date): string {
-    return date.toISOString().split('.')[0];
+    return date.toISOString().split('.')[0]
   }
 
   async schedule(messageBody: DTO, lambdaArn: string, delaySeconds?: number): Promise<void> {
     const scheduleName = `schedule-${randomUUID()}`
     const scheduleTime = new Date()
 
-    const MIN_DELAY_SECONDS = 80;
+    const MIN_DELAY_SECONDS = 80
     if (delaySeconds === undefined || delaySeconds < MIN_DELAY_SECONDS) {
-      delaySeconds = MIN_DELAY_SECONDS;
+      delaySeconds = MIN_DELAY_SECONDS
     }
 
-    scheduleTime.setSeconds(scheduleTime.getSeconds() + delaySeconds);
+    scheduleTime.setSeconds(scheduleTime.getSeconds() + delaySeconds)
 
     try {
       const result = await this.client.send(
@@ -43,11 +43,11 @@ export default class SchedulerOperations implements SchedulerModel {
           },
           ActionAfterCompletion: 'NONE',
         })
-      );
-      this.logger.info('Schedule created successfully', { result });
+      )
+      this.logger.info('Schedule created successfully', { result })
     } catch (error) {
-      this.logger.error('Error creating schedule:', error);
-      throw error;
+      this.logger.error('Error creating schedule:', error)
+      throw error
     }
   }
 

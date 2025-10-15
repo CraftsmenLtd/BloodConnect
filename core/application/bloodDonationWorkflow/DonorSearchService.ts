@@ -38,7 +38,7 @@ export class DonorSearchService {
     protected readonly donorSearchRepository: DonorSearchRepository,
     protected readonly logger: Logger,
     protected readonly options: DonorSearchConfig
-  ) {}
+  ) { }
 
   async initiateDonorSearchRequest(
     donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes,
@@ -117,7 +117,7 @@ export class DonorSearchService {
   ): Promise<void> {
 
     const body = JSON.stringify(donorSearchQueueAttributes)
-    const payload = {"Records": [{"body": body}]}
+    const payload = { 'Records': [{ 'body': body }] }
     this.logger.info(`scheduling donor search request with delay period ${delayPeriod ?? 0} seconds with attributes`, payload)
 
     await schedulerModel.schedule(
@@ -178,8 +178,7 @@ export class DonorSearchService {
     }
 
     this.logger.info(
-      `checking targeted execution time${
-        targetedExecutionTime !== undefined ? ` ${targetedExecutionTime}` : ''
+      `checking targeted execution time${targetedExecutionTime !== undefined ? ` ${targetedExecutionTime}` : ''
       }`
     )
     const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
