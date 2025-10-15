@@ -32,6 +32,7 @@ import AcceptDonationDynamoDbOperations
 import {
   GeohashService
 } from 'core/application/bloodDonationWorkflow/GeohashService'
+import SchedulerOperations from '../commons/EventBridge/ScheduleOperations'
 
 const config = new Config<DonorSearchConfig>().getConfig()
 
@@ -98,7 +99,7 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
     serviceLogger
   )
   const geohashService = new GeohashService(geohashDynamoDbOperations, serviceLogger, config)
-
+  const schedulerModel = new SchedulerOperations(config.awsRegion, config.schedulerRoleArn, serviceLogger)
   try {
     await donorSearchService.searchDonors({
       seekerId,
@@ -116,6 +117,7 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
       notificationService,
       geohashService,
       queueModel: new SQSOperations(config.awsRegion),
+      schedulerModel,
       geohashCache: GEOHASH_CACHE
     })
   } catch (error) {
