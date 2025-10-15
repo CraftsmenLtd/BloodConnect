@@ -85,7 +85,8 @@ locals {
           "lambda:InvokeFunction"
         ]
         resources = [
-          local.donor_search_lambda_arn
+          "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${local.donor_search_lambda_name}:*",
+          "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${local.donor_search_lambda_name}"
         ]
         principals = [
           {
