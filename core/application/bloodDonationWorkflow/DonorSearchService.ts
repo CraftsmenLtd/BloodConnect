@@ -98,18 +98,11 @@ export class DonorSearchService {
 
   async scheduleDonorSearchRequest(
     donorSearchQueueAttributes: DonorSearchQueueAttributes,
-    schedulerModel: SchedulerModel,
-    delayPeriod?: number
+    schedulerModel: SchedulerModel
   ): Promise<void> {
-
-    const body = JSON.stringify(donorSearchQueueAttributes)
-    const payload = { 'Records': [{ 'body': body }] }
-    this.logger.info(`scheduling donor search request with delay period ${delayPeriod ?? 0} seconds with attributes`, payload)
-
     await schedulerModel.schedule(
-      payload,
-      this.options.donorSearchLambdaArn,
-      delayPeriod
+      donorSearchQueueAttributes,
+      this.options.donorSearchLambdaArn
     )
   }
 
@@ -117,7 +110,6 @@ export class DonorSearchService {
     seekerId,
     requestPostId,
     createdAt,
-    targetedExecutionTime,
     remainingDonorsToFind,
     currentNeighborSearchLevel,
     remainingGeohashesToProcess,
@@ -163,10 +155,6 @@ export class DonorSearchService {
       return
     }
 
-    this.logger.info(
-      `checking targeted execution time${targetedExecutionTime !== undefined ? ` ${targetedExecutionTime}` : ''
-      }`
-    )
     const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
     if (donorSearchRecord === null) {
       this.logger.info('terminating process as no search record found')
@@ -259,8 +247,7 @@ export class DonorSearchService {
           remainingDonorsToFind: nextRemainingDonorsToFind,
           initiationCount
         },
-        schedulerModel,
-        this.options.donorSearchDelayBetweenExecution
+        schedulerModel
       )
 
       return
@@ -315,8 +302,7 @@ export class DonorSearchService {
         remainingDonorsToFind: 0,
         targetedExecutionTime: Math.floor(Date.now() / 1000) + initiatingDelayPeriod
       },
-      schedulerModel,
-      initiatingDelayPeriod
+      schedulerModel
     )
   }
 

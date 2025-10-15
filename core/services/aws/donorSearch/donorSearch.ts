@@ -1,4 +1,3 @@
-import type { SQSEvent } from 'aws-lambda'
 import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
 import type {
   DonorSearchConfig,
@@ -63,9 +62,7 @@ const GEOHASH_CACHE = new GeohashCacheManager<string, GeohashDonorMap>(
   config.maxGeohashCacheTimeoutMinutes
 )
 
-async function donorSearchLambda(event: SQSEvent): Promise<void> {
-  const record = event.Records[0]
-  const donorSearchQueueAttributes: DonorSearchQueueAttributes = JSON.parse(record.body)
+async function donorSearchLambda(donorSearchQueueAttributes: DonorSearchQueueAttributes): Promise<void> {
 
   const {
     seekerId,
@@ -99,7 +96,7 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
     serviceLogger
   )
   const geohashService = new GeohashService(geohashDynamoDbOperations, serviceLogger, config)
-  const schedulerModel = new SchedulerOperations(config.awsRegion, config.schedulerRoleArn, serviceLogger)
+  const schedulerModel = new SchedulerOperations(config.awsRegion, config.schedulerRoleArn, serviceLogger, config.donorSearchDelayBetweenExecution)
   try {
     await donorSearchService.searchDonors({
       seekerId,
@@ -111,7 +108,6 @@ async function donorSearchLambda(event: SQSEvent): Promise<void> {
       remainingGeohashesToProcess,
       initiationCount,
       notifiedEligibleDonors,
-      receiptHandle: record.receiptHandle,
       bloodDonationService,
       acceptDonationService,
       notificationService,
