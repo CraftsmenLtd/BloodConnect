@@ -25,7 +25,8 @@ locals {
       statement = concat(
         local.policies.common_policies,
         local.policies.dynamodb_policy,
-        local.policies.sqs_policy
+        local.policies.sqs_policy,
+        local.policies.scheduler_policy
       )
       memory_size = 1024
       timeout     = local.donor_search_queue_visibility_timeout_seconds - 60
