@@ -1,7 +1,7 @@
 import { DonorSearchService } from '../../../application/bloodDonationWorkflow/DonorSearchService'
 import type {
   DonorSearchConfig,
-  DonorSearchQueueAttributes
+  DonorSearchSchedulerAttributes
 } from '../../../application/bloodDonationWorkflow/Types'
 
 import SQSOperations from '../commons/sqs/SQSOperations'
@@ -62,7 +62,7 @@ const GEOHASH_CACHE = new GeohashCacheManager<string, GeohashDonorMap>(
   config.maxGeohashCacheTimeoutMinutes
 )
 
-async function donorSearchLambda(donorSearchQueueAttributes: DonorSearchQueueAttributes): Promise<void> {
+async function donorSearchLambda(DonorSearchSchedulerAttributes: DonorSearchSchedulerAttributes): Promise<void> {
 
   const {
     seekerId,
@@ -74,7 +74,7 @@ async function donorSearchLambda(donorSearchQueueAttributes: DonorSearchQueueAtt
     remainingGeohashesToProcess,
     initiationCount,
     notifiedEligibleDonors
-  } = donorSearchQueueAttributes
+  } = DonorSearchSchedulerAttributes
 
   const serviceLogger = createServiceLogger(seekerId, {
     requestPostId: requestPostId,

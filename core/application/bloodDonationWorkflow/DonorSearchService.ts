@@ -10,7 +10,7 @@ import {
   DynamoDBEventName,
   type DonationRequestInitiatorAttributes,
   type DonorSearchAttributes,
-  type DonorSearchQueueAttributes
+  type DonorSearchSchedulerAttributes
 } from './Types'
 import type { QueueModel } from '../models/queue/QueueModel'
 import {
@@ -52,7 +52,7 @@ export class DonorSearchService {
       notifiedEligibleDonors: {}
     }
 
-    const donorSearchQueueAttributes: DonorSearchQueueAttributes = {
+    const DonorSearchSchedulerAttributes: DonorSearchSchedulerAttributes = {
       seekerId,
       requestPostId,
       createdAt,
@@ -79,7 +79,7 @@ export class DonorSearchService {
       await this.createDonorSearchRecord(donorSearchAttributes)
 
       this.logger.info('starting donor search request')
-      await this.scheduleDonorSearchRequest(donorSearchQueueAttributes, schedulerModel)
+      await this.scheduleDonorSearchRequest(DonorSearchSchedulerAttributes, schedulerModel)
     } else {
       this.logger.info('updating donor search record because the donation request has been updated')
       await this.updateDonorSearchRecord({
@@ -90,18 +90,18 @@ export class DonorSearchService {
     }
 
     if (shouldRestartSearch) {
-      donorSearchQueueAttributes.notifiedEligibleDonors = donorSearchRecord.notifiedEligibleDonors
+      DonorSearchSchedulerAttributes.notifiedEligibleDonors = donorSearchRecord.notifiedEligibleDonors
       this.logger.info('restarting donor search request')
-      await this.scheduleDonorSearchRequest(donorSearchQueueAttributes, schedulerModel)
+      await this.scheduleDonorSearchRequest(DonorSearchSchedulerAttributes, schedulerModel)
     }
   }
 
   async scheduleDonorSearchRequest(
-    donorSearchQueueAttributes: DonorSearchQueueAttributes,
+    DonorSearchSchedulerAttributes: DonorSearchSchedulerAttributes,
     schedulerModel: SchedulerModel
   ): Promise<void> {
     await schedulerModel.schedule(
-      donorSearchQueueAttributes,
+      DonorSearchSchedulerAttributes,
       this.options.donorSearchLambdaArn
     )
   }

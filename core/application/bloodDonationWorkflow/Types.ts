@@ -101,7 +101,7 @@ export type DonorSearchAttributes = {
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 
-export type DonorSearchQueueAttributes = {
+export type DonorSearchSchedulerAttributes = {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
