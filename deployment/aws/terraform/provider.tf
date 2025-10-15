@@ -11,4 +11,19 @@ terraform {
 provider "aws" {
   alias  = "us-east-1"
   region = "us-east-1"
+  default_tags {
+    tags = {
+      environment = "${var.aws_environment}"
+      app         = "bloodconnect"
+    }
+  }
+}
+
+provider "aws" {
+  default_tags {
+    tags = {
+      environment = "${var.aws_environment}"
+      app         = "bloodconnect"
+    }
+  }
 }

@@ -21,7 +21,7 @@ const useRequestStatus = (): unknown => {
   }, { shouldExecuteOnMount: true, parseError: extractErrorMessage })
 
   const notYetHandler = (): void => {
-    navigation.navigate(SCREENS.MY_ACTIVITY)
+    navigation.navigate(SCREENS.BOTTOM_TABS, { screen: SCREENS.MY_ACTIVITY })
   }
 
   const yesManagedHandler = (): void => {

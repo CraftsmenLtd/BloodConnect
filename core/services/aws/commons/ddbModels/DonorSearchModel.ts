@@ -47,7 +47,7 @@ implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, Dono
   }
 
   toDto(dbFields: DonorSearchFields): DonorSearchDTO {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { PK, SK, LSI1SK, createdAt, ...remainingDonorSearchFields } = dbFields
 
     return {

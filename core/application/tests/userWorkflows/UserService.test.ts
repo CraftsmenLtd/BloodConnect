@@ -14,6 +14,7 @@ import type {
 import type { UpdateUserAttributes } from '../../userWorkflow/Types'
 import { mockLogger } from '../mocks/mockLogger'
 import type { LocationService } from '../../userWorkflow/LocationService'
+import { ISO_TIMESTAMP_REGEX } from '../../../../commons/libs/constants/Patterns'
 
 jest.mock('../../utils/idGenerator')
 jest.mock('../../userWorkflow/userMessages')
@@ -212,6 +213,42 @@ describe('UserService Tests', () => {
 
       expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(longUserName)
       expect(result).toEqual(mockMessage)
+    })
+  })
+
+  describe('recordLastSuccessfulLoginTimestamp', () => {
+    test('should update last login timestamp successfully', async() => {
+      const userId = '12345'
+      const timestamp = '2023-10-08T10:30:00.000Z'
+
+      userRepository.update.mockResolvedValue(mockUserWithStringId)
+
+      await userService.recordLastSuccessfulLoginTimestamp(userId, timestamp)
+
+      expect(userRepository.update).toHaveBeenCalledWith({
+        id: userId,
+        lastLogin: timestamp,
+        updatedAt: expect.stringMatching(ISO_TIMESTAMP_REGEX)
+      })
+      expect(mockLogger.info).toHaveBeenCalledWith('Recording last successful login', { userId, timestamp })
+    })
+
+    test('should handle repository update failure gracefully without throwing', async() => {
+      const userId = '12345'
+      const timestamp = '2023-10-08T10:30:00.000Z'
+      const repositoryError = new Error('Database connection failed')
+
+      userRepository.update.mockRejectedValue(repositoryError)
+
+      // Should not throw - errors are caught and logged
+      await expect(userService.recordLastSuccessfulLoginTimestamp(userId, timestamp))
+        .resolves.not.toThrow()
+
+      expect(mockLogger.info).toHaveBeenCalledWith('Recording last successful login', { userId, timestamp })
+      expect(mockLogger.error).toHaveBeenCalledWith('Failed to record last successful login', {
+        userId,
+        error: repositoryError
+      })
     })
   })
 })
