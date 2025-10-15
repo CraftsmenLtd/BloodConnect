@@ -15,11 +15,9 @@ import {
 import type { QueueModel } from '../models/queue/QueueModel'
 import {
   GEO_PARTITION_PREFIX_LENGTH,
-  MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS
 } from '../../../commons/libs/constants/NoMagicNumbers'
 import type { Logger } from '../models/logger/Logger'
 import type DonorSearchRepository from '../models/policies/repositories/DonorSearchRepository'
-import { DonorSearchIntentionalError } from './DonorSearchOperationalError'
 import type {
   DonorInfo,
   GeohashCacheManager,
@@ -96,18 +94,6 @@ export class DonorSearchService {
       this.logger.info('restarting donor search request')
       await this.scheduleDonorSearchRequest(donorSearchQueueAttributes, schedulerModel)
     }
-  }
-
-  async enqueueDonorSearchRequest(
-    donorSearchQueueAttributes: DonorSearchQueueAttributes,
-    queueModel: QueueModel,
-    delayPeriod?: number
-  ): Promise<void> {
-    await queueModel.queue(
-      donorSearchQueueAttributes,
-      this.options.donorSearchQueueUrl,
-      delayPeriod
-    )
   }
 
   async scheduleDonorSearchRequest(
@@ -332,26 +318,6 @@ export class DonorSearchService {
       schedulerModel,
       initiatingDelayPeriod
     )
-  }
-
-  async handleVisibilityTimeout(
-    queueModel: QueueModel,
-    targetedExecutionTime: number | undefined,
-    receiptHandle: string
-  ): Promise<void> {
-    const currentUnixTime = Math.floor(Date.now() / 1000)
-    if (targetedExecutionTime !== undefined && targetedExecutionTime > currentUnixTime) {
-      const visibilityTimeout = Math.min(
-        targetedExecutionTime - currentUnixTime,
-        MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS
-      )
-      await queueModel.updateVisibilityTimeout(
-        receiptHandle,
-        this.options.donorSearchQueueUrl,
-        visibilityTimeout
-      )
-      throw new DonorSearchIntentionalError(`updated visibility timeout to ${visibilityTimeout}`)
-    }
   }
 
   async createDonorSearchRecord(donorSearchAttributes: DonorSearchAttributes): Promise<void> {

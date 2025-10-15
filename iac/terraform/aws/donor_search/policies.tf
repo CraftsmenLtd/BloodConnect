@@ -42,7 +42,6 @@ locals {
         ]
         resources = [
           module.donation_request_queue.queue_arn,
-          module.donor_search_queue.queue_arn,
           module.donation_status_manager_queue.queue_arn,
           var.push_notification_queue.arn
         ]
