@@ -330,7 +330,7 @@ export class DonorSearchService {
         targetedExecutionTime: Math.floor(Date.now() / 1000) + initiatingDelayPeriod
       },
       schedulerModel,
-      this.options.donorSearchDelayBetweenExecution
+      initiatingDelayPeriod
     )
   }
 

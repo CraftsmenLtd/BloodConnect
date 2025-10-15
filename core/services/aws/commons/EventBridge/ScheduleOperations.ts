@@ -23,7 +23,7 @@ export default class SchedulerOperations implements SchedulerModel {
     const scheduleName = `schedule-${randomUUID()}`
     const scheduleTime = new Date()
 
-    const MIN_DELAY_SECONDS = 80
+    const MIN_DELAY_SECONDS = 60
     if (delaySeconds === undefined || delaySeconds < MIN_DELAY_SECONDS) {
       delaySeconds = MIN_DELAY_SECONDS
     }
@@ -31,7 +31,7 @@ export default class SchedulerOperations implements SchedulerModel {
     scheduleTime.setSeconds(scheduleTime.getSeconds() + delaySeconds)
 
     try {
-      const result = await this.client.send(
+      await this.client.send(
         new CreateScheduleCommand({
           Name: scheduleName,
           ScheduleExpression: `at(${this.toISOStringWithoutMilliseconds(scheduleTime)})`,
@@ -41,10 +41,9 @@ export default class SchedulerOperations implements SchedulerModel {
             RoleArn: this.roleArn,
             Input: JSON.stringify(messageBody),
           },
-          ActionAfterCompletion: 'NONE',
+          ActionAfterCompletion: 'DELETE',
         })
       )
-      this.logger.info('Schedule created successfully', { result })
     } catch (error) {
       this.logger.error('Error creating schedule:', error)
       throw error
