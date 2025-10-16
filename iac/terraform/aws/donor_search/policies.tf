@@ -42,11 +42,59 @@ locals {
         ]
         resources = [
           module.donation_request_queue.queue_arn,
-          module.donor_search_queue.queue_arn,
           module.donation_status_manager_queue.queue_arn,
           var.push_notification_queue.arn
         ]
       }
+    ],
+    scheduler_policy = [
+      {
+        sid    = "EventBridgeSchedulerPolicy",
+        Effect = "Allow",
+        actions = [
+          "scheduler:CreateSchedule",
+          "scheduler:UpdateSchedule",
+          "scheduler:DeleteSchedule",
+          "scheduler:GetSchedule",
+          "scheduler:ListSchedules"
+        ]
+        resources = [
+          "arn:aws:scheduler:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:schedule/*"
+        ]
+      },
+      {
+        sid    = "AllowPassRoleToScheduler",
+        Effect = "Allow",
+        actions = [
+          "iam:PassRole"
+        ]
+        resources = [
+          local.eventbridge_scheduler_role_arn
+        ]
+        conditions = {
+          StringEquals = {
+            "iam:PassedToService" = "scheduler.amazonaws.com"
+          }
+        }
+      },
+      {
+        sid    = "AllowSchedulerServiceInvokeLambda"
+        Effect = "Allow"
+        actions = [
+          "lambda:InvokeFunction"
+        ]
+        resources = [
+          "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${local.donor_search_lambda_name}:*",
+          "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${local.donor_search_lambda_name}"
+        ]
+        principals = [
+          {
+            type        = "Service"
+            identifiers = ["scheduler.amazonaws.com"]
+          }
+        ]
+      },
+     
     ]
   }
 }

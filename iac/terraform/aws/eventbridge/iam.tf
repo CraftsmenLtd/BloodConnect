@@ -50,3 +50,51 @@ resource "aws_iam_role_policy" "eventbridge_pipe_policy" {
   role   = aws_iam_role.eventbridge_pipe_role.id
   policy = data.aws_iam_policy_document.eventbridge_pipe_policy_doc.json
 }
+
+# EventBridge Scheduler role to invoke donor_search lambda
+data "aws_iam_policy_document" "eventbridge_scheduler_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["scheduler.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+  }
+}
+
+resource "aws_iam_role" "eventbridge_scheduler_role" {
+  name               = "${var.environment}-eventbridge-scheduler-role"
+  assume_role_policy = data.aws_iam_policy_document.eventbridge_scheduler_assume_role.json
+
+  tags = {
+    Name = "${var.environment}-eventbridge-scheduler-role"
+  }
+}
+
+data "aws_iam_policy_document" "eventbridge_scheduler_policy_doc" {
+  statement {
+    effect    = "Allow"
+    actions   = ["lambda:InvokeFunction"]
+    resources = [local.donor_search_lambda_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "eventbridge_scheduler_policy" {
+  name   = "${var.environment}-eventbridge-scheduler-policy"
+  role   = aws_iam_role.eventbridge_scheduler_role.id
+  policy = data.aws_iam_policy_document.eventbridge_scheduler_policy_doc.json
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_scheduler_donor_search" {
+  statement_id  = "AllowExecutionFromEventBridgeScheduler"
+  action        = "lambda:InvokeFunction"
+  function_name = local.donor_search_lambda_name
+  principal     = "scheduler.amazonaws.com"
+  source_arn    = "arn:aws:scheduler:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:schedule/*"
+}
