@@ -12,7 +12,6 @@ locals {
       )
       env_variables = {
         DYNAMODB_TABLE_NAME                   = split("/", var.dynamodb_table_arn)[1]
-        DONOR_SEARCH_QUEUE_URL                = module.donor_search_queue.queue_url
         NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH = local.neighbor_search_geohash_prefix_length
         DONOR_SEARCH_LAMBDA_ARN               = local.donor_search_lambda_arn
         SCHEDULER_ROLE_ARN                    = local.eventbridge_scheduler_role_arn
@@ -29,11 +28,10 @@ locals {
         local.policies.scheduler_policy
       )
       memory_size = 1024
-      timeout     = local.donor_search_queue_visibility_timeout_seconds - 60
+      timeout     = 180
       env_variables = {
         DYNAMODB_TABLE_NAME                     = split("/", var.dynamodb_table_arn)[1]
         DONOR_SEARCH_MAX_INITIATING_RETRY_COUNT = local.donor_search_max_initiating_retry_count
-        DONOR_SEARCH_QUEUE_URL                  = module.donor_search_queue.queue_url
         NOTIFICATION_QUEUE_URL                  = var.push_notification_queue.url
         MAX_GEOHASH_CACHE_ENTRIES_COUNT         = local.max_geohash_cache_entries_count
         MAX_GEOHASH_CACHE_MB_SIZE               = local.max_geohash_cache_mb_size

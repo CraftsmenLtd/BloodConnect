@@ -50,7 +50,7 @@ async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
 
       await donorSearchService.initiateDonorSearchRequest(
         donationRequestInitiatorAttributes,
-        new SchedulerOperations(config.awsRegion, config.schedulerRoleArn, serviceLogger),
+        new SchedulerOperations(config.awsRegion, config.schedulerRoleArn, serviceLogger, config.donorSearchDelayBetweenExecution),
         body.status,
         body.eventName
       )

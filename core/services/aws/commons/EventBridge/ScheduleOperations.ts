@@ -3,17 +3,22 @@ import type { DTO } from 'commons/dto/DTOCommon'
 import type { SchedulerModel } from 'core/application/models/scheduler/SchedulerModel'
 import type { Logger } from 'core/application/models/logger/Logger'
 
-type ScheduledMessageBody = DTO & { requestPostId: string }; 
+type ScheduleMessageBody = DTO & {
+  targetedExecutionTime?: string,
+  requestPostId: string
+}
 
 export default class SchedulerOperations implements SchedulerModel {
   private readonly client: SchedulerClient
   private readonly roleArn: string
   protected readonly logger: Logger
+  private readonly defaultDelayInSeconds?: number
 
-  constructor(region: string, roleArn: string, logger: Logger) {
+  constructor(region: string, roleArn: string, logger: Logger, defaultDelayInSeconds?: number) {
     this.client = new SchedulerClient({ region })
     this.roleArn = roleArn
     this.logger = logger
+    this.defaultDelayInSeconds = defaultDelayInSeconds ?? 60
   }
 
   private toISOStringWithoutMilliseconds(date: Date): string {
@@ -21,16 +26,16 @@ export default class SchedulerOperations implements SchedulerModel {
   }
   
 
-  async schedule(messageBody: ScheduledMessageBody, lambdaArn: string, delaySeconds?: number): Promise<void> {
+  async schedule(messageBody: ScheduleMessageBody, lambdaArn: string): Promise<void> {
     const scheduleName = `schedule-${messageBody.requestPostId}`
-    const scheduleTime = new Date()
+    const currentTime = new Date()
 
-    const MIN_DELAY_SECONDS = 60
-    if (delaySeconds === undefined || delaySeconds < MIN_DELAY_SECONDS) {
-      delaySeconds = MIN_DELAY_SECONDS
-    }
+    const minimumTime = this.defaultDelayInSeconds
+      ? new Date(currentTime.getTime() + this.defaultDelayInSeconds * 1000)
+      : currentTime
 
-    scheduleTime.setSeconds(scheduleTime.getSeconds() + delaySeconds)
+    const targetTime = messageBody.targetedExecutionTime ? new Date(messageBody.targetedExecutionTime) : null
+    const scheduleTime = targetTime && targetTime > minimumTime ? targetTime : minimumTime
 
     try {
       await this.client.send(
