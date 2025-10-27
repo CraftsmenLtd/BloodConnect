@@ -1,8 +1,9 @@
 import { SchedulerClient, CreateScheduleCommand, DeleteScheduleCommand } from '@aws-sdk/client-scheduler'
 import type { DTO } from 'commons/dto/DTOCommon'
-import { randomUUID } from 'crypto'
 import type { SchedulerModel } from 'core/application/models/scheduler/SchedulerModel'
 import type { Logger } from 'core/application/models/logger/Logger'
+
+type ScheduledMessageBody = DTO & { requestPostId: string }; 
 
 export default class SchedulerOperations implements SchedulerModel {
   private readonly client: SchedulerClient
@@ -18,9 +19,10 @@ export default class SchedulerOperations implements SchedulerModel {
   private toISOStringWithoutMilliseconds(date: Date): string {
     return date.toISOString().split('.')[0]
   }
+  
 
-  async schedule(messageBody: DTO, lambdaArn: string, delaySeconds?: number): Promise<void> {
-    const scheduleName = `schedule-${randomUUID()}`
+  async schedule(messageBody: ScheduledMessageBody, lambdaArn: string, delaySeconds?: number): Promise<void> {
+    const scheduleName = `schedule-${messageBody.requestPostId}`
     const scheduleTime = new Date()
 
     const MIN_DELAY_SECONDS = 60
