@@ -24,7 +24,6 @@ export default class SchedulerOperations implements SchedulerModel {
   private toISOStringWithoutMilliseconds(date: Date): string {
     return date.toISOString().split('.')[0]
   }
-  
 
   async schedule(messageBody: ScheduleMessageBody, lambdaArn: string): Promise<void> {
     const scheduleName = `schedule-${messageBody.requestPostId}`
