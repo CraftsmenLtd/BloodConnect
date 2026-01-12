@@ -6,13 +6,13 @@ import type {
   DonationRequestInitiatorAttributes,
   DonorSearchConfig,
 } from '../../../application/bloodDonationWorkflow/Types'
-import SQSOperations from '../commons/sqs/SQSOperations'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
   DonorSearchIntentionalError
 } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
 import { Config } from 'commons/libs/config/config'
 import DonorSearchDynamoDbOperations from '../commons/ddbOperations/DonorSearchDynamoDbOperations'
+import SchedulerOperations from '../commons/EventBridge/ScheduleOperations'
 
 const config = new Config<DonorSearchConfig>().getConfig()
 
@@ -50,7 +50,7 @@ async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
 
       await donorSearchService.initiateDonorSearchRequest(
         donationRequestInitiatorAttributes,
-        new SQSOperations(config.awsRegion),
+        new SchedulerOperations(config.awsRegion, config.schedulerRoleArn, serviceLogger, config.donorSearchDelayBetweenExecution),
         body.status,
         body.eventName
       )
