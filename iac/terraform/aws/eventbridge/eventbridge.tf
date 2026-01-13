@@ -2,7 +2,7 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   name     = "${var.environment}-donation-request-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
   source   = var.dynamodb_table_stream_arn
-  target   = var.donation_request_queue_arn
+  target   = local.donation_request_initiator_lambda_arn
 
   source_parameters {
     dynamodb_stream_parameters {
