@@ -1,4 +1,3 @@
-import type { SQSEvent } from 'aws-lambda'
 import {
   DonorSearchService
 } from '../../../application/bloodDonationWorkflow/DonorSearchService'
@@ -21,14 +20,24 @@ const donorSearchDynamoDbOperations = new DonorSearchDynamoDbOperations(
   config.awsRegion
 )
 
-async function donationRequestInitiatorLambda(event: SQSEvent): Promise<void> {
-  for (const record of event.Records) {
-    const body
-      = typeof record.body === 'string'
-        && record.body.trim() !== '' ? JSON.parse(record.body) : {}
+// EventBridge Pipe event format
+interface EventBridgePipeEvent {
+  PK: string
+  SK: string
+  geohash: string
+  status: string
+  eventName?: string
+}
 
-    const primaryIndex: string = body?.PK
-    const secondaryIndex: string = body?.SK
+async function donationRequestInitiatorLambda(
+  event: EventBridgePipeEvent | EventBridgePipeEvent[]
+): Promise<void> {
+  // Normalize to array (EventBridge Pipe with batch_size > 1 sends array)
+  const events = Array.isArray(event) ? event : [event]
+
+  for (const body of events) {
+    const primaryIndex: string = body.PK
+    const secondaryIndex: string = body.SK
     const seekerId = primaryIndex.split('#')[1]
     const requestPostId = secondaryIndex.split('#')[2]
     const createdAt = secondaryIndex.split('#')[1]

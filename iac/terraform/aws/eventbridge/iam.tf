@@ -29,7 +29,12 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
   statement {
     effect    = "Allow"
     actions   = ["sqs:SendMessage"]
-    resources = [var.donation_request_queue_arn, var.donation_status_manager_queue_arn]
+    resources = [var.donation_status_manager_queue_arn]
+  }
+  statement {
+    effect    = "Allow"
+    actions   = ["lambda:InvokeFunction"]
+    resources = [local.donation_request_initiator_lambda_arn]
   }
   statement {
     effect = "Allow"
@@ -97,4 +102,12 @@ resource "aws_lambda_permission" "allow_eventbridge_scheduler_donor_search" {
   function_name = local.donor_search_lambda_name
   principal     = "scheduler.amazonaws.com"
   source_arn    = "arn:aws:scheduler:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:schedule/*"
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_pipe_donation_request_initiator" {
+  statement_id  = "AllowExecutionFromEventBridgePipe"
+  action        = "lambda:InvokeFunction"
+  function_name = local.donation_request_initiator_lambda_name
+  principal     = "pipes.amazonaws.com"
+  source_arn    = aws_pipes_pipe.donation_request_pipe.arn
 }
