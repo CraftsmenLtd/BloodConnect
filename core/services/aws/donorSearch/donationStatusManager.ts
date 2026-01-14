@@ -1,4 +1,3 @@
-import type { SQSEvent, SQSRecord } from 'aws-lambda'
 import { BloodDonationService } from '../../../application/bloodDonationWorkflow/BloodDonationService'
 import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
 import {
@@ -23,10 +22,22 @@ const acceptDonationDynamoDbOperations = new AcceptDonationDynamoDbOperations(
   config.awsRegion
 )
 
-async function donationStatusManager(event: SQSEvent): Promise<{ status: string }> {
+// EventBridge Pipe event format
+interface DonationStatusEvent {
+  PK: string
+  SK: string
+  createdAt: string
+}
+
+async function donationStatusManager(
+  event: DonationStatusEvent | DonationStatusEvent[]
+): Promise<{ status: string }> {
   try {
-    for (const record of event.Records) {
-      await processSQSRecord(record)
+    // Normalize to array (EventBridge Pipe with batch_size > 1 sends array)
+    const events = Array.isArray(event) ? event : [event]
+
+    for (const body of events) {
+      await processDonationStatusEvent(body)
     }
 
     return { status: 'Success' }
@@ -35,13 +46,11 @@ async function donationStatusManager(event: SQSEvent): Promise<{ status: string 
   }
 }
 
-async function processSQSRecord(record: SQSRecord): Promise<void> {
-  const body
-    = typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
+async function processDonationStatusEvent(body: DonationStatusEvent): Promise<void> {
+  const primaryIndex: string = body.PK
+  const secondaryIndex: string = body.SK
+  const createdAt: string = body.createdAt
 
-  const primaryIndex: string = body?.PK
-  const secondaryIndex: string = body?.SK
-  const createdAt: string = body?.createdAt
   if (primaryIndex === '' || secondaryIndex === '') {
     throw new Error('Missing PK or SK in the DynamoDB record')
   }

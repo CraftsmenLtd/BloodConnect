@@ -1,7 +1,1 @@
-module "donation_status_manager_queue" {
-  source                     = "./../sqs"
-  environment                = var.environment
-  queue_name                 = "donation-status-manager"
-  enable_lambda_event_source = true
-  lambda_function_arn        = module.donor_search_lambda["donation-status-manager"].lambda_arn
-}
+# SQS queue definitions removed - all queues migrated to direct Lambda invocation via EventBridge Pipes

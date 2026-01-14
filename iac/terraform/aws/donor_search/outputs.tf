@@ -1,7 +1,3 @@
-output "donation_status_manager_queue_arn" {
-  value = module.donation_status_manager_queue.queue_arn
-}
-
 output "donor_search_lambda_name" {
   value = module.donor_search_lambda["donor-search"].lambda_function_name
 }

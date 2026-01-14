@@ -54,7 +54,7 @@ resource "aws_pipes_pipe" "donation_accept_pipe" {
   name     = "${var.environment}-donation-accept-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
   source   = var.dynamodb_table_stream_arn
-  target   = var.donation_status_manager_queue_arn
+  target   = local.donation_status_manager_lambda_arn
 
   source_parameters {
     dynamodb_stream_parameters {
@@ -104,7 +104,7 @@ resource "aws_pipes_pipe" "donation_ignore_pipe" {
   name     = "${var.environment}-donation-ignore-pipe"
   role_arn = aws_iam_role.eventbridge_pipe_role.arn
   source   = var.dynamodb_table_stream_arn
-  target   = var.donation_status_manager_queue_arn
+  target   = local.donation_status_manager_lambda_arn
 
   source_parameters {
     dynamodb_stream_parameters {
