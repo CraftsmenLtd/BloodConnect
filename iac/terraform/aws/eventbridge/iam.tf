@@ -28,13 +28,11 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
   }
   statement {
     effect    = "Allow"
-    actions   = ["sqs:SendMessage"]
-    resources = [var.donation_status_manager_queue_arn]
-  }
-  statement {
-    effect    = "Allow"
     actions   = ["lambda:InvokeFunction"]
-    resources = [local.donation_request_initiator_lambda_arn]
+    resources = [
+      local.donation_request_initiator_lambda_arn,
+      local.donation_status_manager_lambda_arn
+    ]
   }
   statement {
     effect = "Allow"
@@ -110,4 +108,20 @@ resource "aws_lambda_permission" "allow_eventbridge_pipe_donation_request_initia
   function_name = local.donation_request_initiator_lambda_name
   principal     = "pipes.amazonaws.com"
   source_arn    = aws_pipes_pipe.donation_request_pipe.arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_pipe_donation_status_manager_accept" {
+  statement_id  = "AllowExecutionFromDonationAcceptPipe"
+  action        = "lambda:InvokeFunction"
+  function_name = local.donation_status_manager_lambda_name
+  principal     = "pipes.amazonaws.com"
+  source_arn    = aws_pipes_pipe.donation_accept_pipe.arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_pipe_donation_status_manager_ignore" {
+  statement_id  = "AllowExecutionFromDonationIgnorePipe"
+  action        = "lambda:InvokeFunction"
+  function_name = local.donation_status_manager_lambda_name
+  principal     = "pipes.amazonaws.com"
+  source_arn    = aws_pipes_pipe.donation_ignore_pipe.arn
 }

@@ -41,7 +41,6 @@ locals {
           "sqs:GetQueueAttributes"
         ]
         resources = [
-          module.donation_status_manager_queue.queue_arn,
           var.push_notification_queue.arn
         ]
       }
