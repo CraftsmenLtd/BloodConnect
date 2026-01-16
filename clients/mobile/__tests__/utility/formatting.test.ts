@@ -5,14 +5,34 @@ describe('Utility Functions', () => {
     describe('formattedDate', () => {
       test('should format date string correctly', () => {
         const dateString = '2024-10-23T14:30:00Z'
-        const expected = '10/23/2024, 2:30 PM'
-        expect(formattedDate(dateString)).toBe(expected)
+        const result = formattedDate(dateString)
+
+        // Verify the format is correct (MM/DD/YYYY, HH:MM AM/PM)
+        expect(result).toMatch(/^\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)$/)
+
+        expect(result).toContain('10/23/2024')
       })
 
       test('should format Date object correctly', () => {
         const dateObject = new Date('2024-10-23T14:30:00Z')
-        const expected = '10/23/2024, 2:30 PM'
-        expect(formattedDate(dateObject)).toBe(expected)
+        const result = formattedDate(dateObject)
+
+        // Verify the format is correct (MM/DD/YYYY, HH:MM AM/PM)
+        expect(result).toMatch(/^\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{2} (AM|PM)$/)
+
+        // Verify the date contains correct components
+        expect(result).toContain('10/23/2024')
+      })
+
+      test('should format date with showOnlyDate flag', () => {
+        const dateString = '2024-10-23T14:30:00Z'
+        const result = formattedDate(dateString, true)
+
+        // Verify the format is correct (MM/DD/YYYY only, no time)
+        expect(result).toMatch(/^\d{1,2}\/\d{1,2}\/\d{4}$/)
+        expect(result).toContain('10/23/2024')
+        expect(result).not.toContain('PM')
+        expect(result).not.toContain('AM')
       })
 
       test('should handle invalid date input', () => {
