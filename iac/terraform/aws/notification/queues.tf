@@ -7,7 +7,7 @@ resource "aws_sqs_queue" "push_notification_dlq" {
 resource "aws_sqs_queue" "push_notification_queue" {
   #checkov:skip=CKV_AWS_27: "Ensure all data stored in the SQS queue is encrypted"
   name                       = "${var.environment}-push-notification-queue"
-  visibility_timeout_seconds = 60
+  visibility_timeout_seconds = 180
   message_retention_seconds  = 345600 # 4 days
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.push_notification_dlq.arn
