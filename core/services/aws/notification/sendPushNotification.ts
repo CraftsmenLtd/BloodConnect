@@ -1,4 +1,4 @@
-import type { SQSEvent, SQSRecord } from 'aws-lambda'
+import type { SQSBatchResponse, SQSEvent, SQSRecord } from 'aws-lambda'
 import type {
   NotificationAttributes
 } from '../../../application/notificationWorkflow/Types'
@@ -12,6 +12,7 @@ import NotificationOperationError from '../../../application/notificationWorkflo
 import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
 import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
 import { Config } from 'commons/libs/config/config'
+import { GENERIC_CODES } from '../../../../commons/libs/constants/GenericCodes'
 
 const userDeviceToSnsEndpointMap = new LocalCacheMapManager<string, string>(
   MAX_LOCAL_CACHE_SIZE_COUNT
@@ -35,13 +36,34 @@ const userDynamoDbOperations = new UserDynamoDbOperations(
   config.awsRegion
 )
 
-async function sendPushNotification(event: SQSEvent): Promise<void> {
-  for (const record of event.Records) {
-    await processSQSRecord(record)
+const NON_RETRYABLE_CODES = new Set([
+  GENERIC_CODES.BAD_REQUEST,
+  GENERIC_CODES.NOT_FOUND,
+  GENERIC_CODES.UNAUTHORIZED
+])
+
+function isNonRetryable(error: unknown): boolean {
+  if (error instanceof NotificationOperationError) {
+    return NON_RETRYABLE_CODES.has(error.errorCode)
   }
+
+  return false
 }
 
-async function processSQSRecord(record: SQSRecord): Promise<void> {
+async function sendPushNotification(event: SQSEvent): Promise<SQSBatchResponse> {
+  const batchItemFailures: SQSBatchResponse['batchItemFailures'] = []
+
+  for (const record of event.Records) {
+    const failed = await processSQSRecord(record)
+    if (failed) {
+      batchItemFailures.push({ itemIdentifier: record.messageId })
+    }
+  }
+
+  return { batchItemFailures }
+}
+
+async function processSQSRecord(record: SQSRecord): Promise<boolean> {
   const body: NotificationAttributes
     = typeof record.body === 'string' && record.body.trim() !== '' ? JSON.parse(record.body) : {}
 
@@ -58,13 +80,18 @@ async function processSQSRecord(record: SQSRecord): Promise<void> {
       userDeviceToSnsEndpointMap,
       new SNSOperations(config.awsRegion, config.platformArnApns, config.platformArnFcm)
     )
+
+    return false
   } catch (error) {
-    if (error instanceof NotificationOperationError) {
-      serviceLogger.error(error.message)
-    } else {
-      serviceLogger.error(error)
+    if (isNonRetryable(error)) {
+      serviceLogger.error({ error, messageId: record.messageId }, 'non-retryable error, skipping message')
+
+      return false
     }
-    throw error
+
+    serviceLogger.error({ error, messageId: record.messageId }, 'retryable error, marking for retry')
+
+    return true
   }
 }
 
