@@ -122,3 +122,10 @@ These Terms and Conditions shall be governed by and construed in accordance with
 For any questions, concerns, or feedback regarding these Terms and Conditions, please contact us:
 
 | Email: bloodconnect@craftsmensoftware.com
+
+14. Child Safety
+-----------------
+BloodConnect has a zero-tolerance policy for Child Sexual Abuse and Exploitation (CSAE) and
+Child Sexual Abuse Material (CSAM). Violations will result in immediate account termination
+and reporting to relevant authorities. To report a concern, contact support@bloodconnect.net
+or visit our `Child Safety Standards <https://bloodconnect.net/child-safety/>`_ page.
