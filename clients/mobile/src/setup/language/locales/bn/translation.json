@@ -116,7 +116,10 @@
     "profile": "প্রোফাইল",
     "about": "অ্যাপ সম্পর্কে জানুন",
     "logout": "লগআউট",
-    "settings": "সেটিংস"
+    "settings": "সেটিংস",
+    "childSafety": "শিশু সুরক্ষা মানদণ্ড",
+    "privacyPolicy": "গোপনীয়তা নীতি",
+    "termsOfService": "সেবার শর্তাবলী"
   },
   "headers": {
     "createNewAccount": "নতুন অ্যাকাউন্ট তৈরি করুন",

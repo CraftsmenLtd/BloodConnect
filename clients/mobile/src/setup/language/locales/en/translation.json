@@ -116,7 +116,10 @@
     "profile": "Profile",
     "about": "About",
     "logout": "Logout",
-    "settings": "Settings"
+    "settings": "Settings",
+    "childSafety": "Child Safety Standards",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
   },
   "headers": {
     "createNewAccount": "Create New Account",
