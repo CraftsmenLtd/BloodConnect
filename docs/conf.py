@@ -20,7 +20,7 @@ extensions = [
 graphviz_output_format = "svg"
 
 templates_path = ["templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "legal/internal-csae-sop.rst"]
 
 
 # -- Options for HTML output -------------------------------------------------
