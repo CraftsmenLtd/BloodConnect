@@ -121,6 +121,12 @@
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service"
   },
+  "settings": {
+    "reportSafety": "Report a safety concern"
+  },
+  "postCard": {
+    "reportSafety": "Report"
+  },
   "headers": {
     "createNewAccount": "Create New Account",
     "createBloodRequest": "Create Blood Request"
