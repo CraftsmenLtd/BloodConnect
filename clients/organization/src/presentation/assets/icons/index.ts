@@ -16,7 +16,9 @@ import {
   MdMenu,
   MdSettings,
   MdLogout,
-  MdDashboard
+  MdDashboard,
+  MdReportProblem,
+  MdChildCare
 } from 'react-icons/md'
 import { HiOutlinePhone } from 'react-icons/hi'
 import { FaSun, FaMoon } from 'react-icons/fa'
@@ -39,6 +41,8 @@ export {
   MdSettings,
   MdDashboard,
   MdLogout,
+  MdReportProblem,
+  MdChildCare,
   FaSun,
   FaMoon,
   FaCheck,
