@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               label="Child Safety Standards"
               sidebarExpanded={sidebarExpanded}
               onClick={() => {
-                window.open('https://bloodconnect.net/child-safety/', '_blank')
+                window.open('https://bloodconnect.net/child-safety.html', '_blank')
               }}
             />
             <SidebarLink

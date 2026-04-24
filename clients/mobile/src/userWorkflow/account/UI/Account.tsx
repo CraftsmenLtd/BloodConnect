@@ -74,7 +74,7 @@ export const Account = () => {
       <View style={styles.optionsSection}>
         <TouchableOpacity
           style={styles.optionItem}
-          onPress={() => { void Linking.openURL('https://bloodconnect.net/child-safety/') }}
+          onPress={() => { void Linking.openURL('https://bloodconnect.net/child-safety.html') }}
           accessibilityLabel={t('account.childSafety')}
           accessibilityHint="Opens in browser"
         >

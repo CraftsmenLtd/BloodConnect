@@ -2,7 +2,7 @@ import { Linking } from 'react-native'
 import { openBrowserAsync } from 'expo-web-browser'
 
 const SAFETY_EMAIL = 'support@bloodconnect.net'
-const FALLBACK_URL = 'https://bloodconnect.net/child-safety/'
+const FALLBACK_URL = 'https://bloodconnect.net/child-safety.html'
 
 export const openSafetyReport = async (context?: string): Promise<void> => {
   const subject = encodeURIComponent('[Safety report]')

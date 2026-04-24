@@ -158,7 +158,7 @@ For privacy-related inquiries contact us at:
 ------------------------
 BloodConnect has a zero-tolerance policy for Child Sexual Abuse and Exploitation (CSAE) and
 Child Sexual Abuse Material (CSAM). To report a child safety concern, contact
-support@bloodconnect.net or visit our `Child Safety Standards <https://bloodconnect.net/child-safety/>`_ page.
+support@bloodconnect.net or visit our `Child Safety Standards <https://bloodconnect.net/child-safety.html>`_ page.
 
 16. Consent
 ------------------------

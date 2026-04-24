@@ -38,7 +38,7 @@ The point of contact is responsible for:
 - Executing this SOP when a credible report arrives.
 - Maintaining and reviewing this document quarterly (Section 7).
 - Serving as the named individual in the Play Console declaration and on the public
-  Child Safety Standards page at ``https://bloodconnect.net/child-safety``.
+  Child Safety Standards page at ``https://bloodconnect.net/child-safety.html``.
 
 ---
 

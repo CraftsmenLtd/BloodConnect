@@ -128,4 +128,4 @@ For any questions, concerns, or feedback regarding these Terms and Conditions, p
 BloodConnect has a zero-tolerance policy for Child Sexual Abuse and Exploitation (CSAE) and
 Child Sexual Abuse Material (CSAM). Violations will result in immediate account termination
 and reporting to relevant authorities. To report a concern, contact support@bloodconnect.net
-or visit our `Child Safety Standards <https://bloodconnect.net/child-safety/>`_ page.
+or visit our `Child Safety Standards <https://bloodconnect.net/child-safety.html>`_ page.
