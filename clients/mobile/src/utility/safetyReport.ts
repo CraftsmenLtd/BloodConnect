@@ -1,4 +1,3 @@
-// TODO(CSS-19): replace mailto with POST /safety/report API call once backend is available
 import { Linking } from 'react-native'
 import { openBrowserAsync } from 'expo-web-browser'
 
