@@ -69,7 +69,6 @@ jobs:
       TF_VAR_facebook_client_secret: ${{ secrets.FACEBOOK_CLIENT_SECRET  }}
       TF_VAR_firebase_token_s3_url: ${{ secrets.FIREBASE_TOKEN_S3_URL }}
       TF_VAR_google_maps_api_key: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-      TF_VAR_poc_emails: ${{ vars.POC_EMAILS || '[]' }}
     steps:
       - name: 📥 Checkout Branch
         uses: actions/checkout@v4
@@ -93,6 +92,10 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHubActions
           aws-region: ${{ inputs.aws_region }}
+
+      - name: 🔧 Set POC emails
+        if: ${{ vars.POC_EMAILS != '' }}
+        run: echo "TF_VAR_poc_emails=${{ vars.POC_EMAILS }}" >> $GITHUB_ENV
 
       - name: 🛠️ Terraform Initialization
         run: make run-command-tf-init

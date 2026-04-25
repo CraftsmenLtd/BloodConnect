@@ -42,7 +42,7 @@ variable "google_maps_api_key" {
 }
 
 variable "poc_emails" {
-  description = "Child safety POC emails — all addresses receive forwarded support@ emails via SNS"
-  type        = list(string)
-  default     = []
+  description = "Comma-separated child safety POC emails e.g. a@example.com,b@example.com"
+  type        = string
+  default     = ""
 }
