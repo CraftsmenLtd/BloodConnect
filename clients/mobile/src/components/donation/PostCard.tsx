@@ -26,6 +26,7 @@ import StatusBadge from './StatusBadge'
 import Badge from '../badge'
 import GenericModal from '../modal'
 import { openMapLocation } from '../../utility/mapUtils'
+import { openSafetyReport } from '../../utility/safetyReport'
 
 export type PostCardDisplayOptions = {
   showContactNumber?: boolean;
@@ -109,6 +110,11 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
     }
   }, [post, cancelHandler])
 
+  const handleReport = useCallback(() => {
+    handleCloseDropdown()
+    void openSafetyReport(post.requestPostId)
+  }, [post.requestPostId, handleCloseDropdown])
+
   const openModal = () => {
     handleCloseDropdown()
     setModalOpen(true)
@@ -142,7 +148,8 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
 
   const dropdownItems = [
     { text: 'Update', onPress: handleUpdate },
-    { text: 'Cancel', onPress: openModal }
+    { text: 'Cancel', onPress: openModal },
+    { text: t('postCard.reportSafety'), onPress: handleReport }
   ]
 
   const DropdownItem: React.FC<{

@@ -5,6 +5,8 @@ import {
   MdDashboard,
   MdSettings,
   MdLogout,
+  MdReportProblem,
+  MdChildCare
 } from '../../assets/icons'
 import SidebarLink from './SidebarLink'
 import { useSidebar } from './useSidebar'
@@ -75,6 +77,24 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="no-scrollbar flex flex-col mt-auto">
         <nav className="p-2">
           <ul className="mb-3 flex flex-col gap-1.5">
+            {/* TODO(CSS-20): replace mailto with POST /safety/report API call */}
+            <SidebarLink
+              icon={<MdReportProblem size={24} />}
+              label="Report a safety concern"
+              sidebarExpanded={sidebarExpanded}
+              onClick={() => {
+                window.location.href =
+                  'mailto:support@bloodconnect.net?subject=%5BSafety%20report%5D&body=Describe%20what%20happened%3A%0A%0AReported%20user%20%2F%20post%20%28if%20known%29%3A%20N%2FA%0A'
+              }}
+            />
+            <SidebarLink
+              icon={<MdChildCare size={24} />}
+              label="Child Safety Standards"
+              sidebarExpanded={sidebarExpanded}
+              onClick={() => {
+                window.open('https://bloodconnect.net/child-safety.html', '_blank')
+              }}
+            />
             <SidebarLink
               icon={
                 theme === 'light' ? <FaSun size={24} /> : <FaMoon size={24} />

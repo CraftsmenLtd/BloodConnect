@@ -2,6 +2,13 @@ module "environments" {
   source = "./environments"
 }
 
+module "ses_support_email" {
+  count       = var.environment == module.environments.PRODUCTION ? 1 : 0
+  source      = "./ses-support-email"
+  domain_name = var.bloodconnect_domain
+  poc_emails  = var.poc_emails
+}
+
 module "user" {
   source             = "./user"
   environment        = var.environment

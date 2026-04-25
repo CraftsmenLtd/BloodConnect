@@ -154,6 +154,12 @@ For privacy-related inquiries contact us at:
 
 | Email: bloodconnect@craftsmensoftware.com
 
-15. Consent
+15. Child Safety
+------------------------
+BloodConnect has a zero-tolerance policy for Child Sexual Abuse and Exploitation (CSAE) and
+Child Sexual Abuse Material (CSAM). To report a child safety concern, contact
+support@bloodconnect.net or visit our `Child Safety Standards <https://bloodconnect.net/child-safety.html>`_ page.
+
+16. Consent
 ------------------------
 By using BloodConnect, you consent to this Privacy Policy and our data practices.

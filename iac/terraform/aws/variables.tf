@@ -86,3 +86,9 @@ variable "google_maps_api_key" {
   type        = string
   sensitive   = true
 }
+
+variable "poc_emails" {
+  description = "Child safety POC emails — all addresses receive forwarded support@ emails via SNS"
+  type        = list(string)
+  default     = []
+}

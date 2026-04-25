@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Text, View, TouchableOpacity
+  Text, View, TouchableOpacity, Linking
 } from 'react-native'
 import { SCREENS } from '../../../setup/constant/screens'
 import { MaterialIcons } from '@expo/vector-icons'
@@ -68,6 +68,41 @@ export const Account = () => {
           <MaterialIcons name="settings" size={24} style={styles.iconStyle} />
           <Text style={styles.optionText}>{t('account.settings')}</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.optionsSection}>
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => { void Linking.openURL('https://bloodconnect.net/child-safety.html') }}
+          accessibilityLabel={t('account.childSafety')}
+          accessibilityHint="Opens in browser"
+        >
+          <MaterialIcons name="child-care" size={24} style={styles.iconStyle} />
+          <Text style={styles.optionText}>{t('account.childSafety')}</Text>
+          <MaterialIcons name="open-in-new" size={24} style={styles.optionIcon} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => { void Linking.openURL('https://craftsmenltd.github.io/BloodConnect/legal/PrivacyPolicy.html') }}
+          accessibilityLabel={t('account.privacyPolicy')}
+          accessibilityHint="Opens in browser"
+        >
+          <MaterialIcons name="privacy-tip" size={24} style={styles.iconStyle} />
+          <Text style={styles.optionText}>{t('account.privacyPolicy')}</Text>
+          <MaterialIcons name="open-in-new" size={24} style={styles.optionIcon} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => { void Linking.openURL('https://craftsmenltd.github.io/BloodConnect/legal/TermsOfService.html') }}
+          accessibilityLabel={t('account.termsOfService')}
+          accessibilityHint="Opens in browser"
+        >
+          <MaterialIcons name="description" size={24} style={styles.iconStyle} />
+          <Text style={styles.optionText}>{t('account.termsOfService')}</Text>
+          <MaterialIcons name="open-in-new" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
       </View>
 
