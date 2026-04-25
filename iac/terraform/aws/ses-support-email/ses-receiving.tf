@@ -57,7 +57,7 @@ resource "aws_s3_bucket_policy" "ses_email_store" {
         Resource = "${aws_s3_bucket.ses_email_store.arn}/*"
         Condition = {
           StringEquals = {
-            "aws:Referer" = data.aws_caller_identity.current.account_id
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
           }
         }
       }
@@ -69,10 +69,11 @@ resource "aws_sns_topic" "support_email_notify" {
   name = "${replace(var.domain_name, ".", "-")}-support-email-notify"
 }
 
-resource "aws_sns_topic_subscription" "poc_email" {
+resource "aws_sns_topic_subscription" "poc_emails" {
+  for_each  = toset(var.poc_emails)
   topic_arn = aws_sns_topic.support_email_notify.arn
   protocol  = "email"
-  endpoint  = var.poc_email
+  endpoint  = each.value
 }
 
 resource "aws_ses_receipt_rule" "support" {
