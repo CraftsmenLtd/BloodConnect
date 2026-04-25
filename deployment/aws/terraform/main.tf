@@ -8,6 +8,7 @@ module "aws" {
   facebook_client_secret = var.facebook_client_secret
   firebase_token_s3_url  = var.firebase_token_s3_url
   google_maps_api_key    = var.google_maps_api_key
+  poc_emails             = var.poc_emails
 
   providers = {
     aws.us-east-1 = aws.us-east-1
