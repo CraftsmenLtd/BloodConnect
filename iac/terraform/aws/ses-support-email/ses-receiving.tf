@@ -80,7 +80,7 @@ resource "aws_sns_topic" "support_email_notify" {
 }
 
 resource "aws_sns_topic_subscription" "poc_emails" {
-  for_each  = toset(var.poc_emails)
+  for_each  = toset(compact(split(",", var.poc_emails)))
   topic_arn = aws_sns_topic.support_email_notify.arn
   protocol  = "email"
   endpoint  = each.value

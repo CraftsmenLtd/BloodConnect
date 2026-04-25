@@ -4,6 +4,7 @@ variable "domain_name" {
 }
 
 variable "poc_emails" {
-  type        = list(string)
-  description = "Child safety POC emails — all addresses receive forwarded support@ emails via SNS"
+  type        = string
+  description = "Comma-separated child safety POC emails e.g. a@example.com,b@example.com"
+  default     = ""
 }
