@@ -8,7 +8,10 @@ import { NetInfoModal } from './src/components/NetInfoModal'
 import { ThemeProvider } from './src/setup/theme/context/ThemeContext'
 import Navigator from './src/setup/navigation/Navigator'
 import { Amplify } from 'aws-amplify'
+import { cognitoUserPoolsTokenProvider } from 'aws-amplify/auth/cognito'
 import { awsCognitoConfiguration } from './src/setup/config/cognito'
+import { secureKeyValueStorage } from './src/utility/secureKeyValueStorage'
+import { clearLegacyTokenStorage } from './src/utility/clearLegacyTokenStorage'
 import { AuthProvider } from './src/authentication/context/AuthContext'
 import { NotificationProvider } from './src/setup/notification/NotificationProvider'
 import { UserProfileProvider } from './src/userWorkflow/context/UserProfileContext'
@@ -28,7 +31,9 @@ if (APP_ENV !== 'development') {
   LogBox.ignoreAllLogs(true)
 }
 
+cognitoUserPoolsTokenProvider.setKeyValueStorage(secureKeyValueStorage)
 Amplify.configure(awsCognitoConfiguration)
+void clearLegacyTokenStorage()
 
 Notifications.setNotificationHandler({
   handleNotification: async() => ({
