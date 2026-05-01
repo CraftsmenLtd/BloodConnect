@@ -75,7 +75,6 @@ export const useAddPersonalInfo = () => {
 
   const getValidationRules = (): Record<PersonalInfoKeys, ValidationRule[]> => {
     const rules: Partial<Record<PersonalInfoKeys, ValidationRule[]>> = {
-      availableForDonation: [validateRequired],
       locations: [validateRequired],
       bloodGroup: [validateRequired],
       lastDonationDate: [validatePastOrTodayDate],
