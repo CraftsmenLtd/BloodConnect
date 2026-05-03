@@ -26,15 +26,19 @@ export default class SNSOperations implements SNSModel {
   async publish(message: NotificationAttributes, snsEndpointArn: string): Promise<void> {
     try {
       const messagePayload = {
-        notification: {
-          title: message.title,
-          body: message.body
-        },
-        data: {
-          title: message.title,
-          body: message.body,
-          type: message.type,
-          payload: message.payload
+        fcmV1Message: {
+          message: {
+            notification: {
+              title: message.title,
+              body: message.body
+            },
+            data: {
+              title: message.title,
+              body: message.body,
+              type: message.type,
+              payload: JSON.stringify(message.payload)
+            }
+          }
         }
       }
       const command = new PublishCommand({
@@ -46,8 +50,8 @@ export default class SNSOperations implements SNSModel {
         TargetArn: snsEndpointArn
       })
       await this.client.send(command)
-    } catch (_error) {
-      throw new Error('Failed to process messages')
+    } catch (error) {
+      throw new Error(`Failed to process messages: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -103,11 +107,13 @@ export default class SNSOperations implements SNSModel {
     attributes: SnsRegistrationAttributes
   ): Promise<void> {
     try {
-      const { userId } = attributes
+      const { userId, deviceToken } = attributes
       const command = new SetEndpointAttributesCommand({
         EndpointArn: existingArn,
         Attributes: {
-          CustomUserData: userId
+          CustomUserData: userId,
+          Token: deviceToken,
+          Enabled: 'true'
         }
       })
       await this.client.send(command)

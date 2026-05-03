@@ -17,8 +17,8 @@ locals {
       js_file_name = "sendPushNotification.js"
       statement    = concat(local.policies.common_policies, local.policies.dynamodb_query_policy, local.policies.sns_publish_policy, local.policies.sqs_receive_policy)
       env_variables = {
-        NOTIFICATION_TOPIC_ARN = aws_sns_platform_application.android_app.arn
-        DYNAMODB_TABLE_NAME    = split("/", var.dynamodb_table_arn)[1]
+        PLATFORM_ARN_FCM    = aws_sns_platform_application.android_app.arn
+        DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
       }
     }
   }
