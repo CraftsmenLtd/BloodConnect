@@ -8,6 +8,7 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../components/button/Button'
 import type { LocationData } from '../../../utility/formatting'
 import { formattedDate } from '../../../utility/formatting'
+import { calculateBMI, getBMICategory } from '../../../utility/bmi'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
 import { useProfile } from '../hooks/useProfile'
@@ -85,6 +86,13 @@ const Profile: React.FC = () => {
             ? userDetails.weight : 0)}
           {renderDetailRow(t('fromLabel.height'), userDetails.height !== undefined
             ? userDetails.height.toString() : '')}
+          {userDetails.weight && userDetails.height
+            ? renderDetailRow('BMI', (() => {
+              const bmi = calculateBMI(userDetails.weight, userDetails.height)
+
+              return `${bmi} (${getBMICategory(bmi)})`
+            })())
+            : null}
           {renderDetailRow(t('fromLabel.phone'), userDetails.phoneNumbers !== undefined
             && userDetails.phoneNumbers.length > 0
             ? userDetails.phoneNumbers[0] : '')}
