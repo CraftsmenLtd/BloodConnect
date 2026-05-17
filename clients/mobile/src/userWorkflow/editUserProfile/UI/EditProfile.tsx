@@ -1,7 +1,7 @@
 import Constants from 'expo-constants'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, TouchableWithoutFeedback, View } from 'react-native'
+import { ScrollView, Text, TouchableWithoutFeedback, View } from 'react-native'
 import { Divider } from '../../../components/button/Divider'
 import { Input } from '../../../components/inputElement/Input'
 import PhoneNumberInput from '../../../components/inputElement/PhoneNumberInput'
@@ -17,6 +17,7 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
 import { useEditProfile } from '../hooks/useEditProfile'
+import { calculateBMI, getBMICategory } from '../../../utility/bmi'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
@@ -115,6 +116,18 @@ const EditProfile = () => {
                 error={errors.height}
               />
             </View>
+
+            {profileData.weight > 0 && profileData.height !== '' && (() => {
+              const bmi = calculateBMI(profileData.weight, profileData.height)
+
+              return (
+                <View style={styles.inputFieldStyle}>
+                  <Text style={{ fontSize: 14, color: '#555' }}>
+                    BMI: {bmi} ({getBMICategory(bmi)})
+                  </Text>
+                </View>
+              )
+            })()}
 
             <View style={styles.inputFieldStyle}>
               <PhoneNumberInput
