@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   Linking
 } from 'react-native'
+import { Input } from '../../../components/inputElement/Input'
 import Dropdown from '../../../components/inputElement/Dropdown'
 import Checkbox from '../../../components/inputElement/Checkbox'
 import { Button } from '../../../components/button/Button'
@@ -19,6 +20,7 @@ import useMapView from '../../../components/mapView/useMapView'
 import CustomToggle from '../../../components/toogleButton'
 import { useAddPersonalInfo } from '../hooks/useAddPersonalInfo'
 import { bloodGroupOptions } from '../options'
+import { calculateBMI, getBMICategory } from '../../../utility/bmi'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
 import { LocationService } from '../../../LocationService/LocationService'
@@ -114,6 +116,49 @@ const AddPersonalInfo = () => {
             isRequired={true}
           />
         </View>
+
+        <View style={styles.fieldSpacing}>
+          <Input
+            name="weight"
+            label="Weight (kg)"
+            value={personalInfo.weight?.toString() ?? ''}
+            onChangeText={handleInputChange}
+            placeholder="Enter your weight"
+            keyboardType="numeric"
+            error={errors.weight}
+          />
+        </View>
+
+        <View style={styles.fieldSpacing}>
+          <Input
+            name="height"
+            label="Height (feet)"
+            value={personalInfo.height?.toString() ?? ''}
+            onChangeText={handleInputChange}
+            placeholder="Enter your height"
+            keyboardType="numeric"
+            error={errors.height}
+          />
+        </View>
+
+        {personalInfo.weight && personalInfo.height
+          ? (() => {
+            const weight = parseFloat(personalInfo.weight)
+            const height = parseFloat(personalInfo.height)
+
+            if (!isNaN(weight) && !isNaN(height) && weight > 0 && height > 0) {
+              const bmi = calculateBMI(weight, height)
+
+              return (
+                <View style={styles.fieldSpacing}>
+                  <Text style={styles.bmiText}>BMI: {bmi} ({getBMICategory(bmi)})</Text>
+                </View>
+              )
+            }
+
+            return null
+          })()
+          : null}
 
         <View style={styles.fieldSpacing}>
           <DateTimePickerComponent
@@ -218,6 +263,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   space: {
     padding: 16
+  },
+  bmiText: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    paddingVertical: 4
   },
   errorMessage: {
     color: 'red',
