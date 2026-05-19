@@ -14,7 +14,8 @@ import type { DonationStatus } from '../../../../../commons/dto/DonationDTO'
 export type QueryDonationsInput = {
   startTime: number;
   endTime: number;
-  geoPartition: string;
+  h3Res5: string;
+  bloodGroup: string;
   country: string;
   status: DonationStatus;
   nextPageToken?: Record<string, AttributeValue>;
@@ -25,7 +26,8 @@ export const queryRequests = async(
   {
     startTime,
     endTime,
-    geoPartition,
+    h3Res5,
+    bloodGroup,
     country,
     status,
     nextPageToken,
@@ -36,7 +38,7 @@ export const queryRequests = async(
   const nowIso = new Date(startTime).toISOString()
   const endIso = new Date(endTime).toISOString()
 
-  const gsi1pk = `LOCATION#${country}-${geoPartition}#STATUS#${status}`
+  const gsi1pk = `REQ#${country}#${bloodGroup}#${status}#${h3Res5}`
 
   const input: QueryCommandInput = {
     TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,

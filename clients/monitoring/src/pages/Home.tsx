@@ -1,6 +1,17 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { encode, decode } from 'ngeohash'
+import { latLngToCell, cellToLatLng, cellToParent } from 'h3-js'
+
+const H3_FINE_RESOLUTION = 10
+const H3_PUBLIC_FEED_RESOLUTION = 5
+
+const decodeCell = (cell: string): { latitude: number; longitude: number } => {
+  const [latitude, longitude] = cellToLatLng(cell)
+
+  return { latitude, longitude }
+}
+
+const encodeCell = (lat: number, lng: number): string => latLngToCell(lat, lng, H3_FINE_RESOLUTION)
 import { Container } from 'react-bootstrap'
 import GeohashMap, { MapDataPointType } from '../components/GeohashMap'
 import RequestSearchCard from '../components/Requests/RequestSearchCard'
@@ -21,7 +32,7 @@ const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchRequestsLoading, setSearchRequestsLoading] = useState(false)
 
-  const centerHash = searchParams.get('centerHash') ?? 'wh0r3mw8'
+  const centerHash = searchParams.get('centerHash') ?? '8a2a1072b59ffff'
   const [requestListProps, setRequestListProps] = useState<{
     show: boolean;
     bloodGroup?: BloodGroup;
@@ -38,9 +49,8 @@ const Home = () => {
   const endTime = Number(searchParams.get('endTime') ?? Date.now())
   const startTime = Number(searchParams.get('startTime') ?? endTime as number - FIVE_MIN_IN_MS)
 
-  const centerLatLng = decode(centerHash)
-  const centerHashPrefix = centerHash.substring(0,
-    Number(import.meta.env.VITE_MAX_GEOHASH_PREFIX_SIZE))
+  const centerLatLng = decodeCell(centerHash)
+  const centerHashPrefix = cellToParent(centerHash, H3_PUBLIC_FEED_RESOLUTION)
 
   const { credentials } = useAws()
   const [globalData, setGlobalData] = useGlobalData()
@@ -60,22 +70,23 @@ const Home = () => {
   }
 
   const parsedRequestsToMapDataPoints = useMemo(() => globalData.requests.reduce((acc, item) => {
-    const geohash = item.geohash.S
+    const h3Cell = item.h3Res8.S
+
     const bloodGroup = item.requestedBloodGroup?.S as BloodGroup
     const detailsShownOnMap = item.SK.S.split('#')[2]
         === requestListProps.detailsShownOnMapForRequestId
         || requestListProps.detailsShownOnMapForRequestId === null
 
-    if (!geohash || !bloodGroup || !detailsShownOnMap) return acc
+    if (!h3Cell || !bloodGroup || !detailsShownOnMap) return acc
 
     const existing = acc.find(
-      (dp) => dp.id === geohash) as MapDataPoint & { type: MapDataPointType.REQUEST }
+      (dp) => dp.id === h3Cell) as MapDataPoint & { type: MapDataPointType.REQUEST }
 
     if (!existing) {
-      const { latitude, longitude } = decode(geohash)
+      const { latitude, longitude } = decodeCell(h3Cell)
       acc.push({
         type: MapDataPointType.REQUEST,
-        id: item.geohash.S,
+        id: item.h3Res8.S,
         latitude,
         longitude,
         onBloodGroupCountClick: (...arg) => { handleBloodTypePopupClick(...arg) },
@@ -108,7 +119,7 @@ const Home = () => {
       if (!existing) {
         acc.push({
           type: MapDataPointType.DONOR,
-          id: encode(latitude, longitude),
+          id: encodeCell(latitude, longitude),
           latitude,
           longitude,
           distance: Number(notifiedDonor.payload.M.distance.N),
@@ -138,7 +149,8 @@ const Home = () => {
   const searchRequests = (data: Data) => queryRequests(dynamodbClient,
     {
       ...data,
-      geoPartition: centerHashPrefix,
+      h3Res5: centerHashPrefix,
+      bloodGroup: requestListProps.bloodGroup ?? 'O+',
     }).
     catch((err) => {
       alert(err)
@@ -188,7 +200,7 @@ const Home = () => {
 
   const sidePanelRequests = globalData.requests.filter(
     (request) => request.requestedBloodGroup.S === requestListProps.bloodGroup
-      && request.geohash.S === requestListProps.geohash)
+      && request.h3Res8.S === requestListProps.geohash)
 
   return (
     <Container
@@ -227,7 +239,7 @@ const Home = () => {
         center={centerLatLng}
         data={data}
         onCenterChange={(arg) => {
-          searchParams.set('centerHash', encode(arg.latitude, arg.longitude))
+          searchParams.set('centerHash', encodeCell(arg.latitude, arg.longitude))
           setSearchParams(searchParams)
         }}
       />

@@ -9,7 +9,8 @@ export type BloodRequestDynamoDBUnmarshaledItem = {
   countryCode: DynamoDBString;
   createdAt: DynamoDBString;
   donationDateTime: DynamoDBString;
-  geohash: DynamoDBString;
+  h3Res5: DynamoDBString;
+  h3Res8: DynamoDBString;
   GSI1PK: DynamoDBString;
   GSI1SK: DynamoDBString;
   latitude: DynamoDBNumber;
