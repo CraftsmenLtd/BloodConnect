@@ -29,6 +29,12 @@ const locationDynamoDbOperations = new LocationDynamoDbOperations(
   config.awsRegion
 )
 
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+const isValidIsoDate = (value: unknown): value is string =>
+  typeof value === 'string'
+  && ISO_DATE_PATTERN.test(value)
+  && !Number.isNaN(Date.parse(value))
+
 async function updateUserLambda(
   event: UpdateUserAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
@@ -44,7 +50,7 @@ async function updateUserLambda(
           ? true
           : false,
       ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
-      ...(event.dateOfBirth !== undefined && { dateOfBirth: event.dateOfBirth }),
+      ...(isValidIsoDate(event.dateOfBirth) && { dateOfBirth: event.dateOfBirth }),
       ...(event.gender !== undefined && { gender: event.gender }),
       ...(event.bloodGroup !== undefined && { bloodGroup: event.bloodGroup }),
       ...(event.preferredDonationLocations !== undefined && {
@@ -52,8 +58,8 @@ async function updateUserLambda(
       }),
       ...(event.height !== undefined && { height: event.height }),
       ...(event.weight !== undefined && { weight: event.weight }),
-      ...(event.lastDonationDate !== undefined && { lastDonationDate: event.lastDonationDate }),
-      ...(event.lastVaccinatedDate !== undefined && {
+      ...(isValidIsoDate(event.lastDonationDate) && { lastDonationDate: event.lastDonationDate }),
+      ...(isValidIsoDate(event.lastVaccinatedDate) && {
         lastVaccinatedDate: event.lastVaccinatedDate
       }),
       ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
