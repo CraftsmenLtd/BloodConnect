@@ -71,16 +71,15 @@ export enum DynamoDBEventName {
 export type DonorSearchConfig = {
   dynamodbTableName: string;
   awsRegion: string;
-  cacheGeohashPrefixLength: number;
-  maxGeohashCacheEntriesCount: number;
-  maxGeohashCacheMbSize: number;
-  maxGeohashCacheTimeoutMinutes: number;
-  maxGeohashNeighborSearchLevel: number;
+  maxCellsPerExecution: number;
+  searchIntervalSeconds: number;
+  initialWaveDelaySeconds: number;
+  retryDelaySeconds: number;
+  maxRetries: number;
+  acceptanceWindowSeconds: number;
+  dormantThresholdSeconds: number;
+  parallelQueryConcurrency: number;
   donorSearchMaxInitiatingRetryCount: number;
-  neighborSearchGeohashPrefixLength: number;
-  donorSearchDelayBetweenExecution: number;
-  maxGeohashPerProcessingBatch: number;
-  maxGeohashesPerExecution: number;
   notificationQueueUrl: string;
   schedulerRoleArn: string;
   donorSearchLambdaArn: string;
@@ -90,7 +89,8 @@ export type DonationRequestInitiatorAttributes = {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
-  geohash: string;
+  centerHex: string;
+  h3Res5: string;
 }
 
 export type DonorSearchAttributes = {
@@ -107,10 +107,9 @@ export type DonorSearchSchedulerAttributes = {
   createdAt: string;
   targetedExecutionTime?: number;
   remainingDonorsToFind?: number;
-  currentNeighborSearchLevel: number;
-  remainingGeohashesToProcess: string[];
-  notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
-  initiationCount: number;
+  currentLevel: number;
+  remainingCells: string[];
+  retryCount: number;
 }
 
 export type AcceptDonationRequestAttributes = {

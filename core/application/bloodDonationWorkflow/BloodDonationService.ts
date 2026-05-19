@@ -4,7 +4,11 @@ import ThrottlingError from './ThrottlingError'
 import type { DonationDTO } from '../../../commons/dto/DonationDTO'
 import { AcceptDonationStatus, DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import { generateGeohash } from '../utils/geohash'
+import { generateH3Cell } from '../utils/h3'
+import {
+  H3_DONOR_SEARCH_RESOLUTION,
+  H3_PUBLIC_FEED_RESOLUTION
+} from '../../../commons/libs/constants/NoMagicNumbers'
 import { validateInputWithRules } from '../utils/validator'
 import type { BloodDonationResponse } from './Types'
 import {
@@ -71,9 +75,15 @@ export class BloodDonationService {
         requestPostId: generateUniqueID(),
         ...bloodDonationAttributes,
         status: DonationStatus.PENDING,
-        geohash: generateGeohash(
+        h3Res5: generateH3Cell(
           bloodDonationAttributes.latitude,
-          bloodDonationAttributes.longitude
+          bloodDonationAttributes.longitude,
+          H3_PUBLIC_FEED_RESOLUTION
+        ),
+        h3Res8: generateH3Cell(
+          bloodDonationAttributes.latitude,
+          bloodDonationAttributes.longitude,
+          H3_DONOR_SEARCH_RESOLUTION
         ),
         donationDateTime: new Date(bloodDonationAttributes.donationDateTime).toISOString(),
         createdAt: new Date().toISOString()

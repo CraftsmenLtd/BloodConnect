@@ -1,6 +1,10 @@
 import type { LocationDTO, UserDetailsDTO } from '../../../commons/dto/UserDTO'
 import { generateUniqueID } from '../utils/idGenerator'
-import { generateGeohash } from '../utils/geohash'
+import { generateH3Cell } from '../utils/h3'
+import {
+  H3_DONOR_SEARCH_RESOLUTION,
+  H3_FINE_RESOLUTION
+} from '../../../commons/libs/constants/NoMagicNumbers'
 import type { BloodGroup } from '../../../commons/dto/DonationDTO'
 import type LocationRepository from '../models/policies/repositories/LocationRepository'
 import type { Logger } from '../models/logger/Logger'
@@ -30,7 +34,8 @@ export class LocationService {
           countryCode: userAttributes.countryCode as string,
           latitude: location.latitude,
           longitude: location.longitude,
-          geohash: generateGeohash(location.latitude, location.longitude),
+          h3Res8: generateH3Cell(location.latitude, location.longitude, H3_DONOR_SEARCH_RESOLUTION),
+          h3Res10: generateH3Cell(location.latitude, location.longitude, H3_FINE_RESOLUTION),
           bloodGroup: userAttributes.bloodGroup as BloodGroup,
           availableForDonation: userAttributes.availableForDonation === true,
           lastVaccinatedDate: `${userAttributes.lastVaccinatedDate}`,
