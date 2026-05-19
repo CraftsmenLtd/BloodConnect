@@ -1,5 +1,4 @@
 import type { DonorSearchDTO } from '../../../../../commons/dto/DonationDTO'
-import { DonationStatus } from '../../../../../commons/dto/DonationDTO'
 import type {
   DbModelDtoAdapter,
   HasTimeLog,
@@ -16,7 +15,7 @@ export type DonorSearchFields = Omit<DonorSearchDTO, 'requestPostId' | 'seekerId
 HasTimeLog & {
   PK: `${typeof DONOR_SEARCH_PK_PREFIX}#${string}`;
   SK: `${typeof DONOR_SEARCH_PK_PREFIX}#${string}#${string}`;
-  LSI1SK: `${typeof DONOR_SEARCH_LSISK_PREFIX}#${string}#${string}`;
+  LSI1SK?: `${typeof DONOR_SEARCH_LSISK_PREFIX}#${string}#${string}`;
 }
 
 export class DonorSearchModel
@@ -37,18 +36,23 @@ implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, Dono
     const { seekerId, requestPostId, ...remainingDonationData } = donationDto
     const postCreationDate = remainingDonationData.createdAt ?? new Date().toISOString()
 
-    return {
+    const data: DonorSearchFields = {
       PK: `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
       SK: `${DONOR_SEARCH_PK_PREFIX}#${postCreationDate}#${requestPostId}`,
-      LSI1SK: `${DONOR_SEARCH_LSISK_PREFIX}#${DonationStatus.PENDING}#${requestPostId}`,
       ...remainingDonationData,
       createdAt: postCreationDate
     }
+
+    if (remainingDonationData.status !== undefined) {
+      data.LSI1SK = `${DONOR_SEARCH_LSISK_PREFIX}#${remainingDonationData.status}#${requestPostId}`
+    }
+
+    return data
   }
 
   toDto(dbFields: DonorSearchFields): DonorSearchDTO {
 
-    const { PK, SK, LSI1SK, createdAt, ...remainingDonorSearchFields } = dbFields
+    const { PK, SK, LSI1SK: _LSI1SK, createdAt, ...remainingDonorSearchFields } = dbFields
 
     return {
       ...remainingDonorSearchFields,
