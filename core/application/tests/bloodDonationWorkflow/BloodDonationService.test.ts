@@ -55,7 +55,10 @@ describe('BloodDonationService', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     (generateUniqueID as jest.Mock).mockReturnValue('req123');
-    (generateH3Cell as jest.Mock).mockReturnValue('8a2a1072b59ffff');
+    (generateH3Cell as jest.Mock).mockImplementation(
+      (_lat: number, _lng: number, resolution: number) =>
+        (resolution === 5 ? '852a1077fffffff' : '882a1072b5fffff')
+    );
     (validateInputWithRules as jest.Mock).mockReturnValue(null)
 
     mockUserService.getUser.mockResolvedValue(mockUserDetailsWithStringId)
@@ -94,7 +97,13 @@ describe('BloodDonationService', () => {
       expect(generateUniqueID).toHaveBeenCalled()
       expect(generateH3Cell).toHaveBeenCalledWith(
         donationAttributesMock.latitude,
-        donationAttributesMock.longitude
+        donationAttributesMock.longitude,
+        5
+      )
+      expect(generateH3Cell).toHaveBeenCalledWith(
+        donationAttributesMock.latitude,
+        donationAttributesMock.longitude,
+        8
       )
 
       expect(mockBloodDonationRepository.create).toHaveBeenCalledWith(
