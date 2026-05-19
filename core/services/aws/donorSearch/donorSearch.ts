@@ -13,9 +13,7 @@ import {
 import {
   AcceptDonationService
 } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
-import type { GeohashDonorMap } from '../../../application/utils/GeohashCacheMapManager'
-import { GeohashCacheManager } from '../../../application/utils/GeohashCacheMapManager'
-import GeohashDynamoDbOperations from '../commons/ddbOperations/GeohashDynamoDbOperations'
+import H3SearchDynamoDbOperations from '../commons/ddbOperations/H3SearchDynamoDbOperations'
 import { NotificationService } from '../../../application/notificationWorkflow/NotificationService'
 import {
   BloodDonationService
@@ -28,9 +26,7 @@ import DonationNotificationDynamoDbOperations
   from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
 import AcceptDonationDynamoDbOperations
   from '../commons/ddbOperations/AcceptedDonationDynamoDbOperations'
-import {
-  GeohashService
-} from 'core/application/bloodDonationWorkflow/GeohashService'
+import { H3SearchService } from '../../../application/bloodDonationWorkflow/H3SearchService'
 import SchedulerOperations from '../commons/EventBridge/ScheduleOperations'
 
 const config = new Config<DonorSearchConfig>().getConfig()
@@ -51,35 +47,24 @@ const acceptDonationDynamoDbOperations = new AcceptDonationDynamoDbOperations(
   config.dynamodbTableName,
   config.awsRegion
 )
-const geohashDynamoDbOperations = new GeohashDynamoDbOperations(
+const h3SearchDynamoDbOperations = new H3SearchDynamoDbOperations(
   config.dynamodbTableName,
   config.awsRegion
 )
 
-const GEOHASH_CACHE = new GeohashCacheManager<string, GeohashDonorMap>(
-  config.maxGeohashCacheEntriesCount,
-  config.maxGeohashCacheMbSize,
-  config.maxGeohashCacheTimeoutMinutes
-)
-
-async function donorSearchLambda(DonorSearchSchedulerAttributes: DonorSearchSchedulerAttributes): Promise<void> {
-
+async function donorSearchLambda(attributes: DonorSearchSchedulerAttributes): Promise<void> {
   const {
     seekerId,
     requestPostId,
     createdAt,
     targetedExecutionTime,
     remainingDonorsToFind,
-    currentNeighborSearchLevel,
-    remainingGeohashesToProcess,
-    initiationCount,
-    notifiedEligibleDonors
-  } = DonorSearchSchedulerAttributes
+    currentLevel,
+    remainingCells,
+    retryCount
+  } = attributes
 
-  const serviceLogger = createServiceLogger(seekerId, {
-    requestPostId: requestPostId,
-    createdAt: createdAt
-  })
+  const serviceLogger = createServiceLogger(seekerId, { requestPostId, createdAt })
 
   const donorSearchService = new DonorSearchService(
     donorSearchDynamoDbOperations,
@@ -95,8 +80,14 @@ async function donorSearchLambda(DonorSearchSchedulerAttributes: DonorSearchSche
     acceptDonationDynamoDbOperations,
     serviceLogger
   )
-  const geohashService = new GeohashService(geohashDynamoDbOperations, serviceLogger, config)
-  const schedulerModel = new SchedulerOperations(config.awsRegion, config.schedulerRoleArn, serviceLogger, config.donorSearchDelayBetweenExecution)
+  const h3SearchService = new H3SearchService(h3SearchDynamoDbOperations, serviceLogger, config)
+  const schedulerModel = new SchedulerOperations(
+    config.awsRegion,
+    config.schedulerRoleArn,
+    serviceLogger,
+    config.searchIntervalSeconds
+  )
+
   try {
     await donorSearchService.searchDonors({
       seekerId,
@@ -104,17 +95,15 @@ async function donorSearchLambda(DonorSearchSchedulerAttributes: DonorSearchSche
       createdAt,
       targetedExecutionTime,
       remainingDonorsToFind,
-      currentNeighborSearchLevel,
-      remainingGeohashesToProcess,
-      initiationCount,
-      notifiedEligibleDonors,
+      currentLevel,
+      remainingCells,
+      retryCount,
       bloodDonationService,
       acceptDonationService,
       notificationService,
-      geohashService,
+      h3SearchService,
       queueModel: new SQSOperations(config.awsRegion),
-      schedulerModel,
-      geohashCache: GEOHASH_CACHE
+      schedulerModel
     })
   } catch (error) {
     serviceLogger.error(

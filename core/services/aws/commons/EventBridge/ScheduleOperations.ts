@@ -4,7 +4,7 @@ import type { SchedulerModel } from 'core/application/models/scheduler/Scheduler
 import type { Logger } from 'core/application/models/logger/Logger'
 
 type ScheduleMessageBody = DTO & {
-  targetedExecutionTime?: string,
+  targetedExecutionTime?: string | number,
   requestPostId: string
 }
 
@@ -26,7 +26,7 @@ export default class SchedulerOperations implements SchedulerModel {
   }
 
   async schedule(messageBody: ScheduleMessageBody, lambdaArn: string): Promise<void> {
-    const scheduleName = `schedule-${messageBody.requestPostId}`
+    const scheduleName = `schedule-${messageBody.requestPostId}-${Date.now()}`
     const currentTime = new Date()
 
     const minimumTime = this.defaultDelayInSeconds

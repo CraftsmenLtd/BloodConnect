@@ -3,7 +3,7 @@ import {
 } from '../../../application/bloodDonationWorkflow/DonorSearchService'
 import type {
   DonationRequestInitiatorAttributes,
-  DonorSearchConfig,
+  DonorSearchConfig
 } from '../../../application/bloodDonationWorkflow/Types'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
@@ -20,11 +20,11 @@ const donorSearchDynamoDbOperations = new DonorSearchDynamoDbOperations(
   config.awsRegion
 )
 
-// EventBridge Pipe event format
 interface EventBridgePipeEvent {
   PK: string
   SK: string
-  geohash: string
+  h3Res5: string
+  h3Res8: string
   status: string
   eventName?: string
 }
@@ -32,7 +32,6 @@ interface EventBridgePipeEvent {
 async function donationRequestInitiatorLambda(
   event: EventBridgePipeEvent | EventBridgePipeEvent[]
 ): Promise<void> {
-  // Normalize to array (EventBridge Pipe with batch_size > 1 sends array)
   const events = Array.isArray(event) ? event : [event]
 
   for (const body of events) {
@@ -54,16 +53,21 @@ async function donationRequestInitiatorLambda(
         seekerId,
         requestPostId,
         createdAt,
-        geohash: body.geohash
+        centerHex: body.h3Res8,
+        h3Res5: body.h3Res5
       }
 
       await donorSearchService.initiateDonorSearchRequest(
         donationRequestInitiatorAttributes,
-        new SchedulerOperations(config.awsRegion, config.schedulerRoleArn, serviceLogger, config.donorSearchDelayBetweenExecution),
+        new SchedulerOperations(
+          config.awsRegion,
+          config.schedulerRoleArn,
+          serviceLogger,
+          config.initialWaveDelaySeconds
+        ),
         body.status,
         body.eventName
       )
-
     } catch (error) {
       serviceLogger.error(error instanceof DonorSearchIntentionalError ? error.message : error)
       throw error
