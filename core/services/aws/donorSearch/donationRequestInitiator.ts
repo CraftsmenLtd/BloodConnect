@@ -20,7 +20,7 @@ const donorSearchDynamoDbOperations = new DonorSearchDynamoDbOperations(
   config.awsRegion
 )
 
-interface EventBridgePipeEvent {
+type EventBridgePipeEvent = {
   PK: string
   SK: string
   h3Res5: string

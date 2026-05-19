@@ -185,17 +185,27 @@ export default [
   },
   {
     ignores: [
-      'node_modules/',
-      'coverage/',
-      'dist/',
-      'docs/',
-      'clients/website/',
-      'iac/',
-      '.build/',
-      '.idea/',
-      '.vscode/',
-      'clients/organization/',
-      '.github/'
+      '**/node_modules/**',
+      '**/coverage/**',
+      '**/dist/**',
+      '**/.build/**',
+      '**/build/**',
+      'docs/**',
+      'clients/website/**',
+      'clients/organization/**',
+      'iac/**',
+      '.idea/**',
+      '.vscode/**',
+      '.github/**',
+      '**/venv/**',
+      '**/.venv/**',
+      '**/env/**',
+      '**/__pycache__/**',
+      '**/*.pyc',
+      '**/.mypy_cache/**',
+      '**/.pytest_cache/**',
+      '**/.ruff_cache/**',
+      '**/.tox/**'
     ]
   }
 ]

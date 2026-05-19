@@ -23,7 +23,7 @@ const acceptDonationDynamoDbOperations = new AcceptDonationDynamoDbOperations(
 )
 
 // EventBridge Pipe event format
-interface DonationStatusEvent {
+type DonationStatusEvent = {
   PK: string
   SK: string
   createdAt: string

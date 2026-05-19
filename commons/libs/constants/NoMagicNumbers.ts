@@ -3,9 +3,9 @@ export const RADIUS_OF_EARTH = 6378
 export const MAX_QUEUE_VISIBILITY_TIMEOUT_SECONDS = 11 * 60 * 60
 
 // H3 resolutions. Schema-coupled. Changing requires GSI key rewrite + data backfill.
-export const H3_DONOR_SEARCH_RESOLUTION = 8   // LOC GSI1 partition + ring walk
-export const H3_PUBLIC_FEED_RESOLUTION = 5    // REQ GSI1 partition for nearby posts
-export const H3_FINE_RESOLUTION = 10          // stored on rows for distance refine
+export const H3_DONOR_SEARCH_RESOLUTION = 8 // LOC GSI1 partition + ring walk
+export const H3_PUBLIC_FEED_RESOLUTION = 5 // REQ GSI1 partition for nearby posts
+export const H3_FINE_RESOLUTION = 10 // stored on rows for distance refine
 
 // Donor search wave tunables
 export const MAX_CELLS_PER_EXECUTION = 500
