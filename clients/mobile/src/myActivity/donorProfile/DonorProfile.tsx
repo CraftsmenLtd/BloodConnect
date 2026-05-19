@@ -8,19 +8,12 @@ import { COMMON_URLS } from '../../setup/constant/commonUrls'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import StateAwareRenderer from '../../components/StateAwareRenderer'
+import { calculateBMI, getBMICategory } from '../../utility/bmi'
 
 const DonorProfile = () => {
   const theme = useTheme()
   const styles = createStyles(theme)
   const { donorProfile, loading, error, handleCall } = useDonorProfile()
-
-  const calculateBMI = (weightKg: number, heightFeet: number | string): number => {
-    const heightInFeet = typeof heightFeet === 'string' ? parseFloat(heightFeet) : heightFeet
-    const heightInMeters = heightInFeet * 0.3048
-    const bmi = weightKg / (heightInMeters ** 2)
-
-    return parseFloat(bmi.toFixed(2))
-  }
   const ViewToRender = () => <View style={styles.container}>
     <View style={styles.profileContainer}>
       <Image
@@ -49,9 +42,15 @@ const DonorProfile = () => {
     </View>
 
     <View style={styles.detailsRow}>
-      <Text style={styles.detailsText}>BMI: {
-        donorProfile.weight && donorProfile.height
-          ? calculateBMI(donorProfile.weight, donorProfile.height) : 'Not Available'}</Text>
+      <Text style={styles.detailsText}>
+        {donorProfile.weight && donorProfile.height
+          ? (() => {
+            const bmi = calculateBMI(donorProfile.weight, donorProfile.height)
+
+            return `BMI: ${bmi} (${getBMICategory(bmi)})`
+          })()
+          : 'BMI: Not Available'}
+      </Text>
     </View>
 
     <View style={{ width: '100%' }}>
