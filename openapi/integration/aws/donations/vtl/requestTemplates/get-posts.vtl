@@ -1,42 +1,11 @@
-## context.RequestTime, split the string for date
-#set($all_parts = $context.requestTime.split(':'))
-
-## Break out date part into day/month/year
-#set($date_parts = $all_parts[0].split('/'))
-#set($day = $date_parts[0])
-#set($month_name = $date_parts[1])
-#set($year = $date_parts[2])
-
-## Set an array to convert month names to month numbers
-#set($months = {'Jan':'01', 'Feb':'02', 'Mar':'03', 'Apr':'04', 'May':'05', 'Jun':'06', 'Jul':'07',
-'Aug':'08', 'Sep':'09', 'Oct':'10', 'Nov':'11', 'Dec':'12'})
-#set($month = $months.get($month_name))
-
-## Break up the time part into hours/mins/seconds
-#set($hours = $all_parts[1])
-#set($minutes = $all_parts[2])
-#set($seconds = $all_parts[3].split(' ')[0])
-
-## Get milliseconds from timestamp (last 3 digits)
-#set($timestamp = $context.requestTimeEpoch)
-#set($milliseconds = $timestamp % 1000)
-
-## Get current iso datetime
-#set($nowIsoDate = $year + "-" + $month + "-" + $day + "T" + $hours + ":" + $minutes + ":" +
-$seconds + "." + $milliseconds + "Z")
-
 {
-  "TableName": "${DYNAMODB_TABLE_NAME}",
-  "IndexName": "GSI1",
-  "KeyConditionExpression": "GSI1PK = :gsi1pk",
-  "FilterExpression": "donationDateTime > :donationDateTime",
-  "ExpressionAttributeValues": {
-    ":gsi1pk": {
-      "S": "LOCATION#$input.params().header.get('CloudFront-Viewer-Country')-$input.params('geoPartition')#STATUS#PENDING"
-    },
-    ":donationDateTime": {
-      "S": "$nowIsoDate"
-    }
-  },
-  "ScanIndexForward": false
+  "lat": "$input.params('lat')",
+  "lng": "$input.params('lng')",
+  "radius": "$input.params('radius')",
+  "bloodGroup": "$input.params('bloodGroup')",
+  "cursor": "$input.params('cursor')",
+  "pageSize": "$input.params('pageSize')",
+  "countryCode": "$input.params().header.get('CloudFront-Viewer-Country')",
+  "apiGwRequestId": "$context.requestId",
+  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')"
 }

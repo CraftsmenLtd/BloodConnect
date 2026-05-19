@@ -82,6 +82,24 @@ locals {
       env_variables = {
         DYNAMODB_TABLE_NAME = split("/", var.dynamodb_table_arn)[1]
       }
+    },
+    get-nearby-posts = {
+      name         = "get-nearby-posts"
+      handler      = "getNearbyPosts.default"
+      js_file_name = "getNearbyPosts.js"
+      statement = concat(
+        local.policies.common_policies,
+        local.policies.dynamodb_create_policy,
+        local.policies.dynamodb_query_gsi_policy
+      )
+      invocation_arn_placeholder = "GET_NEARBY_POSTS_INVOCATION_ARN"
+      memory_size  = 512
+      timeout      = 15
+      env_variables = {
+        DYNAMODB_TABLE_NAME    = split("/", var.dynamodb_table_arn)[1]
+        FEED_MAX_RADIUS_KM     = 50
+        FEED_DEFAULT_RADIUS_KM = 10
+      }
     }
   }
 }

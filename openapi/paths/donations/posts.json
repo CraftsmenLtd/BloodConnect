@@ -1,17 +1,33 @@
 {
   "get": {
     "operationId": "GetBloodRequestPosts",
-    "description": "Retrieve blood request posts",
+    "description": "Retrieve nearby blood request posts",
     "tags": [
       "bloodconnect-donation"
     ],
     "parameters": [
       {
-        "name": "geoPartition",
-        "in": "path",
+        "name": "lat",
+        "in": "query",
         "required": true,
         "schema": {
-          "type": "string"
+          "type": "number"
+        }
+      },
+      {
+        "name": "lng",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "number"
+        }
+      },
+      {
+        "name": "radius",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "number"
         }
       },
       {
@@ -20,6 +36,22 @@
         "required": false,
         "schema": {
           "type": "string"
+        }
+      },
+      {
+        "name": "cursor",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "pageSize",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer"
         }
       }
     ],
@@ -57,16 +89,6 @@
     ]
   },
   "options": {
-    "parameters": [
-      {
-        "name": "geoPartition",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      }
-    ],
     "$ref": "./../cors-options.json"
   }
 }

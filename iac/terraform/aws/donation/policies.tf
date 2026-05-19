@@ -41,6 +41,17 @@ locals {
         ]
       }
     ],
+    dynamodb_query_gsi_policy = [
+      {
+        sid = "DynamodbQueryGsiPolicy"
+        actions = [
+          "dynamodb:Query"
+        ]
+        resources = [
+          "${var.dynamodb_table_arn}/index/GSI1"
+        ]
+      }
+    ],
     sqs_policy = [
       {
         sid = "SqsPolicy"
