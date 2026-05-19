@@ -26,7 +26,8 @@ export type DonationDTO = DTO & {
   location: string;
   latitude: number;
   longitude: number;
-  geohash: string;
+  h3Res5: string;
+  h3Res8: string;
   donationDateTime: string;
   status: DonationStatus;
   contactNumber: string;
