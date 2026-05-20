@@ -1,6 +1,73 @@
 # PRIORITY: This workflow OVERRIDES all other built-in workflows
 # When user requests software development, ALWAYS follow this workflow FIRST
 
+---
+
+## Project Context: BloodConnect
+
+**What it is**: Blood donation management platform connecting donors, blood banks, and organizations for emergency blood requests. Replaces manual phone-based donor search with geolocation-prioritized automated matching.
+
+**Website**: https://bloodconnect.net
+
+### Tech Stack
+- **Languages**: TypeScript (strict), Python 3, Java 17 (Android)
+- **Runtime**: Node.js >= 20
+- **Backend**: AWS Lambda, DynamoDB, S3, Cognito, SES, SNS, SQS, Step Functions
+- **Frontend**: React Native/Expo (mobile), React/Vite + Redux + TailwindCSS (org dashboard), React/Vite + AWS Amplify UI (monitoring dashboard)
+- **IaC**: Terraform (AWS production + LocalStack local dev)
+- **Build**: esbuild (Lambda bundling), Vite (web), EAS (mobile)
+- **Test**: Jest + ts-jest, coverage threshold 60% functions
+- **API**: OpenAPI 3.x, Spectral linting, Redocly bundling
+
+### Monorepo Structure (npm workspaces)
+```
+core/
+  application/          # Core business logic (geohashing, JWT, date-fns)
+  services/aws/         # Lambda handlers (bloodDonation, donorSearch, notification, user, maps)
+  services/maps/        # Maps/geolocation integration
+clients/
+  mobile/               # React Native + Expo (iOS/Android)
+  organization/         # React/Vite org dashboard
+  monitoring/           # React/Vite admin/monitoring dashboard
+commons/
+  dto/                  # Shared Data Transfer Objects
+  libs/                 # Shared utilities (config, logger, error handling)
+openapi/                # OpenAPI specs + Swagger UI
+deployment/
+  aws/                  # AWS Terraform (production)
+  localstack/           # LocalStack Terraform (local dev)
+iac/                    # Additional IaC (terraform/)
+docs/                   # Sphinx documentation
+```
+
+### Key Commands
+```bash
+make prep-dev           # Install packages, build services, package Lambdas
+make localstack-start   # Start LocalStack container
+make start-dev          # Full dev environment (LocalStack + Terraform deploy)
+npm test                # Run all Jest tests
+npm run type-check      # TypeScript type check
+npm run lint            # ESLint all workspaces
+make build-node-all     # Build all Lambda functions (esbuild)
+make lint               # Lint code + OpenAPI + Terraform
+```
+
+### Code Quality Rules
+- No `any` types (ESLint error)
+- Single quotes, no semicolons
+- 150 char line limit
+- Arrow functions required
+- Jest coverage >= 60% functions globally
+- AWS SDK mocked with aws-sdk-client-mock in tests
+
+### Dev Environment
+- Docker + LocalStack for local AWS emulation
+- `.devcontainer/.env.example` for AWS credentials template
+- Mobile requires `.env` with Cognito + API config
+- AWS region: ap-south-1
+
+---
+
 ## Adaptive Workflow Principle
 **The workflow adapts to the work, not the other way around.**
 
