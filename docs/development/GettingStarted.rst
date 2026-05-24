@@ -218,3 +218,38 @@ The hassle free deployment strategy. Go onto github actions `<here https://githu
     :width: 600
 
 Thats all for now. Have fun.
+
+AI-Assisted Development (AIDLC)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This project uses the `AI-DLC workflow <https://github.com/awslabs/aidlc-workflows>`_ — an adaptive, intent-driven software development methodology from AWS Labs.
+Rule details live in ``.aidlc-rule-details/`` at the project root.
+
+.. note::
+
+   Currently configured for **Claude Code** only.
+   Contributions to add support for other tools (Cursor, Cline, GitHub Copilot, Amazon Q, Kiro) are welcome.
+   See `aidlc-workflows <https://github.com/awslabs/aidlc-workflows>`_ for setup guides per tool.
+
+Verify Setup (Claude Code)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. Run ``/config`` to confirm ``CLAUDE.md`` is loaded.
+2. Ask the assistant:
+
+.. code-block:: text
+
+   "What instructions are currently active in this project?"
+
+A correctly configured session will describe the AIDLC adaptive workflow with Inception, Construction, and Operations phases.
+
+Starting the Workflow
+^^^^^^^^^^^^^^^^^^^^^
+
+Begin any development request with:
+
+.. code-block:: text
+
+   "Using AI-DLC, ..."
+
+This activates the full structured workflow automatically.
