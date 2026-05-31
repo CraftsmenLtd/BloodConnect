@@ -39,7 +39,7 @@ locals {
         RETRY_DELAY_SECONDS                     = local.retry_delay_seconds
         MAX_RETRIES                             = local.max_retries
         ACCEPTANCE_WINDOW_SECONDS               = local.acceptance_window_seconds
-        DORMANT_THRESHOLD_SECONDS               = local.dormant_threshold_seconds
+        MAX_SEARCH_RADIUS_KM                    = local.max_search_radius_km
         PARALLEL_QUERY_CONCURRENCY              = local.parallel_query_concurrency
         DONOR_SEARCH_LAMBDA_ARN                 = local.donor_search_lambda_arn
         SCHEDULER_ROLE_ARN                      = local.eventbridge_scheduler_role_arn

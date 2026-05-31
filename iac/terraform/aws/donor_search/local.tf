@@ -8,7 +8,7 @@ locals {
   retry_delay_seconds                      = 300
   max_retries                              = 3
   acceptance_window_seconds                = 3600
-  dormant_threshold_seconds                = 3600
+  max_search_radius_km                     = 15
   parallel_query_concurrency               = 25
   donor_search_max_initiating_retry_count  = 5
 

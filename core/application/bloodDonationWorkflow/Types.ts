@@ -77,7 +77,7 @@ export type DonorSearchConfig = {
   retryDelaySeconds: number;
   maxRetries: number;
   acceptanceWindowSeconds: number;
-  dormantThresholdSeconds: number;
+  maxSearchRadiusKm: number;
   parallelQueryConcurrency: number;
   donorSearchMaxInitiatingRetryCount: number;
   notificationQueueUrl: string;

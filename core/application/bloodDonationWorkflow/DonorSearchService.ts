@@ -172,22 +172,6 @@ export class DonorSearchService {
       return
     }
 
-    const dormantSeconds = (Date.now() - new Date(donorSearchRecord.createdAt).getTime()) / 1000
-    if (dormantSeconds > this.options.dormantThresholdSeconds) {
-      this.logger.info(
-        { dormantSeconds, threshold: this.options.dormantThresholdSeconds },
-        'terminating search — dormant threshold exceeded'
-      )
-      await this.updateDonorSearchRecord({
-        seekerId,
-        requestPostId,
-        createdAt,
-        status: DonorSearchStatus.COMPLETED
-      })
-
-      return
-    }
-
     const {
       bloodQuantity,
       requestedBloodGroup,

@@ -22,7 +22,7 @@ type AllConfig = {
   retryDelaySeconds: number;
   maxRetries: number;
   acceptanceWindowSeconds: number;
-  dormantThresholdSeconds: number;
+  maxSearchRadiusKm: number;
   parallelQueryConcurrency: number;
 
   // Public post feed
@@ -68,8 +68,8 @@ export class Config<T extends ConfigSubset<T>> {
       maxRetries: Number(process.env.MAX_RETRIES) as AllConfig['maxRetries'],
       acceptanceWindowSeconds:
         Number(process.env.ACCEPTANCE_WINDOW_SECONDS) as AllConfig['acceptanceWindowSeconds'],
-      dormantThresholdSeconds:
-        Number(process.env.DORMANT_THRESHOLD_SECONDS) as AllConfig['dormantThresholdSeconds'],
+      maxSearchRadiusKm:
+        Number(process.env.MAX_SEARCH_RADIUS_KM) as AllConfig['maxSearchRadiusKm'],
       parallelQueryConcurrency:
         Number(process.env.PARALLEL_QUERY_CONCURRENCY) as AllConfig['parallelQueryConcurrency'],
 
