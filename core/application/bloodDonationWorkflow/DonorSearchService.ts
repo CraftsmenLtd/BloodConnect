@@ -106,7 +106,9 @@ export class DonorSearchService {
     } else if (shouldRestartSearch) {
       this.logger.info('restarting donor search request')
       await this.updateDonorSearchRecord({
-        ...donorSearchAttributes,
+        seekerId,
+        requestPostId,
+        createdAt,
         status: DonorSearchStatus.PENDING
       })
       await this.scheduleDonorSearchRequest(schedulerAttributes, schedulerModel)

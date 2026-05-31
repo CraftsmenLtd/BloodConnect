@@ -29,8 +29,9 @@ Components
 
 ``core/services/aws/donorSearch/donationRequestInitiator.ts``
     Runs when the EventBridge Pipe delivers a change. Reads the pipe event
-    into ``DonationRequestInitiatorAttributes`` (including
-    ``centerHex = h3Res8``) and calls
+    into ``DonationRequestInitiatorAttributes`` (``centerHex = h3Res8``
+    plus ``h3Res5``, which is forwarded for consistency with the
+    nearby-posts feed but unused by the donor search itself) and calls
     ``DonorSearchService.initiateDonorSearchRequest``. Retries on
     transient errors with exponential backoff, up to
     ``donorSearchMaxInitiatingRetryCount`` attempts.
@@ -51,8 +52,9 @@ Components
     (``queryDonorsInHex``).
 
 ``core/application/utils/h3.ts``
-    A thin wrapper around ``h3-js``: ``generateH3Cell``, ``getH3GridRing``,
-    ``getH3GridDisk``, ``haversineKm``, ``getDistanceBetweenH3Cells``.
+    A thin wrapper around ``h3-js``: ``generateH3Cell``,
+    ``getH3CellParent``, ``getH3GridRing``, ``getH3GridDisk``,
+    ``haversineKm``, ``getDistanceBetweenH3Cells``.
 
 ``core/application/utils/calculateDonorsToNotify.ts``
     Pure helpers that decide how many donors a wave should aim for and how
@@ -116,13 +118,16 @@ Each scheduled invocation does the following:
    ``parallelQueryConcurrency`` against the location GSI, filtered by
    blood group and country. Results are deduplicated and any donors who
    are the seeker or who were already notified are removed.
-5. **Notify them.** Eligible donors are pushed to the notification SQS
-   queue and added to ``notifiedEligibleDonors`` on the search record.
+5. **Notify them.** ``NotificationService.sendRequestNotification`` is
+   called every wave; if any eligible donors were found they are pushed
+   to the notification SQS queue and merged into
+   ``notifiedEligibleDonors`` on the search record.
 6. **Pick what to do next.**
 
    - If more donors are still needed *and* there are unprocessed cells
-     left in the ring batch, schedule the next wave right away with the
-     updated ``currentLevel`` and ``remainingCells``.
+     left in the ring batch, schedule the next wave after
+     ``searchIntervalSeconds`` with the updated ``currentLevel`` and
+     ``remainingCells``.
    - Otherwise, if no donors were found in this wave and ``retryCount``
      is below ``maxRetries``, schedule a delayed retry from level 0 with
      ``retryCount + 1``.
@@ -132,7 +137,10 @@ Calculation helpers (``calculateDonorsToNotify.ts``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``calculateRemainingBagsNeeded(bloodQuantity, donorsFoundCount)``
-    Returns ``max(0, bloodQuantity - donorsFoundCount)``.
+    Returns ``max(0, bloodQuantity - donorsFoundCount)``. The donor
+    search calls ``acceptDonationService.getRemainingBagsNeeded``, which
+    fetches accepted donors from DynamoDB and then delegates to this
+    helper.
 
 ``calculateTotalDonorsToFind(remainingBagsNeeded, urgencyLevel)``
     Asks for a few extra donors so the request can survive some declines:
