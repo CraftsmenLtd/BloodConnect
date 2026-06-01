@@ -11,7 +11,6 @@ type AllConfig = {
   platformArnApns: string;
   platformArnFcm: string;
   notificationQueueUrl: string;
-  donorSearchMaxInitiatingRetryCount: number;
   donorSearchLambdaArn: string;
   schedulerRoleArn: string;
 
@@ -51,9 +50,6 @@ export class Config<T extends ConfigSubset<T>> {
       platformArnApns: process.env.PLATFORM_ARN_APNS as AllConfig['platformArnApns'],
       platformArnFcm: process.env.PLATFORM_ARN_FCM as AllConfig['platformArnFcm'],
       notificationQueueUrl: process.env.NOTIFICATION_QUEUE_URL as AllConfig['notificationQueueUrl'],
-      donorSearchMaxInitiatingRetryCount:
-        Number(process.env.DONOR_SEARCH_MAX_INITIATING_RETRY_COUNT) as
-        AllConfig['donorSearchMaxInitiatingRetryCount'],
       schedulerRoleArn: process.env.SCHEDULER_ROLE_ARN as AllConfig['schedulerRoleArn'],
       donorSearchLambdaArn: process.env.DONOR_SEARCH_LAMBDA_ARN as AllConfig['donorSearchLambdaArn'],
 

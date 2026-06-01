@@ -12,10 +12,9 @@ locals {
       )
       env_variables = {
         DYNAMODB_TABLE_NAME                     = split("/", var.dynamodb_table_arn)[1]
-        DONOR_SEARCH_LAMBDA_ARN                 = local.donor_search_lambda_arn
-        SCHEDULER_ROLE_ARN                      = local.eventbridge_scheduler_role_arn
-        INITIAL_WAVE_DELAY_SECONDS              = local.initial_wave_delay_seconds
-        DONOR_SEARCH_MAX_INITIATING_RETRY_COUNT = local.donor_search_max_initiating_retry_count
+        DONOR_SEARCH_LAMBDA_ARN    = local.donor_search_lambda_arn
+        SCHEDULER_ROLE_ARN         = local.eventbridge_scheduler_role_arn
+        INITIAL_WAVE_DELAY_SECONDS = local.initial_wave_delay_seconds
       }
     },
     donor-search = {
@@ -32,8 +31,7 @@ locals {
       timeout     = 300
       env_variables = {
         DYNAMODB_TABLE_NAME                     = split("/", var.dynamodb_table_arn)[1]
-        DONOR_SEARCH_MAX_INITIATING_RETRY_COUNT = local.donor_search_max_initiating_retry_count
-        NOTIFICATION_QUEUE_URL                  = var.push_notification_queue.url
+        NOTIFICATION_QUEUE_URL = var.push_notification_queue.url
         MAX_CELLS_PER_EXECUTION                 = local.max_cells_per_execution
         SEARCH_INTERVAL_SECONDS                 = local.search_interval_seconds
         RETRY_DELAY_SECONDS                     = local.retry_delay_seconds

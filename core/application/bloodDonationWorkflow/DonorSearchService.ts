@@ -38,31 +38,12 @@ export class DonorSearchService {
     donationStatus: DonationStatus,
     eventName: DynamoDBEventName
   ): Promise<void> {
-    const configured = this.options.donorSearchMaxInitiatingRetryCount
-    const maxAttempts = Math.max(1, Number.isFinite(configured) ? configured : 1)
-    let attempt = 0
-
-    while (attempt < maxAttempts) {
-      try {
-        await this.doInitiateDonorSearchRequest(
-          donationRequestInitiatorAttributes,
-          schedulerModel,
-          donationStatus,
-          eventName
-        )
-
-        return
-      } catch (error) {
-        attempt += 1
-        if (attempt >= maxAttempts) throw error
-        const backoffMs = Math.min(1000 * Math.pow(2, attempt), 30000)
-        this.logger.warn(
-          { attempt, maxAttempts, backoffMs, error: (error as Error).message },
-          'initiator retry'
-        )
-        await new Promise((resolve) => setTimeout(resolve, backoffMs))
-      }
-    }
+    await this.doInitiateDonorSearchRequest(
+      donationRequestInitiatorAttributes,
+      schedulerModel,
+      donationStatus,
+      eventName
+    )
   }
 
   private async doInitiateDonorSearchRequest(

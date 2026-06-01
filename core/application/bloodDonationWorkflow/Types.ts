@@ -79,7 +79,6 @@ export type DonorSearchConfig = {
   acceptanceWindowSeconds: number;
   maxSearchRadiusKm: number;
   parallelQueryConcurrency: number;
-  donorSearchMaxInitiatingRetryCount: number;
   notificationQueueUrl: string;
   schedulerRoleArn: string;
   donorSearchLambdaArn: string;
