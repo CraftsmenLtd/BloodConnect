@@ -1,4 +1,3 @@
-import StorageService from '../../src/utility/storageService'
 import {
   signUp, confirmSignUp, signIn, signInWithRedirect, decodeJWT,
   fetchAuthSession, signOut, confirmResetPassword, resetPassword
@@ -18,12 +17,6 @@ import {
   resetPasswordHandler,
   currentLoggedInUser
 } from '../../src/authentication/services/authService'
-
-jest.mock('../../src/utility/storageService', () => ({
-  getItem: jest.fn(),
-  storeItem: jest.fn(),
-  removeItem: jest.fn()
-}))
 
 describe('AuthService', () => {
   const mockRegisterInfo: UserRegistrationCredentials = {
@@ -59,12 +52,10 @@ describe('AuthService', () => {
   })
 
   describe('logoutUser', () => {
-    test('should call signOut and remove tokens from storage', async() => {
+    test('should call signOut', async() => {
       await logoutUser()
 
       expect(signOut).toHaveBeenCalled()
-      expect(StorageService.removeItem).toHaveBeenCalledWith('accessToken')
-      expect(StorageService.removeItem).toHaveBeenCalledWith('idToken')
     })
 
     test('should throw an error if logout fails', async() => {

@@ -15,8 +15,6 @@ import {
   signOut,
   signUp
 } from 'aws-amplify/auth'
-import { TOKEN } from '../../setup/constant/token'
-import StorageService from '../../utility/storageService'
 import { handleAuthError } from './authErrorHandler'
 
 export type User = {
@@ -64,8 +62,6 @@ export const loadTokens = async():
 export const logoutUser = async(): Promise<void> => {
   try {
     await signOut()
-    await StorageService.removeItem(TOKEN.ACCESS_TOKEN)
-    await StorageService.removeItem(TOKEN.ID_TOKEN)
   } catch (error) {
     const errorMessage = handleAuthError(error)
     throw new Error(errorMessage)

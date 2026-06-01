@@ -21,7 +21,7 @@ const donorSearchDynamoDbOperations = new DonorSearchDynamoDbOperations(
 )
 
 // EventBridge Pipe event format
-interface EventBridgePipeEvent {
+type EventBridgePipeEvent = {
   PK: string
   SK: string
   geohash: string

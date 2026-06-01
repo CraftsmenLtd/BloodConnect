@@ -1,9 +1,7 @@
 import { FetchClient } from '../../../src/setup/clients/FetchClient'
 import { FetchClientError } from '../../../src/setup/clients/FetchClientError'
-import StorageService from '../../../src/utility/storageService'
 import authService from '../../../src/authentication/services/authService'
 
-jest.mock('../../../src/utility/storageService')
 jest.mock('../../../src/authentication/services/authService')
 
 describe('FetchClient', () => {
@@ -18,8 +16,7 @@ describe('FetchClient', () => {
     expect(fetchClient).toBeDefined()
   })
 
-  test('should setup request headers with idToken', async() => {
-    (StorageService.getItem as jest.Mock).mockResolvedValue('mockIdToken');
+  test('should setup request headers with idToken from auth session', async() => {
     (authService.fetchSession as jest.Mock).mockResolvedValue({ idToken: 'mockIdToken' })
 
     const headers = await fetchClient.setupRequestHeaders({})
@@ -29,9 +26,7 @@ describe('FetchClient', () => {
     })
   })
 
-  test('should refresh idToken if expired', async() => {
-    (StorageService.getItem as jest.Mock).mockResolvedValue('mockExpiredIdToken');
-    (authService.decodeAccessToken as jest.Mock).mockReturnValue({ exp: Math.floor(Date.now() / 1000) - 1 });
+  test('should fetch a fresh session for every request', async() => {
     (authService.fetchSession as jest.Mock).mockResolvedValue({ idToken: 'newIdToken' })
 
     const headers = await fetchClient.setupRequestHeaders({})
@@ -40,17 +35,6 @@ describe('FetchClient', () => {
       Authorization: 'Bearer newIdToken'
     })
     expect(authService.fetchSession).toHaveBeenCalled()
-  })
-
-  it('should not refresh idToken if valid', async() => {
-    jest.spyOn(authService, 'fetchSession').mockResolvedValueOnce({ idToken: 'newIdToken', accessToken: 'newAcessToken' })
-
-    const headers = await fetchClient.setupRequestHeaders({})
-
-    expect(headers).toEqual({
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer newIdToken'
-    })
   })
 
   test('should perform a GET request', async() => {
@@ -99,10 +83,4 @@ describe('FetchClient', () => {
     await expect(fetchClient.post('/endpoint', { key: 'value' })).rejects.toThrow('Server Error')
   })
 
-  test('should handle unexpected errors gracefully', async() => {
-    const errorStatus = 500;
-    (StorageService.getItem as jest.Mock).mockRejectedValue(new FetchClientError('Storage error', errorStatus))
-    await expect(fetchClient.loadIdToken()).rejects.toThrow(FetchClientError)
-    await expect(fetchClient.loadIdToken()).rejects.toThrow('Storage error')
-  })
 })

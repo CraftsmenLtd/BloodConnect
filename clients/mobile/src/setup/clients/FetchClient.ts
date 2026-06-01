@@ -1,6 +1,5 @@
 import type { HttpClient } from './HttpClient'
 import { FetchClientError } from './FetchClientError'
-import StorageService from '../../utility/storageService'
 import authService from '../../authentication/services/authService'
 
 export type FetchResponse<T> = T & { status: number }
@@ -8,18 +7,12 @@ export type FetchResponse<T> = T & { status: number }
 const HTTP_UNAUTHORIZED = 401
 
 export class FetchClient implements HttpClient {
-  private idToken: string | null = null
   private readonly baseURL: string
   private readonly logoutUser?: () => Promise<void>
 
   constructor(baseURL: string, logoutUser?: () => Promise<void>) {
     this.baseURL = baseURL
     this.logoutUser = logoutUser
-    void this.loadIdToken()
-  }
-
-  public async loadIdToken(): Promise<void> {
-    this.idToken = await StorageService.getItem('idToken')
   }
 
   public async setupRequestHeaders(

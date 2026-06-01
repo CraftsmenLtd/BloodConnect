@@ -188,14 +188,17 @@ export default [
       'node_modules/',
       'coverage/',
       'dist/',
+      '**/dist/',
       'docs/',
       'clients/website/',
       'iac/',
       '.build/',
+      '**/.build/',
       '.idea/',
       '.vscode/',
       'clients/organization/',
-      '.github/'
+      '.github/',
+      'scripts/'
     ]
   }
 ]
