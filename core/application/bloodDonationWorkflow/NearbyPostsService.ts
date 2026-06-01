@@ -50,12 +50,7 @@ export class NearbyPostsService {
       : ALL_BLOOD_GROUPS
 
     const perHexLimit = Math.max(20, pageSize ?? 20)
-    const queries: { hex: string; bg: string }[] = []
-    for (const hex of hexes) {
-      for (const bg of bgGroups) {
-        queries.push({ hex, bg })
-      }
-    }
+    const queries = hexes.flatMap((hex) => bgGroups.map((bg) => ({ hex, bg })))
 
     const merged: NearbyPost[] = []
     for (let i = 0; i < queries.length; i += PARALLEL_QUERY_CONCURRENCY) {
