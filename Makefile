@@ -10,6 +10,14 @@ include clients/mobile/Makefile
 # Makefile flags
 MAKEFLAGS+=--no-print-directory
 
+# Show the help listing when make is run with no target
+.DEFAULT_GOAL := help
+
+##@ General
+help: ## Show this help message
+	@awk 'BEGIN {FS = ":.*##"; printf "\nBloodConnect make targets\n\nUsage: make \033[36m<target>\033[0m\n"} /^[a-zA-Z0-9_%-]+:.*##/ { printf "  \033[36m%-26s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) }' $(MAKEFILE_LIST)
+	@printf "\nCommon vars: DEPLOYMENT_ENVIRONMENT_GROUP, BUILD_PROFILE, NPM_TEST_ARGS, NPM_ARGS\n\n"
+
 # Environment Variables
 LOCALSTACK_VERSION?=4.0.2
 LOCALSTACK_AUTH_TOKEN?=localstack-auth-token
@@ -61,13 +69,12 @@ DOCKER_CHECKOV_SKIP?=--skip-check CKV_DOCKER_9
 DOCKER_LOCALSTACK_CONTAINER_NAME?=bloodconnect-dev-localstack
 DOCKER_DEV_CONTAINER_NAME?=bloodconnect-dev
 
-# Documentation
-sphinx-html: bundle-openapi
+##@ Documentation & API
+sphinx-html: bundle-openapi ## Build the Sphinx HTML docs (bundles OpenAPI first)
 	rm -rf docs/_build
 	$(MAKE) -C docs html
 
-# API
-bundle-openapi:
+bundle-openapi: ## Bundle the OpenAPI v1 spec with Redocly
 	redocly bundle openapi/versions/v1.json -o docs/openapi/v1.json --config openapi/configs/redocly.yaml
 
 # Terraform base command:
@@ -83,93 +90,91 @@ else
 endif
 
 
-check-docker:
+##@ Container Checks
+check-docker: ## Scan Dockerfiles with Checkov
 	checkov --directory . --framework dockerfile
 
 
-# Localstack
-localstack-start:
+##@ Local Environment
+localstack-start: ## Start the LocalStack container
 	docker rm -f $(DOCKER_LOCALSTACK_CONTAINER_NAME)
 	docker run --rm --privileged --name $(DOCKER_LOCALSTACK_CONTAINER_NAME) -itd -e LOCALSTACK_AUTH_TOKEN=$(LOCALSTACK_AUTH_TOKEN) -e LS_LOG=trace -p 4566:4566 -p 4510-4559:4510-4559 $(DOCKER_SOCK_MOUNT) localstack/localstack-pro:$(LOCALSTACK_VERSION)
 
 
-# Nodejs
-install-node-packages:
+##@ Node Build & Package
+install-node-packages: ## Install node packages (npm ci)
 	npm ci
 
-build-node-%:
+build-node-%: ## Build a Lambda service, e.g. build-node-all
 	cd core/services/aws && npm run build-$* -- $(NPM_ARGS)
 
-package-%:
+package-%: ## Package a Lambda for deployment, e.g. package-all
 	cd core/services/aws && npm run package-$*
 
 
-# Unit Test
-test:
+##@ Test & Lint
+test: ## Run all Jest tests (pass args via NPM_TEST_ARGS)
 	npm run test -- $(NPM_TEST_ARGS)
 
 
-# Lint
-lint-code:
+lint-code: ## Lint all workspaces with ESLint
 	npm run lint
 
-lint-code-fix:
+lint-code-fix: ## Lint all workspaces and auto-fix issues
 	npm run lint -- --fix
 
-# Type Check
-type-check:
+type-check: ## Run the TypeScript type checker
 	npm run type-check
 
-lint-api: bundle-openapi
+lint-api: bundle-openapi ## Lint the OpenAPI spec with Spectral
 	spectral lint docs/openapi/v1.json --ruleset openapi/.spectral.json
 
-lint: lint-code tf-validate lint-api
+lint: lint-code tf-validate lint-api ## Lint code, Terraform, and the OpenAPI spec
 
-lint-fix: lint-code-fix
+lint-fix: lint-code-fix ## Auto-fix lint issues
 
-# Docker dev environment
-build-runner-image:
+##@ Docker Dev Environment
+build-runner-image: ## Build the dev runner Docker image
 	docker build --build-arg HOST_UID=$(shell id -u) --build-arg HOST_GID=$(shell id -g) -t $(RUNNER_IMAGE_NAME) .
 
-run-command-%:
+run-command-%: ## Run a make target inside the dev container, e.g. run-command-test
 	docker rm -f $(DOCKER_DEV_CONTAINER_NAME) || true
 	docker run --rm -t --name $(DOCKER_DEV_CONTAINER_NAME) --network host \
 	           $(DOCKER_RUN_MOUNT_OPTIONS) $(DOCKER_ENV) $(RUNNER_IMAGE_NAME) \
 	           make $* NPM_TEST_ARGS=$(NPM_TEST_ARGS) NPM_ARGS=$(NPM_ARGS)
 
-# Swagger UI
-swagger-ui:
+##@ API Explorer
+swagger-ui: ## Launch the Swagger UI (branch/email/password vars)
 	./openapi/swagger-ui/setup-swagger.sh $(branch) $(email) $(password)
 	docker compose -f openapi/docker-compose.yml up -d --build
 
-# Deploy Dev Branch from Local Machine
-deploy-dev-branch:
+##@ Deploy
+deploy-dev-branch: ## Build and deploy the current branch to the dev environment
 	$(MAKE) build-node-all
 	$(MAKE) clean-terraform-files
 	$(MAKE) tf-init DEPLOYMENT_ENVIRONMENT_GROUP=dev
 	$(MAKE) tf-plan-apply DEPLOYMENT_ENVIRONMENT_GROUP=dev
 	$(MAKE) tf-apply DEPLOYMENT_ENVIRONMENT_GROUP=dev
 
-destroy-dev-branch:
+destroy-dev-branch: ## Destroy the current branch's dev environment resources
 	$(MAKE) -s clean-terraform-files
 	$(MAKE) -s tf-init DEPLOYMENT_ENVIRONMENT_GROUP=dev
 	$(MAKE) -s tf-plan-destroy DEPLOYMENT_ENVIRONMENT_GROUP=dev
 	$(MAKE) -s tf-destroy DEPLOYMENT_ENVIRONMENT_GROUP=dev
 
-prep-dev: install-node-packages build-node-all package-all
+##@ Setup & Dev
+prep-dev: install-node-packages build-node-all package-all ## Install packages, build and package all Lambdas
 
-# Dev commands
-start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev
+start-dev: build-runner-image localstack-start run-command-install-node-packages run-dev ## Full local env: runner image + LocalStack + deploy
 
-run-dev: run-command-build-node-all run-command-tf-init \
-         run-command-tf-plan-apply run-command-tf-apply
+run-dev: run-command-build-node-all run-command-tf-init run-command-tf-plan-apply run-command-tf-apply ## Build and deploy inside the dev container
 
-# Mobile
-prepare-mobile-env:
+##@ Mobile (env)
+prepare-mobile-env: ## Write clients/mobile/.env from Terraform outputs
 	@echo AWS_USER_POOL_CLIENT_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_client_id) >> clients/mobile/.env
 	@echo AWS_USER_POOL_ID=$(shell $(MAKE) -s tf-output-aws_user_pool_id) >> clients/mobile/.env
 	@echo API_BASE_URL=$(shell $(MAKE) -s tf-output-aws_api_domain_url) >> clients/mobile/.env
 	@echo AWS_COGNITO_DOMAIN=$(shell $(MAKE) -s tf-output-aws_cognito_custom_domain_name) >> clients/mobile/.env
 
-fetch-google-service-file:
+fetch-google-service-file: ## Download google-services.json from the backend bucket
 	@aws s3 cp s3://$(TF_BACKEND_BUCKET_NAME)/credentials/$(BUILD_PROFILE)/google-services.json clients/mobile/

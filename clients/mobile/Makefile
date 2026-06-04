@@ -14,20 +14,20 @@ APP_VERSION?=1.1.2
 export ANDROID_HOME?=/opt/android-sdk
 export GRADLE_OPTS="-Djava.net.preferIPv4Stack=true"
 
-build-android:
+##@ Mobile (EAS/Expo)
+build-android: ## Trigger a cloud EAS Android build (BUILD_PROFILE)
 	@cd $(MAKEFILE_DIR) && eas build --profile $(BUILD_PROFILE) --platform android --non-interactive --no-wait
 
-start-expo:
+start-expo: ## Start the Expo dev server
 	@npm start --prefix $(MAKEFILE_DIR)
 
-# Build the APK with the specified profile
-build-android-local:
+build-android-local: ## Build the APK/AAB locally with EAS (BUILD_PROFILE)
 	@cd $(MAKEFILE_DIR) && eas build --profile $(BUILD_PROFILE) --clear-cache --platform android --local --output "$(APP_NAME)_$(APP_VERSION)$(if $(filter production,$(BUILD_PROFILE)),.aab,.apk)"
 
-clean:
+clean: ## Remove the mobile build and .expo directories
 	@rm -rf build .expo
 
-upload-env:
+upload-env: ## Push mobile env vars to the EAS project (BUILD_PROFILE)
 	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name APP_NAME --value $(APP_NAME) --type string --visibility plaintext --force --scope project --non-interactive
 	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name EAS_PROJECT_ID --value $(EAS_PROJECT_ID) --type string --visibility plaintext --force --scope project --non-interactive
 	@cd $(MAKEFILE_DIR) && eas env:create --environment $(BUILD_PROFILE) --name APP_VERSION --value $(APP_VERSION) --type string --visibility plaintext --force --scope project --non-interactive
