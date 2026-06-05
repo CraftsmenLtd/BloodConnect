@@ -148,3 +148,4 @@ deployment/**/openapi.json
 .config/eas-cli-nodejs/user-settings.json
 /summary_docs/*
 /aidlc-docs/
+.claude/settings.local.json
