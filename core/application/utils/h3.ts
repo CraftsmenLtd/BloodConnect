@@ -1,5 +1,6 @@
 import { latLngToCell, cellToParent, gridRing, gridDisk, gridDiskDistances, cellToLatLng } from 'h3-js'
 import { RADIUS_OF_EARTH, H3_FINE_RESOLUTION } from '../../../commons/libs/constants/NoMagicNumbers'
+import type { Logger } from '../models/logger/Logger'
 
 export function generateH3Cell(
   latitude: number,
@@ -13,13 +14,17 @@ export function getH3CellParent(cell: string, resolution: number): string {
   return cellToParent(cell, resolution)
 }
 
-export function getH3GridRing(cell: string, k: number): string[] {
+export function getH3GridRing(cell: string, k: number, logger?: Logger): string[] {
   if (k === 0) {
     return [cell]
   }
   try {
     return gridRing(cell, k)
-  } catch (_error) {
+  } catch (error) {
+    logger?.warn(
+      { cell, k, error: (error as Error).message },
+      'gridRing failed near pentagon; using gridDiskDistances fallback'
+    )
     const distances = gridDiskDistances(cell, k)
 
     return distances[k] ?? []

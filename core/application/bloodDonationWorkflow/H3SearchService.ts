@@ -31,7 +31,7 @@ export class H3SearchService {
 
     while (cells.length < maxCells && level < maxRingLevel) {
       level += 1
-      const ring = getH3GridRing(centerHex, level)
+      const ring = getH3GridRing(centerHex, level, this.logger)
       if (ring.length === 0) break
       cells.push(...ring)
     }
