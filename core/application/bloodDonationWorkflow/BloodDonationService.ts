@@ -49,6 +49,7 @@ export const computeSearchStatus = (
   const distances = Object.values(donorSearch.notifiedEligibleDonors).map((d) => d.distance)
   const currentSearchRadiusKm = distances.length > 0 ? Math.max(...distances) : 0
   const rejectedDonorsCount = Math.max(0, notifiedDonorsCount - acceptedDonorsCount)
+
   return {
     donorSearchStatus: donorSearch.status,
     notifiedDonorsCount,
@@ -329,6 +330,7 @@ export class BloodDonationService {
       }
     }
     const searchStatus = computeSearchStatus(donorSearch, acceptedDonors)
+
     return { ...donationPost, acceptedDonors, searchStatus }
   }
 

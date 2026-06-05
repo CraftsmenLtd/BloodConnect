@@ -57,11 +57,13 @@ export const getCircleGeoJson = (
     )
     coordinates.push([lon2 * (180 / Math.PI), lat2 * (180 / Math.PI)])
   }
+
   return { type: 'Feature', geometry: { type: 'Polygon', coordinates: [coordinates] }, properties: {} }
 }
 
 export const getZoomLevel = (radiusKm: number): number => {
   if (radiusKm <= 0) return 13
+
   return Math.max(7, Math.round(13 - Math.log2(Math.max(1, radiusKm))))
 }
 
@@ -74,6 +76,7 @@ export const formatElapsedTime = (createdAt: string): string => {
   const remainHours = hours % 24
   if (days > 0) return `${days}d ${remainHours}h ${minutes}m`
   if (hours > 0) return `${hours}h ${minutes}m`
+
   return `${minutes}m`
 }
 
