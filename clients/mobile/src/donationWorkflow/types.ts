@@ -1,4 +1,4 @@
-import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
+import type { DonationDTO, DonationSearchStatusInfo } from '../../../../commons/dto/DonationDTO'
 
 export type StatusType =
   'ACCEPTED' |
@@ -42,6 +42,7 @@ Pick<DonationDTO, 'latitude' | 'longitude'> & {
   status: StatusType;
   requestPostId: string;
   createdAt: string;
+  searchStatus?: DonationSearchStatusInfo;
 }
 
 export const UrgencyLevel = {
