@@ -147,3 +147,4 @@ deployment/**/openapi.json
 .expo
 .config/eas-cli-nodejs/user-settings.json
 /summary_docs/*
+/aidlc-docs/
