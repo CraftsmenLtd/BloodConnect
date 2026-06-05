@@ -42,6 +42,14 @@ export enum DonorSearchStatus {
   COMPLETED = 'COMPLETED'
 }
 
+export type DonationSearchStatusInfo = {
+  donorSearchStatus: DonorSearchStatus | null;
+  notifiedDonorsCount: number;
+  acceptedDonorsCount: number;
+  rejectedDonorsCount: number;
+  currentSearchRadiusKm: number;
+}
+
 export type EligibleDonorInfo = {
   distance: number;
   locationId: string;
