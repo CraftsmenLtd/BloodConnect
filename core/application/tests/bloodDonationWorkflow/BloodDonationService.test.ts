@@ -1,6 +1,6 @@
 import { BloodDonationService } from '../../bloodDonationWorkflow/BloodDonationService'
-import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
-import { DonationStatus } from '../../../../commons/dto/DonationDTO'
+import type { AcceptDonationDTO, DonationDTO, DonorSearchDTO } from '../../../../commons/dto/DonationDTO'
+import { AcceptDonationStatus, DonationStatus, DonorSearchStatus } from '../../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../../utils/idGenerator'
 import { generateGeohash } from '../../utils/geohash'
 import { validateInputWithRules } from '../../utils/validator'
@@ -14,6 +14,7 @@ import type { UserService } from '../../userWorkflow/UserService'
 import { mockRepository } from '../mocks/mockRepositories'
 import { mockUserDetailsWithStringId } from '../mocks/mockUserData'
 import type { AcceptDonationService } from '../../../application/bloodDonationWorkflow/AcceptDonationRequestService'
+import type DonorSearchRepository from '../../models/policies/repositories/DonorSearchRepository'
 
 jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
@@ -519,6 +520,113 @@ describe('BloodDonationService', () => {
         mockNotificationService,
         mockAcceptDonationService
       )).rejects.toThrow(/Operation failed/)
+    })
+  })
+
+  describe('getDonationRequestDetails', () => {
+    const mockDonorSearchRepository = {
+      getDonorSearchItem: jest.fn()
+    } as unknown as jest.Mocked<DonorSearchRepository>
+
+    const mockDonorSearch: DonorSearchDTO = {
+      seekerId: 'user456',
+      requestPostId: 'req123',
+      createdAt: mockCreatedAt,
+      status: DonorSearchStatus.PENDING,
+      notifiedEligibleDonors: {
+        'donor1': { distance: 5.2, locationId: 'loc1' },
+        'donor2': { distance: 8.7, locationId: 'loc2' }
+      }
+    }
+
+    const mockAcceptedDonors: AcceptDonationDTO[] = [
+      {
+        donorId: 'donor1',
+        requestPostId: 'req123',
+        status: AcceptDonationStatus.ACCEPTED,
+        seekerId: 'user456',
+        createdAt: mockCreatedAt
+      }
+    ]
+
+    beforeEach(() => {
+      mockBloodDonationRepository.getDonationRequest.mockResolvedValue(donationDtoMock)
+    })
+
+    test('returns merged response with searchStatus when both fetches succeed', async() => {
+      const bloodDonationService = new BloodDonationService(mockBloodDonationRepository, mockLogger)
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue(mockAcceptedDonors)
+      mockDonorSearchRepository.getDonorSearchItem.mockResolvedValue(mockDonorSearch)
+
+      const result = await bloodDonationService.getDonationRequestDetails(
+        'user456',
+        'req123',
+        mockCreatedAt,
+        mockAcceptDonationService,
+        mockDonorSearchRepository
+      )
+
+      expect(result.acceptedDonors).toEqual(mockAcceptedDonors)
+      expect(result.searchStatus.donorSearchStatus).toBe(DonorSearchStatus.PENDING)
+      expect(result.searchStatus.notifiedDonorsCount).toBe(2)
+      expect(result.searchStatus.acceptedDonorsCount).toBe(1)
+      expect(result.searchStatus.rejectedDonorsCount).toBe(1)
+      expect(result.searchStatus.currentSearchRadiusKm).toBe(8.7)
+    })
+
+    test('returns zeroed searchStatus when DonorSearch returns null', async() => {
+      const bloodDonationService = new BloodDonationService(mockBloodDonationRepository, mockLogger)
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue([])
+      mockDonorSearchRepository.getDonorSearchItem.mockResolvedValue(null)
+
+      const result = await bloodDonationService.getDonationRequestDetails(
+        'user456',
+        'req123',
+        mockCreatedAt,
+        mockAcceptDonationService,
+        mockDonorSearchRepository
+      )
+
+      expect(result.searchStatus.donorSearchStatus).toBeNull()
+      expect(result.searchStatus.notifiedDonorsCount).toBe(0)
+      expect(result.searchStatus.acceptedDonorsCount).toBe(0)
+      expect(result.searchStatus.rejectedDonorsCount).toBe(0)
+      expect(result.searchStatus.currentSearchRadiusKm).toBe(0)
+    })
+
+    test('returns zeroed searchStatus and logs error when DonorSearch fetch fails', async() => {
+      const bloodDonationService = new BloodDonationService(mockBloodDonationRepository, mockLogger)
+      mockAcceptDonationService.getAcceptedDonorList.mockResolvedValue(mockAcceptedDonors)
+      const fetchError = new Error('DynamoDB throttled')
+      mockDonorSearchRepository.getDonorSearchItem.mockRejectedValue(fetchError)
+
+      const result = await bloodDonationService.getDonationRequestDetails(
+        'user456',
+        'req123',
+        mockCreatedAt,
+        mockAcceptDonationService,
+        mockDonorSearchRepository
+      )
+
+      expect(result.searchStatus.donorSearchStatus).toBeNull()
+      expect(result.searchStatus.notifiedDonorsCount).toBe(0)
+      expect(mockLogger.error).toHaveBeenCalledWith(fetchError, 'DonorSearch fetch failed — returning zeroed searchStatus')
+      expect(result.acceptedDonors).toEqual(mockAcceptedDonors)
+    })
+
+    test('throws when AcceptDonation fetch fails', async() => {
+      const bloodDonationService = new BloodDonationService(mockBloodDonationRepository, mockLogger)
+      const fetchError = new Error('AcceptDonation unavailable')
+      mockAcceptDonationService.getAcceptedDonorList.mockRejectedValue(fetchError)
+      mockDonorSearchRepository.getDonorSearchItem.mockResolvedValue(null)
+
+      await expect(bloodDonationService.getDonationRequestDetails(
+        'user456',
+        'req123',
+        mockCreatedAt,
+        mockAcceptDonationService,
+        mockDonorSearchRepository
+      )).rejects.toThrow('AcceptDonation unavailable')
     })
   })
 })
