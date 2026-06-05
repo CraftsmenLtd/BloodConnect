@@ -17,6 +17,7 @@ import {
   handleNotification
 } from '../../../setup/notification/scheduleNotification'
 import DonorResponses from '../donorResponses/DonorResponses'
+import SearchStatus from './SearchStatus'
 import type { TabConfig } from '../../types'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
@@ -132,6 +133,15 @@ const Detail = ({ navigation, route }: DetailProps) => {
             isLoading={isLoading}
             statusValue={localStatus}
           />
+          {!isDetailsPage && (
+            <SearchStatus
+              seekerId={data.seekerId}
+              requestPostId={data.requestPostId}
+              createdAt={data.createdAt}
+              latitude={data.latitude}
+              longitude={data.longitude}
+            />
+          )}
           {cancelPostError !== '' && <Text style={styles.errorMessage}>{cancelPostError}</Text>}
           {showToast !== null && (
             <Toast
