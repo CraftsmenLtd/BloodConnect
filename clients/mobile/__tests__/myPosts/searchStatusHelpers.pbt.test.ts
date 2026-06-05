@@ -5,6 +5,40 @@ import {
   getZoomLevel
 } from '../../src/myActivity/myPosts/details/SearchStatus'
 
+jest.mock('@maplibre/maplibre-react-native', () => ({
+  MapView: 'MapView',
+  Camera: 'Camera',
+  ShapeSource: 'ShapeSource',
+  FillLayer: 'FillLayer',
+  LineLayer: 'LineLayer',
+  MarkerView: 'MarkerView',
+  RasterSource: 'RasterSource',
+  RasterLayer: 'RasterLayer',
+  StyleURL: { Default: 'mapbox://styles/mapbox/streets-v11' },
+  StyleSheet: { absoluteFill: {} }
+}))
+
+jest.mock('@expo/vector-icons', () => ({
+  MaterialIcons: 'MaterialIcons'
+}))
+
+jest.mock('expo-constants', () => ({
+  default: { expoConfig: { extra: { API_BASE_URL: 'https://mock-api.test' } } }
+}))
+
+jest.mock('../../src/authentication/context/AuthContext', () => ({
+  AuthContext: { Consumer: jest.fn(), Provider: jest.fn() }
+}))
+
+jest.mock('../../src/setup/clients/useFetchClient', () => ({
+  useFetchClient: () => ({ get: jest.fn(), post: jest.fn(), patch: jest.fn() })
+}))
+
+jest.mock('../../src/myActivity/myPosts/details/useDonationSearchStatus', () => ({
+  __esModule: true,
+  default: jest.fn()
+}))
+
 describe('SearchStatus pure functions — property-based tests', () => {
   test('PBT-U2-01: formatElapsedTime output matches expected format for any past date', () => {
     fc.assert(

@@ -32,7 +32,7 @@ jest.mock('expo-constants', () => ({
 }))
 
 jest.mock('../../src/authentication/context/AuthContext', () => ({
-  AuthContext: React.createContext({ logoutUser: jest.fn() })
+  AuthContext: { Consumer: jest.fn(), Provider: jest.fn() }
 }))
 
 jest.mock('../../src/setup/clients/useFetchClient', () => ({
@@ -122,7 +122,7 @@ describe('SearchStatus', () => {
     const { getByTestId } = render(<SearchStatus {...defaultProps} />)
 
     const elapsedEl = getByTestId('search-status-elapsed-time')
-    expect(elapsedEl.props.children).toContain('Searching for')
-    expect(elapsedEl.props.children).toContain('m')
+    expect(elapsedEl.props.children[0]).toContain('Searching for')
+    expect(elapsedEl.props.children[1]).toContain('m')
   })
 })

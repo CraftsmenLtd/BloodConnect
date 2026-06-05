@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import type { DonationSearchStatusInfo } from '../../../../commons/dto/DonationDTO'
-import { DonorSearchStatus } from '../../../../commons/dto/DonationDTO'
+import type { DonationSearchStatusInfo } from '../../../../../../commons/dto/DonationDTO'
+import { DonorSearchStatus } from '../../../../../../commons/dto/DonationDTO'
 import { fetchSingleDonationPost } from '../../../donationWorkflow/donationService'
 import { useFetchClient } from '../../../setup/clients/useFetchClient'
 import type { HttpClient } from '../../../setup/clients/HttpClient'
