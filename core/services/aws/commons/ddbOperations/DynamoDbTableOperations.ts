@@ -47,7 +47,7 @@ export default class DynamoDbTableOperations<
     protected readonly modelAdapter: ModelAdapter,
     protected readonly tableName: string,
     protected readonly region: string,
-    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient({ region }))
+    protected readonly client = DynamoDBDocumentClient.from(new DynamoDBClient({ region }))
   ) {}
 
   async create(item: Dto): Promise<Dto> {
