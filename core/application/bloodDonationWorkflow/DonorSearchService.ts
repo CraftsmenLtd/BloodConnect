@@ -2,6 +2,7 @@ import type { EligibleDonorInfo } from '../../../commons/dto/DonationDTO'
 import {
   DonationStatus,
   DonorSearchStatus,
+  DonorSearchCompletionReason,
   AcceptDonationStatus,
   type DonorSearchDTO
 } from '../../../commons/dto/DonationDTO'
@@ -139,18 +140,22 @@ export class DonorSearchService {
     schedulerModel: SchedulerModel;
   }): Promise<void> {
     const donationPost = await bloodDonationService.getDonationRequest(seekerId, requestPostId, createdAt)
+
+    const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
+    if (donorSearchRecord === null) {
+      this.logger.info('terminating process as no search record found')
+
+      return
+    }
+
     if (
       donationPost.status === DonationStatus.COMPLETED
       || donationPost.status === DonationStatus.CANCELLED
     ) {
       this.logger.info(`terminating process as donation status is ${donationPost.status}`)
-
-      return
-    }
-
-    const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
-    if (donorSearchRecord === null) {
-      this.logger.info('terminating process as no search record found')
+      await this.completeSearch(
+        seekerId, requestPostId, createdAt, DonorSearchCompletionReason.REQUEST_CLOSED
+      )
 
       return
     }
@@ -168,6 +173,9 @@ export class DonorSearchService {
       = await acceptDonationService.getRemainingBagsNeeded(seekerId, requestPostId, bloodQuantity)
     if (remainingBagsNeeded === 0) {
       this.logger.info('terminating process as sufficient donors accepted')
+      await this.completeSearch(
+        seekerId, requestPostId, createdAt, DonorSearchCompletionReason.DONORS_ACCEPTED
+      )
 
       return
     }
@@ -262,13 +270,14 @@ export class DonorSearchService {
     }
 
     if (retryCount >= this.options.maxRetries || !noDonorsFoundInBatch) {
-      this.logger.info(`marking search COMPLETED — retryCount=${retryCount}, maxRetries=${this.options.maxRetries}`)
-      await this.updateDonorSearchRecord({
-        seekerId,
-        requestPostId,
-        createdAt,
-        status: DonorSearchStatus.COMPLETED
-      })
+      const completionReason = nextRemainingDonorsToFind <= 0
+        ? DonorSearchCompletionReason.FOUND_ENOUGH
+        : DonorSearchCompletionReason.RADIUS_EXHAUSTED
+      this.logger.info(
+        { retryCount, maxRetries: this.options.maxRetries, completionReason },
+        'marking search COMPLETED'
+      )
+      await this.completeSearch(seekerId, requestPostId, createdAt, completionReason)
 
       return
     }
@@ -366,6 +375,21 @@ export class DonorSearchService {
     donorSearchAttributes: Partial<DonorSearchAttributes>
   ): Promise<void> {
     await this.donorSearchRepository.update(donorSearchAttributes)
+  }
+
+  private async completeSearch(
+    seekerId: string,
+    requestPostId: string,
+    createdAt: string,
+    completionReason: DonorSearchCompletionReason
+  ): Promise<void> {
+    await this.updateDonorSearchRecord({
+      seekerId,
+      requestPostId,
+      createdAt,
+      status: DonorSearchStatus.COMPLETED,
+      completionReason
+    })
   }
 
   async getDonorSearch(

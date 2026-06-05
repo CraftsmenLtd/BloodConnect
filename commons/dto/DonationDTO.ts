@@ -43,6 +43,13 @@ export enum DonorSearchStatus {
   COMPLETED = 'COMPLETED'
 }
 
+export enum DonorSearchCompletionReason {
+  FOUND_ENOUGH = 'FOUND_ENOUGH',
+  DONORS_ACCEPTED = 'DONORS_ACCEPTED',
+  REQUEST_CLOSED = 'REQUEST_CLOSED',
+  RADIUS_EXHAUSTED = 'RADIUS_EXHAUSTED'
+}
+
 export type EligibleDonorInfo = {
   distance: number;
   locationId: string;
@@ -53,6 +60,7 @@ export type DonorSearchDTO = DTO & {
   requestPostId: string;
   createdAt: string;
   status: DonorSearchStatus;
+  completionReason?: DonorSearchCompletionReason;
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 

@@ -6,6 +6,7 @@ import type {
   BloodGroup,
   DonationDTO,
   DonorSearchStatus,
+  DonorSearchCompletionReason,
   EligibleDonorInfo,
   UrgencyType
 } from '../../../commons/dto/DonationDTO'
@@ -97,6 +98,7 @@ export type DonorSearchAttributes = {
   requestPostId: string;
   createdAt: string;
   status: DonorSearchStatus;
+  completionReason?: DonorSearchCompletionReason;
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 
