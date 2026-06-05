@@ -60,6 +60,21 @@ make lint               # Lint code + OpenAPI + Terraform
 - Jest coverage >= 60% functions globally
 - AWS SDK mocked with aws-sdk-client-mock in tests
 
+### Pre-Commit and Pre-Push Requirements
+**MANDATORY**: Before any `git commit` or `git push`, run tests for all affected workspaces and confirm they pass.
+
+```bash
+# Run tests for affected workspaces (run only relevant ones based on changed files)
+npm test --workspace=core/application      # if core/application files changed
+npm test --workspace=clients/mobile        # if clients/mobile files changed
+npm test --workspace=clients/organization  # if clients/organization files changed
+npm test --workspace=clients/monitoring    # if clients/monitoring files changed
+npm test                                   # run all if cross-workspace changes
+```
+
+- Fix any NEW test failures before committing. Pre-existing failures on `master` that are unrelated to the current change do not block commit.
+- Verify which failures are pre-existing by checking if the same suite fails on `master` before attributing a failure to current changes.
+
 ### Dev Environment
 - Docker + LocalStack for local AWS emulation
 - `.devcontainer/.env.example` for AWS credentials template
