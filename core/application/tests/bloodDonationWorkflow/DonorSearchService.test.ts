@@ -219,7 +219,10 @@ describe('DonorSearchService.initiateDonorSearchRequest restart logic', () => {
     )
 
     expect(repo.update).toHaveBeenCalledWith(
-      expect.objectContaining({ status: DonorSearchStatus.PENDING })
+      expect.objectContaining({
+        status: DonorSearchStatus.PENDING,
+        completionReason: null
+      })
     )
     expect(scheduler.schedule).toHaveBeenCalledTimes(1)
   })

@@ -93,7 +93,7 @@ export type DonorSearchAttributes = {
   requestPostId: string;
   createdAt: string;
   status: DonorSearchStatus;
-  completionReason?: DonorSearchCompletionReason;
+  completionReason?: DonorSearchCompletionReason | null;
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
 }
 

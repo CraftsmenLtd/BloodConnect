@@ -276,9 +276,10 @@ export default class DynamoDbTableOperations<
       const input: UpdateCommandInput = {
         TableName: this.tableName,
         Key: keyObject,
-        UpdateExpression: `${updateExpression.length
-          ? `SET ${updateExpression.join(', ')}` : ''}${removeExpression.length
-          ? `REMOVE ${removeExpression.join(', ')}` : ''}`,
+        UpdateExpression: [
+          updateExpression.length ? `SET ${updateExpression.join(', ')}` : '',
+          removeExpression.length ? `REMOVE ${removeExpression.join(', ')}` : ''
+        ].filter(Boolean).join(' '),
         ExpressionAttributeValues: expressionAttribute,
         ExpressionAttributeNames: expressionAttributeNames
       }

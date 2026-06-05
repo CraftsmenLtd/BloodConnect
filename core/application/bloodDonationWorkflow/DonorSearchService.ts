@@ -90,7 +90,8 @@ export class DonorSearchService {
         seekerId,
         requestPostId,
         createdAt,
-        status: DonorSearchStatus.PENDING
+        status: DonorSearchStatus.PENDING,
+        completionReason: null
       })
       await this.scheduleDonorSearchRequest(schedulerAttributes, schedulerModel)
     } else {
