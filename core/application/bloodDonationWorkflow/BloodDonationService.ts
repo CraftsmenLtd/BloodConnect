@@ -1,7 +1,7 @@
 import { GENERIC_CODES } from '../../../commons/libs/constants/GenericCodes'
 import BloodDonationOperationError from './BloodDonationOperationError'
 import ThrottlingError from './ThrottlingError'
-import type { DonationDTO } from '../../../commons/dto/DonationDTO'
+import type { AcceptDonationDTO, DonationDTO, DonationSearchStatusInfo, DonorSearchDTO } from '../../../commons/dto/DonationDTO'
 import { AcceptDonationStatus, DonationStatus } from '../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../utils/idGenerator'
 import { generateGeohash } from '../utils/geohash'
@@ -16,6 +16,7 @@ import {
 } from './Types'
 import { THROTTLING_LIMITS } from '../../../commons/libs/constants/ThrottlingLimits'
 import type BloodDonationRepository from '../models/policies/repositories/BloodDonationRepository'
+import type DonorSearchRepository from '../models/policies/repositories/DonorSearchRepository'
 import type { UserService } from '../userWorkflow/UserService'
 import type { Logger } from '../models/logger/Logger'
 import type { NotificationService } from '../notificationWorkflow/NotificationService'
@@ -29,6 +30,33 @@ import { NotificationStatus, NotificationType } from '../../../commons/dto/Notif
 import type { UpdateUserAttributes } from '../userWorkflow/Types'
 import type { LocationService } from '../userWorkflow/LocationService'
 import type { QueueModel } from '../models/queue/QueueModel'
+
+export const computeSearchStatus = (
+  donorSearch: DonorSearchDTO | null,
+  acceptedDonors: AcceptDonationDTO[]
+): DonationSearchStatusInfo => {
+  if (donorSearch === null) {
+    return {
+      donorSearchStatus: null,
+      notifiedDonorsCount: 0,
+      acceptedDonorsCount: 0,
+      rejectedDonorsCount: 0,
+      currentSearchRadiusKm: 0
+    }
+  }
+  const notifiedDonorsCount = Object.keys(donorSearch.notifiedEligibleDonors).length
+  const acceptedDonorsCount = acceptedDonors.length
+  const distances = Object.values(donorSearch.notifiedEligibleDonors).map((d) => d.distance)
+  const currentSearchRadiusKm = distances.length > 0 ? Math.max(...distances) : 0
+  const rejectedDonorsCount = Math.max(0, notifiedDonorsCount - acceptedDonorsCount)
+  return {
+    donorSearchStatus: donorSearch.status,
+    notifiedDonorsCount,
+    acceptedDonorsCount,
+    rejectedDonorsCount,
+    currentSearchRadiusKm
+  }
+}
 
 export class BloodDonationService {
   constructor(
@@ -273,15 +301,35 @@ export class BloodDonationService {
     seekerId: string,
     requestPostId: string,
     createdAt: string,
-    acceptDonationService: AcceptDonationService
+    acceptDonationService: AcceptDonationService,
+    donorSearchRepository: DonorSearchRepository
   ): Promise<BloodDonationResponse> {
     const donationPost = await this.getDonationRequest(seekerId, requestPostId, createdAt)
-    const acceptedDonors = await acceptDonationService.getAcceptedDonorList(seekerId, requestPostId)
-
-    return {
-      ...donationPost,
-      acceptedDonors
+    const [acceptedResult, donorSearchResult] = await Promise.allSettled([
+      acceptDonationService.getAcceptedDonorList(seekerId, requestPostId),
+      donorSearchRepository.getDonorSearchItem(seekerId, requestPostId, createdAt)
+    ])
+    if (acceptedResult.status === 'rejected') {
+      throw acceptedResult.reason
     }
+    const acceptedDonors: AcceptDonationDTO[] = acceptedResult.value
+    let donorSearch: DonorSearchDTO | null = null
+    if (donorSearchResult.status === 'rejected') {
+      this.logger.error(donorSearchResult.reason, 'DonorSearch fetch failed — returning zeroed searchStatus')
+    } else {
+      donorSearch = donorSearchResult.value
+      if (donorSearch !== null) {
+        this.logger.info(
+          {
+            notifiedCount: Object.keys(donorSearch.notifiedEligibleDonors).length,
+            donorSearchStatus: donorSearch.status
+          },
+          'DonorSearch fetched successfully'
+        )
+      }
+    }
+    const searchStatus = computeSearchStatus(donorSearch, acceptedDonors)
+    return { ...donationPost, acceptedDonors, searchStatus }
   }
 
   async completeDonationRequest(

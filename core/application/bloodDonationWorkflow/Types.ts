@@ -5,6 +5,7 @@ import type {
   AcceptDonationStatus,
   BloodGroup,
   DonationDTO,
+  DonationSearchStatusInfo,
   DonorSearchStatus,
   EligibleDonorInfo,
   UrgencyType
@@ -126,6 +127,7 @@ export type AcceptDonationRequestAttributes = {
 
 export type BloodDonationResponse = DonationDTO & {
   acceptedDonors: AcceptDonationDTO[];
+  searchStatus: DonationSearchStatusInfo;
 }
 
 export type DonationRecordEventAttributes = {

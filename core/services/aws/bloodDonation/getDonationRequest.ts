@@ -10,6 +10,7 @@ import { AcceptDonationService } from '../../../application/bloodDonationWorkflo
 import DonationRecordOperationError from '../../../application/bloodDonationWorkflow/DonationRecordOperationError'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import AcceptDonationDynamoDbOperations from '../commons/ddbOperations/AcceptedDonationDynamoDbOperations'
+import DonorSearchDynamoDbOperations from '../commons/ddbOperations/DonorSearchDynamoDbOperations'
 import { Config } from '../../../../commons/libs/config/config'
 
 const config = new Config<{
@@ -22,6 +23,10 @@ const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
   config.awsRegion
 )
 const acceptDonationDynamoDbOperations = new AcceptDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const donorSearchDynamoDbOperations = new DonorSearchDynamoDbOperations(
   config.dynamodbTableName,
   config.awsRegion
 )
@@ -42,7 +47,8 @@ async function getDonationRequestLambda(
       seekerId,
       requestPostId,
       createdAt,
-      acceptDonationService
+      acceptDonationService,
+      donorSearchDynamoDbOperations
     )
 
     return generateApiGatewayResponse(

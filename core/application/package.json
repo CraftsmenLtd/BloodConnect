@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.4",
-    "@types/ngeohash": "^0.6.8"
+    "@types/ngeohash": "^0.6.8",
+    "fast-check": "^4.8.0"
   }
 }
