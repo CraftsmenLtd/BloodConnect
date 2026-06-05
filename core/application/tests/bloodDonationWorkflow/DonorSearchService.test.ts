@@ -185,3 +185,75 @@ describe('DonorSearchService.searchDonors terminal paths', () => {
     expect(mockDonorSearchRepository.update).not.toHaveBeenCalled()
   })
 })
+
+describe('DonorSearchService.initiateDonorSearchRequest restart logic', () => {
+  const repo = {
+    getDonorSearchItem: jest.fn(),
+    update: jest.fn(),
+    create: jest.fn()
+  } as unknown as jest.Mocked<DonorSearchRepository>
+
+  const scheduler = { schedule: jest.fn() } as unknown as jest.Mocked<SchedulerModel>
+
+  const initiatorAttributes = {
+    seekerId: donationDtoMock.seekerId,
+    requestPostId: donationDtoMock.requestPostId,
+    createdAt: donationDtoMock.createdAt,
+    centerHex: donationDtoMock.h3Res8,
+    h3Res5: donationDtoMock.h3Res5
+  }
+
+  const completedRecord = { ...donorSearchRecordMock, status: DonorSearchStatus.COMPLETED }
+
+  const buildService = () => new DonorSearchService(repo, mockLogger, mockConfig)
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('restarts when a completed search sees status transition into PENDING', async() => {
+    repo.getDonorSearchItem.mockResolvedValue(completedRecord)
+
+    await buildService().initiateDonorSearchRequest(
+      initiatorAttributes, scheduler, DonationStatus.PENDING, DonationStatus.MANAGED
+    )
+
+    expect(repo.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: DonorSearchStatus.PENDING })
+    )
+    expect(scheduler.schedule).toHaveBeenCalledTimes(1)
+  })
+
+  test('does not restart on a benign edit that leaves status PENDING', async() => {
+    repo.getDonorSearchItem.mockResolvedValue(completedRecord)
+
+    await buildService().initiateDonorSearchRequest(
+      initiatorAttributes, scheduler, DonationStatus.PENDING, DonationStatus.PENDING
+    )
+
+    expect(repo.update).not.toHaveBeenCalled()
+    expect(scheduler.schedule).not.toHaveBeenCalled()
+  })
+
+  test('does not restart while the search is still running', async() => {
+    repo.getDonorSearchItem.mockResolvedValue(donorSearchRecordMock)
+
+    await buildService().initiateDonorSearchRequest(
+      initiatorAttributes, scheduler, DonationStatus.PENDING, DonationStatus.MANAGED
+    )
+
+    expect(repo.update).not.toHaveBeenCalled()
+    expect(scheduler.schedule).not.toHaveBeenCalled()
+  })
+
+  test('creates and schedules a brand new search', async() => {
+    repo.getDonorSearchItem.mockResolvedValue(null)
+
+    await buildService().initiateDonorSearchRequest(
+      initiatorAttributes, scheduler, DonationStatus.PENDING, '' as DonationStatus
+    )
+
+    expect(repo.create).toHaveBeenCalledTimes(1)
+    expect(scheduler.schedule).toHaveBeenCalledTimes(1)
+  })
+})

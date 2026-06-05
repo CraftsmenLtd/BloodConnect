@@ -34,7 +34,8 @@ resource "aws_pipes_pipe" "donation_request_pipe" {
   "SK": "<$.dynamodb.NewImage.SK.S>",
   "h3Res5": "<$.dynamodb.NewImage.h3Res5.S>",
   "h3Res8": "<$.dynamodb.NewImage.h3Res8.S>",
-  "status": "<$.dynamodb.NewImage.status.S>"
+  "status": "<$.dynamodb.NewImage.status.S>",
+  "previousStatus": "<$.dynamodb.OldImage.status.S>"
 }
 EOF
   }

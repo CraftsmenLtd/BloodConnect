@@ -9,6 +9,7 @@ import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
   DonorSearchIntentionalError
 } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
+import type { DonationStatus } from '../../../../commons/dto/DonationDTO'
 import { Config } from 'commons/libs/config/config'
 import DonorSearchDynamoDbOperations from '../commons/ddbOperations/DonorSearchDynamoDbOperations'
 import SchedulerOperations from '../commons/EventBridge/ScheduleOperations'
@@ -26,7 +27,7 @@ type EventBridgePipeEvent = {
   h3Res5: string
   h3Res8: string
   status: string
-  eventName?: string
+  previousStatus?: string
 }
 
 async function donationRequestInitiatorLambda(
@@ -65,8 +66,8 @@ async function donationRequestInitiatorLambda(
           serviceLogger,
           config.initialWaveDelaySeconds
         ),
-        body.status,
-        body.eventName
+        body.status as DonationStatus,
+        (body.previousStatus ?? '') as DonationStatus
       )
     } catch (error) {
       serviceLogger.error(error instanceof DonorSearchIntentionalError ? error.message : error)

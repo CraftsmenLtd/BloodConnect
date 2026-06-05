@@ -64,11 +64,6 @@ export type UpdateBloodDonationAttributes = {
   shortDescription?: string;
 }
 
-export enum DynamoDBEventName {
-  INSERT = 'INSERT',
-  MODIFY = 'MODIFY'
-}
-
 export type DonorSearchConfig = {
   dynamodbTableName: string;
   awsRegion: string;

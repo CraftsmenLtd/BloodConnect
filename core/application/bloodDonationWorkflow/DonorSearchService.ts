@@ -8,11 +8,10 @@ import {
 } from '../../../commons/dto/DonationDTO'
 import { haversineKm } from '../utils/h3'
 import type { DonorSearchConfig } from './Types'
-import {
-  DynamoDBEventName,
-  type DonationRequestInitiatorAttributes,
-  type DonorSearchAttributes,
-  type DonorSearchSchedulerAttributes
+import type {
+  DonationRequestInitiatorAttributes,
+  DonorSearchAttributes,
+  DonorSearchSchedulerAttributes
 } from './Types'
 import type { QueueModel } from '../models/queue/QueueModel'
 import type { Logger } from '../models/logger/Logger'
@@ -37,13 +36,13 @@ export class DonorSearchService {
     donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes,
     schedulerModel: SchedulerModel,
     donationStatus: DonationStatus,
-    eventName: DynamoDBEventName
+    previousStatus: DonationStatus
   ): Promise<void> {
     await this.doInitiateDonorSearchRequest(
       donationRequestInitiatorAttributes,
       schedulerModel,
       donationStatus,
-      eventName
+      previousStatus
     )
   }
 
@@ -51,7 +50,7 @@ export class DonorSearchService {
     donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes,
     schedulerModel: SchedulerModel,
     donationStatus: DonationStatus,
-    eventName: DynamoDBEventName
+    previousStatus: DonationStatus
   ): Promise<void> {
     const { seekerId, requestPostId, createdAt, centerHex } = donationRequestInitiatorAttributes
 
@@ -76,7 +75,7 @@ export class DonorSearchService {
 
     const shouldRestartSearch
       = donorSearchRecord?.status === DonorSearchStatus.COMPLETED
-      && eventName === DynamoDBEventName.MODIFY
+      && previousStatus !== DonationStatus.PENDING
       && donationStatus === DonationStatus.PENDING
 
     if (donorSearchRecord === null) {
