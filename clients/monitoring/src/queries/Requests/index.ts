@@ -6,6 +6,7 @@ import type {
 import { QueryCommand, GetItemCommand } from '@aws-sdk/client-dynamodb'
 import type {
   BloodRequestDynamoDBUnmarshaledItem,
+  DonorSearchDynamoDBUnmarshaledItem,
   NotificationDynamoDBUnmarshaledItem,
   UserLocationDynamoDBUnmarshaledItem } from '../../constants/types'
 import type { DonationStatus } from '../../../../../commons/dto/DonationDTO'
@@ -91,6 +92,25 @@ export const queryNotifiedDonors = async(
     items: (response.Items ?? []) as NotificationDynamoDBUnmarshaledItem[],
     nextPageToken: response.LastEvaluatedKey,
   }
+}
+
+export const queryDonorSearch = async(
+  dynamodbClient: DynamoDBClient,
+  { seekerId, requestPostId, createdAt }:
+  { seekerId: string; requestPostId: string; createdAt: string }
+): Promise<DonorSearchDynamoDBUnmarshaledItem | undefined> => {
+  const input: GetItemCommandInput = {
+    TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
+    Key: {
+      PK: { S: `DONOR_SEARCH#${seekerId}` },
+      SK: { S: `DONOR_SEARCH#${createdAt}#${requestPostId}` },
+    },
+  }
+
+  const command = new GetItemCommand(input)
+  const response = await dynamodbClient.send(command)
+
+  return response.Item as DonorSearchDynamoDBUnmarshaledItem | undefined
 }
 
 export const queryUserLocation = async(

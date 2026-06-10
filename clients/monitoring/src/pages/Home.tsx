@@ -26,7 +26,7 @@ import type { MapDataPoint } from '../components/GeohashMap'
 import type { Data } from '../components/Requests/RequestSearchCard'
 import RequestList from '../components/Requests/RequestList'
 import type { BloodRequestDynamoDBUnmarshaledItem } from '../constants/types'
-import { queryRequests, queryUserLocation, queryNotifiedDonors } from '../queries/Requests'
+import { queryRequests, queryUserLocation, queryNotifiedDonors, queryDonorSearch } from '../queries/Requests'
 
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -198,6 +198,32 @@ const Home = () => {
       })
     })
 
+  const searchDonorSearchProgress = (requestId: string) => {
+    const request = globalData.requests.find((item) => item.SK.S.split('#')[2] === requestId)
+    if (!request) return Promise.resolve()
+
+    return queryDonorSearch(dynamodbClient, {
+      seekerId: request.PK.S.split('#')[1],
+      requestPostId: requestId,
+      createdAt: request.createdAt.S,
+    })
+      .catch((err) => {
+        alert(err)
+
+        return undefined
+      })
+      .then((donorSearch) => {
+        if (!donorSearch) return
+        setGlobalData((prev) => {
+          const requests = [...prev.requests]
+          const target = requests.find((item) => item.SK.S.split('#')[2] === requestId)
+          if (target) target.donorSearch = donorSearch
+
+          return { requests }
+        })
+      })
+  }
+
   const sidePanelRequests = globalData.requests.filter(
     (request) => request.requestedBloodGroup.S === requestListProps.bloodGroup
       && request.h3Res8.S === requestListProps.geohash)
@@ -257,7 +283,10 @@ const Home = () => {
             onCardClickToOpen={(requestId) => {
               setSearchRequestsLoading(true)
               setRequestListProps((prev) => ({ ...prev, detailsShownOnMapForRequestId: requestId }))
-              searchNotifiedDonors(requestId).finally(() => { setSearchRequestsLoading(false) })
+              Promise.all([
+                searchNotifiedDonors(requestId),
+                searchDonorSearchProgress(requestId)
+              ]).finally(() => { setSearchRequestsLoading(false) })
             }}
             bloodGroup={requestListProps!.bloodGroup}
             geohash={requestListProps.geohash}
