@@ -79,13 +79,13 @@ export class DonorSearchService {
       && donationStatus === DonationStatus.PENDING
 
     if (donorSearchRecord === null) {
-      this.logger.info('inserting donor search record')
+      this.logger.info({ event: 'search_record_created' }, 'inserting donor search record')
       await this.createDonorSearchRecord(donorSearchAttributes)
 
-      this.logger.info('starting donor search request')
+      this.logger.info({ event: 'search_scheduled' }, 'starting donor search request')
       await this.scheduleDonorSearchRequest(schedulerAttributes, schedulerModel)
     } else if (shouldRestartSearch) {
-      this.logger.info('restarting donor search request')
+      this.logger.info({ event: 'search_restarted' }, 'restarting donor search request')
       await this.updateDonorSearchRecord({
         seekerId,
         requestPostId,
@@ -95,7 +95,7 @@ export class DonorSearchService {
       })
       await this.scheduleDonorSearchRequest(schedulerAttributes, schedulerModel)
     } else {
-      this.logger.info('donor search record already exists; no restart triggered')
+      this.logger.info({ event: 'search_restart_skipped' }, 'donor search record already exists; no restart triggered')
     }
   }
 
@@ -143,7 +143,7 @@ export class DonorSearchService {
 
     const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
     if (donorSearchRecord === null) {
-      this.logger.info('terminating process as no search record found')
+      this.logger.info({ event: 'search_record_missing' }, 'terminating process as no search record found')
 
       return
     }
@@ -152,7 +152,10 @@ export class DonorSearchService {
       donationPost.status === DonationStatus.COMPLETED
       || donationPost.status === DonationStatus.CANCELLED
     ) {
-      this.logger.info(`terminating process as donation status is ${donationPost.status}`)
+      this.logger.info(
+        { event: 'search_request_closed', donationStatus: donationPost.status },
+        `terminating process as donation status is ${donationPost.status}`
+      )
       await this.completeSearch(
         seekerId, requestPostId, createdAt, DonorSearchCompletionReason.REQUEST_CLOSED
       )
@@ -172,7 +175,7 @@ export class DonorSearchService {
     const remainingBagsNeeded
       = await acceptDonationService.getRemainingBagsNeeded(seekerId, requestPostId, bloodQuantity)
     if (remainingBagsNeeded === 0) {
-      this.logger.info('terminating process as sufficient donors accepted')
+      this.logger.info({ event: 'search_donors_accepted' }, 'terminating process as sufficient donors accepted')
       await this.completeSearch(
         seekerId, requestPostId, createdAt, DonorSearchCompletionReason.DONORS_ACCEPTED
       )
@@ -195,7 +198,10 @@ export class DonorSearchService {
         ? remainingDonorsToFind + rejectedDonorsCount
         : calculateTotalDonorsToFind(remainingBagsNeeded, urgencyLevel)
 
-    this.logger.info(`querying H3 cells to find ${totalDonorsToFind} eligible donors`)
+    this.logger.info(
+      { event: 'wave_start', retryCount, level: currentLevel, target: totalDonorsToFind },
+      `querying H3 cells to find ${totalDonorsToFind} eligible donors`
+    )
 
     const { cells, finalLevel } = h3SearchService.buildRingBatch(
       centerHex,
@@ -215,7 +221,10 @@ export class DonorSearchService {
     })
 
     const eligibleDonorsCount = Object.keys(eligibleDonors).length
-    this.logger.info(`sending notification for donation request to ${eligibleDonorsCount} donors`)
+    this.logger.info(
+      { event: 'notifications_published', retryCount, level: finalLevel, donorsFound: eligibleDonorsCount },
+      `sending notification for donation request to ${eligibleDonorsCount} donors`
+    )
     await notificationService.sendRequestNotification(
       donationPost,
       eligibleDonors,
@@ -253,6 +262,7 @@ export class DonorSearchService {
     if (nextRemainingDonorsToFind > 0 && leftoverCells.length > 0) {
       this.logger.info(
         {
+          event: 'wave_continue',
           currentLevel: finalLevel,
           leftoverCellsCount: leftoverCells.length,
           remainingDonorsToFind: nextRemainingDonorsToFind,
@@ -283,7 +293,7 @@ export class DonorSearchService {
         ? DonorSearchCompletionReason.FOUND_ENOUGH
         : DonorSearchCompletionReason.RADIUS_EXHAUSTED
       this.logger.info(
-        { retryCount, maxRetries: this.options.maxRetries, completionReason },
+        { event: 'search_completed', retryCount, maxRetries: this.options.maxRetries, completionReason },
         'marking search COMPLETED'
       )
       await this.completeSearch(seekerId, requestPostId, createdAt, completionReason)
@@ -299,7 +309,7 @@ export class DonorSearchService {
     )
 
     this.logger.info(
-      { retryCount: retryCount + 1, retryDelaySeconds },
+      { event: 'retry_scheduled', retryCount: retryCount + 1, retryDelaySeconds },
       `no donors found in batch; scheduling retry ${retryCount + 1}`
     )
 
