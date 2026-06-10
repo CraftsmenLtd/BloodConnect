@@ -8,6 +8,7 @@ import type {
   DonorSearchStatus,
   DonorSearchCompletionReason,
   EligibleDonorInfo,
+  WaveEntry,
   UrgencyType
 } from '../../../commons/dto/DonationDTO'
 
@@ -95,6 +96,12 @@ export type DonorSearchAttributes = {
   status: DonorSearchStatus;
   completionReason?: DonorSearchCompletionReason | null;
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
+  currentLevel?: number;
+  currentRetryCount?: number;
+  lastUpdatedAt?: string;
+  targetDonors?: number;
+  donorsFoundSoFar?: number;
+  waveHistory?: WaveEntry[];
 }
 
 export type DonorSearchSchedulerAttributes = {

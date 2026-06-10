@@ -184,6 +184,70 @@ describe('DonorSearchService.searchDonors terminal paths', () => {
 
     expect(mockDonorSearchRepository.update).not.toHaveBeenCalled()
   })
+
+  const setupContinuingWave = (donorsFound: number) => {
+    mockBloodDonationService.getDonationRequest.mockResolvedValue(
+      { ...donationDtoMock, status: DonationStatus.PENDING }
+    )
+    mockAcceptDonationService.getRemainingBagsNeeded.mockResolvedValue(2)
+    mockH3SearchService.buildRingBatch.mockReturnValue(
+      { cells: [donationDtoMock.h3Res8], finalLevel: 3 }
+    )
+    mockH3SearchService.queryDonorsInHex.mockResolvedValue(
+      Array.from({ length: donorsFound }, (_, i) => buildDonor(`donor-${i}`))
+    )
+  }
+
+  test('persists wave progress and appends a waveHistory entry', async() => {
+    setupContinuingWave(2)
+
+    await buildService().searchDonors(baseArgs)
+
+    expect(mockDonorSearchRepository.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentLevel: 3,
+        currentRetryCount: 0,
+        donorsFoundSoFar: 2,
+        waveHistory: [expect.objectContaining({ retryCount: 0, level: 3, donorsFound: 2 })]
+      })
+    )
+  })
+
+  test('writes the initial targetDonors on the first wave when absent', async() => {
+    setupContinuingWave(2)
+
+    await buildService().searchDonors(baseArgs)
+
+    expect(mockDonorSearchRepository.update).toHaveBeenCalledWith(
+      expect.objectContaining({ targetDonors: 4 })
+    )
+  })
+
+  test('does not overwrite targetDonors once it is already set', async() => {
+    setupContinuingWave(2)
+    mockDonorSearchRepository.getDonorSearchItem.mockResolvedValue(
+      { ...donorSearchRecordMock, targetDonors: 5 }
+    )
+
+    await buildService().searchDonors(baseArgs)
+
+    const progressCall = mockDonorSearchRepository.update.mock.calls.find(
+      (call) => call[0].waveHistory !== undefined
+    )
+    expect(progressCall?.[0]).not.toHaveProperty('targetDonors')
+  })
+
+  test('stamps lastUpdatedAt on every update', async() => {
+    mockBloodDonationService.getDonationRequest.mockResolvedValue(
+      { ...donationDtoMock, status: DonationStatus.CANCELLED }
+    )
+
+    await buildService().searchDonors(baseArgs)
+
+    expect(mockDonorSearchRepository.update).toHaveBeenCalledWith(
+      expect.objectContaining({ lastUpdatedAt: expect.any(String) })
+    )
+  })
 })
 
 describe('DonorSearchService.initiateDonorSearchRequest restart logic', () => {

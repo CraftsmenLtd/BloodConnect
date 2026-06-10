@@ -1,4 +1,4 @@
-import type { EligibleDonorInfo } from '../../../commons/dto/DonationDTO'
+import type { EligibleDonorInfo, WaveEntry } from '../../../commons/dto/DonationDTO'
 import {
   DonationStatus,
   DonorSearchStatus,
@@ -223,18 +223,27 @@ export class DonorSearchService {
       this.options.notificationQueueUrl
     )
 
-    if (eligibleDonorsCount > 0) {
-      const mergedNotified = {
-        ...(donorSearchRecord.notifiedEligibleDonors ?? {}),
-        ...eligibleDonors
-      }
-      await this.updateDonorSearchRecord({
-        seekerId,
-        requestPostId,
-        createdAt,
-        notifiedEligibleDonors: mergedNotified
-      })
+    const mergedNotified = {
+      ...(donorSearchRecord.notifiedEligibleDonors ?? {}),
+      ...eligibleDonors
     }
+    const waveEntry: WaveEntry = {
+      retryCount,
+      level: finalLevel,
+      donorsFound: eligibleDonorsCount,
+      at: new Date().toISOString()
+    }
+    await this.updateDonorSearchRecord({
+      seekerId,
+      requestPostId,
+      createdAt,
+      currentLevel: finalLevel,
+      currentRetryCount: retryCount,
+      donorsFoundSoFar: Object.keys(mergedNotified).length,
+      waveHistory: [...(donorSearchRecord.waveHistory ?? []), waveEntry],
+      ...(eligibleDonorsCount > 0 ? { notifiedEligibleDonors: mergedNotified } : {}),
+      ...(donorSearchRecord.targetDonors === undefined ? { targetDonors: totalDonorsToFind } : {})
+    })
 
     const nextRemainingDonorsToFind = totalDonorsToFind - eligibleDonorsCount
     const leftoverCells = cells.slice(processedCellCount)
@@ -374,7 +383,10 @@ export class DonorSearchService {
   async updateDonorSearchRecord(
     donorSearchAttributes: Partial<DonorSearchAttributes>
   ): Promise<void> {
-    await this.donorSearchRepository.update(donorSearchAttributes)
+    await this.donorSearchRepository.update({
+      ...donorSearchAttributes,
+      lastUpdatedAt: new Date().toISOString()
+    })
   }
 
   private async completeSearch(

@@ -55,6 +55,13 @@ export type EligibleDonorInfo = {
   locationId: string;
 }
 
+export type WaveEntry = {
+  retryCount: number;
+  level: number;
+  donorsFound: number;
+  at: string;
+}
+
 export type DonorSearchDTO = DTO & {
   seekerId: string;
   requestPostId: string;
@@ -62,6 +69,12 @@ export type DonorSearchDTO = DTO & {
   status: DonorSearchStatus;
   completionReason?: DonorSearchCompletionReason;
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
+  currentLevel?: number;
+  currentRetryCount?: number;
+  lastUpdatedAt?: string;
+  targetDonors?: number;
+  donorsFoundSoFar?: number;
+  waveHistory?: WaveEntry[];
 }
 
 export enum AcceptDonationStatus {
