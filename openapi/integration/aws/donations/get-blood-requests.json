@@ -1,9 +1,9 @@
 {
   "type": "aws",
   "httpMethod": "POST",
-  "uri": "${GET_NEARBY_POSTS_INVOCATION_ARN}",
+  "uri": "${GET_NEARBY_BLOOD_REQUESTS_INVOCATION_ARN}",
   "requestTemplates": {
-    "application/json": "#importVtl donations/vtl/requestTemplates/get-posts.vtl"
+    "application/json": "#importVtl donations/vtl/requestTemplates/get-blood-requests.vtl"
   },
   "responses": {
     "default": {
@@ -14,7 +14,7 @@
         "method.response.header.Access-Control-Allow-Origin": "'*'"
       },
       "responseTemplates": {
-        "application/json": "#importVtl donations/vtl/responseTemplates/get-posts.vtl"
+        "application/json": "#importVtl donations/vtl/responseTemplates/get-blood-requests.vtl"
       }
     }
   },

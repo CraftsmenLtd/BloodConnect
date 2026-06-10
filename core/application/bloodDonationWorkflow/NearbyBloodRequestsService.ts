@@ -6,25 +6,25 @@ import {
   FEED_DEFAULT_RADIUS_KM,
   PARALLEL_QUERY_CONCURRENCY
 } from '../../../commons/libs/constants/NoMagicNumbers'
-import type NearbyPostsRepository from '../models/policies/repositories/NearbyPostsRepository'
-import type { NearbyPost } from '../models/policies/repositories/NearbyPostsRepository'
+import type NearbyBloodRequestsRepository from '../models/policies/repositories/NearbyBloodRequestsRepository'
+import type { NearbyBloodRequest } from '../models/policies/repositories/NearbyBloodRequestsRepository'
 import type { Logger } from '../models/logger/Logger'
 import type { BloodGroup } from '../../../commons/dto/DonationDTO'
 
 const ALL_BLOOD_GROUPS: BloodGroup[] = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
-export type NearbyPostsResult = {
-  data: (NearbyPost & { distanceKm: number })[];
+export type NearbyBloodRequestsResult = {
+  data: (NearbyBloodRequest & { distanceKm: number })[];
   nextCursor: string | null;
 }
 
-export class NearbyPostsService {
+export class NearbyBloodRequestsService {
   constructor(
-    protected readonly repository: NearbyPostsRepository,
+    protected readonly repository: NearbyBloodRequestsRepository,
     protected readonly logger: Logger
   ) { }
 
-  async getNearbyPosts({
+  async getNearbyBloodRequests({
     lat,
     lng,
     radiusKm,
@@ -40,7 +40,7 @@ export class NearbyPostsService {
     bloodGroup?: string;
     pageSize?: number;
     cursor?: string | null;
-  }): Promise<NearbyPostsResult> {
+  }): Promise<NearbyBloodRequestsResult> {
     const radius = Math.min(radiusKm ?? FEED_DEFAULT_RADIUS_KM, FEED_MAX_RADIUS_KM)
     const k = Math.ceil(radius / (H3_RES_5_EDGE_KM * 1.5))
     const centerHex = generateH3Cell(lat, lng, H3_PUBLIC_FEED_RESOLUTION)
@@ -52,11 +52,11 @@ export class NearbyPostsService {
     const perHexLimit = Math.max(20, pageSize ?? 20)
     const queries = hexes.flatMap((hex) => bgGroups.map((bg) => ({ hex, bg })))
 
-    const merged: NearbyPost[] = []
+    const merged: NearbyBloodRequest[] = []
     for (let i = 0; i < queries.length; i += PARALLEL_QUERY_CONCURRENCY) {
       const batch = queries.slice(i, i + PARALLEL_QUERY_CONCURRENCY)
       const results = await Promise.all(
-        batch.map((q) => this.repository.queryPostsInHex(countryCode, q.bg, q.hex, perHexLimit))
+        batch.map((q) => this.repository.queryBloodRequestsInHex(countryCode, q.bg, q.hex, perHexLimit))
       )
       for (const res of results) merged.push(...res)
     }

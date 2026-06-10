@@ -1,7 +1,7 @@
 import type { DonationDTO } from '../../../../../commons/dto/DonationDTO'
 import type Repository from './Repository'
 
-export type NearbyPost = {
+export type NearbyBloodRequest = {
   requestPostId: string;
   seekerId: string;
   requestedBloodGroup: string;
@@ -19,13 +19,13 @@ export type NearbyPost = {
   createdAt: string;
 }
 
-type NearbyPostsRepository = {
-  queryPostsInHex(
+type NearbyBloodRequestsRepository = {
+  queryBloodRequestsInHex(
     countryCode: string,
     bloodGroup: string,
     h3Res5Cell: string,
     limit: number
-  ): Promise<NearbyPost[]>;
+  ): Promise<NearbyBloodRequest[]>;
 } & Repository<DonationDTO, Record<string, unknown>>
 
-export default NearbyPostsRepository
+export default NearbyBloodRequestsRepository

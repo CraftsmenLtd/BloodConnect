@@ -50,7 +50,7 @@ export const fetchDonationPublicPosts = async(
     if (bloodGroup !== '') params.bloodGroup = bloodGroup
     if (radius !== undefined) params.radius = radius
 
-    const response = await httpClient.get<DonationResponse>('/donations/posts', params)
+    const response = await httpClient.get<DonationResponse>('/donations/blood-requests', params)
 
     return {
       data: response.data,

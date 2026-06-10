@@ -1,7 +1,7 @@
 {
   "get": {
-    "operationId": "GetBloodRequestPosts",
-    "description": "Retrieve nearby blood request posts",
+    "operationId": "GetNearbyBloodRequests",
+    "description": "Retrieve nearby blood requests",
     "tags": [
       "bloodconnect-donation"
     ],
@@ -80,7 +80,7 @@
     },
     "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
     "x-amazon-apigateway-integration": {
-      "$ref": "./../../integration/aws/donations/get-posts.json"
+      "$ref": "./../../integration/aws/donations/get-blood-requests.json"
     },
     "security": [
       {

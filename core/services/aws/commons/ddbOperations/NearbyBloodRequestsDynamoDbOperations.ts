@@ -6,8 +6,8 @@ import {
   QueryConditionOperator
 } from '../../../../application/models/policies/repositories/QueryTypes'
 import type { DonationDTO } from '../../../../../commons/dto/DonationDTO'
-import type NearbyPostsRepository from 'core/application/models/policies/repositories/NearbyPostsRepository'
-import type { NearbyPost } from 'core/application/models/policies/repositories/NearbyPostsRepository'
+import type NearbyBloodRequestsRepository from 'core/application/models/policies/repositories/NearbyBloodRequestsRepository'
+import type { NearbyBloodRequest } from 'core/application/models/policies/repositories/NearbyBloodRequestsRepository'
 import type { DonationFields } from '../ddbModels/BloodDonationModel'
 import { BloodDonationModel } from '../ddbModels/BloodDonationModel'
 
@@ -31,21 +31,21 @@ const PROJECTED_ATTRIBUTES = [
   'createdAt'
 ]
 
-export default class NearbyPostsDynamoDbOperations extends DynamoDbTableOperations<
+export default class NearbyBloodRequestsDynamoDbOperations extends DynamoDbTableOperations<
   DonationDTO,
   DonationFields,
   BloodDonationModel
-> implements NearbyPostsRepository {
+> implements NearbyBloodRequestsRepository {
   constructor(tableName: string, region: string) {
     super(new BloodDonationModel(), tableName, region)
   }
 
-  async queryPostsInHex(
+  async queryBloodRequestsInHex(
     countryCode: string,
     bloodGroup: string,
     h3Res5Cell: string,
     limit: number
-  ): Promise<NearbyPost[]> {
+  ): Promise<NearbyBloodRequest[]> {
     const gsiIndex = this.modelAdapter.getIndex('GSI', 'GSI1')
     if (gsiIndex === undefined) {
       throw new Error('Index not found.')

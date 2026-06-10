@@ -31,7 +31,7 @@ Components
     Runs when the EventBridge Pipe delivers a change. Reads the pipe event
     into ``DonationRequestInitiatorAttributes`` (``centerHex = h3Res8``
     plus ``h3Res5``, which is forwarded for consistency with the
-    nearby-posts feed but unused by the donor search itself) and calls
+    nearby blood requests feed but unused by the donor search itself) and calls
     ``DonorSearchService.initiateDonorSearchRequest``. Retries on
     transient errors with exponential backoff, up to
     ``donorSearchMaxInitiatingRetryCount`` attempts.
@@ -67,8 +67,8 @@ Three H3 resolutions are used (constants in
 ``commons/libs/constants/NoMagicNumbers.ts``):
 
 - ``H3_PUBLIC_FEED_RESOLUTION = 5`` (edge ~8.5 km, area ~252.9 km²) —
-  partition key for the request GSI that backs the public nearby-posts
-  feed.
+  partition key for the request GSI that backs the public nearby blood
+  requests feed.
 - ``H3_DONOR_SEARCH_RESOLUTION = 8`` (edge ~461 m, area ~0.74 km²) —
   partition key for the location GSI used by the donor search ring walk.
 - ``H3_FINE_RESOLUTION = 10`` (edge ~66 m, area ~15,047 m²) — a
@@ -256,4 +256,4 @@ Related
 - ``docs/architecture/Database.rst`` — the DynamoDB single-table layout,
   including the H3-keyed GSIs.
 - ``docs/development/MobileAppDevelopment.rst`` — how the mobile app
-  consumes the public nearby-posts API that shares the H3 index.
+  consumes the public nearby blood requests API that shares the H3 index.

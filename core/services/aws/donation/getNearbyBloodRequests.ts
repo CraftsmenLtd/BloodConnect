@@ -1,8 +1,8 @@
 import type { APIGatewayProxyResult } from 'aws-lambda'
 import { HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import generateApiGatewayResponse from '../commons/lambda/ApiGateway'
-import { NearbyPostsService } from '../../../application/bloodDonationWorkflow/NearbyPostsService'
-import NearbyPostsDynamoDbOperations from '../commons/ddbOperations/NearbyPostsDynamoDbOperations'
+import { NearbyBloodRequestsService } from '../../../application/bloodDonationWorkflow/NearbyBloodRequestsService'
+import NearbyBloodRequestsDynamoDbOperations from '../commons/ddbOperations/NearbyBloodRequestsDynamoDbOperations'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { Config } from '../../../../commons/libs/config/config'
@@ -12,9 +12,9 @@ const config = new Config<{
   awsRegion: string;
 }>().getConfig()
 
-const repo = new NearbyPostsDynamoDbOperations(config.dynamodbTableName, config.awsRegion)
+const repo = new NearbyBloodRequestsDynamoDbOperations(config.dynamodbTableName, config.awsRegion)
 
-type GetNearbyPostsEvent = {
+type GetNearbyBloodRequestsEvent = {
   lat: string;
   lng: string;
   radius?: string;
@@ -24,8 +24,8 @@ type GetNearbyPostsEvent = {
   countryCode?: string;
 } & HttpLoggerAttributes
 
-async function getNearbyPostsLambda(
-  event: GetNearbyPostsEvent
+async function getNearbyBloodRequestsLambda(
+  event: GetNearbyBloodRequestsEvent
 ): Promise<APIGatewayProxyResult> {
   const httpLogger = createHTTPLogger('public', event.apiGwRequestId, event.cloudFrontRequestId)
 
@@ -46,8 +46,8 @@ async function getNearbyPostsLambda(
 
     const countryCode = event.countryCode !== undefined && event.countryCode !== '' ? event.countryCode : 'BD'
 
-    const service = new NearbyPostsService(repo, httpLogger)
-    const result = await service.getNearbyPosts({
+    const service = new NearbyBloodRequestsService(repo, httpLogger)
+    const result = await service.getNearbyBloodRequests({
       lat,
       lng,
       radiusKm,
@@ -62,7 +62,7 @@ async function getNearbyPostsLambda(
         success: true,
         data: result.data,
         nextCursor: result.nextCursor,
-        message: 'Posts retrieved successfully'
+        message: 'Blood requests retrieved successfully'
       },
       HTTP_CODES.OK
     )
@@ -77,4 +77,4 @@ async function getNearbyPostsLambda(
   }
 }
 
-export default getNearbyPostsLambda
+export default getNearbyBloodRequestsLambda

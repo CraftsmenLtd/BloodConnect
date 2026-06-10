@@ -53,8 +53,8 @@
     "/donations/{requestPostId}/{createdAt}": {
       "$ref": "./../paths/donations/donation.json"
     },
-    "/donations/posts": {
-      "$ref": "./../paths/donations/posts.json"
+    "/donations/blood-requests": {
+      "$ref": "./../paths/donations/blood-requests.json"
     },
     "/donations/cancel": {
       "$ref": "./../paths/donations/cancel.json"
