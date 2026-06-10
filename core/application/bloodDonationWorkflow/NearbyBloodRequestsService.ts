@@ -58,7 +58,7 @@ export class NearbyBloodRequestsService {
       const results = await Promise.all(
         batch.map((q) => this.repository.queryBloodRequestsInHex(countryCode, q.bg, q.hex, perHexLimit))
       )
-      for (const res of results) merged.push(...res)
+      merged.push(...results.flat())
     }
 
     const seen = new Set<string>()
