@@ -15,6 +15,10 @@ const NavBar = () => {
         <Navbar.Brand href="/">BloodConnect</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="#/">Map</Nav.Link>
+            <Nav.Link href="#/searches">Searches</Nav.Link>
+          </Nav>
           <Nav className="ms-auto">
             {isLoading ? (
               <Spinner animation="border" role='status' variant='primary' />

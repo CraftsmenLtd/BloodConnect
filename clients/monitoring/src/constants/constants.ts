@@ -1,6 +1,8 @@
 import { AcceptDonationStatus } from '../../../../commons/dto/DonationDTO'
 
 export const FIVE_MIN_IN_MS = 5 * 60 * 1000
+// A PENDING search untouched this long is treated as stuck (~ searchIntervalSeconds * 3).
+export const STUCK_AFTER_MS = 9 * 60 * 1000
 export const REQUEST_CONTROL_CLASS = 'request-control'
 export const DONOR_CONTROL_CLASS = 'donor-control'
 export const HTML_DATA_BLOOD_GROUP_KEY = 'data-blood-group'

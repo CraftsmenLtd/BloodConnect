@@ -4,6 +4,7 @@ import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
 import NavBar from './components/NavBar'
 import Home from './pages/Home'
+import DonorSearches from './pages/DonorSearches'
 import { AwsProvider, useAws } from './hooks/AwsContext'
 import { DataProvider } from './hooks/DataContext'
 import { Container, Spinner } from 'react-bootstrap'
@@ -61,6 +62,9 @@ const AwsProviderWrapper = () => {
     <Route
       path='/'
       element={<Home />} />
+    <Route
+      path='/searches'
+      element={<DonorSearches />} />
   </Routes>
 }
 

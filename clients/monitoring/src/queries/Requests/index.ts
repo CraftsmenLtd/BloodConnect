@@ -113,6 +113,66 @@ export const queryDonorSearch = async(
   return response.Item as DonorSearchDynamoDBUnmarshaledItem | undefined
 }
 
+export const queryStuckSearches = async(
+  dynamodbClient: DynamoDBClient,
+  { stuckBeforeIso, nextPageToken }:
+  { stuckBeforeIso: string; nextPageToken?: Record<string, AttributeValue> }
+): Promise<{
+  items: DonorSearchDynamoDBUnmarshaledItem[];
+  nextPageToken?: Record<string, AttributeValue>;
+}> => {
+  const input: QueryCommandInput = {
+    TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
+    IndexName: 'GSI1',
+    KeyConditionExpression: 'GSI1PK = :pk',
+    FilterExpression: '#lastUpdatedAt < :threshold',
+    ExpressionAttributeNames: { '#lastUpdatedAt': 'lastUpdatedAt' },
+    ExpressionAttributeValues: {
+      ':pk': { S: 'DONOR_SEARCH#PENDING' },
+      ':threshold': { S: stuckBeforeIso },
+    },
+    ScanIndexForward: true,
+    Limit: 50,
+    ExclusiveStartKey: nextPageToken,
+  }
+
+  const command = new QueryCommand(input)
+  const response = await dynamodbClient.send(command)
+
+  return {
+    items: (response.Items ?? []) as DonorSearchDynamoDBUnmarshaledItem[],
+    nextPageToken: response.LastEvaluatedKey,
+  }
+}
+
+export const queryUnderservedSearches = async(
+  dynamodbClient: DynamoDBClient,
+  { nextPageToken }: { nextPageToken?: Record<string, AttributeValue> } = {}
+): Promise<{
+  items: DonorSearchDynamoDBUnmarshaledItem[];
+  nextPageToken?: Record<string, AttributeValue>;
+}> => {
+  const input: QueryCommandInput = {
+    TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
+    IndexName: 'GSI1',
+    KeyConditionExpression: 'GSI1PK = :pk',
+    ExpressionAttributeValues: {
+      ':pk': { S: 'DONOR_SEARCH#RADIUS_EXHAUSTED' },
+    },
+    ScanIndexForward: false,
+    Limit: 50,
+    ExclusiveStartKey: nextPageToken,
+  }
+
+  const command = new QueryCommand(input)
+  const response = await dynamodbClient.send(command)
+
+  return {
+    items: (response.Items ?? []) as DonorSearchDynamoDBUnmarshaledItem[],
+    nextPageToken: response.LastEvaluatedKey,
+  }
+}
+
 export const queryUserLocation = async(
   dynamodbClient: DynamoDBClient,
   { locationId, userId }:{ locationId: string; userId: string }) => {
