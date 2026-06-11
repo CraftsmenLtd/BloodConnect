@@ -11,7 +11,7 @@ type ToastProps = {
 type ToastResponse = {
   showToastMessage: (props: ToastProps) => void;
   showToast: ToastProps | null;
-  toastAnimationFinished?: Animated.Value;
+  toastAnimationFinished: Animated.Value;
 }
 
 const useToast = (): ToastResponse => {

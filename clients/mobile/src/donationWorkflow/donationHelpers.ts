@@ -1,7 +1,7 @@
 import { parseJsonData } from '../utility/jsonParser'
 import type { BloodDonationRecord } from './types'
 
-export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> & {
+export type DonationData = Omit<BloodDonationRecord, 'reqPostId'> & {
   requestPostId: string;
 }
 
@@ -70,5 +70,7 @@ export const formatDonations = (requests: BloodDonationRecord[], name?: string):
   shortDescription: request.shortDescription ?? '',
   status: request.status ?? '',
   createdAt: request.createdAt ?? new Date().toISOString(),
-  acceptedDonors: request.acceptedDonors ?? []
+  acceptedDonors: request.acceptedDonors ?? [],
+  latitude: request.latitude,
+  longitude: request.longitude
 }))

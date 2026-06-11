@@ -8,7 +8,7 @@ import { useFetchClient } from '../../setup/clients/useFetchClient'
 import { fetchDonationPublicPosts } from '../donationService'
 import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 
-export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> & {
+export type DonationData = Omit<BloodDonationRecord, 'reqPostId'> & {
   requestPostId: string;
 }
 

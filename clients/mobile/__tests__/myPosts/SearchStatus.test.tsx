@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react-native'
-import SearchStatus from '../../src/myActivity/myPosts/details/SearchStatus'
+import SearchStatus, { getDisplayRadius } from '../../src/myActivity/myPosts/details/SearchStatus'
 import type { DonationSearchStatusInfo } from '../../../../commons/dto/DonationDTO'
 import { DonorSearchStatus } from '../../../../commons/dto/DonationDTO'
 
@@ -124,5 +124,44 @@ describe('SearchStatus', () => {
     const elapsedEl = getByTestId('search-status-elapsed-time')
     expect(elapsedEl.props.children[0]).toContain('Searching for')
     expect(elapsedEl.props.children[1]).toContain('m')
+  })
+
+  test('shows radius label with km value when radius is set', () => {
+    mockUseDonationSearchStatus.mockReturnValue({
+      searchStatus: mockSearchStatus,
+      isLoading: false,
+      error: null
+    })
+
+    const { getByText } = render(<SearchStatus {...defaultProps} />)
+
+    expect(getByText('5.2 km radius')).toBeTruthy()
+  })
+
+  test('shows starting text in radius label when radius is 0', () => {
+    mockUseDonationSearchStatus.mockReturnValue({
+      searchStatus: { ...mockSearchStatus, currentSearchRadiusKm: 0 },
+      isLoading: false,
+      error: null
+    })
+
+    const { getByText } = render(<SearchStatus {...defaultProps} />)
+
+    expect(getByText('Starting search…')).toBeTruthy()
+  })
+})
+
+describe('getDisplayRadius', () => {
+  test('returns actual radius when radiusKm > 0', () => {
+    expect(getDisplayRadius(8.5, true)).toBe(8.5)
+    expect(getDisplayRadius(8.5, false)).toBe(8.5)
+  })
+
+  test('returns INITIAL_SEARCH_RADIUS_KM when radiusKm is 0 and isPending', () => {
+    expect(getDisplayRadius(0, true)).toBe(2)
+  })
+
+  test('returns 0 when radiusKm is 0 and not pending', () => {
+    expect(getDisplayRadius(0, false)).toBe(0)
   })
 })

@@ -18,7 +18,7 @@ export const MY_ACTIVITY_TAB_CONFIG: TabConfig = {
 
 export type DonationData = {
   requestPostId: string;
-} & Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'>
+} & Omit<BloodDonationRecord, 'reqPostId'>
 
 export const useMyActivity = () => {
   const fetchClient = useFetchClient()

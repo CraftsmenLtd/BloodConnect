@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Text, ScrollView } from 'react-native'
 import useDonationStatus from '../../../api/hooks/useDonationStatus'
 import ToggleTabs from '../../../components/tab/ToggleTabs'
 import type { StatusType } from '../../../donationWorkflow/types'
@@ -118,38 +118,43 @@ const Detail = ({ navigation, route }: DetailProps) => {
         </View>}
 
       {currentTab === DETAIL_POST_TAB_CONFIG.initialTab
-        ? <View style={[styles.postCardContainer, { marginTop: isDetailsPage ? 2 : 20 }]}>
-          <PostCard
-            post={data}
-            showContactNumber
-            showDescription
-            showPatientName
-            showTransportInfo
-            showOptions={!isDetailsPage}
-            showButton={false}
-            showStatus={true}
-            updateHandler={updatePost}
-            cancelHandler={cancelPost}
-            isLoading={isLoading}
-            statusValue={localStatus}
-          />
-          {!isDetailsPage && (
-            <SearchStatus
-              seekerId={data.seekerId}
-              requestPostId={data.requestPostId}
-              createdAt={data.createdAt}
-              latitude={data.latitude}
-              longitude={data.longitude}
+        ? <View style={styles.postCardContainer}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ marginTop: isDetailsPage ? 2 : 20, paddingBottom: 80 }}
+          >
+            <PostCard
+              post={data}
+              showContactNumber
+              showDescription
+              showPatientName
+              showTransportInfo
+              showOptions={!isDetailsPage}
+              showButton={false}
+              showStatus={true}
+              updateHandler={updatePost}
+              cancelHandler={cancelPost}
+              isLoading={isLoading}
+              statusValue={localStatus}
             />
-          )}
-          {cancelPostError !== '' && <Text style={styles.errorMessage}>{cancelPostError}</Text>}
-          {showToast !== null && (
-            <Toast
-              message={showToast?.message}
-              type={showToast?.type}
-              toastAnimationFinished={toastAnimationFinished}
-            />
-          )}
+            {!isDetailsPage && (
+              <SearchStatus
+                seekerId={data.seekerId}
+                requestPostId={data.requestPostId}
+                createdAt={data.createdAt}
+                latitude={data.latitude}
+                longitude={data.longitude}
+              />
+            )}
+            {cancelPostError !== '' && <Text style={styles.errorMessage}>{cancelPostError}</Text>}
+            {showToast !== null && (
+              <Toast
+                message={showToast?.message}
+                type={showToast?.type}
+                toastAnimationFinished={toastAnimationFinished}
+              />
+            )}
+          </ScrollView>
           {!isDetailsPage
             && <View style={styles.buttonContainer}>
               <Button
