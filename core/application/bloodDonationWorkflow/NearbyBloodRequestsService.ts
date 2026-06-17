@@ -61,15 +61,17 @@ export class NearbyBloodRequestsService {
       merged.push(...results.flat())
     }
 
+    const now = Date.now()
     const seen = new Set<string>()
     const filtered = merged
       .filter((p) => {
         if (seen.has(p.requestPostId)) return false
         seen.add(p.requestPostId)
 
-        const distance = haversineKm(lat, lng, p.latitude, p.longitude)
+        const donationTime = new Date(p.donationDateTime).getTime()
+        if (!Number.isNaN(donationTime) && donationTime < now) return false
 
-        return distance <= radius
+        return haversineKm(lat, lng, p.latitude, p.longitude) <= radius
       })
       .map((p) => ({
         ...p,
