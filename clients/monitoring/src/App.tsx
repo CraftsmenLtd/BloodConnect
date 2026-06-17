@@ -2,12 +2,13 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { Amplify } from 'aws-amplify'
 import { Authenticator } from '@aws-amplify/ui-react'
 import '@aws-amplify/ui-react/styles.css'
-import NavBar from './components/NavBar'
-import Home from './pages/Home'
+import AppShell from './layout/AppShell'
+import Live from './pages/Live'
+import MapExplorer from './pages/MapExplorer'
 import DonorSearches from './pages/DonorSearches'
-import { AwsProvider, useAws } from './hooks/AwsContext'
-import { DataProvider } from './hooks/DataContext'
-import { Container, Spinner } from 'react-bootstrap'
+import RequestDetail from './pages/RequestDetail'
+import Lookup from './pages/Lookup'
+import { AwsProvider } from './hooks/AwsContext'
 
 Amplify.configure({
   Auth: {
@@ -31,65 +32,26 @@ Amplify.configure({
   }
 })
 
-const AwsProviderWrapper = () => {
-  const { loading, error, credentials } = useAws()
-
-  if (!credentials) {
-    return <Container style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '95.8vh',
-    }}>
-      {
-        error && (
-          <>
-            <div>{error.name}</div>
-            <div>{error.message}</div>
-            <div>{error.stack}</div>
-          </>
-        )
-      }
-      {
-        loading && (
-          <Spinner animation="border" role="status" variant='primary'/>
-        )
-      }
-    </Container>
-  }
-
-  return <Routes>
-    <Route
-      path='/'
-      element={<Home />} />
-    <Route
-      path='/searches'
-      element={<DonorSearches />} />
-  </Routes>
-}
-
 const App = () => (
-  <div style={{
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    justifyContent: 'center',
-  }}
-  className="bg-dark"
-  >
-    <Authenticator
-      socialProviders={['google']}
-      hideSignUp>
+  <Authenticator
+    socialProviders={['google']}
+    hideSignUp>
+    <AwsProvider>
       <Router>
-        <NavBar />
-        <AwsProvider>
-          <DataProvider>
-            <AwsProviderWrapper />
-          </DataProvider>
-        </AwsProvider>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route path="/" element={<Live />} />
+            <Route path="/searches" element={<DonorSearches />} />
+            <Route
+              path="/request/:seekerId/:createdAt/:requestPostId"
+              element={<RequestDetail />} />
+            <Route path="/map" element={<MapExplorer />} />
+            <Route path="/lookup" element={<Lookup />} />
+          </Route>
+        </Routes>
       </Router>
-    </Authenticator>
-  </div>
+    </AwsProvider>
+  </Authenticator>
 )
 
 export default App

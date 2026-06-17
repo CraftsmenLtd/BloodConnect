@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import type { AcceptDonationStatus, BloodGroup } from '../../../../commons/dto/DonationDTO'
+import type { AcceptDonationStatus, BloodGroup } from '../../../../../commons/dto/DonationDTO'
 import {
   HTML_DATA_BLOOD_GROUP_KEY,
   DONOR_CONTROL_CLASS,
   MARKER_POINT_COLOR_STATUS_MAP,
   REQUEST_CONTROL_CLASS
-} from '../constants/constants'
+} from '../../constants/constants'
 import type { Feature, GeoJsonProperties, LineString } from 'geojson'
 
 
@@ -37,7 +37,7 @@ export type MapDataPoint = {
   }>;
 }
 
-type GeohashMapProps = {
+type MapViewProps = {
   data: MapDataPoint[];
   initialCenter?: [number, number];
   onCenterChange?: (arg: LatLong) => void;
@@ -48,12 +48,12 @@ type GeohashMapProps = {
   };
 };
 
-const GeohashMap = ({
+const MapView = ({
   data,
   onCenterChange,
   center,
   lines
-}: GeohashMapProps) => {
+}: MapViewProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markerRef = useRef<maplibregl.Marker | null>(null)
@@ -140,7 +140,7 @@ const GeohashMap = ({
       const popupId = `${point.type === MapDataPointType.REQUEST ? 'request' : 'donor'}-${point.id}`
 
       document.getElementById(popupId)?.remove()
-      const contentHtml = `${Object.entries(point.content || {})
+      const innerHtml = `${Object.entries(point.content || {})
         .map(([contentKey, value]) => {
           const statusColor = MARKER_POINT_COLOR_STATUS_MAP[contentKey as AcceptDonationStatus]
 
@@ -153,6 +153,9 @@ const GeohashMap = ({
               ? 'black' : statusColor}" class="badge pill text-white">${value}</span></div>`
         })
         .join('')}<strong>${point.id}</strong>`
+      // Popups inherit ancestor color (e.g. RequestDetail's text-light), which is invisible on the
+      // white popup background — pin a dark color so content is readable regardless of page theme.
+      const contentHtml = `<div style="color:#212529">${innerHtml}</div>`
 
       const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
         .setLngLat([point.longitude, point.latitude])
@@ -250,4 +253,4 @@ const GeohashMap = ({
   )
 }
 
-export default GeohashMap
+export default MapView

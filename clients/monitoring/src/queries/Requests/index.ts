@@ -13,12 +13,13 @@ import type { DonationStatus } from '../../../../../commons/dto/DonationDTO'
 
 
 export type QueryDonationsInput = {
-  startTime: number;
-  endTime: number;
+  startTime?: number;
+  endTime?: number;
   h3Res5: string;
   bloodGroup: string;
   country: string;
   status: DonationStatus;
+  limit?: number;
   nextPageToken?: Record<string, AttributeValue>;
 };
 
@@ -31,29 +32,28 @@ export const queryRequests = async(
     bloodGroup,
     country,
     status,
+    limit,
     nextPageToken,
   }: QueryDonationsInput): Promise<{
     items: BloodRequestDynamoDBUnmarshaledItem[];
     nextPageToken?: Record<string, AttributeValue>;
   }> => {
-  const nowIso = new Date(startTime).toISOString()
-  const endIso = new Date(endTime).toISOString()
-
   const gsi1pk = `REQ#${country}#${bloodGroup}#${status}#${h3Res5}`
 
   const input: QueryCommandInput = {
     TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
     IndexName: 'GSI1',
     KeyConditionExpression: 'GSI1PK = :gsi1pk',
-    FilterExpression: 'donationDateTime BETWEEN :start AND :end',
-    ExpressionAttributeValues: {
-      ':gsi1pk': { S: gsi1pk },
-      ':start': { S: nowIso },
-      ':end': { S: endIso },
-    },
+    ExpressionAttributeValues: { ':gsi1pk': { S: gsi1pk } },
     ScanIndexForward: false,
-    Limit: 10,
+    Limit: limit ?? 50,
     ExclusiveStartKey: nextPageToken,
+  }
+
+  if (startTime !== undefined && endTime !== undefined) {
+    input.FilterExpression = 'donationDateTime BETWEEN :start AND :end'
+    input.ExpressionAttributeValues![':start'] = { S: new Date(startTime).toISOString() }
+    input.ExpressionAttributeValues![':end'] = { S: new Date(endTime).toISOString() }
   }
 
   const command = new QueryCommand(input)
@@ -111,6 +111,63 @@ export const queryDonorSearch = async(
   const response = await dynamodbClient.send(command)
 
   return response.Item as DonorSearchDynamoDBUnmarshaledItem | undefined
+}
+
+export const queryActiveSearches = async(
+  dynamodbClient: DynamoDBClient,
+  { nextPageToken }: { nextPageToken?: Record<string, AttributeValue> } = {}
+): Promise<{
+  items: DonorSearchDynamoDBUnmarshaledItem[];
+  nextPageToken?: Record<string, AttributeValue>;
+}> => {
+  const input: QueryCommandInput = {
+    TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
+    IndexName: 'GSI1',
+    KeyConditionExpression: 'GSI1PK = :pk',
+    ExpressionAttributeValues: {
+      ':pk': { S: 'DONOR_SEARCH#PENDING' },
+    },
+    ScanIndexForward: false,
+    Limit: 50,
+    ExclusiveStartKey: nextPageToken,
+  }
+
+  const command = new QueryCommand(input)
+  const response = await dynamodbClient.send(command)
+
+  return {
+    items: (response.Items ?? []) as DonorSearchDynamoDBUnmarshaledItem[],
+    nextPageToken: response.LastEvaluatedKey,
+  }
+}
+
+export const querySearchesBySeeker = async(
+  dynamodbClient: DynamoDBClient,
+  { seekerId, nextPageToken }:
+  { seekerId: string; nextPageToken?: Record<string, AttributeValue> }
+): Promise<{
+  items: DonorSearchDynamoDBUnmarshaledItem[];
+  nextPageToken?: Record<string, AttributeValue>;
+}> => {
+  const input: QueryCommandInput = {
+    TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
+    KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
+    ExpressionAttributeValues: {
+      ':pk': { S: `DONOR_SEARCH#${seekerId}` },
+      ':sk': { S: 'DONOR_SEARCH#' },
+    },
+    ScanIndexForward: false,
+    Limit: 50,
+    ExclusiveStartKey: nextPageToken,
+  }
+
+  const command = new QueryCommand(input)
+  const response = await dynamodbClient.send(command)
+
+  return {
+    items: (response.Items ?? []) as DonorSearchDynamoDBUnmarshaledItem[],
+    nextPageToken: response.LastEvaluatedKey,
+  }
 }
 
 export const queryStuckSearches = async(
@@ -171,6 +228,25 @@ export const queryUnderservedSearches = async(
     items: (response.Items ?? []) as DonorSearchDynamoDBUnmarshaledItem[],
     nextPageToken: response.LastEvaluatedKey,
   }
+}
+
+export const queryRequestById = async(
+  dynamodbClient: DynamoDBClient,
+  { seekerId, requestPostId, createdAt }:
+  { seekerId: string; requestPostId: string; createdAt: string }
+): Promise<BloodRequestDynamoDBUnmarshaledItem | undefined> => {
+  const input: GetItemCommandInput = {
+    TableName: import.meta.env.VITE_AWS_DYNAMODB_TABLE,
+    Key: {
+      PK: { S: `BLOOD_REQ#${seekerId}` },
+      SK: { S: `BLOOD_REQ#${createdAt}#${requestPostId}` },
+    },
+  }
+
+  const command = new GetItemCommand(input)
+  const response = await dynamodbClient.send(command)
+
+  return response.Item as BloodRequestDynamoDBUnmarshaledItem | undefined
 }
 
 export const queryUserLocation = async(
