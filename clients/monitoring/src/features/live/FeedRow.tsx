@@ -27,7 +27,7 @@ const FeedRow = ({ search, health }: { search: DonorSearch; health: Health }) =>
       className="bg-dark text-light border-secondary">
       <div className="d-flex align-items-center gap-2 flex-wrap">
         <Badge bg={healthColor[health]}>&nbsp;</Badge>
-        <code className="text-info">{search.requestPostId.slice(0, 8)}</code>
+        <code className="text-info">{search.requestPostId}</code>
         <span>{found}/{search.targetDonors ?? '?'} donors</span>
         <span className="text-muted">· wave {search.waveHistory.length}</span>
         <span className="text-muted">

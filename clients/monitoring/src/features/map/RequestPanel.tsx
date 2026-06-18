@@ -35,7 +35,7 @@ const RequestPanel = ({ show, requests, onClose }: RequestPanelProps) => {
               onClick={() => open(request)}
               className="bg-dark text-light border-secondary">
               <div className="d-flex gap-2 align-items-center">
-                <code className="text-info">{request.requestPostId.slice(0, 8)}</code>
+                <code className="text-info">{request.requestPostId}</code>
                 <span>{request.requestedBloodGroup}</span>
                 <span className="text-muted">{request.patientName}</span>
                 <span className="ms-auto text-muted small">{timeAgo(request.createdAt)}</span>

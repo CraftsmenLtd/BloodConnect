@@ -12,7 +12,7 @@ const NotifiedDonorTable = ({ donors }: { donors: NotifiedDonor[] }) => {
       <tbody>
         {donors.map((donor) => (
           <tr key={donor.donorId}>
-            <td><code>{donor.donorId.slice(0, 8)}</code></td>
+            <td><code>{donor.donorId}</code></td>
             <td>{donor.status}</td>
             <td>{donor.distance} km</td>
             <td>{donor.area}</td>

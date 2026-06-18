@@ -66,11 +66,15 @@ const RequestDetail = () => {
 
   return (
     <Container className="p-4 text-light" style={{ flexGrow: 1, overflowY: 'auto' }}>
-      <div className="d-flex align-items-center gap-2 mb-3">
+      <div className="d-flex align-items-center gap-2 mb-2 flex-wrap">
         <h5 className="mb-0">Request</h5>
-        <code className="text-info">{requestPostId.slice(0, 12)}</code>
+        <code className="text-info">{requestPostId}</code>
         {request && <Badge bg="dark">{request.requestedBloodGroup}</Badge>}
         {request && <span className="text-muted">{request.location}</span>}
+      </div>
+      <div className="mb-3 small">
+        <span className="text-muted">seeker </span>
+        <code className="text-info">{seekerId}</code>
       </div>
       {request && (
         <div className="mb-3 small text-muted">
