@@ -47,7 +47,7 @@ export default class DynamoDbTableOperations<
     protected readonly modelAdapter: ModelAdapter,
     protected readonly tableName: string,
     protected readonly region: string,
-    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient({ region }))
+    protected readonly client = DynamoDBDocumentClient.from(new DynamoDBClient({ region }))
   ) {}
 
   async create(item: Dto): Promise<Dto> {
@@ -90,7 +90,18 @@ export default class DynamoDbTableOperations<
       }
 
       if (!isNullOrUndefined(requestedAttributes) && requestedAttributes.length > 0) {
-        queryCommandInput.ProjectionExpression = requestedAttributes.join(', ')
+        const projectionAliases: Record<string, string> = {}
+        const projectionTokens = requestedAttributes.map((attr) => {
+          const alias = `#p_${attr}`
+          projectionAliases[alias] = attr
+
+          return alias
+        })
+        queryCommandInput.ProjectionExpression = projectionTokens.join(', ')
+        queryCommandInput.ExpressionAttributeNames = {
+          ...queryCommandInput.ExpressionAttributeNames,
+          ...projectionAliases
+        }
       }
 
       this.applyQueryOptions(queryCommandInput, queryInput.options)
@@ -265,9 +276,10 @@ export default class DynamoDbTableOperations<
       const input: UpdateCommandInput = {
         TableName: this.tableName,
         Key: keyObject,
-        UpdateExpression: `${updateExpression.length
-          ? `SET ${updateExpression.join(', ')}` : ''}${removeExpression.length
-          ? `REMOVE ${removeExpression.join(', ')}` : ''}`,
+        UpdateExpression: [
+          updateExpression.length ? `SET ${updateExpression.join(', ')}` : '',
+          removeExpression.length ? `REMOVE ${removeExpression.join(', ')}` : ''
+        ].filter(Boolean).join(' '),
         ExpressionAttributeValues: expressionAttribute,
         ExpressionAttributeNames: expressionAttributeNames
       }

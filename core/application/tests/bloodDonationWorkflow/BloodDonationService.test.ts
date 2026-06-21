@@ -2,7 +2,7 @@ import { BloodDonationService } from '../../bloodDonationWorkflow/BloodDonationS
 import type { DonationDTO } from '../../../../commons/dto/DonationDTO'
 import { DonationStatus } from '../../../../commons/dto/DonationDTO'
 import { generateUniqueID } from '../../utils/idGenerator'
-import { generateGeohash } from '../../utils/geohash'
+import { generateH3Cell } from '../../utils/h3'
 import { validateInputWithRules } from '../../utils/validator'
 import BloodDonationOperationError from '../../bloodDonationWorkflow/BloodDonationOperationError'
 import ThrottlingError from '../../bloodDonationWorkflow/ThrottlingError'
@@ -19,8 +19,8 @@ jest.mock('../../utils/idGenerator', () => ({
   generateUniqueID: jest.fn()
 }))
 
-jest.mock('../../utils/geohash', () => ({
-  generateGeohash: jest.fn()
+jest.mock('../../utils/h3', () => ({
+  generateH3Cell: jest.fn()
 }))
 
 jest.mock('../../utils/validator', () => ({
@@ -55,7 +55,10 @@ describe('BloodDonationService', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     (generateUniqueID as jest.Mock).mockReturnValue('req123');
-    (generateGeohash as jest.Mock).mockReturnValue('wh0r35qr');
+    (generateH3Cell as jest.Mock).mockImplementation(
+      (_lat: number, _lng: number, resolution: number) =>
+        (resolution === 5 ? '852a1077fffffff' : '882a1072b5fffff')
+    );
     (validateInputWithRules as jest.Mock).mockReturnValue(null)
 
     mockUserService.getUser.mockResolvedValue(mockUserDetailsWithStringId)
@@ -92,9 +95,15 @@ describe('BloodDonationService', () => {
       )
 
       expect(generateUniqueID).toHaveBeenCalled()
-      expect(generateGeohash).toHaveBeenCalledWith(
+      expect(generateH3Cell).toHaveBeenCalledWith(
         donationAttributesMock.latitude,
-        donationAttributesMock.longitude
+        donationAttributesMock.longitude,
+        5
+      )
+      expect(generateH3Cell).toHaveBeenCalledWith(
+        donationAttributesMock.latitude,
+        donationAttributesMock.longitude,
+        8
       )
 
       expect(mockBloodDonationRepository.create).toHaveBeenCalledWith(

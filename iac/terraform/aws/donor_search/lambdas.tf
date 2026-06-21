@@ -11,11 +11,11 @@ locals {
         local.policies.scheduler_policy
       )
       env_variables = {
-        DYNAMODB_TABLE_NAME                   = split("/", var.dynamodb_table_arn)[1]
-        NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH = local.neighbor_search_geohash_prefix_length
-        DONOR_SEARCH_LAMBDA_ARN               = local.donor_search_lambda_arn
-        SCHEDULER_ROLE_ARN                    = local.eventbridge_scheduler_role_arn
-       }
+        DYNAMODB_TABLE_NAME                     = split("/", var.dynamodb_table_arn)[1]
+        DONOR_SEARCH_LAMBDA_ARN    = local.donor_search_lambda_arn
+        SCHEDULER_ROLE_ARN         = local.eventbridge_scheduler_role_arn
+        INITIAL_WAVE_DELAY_SECONDS = local.initial_wave_delay_seconds
+      }
     },
     donor-search = {
       name         = "donor-search"
@@ -28,19 +28,17 @@ locals {
         local.policies.scheduler_policy
       )
       memory_size = 1024
-      timeout     = 180
+      timeout     = 300
       env_variables = {
         DYNAMODB_TABLE_NAME                     = split("/", var.dynamodb_table_arn)[1]
-        DONOR_SEARCH_MAX_INITIATING_RETRY_COUNT = local.donor_search_max_initiating_retry_count
-        NOTIFICATION_QUEUE_URL                  = var.push_notification_queue.url
-        MAX_GEOHASH_CACHE_ENTRIES_COUNT         = local.max_geohash_cache_entries_count
-        MAX_GEOHASH_CACHE_MB_SIZE               = local.max_geohash_cache_mb_size
-        MAX_GEOHASH_CACHE_TIMEOUT_MINUTES       = local.max_geohash_cache_timeout_minutes
-        MAX_GEOHASH_NEIGHBOR_SEARCH_LEVEL       = local.max_geohash_neighbor_search_level
-        CACHE_GEOHASH_PREFIX_LENGTH             = local.cache_geohash_prefix_length
-        NEIGHBOR_SEARCH_GEOHASH_PREFIX_LENGTH   = local.neighbor_search_geohash_prefix_length
-        MAX_GEOHASHES_PER_EXECUTION             = local.max_geohashes_per_execution
-        DONOR_SEARCH_DELAY_BETWEEN_EXECUTION    = local.donor_search_delay_between_execution
+        NOTIFICATION_QUEUE_URL = var.push_notification_queue.url
+        MAX_CELLS_PER_EXECUTION                 = local.max_cells_per_execution
+        SEARCH_INTERVAL_SECONDS                 = local.search_interval_seconds
+        RETRY_DELAY_SECONDS                     = local.retry_delay_seconds
+        MAX_RETRIES                             = local.max_retries
+        ACCEPTANCE_WINDOW_SECONDS               = local.acceptance_window_seconds
+        MAX_SEARCH_RADIUS_KM                    = local.max_search_radius_km
+        PARALLEL_QUERY_CONCURRENCY              = local.parallel_query_concurrency
         DONOR_SEARCH_LAMBDA_ARN                 = local.donor_search_lambda_arn
         SCHEDULER_ROLE_ARN                      = local.eventbridge_scheduler_role_arn
       }

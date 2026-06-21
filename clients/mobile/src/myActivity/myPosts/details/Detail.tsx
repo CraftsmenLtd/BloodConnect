@@ -153,7 +153,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
             </View>
           }
           {isDetailsPage
-            && [STATUS.ACCEPTED, STATUS.IGNORED].includes(localStatus)
+            && [STATUS.ACCEPTED, STATUS.IGNORED, STATUS.PENDING].includes(localStatus)
             && <View style={styles.buttonContainer}>
               {statusError !== '' && <Text style={styles.errorMessage}>{statusError}</Text>}
               <Button

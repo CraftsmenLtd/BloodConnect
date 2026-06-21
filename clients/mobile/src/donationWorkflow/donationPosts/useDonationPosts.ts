@@ -25,22 +25,42 @@ export const useDonationPosts = () => {
   useEffect(() => { void fetchPosts() }, [])
 
   const fetchDonations = async(bloodGroup: string = ''): Promise<void> => {
+    const locations = userProfile.preferredDonationLocations ?? []
+    if (locations.length === 0) {
+      setDonationPosts([])
+
+      return
+    }
+
     const results = await Promise.allSettled(
-      userProfile.uniqueGeoPartitions.map(async(eachPartition) => {
-        const response = await fetchDonationPublicPosts(eachPartition, fetchClient, bloodGroup)
+      locations.map(async(loc) => {
+        const response = await fetchDonationPublicPosts(
+          loc.latitude,
+          loc.longitude,
+          fetchClient,
+          bloodGroup
+        )
 
         return (response.data !== null) ? formatDonations(response.data) : []
       })
     )
 
-    const formattedDonations = results
+    const merged = results
       .filter((result) => result.status === 'fulfilled')
       .flatMap((result) => (result as PromiseFulfilledResult<DonationData[]>).value)
 
-    formattedDonations.sort((a, b) =>
+    const seen = new Set<string>()
+    const deduped = merged.filter((d) => {
+      if (seen.has(d.requestPostId)) return false
+      seen.add(d.requestPostId)
+
+      return true
+    })
+
+    deduped.sort((a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
-    setDonationPosts(formattedDonations)
+    setDonationPosts(deduped)
   }
 
   const fetchPosts = async(): Promise<void> => {

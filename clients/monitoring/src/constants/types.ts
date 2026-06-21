@@ -9,7 +9,8 @@ export type BloodRequestDynamoDBUnmarshaledItem = {
   countryCode: DynamoDBString;
   createdAt: DynamoDBString;
   donationDateTime: DynamoDBString;
-  geohash: DynamoDBString;
+  h3Res5: DynamoDBString;
+  h3Res8: DynamoDBString;
   GSI1PK: DynamoDBString;
   GSI1SK: DynamoDBString;
   latitude: DynamoDBNumber;
@@ -68,7 +69,31 @@ export type UserLocationDynamoDBUnmarshaledItem = {
   longitude: DynamoDBNumber;
 };
 
+export type WaveEntryUnmarshaledItem = {
+  M: {
+    retryCount: DynamoDBNumber;
+    level: DynamoDBNumber;
+    donorsFound: DynamoDBNumber;
+    at: DynamoDBString;
+  };
+};
+
+export type DonorSearchDynamoDBUnmarshaledItem = {
+  PK: DynamoDBString;
+  SK: DynamoDBString;
+  status: DynamoDBString;
+  createdAt: DynamoDBString;
+  completionReason?: DynamoDBString;
+  currentLevel?: DynamoDBNumber;
+  currentRetryCount?: DynamoDBNumber;
+  donorsFoundSoFar?: DynamoDBNumber;
+  targetDonors?: DynamoDBNumber;
+  lastUpdatedAt?: DynamoDBString;
+  waveHistory?: { L: WaveEntryUnmarshaledItem[] };
+};
+
 export type CompleteRequest = (BloodRequestDynamoDBUnmarshaledItem &
   { notifiedDonors?: (NotificationDynamoDBUnmarshaledItem
     & {location: UserLocationDynamoDBUnmarshaledItem})[];
+  donorSearch?: DonorSearchDynamoDBUnmarshaledItem;
   })

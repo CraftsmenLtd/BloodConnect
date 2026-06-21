@@ -235,6 +235,30 @@ resource "aws_iam_role" "maintainers_role" {
   })
 }
 
+resource "aws_iam_role_policy" "maintainers_dynamodb_read" {
+  name = "${var.environment}-maintainers-dynamodb-read"
+  role = aws_iam_role.maintainers_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "MonitoringReadOnly"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:Query"
+        ]
+        Resource = [
+          var.dynamodb_table_arn,
+          "${var.dynamodb_table_arn}/index/GSI1",
+          "${var.dynamodb_table_arn}/index/LSI1"
+        ]
+      }
+    ]
+  })
+}
+
 resource "aws_cognito_identity_pool_roles_attachment" "identity_pool_roles" {
   identity_pool_id = aws_cognito_identity_pool.maintainers.id
 

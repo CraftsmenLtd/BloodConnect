@@ -6,7 +6,9 @@ import type {
   BloodGroup,
   DonationDTO,
   DonorSearchStatus,
+  DonorSearchCompletionReason,
   EligibleDonorInfo,
+  WaveEntry,
   UrgencyType
 } from '../../../commons/dto/DonationDTO'
 
@@ -63,24 +65,17 @@ export type UpdateBloodDonationAttributes = {
   shortDescription?: string;
 }
 
-export enum DynamoDBEventName {
-  INSERT = 'INSERT',
-  MODIFY = 'MODIFY'
-}
-
 export type DonorSearchConfig = {
   dynamodbTableName: string;
   awsRegion: string;
-  cacheGeohashPrefixLength: number;
-  maxGeohashCacheEntriesCount: number;
-  maxGeohashCacheMbSize: number;
-  maxGeohashCacheTimeoutMinutes: number;
-  maxGeohashNeighborSearchLevel: number;
-  donorSearchMaxInitiatingRetryCount: number;
-  neighborSearchGeohashPrefixLength: number;
-  donorSearchDelayBetweenExecution: number;
-  maxGeohashPerProcessingBatch: number;
-  maxGeohashesPerExecution: number;
+  maxCellsPerExecution: number;
+  searchIntervalSeconds: number;
+  initialWaveDelaySeconds: number;
+  retryDelaySeconds: number;
+  maxRetries: number;
+  acceptanceWindowSeconds: number;
+  maxSearchRadiusKm: number;
+  parallelQueryConcurrency: number;
   notificationQueueUrl: string;
   schedulerRoleArn: string;
   donorSearchLambdaArn: string;
@@ -90,7 +85,8 @@ export type DonationRequestInitiatorAttributes = {
   seekerId: string;
   requestPostId: string;
   createdAt: string;
-  geohash: string;
+  centerHex: string;
+  h3Res5: string;
 }
 
 export type DonorSearchAttributes = {
@@ -98,7 +94,14 @@ export type DonorSearchAttributes = {
   requestPostId: string;
   createdAt: string;
   status: DonorSearchStatus;
+  completionReason?: DonorSearchCompletionReason | null;
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
+  currentLevel?: number;
+  currentRetryCount?: number;
+  lastUpdatedAt?: string;
+  targetDonors?: number;
+  donorsFoundSoFar?: number;
+  waveHistory?: WaveEntry[];
 }
 
 export type DonorSearchSchedulerAttributes = {
@@ -107,10 +110,9 @@ export type DonorSearchSchedulerAttributes = {
   createdAt: string;
   targetedExecutionTime?: number;
   remainingDonorsToFind?: number;
-  currentNeighborSearchLevel: number;
-  remainingGeohashesToProcess: string[];
-  notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
-  initiationCount: number;
+  currentLevel: number;
+  remainingCells: string[];
+  retryCount: number;
 }
 
 export type AcceptDonationRequestAttributes = {

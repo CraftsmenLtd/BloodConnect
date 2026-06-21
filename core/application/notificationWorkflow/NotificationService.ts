@@ -213,6 +213,13 @@ export class NotificationService {
     }
   }
 
+  async queryBloodDonationNotifications(
+    requestPostId: string,
+    status?: string
+  ): Promise<(NotificationDTO | DonationNotificationDTO)[]> {
+    return this.notificationRepository.queryBloodDonationNotifications(requestPostId, status)
+  }
+
   async getIgnoredDonorList(
     requestPostId: string
   ): Promise<(NotificationDTO | DonationNotificationDTO)[]> {

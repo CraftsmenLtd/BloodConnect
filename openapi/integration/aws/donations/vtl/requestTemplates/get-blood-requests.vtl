@@ -1,0 +1,11 @@
+{
+  "lat": "$input.params('lat')",
+  "lng": "$input.params('lng')",
+  "radius": "$input.params('radius')",
+  "bloodGroup": "$input.params('bloodGroup')",
+  "cursor": "$input.params('cursor')",
+  "pageSize": "$input.params('pageSize')",
+  "countryCode": "$input.params().header.get('CloudFront-Viewer-Country')",
+  "apiGwRequestId": "$context.requestId",
+  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')"
+}

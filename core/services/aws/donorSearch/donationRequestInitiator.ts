@@ -3,12 +3,13 @@ import {
 } from '../../../application/bloodDonationWorkflow/DonorSearchService'
 import type {
   DonationRequestInitiatorAttributes,
-  DonorSearchConfig,
+  DonorSearchConfig
 } from '../../../application/bloodDonationWorkflow/Types'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import {
   DonorSearchIntentionalError
 } from '../../../application/bloodDonationWorkflow/DonorSearchOperationalError'
+import type { DonationStatus } from '../../../../commons/dto/DonationDTO'
 import { Config } from 'commons/libs/config/config'
 import DonorSearchDynamoDbOperations from '../commons/ddbOperations/DonorSearchDynamoDbOperations'
 import SchedulerOperations from '../commons/EventBridge/ScheduleOperations'
@@ -20,19 +21,18 @@ const donorSearchDynamoDbOperations = new DonorSearchDynamoDbOperations(
   config.awsRegion
 )
 
-// EventBridge Pipe event format
 type EventBridgePipeEvent = {
   PK: string
   SK: string
-  geohash: string
+  h3Res5: string
+  h3Res8: string
   status: string
-  eventName?: string
+  previousStatus?: string
 }
 
 async function donationRequestInitiatorLambda(
   event: EventBridgePipeEvent | EventBridgePipeEvent[]
 ): Promise<void> {
-  // Normalize to array (EventBridge Pipe with batch_size > 1 sends array)
   const events = Array.isArray(event) ? event : [event]
 
   for (const body of events) {
@@ -54,16 +54,21 @@ async function donationRequestInitiatorLambda(
         seekerId,
         requestPostId,
         createdAt,
-        geohash: body.geohash
+        centerHex: body.h3Res8,
+        h3Res5: body.h3Res5
       }
 
       await donorSearchService.initiateDonorSearchRequest(
         donationRequestInitiatorAttributes,
-        new SchedulerOperations(config.awsRegion, config.schedulerRoleArn, serviceLogger, config.donorSearchDelayBetweenExecution),
-        body.status,
-        body.eventName
+        new SchedulerOperations(
+          config.awsRegion,
+          config.schedulerRoleArn,
+          serviceLogger,
+          config.initialWaveDelaySeconds
+        ),
+        body.status as DonationStatus,
+        (body.previousStatus ?? '') as DonationStatus
       )
-
     } catch (error) {
       serviceLogger.error(error instanceof DonorSearchIntentionalError ? error.message : error)
       throw error

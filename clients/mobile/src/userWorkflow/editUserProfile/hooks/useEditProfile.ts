@@ -27,6 +27,14 @@ import { formatLocations } from '../../../utility/formatting'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+const sanitizeIsoDate = (value: unknown): string | undefined =>
+  typeof value === 'string'
+  && ISO_DATE_PATTERN.test(value)
+  && !Number.isNaN(Date.parse(value))
+    ? value
+    : undefined
+
 type ProfileFields = keyof Omit<ProfileData, 'location'>
 
 type ProfileData = {
@@ -169,11 +177,17 @@ export const useEditProfile = () => {
       (preferred) => rest.locations.includes(preferred.area)
     )
 
+    const coercedWeight = Number(rest.weight)
     const requestPayload = {
       ...rest,
 
-      weight: Number.isNaN(rest.weight) ? 0 : rest.weight,
+      weight: Number.isFinite(coercedWeight) ? coercedWeight : 0,
       height: rest.height !== '' ? rest.height : '0.0',
+      dateOfBirth: sanitizeIsoDate(rest.dateOfBirth),
+      lastDonationDate: sanitizeIsoDate(rest.lastDonationDate),
+      lastVaccinatedDate: sanitizeIsoDate(
+        (rest as Record<string, unknown>).lastVaccinatedDate
+      ),
 
       preferredDonationLocations: [
         ...updatedPreferredDonationLocations,

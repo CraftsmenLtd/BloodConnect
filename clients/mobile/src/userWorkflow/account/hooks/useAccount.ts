@@ -18,7 +18,7 @@ export type User = {
 export type UserResponseData = {
   success: boolean;
   data: {
-    preferredDonationLocations: Array<Omit<LocationDTO, 'userId' | 'locationId' | 'geohash' | 'createdAt'>>;
+    preferredDonationLocations: Array<Omit<LocationDTO, 'userId' | 'locationId' | 'createdAt'>>;
     message: string;
   } & Omit<UserDetailsDTO, 'email' | 'age' | 'createdAt' | 'updatedAt' | 'deviceToken' | 'snsEndpointArn'>;
 }

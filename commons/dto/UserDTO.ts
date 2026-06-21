@@ -36,7 +36,8 @@ export type LocationDTO = {
   countryCode: string;
   latitude: number;
   longitude: number;
-  geohash: string;
+  h3Res8: string;
+  h3Res10: string;
   createdAt: string;
   bloodGroup: BloodGroup;
   availableForDonation: boolean;

@@ -29,6 +29,12 @@ const locationDynamoDbOperations = new LocationDynamoDbOperations(
   config.awsRegion
 )
 
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+const isValidIsoDate = (value: unknown): value is string =>
+  typeof value === 'string'
+  && ISO_DATE_PATTERN.test(value)
+  && !Number.isNaN(Date.parse(value))
+
 async function createUserLambda(
   event: CreateUserAttributes & HttpLoggerAttributes
 ): Promise<APIGatewayProxyResult> {
@@ -53,8 +59,8 @@ async function createUserLambda(
       ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
       ...(event.height !== undefined && { height: event.height }),
       ...(event.weight !== undefined && { weight: event.weight }),
-      ...(event.lastDonationDate !== undefined && { lastDonationDate: event.lastDonationDate }),
-      ...(event.lastVaccinatedDate !== undefined && { lastVaccinatedDate: event.lastVaccinatedDate }),
+      ...(isValidIsoDate(event.lastDonationDate) && { lastDonationDate: event.lastDonationDate }),
+      ...(isValidIsoDate(event.lastVaccinatedDate) && { lastVaccinatedDate: event.lastVaccinatedDate }),
       ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
       ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
     }

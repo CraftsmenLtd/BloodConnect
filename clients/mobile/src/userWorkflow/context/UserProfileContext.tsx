@@ -31,8 +31,7 @@ const defaultProfile: UserProfile = {
   NIDBack: '',
   phoneNumbers: [],
   preferredDonationLocations: [],
-  locations: [],
-  uniqueGeoPartitions: []
+  locations: []
 }
 
 const UserProfileContext = createContext<UserProfileContextData | undefined>({
@@ -66,15 +65,12 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       phoneNumbers: profile.phoneNumbers ?? [],
       preferredDonationLocations: profile.preferredDonationLocations?.map((location) => ({
         area: location.area ?? '',
-        geoHash: location.geoHash ?? '',
-        geoPartition: location.geoPartition ?? '',
+        h3Res8: location.h3Res8 ?? '',
+        h3Res10: location.h3Res10 ?? '',
         latitude: location.latitude ?? 0,
         longitude: location.longitude ?? 0
       })) ?? [],
-      locations: profile?.preferredDonationLocations?.map((location) => location.area) ?? [],
-      uniqueGeoPartitions: [
-        ...new Set(profile.preferredDonationLocations?.map((loc) => loc.geoPartition))
-      ]
+      locations: profile?.preferredDonationLocations?.map((location) => location.area) ?? []
     }
   }
 
@@ -103,13 +99,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       ...userProfile,
       ...partialProfile,
       preferredDonationLocations: partialProfile.preferredDonationLocations
-        ?? userProfile.preferredDonationLocations,
-      uniqueGeoPartitions: [
-        ...new Set(
-          (partialProfile.preferredDonationLocations ?? userProfile.preferredDonationLocations)
-            .map((loc) => loc.geoPartition)
-        )
-      ]
+        ?? userProfile.preferredDonationLocations
     }
 
     setUserProfile(updatedProfile)

@@ -36,15 +36,21 @@ export const updateDonation = async(payload: Record<string, unknown>, httpClient
 }
 
 export const fetchDonationPublicPosts = async(
-  geoPartition: string,
+  latitude: number,
+  longitude: number,
   httpClient: HttpClient,
-  bloodGroup: string = ''
+  bloodGroup: string = '',
+  radius?: number
 ): Promise<DonationResponse> => {
   try {
-    const response = await httpClient.get<DonationResponse>(
-      `/donations/posts/${geoPartition}`,
-      { bloodGroup: (bloodGroup !== '' ? bloodGroup : '') }
-    )
+    const params: Record<string, string | number> = {
+      lat: latitude,
+      lng: longitude
+    }
+    if (bloodGroup !== '') params.bloodGroup = bloodGroup
+    if (radius !== undefined) params.radius = radius
+
+    const response = await httpClient.get<DonationResponse>('/donations/blood-requests', params)
 
     return {
       data: response.data,

@@ -21,6 +21,7 @@ Dive into the Code
    :maxdepth: 2
 
    GettingStarted
+   DonorSearch
 
 OpenAPI
 ~~~~~~~

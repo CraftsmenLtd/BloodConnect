@@ -1,4 +1,3 @@
-import { GEO_PARTITION_PREFIX_LENGTH } from '../../../../../commons/libs/constants/NoMagicNumbers'
 import type { DonationDTO, BloodGroup } from '../../../../../commons/dto/DonationDTO'
 import type {
   DbModelDtoAdapter,
@@ -16,8 +15,8 @@ export type DonationFields = Omit<DonationDTO, 'requestPostId' | 'seekerId'> &
 HasTimeLog & {
   PK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}`;
   SK: `${typeof BLOOD_REQUEST_PK_PREFIX}#${string}#${string}`;
-  GSI1PK?: `LOCATION#${string}#STATUS#${string}`;
-  GSI1SK?: `${string}#BG#${string}`;
+  GSI1PK?: `REQ#${string}#${string}#${string}#${string}`;
+  GSI1SK?: string;
   LSI1SK?: `${typeof BLOOD_REQUEST_LSI1SK_PREFIX}#${string}#${string}`;
 }
 
@@ -53,17 +52,17 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
       createdAt
     }
 
-    if (
-      remainingData.status !== undefined
+    const canIndex
+      = remainingData.status !== undefined
       && remainingData.countryCode !== undefined
-      && remainingData.geohash !== undefined
-    ) {
-      const geoPartition = remainingData.geohash.slice(0, GEO_PARTITION_PREFIX_LENGTH)
-      data.GSI1PK = `LOCATION#${remainingData.countryCode}-${geoPartition}#STATUS#${remainingData.status}`
+      && (remainingData.requestedBloodGroup as BloodGroup) !== undefined
+      && remainingData.h3Res5 !== undefined
+
+    if (canIndex) {
+      data.GSI1PK = `REQ#${remainingData.countryCode}#${remainingData.requestedBloodGroup}#${remainingData.status}#${remainingData.h3Res5}`
+      data.GSI1SK = createdAt
     }
-    if ((remainingData.requestedBloodGroup as BloodGroup) !== undefined) {
-      data.GSI1SK = `${createdAt}#BG#${remainingData.requestedBloodGroup}`
-    }
+
     if (remainingData.status !== undefined) {
       data.LSI1SK = `${BLOOD_REQUEST_LSI1SK_PREFIX}#${remainingData.status}#${requestPostId}`
     }
@@ -72,8 +71,7 @@ implements NosqlModel<DonationFields>, DbModelDtoAdapter<DonationDTO, DonationFi
   }
 
   toDto(dbFields: DonationFields): DonationDTO {
-
-    const { PK, SK, LSI1SK, createdAt, ...remainingDonationFields } = dbFields
+    const { PK, SK, LSI1SK: _LSI1SK, GSI1PK: _GSI1PK, GSI1SK: _GSI1SK, createdAt, ...remainingDonationFields } = dbFields
 
     return {
       ...remainingDonationFields,

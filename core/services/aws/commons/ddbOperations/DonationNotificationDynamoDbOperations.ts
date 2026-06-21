@@ -1,4 +1,6 @@
 import DynamoDbTableOperations from './DynamoDbTableOperations'
+import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb'
+import { PutCommand } from '@aws-sdk/lib-dynamodb'
 import type {
   QueryInput
 } from '../../../../application/models/policies/repositories/QueryTypes'
@@ -18,6 +20,25 @@ export default class DonationNotificationDynamoDbOperations extends DynamoDbTabl
 > implements NotificationRepository {
   constructor(tableName: string, region: string) {
     super(new DonationNotificationModel(), tableName, region)
+  }
+
+  async create(
+    item: NotificationDTO | DonationNotificationDTO
+  ): Promise<NotificationDTO | DonationNotificationDTO> {
+    const dbItem = this.modelAdapter.fromDto(item)
+    try {
+      await this.client.send(new PutCommand({
+        TableName: this.tableName,
+        Item: dbItem,
+        ConditionExpression: 'attribute_not_exists(PK)'
+      }))
+    } catch (error) {
+      if (!(error instanceof ConditionalCheckFailedException)) {
+        throw error
+      }
+    }
+
+    return this.modelAdapter.toDto(dbItem)
   }
 
   async queryBloodDonationNotifications(

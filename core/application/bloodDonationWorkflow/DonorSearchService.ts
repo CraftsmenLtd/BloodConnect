@@ -1,35 +1,29 @@
-import type { EligibleDonorInfo } from '../../../commons/dto/DonationDTO'
+import type { EligibleDonorInfo, WaveEntry } from '../../../commons/dto/DonationDTO'
 import {
   DonationStatus,
   DonorSearchStatus,
+  DonorSearchCompletionReason,
+  AcceptDonationStatus,
   type DonorSearchDTO
 } from '../../../commons/dto/DonationDTO'
-import { getDistanceBetweenGeohashes } from '../utils/geohash'
+import { haversineKm } from '../utils/h3'
 import type { DonorSearchConfig } from './Types'
-import {
-  DynamoDBEventName,
-  type DonationRequestInitiatorAttributes,
-  type DonorSearchAttributes,
-  type DonorSearchSchedulerAttributes
+import type {
+  DonationRequestInitiatorAttributes,
+  DonorSearchAttributes,
+  DonorSearchSchedulerAttributes
 } from './Types'
 import type { QueueModel } from '../models/queue/QueueModel'
-import {
-  GEO_PARTITION_PREFIX_LENGTH,
-} from '../../../commons/libs/constants/NoMagicNumbers'
 import type { Logger } from '../models/logger/Logger'
 import type DonorSearchRepository from '../models/policies/repositories/DonorSearchRepository'
-import type {
-  DonorInfo,
-  GeohashCacheManager,
-  GeohashDonorMap
-} from '../utils/GeohashCacheMapManager'
-import { updateGroupedGeohashCache } from '../utils/GeohashCacheMapManager'
-import type { GeohashService } from './GeohashService'
+import type { H3SearchService } from './H3SearchService'
+import type { DonorInHexResult } from '../models/policies/repositories/H3SearchRepository'
 import type { BloodDonationService } from './BloodDonationService'
 import type { AcceptDonationService } from './AcceptDonationRequestService'
 import type { NotificationService } from '../notificationWorkflow/NotificationService'
 import { calculateDelayPeriod, calculateTotalDonorsToFind } from '../utils/calculateDonorsToNotify'
 import type { SchedulerModel } from '../models/scheduler/SchedulerModel'
+import { cellToLatLng } from 'h3-js'
 
 export class DonorSearchService {
   constructor(
@@ -42,66 +36,75 @@ export class DonorSearchService {
     donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes,
     schedulerModel: SchedulerModel,
     donationStatus: DonationStatus,
-    eventName: DynamoDBEventName
+    previousStatus: DonationStatus
   ): Promise<void> {
-    const { seekerId, requestPostId, createdAt } = donationRequestInitiatorAttributes
+    await this.doInitiateDonorSearchRequest(
+      donationRequestInitiatorAttributes,
+      schedulerModel,
+      donationStatus,
+      previousStatus
+    )
+  }
+
+  private async doInitiateDonorSearchRequest(
+    donationRequestInitiatorAttributes: DonationRequestInitiatorAttributes,
+    schedulerModel: SchedulerModel,
+    donationStatus: DonationStatus,
+    previousStatus: DonationStatus
+  ): Promise<void> {
+    const { seekerId, requestPostId, createdAt, centerHex } = donationRequestInitiatorAttributes
 
     const donorSearchAttributes: DonorSearchAttributes = {
-      ...donationRequestInitiatorAttributes,
+      seekerId,
+      requestPostId,
+      createdAt,
       status: DonorSearchStatus.PENDING,
       notifiedEligibleDonors: {}
     }
 
-    const DonorSearchSchedulerAttributes: DonorSearchSchedulerAttributes = {
+    const schedulerAttributes: DonorSearchSchedulerAttributes = {
       seekerId,
       requestPostId,
       createdAt,
-      currentNeighborSearchLevel: 0,
-      remainingGeohashesToProcess: [
-        donationRequestInitiatorAttributes.geohash.slice(
-          0,
-          this.options.neighborSearchGeohashPrefixLength
-        )
-      ],
-      notifiedEligibleDonors: {},
-      initiationCount: 1
+      currentLevel: 0,
+      remainingCells: [centerHex],
+      retryCount: 0
     }
 
     const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
 
     const shouldRestartSearch
       = donorSearchRecord?.status === DonorSearchStatus.COMPLETED
-      && eventName === DynamoDBEventName.MODIFY
+      && previousStatus !== DonationStatus.PENDING
       && donationStatus === DonationStatus.PENDING
 
     if (donorSearchRecord === null) {
-      this.logger.info('inserting donor search record')
+      this.logger.info({ event: 'search_record_created' }, 'inserting donor search record')
       await this.createDonorSearchRecord(donorSearchAttributes)
 
-      this.logger.info('starting donor search request')
-      await this.scheduleDonorSearchRequest(DonorSearchSchedulerAttributes, schedulerModel)
-    } else {
-      this.logger.info('updating donor search record because the donation request has been updated')
+      this.logger.info({ event: 'search_scheduled' }, 'starting donor search request')
+      await this.scheduleDonorSearchRequest(schedulerAttributes, schedulerModel)
+    } else if (shouldRestartSearch) {
+      this.logger.info({ event: 'search_restarted' }, 'restarting donor search request')
       await this.updateDonorSearchRecord({
-        ...donorSearchAttributes,
-        status: shouldRestartSearch ? DonorSearchStatus.PENDING : donorSearchRecord.status,
-        notifiedEligibleDonors: donorSearchRecord.notifiedEligibleDonors
+        seekerId,
+        requestPostId,
+        createdAt,
+        status: DonorSearchStatus.PENDING,
+        completionReason: null
       })
-    }
-
-    if (shouldRestartSearch) {
-      DonorSearchSchedulerAttributes.notifiedEligibleDonors = donorSearchRecord.notifiedEligibleDonors
-      this.logger.info('restarting donor search request')
-      await this.scheduleDonorSearchRequest(DonorSearchSchedulerAttributes, schedulerModel)
+      await this.scheduleDonorSearchRequest(schedulerAttributes, schedulerModel)
+    } else {
+      this.logger.info({ event: 'search_restart_skipped' }, 'donor search record already exists; no restart triggered')
     }
   }
 
   async scheduleDonorSearchRequest(
-    DonorSearchSchedulerAttributes: DonorSearchSchedulerAttributes,
+    schedulerAttributes: DonorSearchSchedulerAttributes,
     schedulerModel: SchedulerModel
   ): Promise<void> {
     await schedulerModel.schedule(
-      DonorSearchSchedulerAttributes,
+      schedulerAttributes,
       this.options.donorSearchLambdaArn
     )
   }
@@ -111,53 +114,51 @@ export class DonorSearchService {
     requestPostId,
     createdAt,
     remainingDonorsToFind,
-    currentNeighborSearchLevel,
-    remainingGeohashesToProcess,
-    initiationCount,
-    notifiedEligibleDonors,
+    currentLevel,
+    remainingCells,
+    retryCount,
     bloodDonationService,
     acceptDonationService,
     notificationService,
-    geohashService,
+    h3SearchService,
     queueModel,
-    schedulerModel,
-    geohashCache
+    schedulerModel
   }: {
     seekerId: string;
     requestPostId: string;
     createdAt: string;
     targetedExecutionTime?: number;
     remainingDonorsToFind?: number;
-    currentNeighborSearchLevel: number;
-    remainingGeohashesToProcess: string[];
-    initiationCount: number;
-    notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
+    currentLevel: number;
+    remainingCells: string[];
+    retryCount: number;
     bloodDonationService: BloodDonationService;
     acceptDonationService: AcceptDonationService;
     notificationService: NotificationService;
-    geohashService: GeohashService;
+    h3SearchService: H3SearchService;
     queueModel: QueueModel;
     schedulerModel: SchedulerModel;
-    geohashCache: GeohashCacheManager<string, GeohashDonorMap>;
   }): Promise<void> {
-    const donationPost = await bloodDonationService.getDonationRequest(
-      seekerId,
-      requestPostId,
-      createdAt
-    )
+    const donationPost = await bloodDonationService.getDonationRequest(seekerId, requestPostId, createdAt)
+
+    const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
+    if (donorSearchRecord === null) {
+      this.logger.info({ event: 'search_record_missing' }, 'terminating process as no search record found')
+
+      return
+    }
 
     if (
       donationPost.status === DonationStatus.COMPLETED
       || donationPost.status === DonationStatus.CANCELLED
     ) {
-      this.logger.info(`terminating process as donation status is ${donationPost.status}`)
-
-      return
-    }
-
-    const donorSearchRecord = await this.getDonorSearch(seekerId, requestPostId, createdAt)
-    if (donorSearchRecord === null) {
-      this.logger.info('terminating process as no search record found')
+      this.logger.info(
+        { event: 'search_request_closed', donationStatus: donationPost.status },
+        `terminating process as donation status is ${donationPost.status}`
+      )
+      await this.completeSearch(
+        seekerId, requestPostId, createdAt, DonorSearchCompletionReason.REQUEST_CLOSED
+      )
 
       return
     }
@@ -168,47 +169,62 @@ export class DonorSearchService {
       urgencyLevel,
       donationDateTime,
       countryCode,
-      geohash
+      h3Res8: centerHex
     } = donationPost
 
-    const isFirstInitiation = initiationCount === 1
-    const remainingBagsNeeded = isFirstInitiation
-      ? bloodQuantity
-      : await acceptDonationService.getRemainingBagsNeeded(seekerId, requestPostId, bloodQuantity)
-
+    const remainingBagsNeeded
+      = await acceptDonationService.getRemainingBagsNeeded(seekerId, requestPostId, bloodQuantity)
     if (remainingBagsNeeded === 0) {
-      this.logger.info('terminating process as sufficient donors have accepted the request')
+      this.logger.info({ event: 'search_donors_accepted' }, 'terminating process as sufficient donors accepted')
+      await this.completeSearch(
+        seekerId, requestPostId, createdAt, DonorSearchCompletionReason.DONORS_ACCEPTED
+      )
 
       return
     }
 
-    const rejectedDonorsCount: number = isFirstInitiation
-      ? 0
-      : await notificationService.getRejectedDonorsCount(requestPostId)
+    const existingNotifications
+      = await notificationService.queryBloodDonationNotifications(requestPostId)
+    const excluded = new Set<string>([
+      ...existingNotifications.map((n) => n.userId),
+      seekerId
+    ])
+    const rejectedDonorsCount = existingNotifications.filter(
+      (n) => n.status === AcceptDonationStatus.IGNORED
+    ).length
 
     const totalDonorsToFind
       = remainingDonorsToFind !== undefined && remainingDonorsToFind > 0
         ? remainingDonorsToFind + rejectedDonorsCount
         : calculateTotalDonorsToFind(remainingBagsNeeded, urgencyLevel)
 
-    this.logger.info(`querying geohash to find ${totalDonorsToFind} eligible donors`)
-    const { eligibleDonors, updatedNeighborSearchLevel, geohashesForNextIteration }
-      = await this.queryEligibleDonors(
-        geohashService,
-        geohashCache,
-        seekerId,
-        requestedBloodGroup,
-        countryCode,
-        geohash,
-        totalDonorsToFind,
-        currentNeighborSearchLevel,
-        remainingGeohashesToProcess,
-        notifiedEligibleDonors
-      )
+    this.logger.info(
+      { event: 'wave_start', retryCount, level: currentLevel, target: totalDonorsToFind },
+      `querying H3 cells to find ${totalDonorsToFind} eligible donors`
+    )
+
+    const { cells, finalLevel } = h3SearchService.buildRingBatch(
+      centerHex,
+      currentLevel,
+      remainingCells,
+      this.options.maxCellsPerExecution
+    )
+
+    const { eligibleDonors, processedCellCount } = await this.collectEligibleDonors({
+      cells,
+      excluded,
+      countryCode,
+      bloodGroup: requestedBloodGroup,
+      donorsNeeded: totalDonorsToFind,
+      centerHex,
+      h3SearchService
+    })
 
     const eligibleDonorsCount = Object.keys(eligibleDonors).length
-
-    this.logger.info(`sending notification for donation request to ${eligibleDonorsCount} donors`)
+    this.logger.info(
+      { event: 'notifications_published', retryCount, level: finalLevel, donorsFound: eligibleDonorsCount },
+      `sending notification for donation request to ${eligibleDonorsCount} donors`
+    )
     await notificationService.sendRequestNotification(
       donationPost,
       eligibleDonors,
@@ -216,24 +232,44 @@ export class DonorSearchService {
       this.options.notificationQueueUrl
     )
 
-    const hasMaxGeohashLevelReached
-      = updatedNeighborSearchLevel >= this.options.maxGeohashNeighborSearchLevel
-      && geohashesForNextIteration.length === 0
+    const mergedNotified = {
+      ...(donorSearchRecord.notifiedEligibleDonors ?? {}),
+      ...eligibleDonors
+    }
+    const waveEntry: WaveEntry = {
+      retryCount,
+      level: finalLevel,
+      donorsFound: eligibleDonorsCount,
+      at: new Date().toISOString()
+    }
+    await this.updateDonorSearchRecord({
+      seekerId,
+      requestPostId,
+      createdAt,
+      currentLevel: finalLevel,
+      currentRetryCount: retryCount,
+      donorsFoundSoFar: Object.keys(mergedNotified).length,
+      waveHistory: [...(donorSearchRecord.waveHistory ?? []), waveEntry],
+      ...(eligibleDonorsCount > 0 ? { notifiedEligibleDonors: mergedNotified } : {}),
+      ...(donorSearchRecord.targetDonors === undefined ? { targetDonors: totalDonorsToFind } : {})
+    })
 
     const nextRemainingDonorsToFind = totalDonorsToFind - eligibleDonorsCount
+    const leftoverCells = cells.slice(processedCellCount)
+    const noDonorsFoundInBatch = leftoverCells.length === 0 && processedCellCount > 0
+      && eligibleDonorsCount === 0
 
-    const updatedNotifiedEligibleDonors = { ...notifiedEligibleDonors, ...eligibleDonors }
-
-    if (!hasMaxGeohashLevelReached && nextRemainingDonorsToFind > 0) {
+    if (nextRemainingDonorsToFind > 0 && leftoverCells.length > 0) {
       this.logger.info(
         {
-          currentNeighborSearchLevel: updatedNeighborSearchLevel,
-          remainingGeohashesToProcessCount: geohashesForNextIteration.length,
+          event: 'wave_continue',
+          currentLevel: finalLevel,
+          leftoverCellsCount: leftoverCells.length,
           remainingDonorsToFind: nextRemainingDonorsToFind,
-          delayPeriod: this.options.donorSearchDelayBetweenExecution,
-          initiationCount
+          delaySeconds: this.options.searchIntervalSeconds,
+          retryCount
         },
-        `continuing donor search to find remaining ${nextRemainingDonorsToFind} donors`
+        `continuing donor search to find ${nextRemainingDonorsToFind} more donors`
       )
 
       await this.scheduleDonorSearchRequest(
@@ -241,11 +277,10 @@ export class DonorSearchService {
           seekerId,
           requestPostId,
           createdAt,
-          notifiedEligibleDonors: updatedNotifiedEligibleDonors,
-          currentNeighborSearchLevel: updatedNeighborSearchLevel,
-          remainingGeohashesToProcess: geohashesForNextIteration,
+          currentLevel: finalLevel,
+          remainingCells: leftoverCells,
           remainingDonorsToFind: nextRemainingDonorsToFind,
-          initiationCount
+          retryCount
         },
         schedulerModel
       )
@@ -253,39 +288,29 @@ export class DonorSearchService {
       return
     }
 
-    const hasDonorSearchMaxInstantiatedRetryReached
-      = initiationCount >= this.options.donorSearchMaxInitiatingRetryCount
-
-    if (hasDonorSearchMaxInstantiatedRetryReached) {
+    if (retryCount >= this.options.maxRetries || !noDonorsFoundInBatch) {
+      const completionReason = nextRemainingDonorsToFind <= 0
+        ? DonorSearchCompletionReason.FOUND_ENOUGH
+        : DonorSearchCompletionReason.RADIUS_EXHAUSTED
       this.logger.info(
-        `updating donor search status to ${DonorSearchStatus.COMPLETED} as max retry reached`
+        { event: 'search_completed', retryCount, maxRetries: this.options.maxRetries, completionReason },
+        'marking search COMPLETED'
       )
-      await this.updateDonorSearchRecord({
-        seekerId,
-        requestPostId,
-        createdAt,
-        notifiedEligibleDonors: updatedNotifiedEligibleDonors,
-        status: DonorSearchStatus.COMPLETED
-      })
+      await this.completeSearch(seekerId, requestPostId, createdAt, completionReason)
 
       return
     }
 
-    const initiatingDelayPeriod = calculateDelayPeriod(
+    const retryDelaySeconds = calculateDelayPeriod(
       donationDateTime,
-      this.options.maxGeohashPerProcessingBatch,
-      this.options.maxGeohashesPerExecution,
-      this.options.donorSearchMaxInitiatingRetryCount,
-      this.options.donorSearchDelayBetweenExecution
+      this.options.maxRetries,
+      this.options.retryDelaySeconds,
+      this.options.acceptanceWindowSeconds
     )
+
     this.logger.info(
-      {
-        currentNeighborSearchLevel: updatedNeighborSearchLevel,
-        remainingGeohashesToProcessCount: geohashesForNextIteration.length,
-        initiationCount: initiationCount + 1,
-        initiatingDelayPeriod
-      },
-      `initiating retry request ${initiationCount + 1}`
+      { event: 'retry_scheduled', retryCount: retryCount + 1, retryDelaySeconds },
+      `no donors found in batch; scheduling retry ${retryCount + 1}`
     )
 
     await this.scheduleDonorSearchRequest(
@@ -293,17 +318,72 @@ export class DonorSearchService {
         seekerId,
         requestPostId,
         createdAt,
-        notifiedEligibleDonors: updatedNotifiedEligibleDonors,
-        currentNeighborSearchLevel: 0,
-        remainingGeohashesToProcess: [
-          geohash.slice(0, this.options.neighborSearchGeohashPrefixLength)
-        ],
-        initiationCount: initiationCount + 1,
+        currentLevel: 0,
+        remainingCells: [centerHex],
+        retryCount: retryCount + 1,
         remainingDonorsToFind: 0,
-        targetedExecutionTime: Math.floor(Date.now() / 1000) + initiatingDelayPeriod
+        targetedExecutionTime: Date.now() + retryDelaySeconds * 1000
       },
       schedulerModel
     )
+  }
+
+  private async collectEligibleDonors({
+    cells,
+    excluded,
+    countryCode,
+    bloodGroup,
+    donorsNeeded,
+    centerHex,
+    h3SearchService
+  }: {
+    cells: string[];
+    excluded: Set<string>;
+    countryCode: string;
+    bloodGroup: string;
+    donorsNeeded: number;
+    centerHex: string;
+    h3SearchService: H3SearchService;
+  }): Promise<{ eligibleDonors: Record<string, EligibleDonorInfo>; processedCellCount: number }> {
+    const seen = new Set<string>()
+    const eligibleDonors: Record<string, EligibleDonorInfo> = {}
+    let processedCellCount = 0
+
+    const chunkSize = Math.max(1, this.options.parallelQueryConcurrency)
+
+    for (let i = 0; i < cells.length; i += chunkSize) {
+      if (processedCellCount >= this.options.maxCellsPerExecution) break
+      if (Object.keys(eligibleDonors).length >= donorsNeeded) break
+
+      const chunk = cells.slice(i, i + chunkSize)
+      const queryResults = await Promise.all(
+        chunk.map((cell) => h3SearchService.queryDonorsInHex(
+          countryCode,
+          bloodGroup,
+          cell,
+          donorsNeeded
+        ))
+      )
+
+      for (const donors of queryResults) {
+        processedCellCount += 1
+        for (const donor of donors) {
+          if (excluded.has(donor.userId)) continue
+          if (seen.has(donor.userId)) continue
+          seen.add(donor.userId)
+
+          eligibleDonors[donor.userId] = {
+            locationId: donor.locationId,
+            distance: distanceForDonor(centerHex, donor)
+          }
+
+          if (Object.keys(eligibleDonors).length >= donorsNeeded) break
+        }
+        if (Object.keys(eligibleDonors).length >= donorsNeeded) break
+      }
+    }
+
+    return { eligibleDonors, processedCellCount }
   }
 
   async createDonorSearchRecord(donorSearchAttributes: DonorSearchAttributes): Promise<void> {
@@ -313,7 +393,25 @@ export class DonorSearchService {
   async updateDonorSearchRecord(
     donorSearchAttributes: Partial<DonorSearchAttributes>
   ): Promise<void> {
-    await this.donorSearchRepository.update(donorSearchAttributes)
+    await this.donorSearchRepository.update({
+      ...donorSearchAttributes,
+      lastUpdatedAt: new Date().toISOString()
+    })
+  }
+
+  private async completeSearch(
+    seekerId: string,
+    requestPostId: string,
+    createdAt: string,
+    completionReason: DonorSearchCompletionReason
+  ): Promise<void> {
+    await this.updateDonorSearchRecord({
+      seekerId,
+      requestPostId,
+      createdAt,
+      status: DonorSearchStatus.COMPLETED,
+      completionReason
+    })
   }
 
   async getDonorSearch(
@@ -321,150 +419,12 @@ export class DonorSearchService {
     requestPostId: string,
     createdAt: string
   ): Promise<DonorSearchDTO | null> {
-    return this.donorSearchRepository.getDonorSearchItem(
-      seekerId,
-      requestPostId,
-      createdAt
-    )
+    return this.donorSearchRepository.getDonorSearchItem(seekerId, requestPostId, createdAt)
   }
+}
 
-  async queryEligibleDonors(
-    geohashService: GeohashService,
-    geohashCache: GeohashCacheManager<string, GeohashDonorMap>,
-    seekerId: string,
-    requestedBloodGroup: string,
-    countryCode: string,
-    geohash: string,
-    totalDonorsToFind: number,
-    currentNeighborSearchLevel: number,
-    remainingGeohashesToProcess: string[],
-    notifiedEligibleDonors: Record<string, EligibleDonorInfo>
-  ): Promise<{
-    eligibleDonors: Record<string, EligibleDonorInfo>;
-    updatedNeighborSearchLevel: number;
-    geohashesForNextIteration: string[];
-  }> {
-    const { updatedGeohashesToProcess, updatedNeighborSearchLevel }
-      = geohashService.getNeighborGeohashes(
-        geohash.slice(0, this.options.neighborSearchGeohashPrefixLength),
-        currentNeighborSearchLevel,
-        remainingGeohashesToProcess
-      )
+function distanceForDonor(centerHex: string, donor: DonorInHexResult): number {
+  const [seekerLat, seekerLng] = cellToLatLng(centerHex)
 
-    const { updatedEligibleDonors, processedGeohashCount }
-      = await this.getNewDonorsInNeighborGeohash(
-        geohashService,
-        geohashCache,
-        seekerId,
-        requestedBloodGroup,
-        countryCode,
-        geohash,
-        updatedGeohashesToProcess,
-        totalDonorsToFind,
-        notifiedEligibleDonors
-      )
-
-    return {
-      eligibleDonors: updatedEligibleDonors,
-      updatedNeighborSearchLevel,
-      geohashesForNextIteration: updatedGeohashesToProcess.slice(processedGeohashCount)
-    }
-  }
-
-  async getNewDonorsInNeighborGeohash(
-    geohashService: GeohashService,
-    geohashCache: GeohashCacheManager<string, GeohashDonorMap>,
-    seekerId: string,
-    requestedBloodGroup: string,
-    countryCode: string,
-    seekerGeohash: string,
-    geohashesToProcess: string[],
-    totalDonorsToFind: number,
-    notifiedEligibleDonors: Record<string, EligibleDonorInfo>,
-    processedGeohashCount: number = 0,
-    eligibleDonors: Record<string, EligibleDonorInfo> = {}
-  ): Promise<{
-    updatedEligibleDonors: Record<string, EligibleDonorInfo>;
-    processedGeohashCount: number;
-  }> {
-    if (
-      geohashesToProcess.length === 0
-      || processedGeohashCount >= this.options.maxGeohashesPerExecution
-      || Object.keys(eligibleDonors).length >= totalDonorsToFind
-    ) {
-      return { updatedEligibleDonors: eligibleDonors, processedGeohashCount }
-    }
-
-    const geohashToProcess = geohashesToProcess[0]
-    const donors = await this.getDonorsFromCache(
-      geohashService,
-      geohashCache,
-      geohashToProcess,
-      countryCode,
-      requestedBloodGroup
-    )
-
-    const updatedEligibleDonors = donors.reduce<Record<string, EligibleDonorInfo>>(
-      (donorAccumulator, donor) => {
-        const donorDistance = getDistanceBetweenGeohashes(seekerGeohash, geohashToProcess)
-
-        const isDonorTheSeeker = donor.userId === seekerId
-        const isDonorCloserOrNew
-          = donorAccumulator[donor.userId] === undefined
-          || donorAccumulator[donor.userId].distance > donorDistance
-        const isDonorAlreadyNotified = notifiedEligibleDonors[donor.userId] !== undefined
-
-        if (!isDonorTheSeeker && isDonorCloserOrNew && !isDonorAlreadyNotified) {
-          donorAccumulator[donor.userId] = {
-            locationId: donor.locationId,
-            distance: donorDistance
-          }
-        }
-
-        return donorAccumulator
-      },
-      { ...eligibleDonors }
-    )
-
-    return this.getNewDonorsInNeighborGeohash(
-      geohashService,
-      geohashCache,
-      seekerId,
-      requestedBloodGroup,
-      countryCode,
-      seekerGeohash,
-      geohashesToProcess.slice(1),
-      totalDonorsToFind,
-      notifiedEligibleDonors,
-      processedGeohashCount + 1,
-      updatedEligibleDonors
-    )
-  }
-
-  async getDonorsFromCache(
-    geohashService: GeohashService,
-    geohashCache: GeohashCacheManager<string, GeohashDonorMap>,
-    geohashToProcess: string,
-    countryCode: string,
-    requestedBloodGroup: string
-  ): Promise<DonorInfo[]> {
-    const geohashCachePrefix = geohashToProcess.slice(0, this.options.cacheGeohashPrefixLength)
-    const geoPartitionPrefix = geohashToProcess.slice(0, GEO_PARTITION_PREFIX_LENGTH)
-
-    const cacheKey = `${countryCode}-${geoPartitionPrefix}-${requestedBloodGroup}-${geohashCachePrefix}`
-    const cachedGroupedGeohash = geohashCache.get(cacheKey) as GeohashDonorMap
-
-    if (cachedGroupedGeohash === undefined) {
-      const queriedDonors = await geohashService.queryGeohash(
-        countryCode,
-        requestedBloodGroup,
-        geohashCachePrefix
-      )
-      updateGroupedGeohashCache(geohashCache, queriedDonors, cacheKey, this.options.neighborSearchGeohashPrefixLength)
-    }
-
-    const cachedDonorMap = geohashCache.get(cacheKey) as GeohashDonorMap
-
-    return cachedDonorMap[geohashToProcess] ?? []
-  }
+  return haversineKm(seekerLat, seekerLng, donor.latitude, donor.longitude)
 }

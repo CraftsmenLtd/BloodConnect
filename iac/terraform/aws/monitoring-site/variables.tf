@@ -3,12 +3,6 @@ variable "environment" {
   description = "Deployment environment"
 }
 
-variable "max_geohash_prefix_length" {
-  type        = number
-  description = "geohash length for calculation"
-  default     = 4
-}
-
 variable "site_path" {
   type        = string
   description = "site path to keep assets in"

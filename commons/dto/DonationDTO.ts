@@ -26,7 +26,8 @@ export type DonationDTO = DTO & {
   location: string;
   latitude: number;
   longitude: number;
-  geohash: string;
+  h3Res5: string;
+  h3Res8: string;
   donationDateTime: string;
   status: DonationStatus;
   contactNumber: string;
@@ -42,9 +43,23 @@ export enum DonorSearchStatus {
   COMPLETED = 'COMPLETED'
 }
 
+export enum DonorSearchCompletionReason {
+  FOUND_ENOUGH = 'FOUND_ENOUGH',
+  DONORS_ACCEPTED = 'DONORS_ACCEPTED',
+  REQUEST_CLOSED = 'REQUEST_CLOSED',
+  RADIUS_EXHAUSTED = 'RADIUS_EXHAUSTED'
+}
+
 export type EligibleDonorInfo = {
   distance: number;
   locationId: string;
+}
+
+export type WaveEntry = {
+  retryCount: number;
+  level: number;
+  donorsFound: number;
+  at: string;
 }
 
 export type DonorSearchDTO = DTO & {
@@ -52,7 +67,14 @@ export type DonorSearchDTO = DTO & {
   requestPostId: string;
   createdAt: string;
   status: DonorSearchStatus;
+  completionReason?: DonorSearchCompletionReason;
   notifiedEligibleDonors: Record<string, EligibleDonorInfo>;
+  currentLevel?: number;
+  currentRetryCount?: number;
+  lastUpdatedAt?: string;
+  targetDonors?: number;
+  donorsFoundSoFar?: number;
+  waveHistory?: WaveEntry[];
 }
 
 export enum AcceptDonationStatus {

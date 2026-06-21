@@ -67,14 +67,15 @@ export const donationDtoMock: DonationDTO = {
   shortDescription: 'Need blood urgently for surgery.',
   status: DonationStatus.PENDING,
   createdAt: currentDate,
-  geohash: 'wh0r35qr'
+  h3Res5: '852a1077fffffff',
+  h3Res8: '882a1072b5fffff'
 }
 
 export const donationFieldsMock: DonationFields = {
   PK: `${BLOOD_REQUEST_PK_PREFIX}#user456`,
   SK: `${BLOOD_REQUEST_PK_PREFIX}#${currentDate}#req123`,
-  GSI1PK: `LOCATION#BD-wh0r#STATUS#${DonationStatus.PENDING}`,
-  GSI1SK: `${currentDate}#BG#O-`,
+  GSI1PK: 'REQ#BD#O-#PENDING#852a1077fffffff',
+  GSI1SK: currentDate,
   LSI1SK: `${BLOOD_REQUEST_LSI1SK_PREFIX}#${DonationStatus.PENDING}#req123`,
   requestedBloodGroup: 'O-',
   patientName: 'John Doe',
@@ -84,7 +85,8 @@ export const donationFieldsMock: DonationFields = {
   location: 'Baridhara, Dhaka',
   latitude: 23.7936,
   longitude: 90.4043,
-  geohash: 'wh0r35qr',
+  h3Res5: '852a1077fffffff',
+  h3Res8: '882a1072b5fffff',
   donationDateTime: '2024-12-20T15:00:00Z',
   transportationInfo: 'Car available',
   shortDescription: 'Need blood urgently for surgery.',
@@ -108,7 +110,8 @@ export const mockDonationDTO: DonationDTO = {
   urgencyLevel: 'urgent' as const,
   countryCode: 'BD',
   location: 'Baridhara, Dhaka',
-  geohash: 'wh0r35qr',
+  h3Res5: '852a1077fffffff',
+  h3Res8: '882a1072b5fffff',
   donationDateTime: '2024-10-20T15:00:00Z',
   latitude: 23.7808875,
   longitude: 90.2792371,
