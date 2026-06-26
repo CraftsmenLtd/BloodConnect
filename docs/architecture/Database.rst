@@ -397,6 +397,48 @@ coordinates.
    (``LOC#…#h3Res8``, ``REQ#…#h3Res5``) and the ``h3Res8`` / ``h3Res10``
    attributes; rows are backfilled per environment.
 
+Chat table (dedicated)
+======================
+
+In-app chat is the one workflow that does **not** share the main table. It uses
+a dedicated table, ``<env>-bloodConnect-chat-table``
+(``iac/terraform/aws/dynamodb/dynamodb.tf``), to isolate its high write volume
+and per-message TTL from core data. The table has a ``PK``/``SK`` primary key, a
+single ``GSI1`` (``GSI1PK``/``GSI1SK``), a stream, and TTL on ``expiresAt``.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Entity
+     - PK
+     - SK
+     - Index / TTL
+   * - Channel
+     - ``CHANNEL#<channelId>``
+     - ``META``
+     - \-
+   * - Message
+     - ``CHANNEL#<channelId>``
+     - ``MSG#<createdAt>#<msgId>``
+     - TTL (90 days)
+   * - Connection
+     - ``CONN#<connectionId>``
+     - ``META``
+     - GSI1 ``USER#<userId>`` / ``CONN#<connectionId>``; TTL
+   * - Inbox row
+     - ``USER#<userId>``
+     - ``CHANNEL#<channelId>``
+     - \-
+   * - Rate window
+     - ``RATE#<userId>``
+     - ``MIN#<epochMinute>``
+     - TTL
+
+Models live in ``core/services/aws/commons/ddbModels/`` (``ChatChannelModel``,
+``ChatMessageModel``, ``ChatConnectionModel``, ``UserChannelModel``). See
+:doc:`../development/Chat` for the workflow and access patterns. ``channelId`` is
+a deterministic hash of ``(seekerId, requestPostId, donorId)``.
+
 Status enumerations
 ===================
 

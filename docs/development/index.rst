@@ -22,6 +22,7 @@ Dive into the Code
 
    GettingStarted
    DonorSearch
+   Chat
 
 OpenAPI
 ~~~~~~~
