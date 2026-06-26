@@ -35,6 +35,13 @@ export type RootStackParamList = {
   [SCREENS.DONOR_CONFIRMATION]: { requestPostId: string; donors: DonorItem[]; createdAt: string };
   [SCREENS.ABOUT]: undefined;
   [SCREENS.SETTINGS]: undefined;
+  [SCREENS.CHAT_INBOX]: undefined;
+  [SCREENS.CHAT_ROOM]: {
+    channelId: string;
+    title?: string;
+    requestedBloodGroup?: string;
+    locked?: boolean;
+  };
   [SCREENS.NO_INTERNET]: undefined;
 }
 
@@ -60,6 +67,8 @@ export type AddPersonalInfoNavigationProp = StackNavigationProp<RootStackParamLi
 export type RequestStatusNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.REQUEST_STATUS>
 export type DonorConfirmationNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.DONOR_CONFIRMATION>
 export type NoInternetNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.NO_INTERNET>
+export type ChatInboxNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.CHAT_INBOX>
+export type ChatRoomNavigationProp = StackNavigationProp<RootStackParamList, SCREENS.CHAT_ROOM>
 
 export type OtpScreenRouteProp = RouteProp<RootStackParamList, SCREENS.OTP>
 export type SetPasswordRouteProp = RouteProp<RootStackParamList, SCREENS.SET_PASSWORD>
@@ -75,3 +84,4 @@ export type DonorConfirmationRouteProp = RouteProp<RootStackParamList, SCREENS.D
 export type About = RouteProp<RootStackParamList, SCREENS.ABOUT>
 export type Settings = RouteProp<RootStackParamList, SCREENS.SETTINGS>
 export type NoInternetRouteProp = RouteProp<RootStackParamList, SCREENS.NO_INTERNET>
+export type ChatRoomRouteProp = RouteProp<RootStackParamList, SCREENS.CHAT_ROOM>
