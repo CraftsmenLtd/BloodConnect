@@ -67,6 +67,14 @@ describe('ChatChannelModel keys (per-request channel query)', () => {
       donorId: 'd'
     })
   })
+
+  test('parseChannelId tolerates a # in the trailing donorId component', () => {
+    expect(parseChannelId('seeker-1#req-1#donor#weird')).toEqual({
+      seekerId: 'seeker-1',
+      requestPostId: 'req-1',
+      donorId: 'donor#weird'
+    })
+  })
 })
 
 describe('ChatMembershipModel keys (per-user membership query)', () => {
