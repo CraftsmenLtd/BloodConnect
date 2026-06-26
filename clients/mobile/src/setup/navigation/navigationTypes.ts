@@ -35,6 +35,7 @@ export type RootStackParamList = {
   [SCREENS.DONOR_CONFIRMATION]: { requestPostId: string; donors: DonorItem[]; createdAt: string };
   [SCREENS.ABOUT]: undefined;
   [SCREENS.SETTINGS]: undefined;
+  [SCREENS.CHAT_ROOM]: { channelId: string };
   [SCREENS.NO_INTERNET]: undefined;
 }
 
