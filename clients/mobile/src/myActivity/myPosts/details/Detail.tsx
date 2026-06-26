@@ -17,6 +17,7 @@ import {
   handleNotification
 } from '../../../setup/notification/scheduleNotification'
 import DonorResponses from '../donorResponses/DonorResponses'
+import { buildChannelId } from '../../../chatWorkflow/utils/buildChannelId'
 import type { TabConfig } from '../../types'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
@@ -61,6 +62,17 @@ const Detail = ({ navigation, route }: DetailProps) => {
 
   const handlePressDonor = (donorId: string): void => {
     navigation.navigate(SCREENS.DONOR_PROFILE, { donorId })
+  }
+
+  const openChatWithDonor = async(donorId: string): Promise<void> => {
+    if (data.seekerId === '' || data.requestPostId === '') {
+      return
+    }
+    const channelId = await buildChannelId(data.seekerId, data.requestPostId, donorId)
+    navigation.navigate(SCREENS.CHAT_ROOM, {
+      channelId,
+      requestedBloodGroup: data.requestedBloodGroup
+    })
   }
 
   const handleTabPress = (tab: string): void => {
@@ -171,6 +183,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
         : <DonorResponses
           acceptedDonors={data.acceptedDonors}
           handlePressDonor={handlePressDonor}
+          onChatPress={(donorId) => { void openChatWithDonor(donorId) }}
         />
       }
     </View>

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import type { ImageStyle, StyleProp } from 'react-native'
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import { COMMON_URLS } from '../../../setup/constant/commonUrls'
@@ -13,10 +14,12 @@ export type DonorItem = {
 type DonorResponsesProps = {
   acceptedDonors: DonorItem[];
   handlePressDonor: (item: string) => void;
+  onChatPress?: (donorId: string) => void;
 }
 
-const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProps) => {
+const DonorResponses = ({ acceptedDonors, handlePressDonor, onChatPress }: DonorResponsesProps) => {
   const styles = createStyles(useTheme())
+  const { t } = useTranslation()
 
   return (
     <View style={styles.rootContainer}>
@@ -44,6 +47,14 @@ const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProp
                     <Text style={styles.name}>{item.donorName}</Text>
                     <Text style={styles.status}>New blood donor</Text>
                   </View>
+                  {onChatPress !== undefined && (
+                    <TouchableOpacity
+                      style={styles.chatButton}
+                      onPress={() => { onChatPress(item.donorId) }}
+                    >
+                      <Text style={styles.chatButtonText}>{t('chat.chatButton')}</Text>
+                    </TouchableOpacity>
+                  )}
                   <Text style={styles.arrow}>&gt;</Text>
                 </TouchableOpacity>
               )}
@@ -114,6 +125,19 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     },
     arrow: {
       fontSize: 20,
+      color: theme.colors.primary
+    },
+    chatButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+      marginRight: 10
+    },
+    chatButtonText: {
+      fontSize: 13,
+      fontWeight: '600',
       color: theme.colors.primary
     }
   })
