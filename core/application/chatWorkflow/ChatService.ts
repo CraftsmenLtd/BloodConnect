@@ -91,7 +91,9 @@ export class ChatService {
     })
   }
 
-  async sendMessage(attributes: SendChatMessageAttributes): Promise<ChatMessageDTO> {
+  async sendMessage(
+    attributes: SendChatMessageAttributes
+  ): Promise<{ message: ChatMessageDTO; recipientId: string }> {
     const validationError = validateInputWithRules(
       { content: attributes.content },
       sendChatMessageValidationRules
@@ -140,7 +142,7 @@ export class ChatService {
       this.touchSenderChannel(attributes.senderId, channel.channelId, preview, createdAt)
     ])
 
-    return createdMessage
+    return { message: createdMessage, recipientId }
   }
 
   async getHistory(

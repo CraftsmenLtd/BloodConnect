@@ -7,3 +7,7 @@ output "lambda_metadata" {
     }
   ]
 }
+
+output "chat_websocket_url" {
+  value = aws_apigatewayv2_stage.chat_ws.invoke_url
+}

@@ -98,6 +98,7 @@ module "chat" {
   source                  = "./chat"
   environment             = var.environment
   dynamodb_chat_table_arn = module.database.dynamodb_chat_table_arn
+  cognito_user_pool_arn   = module.cognito.user_pool_arn
 }
 
 module "notification" {

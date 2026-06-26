@@ -37,6 +37,41 @@ locals {
         ]
         resources = [var.dynamodb_chat_table_arn]
       }
+    ],
+    chat_connection_policy = [
+      {
+        sid = "ChatConnectionPolicy"
+        actions = [
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:GetItem",
+          "dynamodb:Query"
+        ]
+        resources = [
+          var.dynamodb_chat_table_arn,
+          "${var.dynamodb_chat_table_arn}/index/GSI1"
+        ]
+      }
+    ],
+    cognito_get_user_policy = [
+      {
+        sid = "CognitoGetUserPolicy"
+        actions = [
+          "cognito-idp:GetUser"
+        ]
+        resources = [var.cognito_user_pool_arn]
+      }
+    ],
+    websocket_manage_policy = [
+      {
+        sid = "WebSocketManageConnectionsPolicy"
+        actions = [
+          "execute-api:ManageConnections"
+        ]
+        resources = [
+          "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*/*"
+        ]
+      }
     ]
   }
 }
