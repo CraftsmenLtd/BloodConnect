@@ -31,7 +31,9 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
     actions   = ["lambda:InvokeFunction"]
     resources = [
       local.donation_request_initiator_lambda_arn,
-      local.donation_status_manager_lambda_arn
+      local.donation_status_manager_lambda_arn,
+      local.create_chat_channel_lambda_arn,
+      local.lock_chat_channel_lambda_arn
     ]
   }
   statement {
@@ -43,7 +45,9 @@ data "aws_iam_policy_document" "eventbridge_pipe_policy_doc" {
     ]
     resources = [
       "${aws_cloudwatch_log_group.donation_request_pipe_log_group.arn}:*",
-      "${aws_cloudwatch_log_group.donation_accept_pipe_log_group.arn}:*"
+      "${aws_cloudwatch_log_group.donation_accept_pipe_log_group.arn}:*",
+      "${aws_cloudwatch_log_group.chat_channel_pipe_log_group.arn}:*",
+      "${aws_cloudwatch_log_group.chat_lock_pipe_log_group.arn}:*"
     ]
   }
 }

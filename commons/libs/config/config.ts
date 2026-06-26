@@ -6,6 +6,7 @@ type AllConfig = {
   country: string;
   minMonthsBetweenDonations: number;
   dynamodbTableName: string;
+  chatDynamodbTableName: string;
   awsRegion: string;
   emailSender: string;
   platformArnApns: string;
@@ -45,6 +46,8 @@ export class Config<T extends ConfigSubset<T>> {
       minMonthsBetweenDonations: Number(process.env.MIN_MONTHS_BETWEEN_DONATIONS) as
         AllConfig['minMonthsBetweenDonations'],
       dynamodbTableName: process.env.DYNAMODB_TABLE_NAME as AllConfig['dynamodbTableName'],
+      chatDynamodbTableName:
+        process.env.CHAT_DYNAMODB_TABLE_NAME as AllConfig['chatDynamodbTableName'],
       awsRegion: process.env.AWS_REGION as AllConfig['awsRegion'],
       emailSender: process.env.EMAIL_SENDER as AllConfig['emailSender'],
       platformArnApns: process.env.PLATFORM_ARN_APNS as AllConfig['platformArnApns'],

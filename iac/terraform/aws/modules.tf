@@ -94,6 +94,12 @@ module "eventbridge" {
   dynamodb_table_arn        = module.database.dynamodb_table_arn
 }
 
+module "chat" {
+  source                  = "./chat"
+  environment             = var.environment
+  dynamodb_chat_table_arn = module.database.dynamodb_chat_table_arn
+}
+
 module "notification" {
   source                  = "./notification"
   environment             = var.environment

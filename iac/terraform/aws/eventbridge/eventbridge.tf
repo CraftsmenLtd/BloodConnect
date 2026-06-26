@@ -151,3 +151,103 @@ EOF
 
   depends_on = [aws_iam_role_policy.eventbridge_pipe_policy]
 }
+
+
+resource "aws_pipes_pipe" "chat_channel_pipe" {
+  name     = "${var.environment}-chat-channel-pipe"
+  role_arn = aws_iam_role.eventbridge_pipe_role.arn
+  source   = var.dynamodb_table_stream_arn
+  target   = local.create_chat_channel_lambda_arn
+
+  source_parameters {
+    dynamodb_stream_parameters {
+      starting_position             = "LATEST"
+      batch_size                    = 1
+      maximum_record_age_in_seconds = -1
+    }
+
+    filter_criteria {
+      filter {
+        pattern = jsonencode({
+          "eventName" : ["INSERT"],
+          "dynamodb" : {
+            "NewImage" : {
+              "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
+              "SK" : { "S" : [{ "prefix" : "ACCEPTED#" }] },
+              "status" : { "S" : ["ACCEPTED"] }
+            }
+          }
+        })
+      }
+    }
+  }
+
+  target_parameters {
+    input_template = <<EOF
+{
+  "PK": "<$.dynamodb.NewImage.PK.S>",
+  "SK": "<$.dynamodb.NewImage.SK.S>"
+}
+EOF
+  }
+
+  log_configuration {
+    include_execution_data = ["ALL"]
+    level                  = "INFO"
+    cloudwatch_logs_log_destination {
+      log_group_arn = aws_cloudwatch_log_group.chat_channel_pipe_log_group.arn
+    }
+  }
+
+  depends_on = [aws_iam_role_policy.eventbridge_pipe_policy]
+}
+
+
+resource "aws_pipes_pipe" "chat_lock_pipe" {
+  name     = "${var.environment}-chat-lock-pipe"
+  role_arn = aws_iam_role.eventbridge_pipe_role.arn
+  source   = var.dynamodb_table_stream_arn
+  target   = local.lock_chat_channel_lambda_arn
+
+  source_parameters {
+    dynamodb_stream_parameters {
+      starting_position             = "LATEST"
+      batch_size                    = 1
+      maximum_record_age_in_seconds = -1
+    }
+
+    filter_criteria {
+      filter {
+        pattern = jsonencode({
+          "eventName" : ["MODIFY"],
+          "dynamodb" : {
+            "NewImage" : {
+              "PK" : { "S" : [{ "prefix" : "BLOOD_REQ#" }] },
+              "SK" : { "S" : [{ "prefix" : "ACCEPTED#" }] },
+              "status" : { "S" : ["COMPLETED", "IGNORED"] }
+            }
+          }
+        })
+      }
+    }
+  }
+
+  target_parameters {
+    input_template = <<EOF
+{
+  "PK": "<$.dynamodb.NewImage.PK.S>",
+  "SK": "<$.dynamodb.NewImage.SK.S>"
+}
+EOF
+  }
+
+  log_configuration {
+    include_execution_data = ["ALL"]
+    level                  = "INFO"
+    cloudwatch_logs_log_destination {
+      log_group_arn = aws_cloudwatch_log_group.chat_lock_pipe_log_group.arn
+    }
+  }
+
+  depends_on = [aws_iam_role_policy.eventbridge_pipe_policy]
+}

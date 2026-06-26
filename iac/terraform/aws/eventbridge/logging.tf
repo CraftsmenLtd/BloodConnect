@@ -18,3 +18,17 @@ resource "aws_cloudwatch_log_group" "donation_request_monitoring_pipe_log_group"
   name              = "/aws/vendedlogs/pipes/${var.environment}-donation-request-monitoring-pipe"
   retention_in_days = 30
 }
+
+resource "aws_cloudwatch_log_group" "chat_channel_pipe_log_group" {
+  #checkov:skip=CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
+  #checkov:skip=CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
+  name              = "/aws/vendedlogs/pipes/${var.environment}-chat-channel-pipe"
+  retention_in_days = 30
+}
+
+resource "aws_cloudwatch_log_group" "chat_lock_pipe_log_group" {
+  #checkov:skip=CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
+  #checkov:skip=CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
+  name              = "/aws/vendedlogs/pipes/${var.environment}-chat-lock-pipe"
+  retention_in_days = 30
+}
