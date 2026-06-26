@@ -78,6 +78,32 @@ locals {
       env_variables = {
         CHAT_DYNAMODB_TABLE_NAME = split("/", var.dynamodb_chat_table_arn)[1]
       }
+    },
+    get-chat-inbox = {
+      name         = "get-chat-inbox"
+      handler      = "getChatInbox.default"
+      js_file_name = "getChatInbox.js"
+      statement = concat(
+        local.policies.common_policies,
+        local.policies.chat_read_policy
+      )
+      invocation_arn_placeholder = "GET_CHAT_INBOX_INVOCATION_ARN"
+      env_variables = {
+        CHAT_DYNAMODB_TABLE_NAME = split("/", var.dynamodb_chat_table_arn)[1]
+      }
+    },
+    get-chat-history = {
+      name         = "get-chat-history"
+      handler      = "getChatHistory.default"
+      js_file_name = "getChatHistory.js"
+      statement = concat(
+        local.policies.common_policies,
+        local.policies.chat_read_policy
+      )
+      invocation_arn_placeholder = "GET_CHAT_HISTORY_INVOCATION_ARN"
+      env_variables = {
+        CHAT_DYNAMODB_TABLE_NAME = split("/", var.dynamodb_chat_table_arn)[1]
+      }
     }
   }
 }

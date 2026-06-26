@@ -14,6 +14,10 @@
       "description": "Push notification module of BloodConnect"
     },
     {
+      "name": "bloodconnect-chat",
+      "description": "In-app chat module of BloodConnect"
+    },
+    {
       "name": "cors-options",
       "description": "API Endpoints for BloodConnect cors options"
     }
@@ -64,6 +68,12 @@
     },
     "/donations/complete": {
       "$ref": "./../paths/donations/complete.json"
+    },
+    "/chat/inbox": {
+      "$ref": "./../paths/chat/inbox.json"
+    },
+    "/chat/{channelId}/messages": {
+      "$ref": "./../paths/chat/messages.json"
     },
     "/notification/register": {
       "$ref": "./../paths/notification/register.json"

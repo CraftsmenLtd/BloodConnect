@@ -1,0 +1,7 @@
+{
+  "userId": "$context.authorizer.claims['custom:userId']",
+  "apiGwRequestId": "$context.requestId",
+  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "limit": "$input.params('limit')",
+  "nextKey": "$util.escapeJavaScript($input.params('nextKey'))"
+}

@@ -38,6 +38,19 @@ locals {
         resources = [var.dynamodb_chat_table_arn]
       }
     ],
+    chat_read_policy = [
+      {
+        sid = "ChatReadPolicy"
+        actions = [
+          "dynamodb:GetItem",
+          "dynamodb:Query"
+        ]
+        resources = [
+          var.dynamodb_chat_table_arn,
+          "${var.dynamodb_chat_table_arn}/index/GSI1"
+        ]
+      }
+    ],
     chat_connection_policy = [
       {
         sid = "ChatConnectionPolicy"
