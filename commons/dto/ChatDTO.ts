@@ -32,6 +32,14 @@ export const parseChannelId = (
   }
 }
 
+// A channel's only participants are its seeker and its donor; used to enforce participant-only
+// access on the chat handlers.
+export const isChannelParticipant = (userId: string, channelId: string): boolean => {
+  const { seekerId, donorId } = parseChannelId(channelId)
+
+  return userId === seekerId || userId === donorId
+}
+
 // Request context snapshotted onto the channel at creation so the chat header
 // renders on a cold-start deep-link without a separate post fetch.
 export type ChatContextSnapshot = {

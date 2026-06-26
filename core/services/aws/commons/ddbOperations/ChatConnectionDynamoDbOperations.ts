@@ -3,6 +3,7 @@ import {
   DynamoDBDocumentClient,
   PutCommand,
   DeleteCommand,
+  GetCommand,
   QueryCommand
 } from '@aws-sdk/lib-dynamodb'
 import type { ChatConnectionDTO } from '../../../../../commons/dto/ChatDTO'
@@ -33,6 +34,21 @@ export default class ChatConnectionDynamoDbOperations implements ChatConnectionR
     }))
 
     return this.model.toDto(item)
+  }
+
+  async getByConnectionId(connectionId: string): Promise<ChatConnectionDTO | null> {
+    const result = await this.client.send(new GetCommand({
+      TableName: this.tableName,
+      Key: {
+        PK: `${CHAT_CONNECTION_PK_PREFIX}#${connectionId}`,
+        SK: `${CHAT_CONNECTION_PK_PREFIX}#${connectionId}`
+      }
+    }))
+    if (result.Item === null || result.Item === undefined) {
+      return null
+    }
+
+    return this.model.toDto(result.Item as ChatConnectionFields)
   }
 
   async deleteByConnectionId(connectionId: string): Promise<void> {

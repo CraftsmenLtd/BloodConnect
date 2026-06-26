@@ -6,5 +6,8 @@ type ChatConnectionRepository = {
   put(connection: ChatConnectionDTO): Promise<ChatConnectionDTO>;
   deleteByConnectionId(connectionId: string): Promise<void>;
   queryByUserId(userId: string): Promise<ChatConnectionDTO[]>;
+  // Resolves the authenticated userId for a live connection: the $connect authorizer context is
+  // not propagated to message routes, so sendMessage looks the sender up by connectionId.
+  getByConnectionId(connectionId: string): Promise<ChatConnectionDTO | null>;
 }
 export default ChatConnectionRepository

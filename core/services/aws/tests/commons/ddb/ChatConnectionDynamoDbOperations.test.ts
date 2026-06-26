@@ -3,6 +3,7 @@ import {
   DynamoDBDocumentClient,
   PutCommand,
   DeleteCommand,
+  GetCommand,
   QueryCommand
 } from '@aws-sdk/lib-dynamodb'
 import { mockClient } from 'aws-sdk-client-mock'
@@ -42,6 +43,30 @@ describe('ChatConnectionDynamoDbOperations', () => {
 
     const input = ddbMock.commandCalls(DeleteCommand)[0].args[0].input
     expect(input.Key).toEqual({ PK: 'CONNECTION#conn-1', SK: 'CONNECTION#conn-1' })
+  })
+
+  test('getByConnectionId resolves the userId for a live connection', async() => {
+    ddbMock.on(GetCommand).resolves({
+      Item: {
+        PK: 'CONNECTION#conn-1',
+        SK: 'CONNECTION#conn-1',
+        GSI1PK: 'CHATUSER#user-1',
+        GSI1SK: 'CONNECTION#conn-1',
+        createdAt: 'x'
+      }
+    })
+
+    const connection = await operations.getByConnectionId('conn-1')
+
+    const input = ddbMock.commandCalls(GetCommand)[0].args[0].input
+    expect(input.Key).toEqual({ PK: 'CONNECTION#conn-1', SK: 'CONNECTION#conn-1' })
+    expect(connection?.userId).toBe('user-1')
+  })
+
+  test('getByConnectionId returns null for an unknown connection', async() => {
+    ddbMock.on(GetCommand).resolves({})
+
+    expect(await operations.getByConnectionId('absent')).toBeNull()
   })
 
   test('queryByUserId fans out over all of a user\'s connections via GSI1', async() => {
