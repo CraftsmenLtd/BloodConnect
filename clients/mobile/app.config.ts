@@ -46,6 +46,7 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     ...config,
     extra: {
       ...ENV_VARS[environmentConfigs.APP_ENV],
+      CHAT_WEBSOCKET_URL: process.env.CHAT_WEBSOCKET_URL,
       eas: {
         projectId: environmentConfigs.EAS_PROJECT_ID?.trim()
       }

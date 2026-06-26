@@ -138,5 +138,17 @@
     "myRequest": "আমার অনুরোধসমূহ",
     "myResponses": "আমার উত্তরসমূহ",
     "account": "আমার অ্যাকাউন্ট"
+  },
+  "chat": {
+    "title": "চ্যাট",
+    "inboxTitle": "বার্তাসমূহ",
+    "chatButton": "চ্যাট",
+    "emptyInbox": "এখনও কোনো কথোপকথন নেই।",
+    "emptyConversation": "এখনও কোনো বার্তা নেই। শুরু করুন!",
+    "inputPlaceholder": "একটি বার্তা লিখুন",
+    "send": "পাঠান",
+    "lockedBanner": "এই কথোপকথনটি বন্ধ। আপনি আর বার্তা পাঠাতে পারবেন না।",
+    "bloodRequest": "রক্তের অনুরোধ",
+    "sending": "পাঠানো হচ্ছে…"
   }
 }

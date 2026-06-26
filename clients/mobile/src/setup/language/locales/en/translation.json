@@ -137,5 +137,17 @@
     "myRequests": "My Requests",
     "myResponses": "My Responses",
     "account": "Account"
+  },
+  "chat": {
+    "title": "Chat",
+    "inboxTitle": "Messages",
+    "chatButton": "Chat",
+    "emptyInbox": "No conversations yet.",
+    "emptyConversation": "No messages yet. Say hello!",
+    "inputPlaceholder": "Type a message",
+    "send": "Send",
+    "lockedBanner": "This conversation is closed. You can no longer send messages.",
+    "bloodRequest": "Blood request",
+    "sending": "Sending…"
   }
 }
