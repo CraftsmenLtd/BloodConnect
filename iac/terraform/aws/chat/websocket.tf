@@ -38,6 +38,7 @@ resource "aws_apigatewayv2_integration" "chat_ws" {
 }
 
 resource "aws_apigatewayv2_route" "chat_ws" {
+  # checkov:skip=CKV_AWS_309: "Only the $connect route can carry an authorizer on a WebSocket API; $disconnect and sendMessage run on a connection already authorized at $connect by the Cognito Lambda authorizer"
   for_each           = local.chat_ws_routes
   api_id             = aws_apigatewayv2_api.chat_ws.id
   route_key          = each.value.route_key
@@ -63,11 +64,31 @@ resource "aws_apigatewayv2_deployment" "chat_ws" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "chat_ws_access_logs" {
+  #checkov:skip=CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
+  #checkov:skip=CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
+  name              = "/aws/apigateway/${var.environment}-chat-websocket"
+  retention_in_days = 60
+}
+
 resource "aws_apigatewayv2_stage" "chat_ws" {
-  #checkov:skip=CKV_AWS_95: "Ensure API Gateway has Access Logging enabled"
+  # checkov:skip=CKV2_AWS_51: "Client certificate authentication is not supported for WebSocket APIs; connections are authenticated by the Cognito Lambda authorizer on $connect"
   api_id        = aws_apigatewayv2_api.chat_ws.id
   name          = var.environment
   deployment_id = aws_apigatewayv2_deployment.chat_ws.id
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.chat_ws_access_logs.arn
+    format = jsonencode({
+      requestId       = "$context.requestId"
+      ip              = "$context.identity.sourceIp"
+      requestTime     = "$context.requestTime"
+      routeKey        = "$context.routeKey"
+      status          = "$context.status"
+      connectionId    = "$context.connectionId"
+      responseLatency = "$context.responseLatency"
+    })
+  }
 }
 
 resource "aws_lambda_permission" "chat_ws_routes" {
