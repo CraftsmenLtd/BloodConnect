@@ -31,7 +31,7 @@ export class ChatConnectionService {
   }
 
   async removeConnection(connectionId: string): Promise<void> {
-    await this.chatConnectionRepository.delete(connectionId).catch((error) => {
+    await this.chatConnectionRepository.deleteConnection(connectionId).catch((error) => {
       this.logger.warn(`Failed to remove connection ${connectionId}: ${this.getErrorMessage(error)}`)
     })
   }
