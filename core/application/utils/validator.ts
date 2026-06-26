@@ -1,4 +1,5 @@
 import { UNKNOWN_ERROR_MESSAGE } from '../../../commons/libs/constants/ApiResponseMessages'
+import { MAX_CHAT_MESSAGE_LENGTH } from '../../../commons/libs/constants/NoMagicNumbers'
 
 export function validateDonationDateTime(donationDateTime: string): null {
   const now = new Date()
@@ -14,6 +15,17 @@ export function validateDonationDateTime(donationDateTime: string): null {
 export function validateBloodQuantity(bloodQuantity: number): null | string {
   if (bloodQuantity < 1 || bloodQuantity > 10) {
     throw new Error('Blood quantity must be between 1 and 10.')
+  }
+
+  return null
+}
+
+export function validateChatMessageContent(content: string): null | string {
+  if (typeof content !== 'string' || content.trim().length === 0) {
+    throw new Error('Message content cannot be empty.')
+  }
+  if (content.length > MAX_CHAT_MESSAGE_LENGTH) {
+    throw new Error(`Message content cannot exceed ${MAX_CHAT_MESSAGE_LENGTH} characters.`)
   }
 
   return null
