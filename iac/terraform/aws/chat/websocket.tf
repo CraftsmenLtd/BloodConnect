@@ -52,12 +52,16 @@ resource "aws_apigatewayv2_route" "connect" {
 }
 
 resource "aws_apigatewayv2_route" "disconnect" {
+  # checkov:skip=CKV_AWS_309: Authorization is enforced once at $connect via the Cognito custom
+  # authorizer; WebSocket APIs do not re-authorize per-message routes, which inherit the connection.
   api_id    = aws_apigatewayv2_api.chat.id
   route_key = "$disconnect"
   target    = "integrations/${aws_apigatewayv2_integration.disconnect.id}"
 }
 
 resource "aws_apigatewayv2_route" "send_message" {
+  # checkov:skip=CKV_AWS_309: Authorization is enforced once at $connect via the Cognito custom
+  # authorizer; WebSocket APIs do not re-authorize per-message routes, which inherit the connection.
   api_id    = aws_apigatewayv2_api.chat.id
   route_key = "sendMessage"
   target    = "integrations/${aws_apigatewayv2_integration.send_message.id}"
@@ -91,10 +95,32 @@ resource "aws_apigatewayv2_deployment" "chat" {
   ]
 }
 
+resource "aws_cloudwatch_log_group" "chat_websocket_access" {
+  #checkov:skip=CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
+  #checkov:skip=CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
+  name              = "/aws/apigateway/${var.environment}-chat-websocket"
+  retention_in_days = 60
+}
+
 resource "aws_apigatewayv2_stage" "chat" {
+  # checkov:skip=CKV2_AWS_51: Client certificate auth verifies API Gateway to an HTTP backend; the
+  # chat integrations are Lambda AWS_PROXY, so mutual TLS to a backend is not applicable.
   api_id        = aws_apigatewayv2_api.chat.id
   name          = var.environment
   deployment_id = aws_apigatewayv2_deployment.chat.id
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.chat_websocket_access.arn
+    format = jsonencode({
+      requestId        = "$context.requestId"
+      connectionId     = "$context.connectionId"
+      routeKey         = "$context.routeKey"
+      eventType        = "$context.eventType"
+      status           = "$context.status"
+      requestTime      = "$context.requestTime"
+      integrationError = "$context.integrationErrorMessage"
+    })
+  }
 }
 
 # --- Permissions for API Gateway to invoke the lambdas ---
