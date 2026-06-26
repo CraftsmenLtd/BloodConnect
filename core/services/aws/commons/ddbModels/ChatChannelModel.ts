@@ -1,4 +1,8 @@
 import type { ChatChannelDTO } from '../../../../../commons/dto/ChatDTO'
+// channelId helpers are the single source of truth in commons/dto/ChatDTO (shared with the
+// application layer); imported for use in toDto and re-exported so existing model/test imports
+// keep working.
+import { buildChannelId, parseChannelId } from '../../../../../commons/dto/ChatDTO'
 import type {
   DbModelDtoAdapter,
   HasTimeLog,
@@ -8,20 +12,10 @@ import type {
   IndexType
 } from './DbModelDefinitions'
 
+export { buildChannelId, parseChannelId }
+
 export const CHAT_CHANNEL_PK_PREFIX = 'CHANNEL'
 export const CHAT_CHANNEL_SK_PREFIX = 'DONOR'
-
-// channelId is the composite identity carried on membership and message items.
-export const buildChannelId = (seekerId: string, requestPostId: string, donorId: string): string =>
-  `${seekerId}#${requestPostId}#${donorId}`
-
-export const parseChannelId = (
-  channelId: string
-): { seekerId: string; requestPostId: string; donorId: string } => {
-  const [seekerId, requestPostId, donorId] = channelId.split('#')
-
-  return { seekerId, requestPostId, donorId }
-}
 
 export type ChatChannelFields = Omit<
 ChatChannelDTO,
