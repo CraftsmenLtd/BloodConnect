@@ -72,11 +72,13 @@ locals {
         local.policies.chat_create_policy,
         local.policies.chat_update_policy,
         local.policies.chat_connection_policy,
-        local.policies.websocket_manage_policy
+        local.policies.websocket_manage_policy,
+        local.policies.sqs_policy
       )
       invocation_arn_placeholder = ""
       env_variables = {
         CHAT_DYNAMODB_TABLE_NAME = split("/", var.dynamodb_chat_table_arn)[1]
+        NOTIFICATION_QUEUE_URL   = var.push_notification_queue.url
       }
     },
     get-chat-inbox = {

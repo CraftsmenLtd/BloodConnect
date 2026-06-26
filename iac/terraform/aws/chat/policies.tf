@@ -85,6 +85,15 @@ locals {
           "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*/*"
         ]
       }
+    ],
+    sqs_policy = [
+      {
+        sid = "SqsPolicy"
+        actions = [
+          "sqs:SendMessage"
+        ]
+        resources = [var.push_notification_queue.arn]
+      }
     ]
   }
 }

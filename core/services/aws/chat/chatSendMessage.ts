@@ -7,16 +7,23 @@ import UserChannelDynamoDbOperations from '../commons/ddbOperations/UserChannelD
 import ChatConnectionDynamoDbOperations from '../commons/ddbOperations/ChatConnectionDynamoDbOperations'
 import ChatRateLimitDynamoDbOperations from '../commons/ddbOperations/ChatRateLimitDynamoDbOperations'
 import WebSocketClient from '../commons/websocket/WebSocketClient'
+import SQSOperations from '../commons/sqs/SQSOperations'
 import ChatOperationError from '../../../application/chatWorkflow/ChatOperationError'
 import { Config } from '../../../../commons/libs/config/config'
 import { createServiceLogger } from '../commons/logger/ServiceLogger'
 import { GENERIC_CODES, HTTP_CODES } from '../../../../commons/libs/constants/GenericCodes'
 import { THROTTLING_LIMITS } from '../../../../commons/libs/constants/ThrottlingLimits'
+import { NotificationType } from '../../../../commons/dto/NotificationDTO'
+import type { NotificationAttributes } from '../../../application/notificationWorkflow/Types'
+import type { ChatMessageDTO } from '../../../../commons/dto/ChatDTO'
 
 const config = new Config<{
   chatDynamodbTableName: string;
   awsRegion: string;
+  notificationQueueUrl: string;
 }>().getConfig()
+
+const sqsOperations = new SQSOperations(config.awsRegion)
 
 const chatChannelOperations = new ChatChannelDynamoDbOperations(
   config.chatDynamodbTableName,
@@ -106,9 +113,10 @@ async function sendMessage(
     await deliver(
       webSocketClient,
       chatConnectionService,
-      [recipientId, userId],
-      connectionId,
-      { type: 'message', data: message }
+      message,
+      userId,
+      recipientId,
+      connectionId
     )
 
     return { statusCode: HTTP_CODES.OK, body: 'Sent' }
@@ -137,27 +145,75 @@ function parseBody(rawBody: string | undefined): SendMessageBody {
 async function deliver(
   webSocketClient: WebSocketClient,
   chatConnectionService: ChatConnectionService,
-  userIds: string[],
-  originConnectionId: string,
-  payload: unknown
+  message: ChatMessageDTO,
+  senderId: string,
+  recipientId: string,
+  originConnectionId: string
 ): Promise<void> {
-  const uniqueUserIds = [...new Set(userIds)]
-  const connectionLists = await Promise.all(
-    uniqueUserIds.map((userId) => chatConnectionService.getUserConnections(userId))
+  const payload = { type: 'message', data: message }
+
+  // Recipient: deliver over websocket, otherwise fall back to a push notification.
+  const recipientDelivered = await postToUser(
+    webSocketClient,
+    chatConnectionService,
+    recipientId,
+    payload
+  )
+  if (!recipientDelivered) {
+    await enqueuePushNotification(recipientId, message)
+  }
+
+  // Sender: echo to their other devices so multi-device sessions stay in sync.
+  await postToUser(
+    webSocketClient,
+    chatConnectionService,
+    senderId,
+    payload,
+    originConnectionId
+  )
+}
+
+async function postToUser(
+  webSocketClient: WebSocketClient,
+  chatConnectionService: ChatConnectionService,
+  userId: string,
+  payload: unknown,
+  excludeConnectionId?: string
+): Promise<boolean> {
+  const connections = (await chatConnectionService.getUserConnections(userId)).filter(
+    (connection) => connection.connectionId !== excludeConnectionId
   )
 
-  const targets = connectionLists
-    .flat()
-    .filter((connection) => connection.connectionId !== originConnectionId)
-
-  await Promise.all(
-    targets.map(async (connection) => {
+  const results = await Promise.all(
+    connections.map(async (connection) => {
       const delivered = await webSocketClient.post(connection.connectionId, payload)
       if (!delivered) {
         await chatConnectionService.removeConnection(connection.connectionId)
       }
+
+      return delivered
     })
   )
+
+  return results.some((delivered) => delivered)
+}
+
+async function enqueuePushNotification(
+  recipientId: string,
+  message: ChatMessageDTO
+): Promise<void> {
+  const notification: NotificationAttributes = {
+    userId: recipientId,
+    title: 'New message',
+    body: message.content,
+    type: NotificationType.CHAT_MESSAGE,
+    payload: {
+      channelId: message.channelId,
+      senderId: message.senderId
+    }
+  }
+
+  await sqsOperations.queue(notification, config.notificationQueueUrl)
 }
 
 export default sendMessage

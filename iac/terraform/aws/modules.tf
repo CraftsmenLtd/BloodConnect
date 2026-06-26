@@ -99,6 +99,7 @@ module "chat" {
   environment             = var.environment
   dynamodb_chat_table_arn = module.database.dynamodb_chat_table_arn
   cognito_user_pool_arn   = module.cognito.user_pool_arn
+  push_notification_queue = module.notification.push_notification_queue
 }
 
 module "notification" {
