@@ -1,0 +1,27 @@
+{
+  "GetChatHistoryModel": {
+    "type": "object",
+    "required": [
+      "channelId"
+    ],
+    "properties": {
+      "channelId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "limit": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100
+      },
+      "exclusiveStartKey": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "example": {
+      "channelId": "123abc#post01110#456def",
+      "limit": 20
+    }
+  }
+}

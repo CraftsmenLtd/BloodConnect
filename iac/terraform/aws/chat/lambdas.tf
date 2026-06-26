@@ -76,6 +76,45 @@ locals {
       env_variables = {
         DYNAMODB_TABLE_NAME = local.table_name
       }
+    },
+    chat-list-channels = {
+      name                       = "chat-list-channels"
+      handler                    = "chatListChannels.default"
+      js_file_name               = "chatListChannels.js"
+      invocation_arn_placeholder = "CHAT_LIST_CHANNELS_INVOCATION_ARN"
+      statement = concat(
+        local.policies.common_policies,
+        local.policies.dynamodb_create_policy
+      )
+      env_variables = {
+        DYNAMODB_TABLE_NAME = local.table_name
+      }
+    },
+    chat-get-history = {
+      name                       = "chat-get-history"
+      handler                    = "chatGetHistory.default"
+      js_file_name               = "chatGetHistory.js"
+      invocation_arn_placeholder = "CHAT_GET_HISTORY_INVOCATION_ARN"
+      statement = concat(
+        local.policies.common_policies,
+        local.policies.dynamodb_create_policy
+      )
+      env_variables = {
+        DYNAMODB_TABLE_NAME = local.table_name
+      }
+    },
+    chat-mark-read = {
+      name                       = "chat-mark-read"
+      handler                    = "chatMarkRead.default"
+      js_file_name               = "chatMarkRead.js"
+      invocation_arn_placeholder = "CHAT_MARK_READ_INVOCATION_ARN"
+      statement = concat(
+        local.policies.common_policies,
+        local.policies.dynamodb_update_policy
+      )
+      env_variables = {
+        DYNAMODB_TABLE_NAME = local.table_name
+      }
     }
   }
 }

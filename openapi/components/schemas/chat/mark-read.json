@@ -1,0 +1,17 @@
+{
+  "MarkChatReadModel": {
+    "type": "object",
+    "required": [
+      "channelId"
+    ],
+    "properties": {
+      "channelId": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "example": {
+      "channelId": "123abc#post01110#456def"
+    }
+  }
+}
