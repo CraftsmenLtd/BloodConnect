@@ -54,6 +54,15 @@ export const Account = () => {
 
         <TouchableOpacity
           style={styles.optionItem}
+          onPress={() => { navigation.navigate(SCREENS.CHAT_INBOX) }}
+        >
+          <MaterialIcons name="chat-bubble-outline" size={24} style={styles.iconStyle} />
+          <Text style={styles.optionText}>{t('chat.inboxTitle')}</Text>
+          <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionItem}
           onPress={() => { navigation.navigate(SCREENS.ABOUT) }}
         >
           <MaterialIcons name="info-outline" size={24} style={styles.iconStyle} />

@@ -20,6 +20,7 @@ type NotificationScreenConfig = {
 const SCREEN_FOR_NOTIFICATION: Partial<Record<string, NotificationScreenConfig>> = {
   BLOOD_REQ_POST: { screen: SCREENS.BLOOD_REQUEST_PREVIEW, getParams: (data) => ({ notificationData: data }) },
   REQ_ACCEPTED: { screen: SCREENS.DONOR_RESPONSE, getParams: (data) => ({ notificationData: data }) },
+  CHAT_MESSAGE: { screen: SCREENS.CHAT_ROOM, getParams: (data) => ({ channelId: data.channelId }) },
   [LOCAL_NOTIFICATION_TYPE.REQUEST_STATUS]: { screen: SCREENS.REQUEST_STATUS, getParams: (data) => ({ ...data }) },
   [LOCAL_NOTIFICATION_TYPE.REMINDER]: { screen: SCREENS.MY_ACTIVITY, getParams: (data) => ({ ...data }) }
 }
