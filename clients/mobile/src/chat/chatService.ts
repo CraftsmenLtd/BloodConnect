@@ -1,9 +1,9 @@
 import type { HttpClient } from '../setup/clients/HttpClient'
 import type { ApiResponse } from '../setup/clients/response'
-import type { ChatHistoryPage, ChatMembershipDTO } from './chatTypes'
+import type { ChatHistoryResult, ChatMembershipDTO } from './chatTypes'
 
 export type ChatChannelsResponse = ApiResponse<ChatMembershipDTO[]>
-export type ChatHistoryResponse = ApiResponse<ChatHistoryPage>
+export type ChatHistoryResponse = ApiResponse<ChatHistoryResult>
 
 // Lists the caller's chat channels (their membership items). Claim-only GET.
 export const fetchChatChannels = async(httpClient: HttpClient): Promise<ChatChannelsResponse> => {

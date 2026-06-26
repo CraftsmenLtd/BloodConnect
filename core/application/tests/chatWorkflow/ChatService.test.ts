@@ -233,7 +233,7 @@ describe('ChatService', () => {
   })
 
   describe('getHistory', () => {
-    test('passes the limit and cursor through and returns the newest-first page', async() => {
+    test('passes the limit and cursor through and returns the newest-first page with the channel context', async() => {
       const page = {
         items: [
           { channelId: CHANNEL_ID, messageId: 'm2', senderId: SEEKER_ID, content: 'b', createdAt: '2026-06-26T00:00:02.000Z' },
@@ -242,13 +242,26 @@ describe('ChatService', () => {
         lastEvaluatedKey: { PK: 'CHATMSG#x', SK: 'm1' }
       }
       chatRepository.queryMessages.mockResolvedValue(page)
+      chatRepository.getChannel.mockResolvedValue(openChannelDto)
 
       const cursor = { PK: 'CHATMSG#x', SK: 'm3' }
       const result = await chatService.getHistory(CHANNEL_ID, 25, cursor)
 
       expect(chatRepository.queryMessages).toHaveBeenCalledWith(CHANNEL_ID, 25, cursor)
-      expect(result.items[0].messageId).toBe('m2')
-      expect(result.lastEvaluatedKey).toEqual({ PK: 'CHATMSG#x', SK: 'm1' })
+      expect(chatRepository.getChannel).toHaveBeenCalledWith(SEEKER_ID, REQUEST_POST_ID, DONOR_ID)
+      expect(result.page.items[0].messageId).toBe('m2')
+      expect(result.page.lastEvaluatedKey).toEqual({ PK: 'CHATMSG#x', SK: 'm1' })
+      expect(result.channel).toEqual({ status: ChatChannelStatus.OPEN, context })
+    })
+
+    test('returns a null channel when the channel no longer exists', async() => {
+      chatRepository.queryMessages.mockResolvedValue({ items: [] })
+      chatRepository.getChannel.mockResolvedValue(null)
+
+      const result = await chatService.getHistory(CHANNEL_ID)
+
+      expect(result.channel).toBeNull()
+      expect(result.page.items).toEqual([])
     })
   })
 

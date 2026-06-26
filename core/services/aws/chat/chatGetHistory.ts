@@ -42,9 +42,9 @@ async function chatGetHistory(event: GetHistoryEvent): Promise<APIGatewayProxyRe
   )
 
   try {
-    const page = await chatService.getHistory(event.channelId, event.limit, event.exclusiveStartKey)
+    const result = await chatService.getHistory(event.channelId, event.limit, event.exclusiveStartKey)
 
-    return generateApiGatewayResponse({ success: true, data: page }, HTTP_CODES.OK)
+    return generateApiGatewayResponse({ success: true, data: result }, HTTP_CODES.OK)
   } catch (error) {
     httpLogger.error(error)
     const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE

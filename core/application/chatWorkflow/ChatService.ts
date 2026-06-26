@@ -31,6 +31,13 @@ export type OpenChannelAttributes = {
   context: ChatContextSnapshot;
 }
 
+// History plus the channel's status and snapshotted context, so the chat room renders its header
+// (and locked banner) on a cold-start deep-link from the same call, without a separate post fetch.
+export type ChatHistoryResult = {
+  channel: { status: ChatChannelStatus; context: ChatContextSnapshot } | null;
+  page: ChatHistoryPage;
+}
+
 export class ChatService {
   constructor(
     protected readonly chatRepository: ChatRepository,
@@ -132,13 +139,23 @@ export class ChatService {
     await this.chatRepository.updateLastRead(userId, channelId, new Date().toISOString())
   }
 
-  // Newest-first paginated message history for a channel.
+  // Newest-first paginated message history for a channel, plus the channel's status and context
+  // snapshot so the client renders the header and locked banner from this one call.
   async getHistory(
     channelId: string,
     limit?: number,
     exclusiveStartKey?: Record<string, unknown>
-  ): Promise<ChatHistoryPage> {
-    return this.chatRepository.queryMessages(channelId, limit, exclusiveStartKey)
+  ): Promise<ChatHistoryResult> {
+    const { seekerId, requestPostId, donorId } = parseChannelId(channelId)
+    const [channel, page] = await Promise.all([
+      this.chatRepository.getChannel(seekerId, requestPostId, donorId),
+      this.chatRepository.queryMessages(channelId, limit, exclusiveStartKey)
+    ])
+
+    return {
+      channel: channel === null ? null : { status: channel.status, context: channel.context },
+      page
+    }
   }
 
   async lockChannel(seekerId: string, requestPostId: string, donorId: string): Promise<void> {

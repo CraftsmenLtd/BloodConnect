@@ -52,9 +52,12 @@ describe('chatGetHistory', () => {
     expect(mockGetHistory).not.toHaveBeenCalled()
   })
 
-  test('returns a paginated page for a participant', async() => {
-    const page = { items: [{ messageId: 'm2' }, { messageId: 'm1' }], lastEvaluatedKey: { SK: 'm1' } }
-    mockGetHistory.mockResolvedValue(page)
+  test('returns a paginated page plus the channel context for a participant', async() => {
+    const historyResult = {
+      channel: { status: 'OPEN', context: { requestedBloodGroup: 'O+' } },
+      page: { items: [{ messageId: 'm2' }, { messageId: 'm1' }], lastEvaluatedKey: { SK: 'm1' } }
+    }
+    mockGetHistory.mockResolvedValue(historyResult)
 
     const cursor = { SK: 'm3' }
     const result = await chatGetHistory({
@@ -67,7 +70,9 @@ describe('chatGetHistory', () => {
 
     expect(result.statusCode).toBe(200)
     expect(mockGetHistory).toHaveBeenCalledWith(CHANNEL_ID, 25, cursor)
-    expect(JSON.parse(result.body).data.items).toHaveLength(2)
+    const body = JSON.parse(result.body)
+    expect(body.data.page.items).toHaveLength(2)
+    expect(body.data.channel.status).toBe('OPEN')
   })
 })
 

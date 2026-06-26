@@ -41,7 +41,7 @@ describe('useChatRoom', () => {
   afterEach(() => { jest.clearAllMocks() })
 
   it('marks the channel read on open', async() => {
-    (fetchChatHistory as jest.Mock).mockResolvedValue({ data: { items: [] }, status: 200 })
+    (fetchChatHistory as jest.Mock).mockResolvedValue({ data: { channel: null, page: { items: [] } }, status: 200 })
     ;(markChatRead as jest.Mock).mockResolvedValue({ success: true })
     ;(createChatWebSocketClient as jest.Mock).mockReturnValue(makeFakeClient())
 
@@ -53,7 +53,7 @@ describe('useChatRoom', () => {
 
   it('queues a send made while offline and flushes it on reconnect', async() => {
     const fakeClient = makeFakeClient()
-    ;(fetchChatHistory as jest.Mock).mockResolvedValue({ data: { items: [] }, status: 200 })
+    ;(fetchChatHistory as jest.Mock).mockResolvedValue({ data: { channel: null, page: { items: [] } }, status: 200 })
     ;(markChatRead as jest.Mock).mockResolvedValue({})
     ;(createChatWebSocketClient as jest.Mock).mockReturnValue(fakeClient)
 

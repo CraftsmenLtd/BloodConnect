@@ -17,6 +17,8 @@ import {
   handleNotification
 } from '../../../setup/notification/scheduleNotification'
 import DonorResponses from '../donorResponses/DonorResponses'
+import { buildChannelId } from '../../../../../../commons/dto/ChatDTO'
+import { isChatEnabled } from '../../../chat/chatConfig'
 import type { TabConfig } from '../../types'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
@@ -61,6 +63,12 @@ const Detail = ({ navigation, route }: DetailProps) => {
 
   const handlePressDonor = (donorId: string): void => {
     navigation.navigate(SCREENS.DONOR_PROFILE, { donorId })
+  }
+
+  const handleChatWithDonor = (donorId: string): void => {
+    navigation.navigate(SCREENS.CHAT_ROOM, {
+      channelId: buildChannelId(data.seekerId, data.requestPostId, donorId)
+    })
   }
 
   const handleTabPress = (tab: string): void => {
@@ -171,6 +179,7 @@ const Detail = ({ navigation, route }: DetailProps) => {
         : <DonorResponses
           acceptedDonors={data.acceptedDonors}
           handlePressDonor={handlePressDonor}
+          onChatPress={isChatEnabled() ? handleChatWithDonor : undefined}
         />
       }
     </View>

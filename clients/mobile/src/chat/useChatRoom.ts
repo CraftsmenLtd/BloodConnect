@@ -4,10 +4,11 @@ import { log } from '../utility/logger'
 import { createChatWebSocketClient } from './chatClientFactory'
 import type { ChatWebSocketClient } from './ChatWebSocketClient'
 import { fetchChatHistory, markChatRead } from './chatService'
-import type { ChatMessageDTO } from './chatTypes'
+import type { ChatChannelContext, ChatMessageDTO } from './chatTypes'
 
 type UseChatRoomResult = {
   messages: ChatMessageDTO[];
+  channel: ChatChannelContext | null;
   loading: boolean;
   error: string | null;
   connected: boolean;
@@ -24,6 +25,7 @@ export const useChatRoom = (channelId: string): UseChatRoomResult => {
   const fetchClientRef = useRef(fetchClient)
   fetchClientRef.current = fetchClient
   const [messages, setMessages] = useState<ChatMessageDTO[]>([])
+  const [channel, setChannel] = useState<ChatChannelContext | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [connected, setConnected] = useState(false)
@@ -55,7 +57,10 @@ export const useChatRoom = (channelId: string): UseChatRoomResult => {
       setError(null)
       try {
         const response = await fetchChatHistory(channelId, fetchClientRef.current)
-        if (active) setMessages(response.data?.items ?? [])
+        if (active) {
+          setMessages(response.data?.page.items ?? [])
+          setChannel(response.data?.channel ?? null)
+        }
       } catch (historyError) {
         if (active) {
           setError(historyError instanceof Error ? historyError.message : 'Failed to load messages.')
@@ -87,5 +92,5 @@ export const useChatRoom = (channelId: string): UseChatRoomResult => {
     }
   }, [channelId, flushQueue])
 
-  return { messages, loading, error, connected, send }
+  return { messages, channel, loading, error, connected, send }
 }

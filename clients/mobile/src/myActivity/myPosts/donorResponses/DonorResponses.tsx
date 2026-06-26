@@ -13,9 +13,11 @@ export type DonorItem = {
 type DonorResponsesProps = {
   acceptedDonors: DonorItem[];
   handlePressDonor: (item: string) => void;
+  // When provided (chat rollout on), each donor row gets a Chat button opening that donor's channel.
+  onChatPress?: (donorId: string) => void;
 }
 
-const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProps) => {
+const DonorResponses = ({ acceptedDonors, handlePressDonor, onChatPress }: DonorResponsesProps) => {
   const styles = createStyles(useTheme())
 
   return (
@@ -44,6 +46,13 @@ const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProp
                     <Text style={styles.name}>{item.donorName}</Text>
                     <Text style={styles.status}>New blood donor</Text>
                   </View>
+                  {onChatPress !== undefined && (
+                    <TouchableOpacity
+                      style={styles.chatButton}
+                      onPress={() => { onChatPress(item.donorId) }}>
+                      <Text style={styles.chatButtonText}>Chat</Text>
+                    </TouchableOpacity>
+                  )}
                   <Text style={styles.arrow}>&gt;</Text>
                 </TouchableOpacity>
               )}
@@ -115,6 +124,19 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     arrow: {
       fontSize: 20,
       color: theme.colors.primary
+    },
+    chatButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+      marginRight: 12
+    },
+    chatButtonText: {
+      fontSize: 13,
+      color: theme.colors.primary,
+      fontWeight: '600'
     }
   })
 
