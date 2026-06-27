@@ -19,6 +19,7 @@ import * as Notifications from 'expo-notifications'
 import type { RootStackParamList } from './src/setup/navigation/navigationTypes'
 import Constants from 'expo-constants'
 import { MyActivityProvider } from './src/myActivity/context/MyActivityProvider'
+import { ChatProvider } from './src/chat/context/ChatProvider'
 import useBackPressHandler from './src/hooks/useBackPressHandler'
 import Monitoring from './src/setup/monitoring/MonitoringService'
 import { I18nextProvider, useTranslation } from 'react-i18next'
@@ -64,12 +65,14 @@ export default function App() {
               <AuthProvider>
                 <UserProfileProvider>
                   <MyActivityProvider>
-                    <ThemeProvider>
-                      {/* TODO: need to use themes' primary color but it's not working. */}
-                      <StatusBar hidden={false} backgroundColor='#FF4D4D' />
-                      <Navigator />
-                      <NetInfoModal />
-                    </ThemeProvider>
+                    <ChatProvider>
+                      <ThemeProvider>
+                        {/* TODO: need to use themes' primary color but it's not working. */}
+                        <StatusBar hidden={false} backgroundColor='#FF4D4D' />
+                        <Navigator />
+                        <NetInfoModal />
+                      </ThemeProvider>
+                    </ChatProvider>
                   </MyActivityProvider>
                 </UserProfileProvider>
               </AuthProvider>

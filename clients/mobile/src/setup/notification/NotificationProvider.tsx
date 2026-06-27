@@ -11,15 +11,28 @@ import type { RootStackParamList } from '../navigation/navigationTypes'
 import storageService from '../../utility/storageService'
 import LOCAL_STORAGE_KEYS from '../constant/localStorageKeys'
 import { LOCAL_NOTIFICATION_TYPE } from '../constant/consts'
+import { NotificationType } from '../../../../../commons/dto/NotificationDTO'
+import { CHANNEL_ID_SEPARATOR } from '../../chat/constants/chatConstants'
 
 type NotificationScreenConfig = {
   screen: keyof RootStackParamList;
   getParams?: (data: Record<string, unknown>) => NotificationData;
 }
 
+// The chat room is keyed by channelId; requestPostId is the middle segment of the
+// channelId, so a cold-start open still resolves the room if the push omits it.
+const buildChatRoomParams = (data: Record<string, unknown>): NotificationData => {
+  const channelId = typeof data.channelId === 'string' ? data.channelId : ''
+  const explicitRequestPostId = typeof data.requestPostId === 'string' ? data.requestPostId : ''
+  const requestPostId = explicitRequestPostId !== '' ? explicitRequestPostId : channelId.split(CHANNEL_ID_SEPARATOR)[1] ?? ''
+
+  return { channelId, requestPostId }
+}
+
 const SCREEN_FOR_NOTIFICATION: Partial<Record<string, NotificationScreenConfig>> = {
   BLOOD_REQ_POST: { screen: SCREENS.BLOOD_REQUEST_PREVIEW, getParams: (data) => ({ notificationData: data }) },
   REQ_ACCEPTED: { screen: SCREENS.DONOR_RESPONSE, getParams: (data) => ({ notificationData: data }) },
+  [NotificationType.CHAT_MESSAGE]: { screen: SCREENS.CHAT_ROOM, getParams: (data) => buildChatRoomParams(data) },
   [LOCAL_NOTIFICATION_TYPE.REQUEST_STATUS]: { screen: SCREENS.REQUEST_STATUS, getParams: (data) => ({ ...data }) },
   [LOCAL_NOTIFICATION_TYPE.REMINDER]: { screen: SCREENS.MY_ACTIVITY, getParams: (data) => ({ ...data }) }
 }

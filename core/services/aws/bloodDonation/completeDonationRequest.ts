@@ -20,6 +20,8 @@ import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/Don
 import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
 import { LocationService } from 'core/application/userWorkflow/LocationService'
 import SQSOperations from '../commons/sqs/SQSOperations'
+import { ChatChannelService } from '../../../application/chatWorkflow/ChatChannelService'
+import ChatChannelDynamoDbOperations from '../commons/ddbOperations/ChatChannelDynamoDbOperations'
 
 const config = new Config<{
   dynamodbTableName: string;
@@ -48,6 +50,10 @@ const locationDynamoDbOperations = new LocationDynamoDbOperations(
   config.dynamodbTableName,
   config.awsRegion
 )
+const chatChannelDynamoDbOperations = new ChatChannelDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 
 async function completeDonationRequest(
@@ -63,6 +69,7 @@ async function completeDonationRequest(
   const userService = new UserService(userDynamoDbOperations, httpLogger)
   const donationRecordService = new DonationRecordService(donationRecordDynamoDbOperations, httpLogger)
   const locationService = new LocationService(locationDynamoDbOperations, httpLogger)
+  const chatChannelService = new ChatChannelService(chatChannelDynamoDbOperations)
   try {
     const { donorIds, seekerId, requestPostId, requestCreatedAt } = event
     await bloodDonationService.completeDonationRequest(
@@ -76,7 +83,8 @@ async function completeDonationRequest(
       locationService,
       config.minMonthsBetweenDonations,
       new SQSOperations(config.awsRegion),
-      config.notificationQueueUrl
+      config.notificationQueueUrl,
+      chatChannelService
     )
 
     return generateApiGatewayResponse(

@@ -33,6 +33,7 @@ import { NotificationStatus, NotificationType } from '../../../commons/dto/Notif
 import type { UpdateUserAttributes } from '../userWorkflow/Types'
 import type { LocationService } from '../userWorkflow/LocationService'
 import type { QueueModel } from '../models/queue/QueueModel'
+import type { ChatChannelService } from '../chatWorkflow/ChatChannelService'
 
 export class BloodDonationService {
   constructor(
@@ -252,6 +253,17 @@ export class BloodDonationService {
     await this.bloodDonationRepository.update(updateData)
   }
 
+  async cancelDonationRequest(
+    seekerId: string,
+    requestPostId: string,
+    createdAt: string,
+    chatChannelService: ChatChannelService
+  ): Promise<void> {
+    await this.updateDonationStatus(seekerId, requestPostId, createdAt, DonationStatus.CANCELLED)
+    this.logger.info('locking chat channels for cancelled request')
+    await chatChannelService.lockChannelsForRequest(seekerId, requestPostId)
+  }
+
   async checkAndUpdateDonationStatus(
     seekerId: string,
     requestPostId: string,
@@ -305,7 +317,8 @@ export class BloodDonationService {
     locationService: LocationService,
     minMonthsBetweenDonations: number,
     queueModel: QueueModel,
-    notificationQueueUrl: string
+    notificationQueueUrl: string,
+    chatChannelService: ChatChannelService
   ): Promise<void> {
     const donationPost = await this.getDonationRequest(seekerId, requestPostId, requestCreatedAt)
 
@@ -315,6 +328,9 @@ export class BloodDonationService {
       requestCreatedAt,
       DonationStatus.COMPLETED
     )
+
+    this.logger.info('locking chat channels for completed request')
+    await chatChannelService.lockChannelsForRequest(seekerId, requestPostId)
     for (const donorId of donorIds) {
       await donationRecordService.createDonationRecord({
         donorId,

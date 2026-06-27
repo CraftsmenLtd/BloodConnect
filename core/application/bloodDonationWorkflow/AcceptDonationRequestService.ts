@@ -10,9 +10,11 @@ import type { BloodDonationService } from './BloodDonationService'
 import type { NotificationService } from '../notificationWorkflow/NotificationService'
 import type { UserService } from '../userWorkflow/UserService'
 import type { UserDetailsDTO } from '../../../commons/dto/UserDTO'
-import type { DonationNotificationAttributes } from '../notificationWorkflow/Types'
+import type { DonationNotificationAttributes, NotificationAttributes } from '../notificationWorkflow/Types'
 import { NotificationType } from '../../../commons/dto/NotificationDTO'
 import type { QueueModel } from '../models/queue/QueueModel'
+import type { ChatChannelService } from '../chatWorkflow/ChatChannelService'
+import type { ChatChannelDTO } from '../../../commons/dto/ChatDTO'
 
 export class AcceptDonationService {
   constructor(
@@ -30,7 +32,8 @@ export class AcceptDonationService {
     userService: UserService,
     notificationService: NotificationService,
     queueModel: QueueModel,
-    notificationQueueUrl: string
+    notificationQueueUrl: string,
+    chatChannelService: ChatChannelService
   ): Promise<void> {
     if (![AcceptDonationStatus.ACCEPTED, AcceptDonationStatus.IGNORED].includes(status)) {
       throw new Error('Invalid status for donation response.')
@@ -74,11 +77,23 @@ export class AcceptDonationService {
           status,
           donorProfile
         )
+        await this.openChatChannel(
+          chatChannelService,
+          notificationService,
+          queueModel,
+          notificationQueueUrl,
+          seekerId,
+          requestPostId,
+          donorId,
+          createdAt
+        )
       }
     } else {
       if (status === AcceptDonationStatus.IGNORED) {
         this.logger.info('removing donation acceptance entry')
         await this.acceptDonationRepository.deleteAcceptedRequest(seekerId, requestPostId, donorId)
+        this.logger.info('locking chat channel for ignored acceptance')
+        await chatChannelService.lockChannelForDonor(seekerId, requestPostId, donorId)
       }
       if (status !== acceptanceRecord.status) {
         await this.sendNotificationToSeeker(
@@ -92,6 +107,20 @@ export class AcceptDonationService {
           createdAt,
           status,
           donorProfile
+        )
+      }
+      // ADV-001: a retry after a failed channel-create re-enters here; ensureChannel
+      // (create-if-missing) still creates the channel that the null branch missed.
+      if (status === AcceptDonationStatus.ACCEPTED) {
+        await this.openChatChannel(
+          chatChannelService,
+          notificationService,
+          queueModel,
+          notificationQueueUrl,
+          seekerId,
+          requestPostId,
+          donorId,
+          createdAt
         )
       }
     }
@@ -304,6 +333,58 @@ export class AcceptDonationService {
         NotificationType.BLOOD_REQ_POST,
         status
       )
+    }
+  }
+
+  async openChatChannel(
+    chatChannelService: ChatChannelService,
+    notificationService: NotificationService,
+    queueModel: QueueModel,
+    notificationQueueUrl: string,
+    seekerId: string,
+    requestPostId: string,
+    donorId: string,
+    createdAt: string
+  ): Promise<void> {
+    this.logger.info('ensuring chat channel for accepted donation')
+    const channel = await chatChannelService.ensureChannel(
+      seekerId,
+      requestPostId,
+      donorId,
+      createdAt
+    )
+    await this.notifyChatOpened(notificationService, queueModel, notificationQueueUrl, channel)
+  }
+
+  async notifyChatOpened(
+    notificationService: NotificationService,
+    queueModel: QueueModel,
+    notificationQueueUrl: string,
+    channel: ChatChannelDTO
+  ): Promise<void> {
+    this.logger.info('notifying both parties that the chat is open')
+    await Promise.all(
+      [channel.seekerId, channel.donorId].map((userId) =>
+        notificationService.sendNotification(
+          this.buildChatOpenedNotification(userId, channel),
+          queueModel,
+          notificationQueueUrl
+        ))
+    )
+  }
+
+  buildChatOpenedNotification(userId: string, channel: ChatChannelDTO): NotificationAttributes {
+    return {
+      userId,
+      title: 'Chat opened',
+      body: 'You can now chat about this blood request.',
+      type: NotificationType.CHAT_MESSAGE,
+      payload: {
+        channelId: channel.channelId,
+        seekerId: channel.seekerId,
+        donorId: channel.donorId,
+        requestPostId: channel.requestPostId
+      }
     }
   }
 }

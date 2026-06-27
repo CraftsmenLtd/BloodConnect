@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, RefreshControl } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 import ToggleTabs from '../components/tab/ToggleTabs'
 import { MY_ACTIVITY_TAB_CONFIG, useMyActivity } from './useMyActivity'
 import { useTheme } from '../setup/theme/hooks/useTheme'
@@ -7,12 +8,29 @@ import type { Theme } from '../setup/theme'
 import Posts from '../components/donation/Posts'
 import { useMyActivityContext } from './context/useMyActivityContext'
 import Toast from '../components/toast'
+import { SCREENS } from '../setup/constant/screens'
+import type { ChatRoomNavigationProp } from '../setup/navigation/navigationTypes'
+import { useUserProfile } from '../userWorkflow/context/UserProfileContext'
+import { buildChannelId } from '../chat/constants/chatConstants'
+import type { DonationData } from '../donationWorkflow/donationHelpers'
 import React from 'react'
 
 const MyActivityTab = () => {
   const theme = useTheme()
   const { t } = useTranslation()
   const styles = createStyles(useTheme())
+  const navigation = useNavigation<ChatRoomNavigationProp>()
+  const { userProfile } = useUserProfile()
+
+  // Donor-side entry: the current user is the donor on a request they accepted.
+  const openDonorChat = (donationData: DonationData): void => {
+    const channelId = buildChannelId(donationData.seekerId, donationData.requestPostId, userProfile.userId)
+    navigation.navigate(SCREENS.CHAT_ROOM, {
+      channelId,
+      requestPostId: donationData.requestPostId,
+      bloodGroup: donationData.requestedBloodGroup
+    })
+  }
   const {
     donationPosts,
     errorMessage,
@@ -80,7 +98,8 @@ const MyActivityTab = () => {
           errorMessage={myResponsesError}
           emptyDataMessage={t('donationPosts.emptyMyDonationPosts')}
           detailHandler={myResponsesDetailHandler}
-          displayOptions={{ showOptions: false, showButton: true, showStatus: true }}
+          chatHandler={openDonorChat}
+          displayOptions={{ showOptions: false, showButton: true, showStatus: true, showChatButton: true }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

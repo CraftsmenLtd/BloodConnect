@@ -38,6 +38,7 @@ export type PostCardDisplayOptions = {
   showOptions?: boolean;
   showPostUpdatedOption?: boolean;
   showStatus?: boolean;
+  showChatButton?: boolean;
   statusValue?: StatusType;
 }
 
@@ -46,6 +47,7 @@ type PostCardProps = {
   updateHandler?: (donationData: DonationData) => void;
   detailHandler?: (donationData: DonationData) => void;
   cancelHandler?: (donationData: DonationData) => void;
+  chatHandler?: (donationData: DonationData) => void;
   isLoading?: boolean;
 } & PostCardDisplayOptions
 
@@ -59,6 +61,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   updateHandler,
   detailHandler,
   cancelHandler,
+  chatHandler,
   showContactNumber = false,
   showDescription = true,
   showTransportInfo = false,
@@ -68,6 +71,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   showOptions = true,
   showPostUpdatedOption = true,
   showStatus = false,
+  showChatButton = false,
   isLoading = false,
   statusValue = null
 }) => {
@@ -363,6 +367,14 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
           buttonStyle={styles.buttonStyle}
           textStyle={styles.textStyle}
           onPress={() => { detailHandler?.(post) }}
+        />
+      </View>}
+      {showChatButton && chatHandler !== undefined && <View style={styles.buttonContainer}>
+        <Button
+          text="Message"
+          buttonStyle={styles.buttonStyle}
+          textStyle={styles.textStyle}
+          onPress={() => { chatHandler(post) }}
         />
       </View>}
     </View>

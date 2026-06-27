@@ -92,3 +92,9 @@ variable "poc_emails" {
   type        = string
   default     = ""
 }
+
+variable "chat_message_retention_days" {
+  description = "Retention window (days) for in-app chat messages before DynamoDB TTL purges them. The per-item expiresAt is computed in app code; this documents the configured retention."
+  type        = number
+  default     = 90
+}
