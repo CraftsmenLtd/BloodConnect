@@ -58,11 +58,13 @@ resource "aws_apigatewayv2_route" "connect" {
   target             = "integrations/${aws_apigatewayv2_integration.connect.id}"
 }
 
-# $disconnect and sendmessage do not re-authorize: the connection is authenticated
-# once at $connect (the Lambda request authorizer), and its authorizer context is
-# carried on every subsequent frame's requestContext. authorization_type is set
-# explicitly to satisfy CKV_AWS_309.
+# $disconnect and sendmessage do not re-authorize: WebSocket APIs only support an
+# authorizer on the $connect route. The connection is authenticated once at $connect
+# (the Lambda request authorizer), and that authorizer context is carried on every
+# subsequent frame's requestContext. AWS rejects attaching an authorizer to these
+# routes, so CKV_AWS_309 (which requires a non-NONE authorization type) is skipped.
 resource "aws_apigatewayv2_route" "disconnect" {
+  #checkov:skip=CKV_AWS_309: "WebSocket auth is enforced at $connect; $disconnect cannot carry its own authorizer"
   api_id             = aws_apigatewayv2_api.chat_websocket.id
   route_key          = "$disconnect"
   authorization_type = "NONE"
@@ -70,6 +72,7 @@ resource "aws_apigatewayv2_route" "disconnect" {
 }
 
 resource "aws_apigatewayv2_route" "sendmessage" {
+  #checkov:skip=CKV_AWS_309: "WebSocket auth is enforced at $connect; custom routes ride the authenticated connection and cannot carry their own authorizer"
   api_id             = aws_apigatewayv2_api.chat_websocket.id
   route_key          = "sendmessage"
   authorization_type = "NONE"
