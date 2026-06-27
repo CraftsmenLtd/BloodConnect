@@ -1,14 +1,31 @@
 import React from 'react'
 import { Text, View, StyleSheet } from 'react-native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { useDonationResponse } from './useDonationResponse'
 import PostCard from '../../components/donation/PostCard'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
+import { SCREENS } from '../../setup/constant/screens'
+import type { ChatRoomNavigationProp, DonorResponseRouteProp } from '../../setup/navigation/navigationTypes'
+import { buildChannelId } from '../../chat/constants/chatConstants'
 
 const DonorResponse = () => {
   const styles = createStyles(useTheme())
   const { bloodRequest, seeDetails, ignoreHandler } = useDonationResponse()
+  const navigation = useNavigation<ChatRoomNavigationProp>()
+  const { notificationData } = useRoute<DonorResponseRouteProp>().params
+
+  // Seeker-side entry: a specific donor responded, so the channel triple is fully known.
+  const openChat = (): void => {
+    const channelId = buildChannelId(notificationData.seekerId, notificationData.requestPostId, notificationData.donorId)
+    navigation.navigate(SCREENS.CHAT_ROOM, {
+      channelId,
+      requestPostId: notificationData.requestPostId,
+      bloodGroup: notificationData.requestedBloodGroup
+    })
+  }
+
   if (bloodRequest === null || bloodRequest === undefined) return null
 
   return (
@@ -25,6 +42,9 @@ const DonorResponse = () => {
             buttonStyle={styles.ignoreButton}
             textStyle={styles.buttonTextStyle}
             onPress={ignoreHandler} />
+        </View>
+        <View style={styles.buttonWrapper}>
+          <Button text="Message" buttonStyle={styles.messageButton} onPress={openChat} />
         </View>
         <View style={styles.buttonWrapper}>
           <Button text="See Responses" onPress={seeDetails} />
@@ -46,6 +66,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flex: 1,
     marginRight: 10,
     color: theme.colors.black
+  },
+  messageButton: {
+    flex: 1,
+    backgroundColor: theme.colors.secondary
   },
   buttonTextStyle: {
     color: theme.colors.black

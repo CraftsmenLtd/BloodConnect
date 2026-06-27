@@ -19,6 +19,8 @@ import { Config } from '../../../../commons/libs/config/config'
 import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/DonationNotificationDynamoDbOperations'
 import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
 import SQSOperations from '../commons/sqs/SQSOperations'
+import { ChatChannelService } from '../../../application/chatWorkflow/ChatChannelService'
+import ChatChannelDynamoDbOperations from '../commons/ddbOperations/ChatChannelDynamoDbOperations'
 
 const config = new Config<{
   dynamodbTableName: string;
@@ -42,6 +44,10 @@ const notificationDynamoDbOperations = new DonationNotificationDynamoDbOperation
   config.dynamodbTableName,
   config.awsRegion
 )
+const chatChannelDynamoDbOperations = new ChatChannelDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 async function acceptDonationRequestLambda(
   event: AcceptDonationRequestAttributes & HttpLoggerAttributes
@@ -57,6 +63,7 @@ async function acceptDonationRequestLambda(
   const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
   const notificationService = new NotificationService(notificationDynamoDbOperations, httpLogger)
   const userService = new UserService(userDynamoDbOperations, httpLogger)
+  const chatChannelService = new ChatChannelService(chatChannelDynamoDbOperations)
   try {
     const { donorId, seekerId, requestPostId, createdAt, status } = event
     await acceptDonationService.acceptDonationRequest(
@@ -69,7 +76,8 @@ async function acceptDonationRequestLambda(
       userService,
       notificationService,
       new SQSOperations(config.awsRegion),
-      config.notificationQueueUrl
+      config.notificationQueueUrl,
+      chatChannelService
     )
 
     return generateApiGatewayResponse(

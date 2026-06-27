@@ -31,6 +31,8 @@ Source of truth: ``iac/terraform/aws/dynamodb/dynamodb.tf``.
      - ``PK`` (partition) + ``SK`` (sort)
    * - Streams
      - Enabled, ``NEW_AND_OLD_IMAGES``
+   * - Time-to-live
+     - Enabled on attribute ``expiresAt`` (epoch seconds) — opt-in per item
    * - Local secondary index
      - ``LSI1`` — range key ``LSI1SK``, projection ``ALL``
    * - Global secondary index
@@ -45,8 +47,8 @@ Design conventions
 ==================
 
 - **Single-table design.** All entities share one table; the key prefix
-  (``USER#``, ``BLOOD_REQ#``, ``DONOR_SEARCH#``, ``DONATION#``, ``NOTIFICATION#``)
-  identifies the entity type.
+  (``USER#``, ``BLOOD_REQ#``, ``DONOR_SEARCH#``, ``DONATION#``, ``NOTIFICATION#``,
+  ``CHAT#``, ``CHATMSG#``, ``WSCONN#``) identifies the entity type.
 - **Key overloading.** ``GSI1PK``/``GSI1SK`` and ``LSI1SK`` carry different
   composite values per entity. Items only join an index when they populate the
   relevant key attributes; otherwise they are invisible to that index.
@@ -54,6 +56,10 @@ Design conventions
   before alphanumerics, keeping prefixed items grouped).
 - **ISO 8601 timestamps.** ``createdAt`` / ``updatedAt`` are stored as sortable
   UTC strings (``YYYY-MM-DDTHH:MM:SSZ``) so they work as sort-key segments.
+- **Opt-in TTL.** The table's ``expiresAt`` TTL attribute (epoch seconds) is set
+  **only** by the chat entities (``CHAT#`` / ``CHATMSG#`` / ``WSCONN#`` and the
+  ``USER#…/CHAT#…`` inbox pointer). Every other entity leaves ``expiresAt`` unset
+  and is therefore never auto-purged — TTL is per-item by DynamoDB design.
 - **DTO-backed attributes.** Item attributes are the fields of the matching DTO;
   the model's ``fromDto``/``toDto`` only rewrites the key attributes. Attribute
   lists below reference the DTO rather than duplicating every field, so the doc
@@ -311,6 +317,151 @@ Access patterns
    A second adapter, ``NotificationModel`` (same ``PK``/``SK`` shape, no index
    keys), is defined but **not currently wired to any operations class** — only
    its ``NOTIFICATION#`` prefix constant is reused. Listed for completeness.
+
+Chat channel
+------------
+
+Source: ``core/services/aws/commons/ddbModels/ChatChannelModel.ts`` · operations:
+``ChatChannelDynamoDbOperations`` · attributes: ``ChatChannelDTO``
+(``commons/dto/ChatDTO.ts``).
+
+The private donor↔seeker chat created when a donor accepts a request. The
+``channelId`` encodes the triple ``<seekerId>#<requestPostId>#<donorId>``, so the
+channel is deterministic for a given acceptance.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 82
+
+   * - Key
+     - Value
+   * - ``PK``
+     - ``CHAT#<channelId>`` (``channelId = <seekerId>#<requestPostId>#<donorId>``)
+   * - ``SK``
+     - ``METADATA``
+   * - ``expiresAt``
+     - epoch seconds, ``createdAt + (90 + 7) days``
+
+Access patterns
+
+- **Get a channel** — exact lookup ``PK = CHAT#<channelId>``, ``SK = METADATA``
+  (``getChannel``).
+- **Create idempotently** — conditional put ``attribute_not_exists(PK)``, so the
+  ``ensureChannel`` call on every ACCEPTED acceptance creates the channel at most
+  once (re-entry on retry is a no-op).
+
+``status`` is ``ACTIVE`` or ``LOCKED`` (``ChatChannelStatus``); terminal donation
+transitions (complete / cancel / ignore) set ``LOCKED``, after which
+``sendChatMessage`` rejects writes. ``expiresAt`` carries a 7-day buffer beyond
+the message retention window so the channel row self-cleans **after** its last
+message TTL-expires, rather than orphaning (ADV-009).
+
+Chat inbox pointer
+------------------
+
+Source: ``ChatChannelModel.ts`` (``ChatInboxPointerFields``) · operations:
+``ChatChannelDynamoDbOperations``.
+
+One pointer per participant, written alongside the channel, so each user lists
+their own channels by querying their ``USER#`` partition (same pattern as donor
+locations). This row holds the per-user unread badge.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 82
+
+   * - Key
+     - Value
+   * - ``PK``
+     - ``USER#<userId>``
+   * - ``SK``
+     - ``CHAT#<channelId>``
+   * - ``expiresAt``
+     - epoch seconds, ``createdAt + (90 + 7) days``
+
+Access patterns
+
+- **List a user's chats** — query ``PK = USER#<userId>``,
+  ``SK begins_with CHAT#`` (``listChannels``).
+- **Increment unread + preview** — on each delivered message,
+  ``sendChatMessage`` does ``ADD unreadCount :1`` and sets ``lastMessagePreview``
+  on the **recipient's** pointer.
+- **Reset unread** — the mark-as-read endpoint sets ``unreadCount = 0`` on the
+  **caller's** pointer only (``resetUnread``).
+
+``lastMessagePreview`` and ``unreadCount`` are optional and start unset; the
+pointer shares the channel's ``expiresAt`` buffer.
+
+Chat message
+------------
+
+Source: ``core/services/aws/commons/ddbModels/ChatMessageModel.ts`` · operations:
+``ChatMessageDynamoDbOperations`` · attributes: ``ChatMessageDTO``
+(``commons/dto/ChatDTO.ts``).
+
+One item per message, partitioned by channel. ``createdAt`` is **client-supplied**
+(validated server-side within a ±5-minute drift window), making the sort key
+deterministic per ``messageId``.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 82
+
+   * - Key
+     - Value
+   * - ``PK``
+     - ``CHATMSG#<channelId>``
+   * - ``SK``
+     - ``<createdAt>#<messageId>``
+   * - ``expiresAt``
+     - epoch seconds, ``createdAt + 90 days``
+
+Access patterns
+
+- **Paginated history** — query ``PK = CHATMSG#<channelId>`` ordered by ``SK``,
+  with a ``lastEvaluatedKey`` cursor (``getHistory``).
+- **Rate-limit count** — bounded query of the trailing 60s on the partition;
+  the 61st message in a minute is rejected (``countMessagesSince``).
+- **Idempotent persist** — conditional put ``attribute_not_exists(SK)``; an
+  offline-queue re-send of the same ``messageId`` is deduped server-side.
+
+``expiresAt`` (``clientCreatedAt + 90 days``) drives the per-message TTL purge,
+so history older than the retention window self-deletes.
+
+WebSocket connection
+--------------------
+
+Source: ``core/services/aws/commons/ddbModels/WsConnectionModel.ts`` ·
+operations: ``WsConnectionDynamoDbOperations`` · attributes: ``WsConnectionDTO``
+(local to the model — an internal ``connectionId``↔``userId`` mapping, not a
+cross-layer DTO).
+
+Records a live API Gateway WebSocket connection so a message can be routed to a
+recipient's open sockets.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 82
+
+   * - Key
+     - Value
+   * - ``PK``
+     - ``WSCONN#<userId>``
+   * - ``SK``
+     - ``<connectionId>``
+   * - ``expiresAt``
+     - epoch seconds, ``now + 24 hours`` (stale-connection cleanup)
+
+Access patterns
+
+- **List a user's connections** — query ``PK = WSCONN#<userId>`` to fan a message
+  out to every live socket (``getConnectionsByUser``).
+- **Record on ``$connect`` / delete on ``$disconnect``** — put / delete by
+  ``(userId, connectionId)``. A ``postToConnection`` returning 410/Gone also
+  deletes the stale row before falling through to the push path.
+
+The short 24-hour ``expiresAt`` is a safety net for connections never cleanly
+closed; normal disconnects delete the row immediately.
 
 Overloaded index summary
 ========================

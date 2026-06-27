@@ -1,0 +1,97 @@
+{
+  "get": {
+    "operationId": "GetChannelHistory",
+    "description": "Get paginated chat message history for a channel",
+    "tags": [
+      "bloodconnect-chat"
+    ],
+    "parameters": [
+      {
+        "name": "channelId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      {
+        "name": "cursor",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "200 response",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Methods": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "Access-Control-Allow-Headers": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "messages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "nextCursor": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "x-amazon-apigateway-request-validator": "ValidateBodyAndQuery",
+    "x-amazon-apigateway-integration": {
+      "$ref": "./../../integration/aws/chat/get-channel-history.json"
+    },
+    "security": [
+      {
+        "CognitoAuthorizer": []
+      }
+    ]
+  },
+  "options": {
+    "parameters": [
+      {
+        "name": "channelId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "$ref": "./../cors-options.json"
+  }
+}

@@ -19,6 +19,8 @@ import Profile from '../../userWorkflow/userProfile/UI/Profile'
 import EditProfile from '../../userWorkflow/editUserProfile/UI/EditProfile'
 import RequestStatusScreen from '../../myActivity/donorTracking/bloodRequestStatus/RequestStatusScreen'
 import DonorConfirmationScreen from '../../myActivity/donorTracking/donorConfirmation/DonorConfirmationScreen'
+import ChatInboxScreen from '../../chat/ChatInboxScreen'
+import ChatRoomScreen from '../../chat/ChatRoomScreen'
 
 export const routes = [
   {
@@ -139,6 +141,18 @@ export const routes = [
     name: SCREENS.SETTINGS,
     component: SettingsPage,
     options: { headerShown: true, headerTitle: 'Settings' },
+    protected: true
+  },
+  {
+    name: SCREENS.CHAT_INBOX,
+    component: ChatInboxScreen,
+    options: { headerShown: true, headerTitle: 'Messages' },
+    protected: true
+  },
+  {
+    name: SCREENS.CHAT_ROOM,
+    component: ChatRoomScreen,
+    options: { headerShown: true, headerTitle: 'Chat' },
     protected: true
   }
 ]

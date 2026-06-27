@@ -1,0 +1,22 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "${MARK_CHANNEL_READ_INVOCATION_ARN}",
+  "requestTemplates": {
+    "application/json": "#importVtl chat/vtl/requestTemplates/post-mark-read.vtl"
+  },
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'POST'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      },
+      "responseTemplates": {
+        "application/json": "#importVtl chat/vtl/responseTemplates/post-mark-read.vtl"
+      }
+    }
+  },
+  "passthroughBehavior": "never"
+}

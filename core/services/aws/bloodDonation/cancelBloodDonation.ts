@@ -5,9 +5,10 @@ import { BloodDonationService } from '../../../application/bloodDonationWorkflow
 import type {
   DonationRecordEventAttributes
 } from '../../../application/bloodDonationWorkflow/Types'
-import { DonationStatus } from '../../../../commons/dto/DonationDTO'
 import BloodDonationOperationError from '../../../application/bloodDonationWorkflow/BloodDonationOperationError'
 import BloodDonationDynamoDbOperations from '../commons/ddbOperations/BloodDonationDynamoDbOperations'
+import { ChatChannelService } from '../../../application/chatWorkflow/ChatChannelService'
+import ChatChannelDynamoDbOperations from '../commons/ddbOperations/ChatChannelDynamoDbOperations'
 import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
@@ -22,6 +23,10 @@ const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
   config.dynamodbTableName,
   config.awsRegion
 )
+const chatChannelDynamoDbOperations = new ChatChannelDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 async function cancelBloodDonation(
   event: DonationRecordEventAttributes & HttpLoggerAttributes
@@ -32,12 +37,13 @@ async function cancelBloodDonation(
     event.cloudFrontRequestId
   )
   const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
+  const chatChannelService = new ChatChannelService(chatChannelDynamoDbOperations)
   try {
-    await bloodDonationService.updateDonationStatus(
+    await bloodDonationService.cancelDonationRequest(
       event.seekerId,
       event.requestPostId,
       event.requestCreatedAt,
-      DonationStatus.CANCELLED
+      chatChannelService
     )
 
     return generateApiGatewayResponse(

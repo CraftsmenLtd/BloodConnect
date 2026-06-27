@@ -46,6 +46,9 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     ...config,
     extra: {
       ...ENV_VARS[environmentConfigs.APP_ENV],
+      // Optional: chat WebSocket endpoint. When unset, the chat send path queues
+      // locally and falls back to the REST flush — real-time delivery stays off.
+      WEBSOCKET_URL: process.env.WEBSOCKET_URL,
       eas: {
         projectId: environmentConfigs.EAS_PROJECT_ID?.trim()
       }

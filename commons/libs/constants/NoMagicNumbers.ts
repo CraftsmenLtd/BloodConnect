@@ -26,3 +26,8 @@ export const FEED_DEFAULT_RADIUS_KM = 10
 export const H3_RES_5_EDGE_KM = 8.54
 // H3 res 8 edge length used by donor search reach math
 export const H3_RES_8_EDGE_KM = 0.461
+
+// Chat tunables
+export const CHAT_MESSAGE_RETENTION_DAYS = 90
+export const CHAT_RATE_LIMIT_PER_MINUTE = 60
+export const WS_CONNECTION_TTL_HOURS = 24

@@ -45,4 +45,12 @@ resource "aws_dynamodb_table" "blood_connect_data" {
     range_key       = "GSI1SK"
     projection_type = "ALL"
   }
+
+  # Per-item TTL: only items that set the "expiresAt" epoch attribute are purged
+  # (e.g. chat messages, ws-connection records). Existing entities never set it,
+  # so they are never expired. See REQ-001 (in-app chat) architecture, Risks.
+  ttl {
+    attribute_name = "expiresAt"
+    enabled        = true
+  }
 }

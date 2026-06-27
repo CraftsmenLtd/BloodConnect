@@ -14,6 +14,7 @@ type PostsProps = {
   errorMessage: string | null;
   detailHandler?: (donationData: DonationData) => void;
   cancelPost?: (donationData: DonationData) => void;
+  chatHandler?: (donationData: DonationData) => void;
   refreshControl?: React.ReactElement;
   displayOptions?: PostCardDisplayOptions;
   emptyDataMessage?: string;
@@ -26,6 +27,7 @@ const Posts: React.FC<PostsProps> = ({
   errorMessage,
   detailHandler,
   cancelPost,
+  chatHandler,
   refreshControl,
   displayOptions,
   emptyDataMessage
@@ -40,6 +42,7 @@ const Posts: React.FC<PostsProps> = ({
         updateHandler={updatePost}
         detailHandler={detailHandler}
         cancelHandler={cancelPost}
+        chatHandler={chatHandler}
         {...displayOptions}
       />)}
     ListEmptyComponent={
