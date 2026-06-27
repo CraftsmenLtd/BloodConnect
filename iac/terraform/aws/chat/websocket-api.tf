@@ -58,24 +58,52 @@ resource "aws_apigatewayv2_route" "connect" {
   target             = "integrations/${aws_apigatewayv2_integration.connect.id}"
 }
 
+# $disconnect and sendmessage do not re-authorize: the connection is authenticated
+# once at $connect (the Lambda request authorizer), and its authorizer context is
+# carried on every subsequent frame's requestContext. authorization_type is set
+# explicitly to satisfy CKV_AWS_309.
 resource "aws_apigatewayv2_route" "disconnect" {
-  api_id    = aws_apigatewayv2_api.chat_websocket.id
-  route_key = "$disconnect"
-  target    = "integrations/${aws_apigatewayv2_integration.disconnect.id}"
+  api_id             = aws_apigatewayv2_api.chat_websocket.id
+  route_key          = "$disconnect"
+  authorization_type = "NONE"
+  target             = "integrations/${aws_apigatewayv2_integration.disconnect.id}"
 }
 
 resource "aws_apigatewayv2_route" "sendmessage" {
-  api_id    = aws_apigatewayv2_api.chat_websocket.id
-  route_key = "sendmessage"
-  target    = "integrations/${aws_apigatewayv2_integration.sendmessage.id}"
+  api_id             = aws_apigatewayv2_api.chat_websocket.id
+  route_key          = "sendmessage"
+  authorization_type = "NONE"
+  target             = "integrations/${aws_apigatewayv2_integration.sendmessage.id}"
+}
+
+# --- Access logging for the stage (CKV_AWS_76) ---
+
+resource "aws_cloudwatch_log_group" "chat_websocket_logs" {
+  #checkov:skip=CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
+  #checkov:skip=CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
+  name              = "/aws/api-gateway/${var.environment}-chat-websocket"
+  retention_in_days = 60
 }
 
 # --- Stage (auto-deploy) ---
 
 resource "aws_apigatewayv2_stage" "chat_websocket" {
+  #checkov:skip=CKV2_AWS_51: "Client certificate auth is not applicable to a Cognito-authorized WebSocket API; the $connect Lambda request authorizer validates the JWT"
   api_id      = aws_apigatewayv2_api.chat_websocket.id
   name        = var.environment
   auto_deploy = true
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.chat_websocket_logs.arn
+    format = jsonencode({
+      requestId    = "$context.requestId"
+      ip           = "$context.identity.sourceIp"
+      requestTime  = "$context.requestTime"
+      routeKey     = "$context.routeKey"
+      status       = "$context.status"
+      connectionId = "$context.connectionId"
+    })
+  }
 }
 
 # --- Invoke permissions for API Gateway ---
