@@ -31,8 +31,8 @@ HasTimeLog & {
 }
 
 const connectionExpiresAt = (): number =>
-  Math.floor(Date.now() / MILLISECONDS_PER_SECOND) +
-  WS_CONNECTION_TTL_HOURS * SECONDS_PER_HOUR
+  Math.floor(Date.now() / MILLISECONDS_PER_SECOND)
+  + WS_CONNECTION_TTL_HOURS * SECONDS_PER_HOUR
 
 export class WsConnectionModel
 implements

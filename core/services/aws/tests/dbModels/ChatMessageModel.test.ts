@@ -15,8 +15,8 @@ describe('ChatMessageModel', () => {
     text: 'are you available?',
     createdAt: clientCreatedAt,
     expiresAt:
-      Math.floor(new Date(clientCreatedAt).getTime() / 1000) +
-      CHAT_MESSAGE_RETENTION_DAYS * SECONDS_PER_DAY
+      Math.floor(new Date(clientCreatedAt).getTime() / 1000)
+      + CHAT_MESSAGE_RETENTION_DAYS * SECONDS_PER_DAY
   }
 
   test('builds exact key strings', () => {
@@ -35,9 +35,9 @@ describe('ChatMessageModel', () => {
 
   test('expiresAt is epoch seconds = clientCreatedAt + retention', () => {
     const fields = model.fromDto(baseDto)
-    const expected =
-      Math.floor(new Date(clientCreatedAt).getTime() / 1000) +
-      CHAT_MESSAGE_RETENTION_DAYS * SECONDS_PER_DAY
+    const expected
+      = Math.floor(new Date(clientCreatedAt).getTime() / 1000)
+      + CHAT_MESSAGE_RETENTION_DAYS * SECONDS_PER_DAY
 
     expect(fields.expiresAt).toBe(expected)
     expect(Number.isInteger(fields.expiresAt)).toBe(true)

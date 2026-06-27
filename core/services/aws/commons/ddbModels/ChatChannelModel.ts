@@ -39,8 +39,8 @@ const toEpochSeconds = (iso: string): number =>
   Math.floor(new Date(iso).getTime() / MILLISECONDS_PER_SECOND)
 
 const channelExpiresAt = (createdAt: string): number =>
-  toEpochSeconds(createdAt) +
-  (CHAT_MESSAGE_RETENTION_DAYS + CHANNEL_RETENTION_BUFFER_DAYS) * SECONDS_PER_DAY
+  toEpochSeconds(createdAt)
+  + (CHAT_MESSAGE_RETENTION_DAYS + CHANNEL_RETENTION_BUFFER_DAYS) * SECONDS_PER_DAY
 
 const inboxPointer = (
   userId: string,

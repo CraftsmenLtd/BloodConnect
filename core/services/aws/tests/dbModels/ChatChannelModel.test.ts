@@ -20,9 +20,9 @@ describe('ChatChannelModel', () => {
     unreadCount: 2
   }
 
-  const expectedExpiresAt =
-    Math.floor(new Date(createdAt).getTime() / 1000) +
-    (CHAT_MESSAGE_RETENTION_DAYS + CHANNEL_BUFFER_DAYS) * SECONDS_PER_DAY
+  const expectedExpiresAt
+    = Math.floor(new Date(createdAt).getTime() / 1000)
+    + (CHAT_MESSAGE_RETENTION_DAYS + CHANNEL_BUFFER_DAYS) * SECONDS_PER_DAY
 
   test('builds exact METADATA key strings', () => {
     const fields = model.fromDto(baseDto)
