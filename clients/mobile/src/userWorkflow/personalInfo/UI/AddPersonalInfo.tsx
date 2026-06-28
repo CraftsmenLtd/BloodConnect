@@ -4,10 +4,9 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
-  TouchableWithoutFeedback,
   Linking
 } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { Input } from '../../../components/inputElement/Input'
 import Dropdown from '../../../components/inputElement/Dropdown'
 import Checkbox from '../../../components/inputElement/Checkbox'
@@ -50,186 +49,186 @@ const AddPersonalInfo = () => {
   const openLink = (url: string) => { Linking.openURL(url).catch(() => { }) }
 
   return (
-    <TouchableWithoutFeedback>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <View style={styles.fieldSpacing}>
-          <Dropdown
-            label='Blood Group'
-            isRequired={true}
-            placeholder='Select Blood Group'
-            options={bloodGroupOptions}
-            name='bloodGroup'
-            selectedValue={personalInfo.bloodGroup}
+    <KeyboardAwareScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContent}
+      keyboardShouldPersistTaps="handled"
+      bottomOffset={25}
+    >
+      <View style={styles.fieldSpacing}>
+        <Dropdown
+          label='Blood Group'
+          isRequired={true}
+          placeholder='Select Blood Group'
+          options={bloodGroupOptions}
+          name='bloodGroup'
+          selectedValue={personalInfo.bloodGroup}
+          onChange={handleInputChange}
+          error={errors.bloodGroup}
+        />
+      </View>
+
+      {(Boolean(isSSO)) && (
+        <View>
+          <PhoneNumberInput
+            name="phoneNumber"
+            label="Phone Number"
+            value={personalInfo.phoneNumber}
             onChange={handleInputChange}
-            error={errors.bloodGroup}
+            showWarning={personalInfo.phoneNumber !== ''}
           />
         </View>
+      )}
 
-        {(Boolean(isSSO)) && (
-          <View>
-            <PhoneNumberInput
-              name="phoneNumber"
-              label="Phone Number"
-              value={personalInfo.phoneNumber}
-              onChange={handleInputChange}
-              showWarning={personalInfo.phoneNumber !== ''}
-            />
-          </View>
+      <View style={styles.fieldSpacing}>
+        <MultiSelect
+          name='locations'
+          label="Select Preferred Location"
+          options={[]}
+          selectedValues={personalInfo.locations}
+          onSelect={handleInputChange}
+          placeholder="Select Preferred Location"
+          isRequired={true}
+          enableSearch={true}
+          fetchOptions={
+            async(searchText) =>
+              locationService.preferredLocationAutocomplete(searchText)
+          }
+          minRequiredLabel='Add minimum 1 area.'
+        />
+        { personalInfo.locations.length > 0 && (
+          <MapView
+            style={styles.mapViewContainer}
+            centerCoordinate={centerCoordinate}
+            zoomLevel={zoomLevel}
+            markers={mapMarkers}
+          />
         )}
+      </View>
 
-        <View style={styles.fieldSpacing}>
-          <MultiSelect
-            name='locations'
-            label="Select Preferred Location"
-            options={[]}
-            selectedValues={personalInfo.locations}
-            onSelect={handleInputChange}
-            placeholder="Select Preferred Location"
-            isRequired={true}
-            enableSearch={true}
-            fetchOptions={
-              async(searchText) =>
-                locationService.preferredLocationAutocomplete(searchText)
-            }
-            minRequiredLabel='Add minimum 1 area.'
-          />
-          { personalInfo.locations.length > 0 && (
-            <MapView
-              style={styles.mapViewContainer}
-              centerCoordinate={centerCoordinate}
-              zoomLevel={zoomLevel}
-              markers={mapMarkers}
-            />
-          )}
-        </View>
+      <View style={styles.fieldSpacing}>
+        <RadioButton
+          name="gender"
+          label="Gender"
+          options={['female', 'male', 'other']}
+          value={personalInfo.gender}
+          onPress={handleInputChange}
+          isRequired={true}
+        />
+      </View>
 
-        <View style={styles.fieldSpacing}>
-          <RadioButton
-            name="gender"
-            label="Gender"
-            options={['female', 'male', 'other']}
-            value={personalInfo.gender}
-            onPress={handleInputChange}
-            isRequired={true}
-          />
-        </View>
+      <View style={styles.fieldSpacing}>
+        <Input
+          name="weight"
+          label="Weight (kg)"
+          value={personalInfo.weight?.toString() ?? ''}
+          onChangeText={handleInputChange}
+          placeholder="Enter your weight"
+          keyboardType="numeric"
+          error={errors.weight}
+        />
+      </View>
 
-        <View style={styles.fieldSpacing}>
-          <Input
-            name="weight"
-            label="Weight (kg)"
-            value={personalInfo.weight?.toString() ?? ''}
-            onChangeText={handleInputChange}
-            placeholder="Enter your weight"
-            keyboardType="numeric"
-            error={errors.weight}
-          />
-        </View>
+      <View style={styles.fieldSpacing}>
+        <Input
+          name="height"
+          label="Height (feet)"
+          value={personalInfo.height?.toString() ?? ''}
+          onChangeText={handleInputChange}
+          placeholder="Enter your height"
+          keyboardType="numeric"
+          error={errors.height}
+        />
+      </View>
 
-        <View style={styles.fieldSpacing}>
-          <Input
-            name="height"
-            label="Height (feet)"
-            value={personalInfo.height?.toString() ?? ''}
-            onChangeText={handleInputChange}
-            placeholder="Enter your height"
-            keyboardType="numeric"
-            error={errors.height}
-          />
-        </View>
+      {personalInfo.weight && personalInfo.height
+        ? (() => {
+          const weight = parseFloat(personalInfo.weight)
+          const height = parseFloat(personalInfo.height)
 
-        {personalInfo.weight && personalInfo.height
-          ? (() => {
-            const weight = parseFloat(personalInfo.weight)
-            const height = parseFloat(personalInfo.height)
+          if (!isNaN(weight) && !isNaN(height) && weight > 0 && height > 0) {
+            const bmi = calculateBMI(weight, height)
 
-            if (!isNaN(weight) && !isNaN(height) && weight > 0 && height > 0) {
-              const bmi = calculateBMI(weight, height)
+            return (
+              <View style={styles.fieldSpacing}>
+                <Text style={styles.bmiText}>BMI: {bmi} ({getBMICategory(bmi)})</Text>
+              </View>
+            )
+          }
 
-              return (
-                <View style={styles.fieldSpacing}>
-                  <Text style={styles.bmiText}>BMI: {bmi} ({getBMICategory(bmi)})</Text>
-                </View>
-              )
-            }
+          return null
+        })()
+        : null}
 
-            return null
-          })()
-          : null}
+      <View style={styles.fieldSpacing}>
+        <DateTimePickerComponent
+          isOnlyDate={true}
+          label="Date of Birth"
+          value={new Date(personalInfo.dateOfBirth)}
+          onChange={(date) => handleInputChange('dateOfBirth', date)}
+          isRequired={true}
+          error={errors.dateOfBirth}
+        />
+      </View>
 
-        <View style={styles.fieldSpacing}>
-          <DateTimePickerComponent
-            isOnlyDate={true}
-            label="Date of Birth"
-            value={new Date(personalInfo.dateOfBirth)}
-            onChange={(date) => handleInputChange('dateOfBirth', date)}
-            isRequired={true}
-            error={errors.dateOfBirth}
-          />
-        </View>
+      <View style={[styles.fieldSpacing, styles.extraTopMargin, styles.extraBottomMargin]}>
+        <CustomToggle
+          value={personalInfo.availableForDonation}
+          label={'Are you available for a donation?'}
+          isReadOnly={false}
+          onToggle={(val) => {
+            handleInputChange('availableForDonation', val)
+          }}
+          direction="row"
+          isRequired={true}
+        />
+      </View>
 
-        <View style={[styles.fieldSpacing, styles.extraTopMargin, styles.extraBottomMargin]}>
-          <CustomToggle
-            value={personalInfo.availableForDonation}
-            label={'Are you available for a donation?'}
-            isReadOnly={false}
-            onToggle={(val) => {
-              handleInputChange('availableForDonation', val)
-            }}
-            direction="row"
-            isRequired={true}
-          />
-        </View>
-
-        <View style={[styles.fieldSpacing, { flexDirection: 'row', alignItems: 'center' }]}>
-          <Checkbox
-            name='acceptPolicy'
-            isChecked={personalInfo.acceptPolicy}
-            checkboxColor={theme.colors.primary}
-            onCheckboxChange={handleInputChange}
-          >
-            <Text style={[styles.termsText, { flex: 1 }]}>
+      <View style={[styles.fieldSpacing, { flexDirection: 'row', alignItems: 'center' }]}>
+        <Checkbox
+          name='acceptPolicy'
+          isChecked={personalInfo.acceptPolicy}
+          checkboxColor={theme.colors.primary}
+          onCheckboxChange={handleInputChange}
+        >
+          <Text style={[styles.termsText, { flex: 1 }]}>
               By continuing, you agree to our
-              <Text style={styles.space}> </Text>
-              <Text
-                style={styles.linkText}
-                onPress={() => { openLink(POLICY_URLS.TERMS_OF_SERVICE) }}
-              >
+            <Text style={styles.space}> </Text>
+            <Text
+              style={styles.linkText}
+              onPress={() => { openLink(POLICY_URLS.TERMS_OF_SERVICE) }}
+            >
                 Terms of Service
-              </Text>
-              <Text style={styles.space}> </Text>
-              and
-              <Text style={styles.space}> </Text>
-              <Text
-                style={styles.linkText}
-                onPress={() => { openLink(POLICY_URLS.PRIVACY_POLICY) }}
-              >
-                Privacy Policy
-              </Text>.
             </Text>
-          </Checkbox>
-        </View>
+            <Text style={styles.space}> </Text>
+              and
+            <Text style={styles.space}> </Text>
+            <Text
+              style={styles.linkText}
+              onPress={() => { openLink(POLICY_URLS.PRIVACY_POLICY) }}
+            >
+                Privacy Policy
+            </Text>.
+          </Text>
+        </Checkbox>
+      </View>
 
-        {errorMessage !== '' && (
-          <View style={styles.fieldSpacing}>
-            <Text style={styles.errorMessage}>{errorMessage}</Text>
-          </View>
-        )}
-
-        <View style={styles.buttonContainer}>
-          <Button
-            text='Save & Continue'
-            disabled={isButtonDisabled}
-            loading={loading}
-            onPress={handleSubmit}
-            buttonStyle={styles.submitButton}
-          />
+      {errorMessage !== '' && (
+        <View style={styles.fieldSpacing}>
+          <Text style={styles.errorMessage}>{errorMessage}</Text>
         </View>
-      </ScrollView>
-    </TouchableWithoutFeedback>
+      )}
+
+      <View style={styles.buttonContainer}>
+        <Button
+          text='Save & Continue'
+          disabled={isButtonDisabled}
+          loading={loading}
+          onPress={handleSubmit}
+          buttonStyle={styles.submitButton}
+        />
+      </View>
+    </KeyboardAwareScrollView>
   )
 }
 
