@@ -691,3 +691,12 @@ This file is an append-only audit trail of all user inputs and AI responses duri
 **Context**: Publishing chat feature work onto its own branch for PR.
 
 ---
+
+## CI Failure Fix — Checkov Security Scan + Local Test Sweep
+**Timestamp**: 2026-07-03T04:30:00Z
+**User Input**: "run all the local tests including linting. got linting error on check\nhttps://github.com/CraftsmenLtd/BloodConnect/actions/runs/28636968799/job/84925273946"
+**AI Response**: "CI failure was NOT ESLint — it was the tf-security step (Checkov): 8 failed checks, all in iac/terraform/aws/chat/websocket.tf (6x CKV_AWS_309 route authorization — WebSocket APIs only support authorizers on $connect which already uses the CUSTOM Lambda authorizer; 1x CKV_AWS_338 log retention >= 1 year — repo convention is to skip with short retention, cf. api_gw.tf; 1x CKV2_AWS_51 client certificates — REST-API-only feature). Fixed with #checkov:skip suppressions following repo convention. Also fixed the 2 Spectral operation-tag-defined warnings by registering the bloodconnect-chat tag in openapi/versions/v1.json global tags. Local verification: ESLint clean; Jest 390/392 (2 pre-existing tz failures in formatting.test.ts); Spectral 0 errors, chat warnings gone (18 pre-existing warnings on non-chat endpoints remain); Checkov (3.3.6 venv, CI flags) 0 chat failures — skipped 83→91 (+8 = our suppressions), only remaining failure is CKV_AWS_374 on pre-existing cloudfront.tf which CI's older Checkov does not enforce."
+**Test Status**: ESLint ✅; Jest 390/392 (2 pre-existing) ✅; Spectral 0 errors ✅; Checkov chat checks ✅.
+**Context**: Fixing CI tf-security failure on branch I-571-in-app-chat.
+
+---
