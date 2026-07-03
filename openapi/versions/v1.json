@@ -14,6 +14,10 @@
       "description": "Push notification module of BloodConnect"
     },
     {
+      "name": "bloodconnect-chat",
+      "description": "In-app chat module of BloodConnect"
+    },
+    {
       "name": "cors-options",
       "description": "API Endpoints for BloodConnect cors options"
     }
