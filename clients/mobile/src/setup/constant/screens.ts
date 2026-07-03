@@ -23,5 +23,7 @@ export enum SCREENS {
   DONOR_CONFIRMATION = 'DonorConfirmation',
   ABOUT = 'About',
   SETTINGS = 'Settings',
-  NO_INTERNET = 'NoInternet'
+  NO_INTERNET = 'NoInternet',
+  CHAT_INBOX = 'ChatInbox',
+  CHAT_ROOM = 'ChatRoom'
 }
