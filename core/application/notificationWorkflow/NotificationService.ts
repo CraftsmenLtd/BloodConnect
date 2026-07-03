@@ -120,6 +120,11 @@ export class NotificationService {
 
       this.logger.info('publishing notification')
       await this.publishNotification(notificationAttributes, cachedUserSnsEndpointArn, snsModel)
+    } else if (notificationAttributes.type === NotificationType.CHAT_MESSAGE) {
+      this.logger.info({
+        userId: notificationAttributes.userId
+      }, 'publishing chat message notification (publish-only, no record persisted)')
+      await this.publishNotification(notificationAttributes, cachedUserSnsEndpointArn, snsModel)
     } else {
       this.logger.info({
         type: notificationAttributes.type,
