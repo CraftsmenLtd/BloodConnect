@@ -30,7 +30,7 @@ const lightTheme: Theme = {
   typography: {
     fontSize: 16,
     errorFontSize: 12,
-    fontFamily: 'Roboto-Regular'
+    fontFamily: 'Roboto_400Regular'
   }
 }
 

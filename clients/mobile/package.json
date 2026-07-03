@@ -13,6 +13,7 @@
     "@aws-amplify/react-native": "^1.1.10",
     "@aws-amplify/rtn-web-browser": "^1.1.4",
     "@aws-amplify/ui-react-native": "^2.6.1",
+    "@expo-google-fonts/roboto": "^0.4.3",
     "@expo/metro-runtime": "~6.1.2",
     "@expo/vector-icons": "^15.0.2",
     "@maplibre/maplibre-react-native": "^10.2.1",

@@ -26,7 +26,12 @@ import i18n from './src/setup/language/i18n'
 import { KeyboardProvider } from 'react-native-keyboard-controller'
 import { useTheme, useIsDark } from './src/setup/theme/hooks/useTheme'
 import type { NavigationContainerRefWithCurrent } from '@react-navigation/native'
-import React from 'react'
+import * as SplashScreen from 'expo-splash-screen'
+import { useFonts } from 'expo-font'
+import { Roboto_400Regular } from '@expo-google-fonts/roboto/400Regular'
+import { Roboto_500Medium } from '@expo-google-fonts/roboto/500Medium'
+import { Roboto_700Bold } from '@expo-google-fonts/roboto/700Bold'
+import React, { useEffect } from 'react'
 
 const ThemedStatusBar = () => {
   const theme = useTheme()
@@ -81,6 +86,9 @@ cognitoUserPoolsTokenProvider.setKeyValueStorage(secureKeyValueStorage)
 Amplify.configure(awsCognitoConfiguration)
 void clearLegacyTokenStorage()
 
+// Keep the native splash up until the app fonts are loaded to avoid a font swap flash.
+void SplashScreen.preventAutoHideAsync()
+
 Notifications.setNotificationHandler({
   handleNotification: async() => ({
     shouldShowAlert: true,
@@ -100,6 +108,18 @@ export default function App() {
   useTranslation()
   useBackPressHandler()
   const navigationRef = useNavigationContainerRef<RootStackParamList>()
+  const [fontsLoaded, fontError] = useFonts({ Roboto_400Regular, Roboto_500Medium, Roboto_700Bold })
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      void SplashScreen.hideAsync()
+    }
+  }, [fontsLoaded, fontError])
+
+  // On font-load failure, render anyway and let text fall back to the system font.
+  if (!fontsLoaded && !fontError) {
+    return null
+  }
 
   return (
     <KeyboardProvider>

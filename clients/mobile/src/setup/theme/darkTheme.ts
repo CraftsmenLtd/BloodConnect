@@ -20,7 +20,7 @@ const darkTheme: Theme = {
     // Text
     textPrimary: '#F5F5F5',
     textSecondary: '#B0B0B0',
-    textTertiary: '#8A8A8A',
+    textTertiary: '#9A9A9A',
     // Lines & overlays
     border: '#3A3A3A',
     borderStrong: '#4A4A4A',
@@ -30,7 +30,7 @@ const darkTheme: Theme = {
   typography: {
     fontSize: 16,
     errorFontSize: 12,
-    fontFamily: 'Roboto-Regular'
+    fontFamily: 'Roboto_400Regular'
   }
 }
 

@@ -17,9 +17,9 @@ const AboutPage: React.FC = () => {
   useEffect(() => {
     let index = 0
     const intervalId = setInterval(() => {
-      setDisplayedText((prevText) => prevText + fullText[index])
       index += 1
-      if (index === fullText.length) {
+      setDisplayedText(fullText.slice(0, index))
+      if (index >= fullText.length) {
         clearInterval(intervalId)
       }
     }, typingSpeed)
