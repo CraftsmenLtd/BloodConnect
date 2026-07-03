@@ -59,12 +59,19 @@ const SearchMultiSelect = ({
   const [isLoading, setIsLoading] = useState(false)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchInputRef = useRef<TextInput>(null)
+  const requestIdRef = useRef(0)
 
   useEffect(() => {
     if (initialOptions.length > 0) {
       setOptions(initialOptions)
     }
   }, [initialOptions])
+
+  useEffect(() => () => {
+    if (typingTimeoutRef.current !== null) {
+      clearTimeout(typingTimeoutRef.current)
+    }
+  }, [])
 
   const handleInputChange = (text: string) => {
     setSearchText(text)
@@ -74,10 +81,12 @@ const SearchMultiSelect = ({
       }
       setIsLoading(true)
       typingTimeoutRef.current = setTimeout(() => {
+        requestIdRef.current += 1
+        const currentId = requestIdRef.current
         fetchOptions(text)
-          .then((newOptions) => { setOptions(newOptions) })
-          .catch(() => { setOptions([]) })
-          .finally(() => { setIsLoading(false) })
+          .then((newOptions) => { if (currentId === requestIdRef.current) setOptions(newOptions) })
+          .catch(() => { if (currentId === requestIdRef.current) setOptions([]) })
+          .finally(() => { if (currentId === requestIdRef.current) setIsLoading(false) })
       }, 500)
     } else {
       const filteredOptions = initialOptions.filter((option) =>
@@ -89,18 +98,30 @@ const SearchMultiSelect = ({
 
   const openDropdown = () => {
     if (!editable) return
-    setSearchText('')
-    setOptions(initialOptions)
     setIsVisible(name)
+    if (value !== '') {
+      handleInputChange(value)
+    } else {
+      setSearchText('')
+      setOptions(initialOptions)
+    }
   }
 
   const closeDropdown = () => {
+    if (typingTimeoutRef.current !== null) {
+      clearTimeout(typingTimeoutRef.current)
+    }
+    setIsLoading(false)
     setIsVisible('')
     Keyboard.dismiss()
   }
 
   const handleSelect = (item: Option) => {
     if (!multiSelect) {
+      if (typingTimeoutRef.current !== null) {
+        clearTimeout(typingTimeoutRef.current)
+      }
+      setIsLoading(false)
       setValue(item.label)
       onChange(name, item.label)
       setIsVisible('')
@@ -175,7 +196,7 @@ const SearchMultiSelect = ({
       >
         <TouchableOpacity style={styles.backdrop} onPress={closeDropdown} activeOpacity={1}>
           <View style={styles.dropdownContainer}>
-            <View style={styles.modalSheet}>
+            <View style={styles.modalSheet} onStartShouldSetResponder={() => true}>
               <View style={styles.searchContainer}>
                 <Ionicons
                   name="search"
@@ -190,7 +211,14 @@ const SearchMultiSelect = ({
                   onChangeText={handleInputChange}
                   style={styles.searchInput}
                 />
-                <TouchableOpacity onPress={() => { setSearchText(''); setOptions([]) }}>
+                <TouchableOpacity onPress={() => {
+                  if (typingTimeoutRef.current !== null) {
+                    clearTimeout(typingTimeoutRef.current)
+                  }
+                  setIsLoading(false)
+                  setSearchText('')
+                  setOptions([])
+                }}>
                   <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
                 </TouchableOpacity>
               </View>

@@ -1,7 +1,8 @@
 import Constants from 'expo-constants'
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Text, View } from 'react-native'
+import type { ScrollView } from 'react-native'
+import { Text, View, findNodeHandle } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { Divider } from '../../../components/button/Divider'
 import { Input } from '../../../components/inputElement/Input'
@@ -37,9 +38,36 @@ const EditProfile = () => {
     setPendingAvailableForDonationSave
   } = useEditProfile()
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(profileData?.locations)
+  const scrollRef = useRef<ScrollView>(null)
+  const locationsRef = useRef<View>(null)
+  const prevLocationsLength = useRef(profileData.locations?.length ?? 0)
+
+  useEffect(() => {
+    const length = profileData.locations?.length ?? 0
+    // Only scroll when a location is added (not on removal or mount).
+    if (length > prevLocationsLength.current) {
+      prevLocationsLength.current = length
+      const timer = setTimeout(() => {
+        const node = locationsRef.current
+        const scroll = scrollRef.current
+        if (node === null || scroll === null) return
+        const scrollNode = findNodeHandle(scroll)
+        if (scrollNode === null) return
+        node.measureLayout(
+          scrollNode,
+          (_x, y) => { scroll.scrollTo({ y: Math.max(y - 20, 0), animated: true }) },
+          () => { /* measure failed — skip scroll */ }
+        )
+      }, 250)
+
+      return () => { clearTimeout(timer) }
+    }
+    prevLocationsLength.current = length
+  }, [profileData.locations?.length])
 
   return (
     <KeyboardAwareScrollView
+      ref={scrollRef}
       style={styles.container}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
@@ -142,7 +170,7 @@ const EditProfile = () => {
             />
           </View>
 
-          <View style={styles.inputFieldStyle}>
+          <View ref={locationsRef} style={styles.inputFieldStyle}>
             <MultiSelect
               name="locations"
               label={t('fromLabel.locations')}

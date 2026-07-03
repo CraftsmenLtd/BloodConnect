@@ -47,18 +47,23 @@ const AddPersonalInfo = () => {
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(personalInfo?.locations)
   const scrollRef = useRef<ScrollView>(null)
   const locationLayoutY = useRef(0)
+  const prevLocationsLength = useRef(personalInfo.locations.length)
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const openLink = (url: string) => { Linking.openURL(url).catch(() => { }) }
 
   useEffect(() => {
-    if (personalInfo.locations.length > 0) {
+    const length = personalInfo.locations.length
+    // Only scroll when a location is added (not on removal or mount).
+    if (length > prevLocationsLength.current) {
+      prevLocationsLength.current = length
       const timer = setTimeout(() => {
         scrollRef.current?.scrollTo({ y: Math.max(locationLayoutY.current - 20, 0), animated: true })
       }, 250)
 
       return () => { clearTimeout(timer) }
     }
+    prevLocationsLength.current = length
   }, [personalInfo.locations.length])
 
   return (

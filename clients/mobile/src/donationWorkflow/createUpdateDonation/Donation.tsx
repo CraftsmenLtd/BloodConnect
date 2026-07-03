@@ -42,8 +42,14 @@ const CreateBloodRequest = () => {
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView([bloodRequestData.location])
   const scrollRef = useRef<ScrollView>(null)
   const locationLayoutY = useRef(0)
+  const isFirstRun = useRef(true)
 
   useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false
+
+      return
+    }
     if (bloodRequestData.location !== '') {
       const timer = setTimeout(() => {
         scrollRef.current?.scrollTo({ y: Math.max(locationLayoutY.current - 20, 0), animated: true })
