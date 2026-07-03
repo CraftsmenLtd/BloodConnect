@@ -1,4 +1,5 @@
 import type { Theme } from './index'
+import { spacing, radius, darkElevation } from './tokens'
 const darkTheme: Theme = {
   colors: {
     // Brand
@@ -31,7 +32,10 @@ const darkTheme: Theme = {
     fontSize: 16,
     errorFontSize: 12,
     fontFamily: 'Roboto_400Regular'
-  }
+  },
+  spacing,
+  radius,
+  elevation: darkElevation
 }
 
 export default darkTheme

@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native'
 import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type WarningProps = {
   text: string;
@@ -30,16 +31,16 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   warningContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
+    padding: spacing.lg,
     borderWidth: 1,
     borderColor: theme.colors.goldenSun,
-    borderRadius: 8,
+    borderRadius: radius.md,
     backgroundColor: theme.colors.peachCream,
-    marginVertical: 10
+    marginVertical: spacing.md
   },
   warningIcon: {
     fontSize: theme.typography.fontSize,
-    marginRight: 10,
+    marginRight: spacing.md,
     color: theme.colors.darkAmber
   },
   warningText: {

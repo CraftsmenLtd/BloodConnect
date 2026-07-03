@@ -16,6 +16,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import type { Option } from './types'
 import { commonStyles } from './commonStyles'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type MultiSelectProps = {
   name: string;
@@ -254,16 +255,16 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   container: {
     width: '100%',
-    marginVertical: 4
+    marginVertical: spacing.xs
   },
   dropdown: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    padding: 12,
+    gap: spacing.sm,
+    padding: spacing.md,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: 8,
+    borderRadius: radius.md,
     backgroundColor: theme.colors.surface
   },
   fieldText: {
@@ -280,19 +281,19 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   chipContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 8
+    marginTop: spacing.sm
   },
   selectedItem: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     borderColor: 'black',
     borderWidth: 1,
-    borderRadius: 100,
-    marginRight: 4,
-    marginTop: 4
+    borderRadius: radius.pill,
+    marginRight: spacing.xs,
+    marginTop: spacing.xs
   },
   extraInfo: {
     fontSize: 12,
@@ -301,8 +302,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   backdrop: {
     flex: 1,
     backgroundColor: theme.colors.backdrop,
-    paddingTop: 50,
-    paddingHorizontal: 16
+    paddingTop: spacing.xxxxl,
+    paddingHorizontal: spacing.lg
   },
   dropdownContainer: {
     width: '100%'
@@ -311,37 +312,33 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     width: '100%',
     maxHeight: height * 0.45,
     backgroundColor: theme.colors.surface,
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: theme.colors.textPrimary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5
+    borderRadius: radius.md,
+    padding: spacing.md,
+    ...theme.elevation.md
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md
   },
   searchIcon: {
-    marginRight: 8
+    marginRight: spacing.sm
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
     color: theme.colors.textPrimary,
-    paddingVertical: 8
+    paddingVertical: spacing.sm
   },
   option: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 8,
+    padding: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.borderStrong
   },

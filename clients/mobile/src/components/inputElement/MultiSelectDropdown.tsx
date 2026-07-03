@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { commonStyles } from './commonStyles'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type Option = {
   label: string;
@@ -109,15 +110,15 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     height: 50,
     borderColor: theme.colors.border,
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 8,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.sm,
     backgroundColor: theme.colors.surface
   },
   dropdownList: {
     backgroundColor: theme.colors.surface,
     borderColor: theme.colors.border,
     borderWidth: 1,
-    borderRadius: 8
+    borderRadius: radius.md
   },
   dropdownItemContainer: {
     backgroundColor: theme.colors.surface
@@ -133,8 +134,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border
   },
@@ -144,28 +145,28 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flex: 1
   },
   checkIcon: {
-    marginLeft: 10
+    marginLeft: spacing.md
   },
   selectedContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 4
+    marginTop: spacing.xs
   },
   selectedTag: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    margin: 4,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    margin: spacing.xs,
     borderColor: theme.colors.primary,
     borderWidth: 1
   },
   selectedText: {
     fontSize: 14,
     color: theme.colors.textPrimary,
-    marginRight: 8
+    marginRight: spacing.sm
   },
   removeIcon: {
     fontSize: 14,

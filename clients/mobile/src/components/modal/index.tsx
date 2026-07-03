@@ -13,6 +13,7 @@ import { Text } from '../text/AppText'
 import Button from '../button/Button'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type ButtonType = {
   text: string;
@@ -121,7 +122,7 @@ const GenericModal: React.FC<GenericModalProps> = ({
               {icon !== null && (
                 <Image
                   source={icon}
-                  style={{ width: iconSize, height: iconSize, marginBottom: 10 }}
+                  style={{ width: iconSize, height: iconSize, marginBottom: spacing.md }}
                   resizeMode="contain"
                 />
               )}
@@ -163,20 +164,20 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   modalContainer: {
     width: '80%',
     backgroundColor: theme.colors.surface,
-    borderRadius: 10,
-    padding: 20,
+    borderRadius: radius.lg,
+    padding: spacing.xl,
     alignItems: 'center',
-    elevation: 5
+    ...theme.elevation.lg
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: spacing.md,
     textAlign: 'center'
   },
   message: {
     fontSize: 16,
-    marginBottom: 20,
+    marginBottom: spacing.xl,
     textAlign: 'center'
   },
   buttonContainer: {
@@ -186,10 +187,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingVertical: 10,
-    marginHorizontal: 5,
+    paddingVertical: spacing.md,
+    marginHorizontal: spacing.xs,
     backgroundColor: theme.colors.primary,
-    borderRadius: 100,
+    borderRadius: radius.pill,
     alignItems: 'center'
   },
   buttonText: {

@@ -6,6 +6,7 @@ import type { Theme } from '../../setup/theme'
 import type { InputProps } from './types'
 import { commonStyles } from './commonStyles'
 import type { Dispatch, SetStateAction } from 'react'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type PasswordInputProps = {
   isVisible: boolean;
@@ -44,16 +45,16 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: 5,
-    paddingHorizontal: 10,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.md,
     backgroundColor: theme.colors.surface
   },
   passwordInput: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: spacing.md,
     color: theme.colors.textPrimary
   },
   eyeIcon: {
-    padding: 10
+    padding: spacing.md
   }
 })

@@ -5,6 +5,7 @@ import { Text } from '../../../components/text/AppText'
 import { COMMON_URLS } from '../../../setup/constant/commonUrls'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
+import { spacing, radius } from '../../../setup/theme/tokens'
 
 export type DonorItem = {
   donorId: string;
@@ -76,18 +77,18 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       backgroundColor: theme.colors.surface
     },
     container: {
-      padding: 16
+      padding: spacing.lg
     },
     title: {
       fontSize: 18,
       fontWeight: 'bold',
-      marginBottom: 10,
+      marginBottom: spacing.md,
       color: theme.colors.textPrimary
     },
     donorItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: 10,
+      paddingVertical: spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.borderStrong
     },
@@ -98,8 +99,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     avatar: {
       width: 40,
       height: 40,
-      borderRadius: 20,
-      marginRight: 12
+      borderRadius: radius.xl,
+      marginRight: spacing.md
     },
     textContainer: {
       flex: 1

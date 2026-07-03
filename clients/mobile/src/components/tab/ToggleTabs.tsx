@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type ToggleTabsProps = {
   tabs: [string, ...string[]];
@@ -35,19 +36,19 @@ const ToggleTabs: React.FC<ToggleTabsProps> = ({ tabs, onTabPress, initialActive
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flexDirection: 'row',
-    borderRadius: 25,
+    borderRadius: radius.xl,
     overflow: 'hidden',
     backgroundColor: theme.colors.surfaceVariant
   },
   tab: {
     flex: 1,
-    paddingVertical: 7,
+    paddingVertical: spacing.sm,
     justifyContent: 'center',
     alignItems: 'center'
   },
   activeTab: {
     backgroundColor: theme.colors.primary,
-    borderRadius: 100
+    borderRadius: radius.pill
   },
   text: {
     fontSize: 14,

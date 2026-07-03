@@ -4,6 +4,7 @@ import { TouchableOpacity, StyleSheet, Image, View, ActivityIndicator } from 're
 import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type SocialButtonProps = {
   text: string;
@@ -34,11 +35,11 @@ export const SocialButton = ({ text, onPress, icon, loading, buttonStyle, textSt
 const createStyles = (theme: Theme) => StyleSheet.create({
   socialButton: {
     backgroundColor: theme.colors.surface,
-    borderRadius: 25,
+    borderRadius: radius.xl,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    paddingVertical: 12,
-    marginBottom: 10,
+    paddingVertical: spacing.md,
+    marginBottom: spacing.md,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -51,7 +52,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   socialIcon: {
     width: 24,
     height: 24,
-    marginRight: 10
+    marginRight: spacing.md
   },
   socialButtonText: {
     color: theme.colors.textPrimary,

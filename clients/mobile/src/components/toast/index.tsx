@@ -3,6 +3,7 @@ import { Animated, StyleSheet } from 'react-native'
 import { Text } from '../text/AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type ToastProps = {
   message: string;
@@ -26,8 +27,8 @@ const createStyles = (theme: Theme, type: string, opacity: Animated.Value): Retu
     bottom: 20,
     left: 20,
     right: 20,
-    padding: 16,
-    borderRadius: 8,
+    padding: spacing.lg,
+    borderRadius: radius.md,
     backgroundColor: type === 'success' ? theme.colors.primary : type === 'error' ? theme.colors.surfaceVariant : theme.colors.textTertiary,
     opacity
   },

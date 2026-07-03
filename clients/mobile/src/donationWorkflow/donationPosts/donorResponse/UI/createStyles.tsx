@@ -1,24 +1,22 @@
 import { StyleSheet } from 'react-native'
 import type { Theme } from '../../../../setup/theme'
+import { spacing, radius } from '../../../../setup/theme/tokens'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.surfaceVariant,
-    paddingTop: 4
+    paddingTop: spacing.xs
   },
   scrollViewContent: {
-    paddingBottom: 20
+    paddingBottom: spacing.xl
   },
   card: {
     backgroundColor: theme.colors.surface,
-    borderRadius: 10,
-    padding: 16,
-    paddingTop: 14,
-    shadowColor: theme.colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    paddingTop: spacing.lg,
+    ...theme.elevation.sm,
     position: 'relative'
   },
   header: {
@@ -36,18 +34,18 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: theme.colors.textSecondary
   },
   emptyPadding: {
-    padding: 8
+    padding: spacing.sm
   },
   seekerDetails: {
     borderWidth: 2,
     borderColor: theme.colors.border,
-    borderRadius: 8
+    borderRadius: radius.md
   },
   frameBloodType: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 10
+    padding: spacing.md
   },
   requestSection: {
     flexDirection: 'row',
@@ -55,9 +53,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   requestUrgency: {
     backgroundColor: theme.colors.goldenYellow,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 20,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.xl,
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -74,10 +72,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   icons: {
     verticalAlign: 'middle',
-    paddingRight: 4
+    paddingRight: spacing.xs
   },
   bloodtypeImage: {
-    marginRight: 8,
+    marginRight: spacing.sm,
     color: theme.colors.bloodRed
   },
   requestText: {
@@ -101,8 +99,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderColor: theme.colors.border
   },
   contactNumber: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
     borderColor: theme.colors.border,
     borderTopWidth: 1
   },
@@ -118,15 +116,15 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   infoRow: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: spacing.md,
     borderTopWidth: 1,
     borderColor: theme.colors.border,
-    paddingHorizontal: 12
+    paddingHorizontal: spacing.md
   },
   label: {
     color: theme.colors.textSecondary,
     fontSize: 14,
-    marginBottom: 4
+    marginBottom: spacing.xs
   },
   value: {
     color: theme.colors.textPrimary,
@@ -142,10 +140,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   callButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
+    paddingVertical: spacing.sm,
     textAlign: 'center',
-    paddingHorizontal: 12,
-    borderRadius: 48,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.pill,
     borderColor: theme.colors.redFaded,
     borderWidth: 1,
     backgroundColor: theme.colors.surfaceVariant
@@ -153,9 +151,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   callIcon: {
     width: 20,
     height: 20,
-    marginRight: 6,
+    marginRight: spacing.sm,
     tintColor: theme.colors.primary,
-    paddingHorizontal: 10
+    paddingHorizontal: spacing.md
   },
   callText: {
     color: theme.colors.primary,
@@ -166,21 +164,21 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 16,
-    paddingTop: 12,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
     backgroundColor: theme.colors.surface
   },
   ignoreButton: {
     backgroundColor: theme.colors.surfaceVariant,
     flex: 1,
-    marginRight: 10,
+    marginRight: spacing.md,
     color: theme.colors.textPrimary
   },
   acceptButton: {
     backgroundColor: theme.colors.primary,
     flex: 1,
     fontWeight: 'bold',
-    borderRadius: 48
+    borderRadius: radius.pill
   },
   acceptButtonText: {
     fontSize: theme.typography.fontSize,

@@ -4,6 +4,7 @@ import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type TextAreaProps = {
   name: string;
@@ -44,8 +45,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   textArea: {
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: 5,
-    padding: 10,
+    borderRadius: radius.sm,
+    padding: spacing.md,
     height: 100,
     textAlignVertical: 'top',
     color: theme.colors.textPrimary,

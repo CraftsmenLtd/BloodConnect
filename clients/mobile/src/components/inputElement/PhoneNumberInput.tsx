@@ -9,6 +9,7 @@ import Loader from '../loaders/loader'
 import Warning from '../warning'
 import { commonStyles } from './commonStyles'
 import usePhoneNumberInput from './hooks/usePhoneNumberInput'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 /**
  * PhoneNumberInput Component
@@ -130,11 +131,11 @@ const PhoneNumberInput = ({
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   ...commonStyles(theme),
   container: {
-    marginVertical: 8
+    marginVertical: spacing.sm
   },
   phoneContainer: {
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: radius.sm,
     backgroundColor: theme.colors.surface,
     height: 50,
     width: '100%',
@@ -142,8 +143,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   textInput: {
     backgroundColor: 'transparent',
-    borderTopRightRadius: 8,
-    borderBottomRightRadius: 8,
+    borderTopRightRadius: radius.md,
+    borderBottomRightRadius: radius.md,
     paddingVertical: 0,
     paddingHorizontal: 0
   },
@@ -157,13 +158,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: theme.colors.textSecondary
   },
   flagButton: {
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8
+    borderTopLeftRadius: radius.md,
+    borderBottomLeftRadius: radius.md
   },
   errorText: {
     color: theme.colors.bloodRed,
     fontSize: 12,
-    marginTop: 4
+    marginTop: spacing.xs
   },
   loader: {
     flex: 1,

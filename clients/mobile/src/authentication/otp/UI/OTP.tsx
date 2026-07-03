@@ -6,6 +6,7 @@ import { Button } from '../../../components/button/Button'
 import { useOtp } from '../hooks/useOtp'
 import LinkWithText from '../../../components/button/LinkWithText'
 import { useTranslation } from 'react-i18next'
+import { spacing, radius } from '../../../setup/theme/tokens'
 
 const OTP = () => {
   const { t } = useTranslation()
@@ -54,18 +55,18 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     paddingTop: '15%',
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
     backgroundColor: theme.colors.surface
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: spacing.xl,
     color: theme.colors.textPrimary
   },
   subtitleContainer: {
-    marginBottom: 20
+    marginBottom: spacing.xl
   },
   subtitle: {
     fontSize: theme.typography.fontSize,
@@ -82,8 +83,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   otpBox: {
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: 5,
-    padding: 10,
+    borderRadius: radius.sm,
+    padding: spacing.md,
     fontSize: 20,
     textAlign: 'center',
     width: 50,

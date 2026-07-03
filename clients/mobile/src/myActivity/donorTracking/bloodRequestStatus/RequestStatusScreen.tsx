@@ -8,6 +8,7 @@ import Button from '../../../components/button/Button'
 import type { Theme } from '../../../setup/theme'
 import StateAwareRenderer from '../../../components/StateAwareRenderer'
 import { commonStyles } from '../../../components/inputElement/commonStyles'
+import { spacing } from '../../../setup/theme/tokens'
 
 const RequestStatusScreen = () => {
   const styles = createStyles(useTheme())
@@ -37,7 +38,7 @@ const RequestStatusScreen = () => {
         <Text
           style={[
             styles.error,
-            { textAlign: 'center', paddingBottom: 12 }
+            { textAlign: 'center', paddingBottom: spacing.md }
           ]}>{completeDonationError}</Text>
 
         <View style={styles.buttonContainer}>
@@ -74,14 +75,14 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   container: {
     flex: 1,
     marginTop: 1,
-    paddingTop: 20,
+    paddingTop: spacing.xl,
     justifyContent: 'space-between',
     backgroundColor: theme.colors.surface
   },
   ignoreButton: {
     backgroundColor: theme.colors.surfaceVariant,
     flex: 1,
-    marginRight: 10,
+    marginRight: spacing.md,
     color: theme.colors.textPrimary
   },
   buttonTextStyle: {
@@ -94,11 +95,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   buttonContainer: {
     flexDirection: 'row',
-    gap: 16,
+    gap: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingTop: 8,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
     backgroundColor: theme.colors.border
   },
   buttonWrapper: {

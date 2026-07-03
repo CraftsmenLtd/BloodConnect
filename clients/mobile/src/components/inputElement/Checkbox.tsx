@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing } from '../../setup/theme/tokens'
 
 type CheckboxProps = {
   isChecked: boolean;
@@ -33,10 +34,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10
+    paddingVertical: spacing.md
   },
   checkboxContainer: {
-    marginRight: 10
+    marginRight: spacing.md
   },
   text: {
     fontSize: theme.typography.fontSize,

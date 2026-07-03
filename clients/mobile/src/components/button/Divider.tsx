@@ -4,6 +4,7 @@ import { View, StyleSheet } from 'react-native'
 import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing } from '../../setup/theme/tokens'
 
 type DividerProps = {
   text?: string;
@@ -31,8 +32,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
-    marginBottom: 25
+    marginTop: spacing.lg,
+    marginBottom: spacing.xxl
   },
   line: {
     flex: 1,
@@ -40,7 +41,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     backgroundColor: theme.colors.border
   },
   text: {
-    marginHorizontal: 10,
+    marginHorizontal: spacing.md,
     fontSize: 14,
     color: theme.colors.textSecondary
   }

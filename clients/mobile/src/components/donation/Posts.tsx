@@ -8,6 +8,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
 import React, { useCallback } from 'react'
 import StateAwareRenderer from '../StateAwareRenderer'
+import { spacing } from '../../setup/theme/tokens'
 
 type PostsProps = {
   updatePost?: (donationData: DonationData) => void;
@@ -90,16 +91,16 @@ const Posts: React.FC<PostsProps> = ({
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   postList: {
-    paddingBottom: 10,
+    paddingBottom: spacing.md,
     flexGrow: 1
   },
   loadingIndicator: {
-    marginTop: 20,
+    marginTop: spacing.xl,
     color: theme.colors.primary
   },
   noDataText: {
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: spacing.xl,
     fontSize: 16,
     color: theme.colors.textSecondary
   },
@@ -107,16 +108,16 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20
+    padding: spacing.xl
   },
   errorText: {
     fontSize: 16,
     color: theme.colors.primary,
     textAlign: 'center',
-    marginBottom: 10
+    marginBottom: spacing.md
   },
   emptyDataMessage: {
-    padding: 20,
+    padding: spacing.xl,
     alignItems: 'center'
   },
   centeredContainer: {

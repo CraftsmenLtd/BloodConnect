@@ -9,6 +9,7 @@ import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import type { Theme } from '../theme'
 import { useTheme } from '../theme/hooks/useTheme'
 import { withRegisterPushOnFocus } from '../../utility/WithDeviceRegistration'
+import { spacing, radius } from '../theme/tokens'
 
 const Stack = createStackNavigator()
 
@@ -74,7 +75,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   comingSoonText: {
     fontSize: 20,
-    padding: 10,
+    padding: spacing.md,
     lineHeight: 30,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
@@ -90,12 +91,12 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     width: 100,
     height: 100,
     backgroundColor: theme.colors.primary,
-    borderRadius: 20
+    borderRadius: radius.xl
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.primary,
-    marginTop: 10
+    marginTop: spacing.md
   },
 })

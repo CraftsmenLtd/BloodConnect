@@ -14,6 +14,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 import type { InputProps } from './types'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type InputElementProps = {
   keyboardType?: KeyboardTypeOptions;
@@ -61,8 +62,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   input: {
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: 5,
-    padding: 10,
+    borderRadius: radius.sm,
+    padding: spacing.md,
     width: '100%',
     color: theme.colors.textPrimary,
     backgroundColor: theme.colors.surface

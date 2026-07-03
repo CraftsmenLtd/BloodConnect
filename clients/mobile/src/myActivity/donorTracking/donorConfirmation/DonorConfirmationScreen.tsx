@@ -8,6 +8,7 @@ import { Button } from '../../../components/button/Button'
 import type { DonorItem } from '../../myPosts/donorResponses/DonorResponses'
 import StateAwareRenderer from '../../../components/StateAwareRenderer'
 import useCompleteDonation from '../useCompleteDonation'
+import { spacing } from '../../../setup/theme/tokens'
 
 const DonorConfirmationScreen = () => {
   const styles = createStyles(useTheme())
@@ -46,25 +47,25 @@ const DonorConfirmationScreen = () => {
 const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: spacing.lg,
     justifyContent: 'space-between',
     backgroundColor: theme.colors.surface
   },
   scrollContainer: {
-    paddingBottom: 16
+    paddingBottom: spacing.lg
   },
   responseText: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 16
+    marginBottom: spacing.lg
   },
   footerContainer: {
-    marginTop: 16
+    marginTop: spacing.lg
   },
   errorText: {
     color: theme.colors.primary,
     fontSize: 14,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
     textAlign: 'center'
   }
 })

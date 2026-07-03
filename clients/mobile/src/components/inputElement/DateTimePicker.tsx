@@ -8,6 +8,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type DateTimePickerComponentProps = {
   label: string;
@@ -65,7 +66,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
   }
 
   return (
-    <View style={{ marginVertical: 4 }}>
+    <View style={{ marginVertical: spacing.xs }}>
       <Text style={styles.label}>
         {label}
         {isRequired && <Text style={styles.asterisk}> *</Text>}
@@ -110,8 +111,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     justifyContent: 'space-between',
     borderWidth: 1,
     borderColor: theme.colors.border,
-    padding: 12,
-    borderRadius: 4
+    padding: spacing.md,
+    borderRadius: radius.sm
   },
   iconStyle: {
     color: theme.colors.primary

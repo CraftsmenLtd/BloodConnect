@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { COMMON_URLS } from '../../setup/constant/commonUrls'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type UserData = {
   name: string;
@@ -59,8 +60,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   profileSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
     borderTopWidth: 1,
     borderBottomWidth: 4,
     borderColor: theme.colors.border
@@ -68,7 +69,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   imageOuterBorder: {
     width: 60,
     height: 60,
-    borderRadius: 50,
+    borderRadius: radius.pill,
     borderWidth: 4,
     borderColor: theme.colors.primary,
     alignItems: 'center',
@@ -77,7 +78,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   imageInnerBorder: {
     width: 58,
     height: 58,
-    borderRadius: 45,
+    borderRadius: radius.pill,
     borderWidth: 2,
     borderColor: theme.colors.border,
     alignItems: 'center',
@@ -87,23 +88,19 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   profileImage: {
     width: 56,
     height: 56,
-    borderRadius: 30
+    borderRadius: radius.xl
   },
   cameraIconContainer: {
     position: 'absolute',
     bottom: -10,
     alignSelf: 'center',
     backgroundColor: theme.colors.surface,
-    borderRadius: 20,
+    borderRadius: radius.xl,
     width: 46,
     height: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: theme.colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
+    ...theme.elevation.sm,
     borderWidth: 1,
     borderColor: theme.colors.border
   },
@@ -112,9 +109,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     width: 46,
     height: 20,
     bottom: -1,
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderRadius: radius.xl,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -126,7 +123,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     transform: [{ scaleX: -1 }]
   },
   profileInfo: {
-    marginLeft: 15
+    marginLeft: spacing.lg
   },
   profileName: {
     fontSize: 18,
@@ -142,6 +139,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   iconStyle: {
     color: theme.colors.textSecondary,
-    marginRight: 4
+    marginRight: spacing.xs
   }
 })

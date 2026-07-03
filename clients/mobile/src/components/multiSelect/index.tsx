@@ -15,6 +15,7 @@ import type { Theme } from '../../setup/theme'
 import Badge from '../badge'
 import { commonStyles } from '../inputElement/commonStyles'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type Option = {
   label: string;
@@ -265,7 +266,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   container: {
     width: '100%',
-    marginVertical: 3
+    marginVertical: spacing.xs
   },
   requiredStar: {
     color: theme.colors.primary
@@ -276,8 +277,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     justifyContent: 'space-between',
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: radius.md,
+    padding: spacing.md,
     backgroundColor: theme.colors.surface
   },
   placeholder: {
@@ -288,11 +289,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     flexWrap: 'wrap',
     flex: 1,
-    gap: 5,
-    paddingVertical: 3
+    gap: spacing.xs,
+    paddingVertical: spacing.xs
   },
   selectedItemContainer: {
-    gap: 4,
+    gap: spacing.xs,
     flexDirection: 'row',
     flexWrap: 'wrap'
   },
@@ -300,19 +301,19 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.surfaceVariant,
-    borderRadius: 20,
+    borderRadius: radius.xl,
     paddingHorizontal: 1,
-    paddingVertical: 3,
-    marginBottom: 5,
+    paddingVertical: spacing.xs,
+    marginBottom: spacing.xs,
     justifyContent: 'space-between',
   },
   selectedItemText: {
-    marginRight: 5
+    marginRight: spacing.xs
   },
   minRequiredLabel: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginTop: 4
+    marginTop: spacing.xs
   },
   backdrop: {
     flex: 1,
@@ -323,43 +324,39 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   dropdownContainer: {
     position: 'absolute',
     width,
-    paddingHorizontal: 16
+    paddingHorizontal: spacing.lg
   },
   dropdown: {
     width: '100%',
     maxHeight: height * 0.45,
     backgroundColor: theme.colors.surface,
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: theme.colors.textPrimary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5
+    borderRadius: radius.md,
+    padding: spacing.md,
+    ...theme.elevation.md
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md
   },
   searchIcon: {
-    marginRight: 8
+    marginRight: spacing.sm
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
     color: theme.colors.textPrimary,
-    paddingVertical: 8
+    paddingVertical: spacing.sm
   },
   option: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border
   },

@@ -4,6 +4,7 @@ import { Text } from './text/AppText'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import Loader from './loaders/loader'
 import type { Theme } from '../setup/theme'
+import { spacing } from '../setup/theme/tokens'
 
 type StateAwareRendererProps = {
   loading?: boolean;
@@ -55,7 +56,7 @@ const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
 const createStyles = (theme: Theme) => StyleSheet.create({
   messageText: {
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: spacing.xl,
     fontSize: 16,
     color: theme.colors.textSecondary
   },

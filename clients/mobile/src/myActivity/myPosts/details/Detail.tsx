@@ -28,6 +28,7 @@ import { useMyActivity } from '../../useMyActivity'
 import Toast from '../../../components/toast'
 import Button from '../../../components/button/Button'
 import { log } from '../../../utility/logger'
+import { spacing } from '../../../setup/theme/tokens'
 
 type DetailProps = {
   navigation: DetailPostScreenNavigationProp;
@@ -187,9 +188,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     backgroundColor: theme.colors.background
   },
   tabHeader: {
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
     backgroundColor: theme.colors.surface,
-    paddingVertical: 16,
+    paddingVertical: spacing.lg,
     borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
     borderTopColor: theme.colors.border,
@@ -208,7 +209,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   errorMessage: {
     color: theme.colors.primary,
     textAlign: 'center',
-    marginTop: 16,
+    marginTop: spacing.lg,
     fontSize: theme.typography.fontSize
   }
 })

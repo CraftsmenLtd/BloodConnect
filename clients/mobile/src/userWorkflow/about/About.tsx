@@ -3,6 +3,7 @@ import { View, Image, StyleSheet } from 'react-native'
 import { Text } from '../../components/text/AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 const currentYear = new Date().getFullYear()
 
@@ -52,7 +53,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: spacing.xl,
     backgroundColor: theme.colors.surface
   },
   logoTitleContainer: {
@@ -65,13 +66,13 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     width: 100,
     height: 100,
     backgroundColor: theme.colors.primary,
-    borderRadius: 20
+    borderRadius: radius.xl
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.primary,
-    marginTop: 10
+    marginTop: spacing.md
   },
   fixedDescriptionContainer: {
     position: 'absolute',
@@ -95,7 +96,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   footerText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    marginHorizontal: 5
+    marginHorizontal: spacing.xs
   },
   companyLogo: {
     width: 20,

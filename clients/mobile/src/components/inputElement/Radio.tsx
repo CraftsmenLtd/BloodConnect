@@ -5,6 +5,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import type { InputProps } from './types'
 import { commonStyles } from './commonStyles'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type RadioButtonProps = {
   onPress: (name: string, value: string) => void;
@@ -48,13 +49,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   wrapper: {
     flexDirection: 'row',
-    marginVertical: 8,
-    gap: 16
+    marginVertical: spacing.sm,
+    gap: spacing.lg
   },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4
+    gap: spacing.xs
   },
   item: {
     textTransform: 'capitalize'
@@ -63,7 +64,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     width: 20,
     height: 20,
     borderWidth: 1,
-    borderRadius: 15,
+    borderRadius: radius.lg,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -74,7 +75,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     width: 13,
     height: 13,
     backgroundColor: theme.colors.primary,
-    borderRadius: 10
+    borderRadius: radius.lg
   },
   extraInfo: {
     color: theme.colors.textSecondary

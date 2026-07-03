@@ -5,6 +5,7 @@ import type { InputProps } from './types'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type DropdownProps = {
   options: Array<{ label: string; value: string }>;
@@ -98,14 +99,14 @@ const createStyles = (theme: Theme, readOnly: boolean): ReturnType<typeof StyleS
     width: '100%',
     position: 'relative',
     zIndex: 1,
-    marginVertical: 4
+    marginVertical: spacing.xs
   },
   scrollView: {
     maxHeight: 500
   },
   dropdown: {
-    padding: 12,
-    borderRadius: 8,
+    padding: spacing.md,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
     backgroundColor: theme.colors.surface
@@ -123,15 +124,11 @@ const createStyles = (theme: Theme, readOnly: boolean): ReturnType<typeof StyleS
     backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: 8,
-    shadowColor: theme.colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5
+    borderRadius: radius.md,
+    ...theme.elevation.md
   },
   option: {
-    padding: 10,
+    padding: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border
   },

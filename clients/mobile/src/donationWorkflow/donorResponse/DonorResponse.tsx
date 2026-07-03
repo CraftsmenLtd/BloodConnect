@@ -6,6 +6,7 @@ import PostCard from '../../components/donation/PostCard'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
+import { spacing } from '../../setup/theme/tokens'
 
 const DonorResponse = () => {
   const styles = createStyles(useTheme())
@@ -38,14 +39,14 @@ const DonorResponse = () => {
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: spacing.xl,
     justifyContent: 'space-between',
     backgroundColor: theme.colors.surface
   },
   ignoreButton: {
     backgroundColor: theme.colors.surfaceVariant,
     flex: 1,
-    marginRight: 10,
+    marginRight: spacing.md,
     color: theme.colors.textPrimary
   },
   buttonTextStyle: {
@@ -58,11 +59,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   buttonContainer: {
     flexDirection: 'row',
-    gap: 16,
+    gap: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingTop: 8,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
     backgroundColor: theme.colors.borderStrong
   },
   buttonWrapper: {

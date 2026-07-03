@@ -5,6 +5,7 @@ import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import Loader from '../loaders/loader'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type ButtonProps = {
   text: string;
@@ -41,11 +42,11 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     button: {
       backgroundColor: theme.colors.primary,
-      paddingVertical: 15,
-      borderRadius: 100,
+      paddingVertical: spacing.lg,
+      borderRadius: radius.pill,
       alignItems: 'center',
       justifyContent: 'center',
-      marginBottom: 10
+      marginBottom: spacing.md
     },
     buttonContent: {
       position: 'relative'

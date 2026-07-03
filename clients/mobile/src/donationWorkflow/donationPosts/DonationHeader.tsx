@@ -9,6 +9,7 @@ import { View,
 import { Text } from '../../components/text/AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type HeaderProps = {
   profileImageUri: string;
@@ -75,9 +76,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
-    paddingVertical: 15,
-    paddingHorizontal: 15,
+    marginBottom: spacing.sm,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
     backgroundColor: theme.colors.surface,
     borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
@@ -87,9 +88,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   filter: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-    paddingVertical: 6,
-    paddingHorizontal: 15,
+    marginBottom: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
     backgroundColor: theme.colors.surface,
     borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
@@ -99,12 +100,12 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   headerLeftContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8
+    gap: spacing.sm
   },
   profileImage: {
     width: 40,
     height: 40,
-    borderRadius: 20
+    borderRadius: radius.xl
   },
   title: {
     fontSize: 17,
@@ -112,16 +113,16 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   button: {
     backgroundColor: theme.colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 25
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: radius.xl
   },
   filterButton: {
     backgroundColor: theme.colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 25,
-    marginRight: 10
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: radius.xl,
+    marginRight: spacing.md
   },
   filterSelected: {
     backgroundColor: theme.colors.primary

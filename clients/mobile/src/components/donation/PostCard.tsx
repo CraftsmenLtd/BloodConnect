@@ -27,6 +27,7 @@ import Badge from '../badge'
 import GenericModal from '../modal'
 import { openMapLocation } from '../../utility/mapUtils'
 import { openSafetyReport } from '../../utility/safetyReport'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 export type PostCardDisplayOptions = {
   showContactNumber?: boolean;
@@ -372,8 +373,8 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
 const createStyles = (theme: Theme) => StyleSheet.create({
   card: {
     backgroundColor: theme.colors.surface,
-    padding: 18,
-    marginBottom: 10,
+    padding: spacing.xl,
+    marginBottom: spacing.md,
     position: 'relative'
   },
   link: {
@@ -383,7 +384,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: spacing.md
   },
   userName: {
     fontWeight: 'bold',
@@ -397,7 +398,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     position: 'relative'
   },
   iconContainer: {
-    padding: 8,
+    padding: spacing.sm,
     marginRight: -8
   },
   modalOverlay: {
@@ -412,17 +413,13 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   dropdownContainer: {
     position: 'absolute',
     backgroundColor: theme.colors.surface,
-    borderRadius: 4,
-    shadowColor: theme.colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    borderRadius: radius.sm,
+    ...theme.elevation.md,
     minWidth: 120
   },
   dropdownItem: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border
   },
@@ -440,20 +437,20 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     color: theme.colors.borderStrong
   },
   bloodInfoWrapper: {
-    borderRadius: 5,
+    borderRadius: radius.sm,
     borderColor: theme.colors.border,
     borderWidth: 1,
-    marginBottom: 8
+    marginBottom: spacing.sm
   },
   postUpdate: {
     flexDirection: 'row',
-    padding: 8,
+    padding: spacing.sm,
     alignItems: 'center',
-    gap: 8,
-    marginTop: 8
+    gap: spacing.sm,
+    marginTop: spacing.sm
   },
   bloodInfo: {
-    padding: 8,
+    padding: spacing.sm,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -465,7 +462,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     alignItems: 'center'
   },
   bloodText: {
-    marginLeft: 8
+    marginLeft: spacing.sm
   },
   lookingForText: {
     fontSize: 13,
@@ -479,15 +476,15 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.goldenYellow,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.lg
   },
   urgentText: {
     color: theme.colors.textPrimary,
     fontWeight: '600',
     fontSize: 12,
-    marginLeft: 4
+    marginLeft: spacing.xs
   },
   locationTimeContainer: {
     flexDirection: 'row',
@@ -502,32 +499,32 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderRightWidth: 0
   },
   infoSection: {
-    padding: 8
+    padding: spacing.sm
   },
   infoHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: spacing.xs
   },
   donationInfoPlaceholder: {
     fontSize: 14,
     color: theme.colors.textSecondary
   },
   descriptionContainer: {
-    padding: 8,
+    padding: spacing.sm,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border
   },
   description: {
     fontSize: 16,
-    marginTop: 4
+    marginTop: spacing.xs
   },
   buttonContainer: {
-    marginTop: 9,
+    marginTop: spacing.sm,
     width: '100%'
   },
   buttonStyle: {
-    paddingVertical: 10,
+    paddingVertical: spacing.md,
     backgroundColor: theme.colors.border
   },
   textStyle: {

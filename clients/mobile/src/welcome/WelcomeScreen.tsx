@@ -9,6 +9,7 @@ import { Button } from '../components/button/Button'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import type { Theme } from '../setup/theme'
 import { useTranslation } from 'react-i18next'
+import { spacing } from '../setup/theme/tokens'
 
 export type WelcomeScreenProps = {
   navigation: WelcomeScreenNavigationProp;
@@ -50,7 +51,7 @@ const createStyles = (theme: Theme) => {
     container: {
       flex: 1,
       justifyContent: 'center',
-      paddingHorizontal: 20,
+      paddingHorizontal: spacing.xl,
       backgroundColor: theme.colors.surface
     },
     image: {
@@ -58,19 +59,19 @@ const createStyles = (theme: Theme) => {
       height: undefined,
       aspectRatio: 1,
       alignSelf: 'center',
-      marginBottom: 30
+      marginBottom: spacing.xxxl
     },
     title: {
       fontSize: 20,
       fontWeight: '600',
       textAlign: 'center',
-      marginBottom: 10
+      marginBottom: spacing.md
     },
     subtitle: {
       fontSize: 14,
       color: theme.colors.textSecondary,
       textAlign: 'center',
-      marginBottom: 40
+      marginBottom: spacing.xxxxl
     },
     loginButton: {
       borderColor: theme.colors.borderStrong,

@@ -10,6 +10,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import StateAwareRenderer from '../../components/StateAwareRenderer'
 import { calculateBMI, getBMICategory } from '../../utility/bmi'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 const DonorProfile = () => {
   const theme = useTheme()
@@ -78,10 +79,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     locationRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginVertical: 4
+      marginVertical: spacing.xs
     },
     locationText: {
-      marginLeft: 8,
+      marginLeft: spacing.sm,
       fontSize: 14,
       color: theme.colors.textSecondary
     },
@@ -89,7 +90,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 16,
+      padding: spacing.lg,
       backgroundColor: theme.colors.surface
     },
     errorText: {
@@ -100,9 +101,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     container: {
       borderTopColor: theme.colors.textPrimary,
       borderTopWidth: 1,
-      paddingTop: 32,
-      paddingBottom: 16,
-      paddingHorizontal: 16,
+      paddingTop: spacing.xxxl,
+      paddingBottom: spacing.lg,
+      paddingHorizontal: spacing.lg,
       backgroundColor: theme.colors.surface,
       alignItems: 'center'
     },
@@ -113,7 +114,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     profileImage: {
       width: 110,
       height: 110,
-      borderRadius: 50,
+      borderRadius: radius.pill,
       borderWidth: 2,
       borderColor: theme.colors.primary
     },
@@ -121,9 +122,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       position: 'absolute',
       bottom: -8,
       backgroundColor: theme.colors.goldenYellow,
-      borderRadius: 12,
+      borderRadius: radius.lg,
       paddingVertical: 2,
-      paddingHorizontal: 8,
+      paddingHorizontal: spacing.sm,
       borderWidth: 1,
       borderColor: theme.colors.primary
     },
@@ -135,13 +136,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     name: {
       fontSize: 20,
       fontWeight: 'bold',
-      marginTop: 12,
+      marginTop: spacing.md,
       color: theme.colors.textPrimary
     },
     detailsRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 8
+      marginTop: spacing.sm
     },
     detailsText: {
       fontSize: 14,
@@ -150,12 +151,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     callButton: {
       flexDirection: 'row',
       justifyContent: 'center',
-      gap: 8,
+      gap: spacing.sm,
       backgroundColor: theme.colors.primary,
-      borderRadius: 100,
-      paddingVertical: 12,
-      paddingHorizontal: 40,
-      marginTop: 16
+      borderRadius: radius.pill,
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.xxxxl,
+      marginTop: spacing.lg
     },
     callButtonText: {
       textAlign: 'center',

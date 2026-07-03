@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type Option = {
   label: string;
@@ -86,8 +87,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     height: 50,
     borderColor: theme.colors.border,
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
     backgroundColor: theme.colors.surface
   },
   placeholderStyle: {
@@ -105,8 +106,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border
   },
@@ -116,14 +117,14 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flex: 1
   },
   checkIcon: {
-    marginLeft: 10,
+    marginLeft: spacing.md,
     color: theme.colors.primary
   },
   dropdownList: {
     backgroundColor: theme.colors.surface,
     borderColor: theme.colors.border,
     borderWidth: 1,
-    borderRadius: 8
+    borderRadius: radius.md
   },
   dropdownItemContainer: {
     backgroundColor: theme.colors.surface
@@ -131,7 +132,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   inputSearch: {
     color: theme.colors.textPrimary,
     borderColor: theme.colors.border,
-    borderRadius: 6
+    borderRadius: radius.md
   }
 })
 

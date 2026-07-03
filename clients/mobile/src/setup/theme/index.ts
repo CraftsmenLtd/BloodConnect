@@ -1,5 +1,6 @@
 import lightTheme from './lightTheme'
 import darkTheme from './darkTheme'
+import type { spacing, radius, Elevation } from './tokens'
 
 type ThemeMode = 'system' | 'light' | 'dark'
 
@@ -36,6 +37,9 @@ type Theme = {
     errorFontSize: number;
     fontFamily: string;
   };
+  spacing: typeof spacing;
+  radius: typeof radius;
+  elevation: Elevation;
 }
 
 export { lightTheme, darkTheme, type Theme, type ThemeMode }

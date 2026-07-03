@@ -1,13 +1,14 @@
 import { StyleSheet } from 'react-native'
 import type { Theme } from '../../setup/theme'
+import { spacing } from '../../setup/theme/tokens'
 
 export const commonStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   inputContainer: {
-    marginBottom: 10
+    marginBottom: spacing.md
   },
   label: {
     fontSize: theme.typography.fontSize,
-    marginBottom: 5,
+    marginBottom: spacing.xs,
     color: theme.colors.textSecondary,
     fontWeight: '500'
   },

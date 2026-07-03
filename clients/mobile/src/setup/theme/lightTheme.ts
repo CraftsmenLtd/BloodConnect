@@ -1,4 +1,5 @@
 import type { Theme } from './index'
+import { spacing, radius, lightElevation } from './tokens'
 const lightTheme: Theme = {
   colors: {
     // Brand
@@ -31,7 +32,10 @@ const lightTheme: Theme = {
     fontSize: 16,
     errorFontSize: 12,
     fontFamily: 'Roboto_400Regular'
-  }
+  },
+  spacing,
+  radius,
+  elevation: lightElevation
 }
 
 export default lightTheme

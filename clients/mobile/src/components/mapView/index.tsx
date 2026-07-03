@@ -20,6 +20,7 @@ import {
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Marker } from './useMapView'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type MapViewProps = {
   centerCoordinate: [number, number];
@@ -80,7 +81,7 @@ type MapViewProps = {
  *       zoomLevel={zoomLevel}
  *       markers={markers}
  *       style={{
- *         borderRadius: 6
+ *         borderRadius: radius.md
  *       }}
  *     />
  *   )
@@ -210,9 +211,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       bottom: 5,
       right: 10,
       backgroundColor: theme.colors.textSecondary,
-      paddingHorizontal: 6,
+      paddingHorizontal: spacing.sm,
       paddingVertical: 2,
-      borderRadius: 4
+      borderRadius: radius.sm
     },
     attributionText: {
       fontSize: 10,
@@ -223,9 +224,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       bottom: 50,
       right: 15,
       backgroundColor: theme.colors.primary,
-      padding: 10,
-      borderRadius: 25,
-      elevation: 5
+      padding: spacing.md,
+      borderRadius: radius.xl,
+      ...theme.elevation.md
     }
   })
 

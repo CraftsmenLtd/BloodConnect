@@ -4,6 +4,7 @@ import { Text } from '../text/AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { commonStyles } from '../inputElement/commonStyles'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type CustomToggleProps = {
   value?: boolean;
@@ -121,16 +122,16 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   toggleContainer: {
     width: 60,
     height: 30,
-    borderRadius: 30,
-    padding: 3,
+    borderRadius: radius.xl,
+    padding: spacing.xs,
     justifyContent: 'center',
   },
   circle: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     backgroundColor: theme.colors.onPrimary,
-    elevation: 2,
+    ...theme.elevation.sm
   },
 })
 

@@ -1,6 +1,7 @@
 import { commonStyles } from '../../../components/inputElement/commonStyles'
 import type { Theme } from '../../../setup/theme'
 import { StyleSheet } from 'react-native'
+import { spacing, radius } from '../../../setup/theme/tokens'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   ...commonStyles(theme),
@@ -9,19 +10,19 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     backgroundColor: theme.colors.surface
   },
   scrollContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 16
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg
   },
   card: {
     backgroundColor: theme.colors.surface,
-    borderRadius: 10,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: theme.colors.borderStrong
   },
   row: {
     borderBottomWidth: 1,
     borderColor: theme.colors.borderStrong,
-    padding: 10
+    padding: spacing.md
   },
   lastRow: {
     borderBottomWidth: 0
@@ -32,16 +33,16 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: theme.colors.textPrimary
   },
   buttonContainer: {
-    padding: 16,
-    paddingTop: 12,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
     backgroundColor: theme.colors.surface,
     borderTopColor: theme.colors.borderStrong,
     borderTopWidth: 1
   },
   editButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 48,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xxxl,
+    borderRadius: radius.pill,
     alignItems: 'center'
   },
   editButtonText: {
@@ -50,7 +51,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontWeight: 'bold'
   },
   selectedItemContainer: {
-    gap: 4,
+    gap: spacing.xs,
     flexDirection: 'row',
     flexWrap: 'wrap'
   },
@@ -58,18 +59,18 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.surfaceVariant,
-    borderRadius: 20,
+    borderRadius: radius.xl,
     paddingHorizontal: 1,
-    paddingVertical: 3,
-    marginBottom: 5,
+    paddingVertical: spacing.xs,
+    marginBottom: spacing.xs,
     justifyContent: 'space-between',
   },
   selectedItemText: {
-    marginRight: 5
+    marginRight: spacing.xs
   },
   mapViewContainer: {
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10
+    borderBottomLeftRadius: radius.lg,
+    borderBottomRightRadius: radius.lg
   },
   dividerContainer: {
     marginBottom: 2

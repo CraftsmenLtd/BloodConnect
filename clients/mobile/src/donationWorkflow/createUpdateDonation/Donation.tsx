@@ -21,6 +21,7 @@ import type { Theme } from '../../setup/theme'
 import SearchMultiSelect from '../../components/inputElement/SearchMultiSelect'
 import { LocationService } from '../../LocationService/LocationService'
 import Dropdown from '../../components/inputElement/Dropdown'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
@@ -217,31 +218,31 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 18,
+    padding: spacing.xl,
     backgroundColor: theme.colors.surface
   },
   fieldSpacing: {
-    marginTop: 5
+    marginTop: spacing.xs
   },
   reducedSpacing: {
-    marginTop: 12,
+    marginTop: spacing.md,
     marginBottom: -6
   },
   extraBottomMargin: {
-    marginBottom: 12
+    marginBottom: spacing.md
   },
   buttonContainer: {
-    marginTop: 28,
-    marginBottom: 16
+    marginTop: spacing.xxxl,
+    marginBottom: spacing.lg
   },
   errorMessage: {
     color: theme.colors.primary,
     textAlign: 'center',
-    marginTop: 16,
+    marginTop: spacing.lg,
     fontSize: theme.typography.fontSize
   },
   mapViewContainer: {
-    borderRadius: 6,
+    borderRadius: radius.md,
     borderWidth: 1.5
   }
 })

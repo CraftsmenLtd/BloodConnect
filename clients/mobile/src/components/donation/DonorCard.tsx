@@ -4,6 +4,7 @@ import { Text } from '../text/AppText'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type DonorCardProps = {
   name: string;
@@ -45,17 +46,17 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: 16,
+      padding: spacing.lg,
       backgroundColor: theme.colors.surfaceVariant
     },
     card: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: 12,
+      padding: spacing.md,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      borderRadius: 8,
-      marginBottom: 12,
+      borderRadius: radius.md,
+      marginBottom: spacing.md,
       backgroundColor: theme.colors.surface
     },
     cardSelected: {
@@ -67,7 +68,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       alignItems: 'center'
     },
     textContainer: {
-      marginLeft: 12
+      marginLeft: spacing.md
     },
     name: {
       fontSize: theme.typography.fontSize,

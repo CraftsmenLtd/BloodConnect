@@ -13,6 +13,7 @@ import { THEME_MODE } from '../../setup/constant/theme'
 import type { Theme, ThemeMode } from '../../setup/theme'
 import { useTheme, useThemeMode } from '../../setup/theme/hooks/useTheme'
 import { openSafetyReport } from '../../utility/safetyReport'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 const SettingsPage: React.FC = (): React.ReactElement => {
   const theme = useTheme()
@@ -76,29 +77,29 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
+      padding: spacing.xl,
       backgroundColor: theme.colors.background,
     },
     themeSection: {
-      marginTop: 24,
+      marginTop: spacing.xxl,
     },
     themeLabel: {
       fontSize: 16,
       fontWeight: '500',
       color: theme.colors.textPrimary,
-      marginBottom: 8,
+      marginBottom: spacing.sm,
     },
     segment: {
       flexDirection: 'row',
       borderWidth: 1,
       borderColor: theme.colors.border,
-      borderRadius: 8,
+      borderRadius: radius.md,
       overflow: 'hidden',
       backgroundColor: theme.colors.surface,
     },
     segmentItem: {
       flex: 1,
-      paddingVertical: 10,
+      paddingVertical: spacing.md,
       alignItems: 'center',
     },
     segmentItemActive: {
@@ -115,14 +116,14 @@ const createStyles = (theme: Theme) =>
     reportRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 24,
-      paddingVertical: 12,
+      marginTop: spacing.xxl,
+      paddingVertical: spacing.md,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
     },
     reportIcon: {
       color: theme.colors.primary,
-      marginRight: 12,
+      marginRight: spacing.md,
     },
     reportText: {
       flex: 1,
