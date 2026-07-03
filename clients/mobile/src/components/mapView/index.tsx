@@ -177,7 +177,7 @@ const ResetToInitialView = ({ cameraRef, centerCoordinate, zoomLevel }): React.R
 
   return (
     <TouchableOpacity style={styles.resetButton} onPress={handlePress}>
-      <MaterialIcons name="my-location" size={24} color="white" />
+      <MaterialIcons name="my-location" size={24} color={theme.colors.onPrimary} />
     </TouchableOpacity>
   )
 }

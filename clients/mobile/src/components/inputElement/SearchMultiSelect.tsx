@@ -289,7 +289,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderColor: 'black',
+    borderColor: theme.colors.borderStrong,
     borderWidth: 1,
     borderRadius: radius.pill,
     marginRight: spacing.xs,
