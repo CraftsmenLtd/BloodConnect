@@ -5,7 +5,8 @@ import { languageOptions } from '../setup/constant/language'
 import type { Theme } from '../setup/theme'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 
 type AuthLayoutProps = {
   children: ReactNode;
@@ -16,10 +17,11 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
 
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1 }}>
-      <ScrollView
+      <KeyboardAwareScrollView
         contentContainerStyle={[styles.scrollViewContainer]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        bottomOffset={25}
       >
         {children}
         <LanguageSwitcher
@@ -27,7 +29,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           position="bottom-right"
           size="sm"
         />
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   )
 }

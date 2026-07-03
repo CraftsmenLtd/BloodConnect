@@ -1,6 +1,6 @@
 {
   "name": "mobile",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "main": "index.js",
   "scripts": {
     "start": "expo start --dev-client",
@@ -55,6 +55,7 @@
     "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-get-random-values": "^1.11.0",
+    "react-native-keyboard-controller": "1.18.5",
     "react-native-logs": "^5.5.0",
     "react-native-phone-number-input": "^2.1.0",
     "react-native-reanimated": "~4.1.0",

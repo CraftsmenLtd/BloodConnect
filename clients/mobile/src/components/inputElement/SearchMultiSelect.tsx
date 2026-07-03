@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Keyboard, ScrollView } from 'react-native'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  Keyboard,
+  Modal,
+  ScrollView,
+  Dimensions,
+  ActivityIndicator
+} from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -42,9 +53,13 @@ const SearchMultiSelect = ({
   const theme = useTheme()
   const styles = createStyles(theme)
   const [value, setValue] = useState(initialValue)
+  const [searchText, setSearchText] = useState('')
   const [selectedValues, setSelectedValues] = useState<Option[]>([])
   const [options, setOptions] = useState<Option[]>(initialOptions)
+  const [isLoading, setIsLoading] = useState(false)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const searchInputRef = useRef<TextInput>(null)
+  const requestIdRef = useRef(0)
 
   useEffect(() => {
     if (initialOptions.length > 0) {
@@ -52,21 +67,26 @@ const SearchMultiSelect = ({
     }
   }, [initialOptions])
 
-  const handleInputChange = (text: string) => {
-    setValue(text)
-    if (!multiSelect) {
-      onChange(name, text)
+  useEffect(() => () => {
+    if (typingTimeoutRef.current !== null) {
+      clearTimeout(typingTimeoutRef.current)
     }
-    setIsVisible(name)
+  }, [])
+
+  const handleInputChange = (text: string) => {
+    setSearchText(text)
     if (fetchOptions !== null && fetchOptions !== undefined) {
       if (typingTimeoutRef.current !== null) {
         clearTimeout(typingTimeoutRef.current)
       }
-
+      setIsLoading(true)
       typingTimeoutRef.current = setTimeout(() => {
-        fetchOptions(text).then((newOptions) => { setOptions(newOptions) }).catch(() => {
-          setOptions([])
-        })
+        requestIdRef.current += 1
+        const currentId = requestIdRef.current
+        fetchOptions(text)
+          .then((newOptions) => { if (currentId === requestIdRef.current) setOptions(newOptions) })
+          .catch(() => { if (currentId === requestIdRef.current) setOptions([]) })
+          .finally(() => { if (currentId === requestIdRef.current) setIsLoading(false) })
       }, 500)
     } else {
       const filteredOptions = initialOptions.filter((option) =>
@@ -76,11 +96,36 @@ const SearchMultiSelect = ({
     }
   }
 
+  const openDropdown = () => {
+    if (!editable) return
+    setIsVisible(name)
+    if (value !== '') {
+      handleInputChange(value)
+    } else {
+      setSearchText('')
+      setOptions(initialOptions)
+    }
+  }
+
+  const closeDropdown = () => {
+    if (typingTimeoutRef.current !== null) {
+      clearTimeout(typingTimeoutRef.current)
+    }
+    setIsLoading(false)
+    setIsVisible('')
+    Keyboard.dismiss()
+  }
+
   const handleSelect = (item: Option) => {
     if (!multiSelect) {
-      setIsVisible('')
+      if (typingTimeoutRef.current !== null) {
+        clearTimeout(typingTimeoutRef.current)
+      }
+      setIsLoading(false)
       setValue(item.label)
       onChange(name, item.label)
+      setIsVisible('')
+      Keyboard.dismiss()
 
       return
     }
@@ -97,53 +142,41 @@ const SearchMultiSelect = ({
       setSelectedValues(updatedValues)
       onChange(name, updatedValues.map((selectedItem) => selectedItem.value))
     }
-
-    Keyboard.dismiss()
   }
 
-  const removeSelectedValue = (value: string) => {
-    const updatedValues = selectedValues.filter((selected) => selected.value !== value)
+  const removeSelectedValue = (selectedValue: string) => {
+    const updatedValues = selectedValues.filter((selected) => selected.value !== selectedValue)
     setSelectedValues(updatedValues)
     onChange(name, updatedValues.map((selectedItem) => selectedItem.value))
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label} onPress={() => { setIsVisible('') }}>
+      <Text style={styles.label}>
         {label}
         {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
-      <View style={{ position: 'relative' }}>
-        <View style={styles.dropdown}>
-          <TextInput
-            placeholder={placeholder}
-            value={value}
-            editable={editable}
-            onChangeText={handleInputChange}
-            onFocus={() => { setIsVisible(name) }}
-            style={[styles.input, !editable && styles.inputDisabled]}
-            pointerEvents={editable ? 'auto' : 'none'}
-          />
-        </View>
-        {isVisible === name && options.length > 0 && (
-          <View style={styles.dropdownOptionsContainer}>
-            <ScrollView nestedScrollEnabled={true} bounces={false}>
-              {options.map((item, index) => (
-                <TouchableOpacity key={`${item.value}-${index}`} style={styles.option} onPress={() => { handleSelect(item) }}>
-                  <Text style={styles.optionText}>{item.label}</Text>
-                  {selectedValues.some((selected) => selected.value === item.value) && (
-                    <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
-                  )}
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        )}
-      </View>
+
+      <TouchableOpacity
+        style={[styles.dropdown, !editable && styles.inputDisabled]}
+        onPress={openDropdown}
+        activeOpacity={1}
+        disabled={!editable}
+      >
+        <Ionicons name="search" size={18} color={theme.colors.textSecondary} />
+        <Text
+          style={[styles.fieldText, value === '' && styles.placeholderText]}
+          numberOfLines={1}
+        >
+          {value === '' ? placeholder : value}
+        </Text>
+      </TouchableOpacity>
+
       {extraInfo.trim().length > 0 && <Text style={styles.extraInfo}>{extraInfo}</Text>}
-      {error !== null && <Text style={styles.error}>{error}</Text>}
+      {error !== null && error !== undefined && <Text style={styles.error}>{error}</Text>}
+
       {multiSelect
-        && <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 }}>
+        && <View style={styles.chipContainer}>
           {selectedValues.map((item, index) => (
             <View key={`${index}-${item.value}`} style={styles.selectedItem}>
               <Text>{item.label}</Text>
@@ -154,11 +187,67 @@ const SearchMultiSelect = ({
           ))}
         </View>}
 
+      <Modal
+        transparent
+        visible={isVisible === name}
+        onRequestClose={closeDropdown}
+        onShow={() => { searchInputRef.current?.focus() }}
+        statusBarTranslucent
+      >
+        <TouchableOpacity style={styles.backdrop} onPress={closeDropdown} activeOpacity={1}>
+          <View style={styles.dropdownContainer}>
+            <View style={styles.modalSheet} onStartShouldSetResponder={() => true}>
+              <View style={styles.searchContainer}>
+                <Ionicons
+                  name="search"
+                  size={20}
+                  color={theme.colors.textSecondary}
+                  style={styles.searchIcon}
+                />
+                <TextInput
+                  ref={searchInputRef}
+                  placeholder={placeholder}
+                  value={searchText}
+                  onChangeText={handleInputChange}
+                  style={styles.searchInput}
+                />
+                <TouchableOpacity onPress={() => {
+                  if (typingTimeoutRef.current !== null) {
+                    clearTimeout(typingTimeoutRef.current)
+                  }
+                  setIsLoading(false)
+                  setSearchText('')
+                  setOptions([])
+                }}>
+                  <Ionicons name="close-circle" size={16} color={theme.colors.primary} />
+                </TouchableOpacity>
+              </View>
+              {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
+              <ScrollView keyboardShouldPersistTaps="handled">
+                {options.map((item, index) => (
+                  <TouchableOpacity
+                    key={`${item.value}-${index}`}
+                    style={styles.option}
+                    onPress={() => { handleSelect(item) }}
+                  >
+                    <Text style={styles.optionText}>{item.label}</Text>
+                    {selectedValues.some((selected) => selected.value === item.value) && (
+                      <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   )
 }
 
 export default SearchMultiSelect
+
+const { height } = Dimensions.get('window')
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   ...commonStyles(theme),
@@ -167,47 +256,30 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     marginVertical: 4
   },
   dropdown: {
-    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 12,
     borderWidth: 1,
     borderColor: theme.colors.extraLightGray,
     borderRadius: 8,
     backgroundColor: theme.colors.white
   },
-  input: {
+  fieldText: {
+    flex: 1,
     fontSize: 16,
     color: theme.colors.textPrimary
+  },
+  placeholderText: {
+    color: theme.colors.grey
   },
   inputDisabled: {
-    color: theme.colors.textSecondary,
     opacity: 0.5
   },
-  dropdownOptionsContainer: {
-    position: 'absolute',
-    left: 0,
-    top: '100%',
-    width: '100%',
-    zIndex: 9999,
-    backgroundColor: theme.colors.white,
-    borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
-    borderRadius: 8,
-    shadowColor: theme.colors.textPrimary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5
-  },
-  option: {
+  chipContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.lightGrey
-  },
-  optionText: {
-    fontSize: 16,
-    color: theme.colors.textPrimary
+    flexWrap: 'wrap',
+    marginTop: 8
   },
   selectedItem: {
     flexDirection: 'row',
@@ -224,5 +296,56 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   extraInfo: {
     fontSize: 12,
     color: theme.colors.darkGrey
+  },
+  backdrop: {
+    flex: 1,
+    backgroundColor: theme.colors.blackFaded,
+    paddingTop: 50,
+    paddingHorizontal: 16
+  },
+  dropdownContainer: {
+    width: '100%'
+  },
+  modalSheet: {
+    width: '100%',
+    maxHeight: height * 0.45,
+    backgroundColor: theme.colors.white,
+    borderRadius: 8,
+    padding: 10,
+    shadowColor: theme.colors.textPrimary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.lightGrey,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 10
+  },
+  searchIcon: {
+    marginRight: 8
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: theme.colors.textPrimary,
+    paddingVertical: 8
+  },
+  option: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.lightGrey
+  },
+  optionText: {
+    fontSize: 16,
+    color: theme.colors.textPrimary
   }
 })

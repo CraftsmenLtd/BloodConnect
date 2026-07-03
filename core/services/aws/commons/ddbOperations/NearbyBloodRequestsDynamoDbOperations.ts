@@ -68,10 +68,8 @@ export default class NearbyBloodRequestsDynamoDbOperations extends DynamoDbTable
 
     return (queryResult.items ?? []).map((item) => {
       const raw = item as unknown as Record<string, unknown>
-      const pk = (raw.PK as string) ?? ''
-      const sk = (raw.SK as string) ?? ''
-      const seekerId = pk.replace('BLOOD_REQ#', '')
-      const requestPostId = sk.split('#')[2] ?? ''
+      const requestPostId = (raw.requestPostId as string) ?? ''
+      const seekerId = (raw.seekerId as string) ?? ''
 
       return {
         requestPostId,
