@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet, RefreshControl } from 'react-native'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import type { Theme } from '../../setup/theme'
 import { useDonationPosts } from './useDonationPosts'
 import Header from './DonationHeader'
 import Posts from '../../components/donation/Posts'
@@ -14,7 +15,7 @@ export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 
 const DonationPosts = () => {
   const theme = useTheme()
   const { t } = useTranslation()
-  const styles = createStyles()
+  const styles = createStyles(theme)
   const {
     errorMessage,
     createPost,
@@ -60,9 +61,10 @@ const DonationPosts = () => {
   )
 }
 
-const createStyles = () => StyleSheet.create({
+const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: theme.colors.background
   }
 })
 

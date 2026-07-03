@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { Dropdown as CustomDropdown } from 'react-native-element-dropdown'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -36,13 +37,14 @@ const Dropdown: React.FC<DropdownComponentProps> = ({
   readonly = false,
   allowSearch = false
 }) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   const renderItem = (item: Option) => (
     <View style={styles.itemContainer}>
       <Text style={styles.itemText}>{item.label}</Text>
       {selectedValue === item.value && (
-        <MaterialIcons name="check" size={20} color="red" style={styles.checkIcon} />
+        <MaterialIcons name="check" size={20} color={theme.colors.primary} style={styles.checkIcon} />
       )}
     </View>
   )
@@ -66,7 +68,10 @@ const Dropdown: React.FC<DropdownComponentProps> = ({
         onChange={(item: Option) => { onChange(name, item.value) }}
         renderItem={(item: Option) => renderItem(item)}
         disable={readonly}
-        activeColor={readonly ? 'transparent' : '#F8F8F8'}
+        activeColor={readonly ? 'transparent' : theme.colors.surfaceVariant}
+        containerStyle={styles.dropdownList}
+        itemContainerStyle={styles.dropdownItemContainer}
+        inputSearchStyle={styles.inputSearch}
         search={allowSearch}
         searchPlaceholder='Type to Search...'
       />
@@ -79,15 +84,15 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   dropdown: {
     height: 50,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   placeholderStyle: {
     fontSize: 16,
-    color: theme.colors.grey
+    color: theme.colors.textTertiary
   },
   selectedTextStyle: {
     fontSize: 16,
@@ -103,7 +108,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.extraLightGray
+    borderBottomColor: theme.colors.border
   },
   itemText: {
     fontSize: 16,
@@ -113,6 +118,20 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   checkIcon: {
     marginLeft: 10,
     color: theme.colors.primary
+  },
+  dropdownList: {
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderWidth: 1,
+    borderRadius: 8
+  },
+  dropdownItemContainer: {
+    backgroundColor: theme.colors.surface
+  },
+  inputSearch: {
+    color: theme.colors.textPrimary,
+    borderColor: theme.colors.border,
+    borderRadius: 6
   }
 })
 

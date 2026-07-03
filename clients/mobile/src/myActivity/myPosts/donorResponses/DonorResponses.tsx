@@ -1,6 +1,7 @@
 import React from 'react'
 import type { ImageStyle, StyleProp } from 'react-native'
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { View, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { COMMON_URLS } from '../../../setup/constant/commonUrls'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
@@ -59,7 +60,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
   StyleSheet.create({
     rootContainer: {
       flex: 1,
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     centeredContainer: {
       flex: 1,
@@ -68,11 +69,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     },
     noDonorText: {
       fontSize: 16,
-      color: theme.colors.grey,
+      color: theme.colors.textTertiary,
       textAlign: 'center'
     },
     responseContainer: {
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     container: {
       padding: 16
@@ -88,7 +89,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       alignItems: 'center',
       paddingVertical: 10,
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.lightGrey
+      borderBottomColor: theme.colors.borderStrong
     },
     donorItemLast: {
       borderBottomWidth: 0,
@@ -110,7 +111,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     },
     status: {
       fontSize: 12,
-      color: theme.colors.darkGrey
+      color: theme.colors.textSecondary
     },
     arrow: {
       fontSize: 20,

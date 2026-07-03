@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { TouchableOpacity, Animated, StyleSheet, View, Text } from 'react-native'
+import { TouchableOpacity, Animated, StyleSheet, View } from 'react-native'
+import { Text } from '../text/AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { commonStyles } from '../inputElement/commonStyles'
@@ -92,7 +93,7 @@ const CustomToggle: React.FC<CustomToggleProps> = ({
       <TouchableOpacity
         style={[
           styles.toggleContainer,
-          { backgroundColor: value ? theme.colors.primary : theme.colors.grey },
+          { backgroundColor: value ? theme.colors.primary : theme.colors.textTertiary },
         ]}
         activeOpacity={isReadOnly ? 1 : 0.8}
         onPress={handleToggle}
@@ -128,7 +129,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.onPrimary,
     elevation: 2,
   },
 })

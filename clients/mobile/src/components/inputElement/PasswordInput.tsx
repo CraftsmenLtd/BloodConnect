@@ -1,4 +1,5 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { FontAwesome } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -12,7 +13,8 @@ type PasswordInputProps = {
 } & Omit<InputProps, 'placeholder'>
 
 export const PasswordInput = ({ name, label, value, onChangeText, isVisible, setIsVisible, error }: PasswordInputProps) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   return (
     <View style={styles.inputContainer}>
@@ -21,12 +23,13 @@ export const PasswordInput = ({ name, label, value, onChangeText, isVisible, set
         <TextInput
           style={styles.passwordInput}
           placeholder="**********"
+          placeholderTextColor={theme.colors.textTertiary}
           secureTextEntry={!isVisible}
           value={value}
           onChangeText={(text) => { onChangeText(name, text) }}
         />
         <TouchableOpacity onPress={() => { setIsVisible((prevState) => !prevState) }} style={styles.eyeIcon}>
-          <FontAwesome name={isVisible ? 'eye' : 'eye-slash'} size={20} color="gray" />
+          <FontAwesome name={isVisible ? 'eye' : 'eye-slash'} size={20} color={theme.colors.textTertiary} />
         </TouchableOpacity>
       </View>
       {error !== null && <Text style={styles.error}>{error}</Text>}
@@ -40,13 +43,15 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderRadius: 5,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
+    backgroundColor: theme.colors.surface
   },
   passwordInput: {
     flex: 1,
-    paddingVertical: 10
+    paddingVertical: 10,
+    color: theme.colors.textPrimary
   },
   eyeIcon: {
     padding: 10

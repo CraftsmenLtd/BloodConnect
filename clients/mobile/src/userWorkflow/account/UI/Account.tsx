@@ -1,8 +1,9 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Text, View, TouchableOpacity, Linking
+  View, TouchableOpacity, Linking
 } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { SCREENS } from '../../../setup/constant/screens'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'

@@ -2,7 +2,8 @@ import Constants from 'expo-constants'
 import React, { useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ScrollView } from 'react-native'
-import { Text, View, findNodeHandle } from 'react-native'
+import { View, findNodeHandle } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { Divider } from '../../../components/button/Divider'
 import { Input } from '../../../components/inputElement/Input'
@@ -26,7 +27,8 @@ const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 const locationService = new LocationService(API_BASE_URL)
 
 const EditProfile = () => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
   const { t } = useTranslation()
   const {
     profileData,
@@ -152,7 +154,7 @@ const EditProfile = () => {
 
             return (
               <View style={styles.inputFieldStyle}>
-                <Text style={{ fontSize: 14, color: '#555' }}>
+                <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
                     BMI: {bmi} ({getBMICategory(bmi)})
                 </Text>
               </View>

@@ -1,6 +1,7 @@
 import React from 'react'
 import type { StyleProp, ViewStyle, TextStyle } from 'react-native'
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native'
+import { TouchableOpacity, StyleSheet, View } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import Loader from '../loaders/loader'
@@ -54,7 +55,7 @@ const createStyles = (theme: Theme) =>
       left: 50
     },
     buttonText: {
-      color: theme.colors.white,
+      color: theme.colors.onPrimary,
       fontWeight: 'bold',
       fontSize: theme.typography.fontSize
     },
@@ -63,7 +64,7 @@ const createStyles = (theme: Theme) =>
       opacity: 0.5
     },
     disabledText: {
-      color: theme.colors.white
+      color: theme.colors.onPrimary
     }
   })
 

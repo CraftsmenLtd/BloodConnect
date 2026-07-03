@@ -122,7 +122,11 @@
     "termsOfService": "সেবার শর্তাবলী"
   },
   "settings": {
-    "reportSafety": "নিরাপত্তা উদ্বেগ রিপোর্ট করুন"
+    "reportSafety": "নিরাপত্তা উদ্বেগ রিপোর্ট করুন",
+    "appearance": "থিম",
+    "themeSystem": "সিস্টেম",
+    "themeLight": "লাইট",
+    "themeDark": "ডার্ক"
   },
   "postCard": {
     "reportSafety": "রিপোর্ট করুন"

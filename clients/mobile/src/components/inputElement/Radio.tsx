@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import type { InputProps } from './types'
@@ -76,7 +77,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderRadius: 10
   },
   extraInfo: {
-    color: theme.colors.darkGrey
+    color: theme.colors.textSecondary
   }
 })
 

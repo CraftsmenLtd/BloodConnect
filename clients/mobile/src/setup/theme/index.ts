@@ -1,28 +1,35 @@
 import lightTheme from './lightTheme'
 import darkTheme from './darkTheme'
 
+type ThemeMode = 'system' | 'light' | 'dark'
+
 type Theme = {
   colors: {
+    // Brand
     primary: string;
+    bloodRed: string;
     secondary: string;
-    white: string;
-    textPrimary: string;
-    textSecondary: string;
-    grey: string;
-    extraLightGray: string;
-    lightGrey: string;
-    darkGrey: string;
-    charcoalGray: string;
-    black: string;
-    blackFaded: string;
-    greyBG: string;
-    redFaded: string;
+    onPrimary: string;
+    // Accents
     goldenYellow: string;
     goldenSun: string;
     peachCream: string;
     darkAmber: string;
+    redFaded: string;
     gradientBackground: string;
-    bloodRed: string;
+    // Surfaces
+    background: string;
+    surface: string;
+    surfaceVariant: string;
+    // Text
+    textPrimary: string;
+    textSecondary: string;
+    textTertiary: string;
+    // Lines & overlays
+    border: string;
+    borderStrong: string;
+    backdrop: string;
+    shadow: string;
   };
   typography: {
     fontSize: number;
@@ -31,4 +38,4 @@ type Theme = {
   };
 }
 
-export { lightTheme, darkTheme, type Theme }
+export { lightTheme, darkTheme, type Theme, type ThemeMode }

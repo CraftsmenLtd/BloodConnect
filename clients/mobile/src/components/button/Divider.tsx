@@ -1,6 +1,7 @@
 import React from 'react'
 import type { StyleProp, ViewStyle, TextStyle } from 'react-native'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 
@@ -36,7 +37,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: theme.colors.extraLightGray
+    backgroundColor: theme.colors.border
   },
   text: {
     marginHorizontal: 10,

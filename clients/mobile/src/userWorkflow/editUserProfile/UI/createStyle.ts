@@ -4,11 +4,11 @@ import type { Theme } from '../../../setup/theme'
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   gradientTop: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   gradientBottom: {
     flex: 1,
@@ -17,13 +17,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   scrollContent: {
     flexGrow: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   infoContainer: {
     padding: 16
   },
   inputStyle: {
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   nidSection: {
     marginTop: 16
@@ -45,8 +45,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     padding: 16,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.lightGrey,
-    backgroundColor: theme.colors.white
+    borderTopColor: theme.colors.borderStrong,
+    backgroundColor: theme.colors.surface
   },
   mapViewContainer: {
     borderRadius: 6,

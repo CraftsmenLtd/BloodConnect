@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Text, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
 import { Button } from '../../../components/button/Button'

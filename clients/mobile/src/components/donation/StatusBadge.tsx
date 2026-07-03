@@ -33,16 +33,16 @@ const getStatusStyles = (status: StatusType, theme: Theme): StatusStyles => {
     case STATUS.ACCEPTED:
       return {
         container: { backgroundColor: theme.colors.secondary },
-        text: { color: theme.colors.white }
+        text: { color: theme.colors.onPrimary }
       }
     case STATUS.IGNORED:
       return {
         container: { backgroundColor: theme.colors.redFaded },
-        text: { color: theme.colors.white }
+        text: { color: theme.colors.onPrimary }
       }
     case STATUS.PENDING:
       return {
-        container: { backgroundColor: theme.colors.greyBG },
+        container: { backgroundColor: theme.colors.surfaceVariant },
         text: { color: theme.colors.textPrimary }
       }
     case STATUS.CANCELLED:
@@ -52,7 +52,7 @@ const getStatusStyles = (status: StatusType, theme: Theme): StatusStyles => {
       }
     case STATUS.EXPIRED:
       return {
-        container: { backgroundColor: theme.colors.extraLightGray },
+        container: { backgroundColor: theme.colors.border },
         text: { color: theme.colors.textPrimary }
       }
     case STATUS.MANAGED:
@@ -63,11 +63,11 @@ const getStatusStyles = (status: StatusType, theme: Theme): StatusStyles => {
     case STATUS.COMPLETED:
       return {
         container: { backgroundColor: theme.colors.primary },
-        text: { color: theme.colors.white }
+        text: { color: theme.colors.onPrimary }
       }
     default:
       return {
-        container: { backgroundColor: theme.colors.grey },
+        container: { backgroundColor: theme.colors.textTertiary },
         text: { color: theme.colors.textSecondary }
       }
   }

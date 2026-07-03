@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native'
+import { View, Image, StyleSheet, useWindowDimensions } from 'react-native'
+import { Text } from '../components/text/AppText'
 import { LanguageSwitcher } from '../components/languageSwitcher'
 import { languageOptions } from '../setup/constant/language'
 import type { WelcomeScreenNavigationProp } from '../setup/navigation/navigationTypes'
@@ -50,7 +51,7 @@ const createStyles = (theme: Theme) => {
       flex: 1,
       justifyContent: 'center',
       paddingHorizontal: 20,
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     image: {
       width: width * 0.4,
@@ -67,14 +68,14 @@ const createStyles = (theme: Theme) => {
     },
     subtitle: {
       fontSize: 14,
-      color: theme.colors.darkGrey,
+      color: theme.colors.textSecondary,
       textAlign: 'center',
       marginBottom: 40
     },
     loginButton: {
-      borderColor: theme.colors.lightGrey,
+      borderColor: theme.colors.borderStrong,
       borderWidth: 1,
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     loginText: {
       color: theme.colors.textPrimary

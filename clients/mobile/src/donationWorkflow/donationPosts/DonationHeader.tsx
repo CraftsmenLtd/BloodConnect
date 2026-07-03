@@ -1,6 +1,12 @@
 import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
+import {
+  useTranslation } from 'react-i18next'
+import { View,
+  Image,
+  TouchableOpacity,
+  StyleSheet
+} from 'react-native'
+import { Text } from '../../components/text/AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
@@ -72,10 +78,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginBottom: 8,
     paddingVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: theme.colors.white,
-    borderBottomColor: theme.colors.extraLightGray,
+    backgroundColor: theme.colors.surface,
+    borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
-    borderTopColor: theme.colors.extraLightGray,
+    borderTopColor: theme.colors.border,
     borderTopWidth: 1
   },
   filter: {
@@ -84,10 +90,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginBottom: 8,
     paddingVertical: 6,
     paddingHorizontal: 15,
-    backgroundColor: theme.colors.white,
-    borderBottomColor: theme.colors.extraLightGray,
+    backgroundColor: theme.colors.surface,
+    borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
-    borderTopColor: theme.colors.extraLightGray,
+    borderTopColor: theme.colors.border,
     borderTopWidth: 1
   },
   headerLeftContent: {
@@ -102,7 +108,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   title: {
     fontSize: 17,
-    color: theme.colors.lightGrey
+    color: theme.colors.borderStrong
   },
   button: {
     backgroundColor: theme.colors.primary,
@@ -121,10 +127,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     backgroundColor: theme.colors.primary
   },
   filterNotSelected: {
-    backgroundColor: theme.colors.lightGrey
+    backgroundColor: theme.colors.borderStrong
   },
   buttonText: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontWeight: 'bold'
   }
 })

@@ -2,9 +2,9 @@ import React, { useRef } from 'react'
 import {
   View,
   StyleSheet,
-  Text,
   TouchableOpacity
 } from 'react-native'
+import { Text } from '../text/AppText'
 import { MaterialIcons } from '@expo/vector-icons'
 import type {
   CameraRef
@@ -199,7 +199,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       height: 300,
       overflow: 'hidden',
       marginTop: 2,
-      borderColor: theme.colors.lightGrey
+      borderColor: theme.colors.borderStrong
     },
     markerContainer: {
       width: 30,
@@ -216,7 +216,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     },
     attributionText: {
       fontSize: 10,
-      color: theme.colors.white
+      color: theme.colors.onPrimary
     },
     resetButton: {
       position: 'absolute',

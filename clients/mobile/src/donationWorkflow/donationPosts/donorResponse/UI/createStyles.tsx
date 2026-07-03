@@ -4,25 +4,25 @@ import type { Theme } from '../../../../setup/theme'
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.greyBG,
+    backgroundColor: theme.colors.surfaceVariant,
     paddingTop: 4
   },
   scrollViewContent: {
     paddingBottom: 20
   },
   card: {
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: 10,
     padding: 16,
     paddingTop: 14,
-    shadowColor: theme.colors.black,
+    shadowColor: theme.colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     position: 'relative'
   },
   header: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontSize: 16,
     fontWeight: 'bold'
   },
@@ -40,7 +40,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   seekerDetails: {
     borderWidth: 2,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderRadius: 8
   },
   frameBloodType: {
@@ -89,7 +89,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: 16
   },
   urgentText: {
-    color: theme.colors.black,
+    color: theme.colors.textPrimary,
     fontWeight: 'bold',
     fontSize: 12,
     flexDirection: 'row',
@@ -98,12 +98,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   infoSection: {
     flexDirection: 'row',
     alignItems: 'stretch',
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   contactNumber: {
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderTopWidth: 1
   },
   contactRow: {
@@ -120,7 +120,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flex: 1,
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     paddingHorizontal: 12
   },
   label: {
@@ -136,7 +136,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   dividerHorizontal: {
     width: 1,
-    backgroundColor: theme.colors.extraLightGray,
+    backgroundColor: theme.colors.border,
     height: '100%'
   },
   callButton: {
@@ -148,7 +148,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderRadius: 48,
     borderColor: theme.colors.redFaded,
     borderWidth: 1,
-    backgroundColor: theme.colors.greyBG
+    backgroundColor: theme.colors.surfaceVariant
   },
   callIcon: {
     width: 20,
@@ -168,13 +168,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     justifyContent: 'space-between',
     padding: 16,
     paddingTop: 12,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   ignoreButton: {
-    backgroundColor: theme.colors.greyBG,
+    backgroundColor: theme.colors.surfaceVariant,
     flex: 1,
     marginRight: 10,
-    color: 'black'
+    color: theme.colors.textPrimary
   },
   acceptButton: {
     backgroundColor: theme.colors.primary,

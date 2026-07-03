@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Image, StyleSheet } from 'react-native'
+import { Text } from '../../components/text/AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
@@ -52,7 +53,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   logoTitleContainer: {
     position: 'absolute',
@@ -93,7 +94,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
-    color: theme.colors.darkGrey,
+    color: theme.colors.textSecondary,
     marginHorizontal: 5
   },
   companyLogo: {

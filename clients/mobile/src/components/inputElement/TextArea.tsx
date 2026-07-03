@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, TextInput, Text, StyleSheet } from 'react-native'
+import { View, TextInput, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
@@ -15,13 +16,15 @@ type TextAreaProps = {
 }
 
 export const TextArea = ({ name, label, value, placeholder, onChangeText, maxLength, error }: TextAreaProps) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         placeholder={placeholder}
+        placeholderTextColor={theme.colors.textTertiary}
         style={styles.textArea}
         value={value}
         onChangeText={(text) => { onChangeText(name, text) }}
@@ -40,11 +43,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   textArea: {
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderRadius: 5,
     padding: 10,
     height: 100,
-    textAlignVertical: 'top'
+    textAlignVertical: 'top',
+    color: theme.colors.textPrimary,
+    backgroundColor: theme.colors.surface
   },
   charCountContainer: {
     flexDirection: 'row',

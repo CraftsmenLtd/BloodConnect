@@ -6,21 +6,21 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   container: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   scrollContainer: {
     paddingHorizontal: 16,
     paddingVertical: 16
   },
   card: {
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: theme.colors.lightGrey
+    borderColor: theme.colors.borderStrong
   },
   row: {
     borderBottomWidth: 1,
-    borderColor: theme.colors.lightGrey,
+    borderColor: theme.colors.borderStrong,
     padding: 10
   },
   lastRow: {
@@ -29,13 +29,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   value: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: theme.colors.black
+    color: theme.colors.textPrimary
   },
   buttonContainer: {
     padding: 16,
     paddingTop: 12,
-    backgroundColor: theme.colors.white,
-    borderTopColor: theme.colors.lightGrey,
+    backgroundColor: theme.colors.surface,
+    borderTopColor: theme.colors.borderStrong,
     borderTopWidth: 1
   },
   editButton: {
@@ -45,7 +45,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center'
   },
   editButtonText: {
-    color: 'white',
+    color: theme.colors.onPrimary,
     fontSize: 16,
     fontWeight: 'bold'
   },
@@ -57,7 +57,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   selectedItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.greyBG,
+    backgroundColor: theme.colors.surfaceVariant,
     borderRadius: 20,
     paddingHorizontal: 1,
     paddingVertical: 3,

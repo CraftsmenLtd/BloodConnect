@@ -8,7 +8,7 @@ export const commonStyles = (theme: Theme): ReturnType<typeof StyleSheet.create>
   label: {
     fontSize: theme.typography.fontSize,
     marginBottom: 5,
-    color: theme.colors.darkGrey,
+    color: theme.colors.textSecondary,
     fontWeight: '500'
   },
   error: {

@@ -7,13 +7,13 @@ import type {
 } from 'react-native'
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Modal,
   TouchableWithoutFeedback,
   Dimensions
 } from 'react-native'
+import { Text } from '../text/AppText'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { formatBloodQuantity } from '../../donationWorkflow/donationHelpers'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -190,7 +190,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                     onPress={handleToggleDropdown}
                     style={styles.iconContainer}
                   >
-                    <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.grey} />
+                    <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.textTertiary} />
                   </TouchableOpacity>
                 </View>
 
@@ -229,7 +229,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
                     {
                       onPress: closeModal,
                       style: {
-                        backgroundColor: theme.colors.greyBG,
+                        backgroundColor: theme.colors.surfaceVariant,
                         color: theme.colors.textPrimary
                       },
                       text: t('btn.close')
@@ -282,7 +282,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
           <View style={styles.locationTimeWrapper}>
             <View style={styles.infoSection}>
               <View style={styles.infoHeader}>
-                <Ionicons name="location-outline" size={16} color={theme.colors.grey} />
+                <Ionicons name="location-outline" size={16} color={theme.colors.textTertiary} />
                 <Text style={styles.donationInfoPlaceholder}>
                   {t('donationPosts.donationPoint')}
                 </Text>
@@ -295,7 +295,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
           <View style={[styles.locationTimeWrapper, styles.noBorder]}>
             <View style={styles.infoSection}>
               <View style={styles.infoHeader}>
-                <Ionicons name="time-outline" size={16} color={theme.colors.grey} />
+                <Ionicons name="time-outline" size={16} color={theme.colors.textTertiary} />
                 <Text style={styles.donationInfoPlaceholder}>
                   {t('donationPosts.timeDate')}
                 </Text>
@@ -345,7 +345,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         && <>
           <Text style={styles.bloodAmount}>Request Update</Text>
           <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
-            <Ionicons name='time-outline' size={20} color={theme.colors.grey} />
+            <Ionicons name='time-outline' size={20} color={theme.colors.textTertiary} />
             <View>
               <Text style={styles.donationInfoPlaceholder}>
                 {t('donationPosts.numberOfDonors')}
@@ -371,7 +371,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   card: {
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     padding: 18,
     marginBottom: 10,
     position: 'relative'
@@ -390,7 +390,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     fontSize: 16
   },
   postTime: {
-    color: theme.colors.grey,
+    color: theme.colors.textTertiary,
     fontSize: 12
   },
   menuContainer: {
@@ -411,9 +411,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   dropdownContainer: {
     position: 'absolute',
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: 4,
-    shadowColor: theme.colors.black,
+    shadowColor: theme.colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -424,24 +424,24 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.extraLightGray
+    borderBottomColor: theme.colors.border
   },
   dropdownItemLast: {
     borderBottomWidth: 0
   },
   dropdownText: {
-    color: theme.colors.black,
+    color: theme.colors.textPrimary,
     fontSize: 14
   },
   buttonDisabled: {
     opacity: 0.5
   },
   textDisabled: {
-    color: theme.colors.lightGrey
+    color: theme.colors.borderStrong
   },
   bloodInfoWrapper: {
     borderRadius: 5,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderWidth: 1,
     marginBottom: 8
   },
@@ -457,7 +457,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottomColor: theme.colors.extraLightGray,
+    borderBottomColor: theme.colors.border,
     borderBottomWidth: 1
   },
   bloodRow: {
@@ -484,7 +484,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderRadius: 12
   },
   urgentText: {
-    color: theme.colors.black,
+    color: theme.colors.textPrimary,
     fontWeight: '600',
     fontSize: 12,
     marginLeft: 4
@@ -495,7 +495,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   locationTimeWrapper: {
     width: '50%',
-    borderRightColor: theme.colors.extraLightGray,
+    borderRightColor: theme.colors.border,
     borderRightWidth: 1
   },
   noBorder: {
@@ -516,7 +516,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   descriptionContainer: {
     padding: 8,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.extraLightGray
+    borderTopColor: theme.colors.border
   },
   description: {
     fontSize: 16,
@@ -528,7 +528,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   buttonStyle: {
     paddingVertical: 10,
-    backgroundColor: theme.colors.extraLightGray
+    backgroundColor: theme.colors.border
   },
   textStyle: {
     color: theme.colors.textPrimary

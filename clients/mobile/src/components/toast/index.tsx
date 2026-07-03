@@ -1,5 +1,6 @@
 import React from 'react'
-import { Animated, StyleSheet, Text } from 'react-native'
+import { Animated, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 
@@ -27,11 +28,11 @@ const createStyles = (theme: Theme, type: string, opacity: Animated.Value): Retu
     right: 20,
     padding: 16,
     borderRadius: 8,
-    backgroundColor: type === 'success' ? theme.colors.primary : type === 'error' ? theme.colors.greyBG : theme.colors.grey,
+    backgroundColor: type === 'success' ? theme.colors.primary : type === 'error' ? theme.colors.surfaceVariant : theme.colors.textTertiary,
     opacity
   },
   text: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     textAlign: 'center'
   }
 })

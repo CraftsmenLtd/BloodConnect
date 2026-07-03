@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { useTranslation } from 'react-i18next'
 import type { ScrollView } from 'react-native'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import { Text } from '../../components/text/AppText'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import PhoneNumberInput from '../../components/inputElement/PhoneNumberInput'
 import RadioButton from '../../components/inputElement/Radio'
@@ -212,12 +213,12 @@ const CreateBloodRequest = () => {
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   scrollContent: {
     flexGrow: 1,
     padding: 18,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   fieldSpacing: {
     marginTop: 5

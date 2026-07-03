@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -23,7 +24,7 @@ const DonorCard: React.FC<DonorCardProps> = ({ name, isSelected, onSelect }) => 
         <MaterialIcons
           name={isSelected ? 'check-box' : 'check-box-outline-blank'}
           size={24}
-          color={isSelected ? theme.colors.primary : theme.colors.lightGrey}
+          color={isSelected ? theme.colors.primary : theme.colors.borderStrong}
         />
         <View style={styles.textContainer}>
           <Text style={[styles.name, isSelected ? styles.nameSelected : null]}>
@@ -45,17 +46,17 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     container: {
       flex: 1,
       padding: 16,
-      backgroundColor: theme.colors.greyBG
+      backgroundColor: theme.colors.surfaceVariant
     },
     card: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 12,
       borderWidth: 1,
-      borderColor: theme.colors.extraLightGray,
+      borderColor: theme.colors.border,
       borderRadius: 8,
       marginBottom: 12,
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     cardSelected: {
       borderColor: theme.colors.primary,

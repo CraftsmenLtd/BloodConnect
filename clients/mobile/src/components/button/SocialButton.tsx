@@ -1,6 +1,7 @@
 import React from 'react'
 import type { ImageSourcePropType, StyleProp, ViewStyle, TextStyle } from 'react-native'
-import { TouchableOpacity, Text, StyleSheet, Image, View, ActivityIndicator } from 'react-native'
+import { TouchableOpacity, StyleSheet, Image, View, ActivityIndicator } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 
@@ -32,10 +33,10 @@ export const SocialButton = ({ text, onPress, icon, loading, buttonStyle, textSt
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   socialButton: {
-    backgroundColor: 'white',
+    backgroundColor: theme.colors.surface,
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     paddingVertical: 12,
     marginBottom: 10,
     alignItems: 'center',

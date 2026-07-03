@@ -122,7 +122,11 @@
     "termsOfService": "Terms of Service"
   },
   "settings": {
-    "reportSafety": "Report a safety concern"
+    "reportSafety": "Report a safety concern",
+    "appearance": "Appearance",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark"
   },
   "postCard": {
     "reportSafety": "Report"

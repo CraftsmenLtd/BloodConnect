@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Dimensions, ScrollView } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Dimensions, ScrollView } from 'react-native'
+import { Text } from '../text/AppText'
 import type { InputProps } from './types'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -106,8 +107,8 @@ const createStyles = (theme: Theme, readOnly: boolean): ReturnType<typeof StyleS
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.lightGrey,
-    backgroundColor: theme.colors.white
+    borderColor: theme.colors.borderStrong,
+    backgroundColor: theme.colors.surface
   },
   selectedText: {
     fontSize: theme.typography.fontSize,
@@ -119,11 +120,11 @@ const createStyles = (theme: Theme, readOnly: boolean): ReturnType<typeof StyleS
     left: 0,
     width: '100%',
     zIndex: 9999,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderRadius: 8,
-    shadowColor: theme.colors.charcoalGray,
+    shadowColor: theme.colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -132,7 +133,7 @@ const createStyles = (theme: Theme, readOnly: boolean): ReturnType<typeof StyleS
   option: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.extraLightGray
+    borderBottomColor: theme.colors.border
   },
   optionText: {
     fontSize: theme.typography.fontSize,

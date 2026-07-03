@@ -1,5 +1,6 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { Input } from '../../../components/inputElement/Input'
 import { Button } from '../../../components/button/Button'
 import { SocialButton } from '../../../components/button/SocialButton'

@@ -1,4 +1,5 @@
-import { Text, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { Input } from '../../../components/inputElement/Input'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'

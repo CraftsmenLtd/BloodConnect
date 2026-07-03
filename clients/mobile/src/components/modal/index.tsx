@@ -6,10 +6,10 @@ import {
   TouchableWithoutFeedback,
   Modal,
   View,
-  Text,
   StyleSheet,
   Image
 } from 'react-native'
+import { Text } from '../text/AppText'
 import Button from '../button/Button'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -156,13 +156,13 @@ const GenericModal: React.FC<GenericModalProps> = ({
 const createStyles = (theme: Theme) => StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: theme.colors.blackFaded,
+    backgroundColor: theme.colors.backdrop,
     justifyContent: 'center',
     alignItems: 'center'
   },
   modalContainer: {
     width: '80%',
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
@@ -193,7 +193,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     alignItems: 'center'
   },
   buttonText: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontSize: 16
   }
 })

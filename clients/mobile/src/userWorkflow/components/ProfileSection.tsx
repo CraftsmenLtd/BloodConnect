@@ -1,6 +1,7 @@
 import React from 'react'
 import type { StyleProp, ImageStyle } from 'react-native'
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
+import { View, Image, StyleSheet, Pressable } from 'react-native'
+import { Text } from '../../components/text/AppText'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -62,7 +63,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     paddingVertical: 16,
     borderTopWidth: 1,
     borderBottomWidth: 4,
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   imageOuterBorder: {
     width: 60,
@@ -78,7 +79,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     height: 58,
     borderRadius: 45,
     borderWidth: 2,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative'
@@ -92,22 +93,22 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     position: 'absolute',
     bottom: -10,
     alignSelf: 'center',
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: 20,
     width: 46,
     height: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: theme.colors.black,
+    shadowColor: theme.colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   cameraIconWrapper: {
-    backgroundColor: theme.colors.greyBG,
+    backgroundColor: theme.colors.surfaceVariant,
     width: 46,
     height: 20,
     bottom: -1,
@@ -118,7 +119,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     justifyContent: 'center'
   },
   cameraIcon: {
-    color: theme.colors.black,
+    color: theme.colors.textPrimary,
     fontSize: 18,
     width: 16,
     height: 16,
@@ -137,10 +138,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   profileLocation: {
     fontSize: 14,
-    color: 'gray'
+    color: theme.colors.textSecondary
   },
   iconStyle: {
-    color: 'gray',
+    color: theme.colors.textSecondary,
     marginRight: 4
   }
 })

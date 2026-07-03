@@ -1,6 +1,10 @@
 import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { View, Text, ScrollView } from 'react-native'
+import {
+  useTranslation } from 'react-i18next'
+import { View,
+  ScrollView
+} from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import Badge from '../../../components/badge'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'

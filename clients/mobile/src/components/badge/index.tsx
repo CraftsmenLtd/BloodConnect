@@ -1,6 +1,7 @@
 import React from 'react'
 import type { ViewStyle, TextStyle, StyleProp } from 'react-native'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { FontAwesome6 } from '@expo/vector-icons'
 
@@ -65,7 +66,7 @@ const Badge: React.FC<BadgeProps> = ({
         <FontAwesome6
           name={iconName}
           size={16}
-          color={theme.colors.black}
+          color={theme.colors.textPrimary}
           style={styles.icon}
         />
       )}

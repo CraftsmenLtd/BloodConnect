@@ -4,7 +4,6 @@ import type {
   ImageStyle
 } from 'react-native'
 import {
-  Text,
   View,
   Image,
   SafeAreaView,
@@ -12,6 +11,7 @@ import {
   TouchableOpacity,
   Linking
 } from 'react-native'
+import { Text } from '../../../../components/text/AppText'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
@@ -95,7 +95,7 @@ const ResponseDonationRequest = () => {
             <View style={styles.infoSection}>
               <View style={styles.infoRow}>
                 <View style={styles.labelRow}>
-                  <Ionicons name="location-outline" size={14} color="gray" style={styles.icons} />
+                  <Ionicons name="location-outline" size={14} color={theme.colors.textSecondary} style={styles.icons} />
                   <Text style={styles.label}>
                     {t('donationPosts.donationPoint')}
                   </Text>
@@ -115,7 +115,7 @@ const ResponseDonationRequest = () => {
               <View style={styles.dividerHorizontal}></View>
               <View style={styles.infoRow}>
                 <View style={styles.labelRow}>
-                  <Ionicons name="calendar-outline" size={14} color="gray" style={styles.icons} />
+                  <Ionicons name="calendar-outline" size={14} color={theme.colors.textSecondary} style={styles.icons} />
                   <Text style={styles.label}>
                     {t('donationPosts.timeDate')}
                   </Text>
@@ -204,7 +204,7 @@ const ResponseDonationRequest = () => {
             && <Button
               text={t('btn.ignore')}
               buttonStyle={styles.ignoreButton}
-              textStyle={{ color: theme.colors.black }}
+              textStyle={{ color: theme.colors.textPrimary }}
               onPress={() => {
                 void handleIgnore()
               }} />}

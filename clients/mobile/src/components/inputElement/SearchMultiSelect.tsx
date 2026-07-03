@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   TextInput,
@@ -11,6 +10,7 @@ import {
   Dimensions,
   ActivityIndicator
 } from 'react-native'
+import { Text } from '../text/AppText'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -207,6 +207,7 @@ const SearchMultiSelect = ({
                 <TextInput
                   ref={searchInputRef}
                   placeholder={placeholder}
+                  placeholderTextColor={theme.colors.textTertiary}
                   value={searchText}
                   onChangeText={handleInputChange}
                   style={styles.searchInput}
@@ -261,9 +262,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     gap: 8,
     padding: 12,
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderRadius: 8,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   fieldText: {
     flex: 1,
@@ -271,7 +272,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: theme.colors.textPrimary
   },
   placeholderText: {
-    color: theme.colors.grey
+    color: theme.colors.textTertiary
   },
   inputDisabled: {
     opacity: 0.5
@@ -295,11 +296,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   extraInfo: {
     fontSize: 12,
-    color: theme.colors.darkGrey
+    color: theme.colors.textSecondary
   },
   backdrop: {
     flex: 1,
-    backgroundColor: theme.colors.blackFaded,
+    backgroundColor: theme.colors.backdrop,
     paddingTop: 50,
     paddingHorizontal: 16
   },
@@ -309,7 +310,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   modalSheet: {
     width: '100%',
     maxHeight: height * 0.45,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: 8,
     padding: 10,
     shadowColor: theme.colors.textPrimary,
@@ -322,7 +323,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.lightGrey,
+    borderColor: theme.colors.borderStrong,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10
@@ -342,7 +343,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     padding: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.lightGrey
+    borderBottomColor: theme.colors.borderStrong
   },
   optionText: {
     fontSize: 16,

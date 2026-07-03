@@ -4,7 +4,7 @@ import type { Theme } from '../../../setup/theme'
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   header: {
     fontSize: 24,
@@ -19,7 +19,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     marginBottom: 20,
     paddingTop: 20,
     borderTopWidth: 1,
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   imageOuterBorder: {
     width: 60,
@@ -35,7 +35,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     height: 58,
     borderRadius: 45,
     borderWidth: 2,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -56,14 +56,14 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   profileLocation: {
     fontSize: 14,
-    color: 'gray'
+    color: theme.colors.textSecondary
   },
   optionsSection: {
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   moreSection: {
     borderTopWidth: 4,
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   headingStyle: {
     alignItems: 'center',

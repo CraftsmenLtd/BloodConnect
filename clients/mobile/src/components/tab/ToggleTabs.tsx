@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 
@@ -36,7 +37,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     borderRadius: 25,
     overflow: 'hidden',
-    backgroundColor: theme.colors.greyBG
+    backgroundColor: theme.colors.surfaceVariant
   },
   tab: {
     flex: 1,
@@ -50,11 +51,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   text: {
     fontSize: 14,
-    color: theme.colors.black,
+    color: theme.colors.textPrimary,
     fontWeight: '500'
   },
   activeText: {
-    color: theme.colors.white
+    color: theme.colors.onPrimary
   }
 })
 

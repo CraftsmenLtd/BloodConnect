@@ -3,10 +3,10 @@ import React, { useRef, useEffect } from 'react'
 import type { ScrollView } from 'react-native'
 import {
   View,
-  Text,
   StyleSheet,
   Linking
 } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { Input } from '../../../components/inputElement/Input'
 import Dropdown from '../../../components/inputElement/Dropdown'
@@ -258,7 +258,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   scrollContent: {
     padding: 16,
     paddingBottom: 32,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   fieldSpacing: {
     marginBottom: 0
@@ -291,7 +291,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     paddingVertical: 4
   },
   errorMessage: {
-    color: 'red',
+    color: theme.colors.primary,
     textAlign: 'center',
     padding: 8,
     borderRadius: 6

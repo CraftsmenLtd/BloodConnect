@@ -1,6 +1,7 @@
 import React from 'react'
 import type { ImageStyle, StyleProp } from 'react-native'
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { Text } from '../../components/text/AppText'
 import { Ionicons } from '@expo/vector-icons'
 import useDonorProfile from './useDonorProfile'
 import type { preferredDonationLocations } from '../../userWorkflow/services/userServices'
@@ -72,7 +73,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     locationRow: {
       flexDirection: 'row',
@@ -89,7 +90,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       justifyContent: 'center',
       alignItems: 'center',
       padding: 16,
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     errorText: {
       fontSize: 16,
@@ -97,12 +98,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       textAlign: 'center'
     },
     container: {
-      borderTopColor: theme.colors.black,
+      borderTopColor: theme.colors.textPrimary,
       borderTopWidth: 1,
       paddingTop: 32,
       paddingBottom: 16,
       paddingHorizontal: 16,
-      backgroundColor: theme.colors.white,
+      backgroundColor: theme.colors.surface,
       alignItems: 'center'
     },
     profileContainer: {
@@ -144,7 +145,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     },
     detailsText: {
       fontSize: 14,
-      color: theme.colors.grey
+      color: theme.colors.textTertiary
     },
     callButton: {
       flexDirection: 'row',
@@ -159,7 +160,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     callButtonText: {
       textAlign: 'center',
       fontSize: 16,
-      color: theme.colors.white,
+      color: theme.colors.onPrimary,
       fontWeight: 'bold'
     }
   })

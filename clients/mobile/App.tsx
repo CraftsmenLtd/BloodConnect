@@ -2,7 +2,7 @@ import 'react-native-gesture-handler'
 import '@react-native-firebase/app'
 import { LogBox, StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native'
+import { NavigationContainer, useNavigationContainerRef, DefaultTheme, DarkTheme } from '@react-navigation/native'
 import { NetInfoProvider } from './src/authentication/context/NetInfo'
 import { NetInfoModal } from './src/components/NetInfoModal'
 import { ThemeProvider } from './src/setup/theme/context/ThemeContext'
@@ -24,7 +24,52 @@ import Monitoring from './src/setup/monitoring/MonitoringService'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 import i18n from './src/setup/language/i18n'
 import { KeyboardProvider } from 'react-native-keyboard-controller'
+import { useTheme, useIsDark } from './src/setup/theme/hooks/useTheme'
+import type { NavigationContainerRefWithCurrent } from '@react-navigation/native'
 import React from 'react'
+
+const ThemedStatusBar = () => {
+  const theme = useTheme()
+
+  return <StatusBar hidden={false} barStyle='light-content' backgroundColor={theme.colors.primary} />
+}
+
+const AppNavigator = ({ navigationRef }: { navigationRef: NavigationContainerRefWithCurrent<RootStackParamList> }) => {
+  const theme = useTheme()
+  const isDark = useIsDark()
+  const base = isDark ? DarkTheme : DefaultTheme
+
+  const navigationTheme = {
+    ...base,
+    colors: {
+      ...base.colors,
+      primary: theme.colors.primary,
+      background: theme.colors.background,
+      card: theme.colors.surface,
+      text: theme.colors.textPrimary,
+      border: theme.colors.border,
+      notification: theme.colors.primary
+    }
+  }
+
+  return (
+    <NavigationContainer ref={navigationRef} theme={navigationTheme}>
+      <NetInfoProvider>
+        <NotificationProvider navigationRef={navigationRef}>
+          <AuthProvider>
+            <UserProfileProvider>
+              <MyActivityProvider>
+                <ThemedStatusBar />
+                <Navigator />
+                <NetInfoModal />
+              </MyActivityProvider>
+            </UserProfileProvider>
+          </AuthProvider>
+        </NotificationProvider>
+      </NetInfoProvider>
+    </NavigationContainer>
+  )
+}
 
 const { APP_ENV } = Constants.expoConfig?.extra ?? {}
 
@@ -60,24 +105,9 @@ export default function App() {
     <KeyboardProvider>
       <I18nextProvider i18n={i18n} >
         <SafeAreaProvider>
-          <NavigationContainer ref={navigationRef}>
-            <NetInfoProvider>
-              <NotificationProvider navigationRef={navigationRef}>
-                <AuthProvider>
-                  <UserProfileProvider>
-                    <MyActivityProvider>
-                      <ThemeProvider>
-                        {/* TODO: need to use themes' primary color but it's not working. */}
-                        <StatusBar hidden={false} backgroundColor='#FF4D4D' />
-                        <Navigator />
-                        <NetInfoModal />
-                      </ThemeProvider>
-                    </MyActivityProvider>
-                  </UserProfileProvider>
-                </AuthProvider>
-              </NotificationProvider>
-            </NetInfoProvider>
-          </NavigationContainer>
+          <ThemeProvider>
+            <AppNavigator navigationRef={navigationRef} />
+          </ThemeProvider>
         </SafeAreaProvider>
       </I18nextProvider>
     </KeyboardProvider>

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Modal,
@@ -10,6 +9,7 @@ import {
   TextInput,
   ActivityIndicator
 } from 'react-native'
+import { Text } from '../text/AppText'
 import { Ionicons } from '@expo/vector-icons'
 import type { Theme } from '../../setup/theme'
 import Badge from '../badge'
@@ -163,6 +163,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
             ref={searchInputRef}
             style={styles.searchInput}
             placeholder="Search..."
+            placeholderTextColor={theme.colors.textTertiary}
             value={searchText}
             onChangeText={handleSearch}
             editable={editable}
@@ -274,14 +275,14 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderRadius: 8,
     padding: 12,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   placeholder: {
     fontSize: 16,
-    color: theme.colors.grey
+    color: theme.colors.textTertiary
   },
   input: {
     flexDirection: 'row',
@@ -298,7 +299,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   selectedItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.greyBG,
+    backgroundColor: theme.colors.surfaceVariant,
     borderRadius: 20,
     paddingHorizontal: 1,
     paddingVertical: 3,
@@ -310,12 +311,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   minRequiredLabel: {
     fontSize: 12,
-    color: theme.colors.darkGrey,
+    color: theme.colors.textSecondary,
     marginTop: 4
   },
   backdrop: {
     flex: 1,
-    backgroundColor: theme.colors.blackFaded,
+    backgroundColor: theme.colors.backdrop,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -327,7 +328,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   dropdown: {
     width: '100%',
     maxHeight: height * 0.45,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: 8,
     padding: 10,
     shadowColor: theme.colors.textPrimary,
@@ -340,7 +341,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.lightGrey,
+    borderColor: theme.colors.borderStrong,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 10
@@ -360,7 +361,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.extraLightGray
+    borderBottomColor: theme.colors.border
   },
   optionText: {
     fontSize: 16,

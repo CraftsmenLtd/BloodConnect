@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import type { StyleProp, ViewStyle } from 'react-native'
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native'
+import { TouchableOpacity, View, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { formattedDate } from '../../utility/formatting'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
@@ -108,7 +109,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     padding: 12,
     borderRadius: 4
   },

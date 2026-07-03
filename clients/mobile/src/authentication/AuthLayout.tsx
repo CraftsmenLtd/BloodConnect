@@ -38,7 +38,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   scrollViewContainer: {
     flexGrow: 1,
     justifyContent: 'flex-start',
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     paddingTop: '10%',
     paddingHorizontal: 20
   }

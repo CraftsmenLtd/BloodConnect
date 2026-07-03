@@ -17,10 +17,19 @@ const BottomNavigation = () => {
     <Tab.Navigator
       screenOptions={{
         headerTitleAlign: 'center',
+        headerStyle: { backgroundColor: colors.surface },
+        headerTintColor: colors.textPrimary,
         headerTitleStyle: {
-          fontSize: 20
+          fontSize: 20,
+          color: colors.textPrimary
         },
-        tabBarActiveTintColor: colors.primary
+        sceneStyle: { backgroundColor: colors.background },
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border
+        },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary
       }}
     >
       <Tab.Screen name={SCREENS.POSTS} component={DonationPosts} options={{

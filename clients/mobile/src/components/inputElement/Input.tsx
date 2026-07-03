@@ -7,9 +7,9 @@ import type {
 import {
   View,
   TextInput,
-  Text,
   StyleSheet
 } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
@@ -33,7 +33,8 @@ export const Input = ({
   readOnly = false,
   inputStyle
 }: InputElementProps): React.ReactElement => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   return (
     <View style={styles.inputContainer}>
@@ -44,6 +45,7 @@ export const Input = ({
       <TextInput
         style={[styles.input, inputStyle]}
         placeholder={placeholder}
+        placeholderTextColor={theme.colors.textTertiary}
         value={value}
         onChangeText={(text) => { onChangeText(name, text) }}
         keyboardType={keyboardType}
@@ -58,9 +60,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   input: {
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderRadius: 5,
     padding: 10,
-    width: '100%'
+    width: '100%',
+    color: theme.colors.textPrimary,
+    backgroundColor: theme.colors.surface
   }
 })

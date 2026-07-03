@@ -1,4 +1,5 @@
-import { FlatList, StyleSheet, View, Text } from 'react-native'
+import { FlatList, StyleSheet, View } from 'react-native'
+import { Text } from '../text/AppText'
 import type { PostCardDisplayOptions } from './PostCard'
 import { PostCard } from './PostCard'
 import type { Theme } from '../../setup/theme'
@@ -113,7 +114,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   noResultText: {
     fontSize: 16,
-    color: theme.colors.grey,
+    color: theme.colors.textTertiary,
     textAlign: 'center'
   },
   errorMessage: {

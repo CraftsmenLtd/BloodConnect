@@ -15,7 +15,8 @@ const Stack = createStackNavigator()
 export default function Navigator() {
   const { isAuthenticated, loading } = useAuth()
   const { userProfile, fetchUserProfile, loading: profileLoading } = useUserProfile()
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -45,6 +46,13 @@ export default function Navigator() {
   return (
     <Stack.Navigator
       initialRouteName={getInitialRoute()}
+      screenOptions={({ navigation }) => ({
+        headerStyle: { backgroundColor: theme.colors.surface },
+        headerTintColor: theme.colors.textPrimary,
+        headerTitleStyle: { color: theme.colors.textPrimary },
+        cardStyle: { backgroundColor: theme.colors.background },
+        detachPreviousScreen: !navigation.isFocused()
+      })}
     >
       {filteredRoutes.map(({ name, component, options }) => (
         <Stack.Screen
@@ -69,7 +77,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     padding: 10,
     lineHeight: 30,
     fontWeight: 'bold',
-    color: theme.colors.black,
+    color: theme.colors.textPrimary,
     textAlign: 'center'
   },
   logoTitleContainer: {

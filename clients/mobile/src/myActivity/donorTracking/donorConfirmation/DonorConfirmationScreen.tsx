@@ -1,4 +1,5 @@
-import { View, StyleSheet, Text, ScrollView } from 'react-native'
+import { View, StyleSheet, ScrollView } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import DonorCard from '../../../components/donation/DonorCard'
 import useDonorConfirmation from './useDonorConfirmation'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
@@ -47,7 +48,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     padding: 16,
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   scrollContainer: {
     paddingBottom: 16

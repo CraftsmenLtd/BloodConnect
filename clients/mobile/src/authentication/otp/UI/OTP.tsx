@@ -1,4 +1,5 @@
-import { View, StyleSheet, Text, TextInput } from 'react-native'
+import { View, StyleSheet, TextInput } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
 import { Button } from '../../../components/button/Button'
@@ -54,7 +55,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     justifyContent: 'flex-start',
     paddingTop: '15%',
     paddingHorizontal: 20,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   title: {
     fontSize: 24,
@@ -80,7 +81,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   otpBox: {
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderRadius: 5,
     padding: 10,
     fontSize: 20,

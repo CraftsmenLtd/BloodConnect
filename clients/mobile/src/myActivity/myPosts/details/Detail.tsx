@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { View, StyleSheet, Text } from 'react-native'
+import {
+  useTranslation } from 'react-i18next'
+import { View,
+  StyleSheet
+} from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import useDonationStatus from '../../../api/hooks/useDonationStatus'
 import ToggleTabs from '../../../components/tab/ToggleTabs'
 import type { StatusType } from '../../../donationWorkflow/types'
@@ -179,20 +183,21 @@ const Detail = ({ navigation, route }: DetailProps) => {
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: theme.colors.background
   },
   tabHeader: {
     paddingHorizontal: 8,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     paddingVertical: 16,
-    borderBottomColor: theme.colors.extraLightGray,
+    borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
-    borderTopColor: theme.colors.extraLightGray,
+    borderTopColor: theme.colors.border,
     borderTopWidth: 1
   },
   postCardContainer: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   buttonContainer: {
     position: 'absolute',
