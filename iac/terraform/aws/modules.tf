@@ -101,6 +101,17 @@ module "notification" {
   firebase_token_s3_url   = var.firebase_token_s3_url
 }
 
+module "chat" {
+  source                    = "./chat"
+  environment               = var.environment
+  dynamodb_table_arn        = module.database.dynamodb_table_arn
+  dynamodb_table_stream_arn = module.database.dynamodb_table_stream_arn
+  notification_queue_arn    = module.notification.push_notification_queue.arn
+  notification_queue_url    = module.notification.push_notification_queue.url
+  cognito_user_pool_id      = module.cognito.user_pool_id
+  cognito_client_id         = module.cognito.user_pool_client_id
+}
+
 module "maps" {
   source              = "./maps"
   environment         = var.environment

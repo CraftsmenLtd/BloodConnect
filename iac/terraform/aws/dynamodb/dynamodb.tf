@@ -8,6 +8,11 @@ resource "aws_dynamodb_table" "blood_connect_data" {
   stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
 
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
+
   attribute {
     name = "PK"
     type = "S"
