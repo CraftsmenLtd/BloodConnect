@@ -63,7 +63,7 @@ const DonorProfile = () => {
 
   return (
     <StateAwareRenderer
-      loading={loading} errorMessage={error} data={donorProfile} ViewComponent={ViewToRender} />
+      loading={loading} errorMessage={error} data={donorProfile} ViewComponent={ViewToRender()} />
   )
 }
 

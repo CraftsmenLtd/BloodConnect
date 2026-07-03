@@ -13,7 +13,7 @@ type StateAwareRendererProps = {
   LoadingComponent?: React.ReactElement;
   ErrorComponent?: React.ReactElement;
   EmptyComponent?: React.ReactElement;
-  ViewComponent: () => React.ReactNode;
+  ViewComponent: React.ReactNode;
 }
 
 const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
@@ -49,7 +49,7 @@ const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
     return EmptyComponent ?? <Text style={styles.messageText}>No items found.</Text>
   }
 
-  return <ViewComponent />
+  return <>{ViewComponent}</>
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({

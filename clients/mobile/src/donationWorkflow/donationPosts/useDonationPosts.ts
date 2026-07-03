@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { useState, useCallback, useRef } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { SCREENS } from '../../setup/constant/screens'
 import type { DonationPostsScreenNavigationProp } from '../../setup/navigation/navigationTypes'
 import { extractErrorMessage, formatDonations } from '../donationHelpers'
@@ -21,8 +21,16 @@ export const useDonationPosts = () => {
   const [refreshing, setRefreshing] = useState(false)
   const { userProfile } = useUserProfile()
   const [isFilteredByBloodGroup, setIsFilteredByBloodGroup] = useState(false)
+  const isInitialFocus = useRef(true)
 
-  useEffect(() => { void fetchPosts() }, [])
+  // Refetch when the screen regains focus. First focus shows the loader; later focuses
+  // refresh silently in place so returning to the tab doesn't flash a full-screen loader.
+  useFocusEffect(
+    useCallback(() => {
+      void fetchPosts({ silent: !isInitialFocus.current })
+      isInitialFocus.current = false
+    }, [])
+  )
 
   const fetchDonations = async(bloodGroup: string = ''): Promise<void> => {
     const locations = userProfile.preferredDonationLocations ?? []
@@ -63,8 +71,10 @@ export const useDonationPosts = () => {
     setDonationPosts(deduped)
   }
 
-  const fetchPosts = async(): Promise<void> => {
-    setLoading(true)
+  const fetchPosts = async({ silent = false }: { silent?: boolean } = {}): Promise<void> => {
+    if (!silent) {
+      setLoading(true)
+    }
     try {
       await fetchDonations()
     } catch (error) {

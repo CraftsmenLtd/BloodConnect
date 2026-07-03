@@ -40,7 +40,7 @@ const DonorConfirmationScreen = () => {
       </View>
     </View>
 
-  return <StateAwareRenderer errorMessage={error} data={donors} ViewComponent={ViewToRender} />
+  return <StateAwareRenderer errorMessage={error} data={donors} ViewComponent={ViewToRender()} />
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({

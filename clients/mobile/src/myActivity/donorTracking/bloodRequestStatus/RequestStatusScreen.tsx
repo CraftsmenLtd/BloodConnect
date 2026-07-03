@@ -65,7 +65,7 @@ const RequestStatusScreen = () => {
     loading={loading}
     errorMessage={error}
     data={bloodRequest}
-    ViewComponent={ViewToRender}
+    ViewComponent={ViewToRender()}
   />
 }
 
