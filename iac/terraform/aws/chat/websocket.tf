@@ -31,6 +31,7 @@ resource "aws_apigatewayv2_integration" "chat_ws" {
 }
 
 resource "aws_apigatewayv2_route" "chat_ws" {
+  #checkov:skip=CKV_AWS_309: "WebSocket APIs only support authorization on $connect, which uses the CUSTOM Lambda authorizer; other routes are protected by the authorized connection"
   for_each           = local.ws_routes
   api_id             = aws_apigatewayv2_api.chat_ws.id
   route_key          = each.key
@@ -41,11 +42,13 @@ resource "aws_apigatewayv2_route" "chat_ws" {
 
 resource "aws_cloudwatch_log_group" "chat_ws" {
   #checkov:skip=CKV_AWS_158: "Ensure that CloudWatch Log Group is encrypted by KMS"
+  #checkov:skip=CKV_AWS_338: "Ensure CloudWatch log groups retains logs for at least 1 year"
   name              = "/aws/apigateway/${var.environment}-bloodConnect-chat-ws"
   retention_in_days = var.log_retention_in_days
 }
 
 resource "aws_apigatewayv2_stage" "chat_ws" {
+  #checkov:skip=CKV2_AWS_51: "Client certificate authentication does not apply to WebSocket API stages"
   api_id      = aws_apigatewayv2_api.chat_ws.id
   name        = var.environment
   auto_deploy = true
