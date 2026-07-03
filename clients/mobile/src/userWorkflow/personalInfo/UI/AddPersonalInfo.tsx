@@ -1,5 +1,6 @@
 import Constants from 'expo-constants'
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
+import type { ScrollView } from 'react-native'
 import {
   View,
   Text,
@@ -44,12 +45,25 @@ const AddPersonalInfo = () => {
     isSSO
   } = useAddPersonalInfo()
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(personalInfo?.locations)
+  const scrollRef = useRef<ScrollView>(null)
+  const locationLayoutY = useRef(0)
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const openLink = (url: string) => { Linking.openURL(url).catch(() => { }) }
 
+  useEffect(() => {
+    if (personalInfo.locations.length > 0) {
+      const timer = setTimeout(() => {
+        scrollRef.current?.scrollTo({ y: Math.max(locationLayoutY.current - 20, 0), animated: true })
+      }, 250)
+
+      return () => { clearTimeout(timer) }
+    }
+  }, [personalInfo.locations.length])
+
   return (
     <KeyboardAwareScrollView
+      ref={scrollRef}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollContent}
       keyboardShouldPersistTaps="handled"
@@ -80,7 +94,10 @@ const AddPersonalInfo = () => {
         </View>
       )}
 
-      <View style={styles.fieldSpacing}>
+      <View
+        style={styles.fieldSpacing}
+        onLayout={(event) => { locationLayoutY.current = event.nativeEvent.layout.y }}
+      >
         <MultiSelect
           name='locations'
           label="Select Preferred Location"

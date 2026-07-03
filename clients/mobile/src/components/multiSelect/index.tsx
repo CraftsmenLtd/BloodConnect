@@ -173,7 +173,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         </View>
       )}
       {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
-      <ScrollView>
+      <ScrollView keyboardShouldPersistTaps="handled">
         {filteredOptions.map((item) => (
           <TouchableOpacity
             key={item.value}
@@ -258,7 +258,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
   )
 })
 
-const { width } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window')
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   ...commonStyles(theme),
@@ -326,7 +326,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   dropdown: {
     width: '100%',
-    maxHeight: 400,
+    maxHeight: height * 0.45,
     backgroundColor: theme.colors.white,
     borderRadius: 8,
     padding: 10,

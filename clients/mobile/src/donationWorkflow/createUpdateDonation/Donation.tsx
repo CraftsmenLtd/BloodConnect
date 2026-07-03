@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { useTranslation } from 'react-i18next'
+import type { ScrollView } from 'react-native'
 import { StyleSheet, Text, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import PhoneNumberInput from '../../components/inputElement/PhoneNumberInput'
@@ -39,9 +40,22 @@ const CreateBloodRequest = () => {
     errorMessage
   } = useBloodRequest()
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView([bloodRequestData.location])
+  const scrollRef = useRef<ScrollView>(null)
+  const locationLayoutY = useRef(0)
+
+  useEffect(() => {
+    if (bloodRequestData.location !== '') {
+      const timer = setTimeout(() => {
+        scrollRef.current?.scrollTo({ y: Math.max(locationLayoutY.current - 20, 0), animated: true })
+      }, 250)
+
+      return () => { clearTimeout(timer) }
+    }
+  }, [bloodRequestData.location])
 
   return (
     <KeyboardAwareScrollView
+      ref={scrollRef}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollContent}
       keyboardShouldPersistTaps="handled"
@@ -95,7 +109,10 @@ const CreateBloodRequest = () => {
         />
       </View>
 
-      <View style={[styles.fieldSpacing, styles.extraBottomMargin]}>
+      <View
+        style={[styles.fieldSpacing, styles.extraBottomMargin]}
+        onLayout={(event) => { locationLayoutY.current = event.nativeEvent.layout.y }}
+      >
         <SearchMultiSelect
           name="location"
           label={t('donationPosts.donationPoint')}
