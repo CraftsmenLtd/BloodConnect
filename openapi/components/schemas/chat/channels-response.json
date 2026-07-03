@@ -1,0 +1,55 @@
+{
+  "ChannelSummaryModel": {
+    "type": "object",
+    "properties": {
+      "channelId": {
+        "type": "string"
+      },
+      "userId": {
+        "type": "string"
+      },
+      "otherParticipantId": {
+        "type": "string"
+      },
+      "role": {
+        "type": "string",
+        "enum": [
+          "SEEKER",
+          "DONOR"
+        ]
+      },
+      "lastMessageAt": {
+        "type": "string"
+      },
+      "lastMessagePreview": {
+        "type": "string"
+      },
+      "lastReadAt": {
+        "type": "string"
+      }
+    }
+  },
+  "ChatChannelsResponseModel": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/ChannelSummaryModel"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    }
+  }
+}

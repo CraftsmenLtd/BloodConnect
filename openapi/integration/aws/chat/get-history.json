@@ -1,0 +1,19 @@
+{
+  "type": "aws",
+  "httpMethod": "POST",
+  "uri": "${CHAT_GET_HISTORY_INVOCATION_ARN}",
+  "requestTemplates": {
+    "application/json": "{\"requesterId\":\"$context.authorizer.claims.sub\",\"channelId\":\"$input.params('channelId')\",\"cursor\":\"$input.params('cursor')\",\"limit\":\"$input.params('limit')\",\"apiGwRequestId\":\"$context.requestId\",\"cloudFrontRequestId\":\"$context.requestId\"}"
+  },
+  "responses": {
+    "default": {
+      "statusCode": "200",
+      "responseParameters": {
+        "method.response.header.Access-Control-Allow-Methods": "'GET'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'"
+      }
+    }
+  },
+  "passthroughBehavior": "never"
+}

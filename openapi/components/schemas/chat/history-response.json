@@ -1,0 +1,51 @@
+{
+  "ChatMessageModel": {
+    "type": "object",
+    "properties": {
+      "channelId": {
+        "type": "string"
+      },
+      "messageId": {
+        "type": "string"
+      },
+      "clientMessageId": {
+        "type": "string"
+      },
+      "senderId": {
+        "type": "string"
+      },
+      "body": {
+        "type": "string"
+      },
+      "sentAt": {
+        "type": "string"
+      },
+      "ttl": {
+        "type": "integer"
+      }
+    }
+  },
+  "ChatHistoryResponseModel": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/ChatMessageModel"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    }
+  }
+}

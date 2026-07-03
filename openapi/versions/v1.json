@@ -41,6 +41,12 @@
     }
   ],
   "paths": {
+    "/chat/history": {
+      "$ref": "./../paths/chat/history.json"
+    },
+    "/chat/channels": {
+      "$ref": "./../paths/chat/channels.json"
+    },
     "/users": {
       "$ref": "./../paths/users/users.json"
     },
