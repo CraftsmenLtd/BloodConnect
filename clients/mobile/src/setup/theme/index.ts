@@ -31,6 +31,8 @@ type Theme = {
     borderStrong: string;
     backdrop: string;
     shadow: string;
+    // States
+    focus: string;
   };
   typography: {
     fontSize: number;

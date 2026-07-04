@@ -64,6 +64,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     width: 20,
     height: 20,
     borderWidth: 1,
+    borderColor: theme.colors.borderStrong,
     borderRadius: radius.lg,
     justifyContent: 'center',
     alignItems: 'center'

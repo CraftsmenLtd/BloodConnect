@@ -27,6 +27,8 @@ export const CustomDropdown = ({
   readOnly = false
 }: DropdownProps) => {
   const styles = createStyles(useTheme(), readOnly)
+  const isOpen = isVisible === name
+  const hasError = error !== null && error !== undefined && error !== ''
   const [showAbove, setShowAbove] = useState(false)
   const dropdownRef = useRef<View | null>(null)
   const windowHeight = Dimensions.get('window').height
@@ -66,8 +68,16 @@ export const CustomDropdown = ({
           {isRequired && <Text style={styles.asterisk}> *</Text>}
         </Text>
         {readOnly
-          ? <Text style={[styles.selectedText, styles.dropdown]}>{value !== '' ? value : options[0].label}</Text>
-          : <Text onPress={handleDropdownToggle} style={[styles.selectedText, styles.dropdown]}>{value !== '' ? value : options[0].label}</Text>
+          ? <Text style={[styles.selectedText, styles.dropdown, styles.inputDisabled]}>{value !== '' ? value : options[0].label}</Text>
+          : <Text
+            onPress={handleDropdownToggle}
+            style={[
+              styles.selectedText,
+              styles.dropdown,
+              isOpen && styles.inputFocused,
+              hasError && styles.inputError
+            ]}
+          >{value !== '' ? value : options[0].label}</Text>
         }
 
         {isVisible === name && !readOnly && (

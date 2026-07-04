@@ -9,6 +9,7 @@ import Loader from '../loaders/loader'
 import Warning from '../warning'
 import { commonStyles } from './commonStyles'
 import usePhoneNumberInput from './hooks/usePhoneNumberInput'
+import useFieldFocus from './hooks/useFieldFocus'
 import { spacing, radius } from '../../setup/theme/tokens'
 
 /**
@@ -68,6 +69,7 @@ const PhoneNumberInput = ({
   const theme = useTheme()
   const isDark = useIsDark()
   const styles = createStyles(theme)
+  const { isFocused, handleFocus, handleBlur } = useFieldFocus()
   const {
     phoneInputRef,
     isValid,
@@ -107,7 +109,8 @@ const PhoneNumberInput = ({
         onChangeFormattedText={handleChangeFormattedText}
         containerStyle={[
           styles.phoneContainer,
-          !isValid ? styles.errorBorder : null
+          isFocused && styles.inputFocused,
+          !isValid && styles.inputError
         ]}
         textContainerStyle={styles.textInput}
         textInputStyle={styles.text}
@@ -115,7 +118,13 @@ const PhoneNumberInput = ({
         flagButtonStyle={styles.flagButton}
         placeholder={placeholder}
         withDarkTheme={isDark}
-        textInputProps={{ placeholderTextColor: theme.colors.textTertiary }}
+        textInputProps={{
+          placeholderTextColor: theme.colors.textTertiary,
+          selectionColor: theme.colors.focus,
+          cursorColor: theme.colors.focus,
+          onFocus: handleFocus,
+          onBlur: handleBlur
+        }}
       />
       {!isValid && <Text style={styles.error}>Please enter a valid phone number</Text>}
       {showWarning
@@ -160,11 +169,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   flagButton: {
     borderTopLeftRadius: radius.md,
     borderBottomLeftRadius: radius.md
-  },
-  errorText: {
-    color: theme.colors.bloodRed,
-    fontSize: 12,
-    marginTop: spacing.xs
   },
   loader: {
     flex: 1,

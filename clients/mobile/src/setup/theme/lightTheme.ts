@@ -26,7 +26,9 @@ const lightTheme: Theme = {
     border: '#E6E6E6',
     borderStrong: '#CCCCCC',
     backdrop: '#21212180',
-    shadow: '#000000'
+    shadow: '#000000',
+    // States
+    focus: '#2F80ED'
   },
   typography: {
     fontSize: 16,

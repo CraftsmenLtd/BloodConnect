@@ -26,6 +26,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
   const styles = createStyles(useTheme())
   const [isPickingTime, setIsPickingTime] = useState<boolean>(false)
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false)
+  const hasError = error !== null && error !== undefined && error !== ''
 
   const handleDateChange = (event: unknown, selectedDate: Date | undefined) => {
     if (event.type === 'dismissed') {
@@ -73,7 +74,12 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
       </Text>
       <TouchableOpacity
         onPress={() => { setShowDatePicker(true) }}
-        style={[styles.datePicker, inputStyle]}>
+        style={[
+          styles.datePicker,
+          showDatePicker && styles.inputFocused,
+          hasError && styles.inputError,
+          inputStyle
+        ]}>
         <Text>
           {value !== null
             ? formattedDate(value, isOnlyDate)

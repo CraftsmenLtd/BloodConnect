@@ -25,14 +25,14 @@ export const Button = ({ text, onPress, buttonStyle, textStyle, loading = false,
       style={[
         styles.button,
         buttonStyle,
-        isDisabled && styles.disabledButton
+        disabled && styles.disabledButton
       ]}
       onPress={onPress}
       disabled={isDisabled}
     >
       <View style={styles.buttonContent}>
         {loading && <View style={styles.loaderOverlay}><Loader size='small' /></View>}
-        <Text style={[styles.buttonText, textStyle, isDisabled && styles.disabledText]}>{text}</Text>
+        <Text style={[styles.buttonText, textStyle, disabled && styles.disabledText]}>{text}</Text>
       </View>
     </TouchableOpacity>
   )
@@ -61,11 +61,10 @@ const createStyles = (theme: Theme) =>
       fontSize: theme.typography.fontSize
     },
     disabledButton: {
-      backgroundColor: theme.colors.primary,
-      opacity: 0.5
+      backgroundColor: theme.colors.surfaceVariant
     },
     disabledText: {
-      color: theme.colors.onPrimary
+      color: theme.colors.textTertiary
     }
   })
 

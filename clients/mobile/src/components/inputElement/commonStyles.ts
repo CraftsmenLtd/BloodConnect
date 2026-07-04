@@ -18,5 +18,15 @@ export const commonStyles = (theme: Theme): ReturnType<typeof StyleSheet.create>
   },
   asterisk: {
     color: theme.colors.primary
+  },
+  inputFocused: {
+    borderColor: theme.colors.focus
+  },
+  inputError: {
+    borderColor: theme.colors.primary
+  },
+  inputDisabled: {
+    backgroundColor: theme.colors.surfaceVariant,
+    opacity: 0.6
   }
 })

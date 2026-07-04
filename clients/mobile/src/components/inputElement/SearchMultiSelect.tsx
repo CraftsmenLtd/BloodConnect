@@ -53,6 +53,8 @@ const SearchMultiSelect = ({
 }: MultiSelectProps) => {
   const theme = useTheme()
   const styles = createStyles(theme)
+  const isOpen = isVisible === name
+  const hasError = error !== null && error !== undefined && error !== ''
   const [value, setValue] = useState(initialValue)
   const [searchText, setSearchText] = useState('')
   const [selectedValues, setSelectedValues] = useState<Option[]>([])
@@ -159,7 +161,12 @@ const SearchMultiSelect = ({
       </Text>
 
       <TouchableOpacity
-        style={[styles.dropdown, !editable && styles.inputDisabled]}
+        style={[
+          styles.dropdown,
+          isOpen && styles.inputFocused,
+          hasError && styles.inputError,
+          !editable && styles.inputDisabled
+        ]}
         onPress={openDropdown}
         activeOpacity={1}
         disabled={!editable}
@@ -210,6 +217,8 @@ const SearchMultiSelect = ({
                   ref={searchInputRef}
                   placeholder={placeholder}
                   placeholderTextColor={theme.colors.textTertiary}
+                  selectionColor={theme.colors.focus}
+                  cursorColor={theme.colors.focus}
                   value={searchText}
                   onChangeText={handleInputChange}
                   style={styles.searchInput}

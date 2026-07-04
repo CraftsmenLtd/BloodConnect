@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { commonStyles } from './commonStyles'
+import useFieldFocus from './hooks/useFieldFocus'
 import { spacing, radius } from '../../setup/theme/tokens'
 
 type Option = {
@@ -38,6 +39,8 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({
 }) => {
   const theme = useTheme()
   const styles = createStyles(theme)
+  const { isFocused, handleFocus, handleBlur } = useFieldFocus()
+  const hasError = error !== null && error !== undefined && error !== ''
   const [selectedValues, setSelectedValues] = useState<string[]>([])
 
   const handleSelect = (item: Option) => {
@@ -71,7 +74,13 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({
         {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
       <Dropdown
-        style={styles.dropdown}
+        style={[
+          styles.dropdown,
+          isFocused && styles.inputFocused,
+          hasError && styles.inputError
+        ]}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         containerStyle={styles.dropdownList}

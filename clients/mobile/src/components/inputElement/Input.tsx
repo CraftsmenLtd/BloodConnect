@@ -14,6 +14,7 @@ import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 import type { InputProps } from './types'
+import useFieldFocus from './hooks/useFieldFocus'
 import { spacing, radius } from '../../setup/theme/tokens'
 
 type InputElementProps = {
@@ -36,6 +37,8 @@ export const Input = ({
 }: InputElementProps): React.ReactElement => {
   const theme = useTheme()
   const styles = createStyles(theme)
+  const { isFocused, handleFocus, handleBlur } = useFieldFocus()
+  const hasError = error !== null && error !== undefined && error !== ''
 
   return (
     <View style={styles.inputContainer}>
@@ -44,15 +47,25 @@ export const Input = ({
         {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
       <TextInput
-        style={[styles.input, inputStyle]}
+        style={[
+          styles.input,
+          isFocused && styles.inputFocused,
+          hasError && styles.inputError,
+          readOnly && styles.inputDisabled,
+          inputStyle
+        ]}
         placeholder={placeholder}
         placeholderTextColor={theme.colors.textTertiary}
+        selectionColor={theme.colors.focus}
+        cursorColor={theme.colors.focus}
         value={value}
         onChangeText={(text) => { onChangeText(name, text) }}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         keyboardType={keyboardType}
         editable={!readOnly}
       />
-      {error !== null && error !== undefined && <Text style={styles.error}>{error}</Text>}
+      {hasError && <Text style={styles.error}>{error}</Text>}
     </View>
   )
 }

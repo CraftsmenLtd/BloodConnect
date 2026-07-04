@@ -26,7 +26,9 @@ const darkTheme: Theme = {
     border: '#3A3A3A',
     borderStrong: '#4A4A4A',
     backdrop: '#000000B3',
-    shadow: '#000000'
+    shadow: '#000000',
+    // States
+    focus: '#5B9BFF'
   },
   typography: {
     fontSize: 16,

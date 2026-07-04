@@ -4,6 +4,7 @@ import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
+import useFieldFocus from './hooks/useFieldFocus'
 import { spacing, radius } from '../../setup/theme/tokens'
 
 type TextAreaProps = {
@@ -19,6 +20,8 @@ type TextAreaProps = {
 export const TextArea = ({ name, label, value, placeholder, onChangeText, maxLength, error }: TextAreaProps) => {
   const theme = useTheme()
   const styles = createStyles(theme)
+  const { isFocused, handleFocus, handleBlur } = useFieldFocus()
+  const hasError = error !== null && error !== undefined && error !== ''
 
   return (
     <View style={styles.container}>
@@ -26,9 +29,17 @@ export const TextArea = ({ name, label, value, placeholder, onChangeText, maxLen
       <TextInput
         placeholder={placeholder}
         placeholderTextColor={theme.colors.textTertiary}
-        style={styles.textArea}
+        selectionColor={theme.colors.focus}
+        cursorColor={theme.colors.focus}
+        style={[
+          styles.textArea,
+          isFocused && styles.inputFocused,
+          hasError && styles.inputError
+        ]}
         value={value}
         onChangeText={(text) => { onChangeText(name, text) }}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         multiline
         maxLength={maxLength}
       />

@@ -13,8 +13,9 @@ type CheckboxProps = {
   children: React.ReactNode;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ isChecked, onCheckboxChange, name, children, checkboxColor = 'red' }) => {
-  const styles = createStyles(useTheme())
+const Checkbox: React.FC<CheckboxProps> = ({ isChecked, onCheckboxChange, name, children, checkboxColor }) => {
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   return (
     <View style={styles.container}>
@@ -22,7 +23,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ isChecked, onCheckboxChange, name, 
         <MaterialIcons
           name={isChecked ? 'check-box' : 'check-box-outline-blank'}
           size={32}
-          color={checkboxColor}
+          color={checkboxColor ?? theme.colors.primary}
         />
       </TouchableOpacity>
       {children}
