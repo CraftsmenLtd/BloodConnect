@@ -17,7 +17,7 @@ const DonorConfirmationScreen = () => {
 
   const ViewToRender = () =>
     <View style={styles.container}>
-      <Text style={styles.responseText}>Select the donors who have donated blood</Text>
+      <Text variant="h3" style={styles.responseText}>Select the donors who have donated blood</Text>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {donors.map((donor: DonorItem) => (
@@ -31,7 +31,7 @@ const DonorConfirmationScreen = () => {
       </ScrollView>
 
       <View style={styles.footerContainer}>
-        {error !== null && <Text style={styles.errorText}>{error}</Text>}
+        {error !== null && <Text variant="bodySmall" style={styles.errorText}>{error}</Text>}
         <Button
           text="Confirm"
           onPress={() => { void executeFunction(selectedDonor, requestPostId, createdAt) }}
@@ -55,8 +55,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     paddingBottom: spacing.lg
   },
   responseText: {
-    fontSize: 18,
-    fontWeight: 'bold',
     marginBottom: spacing.lg
   },
   footerContainer: {
@@ -64,7 +62,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   errorText: {
     color: theme.colors.primary,
-    fontSize: 14,
     marginBottom: spacing.sm,
     textAlign: 'center'
   }

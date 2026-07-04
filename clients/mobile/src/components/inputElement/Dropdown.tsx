@@ -43,7 +43,7 @@ const Dropdown: React.FC<DropdownComponentProps> = ({
 
   const renderItem = (item: Option) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>{item.label}</Text>
+      <Text variant="body" style={styles.itemText}>{item.label}</Text>
       {selectedValue === item.value && (
         <MaterialIcons name="check" size={20} color={theme.colors.primary} style={styles.checkIcon} />
       )}
@@ -112,7 +112,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderBottomColor: theme.colors.border
   },
   itemText: {
-    fontSize: 16,
     color: theme.colors.textPrimary,
     flex: 1
   },

@@ -71,7 +71,7 @@ const Badge: React.FC<BadgeProps> = ({
           style={styles.icon}
         />
       )}
-      <Text style={[styles.text, textStyle]} numberOfLines={1} ellipsizeMode='tail'>{text}</Text>
+      <Text variant="caption" style={[styles.text, textStyle]} numberOfLines={1} ellipsizeMode='tail'>{text}</Text>
     </View>
   )
 }
@@ -86,7 +86,6 @@ const createStyles = (): ReturnType<typeof StyleSheet.create> => StyleSheet.crea
     flexDirection: 'row'
   },
   text: {
-    fontSize: 12,
     fontWeight: '600',
     maxWidth: 120,
     overflow: 'hidden',

@@ -174,7 +174,7 @@ const AddPersonalInfo = () => {
 
             return (
               <View style={styles.fieldSpacing}>
-                <Text style={styles.bmiText}>BMI: {bmi} ({getBMICategory(bmi)})</Text>
+                <Text variant="bodySmall" style={styles.bmiText}>BMI: {bmi} ({getBMICategory(bmi)})</Text>
               </View>
             )
           }
@@ -287,7 +287,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     padding: spacing.lg
   },
   bmiText: {
-    fontSize: 14,
     color: theme.colors.textSecondary,
     paddingVertical: spacing.xs
   },

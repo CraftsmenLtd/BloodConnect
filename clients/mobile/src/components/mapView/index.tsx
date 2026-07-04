@@ -188,7 +188,7 @@ const MapAttribution = (): React.ReactElement => {
 
   return (
     <View style={styles.attributionContainer}>
-      <Text style={styles.attributionText}>© OpenStreetMap Contributors</Text>
+      <Text variant="caption" style={styles.attributionText}>© OpenStreetMap Contributors</Text>
     </View>
   )
 }
@@ -216,7 +216,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       borderRadius: radius.sm
     },
     attributionText: {
-      fontSize: 10,
       color: theme.colors.onPrimary
     },
     resetButton: {

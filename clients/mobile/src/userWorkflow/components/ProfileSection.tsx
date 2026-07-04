@@ -44,10 +44,10 @@ const ProfileSection: React.FC<UserData> = (
         </View>
       </View>
       <View style={styles.profileInfo}>
-        <Text style={styles.profileName}>{name} {age && `(${age})`}</Text>
+        <Text variant="h3" style={styles.profileName}>{name} {age && `(${age})`}</Text>
         <View style={styles.profileLocationSection}>
           <MaterialIcons name="location-on" size={16} style={styles.iconStyle} />
-          <Text style={styles.profileLocation}>{location}</Text>
+          <Text variant="bodySmall" style={styles.profileLocation}>{location}</Text>
         </View>
       </View>
     </View>
@@ -126,7 +126,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     marginLeft: spacing.lg
   },
   profileName: {
-    fontSize: 18,
     fontWeight: 'bold'
   },
   profileLocationSection: {
@@ -134,7 +133,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
   },
   profileLocation: {
-    fontSize: 14,
     color: theme.colors.textSecondary
   },
   iconStyle: {

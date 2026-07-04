@@ -23,20 +23,20 @@ const DonorProfile = () => {
         style={styles.profileImage as StyleProp<ImageStyle>}
       />
       <View style={styles.bloodGroupBadge}>
-        <Text style={styles.bloodGroupText}>
+        <Text variant="body" style={styles.bloodGroupText}>
           {donorProfile?.bloodGroup ?? ''}(ve)
         </Text>
       </View>
     </View>
 
-    <Text style={styles.name}>{donorProfile?.donorName ?? ''}</Text>
+    <Text variant="h2" style={styles.name}>{donorProfile?.donorName ?? ''}</Text>
     <View>
       {Array.isArray(donorProfile?.preferredDonationLocations)
         && donorProfile.preferredDonationLocations.map(
           (location: preferredDonationLocations, index: number) => (
             <View style={styles.locationRow} key={index}>
               <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
-              <Text style={styles.locationText}>
+              <Text variant="bodySmall" style={styles.locationText}>
                 {location?.area ?? ''}
               </Text>
             </View>
@@ -44,7 +44,7 @@ const DonorProfile = () => {
     </View>
 
     <View style={styles.detailsRow}>
-      <Text style={styles.detailsText}>
+      <Text variant="bodySmall" style={styles.detailsText}>
         {donorProfile.weight && donorProfile.height
           ? (() => {
             const bmi = calculateBMI(donorProfile.weight, donorProfile.height)
@@ -57,7 +57,7 @@ const DonorProfile = () => {
 
     <View style={{ width: '100%' }}>
       <TouchableOpacity style={styles.callButton} onPress={handleCall}>
-        <Text style={styles.callButtonText}>Call now</Text>
+        <Text variant="body" style={styles.callButtonText}>Call now</Text>
       </TouchableOpacity>
     </View>
   </View>
@@ -83,7 +83,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     },
     locationText: {
       marginLeft: spacing.sm,
-      fontSize: 14,
       color: theme.colors.textSecondary
     },
     errorContainer: {
@@ -129,13 +128,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       borderColor: theme.colors.primary
     },
     bloodGroupText: {
-      fontSize: 16,
       fontWeight: 'bold',
       color: theme.colors.textSecondary
     },
     name: {
-      fontSize: 20,
-      fontWeight: 'bold',
       marginTop: spacing.md,
       color: theme.colors.textPrimary
     },
@@ -145,7 +141,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       marginTop: spacing.sm
     },
     detailsText: {
-      fontSize: 14,
       color: theme.colors.textTertiary
     },
     callButton: {
@@ -160,7 +155,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
     },
     callButtonText: {
       textAlign: 'center',
-      fontSize: 16,
       color: theme.colors.onPrimary,
       fontWeight: 'bold'
     }

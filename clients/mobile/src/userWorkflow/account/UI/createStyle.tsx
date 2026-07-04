@@ -77,7 +77,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   optionText: {
     marginLeft: spacing.md,
-    fontSize: 16,
     color: theme.colors.textSecondary,
     flex: 1
   },

@@ -51,7 +51,7 @@ const Posts: React.FC<PostsProps> = ({
       renderItem={renderItem}
       ListEmptyComponent={
         <View style={styles.centeredContainer}>
-          <Text style={styles.noResultText}>{emptyDataMessage}</Text>
+          <Text variant="body" style={styles.noResultText}>{emptyDataMessage}</Text>
         </View>
       }
       keyExtractor={(item) => item.requestPostId}
@@ -73,7 +73,7 @@ const Posts: React.FC<PostsProps> = ({
       refreshControl={refreshControl}
       ListEmptyComponent={
         <View style={styles.emptyContainer}>
-          <Text style={styles.errorText}>{errorMessage}</Text>
+          <Text variant="body" style={styles.errorText}>{errorMessage}</Text>
         </View>
       }
     />
@@ -111,7 +111,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     padding: spacing.xl
   },
   errorText: {
-    fontSize: 16,
     color: theme.colors.primary,
     textAlign: 'center',
     marginBottom: spacing.md
@@ -126,7 +125,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     alignItems: 'center'
   },
   noResultText: {
-    fontSize: 16,
     color: theme.colors.textTertiary,
     textAlign: 'center'
   },

@@ -28,7 +28,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderBottomWidth: 0
   },
   value: {
-    fontSize: 14,
     fontWeight: 'bold',
     color: theme.colors.textPrimary
   },

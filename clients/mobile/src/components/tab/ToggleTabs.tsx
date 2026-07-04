@@ -26,7 +26,7 @@ const ToggleTabs: React.FC<ToggleTabsProps> = ({ tabs, onTabPress, initialActive
             onTabPress(tab)
           }}
         >
-          <Text style={[styles.text, activeTab === tab && styles.activeText]}>{tab}</Text>
+          <Text variant="label" style={[styles.text, activeTab === tab && styles.activeText]}>{tab}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -51,9 +51,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderRadius: radius.pill
   },
   text: {
-    fontSize: 14,
-    color: theme.colors.textPrimary,
-    fontWeight: '500'
+    color: theme.colors.textPrimary
   },
   activeText: {
     color: theme.colors.onPrimary

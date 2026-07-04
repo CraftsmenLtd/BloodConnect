@@ -37,7 +37,7 @@ const SettingsPage: React.FC = (): React.ReactElement => {
       />
 
       <View style={styles.themeSection}>
-        <Text style={styles.themeLabel}>{t('settings.appearance')}</Text>
+        <Text variant="body" style={styles.themeLabel}>{t('settings.appearance')}</Text>
         <View style={styles.segment}>
           {themeOptions.map((option) => {
             const isActive = mode === option.value
@@ -50,7 +50,7 @@ const SettingsPage: React.FC = (): React.ReactElement => {
                 accessibilityRole="button"
                 accessibilityState={{ selected: isActive }}
               >
-                <Text style={[styles.segmentText, isActive && styles.segmentTextActive]}>
+                <Text variant="label" style={[styles.segmentText, isActive && styles.segmentTextActive]}>
                   {option.label}
                 </Text>
               </TouchableOpacity>
@@ -66,7 +66,7 @@ const SettingsPage: React.FC = (): React.ReactElement => {
         accessibilityHint="Opens mail app to report a safety concern"
       >
         <MaterialIcons name="flag" size={24} style={styles.reportIcon} />
-        <Text style={styles.reportText}>{t('settings.reportSafety')}</Text>
+        <Text variant="body" style={styles.reportText}>{t('settings.reportSafety')}</Text>
         <MaterialIcons name="open-in-new" size={20} style={styles.reportChevron} />
       </TouchableOpacity>
     </View>
@@ -84,7 +84,6 @@ const createStyles = (theme: Theme) =>
       marginTop: spacing.xxl,
     },
     themeLabel: {
-      fontSize: 16,
       fontWeight: '500',
       color: theme.colors.textPrimary,
       marginBottom: spacing.sm,
@@ -106,8 +105,6 @@ const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.primary,
     },
     segmentText: {
-      fontSize: 14,
-      fontWeight: '500',
       color: theme.colors.textSecondary,
     },
     segmentTextActive: {
@@ -127,7 +124,6 @@ const createStyles = (theme: Theme) =>
     },
     reportText: {
       flex: 1,
-      fontSize: 16,
       color: theme.colors.textPrimary,
     },
     reportChevron: {

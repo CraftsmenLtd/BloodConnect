@@ -21,16 +21,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   header: {
     color: theme.colors.onPrimary,
-    fontSize: 16,
     fontWeight: 'bold'
   },
   name: {
-    fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.textPrimary
   },
   subText: {
-    fontSize: 14,
     color: theme.colors.textSecondary
   },
   emptyPadding: {
@@ -63,8 +60,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: 22
   },
   primaryCaption: {
-    color: theme.colors.textSecondary,
-    fontSize: 12
+    color: theme.colors.textSecondary
   },
   labelRow: {
     flexDirection: 'row',
@@ -83,13 +79,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'column'
   },
   highlightedText: {
-    fontWeight: 'bold',
-    fontSize: 16
+    fontWeight: 'bold'
   },
   urgentText: {
     color: theme.colors.textPrimary,
     fontWeight: 'bold',
-    fontSize: 12,
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -110,7 +104,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center'
   },
   phoneNumber: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.textPrimary
   },
@@ -123,12 +116,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   label: {
     color: theme.colors.textSecondary,
-    fontSize: 14,
     marginBottom: spacing.xs
   },
   value: {
     color: theme.colors.textPrimary,
-    fontSize: 16,
     flexWrap: 'wrap',
     flexShrink: 1
   },
@@ -157,7 +148,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   callText: {
     color: theme.colors.primary,
-    fontSize: 14,
     fontWeight: 'bold',
     lineHeight: 20
   },

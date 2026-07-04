@@ -166,6 +166,7 @@ const SearchMultiSelect = ({
       >
         <Ionicons name="search" size={18} color={theme.colors.textSecondary} />
         <Text
+          variant="body"
           style={[styles.fieldText, value === '' && styles.placeholderText]}
           numberOfLines={1}
         >
@@ -173,7 +174,7 @@ const SearchMultiSelect = ({
         </Text>
       </TouchableOpacity>
 
-      {extraInfo.trim().length > 0 && <Text style={styles.extraInfo}>{extraInfo}</Text>}
+      {extraInfo.trim().length > 0 && <Text variant="caption" style={styles.extraInfo}>{extraInfo}</Text>}
       {error !== null && error !== undefined && <Text style={styles.error}>{error}</Text>}
 
       {multiSelect
@@ -232,7 +233,7 @@ const SearchMultiSelect = ({
                     style={styles.option}
                     onPress={() => { handleSelect(item) }}
                   >
-                    <Text style={styles.optionText}>{item.label}</Text>
+                    <Text variant="body" style={styles.optionText}>{item.label}</Text>
                     {selectedValues.some((selected) => selected.value === item.value) && (
                       <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
                     )}
@@ -269,7 +270,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   fieldText: {
     flex: 1,
-    fontSize: 16,
     color: theme.colors.textPrimary
   },
   placeholderText: {
@@ -296,7 +296,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     marginTop: spacing.xs
   },
   extraInfo: {
-    fontSize: 12,
     color: theme.colors.textSecondary
   },
   backdrop: {
@@ -343,7 +342,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderBottomColor: theme.colors.borderStrong
   },
   optionText: {
-    fontSize: 16,
     color: theme.colors.textPrimary
   }
 })

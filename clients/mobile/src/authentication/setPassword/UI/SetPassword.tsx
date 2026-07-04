@@ -39,7 +39,7 @@ export default function SetPassword(): JSX.Element {
         error={errors.confirmPassword}
       />
 
-      {error !== '' && <Text style={styles.error}>{error}</Text>}
+      {error !== '' && <Text variant="caption" style={styles.error}>{error}</Text>}
       <Button text={t('common.setPassword')} onPress={handleSetPassword} disabled={isButtonDisabled} loading={loading} />
     </AuthLayout>
   )
@@ -48,7 +48,6 @@ export default function SetPassword(): JSX.Element {
 const createStyles = (theme: Theme) => StyleSheet.create({
   error: {
     color: theme.colors.primary,
-    fontSize: theme.typography.errorFontSize,
     textAlign: 'center'
   }
 })

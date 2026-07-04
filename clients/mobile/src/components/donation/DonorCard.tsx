@@ -28,10 +28,10 @@ const DonorCard: React.FC<DonorCardProps> = ({ name, isSelected, onSelect }) => 
           color={isSelected ? theme.colors.primary : theme.colors.borderStrong}
         />
         <View style={styles.textContainer}>
-          <Text style={[styles.name, isSelected ? styles.nameSelected : null]}>
+          <Text variant="body" style={[styles.name, isSelected ? styles.nameSelected : null]}>
             {name}
           </Text>
-          <Text style={[styles.info, isSelected ? styles.infoSelected : null]}>
+          <Text variant="bodySmall" style={[styles.info, isSelected ? styles.infoSelected : null]}>
             New blood donor
           </Text>
         </View>
@@ -71,7 +71,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       marginLeft: spacing.md
     },
     name: {
-      fontSize: theme.typography.fontSize,
       fontWeight: '600',
       color: theme.colors.textPrimary
     },
@@ -79,7 +78,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       color: theme.colors.primary
     },
     info: {
-      fontSize: 14,
       color: theme.colors.textSecondary
     },
     infoSelected: {

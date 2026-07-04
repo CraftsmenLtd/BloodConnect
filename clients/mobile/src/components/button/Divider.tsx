@@ -20,7 +20,7 @@ export const Divider = ({ text, containerStyle, lineStyle, textStyle }: DividerP
     <View style={[styles.container, containerStyle]}>
       <View style={[styles.line, lineStyle]} />
       {text !== undefined && text !== '' && (
-        <Text style={[styles.text, textStyle]}>{text}</Text>
+        <Text variant="bodySmall" style={[styles.text, textStyle]}>{text}</Text>
       )}
       <View style={[styles.line, lineStyle]} />
     </View>
@@ -42,7 +42,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   text: {
     marginHorizontal: spacing.md,
-    fontSize: 14,
     color: theme.colors.textSecondary
   }
 })

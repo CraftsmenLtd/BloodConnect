@@ -154,7 +154,7 @@ const EditProfile = () => {
 
             return (
               <View style={styles.inputFieldStyle}>
-                <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
+                <Text variant="bodySmall" style={{ color: theme.colors.textSecondary }}>
                     BMI: {bmi} ({getBMICategory(bmi)})
                 </Text>
               </View>

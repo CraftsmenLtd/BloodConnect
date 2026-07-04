@@ -25,7 +25,7 @@ const RequestStatusScreen = () => {
   const ViewToRender = () =>
     <View style={styles.container}>
       <View>
-        <Text style={styles.responseText}>Was the blood managed for this request?</Text>
+        <Text variant="h3" style={styles.responseText}>Was the blood managed for this request?</Text>
         <PostCard
           post={bloodRequest}
           showButton={false}
@@ -89,9 +89,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: theme.colors.textPrimary
   },
   responseText: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold'
+    textAlign: 'center'
   },
   buttonContainer: {
     flexDirection: 'row',

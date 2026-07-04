@@ -34,7 +34,7 @@ const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
   }
 
   if (errorMessage !== null || ErrorComponent !== undefined) {
-    return ErrorComponent ?? <Text style={[styles.messageText, styles.errorMessage]}>{errorMessage}</Text>
+    return ErrorComponent ?? <Text variant="body" style={[styles.messageText, styles.errorMessage]}>{errorMessage}</Text>
   }
 
   const isEmpty = (data: unknown): boolean => {
@@ -47,7 +47,7 @@ const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
   }
 
   if (isEmpty(data) && (showEmptyMessageForEmptyArray || !Array.isArray(data))) {
-    return EmptyComponent ?? <Text style={styles.messageText}>No items found.</Text>
+    return EmptyComponent ?? <Text variant="body" style={styles.messageText}>No items found.</Text>
   }
 
   return <>{ViewComponent}</>
@@ -57,7 +57,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   messageText: {
     textAlign: 'center',
     marginTop: spacing.xl,
-    fontSize: 16,
     color: theme.colors.textSecondary
   },
   errorMessage: {

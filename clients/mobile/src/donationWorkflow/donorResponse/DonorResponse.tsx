@@ -16,7 +16,7 @@ const DonorResponse = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.responseText}>{bloodRequest.donorName} responded to your request</Text>
+        <Text variant="h3" style={styles.responseText}>{bloodRequest.donorName} responded to your request</Text>
         <PostCard post={bloodRequest} showButton={false} showDescription showHeader={false} />
       </View>
 
@@ -53,9 +53,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     color: theme.colors.textPrimary
   },
   responseText: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold'
+    textAlign: 'center'
   },
   buttonContainer: {
     flexDirection: 'row',

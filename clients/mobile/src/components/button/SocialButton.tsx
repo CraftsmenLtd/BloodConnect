@@ -26,7 +26,7 @@ export const SocialButton = ({ text, onPress, icon, loading, buttonStyle, textSt
         <Image source={icon} style={styles.socialIcon} />
         {isLoading
           ? (<ActivityIndicator size="small" color={theme.colors.primary}/>)
-          : (<Text style={[styles.socialButtonText, textStyle]}>{text}</Text>)}
+          : (<Text variant="body" style={[styles.socialButtonText, textStyle]}>{text}</Text>)}
       </View>
     </TouchableOpacity>
   )
@@ -56,7 +56,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   socialButtonText: {
     color: theme.colors.textPrimary,
-    fontSize: 16,
     fontWeight: '500'
   }
 })

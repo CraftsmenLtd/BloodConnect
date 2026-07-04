@@ -128,10 +128,10 @@ const GenericModal: React.FC<GenericModalProps> = ({
               )}
 
               {/* Title */}
-              <Text style={styles.title}>{title}</Text>
+              <Text variant="h2" style={styles.title}>{title}</Text>
 
               {/* Message */}
-              <Text style={styles.message}>{message}</Text>
+              <Text variant="body" style={styles.message}>{message}</Text>
 
               {/* Buttons */}
               <View style={styles.buttonContainer}>
@@ -170,13 +170,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     ...theme.elevation.lg
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: spacing.md,
     textAlign: 'center'
   },
   message: {
-    fontSize: 16,
     marginBottom: spacing.xl,
     textAlign: 'center'
   },

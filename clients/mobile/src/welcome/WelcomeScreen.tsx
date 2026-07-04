@@ -29,8 +29,8 @@ const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
 
       <Image source={require('../../assets/images/bloodBag.png')} style={styles.image} />
 
-      <Text style={styles.title}>{t('home.title')}</Text>
-      <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
+      <Text variant="h2" style={styles.title}>{t('home.title')}</Text>
+      <Text variant="bodySmall" style={styles.subtitle}>{t('home.subtitle')}</Text>
 
       <Button
         text={t('common.createAccount')}
@@ -62,13 +62,10 @@ const createStyles = (theme: Theme) => {
       marginBottom: spacing.xxxl
     },
     title: {
-      fontSize: 20,
-      fontWeight: '600',
       textAlign: 'center',
       marginBottom: spacing.md
     },
     subtitle: {
-      fontSize: 14,
       color: theme.colors.textSecondary,
       textAlign: 'center',
       marginBottom: spacing.xxxxl

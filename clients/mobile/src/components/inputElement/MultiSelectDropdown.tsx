@@ -57,7 +57,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({
 
   const renderItem = (item: Option) => (
     <TouchableOpacity style={styles.itemContainer} onPress={() => { handleSelect(item) }}>
-      <Text style={styles.itemText}>{item.label}</Text>
+      <Text variant="body" style={styles.itemText}>{item.label}</Text>
       {selectedValues.includes(item.value) && (
         <MaterialIcons name="check" size={20} color={theme.colors.primary} style={styles.checkIcon} />
       )}
@@ -86,14 +86,14 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({
         renderItem={(item) => renderItem(item as Option)}
         multiSelect
       />
-      {extraInfo.trim().length > 0 && <Text style={styles.extraInfo}>{extraInfo}</Text>}
+      {extraInfo.trim().length > 0 && <Text variant="caption" style={styles.extraInfo}>{extraInfo}</Text>}
       <View style={styles.selectedContainer}>
         {selectedValues.map((value) => (
           <TouchableOpacity key={value} onPress={() => { removeSelectedItem(value) }}>
             <View style={styles.selectedTag}>
-              <Text style={styles.selectedText}>{value}</Text>
+              <Text variant="bodySmall" style={styles.selectedText}>{value}</Text>
               <TouchableOpacity>
-                <Text style={styles.removeIcon}>✕</Text>
+                <Text variant="bodySmall" style={styles.removeIcon}>✕</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -140,7 +140,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderBottomColor: theme.colors.border
   },
   itemText: {
-    fontSize: 16,
     color: theme.colors.textPrimary,
     flex: 1
   },
@@ -164,16 +163,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderWidth: 1
   },
   selectedText: {
-    fontSize: 14,
     color: theme.colors.textPrimary,
     marginRight: spacing.sm
   },
   removeIcon: {
-    fontSize: 14,
     color: theme.colors.primary
   },
   extraInfo: {
-    fontSize: 12,
     color: theme.colors.textSecondary
   }
 })

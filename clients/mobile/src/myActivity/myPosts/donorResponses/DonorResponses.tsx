@@ -24,11 +24,11 @@ const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProp
     <View style={styles.rootContainer}>
       {acceptedDonors.length === 0
         ? <View style={styles.centeredContainer}>
-          <Text style={styles.noDonorText}>No donors have responded yet.</Text>
+          <Text variant="body" style={styles.noDonorText}>No donors have responded yet.</Text>
         </View>
         : <View style={styles.responseContainer}>
           <View style={styles.container}>
-            <Text style={styles.title}>Donors Who Responded</Text>
+            <Text variant="h3" style={styles.title}>Donors Who Responded</Text>
             <FlatList
               data={acceptedDonors}
               keyExtractor={(item) => item.donorId}
@@ -43,8 +43,8 @@ const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProp
                     source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
                     style={styles.avatar as StyleProp<ImageStyle>} />
                   <View style={styles.textContainer}>
-                    <Text style={styles.name}>{item.donorName}</Text>
-                    <Text style={styles.status}>New blood donor</Text>
+                    <Text variant="body" style={styles.name}>{item.donorName}</Text>
+                    <Text variant="caption" style={styles.status}>New blood donor</Text>
                   </View>
                   <Text style={styles.arrow}>&gt;</Text>
                 </TouchableOpacity>
@@ -69,7 +69,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       alignItems: 'center'
     },
     noDonorText: {
-      fontSize: 16,
       color: theme.colors.textTertiary,
       textAlign: 'center'
     },
@@ -80,8 +79,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       padding: spacing.lg
     },
     title: {
-      fontSize: 18,
-      fontWeight: 'bold',
       marginBottom: spacing.md,
       color: theme.colors.textPrimary
     },
@@ -106,12 +103,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       flex: 1
     },
     name: {
-      fontSize: 16,
       fontWeight: '500',
       color: theme.colors.textPrimary
     },
     status: {
-      fontSize: 12,
       color: theme.colors.textSecondary
     },
     arrow: {

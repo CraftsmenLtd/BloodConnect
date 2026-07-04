@@ -15,10 +15,10 @@ const OTP = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t('otp.enterAuthenticationCode')}</Text>
+      <Text variant="h1" style={styles.title}>{t('otp.enterAuthenticationCode')}</Text>
       <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>{t('otp.enter6DigitCodeSent')}</Text>
-        <Text style={[styles.subtitle, styles.subtitleEmail]}> {t('common.email')} ({email})</Text>
+        <Text variant="body" style={styles.subtitle}>{t('otp.enter6DigitCodeSent')}</Text>
+        <Text variant="body" style={[styles.subtitle, styles.subtitleEmail]}> {t('common.email')} ({email})</Text>
       </View>
       <View style={styles.otpContainer}>
         {otp.map((digit: string, index: number) => (
@@ -37,7 +37,7 @@ const OTP = () => {
           />
         ))}
       </View>
-      {error !== '' && <Text style={styles.error}>{error}</Text>}
+      {error !== '' && <Text variant="caption" style={styles.error}>{error}</Text>}
       <LinkWithText
         staticText={t('otp.didntGetCode')}
         linkText={isDisabled === true ? ` Resend OTP in ${countdown}s` : ` ${t('otp.resendOtp')}`}
@@ -59,8 +59,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     backgroundColor: theme.colors.surface
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: spacing.xl,
     color: theme.colors.textPrimary
@@ -69,7 +67,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginBottom: spacing.xl
   },
   subtitle: {
-    fontSize: theme.typography.fontSize,
     color: theme.colors.textSecondary,
     textAlign: 'center'
   },
@@ -92,8 +89,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   error: {
     textAlign: 'center',
-    color: theme.colors.primary,
-    fontSize: theme.typography.errorFontSize
+    color: theme.colors.primary
   }
 })
 

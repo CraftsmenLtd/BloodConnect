@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({
       <View style={styles.header}>
         <View style={styles.headerLeftContent}>
           <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
-          <Text style={styles.title}>{title}</Text>
+          <Text variant="h3" style={styles.title}>{title}</Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={onButtonPress}>
           <Text style={styles.buttonText}>{buttonLabel}</Text>
@@ -108,7 +108,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderRadius: radius.xl
   },
   title: {
-    fontSize: 17,
     color: theme.colors.borderStrong
   },
   button: {

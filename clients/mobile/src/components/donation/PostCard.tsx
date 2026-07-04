@@ -168,7 +168,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         disabled && styles.buttonDisabled
       ]}
     >
-      <Text style={[styles.dropdownText, disabled && styles.textDisabled]}>{text}</Text>
+      <Text variant="bodySmall" style={[styles.dropdownText, disabled && styles.textDisabled]}>{text}</Text>
     </TouchableOpacity>
   )
 
@@ -177,8 +177,8 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
       {showHeader
         && <View style={styles.cardHeader}>
           <View>
-            <Text style={styles.userName}>{post.seekerName}</Text>
-            <Text style={styles.postTime}>
+            <Text variant="body" style={styles.userName}>{post.seekerName}</Text>
+            <Text variant="caption" style={styles.postTime}>
               {t('donationPosts.postedOn')} {formatDateTime(post.createdAt)}
             </Text>
           </View>
@@ -259,10 +259,10 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
               size={32}
             />
             <View style={styles.bloodText}>
-              <Text style={styles.lookingForText}>
+              <Text variant="bodySmall" style={styles.lookingForText}>
                 {t('donationPosts.lookingFor')}
               </Text>
-              <Text style={styles.bloodAmount}>
+              <Text variant="body" style={styles.bloodAmount}>
                 {
                   formatBloodQuantity(post.bloodQuantity)} {post.requestedBloodGroup} (ve) {t('common.blood')
                 }
@@ -284,12 +284,12 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             <View style={styles.infoSection}>
               <View style={styles.infoHeader}>
                 <Ionicons name="location-outline" size={16} color={theme.colors.textTertiary} />
-                <Text style={styles.donationInfoPlaceholder}>
+                <Text variant="bodySmall" style={styles.donationInfoPlaceholder}>
                   {t('donationPosts.donationPoint')}
                 </Text>
               </View>
               <TouchableOpacity onPress={() => { openMapLocation({ location: post.location }) }}>
-                <Text style={[styles.description, styles.link]}>{post.location}</Text>
+                <Text variant="body" style={[styles.description, styles.link]}>{post.location}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -297,45 +297,45 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             <View style={styles.infoSection}>
               <View style={styles.infoHeader}>
                 <Ionicons name="time-outline" size={16} color={theme.colors.textTertiary} />
-                <Text style={styles.donationInfoPlaceholder}>
+                <Text variant="bodySmall" style={styles.donationInfoPlaceholder}>
                   {t('donationPosts.timeDate')}
                 </Text>
               </View>
-              <Text style={styles.description}>{formatDateTime(post.donationDateTime)}</Text>
+              <Text variant="body" style={styles.description}>{formatDateTime(post.donationDateTime)}</Text>
             </View>
           </View>
         </View>
         {post.contactNumber !== '' && showContactNumber
           && <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>
+            <Text variant="bodySmall" style={styles.donationInfoPlaceholder}>
               {t('donationPosts.contactNumber')}
             </Text>
-            <Text style={styles.description}>{post.contactNumber}</Text>
+            <Text variant="body" style={styles.description}>{post.contactNumber}</Text>
           </View>
         }
         {post.patientName !== '' && showPatientName
           && <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>
+            <Text variant="bodySmall" style={styles.donationInfoPlaceholder}>
               {t('donationPosts.nameOfThePatient')}
             </Text>
-            <Text style={styles.description}>{post.patientName}</Text>
+            <Text variant="body" style={styles.description}>{post.patientName}</Text>
           </View>
         }
 
         {post.shortDescription !== '' && showDescription
           && <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>
+            <Text variant="bodySmall" style={styles.donationInfoPlaceholder}>
               {t('donationPosts.shortDescription')}
             </Text>
-            <Text style={styles.description}>{post.shortDescription}</Text>
+            <Text variant="body" style={styles.description}>{post.shortDescription}</Text>
           </View>
         }
         {post.transportationInfo !== '' && showTransportInfo
           && <View style={styles.descriptionContainer}>
-            <Text style={styles.donationInfoPlaceholder}>
+            <Text variant="bodySmall" style={styles.donationInfoPlaceholder}>
               {t('donationPosts.transportationFacilityForTheDonor')}
             </Text>
-            <Text style={styles.description}>{post.transportationInfo}</Text>
+            <Text variant="body" style={styles.description}>{post.transportationInfo}</Text>
           </View>
         }
       </View>
@@ -344,14 +344,14 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
         && post.acceptedDonors.length > 0
         && showPostUpdatedOption
         && <>
-          <Text style={styles.bloodAmount}>Request Update</Text>
+          <Text variant="body" style={styles.bloodAmount}>Request Update</Text>
           <View style={[styles.bloodInfoWrapper, styles.postUpdate]}>
             <Ionicons name='time-outline' size={20} color={theme.colors.textTertiary} />
             <View>
-              <Text style={styles.donationInfoPlaceholder}>
+              <Text variant="bodySmall" style={styles.donationInfoPlaceholder}>
                 {t('donationPosts.numberOfDonors')}
               </Text>
-              <Text style={styles.bloodAmount}>
+              <Text variant="body" style={styles.bloodAmount}>
                 {post.acceptedDonors.length} {t('donationPosts.donorsAcceptedYourRequest')}
               </Text>
             </View>
@@ -387,12 +387,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginBottom: spacing.md
   },
   userName: {
-    fontWeight: 'bold',
-    fontSize: 16
+    fontWeight: 'bold'
   },
   postTime: {
-    color: theme.colors.textTertiary,
-    fontSize: 12
+    color: theme.colors.textTertiary
   },
   menuContainer: {
     position: 'relative'
@@ -427,8 +425,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderBottomWidth: 0
   },
   dropdownText: {
-    color: theme.colors.textPrimary,
-    fontSize: 14
+    color: theme.colors.textPrimary
   },
   buttonDisabled: {
     opacity: 0.5
@@ -465,11 +462,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginLeft: spacing.sm
   },
   lookingForText: {
-    fontSize: 13,
     color: theme.colors.textSecondary
   },
   bloodAmount: {
-    fontSize: 15,
     fontWeight: '500'
   },
   urgentBadge: {
@@ -483,7 +478,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   urgentText: {
     color: theme.colors.textPrimary,
     fontWeight: '600',
-    fontSize: 12,
     marginLeft: spacing.xs
   },
   locationTimeContainer: {
@@ -507,7 +501,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     marginBottom: spacing.xs
   },
   donationInfoPlaceholder: {
-    fontSize: 14,
     color: theme.colors.textSecondary
   },
   descriptionContainer: {
@@ -516,7 +509,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderTopColor: theme.colors.border
   },
   description: {
-    fontSize: 16,
     marginTop: spacing.xs
   },
   buttonContainer: {

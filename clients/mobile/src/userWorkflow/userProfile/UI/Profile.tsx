@@ -48,7 +48,7 @@ const Profile: React.FC = () => {
     isLast: boolean = false): JSX.Element => (
     <View style={[styles.row, isLast && styles.lastRow]}>
       <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value}>{value as string}</Text>
+      <Text variant="bodySmall" style={styles.value}>{value as string}</Text>
     </View>
   )
 

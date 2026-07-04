@@ -34,7 +34,7 @@ export default function ForgotPassword(): JSX.Element {
         error={errors.email}
       />
       <View style={styles.errorContainer}>
-        {error !== '' && <Text style={styles.error}>{error}</Text>}
+        {error !== '' && <Text variant="caption" style={styles.error}>{error}</Text>}
       </View>
       <View style={{ marginTop: spacing.lg }}>
         <Button
@@ -55,7 +55,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   error: {
     paddingVertical: spacing.md,
     color: theme.colors.primary,
-    fontSize: theme.typography.errorFontSize,
     textAlign: 'center'
   }
 })

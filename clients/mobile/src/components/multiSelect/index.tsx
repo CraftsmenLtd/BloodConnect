@@ -182,7 +182,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
             style={styles.option}
             onPress={() => { handleSelect(item) }}
           >
-            <Text style={styles.optionText}>{item.label}</Text>
+            <Text variant="body" style={styles.optionText}>{item.label}</Text>
             {selectedValues.includes(item.value) && (
               <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
             )}
@@ -216,7 +216,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         activeOpacity={1}
       >
         <View style={styles.input}>
-          <Text style={styles.placeholder}>{placeholder}</Text>
+          <Text variant="body" style={styles.placeholder}>{placeholder}</Text>
         </View>
         <Ionicons
           name={isVisible ? 'chevron-up' : 'chevron-down'}
@@ -226,7 +226,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
       </TouchableOpacity>
 
       {(minRequiredLabel !== null && selectedValues.length === 0)
-        && <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
+        && <Text variant="caption" style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
       }
       {error !== null && <Text style={styles.error}>{error}</Text>}
 
@@ -282,7 +282,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     backgroundColor: theme.colors.surface
   },
   placeholder: {
-    fontSize: 16,
     color: theme.colors.textTertiary
   },
   input: {
@@ -311,7 +310,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     marginRight: spacing.xs
   },
   minRequiredLabel: {
-    fontSize: 12,
     color: theme.colors.textSecondary,
     marginTop: spacing.xs
   },
@@ -361,7 +359,6 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     borderBottomColor: theme.colors.border
   },
   optionText: {
-    fontSize: 16,
     color: theme.colors.textPrimary
   }
 })

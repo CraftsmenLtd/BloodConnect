@@ -32,17 +32,17 @@ const AboutPage: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.logoTitleContainer}>
         <Image source={require('../../../assets/icon.png')} style={styles.logo} />
-        <Text style={styles.title}>BloodConnect</Text>
+        <Text variant="h1" style={styles.title}>BloodConnect</Text>
       </View>
 
       <View style={styles.fixedDescriptionContainer}>
-        <Text style={styles.description}>{displayedText}</Text>
+        <Text variant="body" style={styles.description}>{displayedText}</Text>
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>© 2023-{currentYear}</Text>
+        <Text variant="bodySmall" style={styles.footerText}>© 2023-{currentYear}</Text>
         <Image source={require('../../../assets/craftsmen-logo.png')} style={styles.companyLogo} />
-        <Text style={styles.footerText}>Craftsmen Ltd.</Text>
+        <Text variant="bodySmall" style={styles.footerText}>Craftsmen Ltd.</Text>
       </View>
     </View>
   )
@@ -69,8 +69,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     borderRadius: radius.xl
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
     color: theme.colors.primary,
     marginTop: spacing.md
   },
@@ -82,7 +80,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     zIndex: 0
   },
   description: {
-    fontSize: 20,
     textAlign: 'justify',
     color: theme.colors.textSecondary
   },
@@ -94,7 +91,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     justifyContent: 'center'
   },
   footerText: {
-    fontSize: 14,
     color: theme.colors.textSecondary,
     marginHorizontal: spacing.xs
   },
