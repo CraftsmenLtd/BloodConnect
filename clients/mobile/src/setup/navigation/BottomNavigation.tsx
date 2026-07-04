@@ -20,7 +20,6 @@ const BottomNavigation = () => {
         headerStyle: { backgroundColor: colors.surface },
         headerTintColor: colors.textPrimary,
         headerTitleStyle: {
-          fontSize: 20,
           color: colors.textPrimary
         },
         sceneStyle: { backgroundColor: colors.background },

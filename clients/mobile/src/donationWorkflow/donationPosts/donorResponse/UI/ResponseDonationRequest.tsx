@@ -6,11 +6,11 @@ import type {
 import {
   View,
   Image,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Linking
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text } from '../../../../components/text/AppText'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
@@ -48,7 +48,7 @@ const ResponseDonationRequest = () => {
   )
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.card}>
           <Text variant="body" style={styles.header}>Blood Request</Text>

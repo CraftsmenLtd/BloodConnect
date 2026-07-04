@@ -1,6 +1,6 @@
 import React from 'react'
 import type { ImageSourcePropType, StyleProp, ViewStyle, TextStyle } from 'react-native'
-import { TouchableOpacity, StyleSheet, Image, View, ActivityIndicator } from 'react-native'
+import { Pressable, StyleSheet, Image, View, ActivityIndicator } from 'react-native'
 import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -21,14 +21,22 @@ export const SocialButton = ({ text, onPress, icon, loading, buttonStyle, textSt
   const isLoading = loading ?? false
 
   return (
-    <TouchableOpacity style={[styles.socialButton, buttonStyle]} onPress={onPress} disabled={loading}>
+    <Pressable
+      style={({ pressed }) => [
+        styles.socialButton,
+        buttonStyle,
+        pressed && !isLoading && styles.pressed
+      ]}
+      onPress={onPress}
+      disabled={loading}
+    >
       <View style={styles.socialButtonContent}>
         <Image source={icon} style={styles.socialIcon} />
         {isLoading
           ? (<ActivityIndicator size="small" color={theme.colors.primary}/>)
           : (<Text variant="body" style={[styles.socialButtonText, textStyle]}>{text}</Text>)}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   )
 }
 
@@ -57,5 +65,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   socialButtonText: {
     color: theme.colors.textPrimary,
     fontWeight: '500'
+  },
+  pressed: {
+    opacity: 0.9,
+    transform: [{ scale: 0.98 }]
   }
 })

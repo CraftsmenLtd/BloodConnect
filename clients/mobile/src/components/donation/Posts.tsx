@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View } from 'react-native'
+import { FlatList, StyleSheet, View, LayoutAnimation, Platform, UIManager } from 'react-native'
 import type { ListRenderItem } from 'react-native'
 import { Text } from '../text/AppText'
 import type { PostCardDisplayOptions } from './PostCard'
@@ -6,9 +6,13 @@ import { PostCard } from './PostCard'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
-import React, { useCallback } from 'react'
+import React, { useCallback, useRef } from 'react'
 import StateAwareRenderer from '../StateAwareRenderer'
 import { spacing } from '../../setup/theme/tokens'
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental !== undefined) {
+  UIManager.setLayoutAnimationEnabledExperimental(true)
+}
 
 type PostsProps = {
   updatePost?: (donationData: DonationData) => void;
@@ -34,6 +38,13 @@ const Posts: React.FC<PostsProps> = ({
   emptyDataMessage
 }) => {
   const styles = createStyles(useTheme())
+
+  // Ease list items in/out when posts are added/removed instead of popping.
+  const prevCountRef = useRef(donationPosts.length)
+  if (prevCountRef.current !== donationPosts.length) {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+    prevCountRef.current = donationPosts.length
+  }
 
   const renderItem = useCallback<ListRenderItem<DonationData>>(({ item }) => (
     <PostCard

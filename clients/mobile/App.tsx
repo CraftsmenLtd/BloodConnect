@@ -35,8 +35,11 @@ import React, { useEffect } from 'react'
 
 const ThemedStatusBar = () => {
   const theme = useTheme()
+  const isDark = useIsDark()
 
-  return <StatusBar hidden={false} barStyle='light-content' backgroundColor={theme.colors.primary} />
+  // Match the status bar to the header surface and adapt the icon contrast to the theme
+  // (light-content was white-on-white over the white header on iOS light mode).
+  return <StatusBar hidden={false} barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.surface} />
 }
 
 const AppNavigator = ({ navigationRef }: { navigationRef: NavigationContainerRefWithCurrent<RootStackParamList> }) => {

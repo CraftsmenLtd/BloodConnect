@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Image, StyleSheet, useWindowDimensions } from 'react-native'
+import { Image, StyleSheet, useWindowDimensions } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text } from '../components/text/AppText'
 import { LanguageSwitcher } from '../components/languageSwitcher'
 import { languageOptions } from '../setup/constant/language'
@@ -20,7 +21,7 @@ const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
   const styles = createStyles(useTheme())
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <LanguageSwitcher
         languages={languageOptions}
         position="bottom-right"
@@ -40,7 +41,7 @@ const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
         text={t('common.logIn')}
         onPress={() => { navigation.navigate(SCREENS.LOGIN) }}
         buttonStyle={styles.loginButton} textStyle={styles.loginText} />
-    </View>
+    </SafeAreaView>
   )
 }
 

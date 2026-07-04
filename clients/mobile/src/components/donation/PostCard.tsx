@@ -8,6 +8,7 @@ import type {
 import {
   View,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   Modal,
   TouchableWithoutFeedback,
@@ -187,18 +188,18 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
             {showOptions
               && <View style={styles.menuContainer}>
                 <View ref={iconRef} collapsable={false}>
-                  <TouchableOpacity
+                  <Pressable
                     onPress={handleToggleDropdown}
-                    style={styles.iconContainer}
+                    style={({ pressed }) => [styles.iconContainer, pressed && styles.iconPressed]}
                   >
                     <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.textTertiary} />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
 
                 <Modal
                   visible={showDropdown}
                   transparent
-                  animationType="none"
+                  animationType="fade"
                   onRequestClose={handleCloseDropdown}
                 >
                   <TouchableWithoutFeedback onPress={handleCloseDropdown}>
@@ -398,6 +399,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   iconContainer: {
     padding: spacing.sm,
     marginRight: -8
+  },
+  iconPressed: {
+    opacity: 0.6
   },
   modalOverlay: {
     flex: 1,

@@ -1,6 +1,6 @@
 import React from 'react'
 import type { StyleProp, ViewStyle, TextStyle } from 'react-native'
-import { TouchableOpacity, StyleSheet, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
@@ -21,11 +21,12 @@ export const Button = ({ text, onPress, buttonStyle, textStyle, loading = false,
   const isDisabled = disabled || loading
 
   return (
-    <TouchableOpacity
-      style={[
+    <Pressable
+      style={({ pressed }) => [
         styles.button,
         buttonStyle,
-        disabled && styles.disabledButton
+        disabled && styles.disabledButton,
+        pressed && !isDisabled && styles.pressed
       ]}
       onPress={onPress}
       disabled={isDisabled}
@@ -34,7 +35,7 @@ export const Button = ({ text, onPress, buttonStyle, textStyle, loading = false,
         {loading && <View style={styles.loaderOverlay}><Loader size='small' /></View>}
         <Text style={[styles.buttonText, textStyle, disabled && styles.disabledText]}>{text}</Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   )
 }
 
@@ -65,6 +66,10 @@ const createStyles = (theme: Theme) =>
     },
     disabledText: {
       color: theme.colors.textTertiary
+    },
+    pressed: {
+      opacity: 0.9,
+      transform: [{ scale: 0.98 }]
     }
   })
 
