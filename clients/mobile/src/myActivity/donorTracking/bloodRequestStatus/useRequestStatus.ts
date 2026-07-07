@@ -14,6 +14,9 @@ const useRequestStatus = (): unknown => {
   const { executeFunction, loading: completeDonationLoading, error: completeDonationError } = useCompleteDonation()
 
   const [, loading, bloodRequest, error] = useFetchData(async() => {
+    if (!requestPostId || !createdAt) {
+      throw new Error('Missing some required data. Please try again')
+    }
     const response = await fetchSingleDonationPost(requestPostId, createdAt, fetchClient)
     if (response.status === 200 && response.data !== undefined) {
       return formatDonations([response.data])[0]
