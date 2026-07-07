@@ -17,7 +17,8 @@ type ButtonProps = {
 }
 
 export const Button = ({ text, onPress, buttonStyle, textStyle, loading = false, disabled = false }: ButtonProps) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
   const isDisabled = disabled || loading
 
   return (
@@ -32,8 +33,8 @@ export const Button = ({ text, onPress, buttonStyle, textStyle, loading = false,
       disabled={isDisabled}
     >
       <View style={styles.buttonContent}>
-        {loading && <View style={styles.loaderOverlay}><Loader size='small' /></View>}
-        <Text style={[styles.buttonText, textStyle, disabled && styles.disabledText]}>{text}</Text>
+        <Text style={[styles.buttonText, textStyle, disabled && styles.disabledText, loading && styles.hiddenText]}>{text}</Text>
+        {loading && <View style={styles.loaderOverlay}><Loader size='small' color={theme.colors.onPrimary} /></View>}
       </View>
     </Pressable>
   )
@@ -54,7 +55,15 @@ const createStyles = (theme: Theme) =>
     },
     loaderOverlay: {
       position: 'absolute',
-      left: 50
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    hiddenText: {
+      opacity: 0
     },
     buttonText: {
       color: theme.colors.onPrimary,
