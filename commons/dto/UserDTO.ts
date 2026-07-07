@@ -21,6 +21,7 @@ export type UserDetailsDTO = {
   availableForDonation: boolean;
   NIDFront: string;
   NIDBack: string;
+  profilePicture?: string;
   lastVaccinatedDate?: string;
   createdAt: string;
   updatedAt?: string;

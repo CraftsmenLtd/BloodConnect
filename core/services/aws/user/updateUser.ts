@@ -63,7 +63,8 @@ async function updateUserLambda(
         lastVaccinatedDate: event.lastVaccinatedDate
       }),
       ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
-      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack })
+      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
+      ...(event.profilePicture !== undefined && { profilePicture: event.profilePicture })
     }
 
     await userService.updateUserAttributes(

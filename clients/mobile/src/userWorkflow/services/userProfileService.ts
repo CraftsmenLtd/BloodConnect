@@ -65,6 +65,28 @@ Promise<APIResponse> => {
   }
 }
 
+type UploadUrlResponse = {
+  uploadUrl: string;
+  fileUrl: string;
+}
+
+export const requestProfilePictureUploadUrl = async(
+  httpClient: HttpClient,
+  contentType: string
+): Promise<UploadUrlResponse> => {
+  try {
+    const response = await httpClient.post<UploadUrlResponse>(
+      '/users/profile-picture-upload-url',
+      { contentType }
+    )
+
+    return { uploadUrl: response.uploadUrl, fileUrl: response.fileUrl }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
+    throw new Error(errorMessage)
+  }
+}
+
 export const updateUserProfile = async(payload: Record<string, unknown>, httpClient: HttpClient):
 Promise<APIResponse> => {
   try {

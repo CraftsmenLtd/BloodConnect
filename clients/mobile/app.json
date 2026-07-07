@@ -73,6 +73,12 @@
           }
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow BloodConnect to access your photos so you can set a profile picture."
+        }
+      ],
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
       "@maplibre/maplibre-react-native"

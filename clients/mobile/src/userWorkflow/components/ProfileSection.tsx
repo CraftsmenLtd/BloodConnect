@@ -1,18 +1,22 @@
 import React from 'react'
 import type { StyleProp, ImageStyle } from 'react-native'
-import { View, Image, StyleSheet, Pressable } from 'react-native'
+import { View, Image, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
 import { Text } from '../../components/text/AppText'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
-import { COMMON_URLS } from '../../setup/constant/commonUrls'
+import InitialsAvatar from '../../components/avatar/InitialsAvatar'
+import { useProfileAvatarUri } from '../hooks/useProfileAvatarUri'
 import { spacing, radius } from '../../setup/theme/tokens'
+
+const AVATAR_SIZE = 56
 
 type UserData = {
   name: string;
   location: string;
   age: number;
   isEditing?: boolean;
+  uploading?: boolean;
   onImageUpload?: () => void;
 }
 
@@ -22,18 +26,30 @@ const ProfileSection: React.FC<UserData> = (
     location,
     age,
     isEditing = false,
+    uploading = false,
     onImageUpload
   }) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
+  const avatarUri = useProfileAvatarUri()
 
   return (
     <View style={styles.profileSection}>
       <View style={styles.imageOuterBorder}>
         <View style={styles.imageInnerBorder}>
-          <Image
-            style={styles.profileImage as StyleProp<ImageStyle>}
-            source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-          />
+          {avatarUri !== undefined
+            ? (
+              <Image
+                style={styles.profileImage as StyleProp<ImageStyle>}
+                source={{ uri: avatarUri }}
+              />
+            )
+            : <InitialsAvatar name={name} size={AVATAR_SIZE} />}
+          {uploading && (
+            <View style={styles.uploadingOverlay}>
+              <ActivityIndicator size="small" color={theme.colors.onPrimary} />
+            </View>
+          )}
           {isEditing && (
             <Pressable style={styles.cameraIconContainer} onPress={onImageUpload}>
               <View style={styles.cameraIconWrapper}>
@@ -86,9 +102,16 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     position: 'relative'
   },
   profileImage: {
-    width: 56,
-    height: 56,
-    borderRadius: radius.xl
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: radius.pill
+  },
+  uploadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.backdrop
   },
   cameraIconContainer: {
     position: 'absolute',

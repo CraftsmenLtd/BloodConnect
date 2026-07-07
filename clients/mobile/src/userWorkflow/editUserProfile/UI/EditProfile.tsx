@@ -20,6 +20,7 @@ import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import ProfileSection from '../../components/ProfileSection'
 import createStyles from './createStyle'
 import { useEditProfile } from '../hooks/useEditProfile'
+import { useProfilePictureUpload } from '../../hooks/useProfilePictureUpload'
 import { calculateBMI, getBMICategory } from '../../../utility/bmi'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
@@ -39,6 +40,7 @@ const EditProfile = () => {
     handleSave,
     setPendingAvailableForDonationSave
   } = useEditProfile()
+  const { uploading, pickAndUpload } = useProfilePictureUpload()
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(profileData?.locations)
   const scrollRef = useRef<ScrollView>(null)
   const locationsRef = useRef<View>(null)
@@ -80,6 +82,8 @@ const EditProfile = () => {
         location={profileData?.location}
         age={profileData.age}
         isEditing={true}
+        uploading={uploading}
+        onImageUpload={() => { void pickAndUpload() }}
       />
 
       <View style={styles.gradientTop} />

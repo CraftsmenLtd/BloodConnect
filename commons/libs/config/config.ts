@@ -27,6 +27,11 @@ type AllConfig = {
   // Public post feed
   feedMaxRadiusKm: number;
   feedDefaultRadiusKm: number;
+
+  // Profile picture upload
+  avatarBucketName: string;
+  avatarCdnBaseUrl: string;
+  avatarObjectPrefix: string;
 }
 
 type ConfigSubset<T> = { [K in keyof T]: K extends keyof AllConfig ? AllConfig[K] : never }
@@ -72,7 +77,12 @@ export class Config<T extends ConfigSubset<T>> {
       feedMaxRadiusKm:
         Number(process.env.FEED_MAX_RADIUS_KM) as AllConfig['feedMaxRadiusKm'],
       feedDefaultRadiusKm:
-        Number(process.env.FEED_DEFAULT_RADIUS_KM) as AllConfig['feedDefaultRadiusKm']
+        Number(process.env.FEED_DEFAULT_RADIUS_KM) as AllConfig['feedDefaultRadiusKm'],
+
+      avatarBucketName: process.env.AVATAR_BUCKET_NAME as AllConfig['avatarBucketName'],
+      avatarCdnBaseUrl: process.env.AVATAR_CDN_BASE_URL as AllConfig['avatarCdnBaseUrl'],
+      avatarObjectPrefix:
+        (process.env.AVATAR_OBJECT_PREFIX ?? 'avatars') as AllConfig['avatarObjectPrefix']
     }
   }
 

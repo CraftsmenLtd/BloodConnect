@@ -41,6 +41,7 @@ export type UpdateUserAttributes = {
   availableForDonation?: boolean;
   NIDFront?: string;
   NIDBack?: string;
+  profilePicture?: string;
   lastDonationDate?: string;
   lastVaccinatedDate?: string;
 }

@@ -107,6 +107,7 @@ resource "aws_cognito_identity_provider" "google" {
     name           = "name"
     phone_number   = "phone_number"
     email_verified = "email_verified"
+    picture        = "picture"
     username       = "sub"
   }
 }

@@ -29,6 +29,7 @@ const defaultProfile: UserProfile = {
   lastVaccinatedDate: '',
   NIDFront: '',
   NIDBack: '',
+  profilePicture: '',
   phoneNumbers: [],
   preferredDonationLocations: [],
   locations: []
@@ -62,6 +63,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       lastVaccinatedDate: profile.lastVaccinatedDate ?? '',
       NIDFront: profile.NIDFront ?? '',
       NIDBack: profile.NIDBack ?? '',
+      profilePicture: profile.profilePicture ?? '',
       phoneNumbers: profile.phoneNumbers ?? [],
       preferredDonationLocations: profile.preferredDonationLocations?.map((location) => ({
         area: location.area ?? '',
