@@ -74,7 +74,7 @@ step definitions glue them via cucumber-js.
 - `@aws-sdk/client-cognito-identity-provider` — public auth calls (`SignUp`, `ConfirmSignUp`, `InitiateAuth`).
   These are the app's own auth operations, **not** backend AWS management — consistent with "no direct AWS".
 - HTTP: native `fetch` (Node ≥ 20 — already required) or `axios`; no other runtime needed.
-- Assertions: `chai` or Node's built-in `node:assert/strict` (kept off Jest so the two runners stay separate).
+- Assertions: [chai](https://www.chaijs.com/) or Node's built-in `node:assert/strict` (kept off Jest so the two runners stay separate).
 - TS execution: `ts-node`/`tsx` register for cucumber-js.
 
 ### 2. Configuration (`e2e/support/config.ts`)
@@ -195,7 +195,6 @@ if we want typed payloads.
 ## Out of scope (proposed follow-ups)
 - Mobile (React Native) e2e — needs Detox/Maestro/Appium; cucumber-js/Playwright can't drive the RN app.
 - Web-dashboard UI e2e (organization/monitoring) — separate track (would favor Playwright).
-- Donor-search wave / EventBridge-scheduler deep scenarios beyond the accept-notification hop.
 
 ## Note on repo AIDLC workflow
 `CLAUDE.md` defines a heavier staged workflow (audit.md, aidlc-state.md, requirements/user-stories docs).
