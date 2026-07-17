@@ -45,10 +45,14 @@ async function updateUserLambda(
   try {
     const userAttributes: UpdateUserAttributes = {
       userId: event.userId,
-      availableForDonation:
-        `${event.availableForDonation}` === 'true' || event.availableForDonation === true
-          ? true
-          : false,
+      // Spread conditionally like every other field: an omitted flag must keep the
+      // profile's current value (via the merge in updateUserAttributes), not force
+      // the donor to unavailable. The VTL delivers booleans as strings, hence the
+      // string comparison.
+      ...(event.availableForDonation !== undefined && {
+        availableForDonation:
+          `${event.availableForDonation}` === 'true' || event.availableForDonation === true
+      }),
       ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
       ...(isValidIsoDate(event.dateOfBirth) && { dateOfBirth: event.dateOfBirth }),
       ...(event.gender !== undefined && { gender: event.gender }),
