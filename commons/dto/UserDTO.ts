@@ -42,5 +42,5 @@ export type LocationDTO = {
   createdAt: string;
   bloodGroup: BloodGroup;
   availableForDonation: boolean;
-  lastVaccinatedDate: string;
+  lastVaccinatedDate?: string;
 }
