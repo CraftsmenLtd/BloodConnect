@@ -158,6 +158,61 @@ describe('UserService Tests', () => {
     )
   })
 
+  describe('updateUser countryCode handling', () => {
+    const baseUpdateAttributes = {
+      userId: '12345',
+      name: 'Updated Ebrahim'
+    }
+    const locationServiceMock = () =>
+      ({
+        updateUserLocation: jest.fn().mockResolvedValue(undefined)
+      } as unknown as jest.Mocked<LocationService>)
+
+    test('should keep the existing profile countryCode even when the request sends another', async() => {
+      userService.getUser = jest.fn().mockResolvedValue({ id: '12345', countryCode: 'BD' })
+      userRepository.update.mockResolvedValue(mockUserWithStringId)
+
+      await userService.updateUser(
+        { ...baseUpdateAttributes, countryCode: 'US' } as UpdateUserAttributes,
+        locationServiceMock(),
+        minMonthsBetweenDonations
+      )
+
+      expect(userRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({ countryCode: 'BD' })
+      )
+    })
+
+    test('should fill a missing profile countryCode from the request', async() => {
+      userService.getUser = jest.fn().mockResolvedValue({ id: '12345' })
+      userRepository.update.mockResolvedValue(mockUserWithStringId)
+
+      await userService.updateUser(
+        { ...baseUpdateAttributes, countryCode: 'BD' } as UpdateUserAttributes,
+        locationServiceMock(),
+        minMonthsBetweenDonations
+      )
+
+      expect(userRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({ countryCode: 'BD' })
+      )
+    })
+
+    test('should omit countryCode entirely when neither profile nor request has one', async() => {
+      userService.getUser = jest.fn().mockResolvedValue({ id: '12345' })
+      userRepository.update.mockResolvedValue(mockUserWithStringId)
+
+      await userService.updateUser(
+        { ...baseUpdateAttributes } as UpdateUserAttributes,
+        locationServiceMock(),
+        minMonthsBetweenDonations
+      )
+
+      const updatedData = userRepository.update.mock.calls[0][0]
+      expect('countryCode' in updatedData).toBe(false)
+    })
+  })
+
   describe('getAppUserWelcomeMail', () => {
     test('should get welcome mail message correctly', () => {
       const userName = 'Suzan'

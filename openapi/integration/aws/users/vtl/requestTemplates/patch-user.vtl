@@ -2,7 +2,8 @@
 {
   "userId": "$context.authorizer.claims['custom:userId']",
   "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
-  "apiGwRequestId": "$context.requestId"
+  "apiGwRequestId": "$context.requestId",
+  "countryCode": "$input.params().header.get('CloudFront-Viewer-Country')"
   #if($inputRoot.phoneNumbers != '')
     , "phoneNumbers": $inputRoot.phoneNumbers
   #end

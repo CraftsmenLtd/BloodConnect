@@ -30,6 +30,7 @@ export type CreateUserAttributes = {
 
 export type UpdateUserAttributes = {
   userId: string;
+  countryCode?: string;
   bloodGroup?: BloodGroup;
   phoneNumbers?: string[];
   height?: string;

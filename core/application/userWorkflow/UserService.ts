@@ -91,11 +91,19 @@ export class UserService {
   ): Promise<void> {
     const { userId, preferredDonationLocations } = userAttributes
     const userProfile = await this.getUser(userId)
+    // countryCode is geo-derived at signup and stays fixed afterwards. The
+    // incoming value (viewer-country header) only fills profiles that never
+    // received one, so those users can save locations again.
+    const existingCountryCode = userProfile.countryCode
+    const countryCode = existingCountryCode !== undefined && existingCountryCode !== ''
+      ? existingCountryCode
+      : userAttributes.countryCode
+    const { countryCode: _requestCountryCode, ...remainingAttributes } = userAttributes
     const updateData: Partial<UserDetailsDTO> = await this.updateUserProfile(
       userId,
       {
-        ...userAttributes,
-        countryCode: userProfile.countryCode
+        ...remainingAttributes,
+        ...(countryCode !== undefined && countryCode !== '' && { countryCode })
       },
       minMonthsBetweenDonations
     )
