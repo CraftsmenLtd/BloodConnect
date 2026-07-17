@@ -61,6 +61,7 @@ const SearchMultiSelect = ({
   const [options, setOptions] = useState<Option[]>(initialOptions)
   const [isLoading, setIsLoading] = useState(false)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const focusTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchInputRef = useRef<TextInput>(null)
   const requestIdRef = useRef(0)
 
@@ -73,6 +74,9 @@ const SearchMultiSelect = ({
   useEffect(() => () => {
     if (typingTimeoutRef.current !== null) {
       clearTimeout(typingTimeoutRef.current)
+    }
+    if (focusTimeoutRef.current !== null) {
+      clearTimeout(focusTimeoutRef.current)
     }
   }, [])
 
@@ -114,6 +118,9 @@ const SearchMultiSelect = ({
     if (typingTimeoutRef.current !== null) {
       clearTimeout(typingTimeoutRef.current)
     }
+    if (focusTimeoutRef.current !== null) {
+      clearTimeout(focusTimeoutRef.current)
+    }
     setIsLoading(false)
     setIsVisible('')
     Keyboard.dismiss()
@@ -123,6 +130,9 @@ const SearchMultiSelect = ({
     if (!multiSelect) {
       if (typingTimeoutRef.current !== null) {
         clearTimeout(typingTimeoutRef.current)
+      }
+      if (focusTimeoutRef.current !== null) {
+        clearTimeout(focusTimeoutRef.current)
       }
       setIsLoading(false)
       setValue(item.label)
@@ -200,7 +210,12 @@ const SearchMultiSelect = ({
         transparent
         visible={isVisible === name}
         onRequestClose={closeDropdown}
-        onShow={() => { searchInputRef.current?.focus() }}
+        onShow={() => {
+          if (focusTimeoutRef.current !== null) {
+            clearTimeout(focusTimeoutRef.current)
+          }
+          focusTimeoutRef.current = setTimeout(() => { searchInputRef.current?.focus() }, 200)
+        }}
         statusBarTranslucent
       >
         <TouchableOpacity style={styles.backdrop} onPress={closeDropdown} activeOpacity={1}>
