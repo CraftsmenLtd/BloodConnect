@@ -20,6 +20,9 @@ import DonationNotificationDynamoDbOperations from '../commons/ddbOperations/Don
 import UserDynamoDbOperations from '../commons/ddbOperations/UserDynamoDbOperations'
 import { LocationService } from 'core/application/userWorkflow/LocationService'
 import SQSOperations from '../commons/sqs/SQSOperations'
+import { ChatService } from '../../../application/chatWorkflow/ChatService'
+import ChatDynamoDbOperations from '../commons/ddbOperations/ChatDynamoDbOperations'
+import ChatRateLimitDynamoDbOperations from '../commons/ddbOperations/ChatRateLimitDynamoDbOperations'
 
 const config = new Config<{
   dynamodbTableName: string;
@@ -48,6 +51,14 @@ const locationDynamoDbOperations = new LocationDynamoDbOperations(
   config.dynamodbTableName,
   config.awsRegion
 )
+const chatDynamoDbOperations = new ChatDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const chatRateLimitDynamoDbOperations = new ChatRateLimitDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
 
 
 async function completeDonationRequest(
@@ -58,7 +69,16 @@ async function completeDonationRequest(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
-  const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
+  const chatService = new ChatService(
+    chatDynamoDbOperations,
+    chatRateLimitDynamoDbOperations,
+    httpLogger
+  )
+  const bloodDonationService = new BloodDonationService(
+    bloodDonationDynamoDbOperations,
+    httpLogger,
+    chatService
+  )
   const notificationService = new NotificationService(notificationDynamoDbOperations, httpLogger)
   const userService = new UserService(userDynamoDbOperations, httpLogger)
   const donationRecordService = new DonationRecordService(donationRecordDynamoDbOperations, httpLogger)

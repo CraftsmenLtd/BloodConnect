@@ -46,6 +46,11 @@ export default ({ config }: { config: ExpoConfig }): ExpoConfig => {
     ...config,
     extra: {
       ...ENV_VARS[environmentConfigs.APP_ENV],
+      // Optional (not in the required env set): chat is gated by EXPO_PUBLIC_CHAT_ENABLED, so a build
+      // without a WebSocket endpoint must still succeed. createChatWebSocketClient returns null when unset.
+      WEBSOCKET_URL: process.env.WEBSOCKET_URL,
+      // Build-time rollout flag: gates chat routes and entry points (see isChatEnabled).
+      CHAT_ENABLED: process.env.EXPO_PUBLIC_CHAT_ENABLED,
       eas: {
         projectId: environmentConfigs.EAS_PROJECT_ID?.trim()
       }

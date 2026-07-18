@@ -8,6 +8,13 @@ resource "aws_dynamodb_table" "blood_connect_data" {
   stream_enabled   = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
 
+  # 90-day purge of chat messages and rate-limit counter items (which carry a `ttl` epoch-seconds
+  # attribute). No new GSI is required: chat channel listing uses base-table membership items.
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
+
   attribute {
     name = "PK"
     type = "S"

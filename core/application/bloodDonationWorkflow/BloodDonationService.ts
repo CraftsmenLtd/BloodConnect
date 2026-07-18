@@ -33,11 +33,15 @@ import { NotificationStatus, NotificationType } from '../../../commons/dto/Notif
 import type { UpdateUserAttributes } from '../userWorkflow/Types'
 import type { LocationService } from '../userWorkflow/LocationService'
 import type { QueueModel } from '../models/queue/QueueModel'
+import type { ChatService } from '../chatWorkflow/ChatService'
 
 export class BloodDonationService {
   constructor(
     protected readonly bloodDonationRepository: BloodDonationRepository,
-    protected readonly logger: Logger
+    protected readonly logger: Logger,
+    // Optional so existing call sites keep working; supplied by the handlers that drive terminal
+    // transitions, to lock the request's chat channels.
+    protected readonly chatService?: ChatService
   ) {}
 
   async createBloodDonation(
@@ -250,6 +254,12 @@ export class BloodDonationService {
     }
     this.logger.info('updating donation status')
     await this.bloodDonationRepository.update(updateData)
+
+    // Cancel/expire have no per-donor REMOVE event to drive the lock pipe, so lock all of the
+    // request's channels here. Completion locks per-donor in completeDonationRequest instead.
+    if (status === DonationStatus.CANCELLED || status === DonationStatus.EXPIRED) {
+      await this.chatService?.lockChannelsForRequest(seekerId, requestPostId)
+    }
   }
 
   async checkAndUpdateDonationStatus(
@@ -343,6 +353,10 @@ export class BloodDonationService {
         locationService,
         minMonthsBetweenDonations
       )
+
+      // Lock this donor's chat channel last, so chat-locking is ancillary to the core completion
+      // (per-donor; the request stays the same).
+      await this.chatService?.lockChannel(seekerId, requestPostId, donorId)
     }
 
     await Promise.allSettled(

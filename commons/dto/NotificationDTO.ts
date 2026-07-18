@@ -5,6 +5,7 @@ export enum NotificationType {
   BLOOD_REQ_POST = 'BLOOD_REQ_POST',
   REQ_ACCEPTED = 'REQ_ACCEPTED',
   REQ_IGNORED = 'REQ_IGNORED',
+  CHAT_MESSAGE = 'CHAT_MESSAGE',
   COMMON = 'COMMON'
 }
 export enum NotificationStatus {

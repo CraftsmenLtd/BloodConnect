@@ -19,6 +19,28 @@ import Profile from '../../userWorkflow/userProfile/UI/Profile'
 import EditProfile from '../../userWorkflow/editUserProfile/UI/EditProfile'
 import RequestStatusScreen from '../../myActivity/donorTracking/bloodRequestStatus/RequestStatusScreen'
 import DonorConfirmationScreen from '../../myActivity/donorTracking/donorConfirmation/DonorConfirmationScreen'
+import ChatInbox from '../../chat/ChatInbox'
+import ChatRoom from '../../chat/ChatRoom'
+import { isChatEnabled } from '../../chat/chatConfig'
+
+// Chat routes are only registered when the rollout flag is on, so a flag-off build exposes no chat
+// screens at all (entry-point buttons are gated by the same flag).
+const chatRoutes = isChatEnabled()
+  ? [
+    {
+      name: SCREENS.CHAT_INBOX,
+      component: ChatInbox,
+      options: { headerShown: true, headerTitle: 'Messages' },
+      protected: true
+    },
+    {
+      name: SCREENS.CHAT_ROOM,
+      component: ChatRoom,
+      options: { headerShown: true, headerTitle: 'Chat' },
+      protected: true
+    }
+  ]
+  : []
 
 export const routes = [
   {
@@ -140,5 +162,6 @@ export const routes = [
     component: SettingsPage,
     options: { headerShown: true, headerTitle: 'Settings' },
     protected: true
-  }
+  },
+  ...chatRoutes
 ]

@@ -8,11 +8,29 @@ import Posts from '../components/donation/Posts'
 import { useMyActivityContext } from './context/useMyActivityContext'
 import Toast from '../components/toast'
 import React from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { useUserProfile } from '../userWorkflow/context/UserProfileContext'
+import { isChatEnabled } from '../chat/chatConfig'
+import { buildChannelId } from '../../../../commons/dto/ChatDTO'
+import { SCREENS } from '../setup/constant/screens'
+import type { DonationData } from '../donationWorkflow/donationPosts/useDonationPosts'
+import type { MyActivityScreenNavigationProp } from '../setup/navigation/navigationTypes'
 
 const MyActivityTab = () => {
   const theme = useTheme()
   const { t } = useTranslation()
   const styles = createStyles(useTheme())
+  const navigation = useNavigation<MyActivityScreenNavigationProp>()
+  const { userProfile } = useUserProfile()
+
+  // The donor (current user) chats with the post's seeker about their own response.
+  const chatHandler = isChatEnabled()
+    ? (post: DonationData): void => {
+      navigation.navigate(SCREENS.CHAT_ROOM, {
+        channelId: buildChannelId(post.seekerId, post.requestPostId, userProfile.userId)
+      })
+    }
+    : undefined
   const {
     donationPosts,
     errorMessage,
@@ -80,6 +98,7 @@ const MyActivityTab = () => {
           errorMessage={myResponsesError}
           emptyDataMessage={t('donationPosts.emptyMyDonationPosts')}
           detailHandler={myResponsesDetailHandler}
+          chatHandler={chatHandler}
           displayOptions={{ showOptions: false, showButton: true, showStatus: true }}
           refreshControl={
             <RefreshControl

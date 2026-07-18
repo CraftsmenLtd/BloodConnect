@@ -27,6 +27,10 @@ type AllConfig = {
   // Public post feed
   feedMaxRadiusKm: number;
   feedDefaultRadiusKm: number;
+
+  // Chat WebSocket $connect authorizer
+  cognitoUserPoolId: string;
+  cognitoClientId: string;
 }
 
 type ConfigSubset<T> = { [K in keyof T]: K extends keyof AllConfig ? AllConfig[K] : never }
@@ -72,7 +76,10 @@ export class Config<T extends ConfigSubset<T>> {
       feedMaxRadiusKm:
         Number(process.env.FEED_MAX_RADIUS_KM) as AllConfig['feedMaxRadiusKm'],
       feedDefaultRadiusKm:
-        Number(process.env.FEED_DEFAULT_RADIUS_KM) as AllConfig['feedDefaultRadiusKm']
+        Number(process.env.FEED_DEFAULT_RADIUS_KM) as AllConfig['feedDefaultRadiusKm'],
+
+      cognitoUserPoolId: process.env.COGNITO_USER_POOL_ID as AllConfig['cognitoUserPoolId'],
+      cognitoClientId: process.env.COGNITO_CLIENT_ID as AllConfig['cognitoClientId']
     }
   }
 

@@ -1,0 +1,9 @@
+#set($inputRoot = $input.path('$'))
+{
+  "userId": "$context.authorizer.claims['custom:userId']",
+  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "apiGwRequestId": "$context.requestId",
+  "channelId": "$inputRoot.channelId"#if($inputRoot.limit),
+  "limit": $inputRoot.limit#end#if($inputRoot.exclusiveStartKey),
+  "exclusiveStartKey": $input.json('$.exclusiveStartKey')#end
+}

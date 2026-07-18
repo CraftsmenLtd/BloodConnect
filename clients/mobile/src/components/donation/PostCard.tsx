@@ -46,6 +46,8 @@ type PostCardProps = {
   updateHandler?: (donationData: DonationData) => void;
   detailHandler?: (donationData: DonationData) => void;
   cancelHandler?: (donationData: DonationData) => void;
+  // When provided (chat rollout on), renders a Chat button opening this post's channel.
+  chatHandler?: (donationData: DonationData) => void;
   isLoading?: boolean;
 } & PostCardDisplayOptions
 
@@ -59,6 +61,7 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
   updateHandler,
   detailHandler,
   cancelHandler,
+  chatHandler,
   showContactNumber = false,
   showDescription = true,
   showTransportInfo = false,
@@ -365,6 +368,14 @@ export const PostCard: React.FC<PostCardProps> = React.memo(({
           onPress={() => { detailHandler?.(post) }}
         />
       </View>}
+      {chatHandler !== undefined && <View style={styles.buttonContainer}>
+        <Button
+          text="Chat"
+          buttonStyle={styles.chatButtonStyle}
+          textStyle={styles.chatTextStyle}
+          onPress={() => { chatHandler(post) }}
+        />
+      </View>}
     </View>
   )
 })
@@ -532,6 +543,13 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   textStyle: {
     color: theme.colors.textPrimary
+  },
+  chatButtonStyle: {
+    paddingVertical: 10,
+    backgroundColor: theme.colors.primary
+  },
+  chatTextStyle: {
+    color: theme.colors.white
   }
 })
 

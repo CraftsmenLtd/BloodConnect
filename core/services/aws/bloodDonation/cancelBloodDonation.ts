@@ -12,6 +12,9 @@ import type { HttpLoggerAttributes } from '../commons/logger/HttpLogger'
 import { createHTTPLogger } from '../commons/logger/HttpLogger'
 import { UNKNOWN_ERROR_MESSAGE } from '../../../../commons/libs/constants/ApiResponseMessages'
 import { Config } from '../../../../commons/libs/config/config'
+import { ChatService } from '../../../application/chatWorkflow/ChatService'
+import ChatDynamoDbOperations from '../commons/ddbOperations/ChatDynamoDbOperations'
+import ChatRateLimitDynamoDbOperations from '../commons/ddbOperations/ChatRateLimitDynamoDbOperations'
 
 const config = new Config<{
   dynamodbTableName: string;
@@ -19,6 +22,14 @@ const config = new Config<{
 }>().getConfig()
 
 const bloodDonationDynamoDbOperations = new BloodDonationDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const chatDynamoDbOperations = new ChatDynamoDbOperations(
+  config.dynamodbTableName,
+  config.awsRegion
+)
+const chatRateLimitDynamoDbOperations = new ChatRateLimitDynamoDbOperations(
   config.dynamodbTableName,
   config.awsRegion
 )
@@ -31,7 +42,16 @@ async function cancelBloodDonation(
     event.apiGwRequestId,
     event.cloudFrontRequestId
   )
-  const bloodDonationService = new BloodDonationService(bloodDonationDynamoDbOperations, httpLogger)
+  const chatService = new ChatService(
+    chatDynamoDbOperations,
+    chatRateLimitDynamoDbOperations,
+    httpLogger
+  )
+  const bloodDonationService = new BloodDonationService(
+    bloodDonationDynamoDbOperations,
+    httpLogger,
+    chatService
+  )
   try {
     await bloodDonationService.updateDonationStatus(
       event.seekerId,
