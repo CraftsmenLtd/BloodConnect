@@ -45,13 +45,14 @@ const DonorProfile = () => {
 
     <View style={styles.detailsRow}>
       <Text variant="bodySmall" style={styles.detailsText}>
-        {donorProfile.weight && donorProfile.height
-          ? (() => {
-            const bmi = calculateBMI(donorProfile.weight, donorProfile.height)
+        {(() => {
+          const weight = donorProfile?.weight ?? 0
+          const height = donorProfile?.height ?? 0
+          if (weight === 0 || height === 0) return 'BMI: Not Available'
+          const bmi = calculateBMI(weight, height)
 
-            return `BMI: ${bmi} (${getBMICategory(bmi)})`
-          })()
-          : 'BMI: Not Available'}
+          return `BMI: ${bmi} (${getBMICategory(bmi)})`
+        })()}
       </Text>
     </View>
 
@@ -64,7 +65,7 @@ const DonorProfile = () => {
 
   return (
     <StateAwareRenderer
-      loading={loading} errorMessage={error} data={donorProfile} ViewComponent={ViewToRender()} />
+      loading={loading} errorMessage={error} data={donorProfile} ViewComponent={ViewToRender} />
   )
 }
 

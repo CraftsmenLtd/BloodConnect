@@ -14,7 +14,10 @@ type StateAwareRendererProps = {
   LoadingComponent?: React.ReactElement;
   ErrorComponent?: React.ReactElement;
   EmptyComponent?: React.ReactElement;
-  ViewComponent: React.ReactNode;
+  // Prefer the function form: it is invoked only after the loading, error and empty
+  // guards below have passed, so the view may assume `data` is present. Passing an
+  // already-built element means it is evaluated before those guards run.
+  ViewComponent: React.ReactNode | (() => React.ReactNode);
 }
 
 const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
@@ -50,7 +53,7 @@ const StateAwareRenderer: React.FC<StateAwareRendererProps> = ({
     return EmptyComponent ?? <Text variant="body" style={styles.messageText}>No items found.</Text>
   }
 
-  return <>{ViewComponent}</>
+  return <>{typeof ViewComponent === 'function' ? ViewComponent() : ViewComponent}</>
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
