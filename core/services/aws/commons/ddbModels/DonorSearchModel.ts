@@ -37,7 +37,16 @@ implements NosqlModel<DonorSearchFields>, DbModelDtoAdapter<DonorSearchDTO, Dono
 
   fromDto(donationDto: DonorSearchDTO): DonorSearchFields {
     const { seekerId, requestPostId, ...remainingDonationData } = donationDto
-    const postCreationDate = remainingDonationData.createdAt ?? new Date().toISOString()
+    const postCreationDate = remainingDonationData.createdAt
+    if (seekerId === undefined || seekerId === '') {
+      throw new Error('Cannot build donor search key: seekerId is missing')
+    }
+    if (requestPostId === undefined || requestPostId === '') {
+      throw new Error('Cannot build donor search key: requestPostId is missing')
+    }
+    if (postCreationDate === undefined || postCreationDate === '') {
+      throw new Error('Cannot build donor search key: createdAt is missing')
+    }
 
     const data: DonorSearchFields = {
       PK: `${DONOR_SEARCH_PK_PREFIX}#${seekerId}`,
