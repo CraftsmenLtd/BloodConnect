@@ -68,8 +68,8 @@
         {
           "android": {
             "minSdkVersion": 29,
-            "compileSdkVersion": 35,
-            "targetSdkVersion": 35
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36
           }
         }
       ],
@@ -81,7 +81,8 @@
       ],
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
-      "@maplibre/maplibre-react-native"
+      "@maplibre/maplibre-react-native",
+      "./plugins/withRestrictedResizability"
     ]
   }
 }
