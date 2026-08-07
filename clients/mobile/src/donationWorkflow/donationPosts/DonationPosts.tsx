@@ -6,7 +6,6 @@ import { useDonationPosts } from './useDonationPosts'
 import Header from './DonationHeader'
 import Posts from '../../components/donation/Posts'
 import type { BloodDonationRecord } from '../types'
-import { COMMON_URLS } from '../../setup/constant/commonUrls'
 
 export type DonationData = Omit<BloodDonationRecord, 'reqPostId' | 'latitude' | 'longitude'> & {
   requestPostId: string;
@@ -32,7 +31,6 @@ const DonationPosts = () => {
   return (
     <View style={styles.container}>
       <Header
-        profileImageUri={COMMON_URLS.PROFILE_AVATAR}
         title={t('donationPosts.bloodNeeded')}
         buttonLabel={t('donationPosts.createRequest')}
         onButtonPress={createPost}

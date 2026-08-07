@@ -1,4 +1,5 @@
 import React from 'react'
+import { Image } from 'react-native'
 import { render } from '@testing-library/react-native'
 import DonorProfile from '../../src/myActivity/donorProfile/DonorProfile'
 import useDonorProfile from '../../src/myActivity/donorProfile/useDonorProfile'
@@ -50,6 +51,46 @@ describe('DonorProfile', () => {
     expect(getByText('Failed to fetch donor profile.')).toBeTruthy()
   })
 
+  const loadedDonor = {
+    age: 30,
+    bloodGroup: 'O+',
+    donorName: 'Ebrahim Khan',
+    gender: 'male',
+    height: 5.9,
+    weight: 70,
+    profilePicture: '',
+    phoneNumbers: ['+8801834567890'],
+    preferredDonationLocations: [{ area: 'Banani, Dhaka' }]
+  }
+
+  test('should show the donor\'s uploaded picture when they have one', () => {
+    mockedUseDonorProfile.mockReturnValue(
+      donorProfileState({
+        donorProfile: {
+          ...loadedDonor,
+          profilePicture: 'https://cdn.bloodconnect.net/avatars/donor-1.jpg'
+        }
+      })
+    )
+
+    const { queryByText, UNSAFE_getByType } = render(<DonorProfile />)
+
+    expect(UNSAFE_getByType(Image).props.source).toEqual({
+      uri: 'https://cdn.bloodconnect.net/avatars/donor-1.jpg'
+    })
+    // The initials placeholder must not be rendered alongside the real picture.
+    expect(queryByText('EK')).toBeNull()
+  })
+
+  test('should fall back to the donor\'s initials when they have no picture', () => {
+    mockedUseDonorProfile.mockReturnValue(donorProfileState({ donorProfile: loadedDonor }))
+
+    const { getByText, UNSAFE_queryByType } = render(<DonorProfile />)
+
+    expect(getByText('EK')).toBeTruthy()
+    expect(UNSAFE_queryByType(Image)).toBeNull()
+  })
+
   test('should show the BMI once the donor profile has loaded', () => {
     mockedUseDonorProfile.mockReturnValue(
       donorProfileState({
@@ -60,6 +101,7 @@ describe('DonorProfile', () => {
           gender: 'male',
           height: 5.9,
           weight: 70,
+          profilePicture: '',
           phoneNumbers: ['+8801834567890'],
           preferredDonationLocations: [{ area: 'Banani, Dhaka' }]
         }
@@ -82,6 +124,7 @@ describe('DonorProfile', () => {
           gender: 'male',
           height: 0,
           weight: 0,
+          profilePicture: '',
           phoneNumbers: [],
           preferredDonationLocations: []
         }

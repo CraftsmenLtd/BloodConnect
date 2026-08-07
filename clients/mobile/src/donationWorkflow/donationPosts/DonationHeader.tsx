@@ -7,12 +7,16 @@ import { View,
   StyleSheet
 } from 'react-native'
 import { Text } from '../../components/text/AppText'
+import InitialsAvatar from '../../components/avatar/InitialsAvatar'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { spacing, radius } from '../../setup/theme/tokens'
+import { useProfileAvatarUri } from '../../userWorkflow/hooks/useProfileAvatarUri'
+import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
+
+const AVATAR_SIZE = 40
 
 type HeaderProps = {
-  profileImageUri: string;
   title: string;
   buttonLabel: string;
   onButtonPress: () => void;
@@ -23,7 +27,6 @@ type HeaderProps = {
 }
 
 const Header: React.FC<HeaderProps> = ({
-  profileImageUri,
   title,
   buttonLabel,
   onButtonPress,
@@ -35,12 +38,18 @@ const Header: React.FC<HeaderProps> = ({
   const theme = useTheme()
   const { t } = useTranslation()
   const styles = createStyles(theme)
+  // This is the signed-in user's own avatar, so it resolves the same way as the profile
+  // screen: uploaded picture, then identity-provider photo, then initials.
+  const avatarUri = useProfileAvatarUri()
+  const { userProfile } = useUserProfile()
 
   return (
     <View>
       <View style={styles.header}>
         <View style={styles.headerLeftContent}>
-          <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
+          {avatarUri !== undefined
+            ? <Image source={{ uri: avatarUri }} style={styles.profileImage} />
+            : <InitialsAvatar name={userProfile.name} size={AVATAR_SIZE} />}
           <Text variant="h3" style={styles.title}>{title}</Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={onButtonPress}>
@@ -103,8 +112,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     gap: spacing.sm
   },
   profileImage: {
-    width: 40,
-    height: 40,
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
     borderRadius: radius.xl
   },
   title: {

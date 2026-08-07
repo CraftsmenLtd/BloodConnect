@@ -26,6 +26,7 @@ export type CreateUserAttributes = {
   countryCode: string;
   lastDonationDate?: string;
   lastVaccinatedDate?: string;
+  profilePicture?: string;
 } & BaseUserAttributes
 
 export type UpdateUserAttributes = {

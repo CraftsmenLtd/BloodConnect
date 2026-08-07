@@ -11,6 +11,7 @@ export type DonorProfile = {
   height?: number;
   weight?: number;
   gender?: string;
+  profilePicture?: string;
   preferredDonationLocations?: preferredDonationLocations[];
 }
 

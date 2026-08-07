@@ -26,6 +26,9 @@
         #if($item.weight && $item.weight.S != "")
           "weight": $item.weight.S,
         #end
+        #if($item.profilePicture && $item.profilePicture.S != "")
+          "profilePicture": "$item.profilePicture.S",
+        #end
         "gender": "$item.gender.S"
       #end
     #end,

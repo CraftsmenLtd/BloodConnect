@@ -2,10 +2,13 @@ import React from 'react'
 import type { ImageStyle, StyleProp } from 'react-native'
 import { View, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import { Text } from '../../../components/text/AppText'
-import { COMMON_URLS } from '../../../setup/constant/commonUrls'
+import InitialsAvatar from '../../../components/avatar/InitialsAvatar'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
 import { spacing, radius } from '../../../setup/theme/tokens'
+import useDonorResponses from './useDonorResponses'
+
+const AVATAR_SIZE = 40
 
 export type DonorItem = {
   donorId: string;
@@ -19,6 +22,7 @@ type DonorResponsesProps = {
 
 const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProps) => {
   const styles = createStyles(useTheme())
+  const donorDetails = useDonorResponses(acceptedDonors)
 
   return (
     <View style={styles.rootContainer}>
@@ -39,12 +43,24 @@ const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProp
                     index === acceptedDonors.length - 1 && styles.donorItemLast
                   ]}
                   onPress={() => { handlePressDonor(item.donorId) }}>
-                  <Image
-                    source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-                    style={styles.avatar as StyleProp<ImageStyle>} />
+                  {donorDetails[item.donorId]?.profilePicture !== undefined
+                    ? (
+                      <Image
+                        source={{ uri: donorDetails[item.donorId].profilePicture }}
+                        style={styles.avatar as StyleProp<ImageStyle>} />
+                    )
+                    : (
+                      <View style={styles.avatar as StyleProp<ImageStyle>}>
+                        <InitialsAvatar name={item.donorName} size={AVATAR_SIZE} />
+                      </View>
+                    )}
                   <View style={styles.textContainer}>
                     <Text variant="body" style={styles.name}>{item.donorName}</Text>
-                    <Text variant="caption" style={styles.status}>New blood donor</Text>
+                    {donorDetails[item.donorId]?.area !== undefined && (
+                      <Text variant="caption" style={styles.status}>
+                        {donorDetails[item.donorId].area}
+                      </Text>
+                    )}
                   </View>
                   <Text style={styles.arrow}>&gt;</Text>
                 </TouchableOpacity>
@@ -94,10 +110,11 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       borderBottomColor: 'transparent'
     },
     avatar: {
-      width: 40,
-      height: 40,
+      width: AVATAR_SIZE,
+      height: AVATAR_SIZE,
       borderRadius: radius.xl,
-      marginRight: spacing.md
+      marginRight: spacing.md,
+      overflow: 'hidden'
     },
     textContainer: {
       flex: 1

@@ -5,12 +5,14 @@ import { Text } from '../../components/text/AppText'
 import { Ionicons } from '@expo/vector-icons'
 import useDonorProfile from './useDonorProfile'
 import type { preferredDonationLocations } from '../../userWorkflow/services/userServices'
-import { COMMON_URLS } from '../../setup/constant/commonUrls'
+import InitialsAvatar from '../../components/avatar/InitialsAvatar'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import StateAwareRenderer from '../../components/StateAwareRenderer'
 import { calculateBMI, getBMICategory } from '../../utility/bmi'
 import { spacing, radius } from '../../setup/theme/tokens'
+
+const AVATAR_SIZE = 110
 
 const DonorProfile = () => {
   const theme = useTheme()
@@ -18,10 +20,14 @@ const DonorProfile = () => {
   const { donorProfile, loading, error, handleCall } = useDonorProfile()
   const ViewToRender = () => <View style={styles.container}>
     <View style={styles.profileContainer}>
-      <Image
-        source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-        style={styles.profileImage as StyleProp<ImageStyle>}
-      />
+      {donorProfile?.profilePicture !== undefined && donorProfile.profilePicture !== ''
+        ? (
+          <Image
+            source={{ uri: donorProfile.profilePicture }}
+            style={styles.profileImage as StyleProp<ImageStyle>}
+          />
+        )
+        : <InitialsAvatar name={donorProfile?.donorName ?? ''} size={AVATAR_SIZE} />}
       <View style={styles.bloodGroupBadge}>
         <Text variant="body" style={styles.bloodGroupText}>
           {donorProfile?.bloodGroup ?? ''}(ve)
@@ -112,8 +118,8 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       alignItems: 'center'
     },
     profileImage: {
-      width: 110,
-      height: 110,
+      width: AVATAR_SIZE,
+      height: AVATAR_SIZE,
       borderRadius: radius.pill,
       borderWidth: 2,
       borderColor: theme.colors.primary

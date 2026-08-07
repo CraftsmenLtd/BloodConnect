@@ -35,6 +35,9 @@
         "NIDFront": "$item.NIDFront.S",
         "NIDBack": "$item.NIDBack.S",
         "lastVaccinatedDate": "$item.lastVaccinatedDate.S",
+        #if($item.profilePicture && $item.profilePicture.S != "")
+          "profilePicture": "$item.profilePicture.S",
+        #end
       #end
     #end
     "preferredDonationLocations": [
