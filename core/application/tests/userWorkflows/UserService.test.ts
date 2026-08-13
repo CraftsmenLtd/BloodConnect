@@ -213,6 +213,76 @@ describe('UserService Tests', () => {
     })
   })
 
+  describe('updateUser profilePicture provenance', () => {
+    const googlePicture = 'https://lh3.googleusercontent.com/a/photo.jpg'
+    const baseUpdateAttributes = { userId: '12345', name: 'Updated Ebrahim' }
+    const locationServiceMock = () =>
+      ({
+        updateUserLocation: jest.fn().mockResolvedValue(undefined)
+      } as unknown as jest.Mocked<LocationService>)
+
+    const runUpdate = async(
+      stored: Record<string, unknown>,
+      attributes: Record<string, unknown>
+    ): Promise<Record<string, unknown>> => {
+      userService.getUser = jest.fn().mockResolvedValue({ id: '12345', ...stored })
+      userRepository.update.mockResolvedValue(mockUserWithStringId)
+
+      await userService.updateUser(
+        { ...baseUpdateAttributes, ...attributes } as UpdateUserAttributes,
+        locationServiceMock(),
+        minMonthsBetweenDonations
+      )
+
+      return userRepository.update.mock.calls[0][0] as Record<string, unknown>
+    }
+
+    test('should mark a genuinely new picture as an upload', async() => {
+      const updatedData = await runUpdate(
+        { profilePicture: googlePicture, profilePictureSource: 'provider' },
+        { profilePicture: 'https://cdn.bloodconnect.net/avatars/12345.jpg?v=2' }
+      )
+
+      expect(updatedData.profilePictureSource).toBe('upload')
+    })
+
+    test('should keep the provider source when the client echoes the stored picture back', async() => {
+      const updatedData = await runUpdate(
+        { profilePicture: googlePicture, profilePictureSource: 'provider' },
+        { profilePicture: googlePicture }
+      )
+
+      expect(updatedData.profilePictureSource).toBe('provider')
+    })
+
+    test('should keep the provider source when the request omits the picture', async() => {
+      const updatedData = await runUpdate(
+        { profilePicture: googlePicture, profilePictureSource: 'provider' },
+        {}
+      )
+
+      expect(updatedData.profilePictureSource).toBe('provider')
+    })
+
+    test('should ignore a profilePictureSource supplied by the client', async() => {
+      const updatedData = await runUpdate(
+        { profilePicture: googlePicture, profilePictureSource: 'provider' },
+        { profilePictureSource: 'upload' }
+      )
+
+      expect(updatedData.profilePictureSource).toBe('provider')
+    })
+
+    test('should omit the source entirely for a legacy profile that has none', async() => {
+      const updatedData = await runUpdate(
+        { profilePicture: 'https://cdn.bloodconnect.net/avatars/12345.jpg?v=1' },
+        {}
+      )
+
+      expect('profilePictureSource' in updatedData).toBe(false)
+    })
+  })
+
   describe('getAppUserWelcomeMail', () => {
     test('should get welcome mail message correctly', () => {
       const userName = 'Suzan'
@@ -268,6 +338,99 @@ describe('UserService Tests', () => {
 
       expect(getAppUserWelcomeMailMessage).toHaveBeenCalledWith(longUserName)
       expect(result).toEqual(mockMessage)
+    })
+  })
+
+  describe('syncProviderProfilePicture', () => {
+    const userId = '12345'
+    const googlePicture = 'https://lh3.googleusercontent.com/a/new.jpg'
+
+    // Stubs the method, not the repository: an earlier test reassigns userService.getUser.
+    const mockStoredProfile = (profile: Record<string, unknown>): void => {
+      userService.getUser = jest.fn().mockResolvedValue({
+        ...mockUserWithStringId,
+        ...profile
+      })
+    }
+
+    test('should backfill the picture for a profile that has none', async() => {
+      mockStoredProfile({ profilePicture: undefined, profilePictureSource: undefined })
+      userRepository.update.mockResolvedValue(mockUserWithStringId)
+
+      await userService.syncProviderProfilePicture(userId, googlePicture)
+
+      expect(userRepository.update).toHaveBeenCalledWith({
+        id: userId,
+        profilePicture: googlePicture,
+        profilePictureSource: 'provider',
+        updatedAt: expect.stringMatching(ISO_TIMESTAMP_REGEX)
+      })
+    })
+
+    test('should refresh the picture when the provider photo changed', async() => {
+      mockStoredProfile({
+        profilePicture: 'https://lh3.googleusercontent.com/a/old.jpg',
+        profilePictureSource: 'provider'
+      })
+      userRepository.update.mockResolvedValue(mockUserWithStringId)
+
+      await userService.syncProviderProfilePicture(userId, googlePicture)
+
+      expect(userRepository.update).toHaveBeenCalledWith(
+        expect.objectContaining({ profilePicture: googlePicture })
+      )
+    })
+
+    test('should never overwrite a picture stored before provenance was tracked', async() => {
+      mockStoredProfile({
+        profilePicture: 'https://cdn.bloodconnect.net/avatars/12345.jpg?v=1',
+        profilePictureSource: undefined
+      })
+
+      await userService.syncProviderProfilePicture(userId, googlePicture)
+
+      expect(userRepository.update).not.toHaveBeenCalled()
+    })
+
+    test('should never overwrite a picture the user uploaded themselves', async() => {
+      mockStoredProfile({
+        profilePicture: 'https://cdn.bloodconnect.net/avatars/12345.jpg?v=1',
+        profilePictureSource: 'upload'
+      })
+
+      await userService.syncProviderProfilePicture(userId, googlePicture)
+
+      expect(userRepository.update).not.toHaveBeenCalled()
+    })
+
+    test('should not write when the stored picture already matches the provider photo', async() => {
+      mockStoredProfile({ profilePicture: googlePicture, profilePictureSource: 'provider' })
+
+      await userService.syncProviderProfilePicture(userId, googlePicture)
+
+      expect(userRepository.update).not.toHaveBeenCalled()
+    })
+
+    test('should ignore an empty provider picture without reading the profile', async() => {
+      mockStoredProfile({})
+
+      await userService.syncProviderProfilePicture(userId, '')
+
+      expect(userService.getUser).not.toHaveBeenCalled()
+      expect(userRepository.update).not.toHaveBeenCalled()
+    })
+
+    test('should not throw when the user has no profile row yet', async() => {
+      userService.getUser = jest.fn().mockRejectedValue(new Error('User not found'))
+
+      await expect(userService.syncProviderProfilePicture(userId, googlePicture))
+        .resolves.not.toThrow()
+
+      expect(userRepository.update).not.toHaveBeenCalled()
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'Failed to sync provider profile picture',
+        expect.objectContaining({ userId })
+      )
     })
   })
 

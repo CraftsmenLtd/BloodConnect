@@ -74,6 +74,7 @@ async function updateUserLambda(
       }),
       ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
       ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
+      // Provenance is derived in UserService by comparing against the stored picture.
       ...(event.profilePicture !== undefined && { profilePicture: event.profilePicture })
     }
 

@@ -66,6 +66,18 @@ describe('createUserLambda profilePicture handling', () => {
     expect(passedAttributes.profilePicture).toBe(
       'https://lh3.googleusercontent.com/a/photo.jpg'
     )
+    expect(passedAttributes.profilePictureSource).toBe('provider')
+  })
+
+  test('should ignore a profilePictureSource supplied by the client', async() => {
+    await createUserLambda({
+      ...baseEvent,
+      profilePicture: 'https://lh3.googleusercontent.com/a/photo.jpg',
+      profilePictureSource: 'upload'
+    } as CreateUserAttributes & HttpLoggerAttributes)
+
+    const passedAttributes = mockedUserService.prototype.createUser.mock.calls[0][0]
+    expect(passedAttributes.profilePictureSource).toBe('provider')
   })
 
   test('should omit profilePicture when signup supplies none', async() => {

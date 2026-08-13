@@ -44,7 +44,7 @@
     , "NIDBack": "$inputRoot.NIDBack"
   #end
   #if($inputRoot.profilePicture != '')
-    , "profilePicture": "$inputRoot.profilePicture"
+    , "profilePicture": "$util.escapeJavaScript($inputRoot.profilePicture)"
   #end
   #if($inputRoot.lastVaccinatedDate != '')
     , "lastVaccinatedDate": "$inputRoot.lastVaccinatedDate"

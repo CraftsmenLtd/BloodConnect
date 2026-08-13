@@ -70,6 +70,10 @@
       "NIDBack": {
         "type": "string"
       },
+      "profilePicture": {
+        "type": "string",
+        "format": "uri"
+      },
       "lastVaccinatedDate": {
         "type": "string",
         "format": "date"
@@ -101,6 +105,7 @@
       "availableForDonation": true,
       "NIDFront": "https://cdn.bloodconnect.net/nid/1a2b3c4d5e-front.jpg",
       "NIDBack": "https://cdn.bloodconnect.net/nid/1a2b3c4d5e-back.jpg",
+      "profilePicture": "https://lh3.googleusercontent.com/a/1a2b3c4d5e",
       "lastVaccinatedDate": "2023-03-01"
     }
   }

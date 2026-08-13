@@ -38,8 +38,7 @@ const Header: React.FC<HeaderProps> = ({
   const theme = useTheme()
   const { t } = useTranslation()
   const styles = createStyles(theme)
-  // This is the signed-in user's own avatar, so it resolves the same way as the profile
-  // screen: uploaded picture, then identity-provider photo, then initials.
+  // The signed-in user's own avatar, resolved the same way as the profile screen.
   const avatarUri = useProfileAvatarUri()
   const { userProfile } = useUserProfile()
 

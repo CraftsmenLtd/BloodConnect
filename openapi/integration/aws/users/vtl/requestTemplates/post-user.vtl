@@ -47,6 +47,6 @@
  , "lastVaccinatedDate": "$inputRoot.lastVaccinatedDate"
  #end
  #if($inputRoot.profilePicture != '')
- , "profilePicture": "$inputRoot.profilePicture"
+ , "profilePicture": "$util.escapeJavaScript($inputRoot.profilePicture)"
  #end
 }

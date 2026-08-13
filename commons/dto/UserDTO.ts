@@ -9,6 +9,9 @@ export type UserDTO = DTO & HasIdentifier & {
 
 export type Gender = 'male' | 'female' | 'other'
 
+// 'upload' is the user's own choice and is never overwritten; 'provider' resyncs at login.
+export type ProfilePictureSource = 'provider' | 'upload'
+
 export type UserDetailsDTO = {
   bloodGroup: BloodGroup;
   lastDonationDate?: string;
@@ -22,6 +25,7 @@ export type UserDetailsDTO = {
   NIDFront: string;
   NIDBack: string;
   profilePicture?: string;
+  profilePictureSource?: ProfilePictureSource;
   lastVaccinatedDate?: string;
   createdAt: string;
   updatedAt?: string;

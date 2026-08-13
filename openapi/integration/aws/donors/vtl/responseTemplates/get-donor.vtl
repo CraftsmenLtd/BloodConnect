@@ -19,7 +19,9 @@
         ],
         "donorName": "$item.name.S",
         "bloodGroup": "$item.bloodGroup.S",
-        "age": $item.age.N,
+        #if($item.age && $item.age.N != "")
+          "age": $item.age.N,
+        #end
         #if($item.height && $item.height.S != "")
           "height": $item.height.S,
         #end

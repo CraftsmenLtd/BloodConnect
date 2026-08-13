@@ -63,11 +63,10 @@ async function createUserLambda(
       ...(isValidIsoDate(event.lastVaccinatedDate) && { lastVaccinatedDate: event.lastVaccinatedDate }),
       ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
       ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
-      // Federated sign-ups arrive with an avatar from the identity provider. Persisting it
-      // here is what makes it visible to other users; the idToken claim the client reads is
-      // only ever available to the account holder themselves.
+      // Persisted here so other users can see it — the idToken claim is private to its owner.
+      // Always 'provider': at signup the only source is that claim.
       ...(event.profilePicture !== undefined && event.profilePicture !== ''
-        && { profilePicture: event.profilePicture }),
+        && { profilePicture: event.profilePicture, profilePictureSource: 'provider' as const }),
     }
 
     await userService.createUser(userAttributes, locationService, config.minMonthsBetweenDonations)
