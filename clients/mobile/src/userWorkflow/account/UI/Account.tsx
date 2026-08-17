@@ -29,6 +29,7 @@ export const Account = () => {
       {userProfileData !== null && <ProfileSection
         name={userProfileData?.name ?? ''}
         location={userProfileData?.location ?? ''}
+        bloodGroup={userProfileData?.bloodGroup ?? ''}
       ></ProfileSection>}
 
       <View style={styles.optionsSection}>

@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import InitialsAvatar from '../../components/avatar/InitialsAvatar'
+import Badge from '../../components/badge'
 import { useProfileAvatarUri } from '../hooks/useProfileAvatarUri'
 import { spacing, radius } from '../../setup/theme/tokens'
 
@@ -15,6 +16,7 @@ type UserData = {
   name: string;
   location: string;
   age: number;
+  bloodGroup?: string;
   isEditing?: boolean;
   uploading?: boolean;
   onImageUpload?: () => void;
@@ -25,6 +27,7 @@ const ProfileSection: React.FC<UserData> = (
     name,
     location,
     age,
+    bloodGroup,
     isEditing = false,
     uploading = false,
     onImageUpload
@@ -60,7 +63,16 @@ const ProfileSection: React.FC<UserData> = (
         </View>
       </View>
       <View style={styles.profileInfo}>
-        <Text variant="h3" style={styles.profileName}>{name} {age && `(${age})`}</Text>
+        <View style={styles.profileNameRow}>
+          <Text variant="h3" style={styles.profileName}>{name} {age && `(${age})`}</Text>
+          {bloodGroup !== undefined && bloodGroup !== '' && (
+            <Badge
+              text={bloodGroup}
+              containerStyle={styles.bloodGroupBadge}
+              textStyle={styles.bloodGroupBadgeText}
+            />
+          )}
+        </View>
         <View style={styles.profileLocationSection}>
           <MaterialIcons name="location-on" size={16} style={styles.iconStyle} />
           <Text variant="bodySmall" style={styles.profileLocation}>{location}</Text>
@@ -148,7 +160,20 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   profileInfo: {
     marginLeft: spacing.lg
   },
+  profileNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: spacing.sm
+  },
   profileName: {
+    fontWeight: 'bold'
+  },
+  bloodGroupBadge: {
+    backgroundColor: theme.colors.primary
+  },
+  bloodGroupBadgeText: {
+    color: theme.colors.onPrimary,
     fontWeight: 'bold'
   },
   profileLocationSection: {
