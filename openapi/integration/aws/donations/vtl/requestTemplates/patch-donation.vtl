@@ -1,29 +1,29 @@
 #set($inputRoot = $input.path('$'))
 {
   "seekerId": "$context.authorizer.claims['custom:userId']",
-  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "cloudFrontRequestId": "$util.escapeJavaScript($input.params('X-Amz-Cf-Id')).replaceAll("\\'","'")",
   "apiGwRequestId": "$context.requestId",
-  "requestPostId": "$inputRoot.requestPostId",
-  "createdAt": "$inputRoot.createdAt"
+  "requestPostId": "$util.escapeJavaScript($inputRoot.requestPostId).replaceAll("\\'","'")",
+  "createdAt": "$util.escapeJavaScript($inputRoot.createdAt).replaceAll("\\'","'")"
   #if($inputRoot.bloodQuantity != '')
     , "bloodQuantity": $inputRoot.bloodQuantity
   #end
   #if($inputRoot.urgencyLevel != '')
-    , "urgencyLevel": "$inputRoot.urgencyLevel"
+    , "urgencyLevel": "$util.escapeJavaScript($inputRoot.urgencyLevel).replaceAll("\\'","'")"
   #end
   #if($inputRoot.donationDateTime != '')
-    , "donationDateTime": "$inputRoot.donationDateTime"
+    , "donationDateTime": "$util.escapeJavaScript($inputRoot.donationDateTime).replaceAll("\\'","'")"
   #end
   #if($inputRoot.contactNumber != '')
-    , "contactNumber": "$inputRoot.contactNumber"
+    , "contactNumber": "$util.escapeJavaScript($inputRoot.contactNumber).replaceAll("\\'","'")"
   #end
   #if($inputRoot.patientName != '')
-    , "patientName": "$inputRoot.patientName"
+    , "patientName": "$util.escapeJavaScript($inputRoot.patientName).replaceAll("\\'","'")"
   #end
   #if($inputRoot.transportationInfo != '')
-    , "transportationInfo": "$inputRoot.transportationInfo"
+    , "transportationInfo": "$util.escapeJavaScript($inputRoot.transportationInfo).replaceAll("\\'","'")"
   #end
   #if($inputRoot.shortDescription != '')
-    , "shortDescription": "$inputRoot.shortDescription"
+    , "shortDescription": "$util.escapeJavaScript($inputRoot.shortDescription).replaceAll("\\'","'")"
   #end
 }

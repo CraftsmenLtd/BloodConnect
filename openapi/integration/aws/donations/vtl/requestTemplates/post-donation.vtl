@@ -1,17 +1,17 @@
 #set($inputRoot = $input.path('$'))
 {
   "seekerId": "$context.authorizer.claims['custom:userId']",
-  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "cloudFrontRequestId": "$util.escapeJavaScript($input.params('X-Amz-Cf-Id')).replaceAll("\\'","'")",
   "apiGwRequestId": "$context.requestId",
-  "requestedBloodGroup": "$inputRoot.requestedBloodGroup",
+  "requestedBloodGroup": "$util.escapeJavaScript($inputRoot.requestedBloodGroup).replaceAll("\\'","'")",
   "bloodQuantity": $inputRoot.bloodQuantity,
-  "urgencyLevel": "$inputRoot.urgencyLevel",
-  "location": "$inputRoot.location",
+  "urgencyLevel": "$util.escapeJavaScript($inputRoot.urgencyLevel).replaceAll("\\'","'")",
+  "location": "$util.escapeJavaScript($inputRoot.location).replaceAll("\\'","'")",
   "latitude": $inputRoot.latitude,
   "longitude": $inputRoot.longitude,
-  "donationDateTime": "$inputRoot.donationDateTime",
-  "patientName": "$inputRoot.patientName",
-  "contactNumber": "$inputRoot.contactNumber",
-  "transportationInfo": "$inputRoot.transportationInfo",
-  "shortDescription": "$inputRoot.shortDescription"
+  "donationDateTime": "$util.escapeJavaScript($inputRoot.donationDateTime).replaceAll("\\'","'")",
+  "patientName": "$util.escapeJavaScript($inputRoot.patientName).replaceAll("\\'","'")",
+  "contactNumber": "$util.escapeJavaScript($inputRoot.contactNumber).replaceAll("\\'","'")",
+  "transportationInfo": "$util.escapeJavaScript($inputRoot.transportationInfo).replaceAll("\\'","'")",
+  "shortDescription": "$util.escapeJavaScript($inputRoot.shortDescription).replaceAll("\\'","'")"
 }

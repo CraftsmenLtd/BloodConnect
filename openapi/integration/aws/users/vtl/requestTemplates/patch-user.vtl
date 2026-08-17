@@ -1,52 +1,52 @@
 #set($inputRoot = $input.path('$'))
 {
   "userId": "$context.authorizer.claims['custom:userId']",
-  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "cloudFrontRequestId": "$util.escapeJavaScript($input.params('X-Amz-Cf-Id')).replaceAll("\\'","'")",
   "apiGwRequestId": "$context.requestId",
-  "countryCode": "$input.params().header.get('CloudFront-Viewer-Country')"
+  "countryCode": "$util.escapeJavaScript($input.params().header.get('CloudFront-Viewer-Country')).replaceAll("\\'","'")"
   #if($inputRoot.phoneNumbers != '')
     , "phoneNumbers": $inputRoot.phoneNumbers
   #end
   #if($inputRoot.name != '')
-    , "name": "$inputRoot.name"
+    , "name": "$util.escapeJavaScript($inputRoot.name).replaceAll("\\'","'")"
   #end
   #if($inputRoot.bloodGroup != '')
-    , "bloodGroup": "$inputRoot.bloodGroup"
+    , "bloodGroup": "$util.escapeJavaScript($inputRoot.bloodGroup).replaceAll("\\'","'")"
   #end
   #if($inputRoot.lastDonationDate != '')
-    , "lastDonationDate": "$inputRoot.lastDonationDate"
+    , "lastDonationDate": "$util.escapeJavaScript($inputRoot.lastDonationDate).replaceAll("\\'","'")"
   #end
   #if($inputRoot.height != '')
-    , "height": "$inputRoot.height"
+    , "height": "$util.escapeJavaScript($inputRoot.height).replaceAll("\\'","'")"
   #end
   #if($inputRoot.weight != '')
-    , "weight": "$inputRoot.weight"
+    , "weight": "$util.escapeJavaScript($inputRoot.weight).replaceAll("\\'","'")"
   #end
   #if($inputRoot.gender != '')
-    , "gender": "$inputRoot.gender"
+    , "gender": "$util.escapeJavaScript($inputRoot.gender).replaceAll("\\'","'")"
   #end
   #if($inputRoot.dateOfBirth != '')
-    , "dateOfBirth": "$inputRoot.dateOfBirth"
+    , "dateOfBirth": "$util.escapeJavaScript($inputRoot.dateOfBirth).replaceAll("\\'","'")"
   #end
   #if($inputRoot.age != '')
-    , "age": "$inputRoot.age"
+    , "age": "$util.escapeJavaScript($inputRoot.age).replaceAll("\\'","'")"
   #end
   #if($inputRoot.preferredDonationLocations != '')
     , "preferredDonationLocations": $inputRoot.preferredDonationLocations
   #end
   #if($inputRoot.availableForDonation != '')
-    , "availableForDonation": "$inputRoot.availableForDonation"
+    , "availableForDonation": "$util.escapeJavaScript($inputRoot.availableForDonation).replaceAll("\\'","'")"
   #end
   #if($inputRoot.NIDFront != '')
-    , "NIDFront": "$inputRoot.NIDFront"
+    , "NIDFront": "$util.escapeJavaScript($inputRoot.NIDFront).replaceAll("\\'","'")"
   #end
   #if($inputRoot.NIDBack != '')
-    , "NIDBack": "$inputRoot.NIDBack"
+    , "NIDBack": "$util.escapeJavaScript($inputRoot.NIDBack).replaceAll("\\'","'")"
   #end
   #if($inputRoot.profilePicture != '')
-    , "profilePicture": "$util.escapeJavaScript($inputRoot.profilePicture)"
+    , "profilePicture": "$util.escapeJavaScript($inputRoot.profilePicture).replaceAll("\\'","'")"
   #end
   #if($inputRoot.lastVaccinatedDate != '')
-    , "lastVaccinatedDate": "$inputRoot.lastVaccinatedDate"
+    , "lastVaccinatedDate": "$util.escapeJavaScript($inputRoot.lastVaccinatedDate).replaceAll("\\'","'")"
   #end
 }
