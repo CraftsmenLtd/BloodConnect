@@ -23,7 +23,8 @@
     "filterBy": "Filter By",
     "viewDetails": "View Details",
     "blood": "blood",
-    "urgent": "URGENT"
+    "urgent": "URGENT",
+    "error": "Error"
   },
   "otp": {
     "enterAuthenticationCode": "Enter authentication code",
@@ -48,7 +49,9 @@
     "invalidOtpCode": "Invalid OTP code. Please try again.",
     "otpCodeExpired": "OTP code has expired. Request a new one.",
     "noAccountFound": "No account found with this email.",
-    "somethingWentWrong": "Something went wrong."
+    "somethingWentWrong": "Something went wrong.",
+    "photoPermissionDenied": "Permission to access photos is required.",
+    "imageUploadFailed": "Could not upload the image. Please try again."
   },
   "donationPosts": {
     "bloodNeeded": "Blood Needed?",

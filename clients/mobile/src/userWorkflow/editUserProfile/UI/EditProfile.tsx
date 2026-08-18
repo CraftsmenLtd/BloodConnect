@@ -2,7 +2,7 @@ import Constants from 'expo-constants'
 import React, { useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ScrollView } from 'react-native'
-import { View, findNodeHandle } from 'react-native'
+import { View, findNodeHandle, Alert } from 'react-native'
 import { Text } from '../../../components/text/AppText'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { Divider } from '../../../components/button/Divider'
@@ -40,11 +40,20 @@ const EditProfile = () => {
     handleSave,
     setPendingAvailableForDonationSave
   } = useEditProfile()
-  const { uploading, pickAndUpload } = useProfilePictureUpload()
+  const { uploading, error: uploadError, pickAndUpload } = useProfilePictureUpload()
   const { centerCoordinate, mapMarkers, zoomLevel } = useMapView(profileData?.locations)
   const scrollRef = useRef<ScrollView>(null)
   const locationsRef = useRef<View>(null)
   const prevLocationsLength = useRef(profileData.locations?.length ?? 0)
+
+  // Upload failures used to be set on state nobody read, so a denied permission or a failed
+  // PUT looked identical to success. t() falls back to the raw string for messages that come
+  // back from the API rather than as one of our keys.
+  useEffect(() => {
+    if (uploadError !== '') {
+      Alert.alert(t('common.error'), t(uploadError))
+    }
+  }, [uploadError])
 
   useEffect(() => {
     const length = profileData.locations?.length ?? 0

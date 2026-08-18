@@ -10,8 +10,8 @@ import { Config } from '../../../../commons/libs/config/config'
 
 const config = new Config<{
   awsRegion: string;
-  avatarBucketName: string;
-  avatarCdnBaseUrl: string;
+  mediaBucketName: string;
+  mediaCdnBaseUrl: string;
   avatarObjectPrefix: string;
 }>().getConfig()
 
@@ -42,13 +42,13 @@ async function getProfilePictureUploadUrlLambda(
     // The stored Content-Type — not the key extension — drives how the image is served.
     const objectKey = `${config.avatarObjectPrefix}/${event.userId}/profile`
     const command = new PutObjectCommand({
-      Bucket: config.avatarBucketName,
+      Bucket: config.mediaBucketName,
       Key: objectKey,
       ContentType: contentType
     })
 
     const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: UPLOAD_URL_EXPIRY_SECONDS })
-    const fileUrl = `${config.avatarCdnBaseUrl}/${objectKey}`
+    const fileUrl = `${config.mediaCdnBaseUrl}/${objectKey}`
 
     return generateApiGatewayResponse({ uploadUrl, fileUrl, success: true }, HTTP_CODES.OK)
   } catch (error) {

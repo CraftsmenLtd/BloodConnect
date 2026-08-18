@@ -102,7 +102,7 @@
       "availableForDonation": true,
       "NIDFront": "s3://bucket/nid/1a2b3c4d5e-front.jpg",
       "NIDBack": "s3://bucket/nid/1a2b3c4d5e-back.jpg",
-      "profilePicture": "https://bloodconnect.net/avatars/1a2b3c4d5e/profile.jpg",
+      "profilePicture": "https://bloodconnect.net/media/user-images/1a2b3c4d5e/profile?v=1735689600000",
       "lastVaccinatedDate": "2023-03-01"
     }
   }
