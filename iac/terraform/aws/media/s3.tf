@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "media" {
   #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled"
   #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
   # Shared, general-purpose media bucket (user images now; documents/other media in future).
-  bucket = "${var.environment}-media"
+  bucket = "${var.environment}-bloodconnect-media"
 
   tags = {
     Name = "MediaBucket"
