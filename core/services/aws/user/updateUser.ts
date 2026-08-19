@@ -45,10 +45,20 @@ async function updateUserLambda(
   try {
     const userAttributes: UpdateUserAttributes = {
       userId: event.userId,
-      availableForDonation:
-        `${event.availableForDonation}` === 'true' || event.availableForDonation === true
-          ? true
-          : false,
+      // Spread conditionally like every other field: an omitted flag must keep the
+      // profile's current value (via the merge in updateUserAttributes), not force
+      // the donor to unavailable. The VTL delivers booleans as strings, hence the
+      // string comparison.
+      ...(event.availableForDonation !== undefined && {
+        availableForDonation:
+          `${event.availableForDonation}` === 'true' || event.availableForDonation === true
+      }),
+      // Geo-derived from the CloudFront viewer-country header; empty when the
+      // header is absent. Only forwarded when present — the service uses it
+      // solely to fill profiles that never received a countryCode at signup.
+      ...(typeof event.countryCode === 'string' && event.countryCode !== '' && {
+        countryCode: event.countryCode
+      }),
       ...(event.phoneNumbers !== undefined && { phoneNumbers: event.phoneNumbers }),
       ...(isValidIsoDate(event.dateOfBirth) && { dateOfBirth: event.dateOfBirth }),
       ...(event.gender !== undefined && { gender: event.gender }),
@@ -63,7 +73,9 @@ async function updateUserLambda(
         lastVaccinatedDate: event.lastVaccinatedDate
       }),
       ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
-      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack })
+      ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
+      // Provenance is derived in UserService by comparing against the stored picture.
+      ...(event.profilePicture !== undefined && { profilePicture: event.profilePicture })
     }
 
     await userService.updateUserAttributes(

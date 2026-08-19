@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type ToggleTabsProps = {
   tabs: [string, ...string[]];
@@ -24,7 +26,7 @@ const ToggleTabs: React.FC<ToggleTabsProps> = ({ tabs, onTabPress, initialActive
             onTabPress(tab)
           }}
         >
-          <Text style={[styles.text, activeTab === tab && styles.activeText]}>{tab}</Text>
+          <Text variant="label" style={[styles.text, activeTab === tab && styles.activeText]}>{tab}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -34,27 +36,25 @@ const ToggleTabs: React.FC<ToggleTabsProps> = ({ tabs, onTabPress, initialActive
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flexDirection: 'row',
-    borderRadius: 25,
+    borderRadius: radius.xl,
     overflow: 'hidden',
-    backgroundColor: theme.colors.greyBG
+    backgroundColor: theme.colors.surfaceVariant
   },
   tab: {
     flex: 1,
-    paddingVertical: 7,
+    paddingVertical: spacing.sm,
     justifyContent: 'center',
     alignItems: 'center'
   },
   activeTab: {
     backgroundColor: theme.colors.primary,
-    borderRadius: 100
+    borderRadius: radius.pill
   },
   text: {
-    fontSize: 14,
-    color: theme.colors.black,
-    fontWeight: '500'
+    color: theme.colors.textPrimary
   },
   activeText: {
-    color: theme.colors.white
+    color: theme.colors.onPrimary
   }
 })
 

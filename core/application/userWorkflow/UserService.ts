@@ -91,11 +91,30 @@ export class UserService {
   ): Promise<void> {
     const { userId, preferredDonationLocations } = userAttributes
     const userProfile = await this.getUser(userId)
+    // countryCode is geo-derived at signup and stays fixed afterwards. The
+    // incoming value (viewer-country header) only fills profiles that never
+    // received one, so those users can save locations again.
+    const existingCountryCode = userProfile.countryCode
+    const countryCode = existingCountryCode !== undefined && existingCountryCode !== ''
+      ? existingCountryCode
+      : userAttributes.countryCode
+    // Clients echo the stored picture back when saving unrelated fields, so only a value that
+    // actually differs counts as an upload. Derived here so no payload can claim a source.
+    const incomingPicture = userAttributes.profilePicture
+    const isNewUpload = incomingPicture !== undefined && incomingPicture !== ''
+      && incomingPicture !== userProfile.profilePicture
+    const profilePictureSource = isNewUpload ? 'upload' : userProfile.profilePictureSource
+    const {
+      countryCode: _requestCountryCode,
+      profilePictureSource: _requestPictureSource,
+      ...remainingAttributes
+    } = userAttributes
     const updateData: Partial<UserDetailsDTO> = await this.updateUserProfile(
       userId,
       {
-        ...userAttributes,
-        countryCode: userProfile.countryCode
+        ...remainingAttributes,
+        ...(countryCode !== undefined && countryCode !== '' && { countryCode }),
+        ...(profilePictureSource !== undefined && { profilePictureSource })
       },
       minMonthsBetweenDonations
     )
@@ -217,6 +236,38 @@ export class UserService {
     }
   }
 
+
+  // Backfills profiles that never captured a picture, and keeps provider photos current.
+  async syncProviderProfilePicture(userId: string, providerPicture: string): Promise<void> {
+    if (providerPicture === '') {
+      return
+    }
+
+    try {
+      const userProfile = await this.getUser(userId)
+      const storedPicture = userProfile.profilePicture
+      // Only an absent picture or one we know came from the provider may be replaced. Rows
+      // predating profilePictureSource have none, and every one of those was an upload.
+      if (storedPicture !== undefined && storedPicture !== ''
+        && userProfile.profilePictureSource !== 'provider') {
+        return
+      }
+      if (storedPicture === providerPicture) {
+        return
+      }
+
+      await this.userRepository.update({
+        id: userId,
+        profilePicture: providerPicture,
+        profilePictureSource: 'provider',
+        updatedAt: new Date().toISOString()
+      })
+      this.logger.info('synced profile picture from identity provider', { userId })
+    } catch (error) {
+      // Never fail a login over an avatar; users mid-onboarding have no profile row yet.
+      this.logger.warn('Failed to sync provider profile picture', { userId, error })
+    }
+  }
 
   async recordLastSuccessfulLoginTimestamp(userId: string, timestamp: string): Promise<void> {
     this.logger.info('Recording last successful login', { userId, timestamp })

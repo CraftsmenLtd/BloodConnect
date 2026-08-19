@@ -23,7 +23,8 @@
     "filterBy": "ফিল্টার করুন",
     "viewDetails": "বিস্তারিত দেখুন",
     "blood": "রক্ত",
-    "urgent": "জরুরী"
+    "urgent": "জরুরী",
+    "error": "ত্রুটি"
   },
   "otp": {
     "enterAuthenticationCode": "প্রমাণীকরণ কোড প্রবেশ করুন",
@@ -48,6 +49,8 @@
     "invalidOtpCode": "ভুল OTP কোড। দয়া করে আবার চেষ্টা করুন।",
     "otpCodeExpired": "OTP কোডের মেয়াদ শেষ হয়ে গেছে। একটি নতুন কোড অনুরোধ করুন।",
     "noAccountFound": "এই ইমেইল দিয়ে কোন একাউন্ট পাওয়া যায়নি।",
+    "photoPermissionDenied": "ছবি ব্যবহারের অনুমতি প্রয়োজন।",
+    "imageUploadFailed": "ছবি আপলোড করা যায়নি। দয়া করে আবার চেষ্টা করুন।",
     "somethingWentWrong": "যান্ত্রিক ত্রুটি হয়েছে। আমরা দুঃখিত।"
   },
   "donationPosts": {
@@ -122,7 +125,11 @@
     "termsOfService": "সেবার শর্তাবলী"
   },
   "settings": {
-    "reportSafety": "নিরাপত্তা উদ্বেগ রিপোর্ট করুন"
+    "reportSafety": "নিরাপত্তা উদ্বেগ রিপোর্ট করুন",
+    "appearance": "থিম",
+    "themeSystem": "সিস্টেম",
+    "themeLight": "লাইট",
+    "themeDark": "ডার্ক"
   },
   "postCard": {
     "reportSafety": "রিপোর্ট করুন"

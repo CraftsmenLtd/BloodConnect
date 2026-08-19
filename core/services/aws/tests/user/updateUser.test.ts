@@ -88,6 +88,82 @@ describe('updateUserLambda', () => {
     expect(result.body).toBe(JSON.stringify({ message: mockResponse }))
   })
 
+  it('should not include availableForDonation when the event omits it', async () => {
+    const mockEvent = {
+      userId: '12345',
+      profilePicture: 's3://bucket/profile/12345.jpg'
+    }
+
+    mockedUserService.prototype.updateUserAttributes.mockResolvedValue()
+    mockedGenerateApiGatewayResponse.mockReturnValue({
+      statusCode: HTTP_CODES.OK,
+      body: JSON.stringify({ message: UPDATE_PROFILE_SUCCESS })
+    })
+
+    await updateUserLambda(mockEvent as UpdateUserAttributes & HttpLoggerAttributes)
+
+    const passedAttributes
+      = mockedUserService.prototype.updateUserAttributes.mock.calls[0][1]
+    expect('availableForDonation' in passedAttributes).toBe(false)
+  })
+
+  it('should coerce availableForDonation string "false" to boolean false when present', async () => {
+    const mockEvent = {
+      userId: '12345',
+      availableForDonation: 'false'
+    }
+
+    mockedUserService.prototype.updateUserAttributes.mockResolvedValue()
+    mockedGenerateApiGatewayResponse.mockReturnValue({
+      statusCode: HTTP_CODES.OK,
+      body: JSON.stringify({ message: UPDATE_PROFILE_SUCCESS })
+    })
+
+    await updateUserLambda(mockEvent as unknown as UpdateUserAttributes & HttpLoggerAttributes)
+
+    const passedAttributes
+      = mockedUserService.prototype.updateUserAttributes.mock.calls[0][1]
+    expect(passedAttributes.availableForDonation).toBe(false)
+  })
+
+  it('should forward countryCode when the viewer-country header provides one', async () => {
+    const mockEvent = {
+      userId: '12345',
+      countryCode: 'BD'
+    }
+
+    mockedUserService.prototype.updateUserAttributes.mockResolvedValue()
+    mockedGenerateApiGatewayResponse.mockReturnValue({
+      statusCode: HTTP_CODES.OK,
+      body: JSON.stringify({ message: UPDATE_PROFILE_SUCCESS })
+    })
+
+    await updateUserLambda(mockEvent as UpdateUserAttributes & HttpLoggerAttributes)
+
+    const passedAttributes
+      = mockedUserService.prototype.updateUserAttributes.mock.calls[0][1]
+    expect(passedAttributes.countryCode).toBe('BD')
+  })
+
+  it('should drop countryCode when the viewer-country header is empty', async () => {
+    const mockEvent = {
+      userId: '12345',
+      countryCode: ''
+    }
+
+    mockedUserService.prototype.updateUserAttributes.mockResolvedValue()
+    mockedGenerateApiGatewayResponse.mockReturnValue({
+      statusCode: HTTP_CODES.OK,
+      body: JSON.stringify({ message: UPDATE_PROFILE_SUCCESS })
+    })
+
+    await updateUserLambda(mockEvent as UpdateUserAttributes & HttpLoggerAttributes)
+
+    const passedAttributes
+      = mockedUserService.prototype.updateUserAttributes.mock.calls[0][1]
+    expect('countryCode' in passedAttributes).toBe(false)
+  })
+
   it('should return error response when updateUser throws an error', async () => {
     const mockEvent = {
       userId: '12345',

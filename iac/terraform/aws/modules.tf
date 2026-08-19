@@ -9,10 +9,19 @@ module "ses_support_email" {
   poc_emails  = var.poc_emails
 }
 
+module "media" {
+  source      = "./media"
+  environment = var.environment
+}
+
 module "user" {
-  source             = "./user"
-  environment        = var.environment
-  dynamodb_table_arn = module.database.dynamodb_table_arn
+  source                          = "./user"
+  environment                     = var.environment
+  dynamodb_table_arn              = module.database.dynamodb_table_arn
+  bloodconnect_environment_domain = local.bloodconnect_environment_domain
+  media_bucket_name               = module.media.media_bucket.id
+  media_bucket_arn                = module.media.media_bucket.arn
+  media_path                      = module.media.media_path
 }
 
 module "blood_donation" {
@@ -55,6 +64,8 @@ module "cloudfront" {
   log_store_bucket                = module.web_client.log_store_bucket
   bloodconnect_environment_domain = local.bloodconnect_environment_domain
   monitoring_site_path            = local.monitoring_site_path
+  media_bucket                    = module.media.media_bucket
+  media_path                      = module.media.media_path
 }
 
 module "database" {
@@ -95,10 +106,10 @@ module "eventbridge" {
 }
 
 module "notification" {
-  source                  = "./notification"
-  environment             = var.environment
-  dynamodb_table_arn      = module.database.dynamodb_table_arn
-  firebase_token_s3_url   = var.firebase_token_s3_url
+  source                = "./notification"
+  environment           = var.environment
+  dynamodb_table_arn    = module.database.dynamodb_table_arn
+  firebase_token_s3_url = var.firebase_token_s3_url
 }
 
 module "maps" {

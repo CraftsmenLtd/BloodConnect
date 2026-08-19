@@ -27,6 +27,12 @@ type AllConfig = {
   // Public post feed
   feedMaxRadiusKm: number;
   feedDefaultRadiusKm: number;
+
+  // Profile picture upload. The bucket and CDN are the shared media ones; only the
+  // object prefix is avatar-specific.
+  mediaBucketName: string;
+  mediaCdnBaseUrl: string;
+  avatarObjectPrefix: string;
 }
 
 type ConfigSubset<T> = { [K in keyof T]: K extends keyof AllConfig ? AllConfig[K] : never }
@@ -72,7 +78,12 @@ export class Config<T extends ConfigSubset<T>> {
       feedMaxRadiusKm:
         Number(process.env.FEED_MAX_RADIUS_KM) as AllConfig['feedMaxRadiusKm'],
       feedDefaultRadiusKm:
-        Number(process.env.FEED_DEFAULT_RADIUS_KM) as AllConfig['feedDefaultRadiusKm']
+        Number(process.env.FEED_DEFAULT_RADIUS_KM) as AllConfig['feedDefaultRadiusKm'],
+
+      mediaBucketName: process.env.MEDIA_BUCKET_NAME as AllConfig['mediaBucketName'],
+      mediaCdnBaseUrl: process.env.MEDIA_CDN_BASE_URL as AllConfig['mediaCdnBaseUrl'],
+      avatarObjectPrefix:
+        (process.env.AVATAR_OBJECT_PREFIX ?? 'avatars') as AllConfig['avatarObjectPrefix']
     }
   }
 

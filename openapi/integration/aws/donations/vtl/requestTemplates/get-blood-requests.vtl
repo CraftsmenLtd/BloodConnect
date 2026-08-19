@@ -1,11 +1,11 @@
 {
-  "lat": "$input.params('lat')",
-  "lng": "$input.params('lng')",
-  "radius": "$input.params('radius')",
-  "bloodGroup": "$input.params('bloodGroup')",
-  "cursor": "$input.params('cursor')",
-  "pageSize": "$input.params('pageSize')",
-  "countryCode": "$input.params().header.get('CloudFront-Viewer-Country')",
+  "lat": "$util.escapeJavaScript($input.params('lat')).replaceAll("\\'","'")",
+  "lng": "$util.escapeJavaScript($input.params('lng')).replaceAll("\\'","'")",
+  "radius": "$util.escapeJavaScript($input.params('radius')).replaceAll("\\'","'")",
+  "bloodGroup": "$util.escapeJavaScript($input.params('bloodGroup')).replaceAll("\\'","'")",
+  "cursor": "$util.escapeJavaScript($input.params('cursor')).replaceAll("\\'","'")",
+  "pageSize": "$util.escapeJavaScript($input.params('pageSize')).replaceAll("\\'","'")",
+  "countryCode": "$util.escapeJavaScript($input.params().header.get('CloudFront-Viewer-Country')).replaceAll("\\'","'")",
   "apiGwRequestId": "$context.requestId",
-  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')"
+  "cloudFrontRequestId": "$util.escapeJavaScript($input.params('X-Amz-Cf-Id')).replaceAll("\\'","'")"
 }

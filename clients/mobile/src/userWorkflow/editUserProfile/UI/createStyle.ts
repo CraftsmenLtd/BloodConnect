@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native'
 import type { Theme } from '../../../setup/theme'
+import { spacing, radius } from '../../../setup/theme/tokens'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   gradientTop: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   gradientBottom: {
     flex: 1,
@@ -17,19 +18,19 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   scrollContent: {
     flexGrow: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   infoContainer: {
-    padding: 16
+    padding: spacing.lg
   },
   inputStyle: {
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   nidSection: {
-    marginTop: 16
+    marginTop: spacing.lg
   },
   nidLabel: {
-    marginBottom: 8
+    marginBottom: spacing.sm
   },
   nidImages: {
     flexDirection: 'row',
@@ -38,22 +39,22 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   nidImage: {
     width: 150,
     height: 100,
-    borderRadius: 8,
-    marginRight: 8
+    borderRadius: radius.md,
+    marginRight: spacing.sm
   },
   buttonContainer: {
-    padding: 16,
-    paddingTop: 12,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.lightGrey,
-    backgroundColor: theme.colors.white
+    borderTopColor: theme.colors.borderStrong,
+    backgroundColor: theme.colors.surface
   },
   mapViewContainer: {
-    borderRadius: 6,
+    borderRadius: radius.md,
     borderWidth: 1.5
   },
   dividerContainer: {
-    marginBottom: 15
+    marginBottom: spacing.lg
   },
   dividerLine: {
     backgroundColor: theme.colors.primary

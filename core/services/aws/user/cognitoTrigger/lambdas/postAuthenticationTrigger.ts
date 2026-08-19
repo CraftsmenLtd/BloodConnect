@@ -40,6 +40,13 @@ async function postAuthenticationLambda(
   const timestamp = new Date().toISOString()
   await userService.recordLastSuccessfulLoginTimestamp(userId, timestamp)
 
+  // Cognito re-applies IdP attribute mapping on every federated sign-in, so this is present
+  // even for accounts that predate the mapping. Absent for email/password users.
+  const providerPicture = event.request.userAttributes?.picture
+  if (providerPicture !== undefined && providerPicture !== '') {
+    await userService.syncProviderProfilePicture(userId, providerPicture)
+  }
+
   return event
 }
 

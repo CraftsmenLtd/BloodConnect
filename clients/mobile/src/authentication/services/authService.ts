@@ -134,6 +134,17 @@ export const currentLoggedInUser = async(): Promise<User> => {
   } satisfies User
 }
 
+export const getIdTokenPicture = async(): Promise<string | undefined> => {
+  try {
+    const session: AuthSession = await fetchAuthSession()
+    const picture = session?.tokens?.idToken?.payload.picture
+
+    return typeof picture === 'string' && picture !== '' ? picture : undefined
+  } catch (_error) {
+    return undefined
+  }
+}
+
 export const loginUser = async(email: string, password: string): Promise<boolean> => {
   try {
     const { isSignedIn } = await signIn({

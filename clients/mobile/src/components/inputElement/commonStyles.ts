@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native'
 import type { Theme } from '../../setup/theme'
+import { spacing } from '../../setup/theme/tokens'
 
 export const commonStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   inputContainer: {
-    marginBottom: 10
+    marginBottom: spacing.md
   },
   label: {
     fontSize: theme.typography.fontSize,
-    marginBottom: 5,
-    color: theme.colors.darkGrey,
+    marginBottom: spacing.xs,
+    color: theme.colors.textSecondary,
     fontWeight: '500'
   },
   error: {
@@ -17,5 +18,15 @@ export const commonStyles = (theme: Theme): ReturnType<typeof StyleSheet.create>
   },
   asterisk: {
     color: theme.colors.primary
+  },
+  inputFocused: {
+    borderColor: theme.colors.focus
+  },
+  inputError: {
+    borderColor: theme.colors.primary
+  },
+  inputDisabled: {
+    backgroundColor: theme.colors.surfaceVariant,
+    opacity: 0.6
   }
 })

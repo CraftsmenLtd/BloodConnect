@@ -1,4 +1,4 @@
-import type { Gender, LocationDTO } from '../../../commons/dto/UserDTO'
+import type { Gender, LocationDTO, ProfilePictureSource } from '../../../commons/dto/UserDTO'
 import type { BloodGroup } from '../../../commons/dto/DonationDTO'
 
 export type UserAttributes = {
@@ -26,10 +26,14 @@ export type CreateUserAttributes = {
   countryCode: string;
   lastDonationDate?: string;
   lastVaccinatedDate?: string;
+  profilePicture?: string;
+  // Server-derived, never read from a client payload.
+  profilePictureSource?: ProfilePictureSource;
 } & BaseUserAttributes
 
 export type UpdateUserAttributes = {
   userId: string;
+  countryCode?: string;
   bloodGroup?: BloodGroup;
   phoneNumbers?: string[];
   height?: string;
@@ -41,6 +45,9 @@ export type UpdateUserAttributes = {
   availableForDonation?: boolean;
   NIDFront?: string;
   NIDBack?: string;
+  profilePicture?: string;
+  // Server-derived, never read from a client payload.
+  profilePictureSource?: ProfilePictureSource;
   lastDonationDate?: string;
   lastVaccinatedDate?: string;
 }

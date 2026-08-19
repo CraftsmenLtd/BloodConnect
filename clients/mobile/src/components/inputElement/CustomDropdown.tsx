@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Dimensions, ScrollView } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard, Dimensions, ScrollView } from 'react-native'
+import { Text } from '../text/AppText'
 import type { InputProps } from './types'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type DropdownProps = {
   options: Array<{ label: string; value: string }>;
@@ -25,6 +27,8 @@ export const CustomDropdown = ({
   readOnly = false
 }: DropdownProps) => {
   const styles = createStyles(useTheme(), readOnly)
+  const isOpen = isVisible === name
+  const hasError = error !== null && error !== undefined && error !== ''
   const [showAbove, setShowAbove] = useState(false)
   const dropdownRef = useRef<View | null>(null)
   const windowHeight = Dimensions.get('window').height
@@ -64,8 +68,16 @@ export const CustomDropdown = ({
           {isRequired && <Text style={styles.asterisk}> *</Text>}
         </Text>
         {readOnly
-          ? <Text style={[styles.selectedText, styles.dropdown]}>{value !== '' ? value : options[0].label}</Text>
-          : <Text onPress={handleDropdownToggle} style={[styles.selectedText, styles.dropdown]}>{value !== '' ? value : options[0].label}</Text>
+          ? <Text style={[styles.selectedText, styles.dropdown, styles.inputDisabled]}>{value !== '' ? value : options[0].label}</Text>
+          : <Text
+            onPress={handleDropdownToggle}
+            style={[
+              styles.selectedText,
+              styles.dropdown,
+              isOpen && styles.inputFocused,
+              hasError && styles.inputError
+            ]}
+          >{value !== '' ? value : options[0].label}</Text>
         }
 
         {isVisible === name && !readOnly && (
@@ -97,17 +109,17 @@ const createStyles = (theme: Theme, readOnly: boolean): ReturnType<typeof StyleS
     width: '100%',
     position: 'relative',
     zIndex: 1,
-    marginVertical: 4
+    marginVertical: spacing.xs
   },
   scrollView: {
     maxHeight: 500
   },
   dropdown: {
-    padding: 12,
-    borderRadius: 8,
+    padding: spacing.md,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: theme.colors.lightGrey,
-    backgroundColor: theme.colors.white
+    borderColor: theme.colors.borderStrong,
+    backgroundColor: theme.colors.surface
   },
   selectedText: {
     fontSize: theme.typography.fontSize,
@@ -119,20 +131,16 @@ const createStyles = (theme: Theme, readOnly: boolean): ReturnType<typeof StyleS
     left: 0,
     width: '100%',
     zIndex: 9999,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
-    borderRadius: 8,
-    shadowColor: theme.colors.charcoalGray,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5
+    borderColor: theme.colors.border,
+    borderRadius: radius.md,
+    ...theme.elevation.md
   },
   option: {
-    padding: 10,
+    padding: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.extraLightGray
+    borderBottomColor: theme.colors.border
   },
   optionText: {
     fontSize: theme.typography.fontSize,

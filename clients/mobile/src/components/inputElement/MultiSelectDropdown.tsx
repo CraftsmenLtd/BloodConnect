@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { Text } from '../text/AppText'
 import { Dropdown } from 'react-native-element-dropdown'
 import { MaterialIcons } from '@expo/vector-icons'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import { commonStyles } from './commonStyles'
+import useFieldFocus from './hooks/useFieldFocus'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type Option = {
   label: string;
@@ -34,7 +37,10 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({
   error,
   extraInfo = ''
 }) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
+  const { isFocused, handleFocus, handleBlur } = useFieldFocus()
+  const hasError = error !== null && error !== undefined && error !== ''
   const [selectedValues, setSelectedValues] = useState<string[]>([])
 
   const handleSelect = (item: Option) => {
@@ -54,9 +60,9 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({
 
   const renderItem = (item: Option) => (
     <TouchableOpacity style={styles.itemContainer} onPress={() => { handleSelect(item) }}>
-      <Text style={styles.itemText}>{item.label}</Text>
+      <Text variant="body" style={styles.itemText}>{item.label}</Text>
       {selectedValues.includes(item.value) && (
-        <MaterialIcons name="check" size={20} color="red" style={styles.checkIcon} />
+        <MaterialIcons name="check" size={20} color={theme.colors.primary} style={styles.checkIcon} />
       )}
     </TouchableOpacity>
   )
@@ -68,10 +74,18 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({
         {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
       <Dropdown
-        style={styles.dropdown}
+        style={[
+          styles.dropdown,
+          isFocused && styles.inputFocused,
+          hasError && styles.inputError
+        ]}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
-        selectedStyle={styles.selectedTextStyle}
+        containerStyle={styles.dropdownList}
+        itemContainerStyle={styles.dropdownItemContainer}
+        activeColor={theme.colors.surfaceVariant}
         maxHeight={300}
         data={options}
         labelField='label'
@@ -81,14 +95,14 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownComponentProps> = ({
         renderItem={(item) => renderItem(item as Option)}
         multiSelect
       />
-      {extraInfo.trim().length > 0 && <Text style={styles.extraInfo}>{extraInfo}</Text>}
+      {extraInfo.trim().length > 0 && <Text variant="caption" style={styles.extraInfo}>{extraInfo}</Text>}
       <View style={styles.selectedContainer}>
         {selectedValues.map((value) => (
           <TouchableOpacity key={value} onPress={() => { removeSelectedItem(value) }}>
             <View style={styles.selectedTag}>
-              <Text style={styles.selectedText}>{value}</Text>
+              <Text variant="bodySmall" style={styles.selectedText}>{value}</Text>
               <TouchableOpacity>
-                <Text style={styles.removeIcon}>✕</Text>
+                <Text variant="bodySmall" style={styles.removeIcon}>✕</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -103,63 +117,69 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   dropdown: {
     height: 50,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 8
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.sm,
+    backgroundColor: theme.colors.surface
+  },
+  dropdownList: {
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
+    borderWidth: 1,
+    borderRadius: radius.md
+  },
+  dropdownItemContainer: {
+    backgroundColor: theme.colors.surface
   },
   placeholderStyle: {
     fontSize: 16,
-    color: theme.colors.grey
+    color: theme.colors.textTertiary
   },
   selectedTextStyle: {
     fontSize: 16,
-    color: theme.colors.charcoalGray
+    color: theme.colors.textPrimary
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.extraLightGray
+    borderBottomColor: theme.colors.border
   },
   itemText: {
-    fontSize: 16,
-    color: theme.colors.charcoalGray,
+    color: theme.colors.textPrimary,
     flex: 1
   },
   checkIcon: {
-    marginLeft: 10
+    marginLeft: spacing.md
   },
   selectedContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 4
+    marginTop: spacing.xs
   },
   selectedTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.extraLightGray,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    margin: 4,
+    backgroundColor: theme.colors.border,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    margin: spacing.xs,
     borderColor: theme.colors.primary,
     borderWidth: 1
   },
   selectedText: {
-    fontSize: 14,
-    color: theme.colors.charcoalGray,
-    marginRight: 8
+    color: theme.colors.textPrimary,
+    marginRight: spacing.sm
   },
   removeIcon: {
-    fontSize: 14,
     color: theme.colors.primary
   },
   extraInfo: {
-    fontSize: 12,
-    color: theme.colors.darkGrey
+    color: theme.colors.textSecondary
   }
 })
 

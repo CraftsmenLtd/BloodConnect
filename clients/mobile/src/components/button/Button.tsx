@@ -1,9 +1,11 @@
 import React from 'react'
 import type { StyleProp, ViewStyle, TextStyle } from 'react-native'
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import Loader from '../loaders/loader'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type ButtonProps = {
   text: string;
@@ -15,24 +17,26 @@ type ButtonProps = {
 }
 
 export const Button = ({ text, onPress, buttonStyle, textStyle, loading = false, disabled = false }: ButtonProps) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
   const isDisabled = disabled || loading
 
   return (
-    <TouchableOpacity
-      style={[
+    <Pressable
+      style={({ pressed }) => [
         styles.button,
         buttonStyle,
-        isDisabled && styles.disabledButton
+        disabled && styles.disabledButton,
+        pressed && !isDisabled && styles.pressed
       ]}
       onPress={onPress}
       disabled={isDisabled}
     >
       <View style={styles.buttonContent}>
-        {loading && <View style={styles.loaderOverlay}><Loader size='small' /></View>}
-        <Text style={[styles.buttonText, textStyle, isDisabled && styles.disabledText]}>{text}</Text>
+        <Text style={[styles.buttonText, textStyle, disabled && styles.disabledText, loading && styles.hiddenText]}>{text}</Text>
+        {loading && <View style={styles.loaderOverlay}><Loader size='small' color={theme.colors.onPrimary} /></View>}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   )
 }
 
@@ -40,30 +44,41 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     button: {
       backgroundColor: theme.colors.primary,
-      paddingVertical: 15,
-      borderRadius: 100,
+      paddingVertical: spacing.lg,
+      borderRadius: radius.pill,
       alignItems: 'center',
       justifyContent: 'center',
-      marginBottom: 10
+      marginBottom: spacing.md
     },
     buttonContent: {
       position: 'relative'
     },
     loaderOverlay: {
       position: 'absolute',
-      left: 50
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    hiddenText: {
+      opacity: 0
     },
     buttonText: {
-      color: theme.colors.white,
+      color: theme.colors.onPrimary,
       fontWeight: 'bold',
       fontSize: theme.typography.fontSize
     },
     disabledButton: {
-      backgroundColor: theme.colors.primary,
-      opacity: 0.5
+      backgroundColor: theme.colors.surfaceVariant
     },
     disabledText: {
-      color: theme.colors.white
+      color: theme.colors.textTertiary
+    },
+    pressed: {
+      opacity: 0.9,
+      transform: [{ scale: 0.98 }]
     }
   })
 

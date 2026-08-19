@@ -1,8 +1,10 @@
 import React from 'react'
 import type { StyleProp, ViewStyle, TextStyle } from 'react-native'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing } from '../../setup/theme/tokens'
 
 type DividerProps = {
   text?: string;
@@ -18,7 +20,7 @@ export const Divider = ({ text, containerStyle, lineStyle, textStyle }: DividerP
     <View style={[styles.container, containerStyle]}>
       <View style={[styles.line, lineStyle]} />
       {text !== undefined && text !== '' && (
-        <Text style={[styles.text, textStyle]}>{text}</Text>
+        <Text variant="bodySmall" style={[styles.text, textStyle]}>{text}</Text>
       )}
       <View style={[styles.line, lineStyle]} />
     </View>
@@ -30,17 +32,16 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
-    marginBottom: 25
+    marginTop: spacing.lg,
+    marginBottom: spacing.xxl
   },
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: theme.colors.extraLightGray
+    backgroundColor: theme.colors.border
   },
   text: {
-    marginHorizontal: 10,
-    fontSize: 14,
+    marginHorizontal: spacing.md,
     color: theme.colors.textSecondary
   }
 })

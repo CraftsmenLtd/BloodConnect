@@ -1,53 +1,48 @@
 import { StyleSheet } from 'react-native'
 import type { Theme } from '../../../../setup/theme'
+import { spacing, radius } from '../../../../setup/theme/tokens'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.greyBG,
-    paddingTop: 4
+    backgroundColor: theme.colors.surfaceVariant,
+    paddingTop: spacing.xs
   },
   scrollViewContent: {
-    paddingBottom: 20
+    paddingBottom: spacing.xl
   },
   card: {
-    backgroundColor: theme.colors.white,
-    borderRadius: 10,
-    padding: 16,
-    paddingTop: 14,
-    shadowColor: theme.colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    backgroundColor: theme.colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    paddingTop: spacing.lg,
+    ...theme.elevation.sm,
     position: 'relative'
   },
   header: {
-    color: theme.colors.white,
-    fontSize: 16,
+    color: theme.colors.onPrimary,
     fontWeight: 'bold'
   },
   name: {
-    fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.textPrimary
   },
   subText: {
-    fontSize: 14,
     color: theme.colors.textSecondary
   },
   emptyPadding: {
-    padding: 8
+    padding: spacing.sm
   },
   seekerDetails: {
     borderWidth: 2,
-    borderColor: theme.colors.extraLightGray,
-    borderRadius: 8
+    borderColor: theme.colors.border,
+    borderRadius: radius.md
   },
   frameBloodType: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 10
+    padding: spacing.md
   },
   requestSection: {
     flexDirection: 'row',
@@ -55,9 +50,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   requestUrgency: {
     backgroundColor: theme.colors.goldenYellow,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 20,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.xl,
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -65,8 +60,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     fontSize: 22
   },
   primaryCaption: {
-    color: theme.colors.textSecondary,
-    fontSize: 12
+    color: theme.colors.textSecondary
   },
   labelRow: {
     flexDirection: 'row',
@@ -74,10 +68,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   },
   icons: {
     verticalAlign: 'middle',
-    paddingRight: 4
+    paddingRight: spacing.xs
   },
   bloodtypeImage: {
-    marginRight: 8,
+    marginRight: spacing.sm,
     color: theme.colors.bloodRed
   },
   requestText: {
@@ -85,25 +79,23 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     flexDirection: 'column'
   },
   highlightedText: {
-    fontWeight: 'bold',
-    fontSize: 16
+    fontWeight: 'bold'
   },
   urgentText: {
-    color: theme.colors.black,
+    color: theme.colors.textPrimary,
     fontWeight: 'bold',
-    fontSize: 12,
     flexDirection: 'row',
     alignItems: 'center'
   },
   infoSection: {
     flexDirection: 'row',
     alignItems: 'stretch',
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   contactNumber: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderColor: theme.colors.extraLightGray,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    borderColor: theme.colors.border,
     borderTopWidth: 1
   },
   contactRow: {
@@ -112,75 +104,71 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center'
   },
   phoneNumber: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.textPrimary
   },
   infoRow: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: spacing.md,
     borderTopWidth: 1,
-    borderColor: theme.colors.extraLightGray,
-    paddingHorizontal: 12
+    borderColor: theme.colors.border,
+    paddingHorizontal: spacing.md
   },
   label: {
     color: theme.colors.textSecondary,
-    fontSize: 14,
-    marginBottom: 4
+    marginBottom: spacing.xs
   },
   value: {
     color: theme.colors.textPrimary,
-    fontSize: 16,
     flexWrap: 'wrap',
     flexShrink: 1
   },
   dividerHorizontal: {
     width: 1,
-    backgroundColor: theme.colors.extraLightGray,
+    backgroundColor: theme.colors.border,
     height: '100%'
   },
   callButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
+    paddingVertical: spacing.sm,
     textAlign: 'center',
-    paddingHorizontal: 12,
-    borderRadius: 48,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.pill,
     borderColor: theme.colors.redFaded,
     borderWidth: 1,
-    backgroundColor: theme.colors.greyBG
+    backgroundColor: theme.colors.surfaceVariant
   },
   callIcon: {
     width: 20,
     height: 20,
-    marginRight: 6,
+    marginRight: spacing.sm,
     tintColor: theme.colors.primary,
-    paddingHorizontal: 10
+    paddingHorizontal: spacing.md
   },
   callText: {
     color: theme.colors.primary,
-    fontSize: 14,
     fontWeight: 'bold',
     lineHeight: 20
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 16,
-    paddingTop: 12,
-    backgroundColor: theme.colors.white
+    padding: spacing.lg,
+    paddingTop: spacing.md,
+    backgroundColor: theme.colors.surface
   },
   ignoreButton: {
-    backgroundColor: theme.colors.greyBG,
+    backgroundColor: theme.colors.surfaceVariant,
     flex: 1,
-    marginRight: 10,
-    color: 'black'
+    marginRight: spacing.md,
+    color: theme.colors.textPrimary
   },
   acceptButton: {
     backgroundColor: theme.colors.primary,
     flex: 1,
     fontWeight: 'bold',
-    borderRadius: 48
+    borderRadius: radius.pill
   },
   acceptButtonText: {
     fontSize: theme.typography.fontSize,

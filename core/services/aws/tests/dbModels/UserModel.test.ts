@@ -46,6 +46,23 @@ describe('UserModel Unit Tests', () => {
 
       expect(resultUserWithoutCreatedAt).toEqual(expectedUserWithoutCreatedAt)
     })
+
+    test('should preserve createdAt from the DTO instead of fabricating a new one', () => {
+      const resultUser = userModel.fromDto(mockUserDetailsWithStringId)
+
+      expect(resultUser.createdAt).toBe(mockUserDetailsWithStringId.createdAt)
+    })
+
+    test('should fabricate createdAt only when the DTO lacks one', () => {
+      const dtoWithoutCreatedAt = {
+        ...mockUserDetailsWithStringId,
+        createdAt: undefined as unknown as string
+      }
+      const resultUser = userModel.fromDto(dtoWithoutCreatedAt)
+
+      expect(typeof resultUser.createdAt).toBe('string')
+      expect(Number.isNaN(Date.parse(resultUser.createdAt as string))).toBe(false)
+    })
   })
 
   describe('toDto', () => {

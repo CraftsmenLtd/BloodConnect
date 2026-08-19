@@ -1,6 +1,10 @@
 import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { View, Text, ScrollView } from 'react-native'
+import {
+  useTranslation } from 'react-i18next'
+import { View,
+  ScrollView
+} from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import Badge from '../../../components/badge'
 import MapView from '../../../components/mapView'
 import useMapView from '../../../components/mapView/useMapView'
@@ -44,7 +48,7 @@ const Profile: React.FC = () => {
     isLast: boolean = false): JSX.Element => (
     <View style={[styles.row, isLast && styles.lastRow]}>
       <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value}>{value as string}</Text>
+      <Text variant="bodySmall" style={styles.value}>{value as string}</Text>
     </View>
   )
 

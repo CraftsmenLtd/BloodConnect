@@ -4,5 +4,6 @@ import type Repository from './Repository'
 type LocationRepository = {
   queryUserLocations(userId: string): Promise<LocationDTO[]>;
   deleteUserLocations(userId: string): Promise<void>;
+  deleteUserLocation(userId: string, locationId: string): Promise<void>;
 } & Repository<LocationDTO, Record<string, unknown>>
 export default LocationRepository

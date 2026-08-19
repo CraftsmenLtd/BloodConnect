@@ -1,75 +1,75 @@
 import { commonStyles } from '../../../components/inputElement/commonStyles'
 import type { Theme } from '../../../setup/theme'
 import { StyleSheet } from 'react-native'
+import { spacing, radius } from '../../../setup/theme/tokens'
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   ...commonStyles(theme),
   container: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   scrollContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 16
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg
   },
   card: {
-    backgroundColor: theme.colors.white,
-    borderRadius: 10,
+    backgroundColor: theme.colors.surface,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: theme.colors.lightGrey
+    borderColor: theme.colors.borderStrong
   },
   row: {
     borderBottomWidth: 1,
-    borderColor: theme.colors.lightGrey,
-    padding: 10
+    borderColor: theme.colors.borderStrong,
+    padding: spacing.md
   },
   lastRow: {
     borderBottomWidth: 0
   },
   value: {
-    fontSize: 14,
     fontWeight: 'bold',
-    color: theme.colors.black
+    color: theme.colors.textPrimary
   },
   buttonContainer: {
-    padding: 16,
-    paddingTop: 12,
-    backgroundColor: theme.colors.white,
-    borderTopColor: theme.colors.lightGrey,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
+    backgroundColor: theme.colors.surface,
+    borderTopColor: theme.colors.borderStrong,
     borderTopWidth: 1
   },
   editButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 48,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xxxl,
+    borderRadius: radius.pill,
     alignItems: 'center'
   },
   editButtonText: {
-    color: 'white',
+    color: theme.colors.onPrimary,
     fontSize: 16,
     fontWeight: 'bold'
   },
   selectedItemContainer: {
-    gap: 4,
+    gap: spacing.xs,
     flexDirection: 'row',
     flexWrap: 'wrap'
   },
   selectedItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.greyBG,
-    borderRadius: 20,
+    backgroundColor: theme.colors.surfaceVariant,
+    borderRadius: radius.xl,
     paddingHorizontal: 1,
-    paddingVertical: 3,
-    marginBottom: 5,
+    paddingVertical: spacing.xs,
+    marginBottom: spacing.xs,
     justifyContent: 'space-between',
   },
   selectedItemText: {
-    marginRight: 5
+    marginRight: spacing.xs
   },
   mapViewContainer: {
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10
+    borderBottomLeftRadius: radius.lg,
+    borderBottomRightRadius: radius.lg
   },
   dividerContainer: {
     marginBottom: 2

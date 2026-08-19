@@ -1,6 +1,7 @@
 import React from 'react'
 import type { StyleProp, TextStyle } from 'react-native'
-import { Text, StyleSheet, Linking } from 'react-native'
+import { StyleSheet, Linking } from 'react-native'
+import { Text } from './AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 

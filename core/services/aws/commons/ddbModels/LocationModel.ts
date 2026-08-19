@@ -69,7 +69,7 @@ implements NosqlModel<LocationFields>, DbModelDtoAdapter<LocationDTO, LocationFi
       GSI1SK: `USER#${userId}`,
       h3Res8,
       ...remainingFields,
-      createdAt: new Date().toISOString()
+      createdAt: remainingFields.createdAt ?? new Date().toISOString()
     }
   }
 

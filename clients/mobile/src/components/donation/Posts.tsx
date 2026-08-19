@@ -1,11 +1,18 @@
-import { FlatList, StyleSheet, View, Text } from 'react-native'
+import { FlatList, StyleSheet, View, LayoutAnimation, Platform, UIManager } from 'react-native'
+import type { ListRenderItem } from 'react-native'
+import { Text } from '../text/AppText'
 import type { PostCardDisplayOptions } from './PostCard'
 import { PostCard } from './PostCard'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { DonationData } from '../../donationWorkflow/donationPosts/useDonationPosts'
-import React from 'react'
+import React, { useCallback, useRef } from 'react'
 import StateAwareRenderer from '../StateAwareRenderer'
+import { spacing } from '../../setup/theme/tokens'
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental !== undefined) {
+  UIManager.setLayoutAnimationEnabledExperimental(true)
+}
 
 type PostsProps = {
   updatePost?: (donationData: DonationData) => void;
@@ -32,61 +39,79 @@ const Posts: React.FC<PostsProps> = ({
 }) => {
   const styles = createStyles(useTheme())
 
-  const ViewToRender = () => <FlatList
-    data={donationPosts}
-    renderItem={({ item }) => (
-      <PostCard
-        post={item}
-        updateHandler={updatePost}
-        detailHandler={detailHandler}
-        cancelHandler={cancelPost}
-        {...displayOptions}
-      />)}
-    ListEmptyComponent={
-      <View style={styles.centeredContainer}>
-        <Text style={styles.noResultText}>{emptyDataMessage}</Text>
-      </View>
-    }
-    keyExtractor={(item) => item.requestPostId}
-    contentContainerStyle={styles.postList}
-    refreshControl={refreshControl}
-  />
+  // Ease list items in/out when posts are added/removed instead of popping.
+  const prevCountRef = useRef(donationPosts.length)
+  if (prevCountRef.current !== donationPosts.length) {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+    prevCountRef.current = donationPosts.length
+  }
 
-  const ErrorComponent = () => <FlatList
-    data={[]}
-    renderItem={null}
-    keyExtractor={(_, index) => index.toString()}
-    contentContainerStyle={styles.postList}
-    refreshControl={refreshControl}
-    ListEmptyComponent={
-      <View style={styles.emptyContainer}>
-        <Text style={styles.errorText}>{errorMessage}</Text>
-      </View>
-    }
-  />
+  const renderItem = useCallback<ListRenderItem<DonationData>>(({ item }) => (
+    <PostCard
+      post={item}
+      updateHandler={updatePost}
+      detailHandler={detailHandler}
+      cancelHandler={cancelPost}
+      {...displayOptions}
+    />
+  ), [updatePost, detailHandler, cancelPost, displayOptions])
+
+  const listView = (
+    <FlatList
+      data={donationPosts}
+      renderItem={renderItem}
+      ListEmptyComponent={
+        <View style={styles.centeredContainer}>
+          <Text variant="body" style={styles.noResultText}>{emptyDataMessage}</Text>
+        </View>
+      }
+      keyExtractor={(item) => item.requestPostId}
+      contentContainerStyle={styles.postList}
+      refreshControl={refreshControl}
+      initialNumToRender={6}
+      maxToRenderPerBatch={8}
+      windowSize={11}
+      removeClippedSubviews
+    />
+  )
+
+  const errorView = (
+    <FlatList
+      data={[]}
+      renderItem={null}
+      keyExtractor={(_, index) => index.toString()}
+      contentContainerStyle={styles.postList}
+      refreshControl={refreshControl}
+      ListEmptyComponent={
+        <View style={styles.emptyContainer}>
+          <Text variant="body" style={styles.errorText}>{errorMessage}</Text>
+        </View>
+      }
+    />
+  )
 
   return (
     <StateAwareRenderer
       loading={loading}
       errorMessage={errorMessage}
-      ErrorComponent={errorMessage !== null ? <ErrorComponent /> : undefined}
+      ErrorComponent={errorMessage !== null ? errorView : undefined}
       data={donationPosts}
-      ViewComponent={ViewToRender} />
+      ViewComponent={listView} />
   )
 }
 
 const createStyles = (theme: Theme) => StyleSheet.create({
   postList: {
-    paddingBottom: 10,
+    paddingBottom: spacing.md,
     flexGrow: 1
   },
   loadingIndicator: {
-    marginTop: 20,
+    marginTop: spacing.xl,
     color: theme.colors.primary
   },
   noDataText: {
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: spacing.xl,
     fontSize: 16,
     color: theme.colors.textSecondary
   },
@@ -94,16 +119,15 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20
+    padding: spacing.xl
   },
   errorText: {
-    fontSize: 16,
     color: theme.colors.primary,
     textAlign: 'center',
-    marginBottom: 10
+    marginBottom: spacing.md
   },
   emptyDataMessage: {
-    padding: 20,
+    padding: spacing.xl,
     alignItems: 'center'
   },
   centeredContainer: {
@@ -112,8 +136,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     alignItems: 'center'
   },
   noResultText: {
-    fontSize: 16,
-    color: theme.colors.grey,
+    color: theme.colors.textTertiary,
     textAlign: 'center'
   },
   errorMessage: {

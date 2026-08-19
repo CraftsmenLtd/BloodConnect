@@ -7,6 +7,7 @@ import { useTheme } from '../setup/theme/hooks/useTheme'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { StyleSheet } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
+import { spacing } from '../setup/theme/tokens'
 
 type AuthLayoutProps = {
   children: ReactNode;
@@ -38,9 +39,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   scrollViewContainer: {
     flexGrow: 1,
     justifyContent: 'flex-start',
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     paddingTop: '10%',
-    paddingHorizontal: 20
+    paddingHorizontal: spacing.xl
   }
 })
 

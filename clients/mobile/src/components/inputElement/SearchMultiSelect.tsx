@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   TextInput,
@@ -11,11 +10,13 @@ import {
   Dimensions,
   ActivityIndicator
 } from 'react-native'
+import { Text } from '../text/AppText'
 import { Ionicons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import type { Option } from './types'
 import { commonStyles } from './commonStyles'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type MultiSelectProps = {
   name: string;
@@ -52,12 +53,15 @@ const SearchMultiSelect = ({
 }: MultiSelectProps) => {
   const theme = useTheme()
   const styles = createStyles(theme)
+  const isOpen = isVisible === name
+  const hasError = error !== null && error !== undefined && error !== ''
   const [value, setValue] = useState(initialValue)
   const [searchText, setSearchText] = useState('')
   const [selectedValues, setSelectedValues] = useState<Option[]>([])
   const [options, setOptions] = useState<Option[]>(initialOptions)
   const [isLoading, setIsLoading] = useState(false)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const focusTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const searchInputRef = useRef<TextInput>(null)
   const requestIdRef = useRef(0)
 
@@ -70,6 +74,9 @@ const SearchMultiSelect = ({
   useEffect(() => () => {
     if (typingTimeoutRef.current !== null) {
       clearTimeout(typingTimeoutRef.current)
+    }
+    if (focusTimeoutRef.current !== null) {
+      clearTimeout(focusTimeoutRef.current)
     }
   }, [])
 
@@ -111,6 +118,9 @@ const SearchMultiSelect = ({
     if (typingTimeoutRef.current !== null) {
       clearTimeout(typingTimeoutRef.current)
     }
+    if (focusTimeoutRef.current !== null) {
+      clearTimeout(focusTimeoutRef.current)
+    }
     setIsLoading(false)
     setIsVisible('')
     Keyboard.dismiss()
@@ -120,6 +130,9 @@ const SearchMultiSelect = ({
     if (!multiSelect) {
       if (typingTimeoutRef.current !== null) {
         clearTimeout(typingTimeoutRef.current)
+      }
+      if (focusTimeoutRef.current !== null) {
+        clearTimeout(focusTimeoutRef.current)
       }
       setIsLoading(false)
       setValue(item.label)
@@ -158,13 +171,19 @@ const SearchMultiSelect = ({
       </Text>
 
       <TouchableOpacity
-        style={[styles.dropdown, !editable && styles.inputDisabled]}
+        style={[
+          styles.dropdown,
+          isOpen && styles.inputFocused,
+          hasError && styles.inputError,
+          !editable && styles.inputDisabled
+        ]}
         onPress={openDropdown}
         activeOpacity={1}
         disabled={!editable}
       >
         <Ionicons name="search" size={18} color={theme.colors.textSecondary} />
         <Text
+          variant="body"
           style={[styles.fieldText, value === '' && styles.placeholderText]}
           numberOfLines={1}
         >
@@ -172,7 +191,7 @@ const SearchMultiSelect = ({
         </Text>
       </TouchableOpacity>
 
-      {extraInfo.trim().length > 0 && <Text style={styles.extraInfo}>{extraInfo}</Text>}
+      {extraInfo.trim().length > 0 && <Text variant="caption" style={styles.extraInfo}>{extraInfo}</Text>}
       {error !== null && error !== undefined && <Text style={styles.error}>{error}</Text>}
 
       {multiSelect
@@ -191,7 +210,12 @@ const SearchMultiSelect = ({
         transparent
         visible={isVisible === name}
         onRequestClose={closeDropdown}
-        onShow={() => { searchInputRef.current?.focus() }}
+        onShow={() => {
+          if (focusTimeoutRef.current !== null) {
+            clearTimeout(focusTimeoutRef.current)
+          }
+          focusTimeoutRef.current = setTimeout(() => { searchInputRef.current?.focus() }, 200)
+        }}
         statusBarTranslucent
       >
         <TouchableOpacity style={styles.backdrop} onPress={closeDropdown} activeOpacity={1}>
@@ -207,6 +231,9 @@ const SearchMultiSelect = ({
                 <TextInput
                   ref={searchInputRef}
                   placeholder={placeholder}
+                  placeholderTextColor={theme.colors.textTertiary}
+                  selectionColor={theme.colors.focus}
+                  cursorColor={theme.colors.focus}
                   value={searchText}
                   onChangeText={handleInputChange}
                   style={styles.searchInput}
@@ -230,7 +257,7 @@ const SearchMultiSelect = ({
                     style={styles.option}
                     onPress={() => { handleSelect(item) }}
                   >
-                    <Text style={styles.optionText}>{item.label}</Text>
+                    <Text variant="body" style={styles.optionText}>{item.label}</Text>
                     {selectedValues.some((selected) => selected.value === item.value) && (
                       <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
                     )}
@@ -253,25 +280,24 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   container: {
     width: '100%',
-    marginVertical: 4
+    marginVertical: spacing.xs
   },
   dropdown: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    padding: 12,
+    gap: spacing.sm,
+    padding: spacing.md,
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
-    borderRadius: 8,
-    backgroundColor: theme.colors.white
+    borderColor: theme.colors.border,
+    borderRadius: radius.md,
+    backgroundColor: theme.colors.surface
   },
   fieldText: {
     flex: 1,
-    fontSize: 16,
     color: theme.colors.textPrimary
   },
   placeholderText: {
-    color: theme.colors.grey
+    color: theme.colors.textTertiary
   },
   inputDisabled: {
     opacity: 0.5
@@ -279,29 +305,28 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   chipContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 8
+    marginTop: spacing.sm
   },
   selectedItem: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderColor: 'black',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderColor: theme.colors.borderStrong,
     borderWidth: 1,
-    borderRadius: 100,
-    marginRight: 4,
-    marginTop: 4
+    borderRadius: radius.pill,
+    marginRight: spacing.xs,
+    marginTop: spacing.xs
   },
   extraInfo: {
-    fontSize: 12,
-    color: theme.colors.darkGrey
+    color: theme.colors.textSecondary
   },
   backdrop: {
     flex: 1,
-    backgroundColor: theme.colors.blackFaded,
-    paddingTop: 50,
-    paddingHorizontal: 16
+    backgroundColor: theme.colors.backdrop,
+    paddingTop: spacing.xxxxl,
+    paddingHorizontal: spacing.lg
   },
   dropdownContainer: {
     width: '100%'
@@ -309,43 +334,38 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   modalSheet: {
     width: '100%',
     maxHeight: height * 0.45,
-    backgroundColor: theme.colors.white,
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: theme.colors.textPrimary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5
+    backgroundColor: theme.colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    ...theme.elevation.md
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.lightGrey,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10
+    borderColor: theme.colors.borderStrong,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md
   },
   searchIcon: {
-    marginRight: 8
+    marginRight: spacing.sm
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
     color: theme.colors.textPrimary,
-    paddingVertical: 8
+    paddingVertical: spacing.sm
   },
   option: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 8,
+    padding: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.lightGrey
+    borderBottomColor: theme.colors.borderStrong
   },
   optionText: {
-    fontSize: 16,
     color: theme.colors.textPrimary
   }
 })

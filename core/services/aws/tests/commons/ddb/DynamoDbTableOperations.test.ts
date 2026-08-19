@@ -80,6 +80,18 @@ describe('DynamoDbTableOperations Tests', () => {
     )
   })
 
+  test('should never write createdAt on update', async() => {
+    const mockUpdateResponse = { $metadata: { httpStatusCode: 200 } }
+    ddbMock.on(UpdateCommand).resolves(mockUpdateResponse)
+
+    await dynamoDbOperations.update(mockUserDetailsWithStringId)
+
+    const updateInput = ddbMock.commandCalls(UpdateCommand)[0].args[0].input
+    expect(Object.values(updateInput.ExpressionAttributeNames ?? {})).not.toContain('createdAt')
+    expect(updateInput.ExpressionAttributeValues ?? {}).not.toHaveProperty(':pcreatedAt')
+    expect(Object.values(updateInput.ExpressionAttributeNames ?? {})).toContain('name')
+  })
+
   test('should throw an error when DynamoDB fails to update an item', async() => {
     const mockUpdateResponse = { $metadata: { httpStatusCode: 500 } }
     ddbMock.on(UpdateCommand).resolves(mockUpdateResponse)

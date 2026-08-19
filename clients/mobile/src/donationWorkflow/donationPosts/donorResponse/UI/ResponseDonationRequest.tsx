@@ -4,14 +4,14 @@ import type {
   ImageStyle
 } from 'react-native'
 import {
-  Text,
   View,
   Image,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Linking
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Text } from '../../../../components/text/AppText'
 import { useTheme } from '../../../../setup/theme/hooks/useTheme'
 import { Button } from '../../../../components/button/Button'
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
@@ -48,12 +48,12 @@ const ResponseDonationRequest = () => {
   )
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.card}>
-          <Text style={styles.header}>Blood Request</Text>
-          <Text style={styles.name}>{bloodRequest.seekerName ?? 'Seeker Name'}</Text>
-          <Text style={styles.subText}>{t('donationPosts.postedOn')} {
+          <Text variant="body" style={styles.header}>Blood Request</Text>
+          <Text variant="h3" style={styles.name}>{bloodRequest.seekerName ?? 'Seeker Name'}</Text>
+          <Text variant="bodySmall" style={styles.subText}>{t('donationPosts.postedOn')} {
             bloodRequest?.createdAt !== null
             && bloodRequest?.createdAt !== undefined
               ? new Date(bloodRequest.createdAt).toLocaleString()
@@ -70,8 +70,8 @@ const ResponseDonationRequest = () => {
                   size={32}
                 />
                 <View style={styles.requestText}>
-                  <Text style={styles.primaryCaption}>{t('donationPosts.lookingFor')}</Text>
-                  <Text style={styles.highlightedText}>
+                  <Text variant="caption" style={styles.primaryCaption}>{t('donationPosts.lookingFor')}</Text>
+                  <Text variant="body" style={styles.highlightedText}>
                     {
                       formatBloodQuantity(
                         bloodRequest.bloodQuantity) ?? 0
@@ -87,7 +87,7 @@ const ResponseDonationRequest = () => {
                   <MaterialCommunityIcons
                     name='alert'
                   />
-                  <Text style={styles.urgentText}>{t('common.urgent')}</Text>
+                  <Text variant="caption" style={styles.urgentText}>{t('common.urgent')}</Text>
                 </View>
               )}
             </View>
@@ -95,8 +95,8 @@ const ResponseDonationRequest = () => {
             <View style={styles.infoSection}>
               <View style={styles.infoRow}>
                 <View style={styles.labelRow}>
-                  <Ionicons name="location-outline" size={14} color="gray" style={styles.icons} />
-                  <Text style={styles.label}>
+                  <Ionicons name="location-outline" size={14} color={theme.colors.textSecondary} style={styles.icons} />
+                  <Text variant="bodySmall" style={styles.label}>
                     {t('donationPosts.donationPoint')}
                   </Text>
                 </View>
@@ -107,20 +107,20 @@ const ResponseDonationRequest = () => {
                         location: bloodRequest.location
                       })
                     }}>
-                    <Text style={[styles.value, styles.link]}>{bloodRequest.location}</Text>
+                    <Text variant="body" style={[styles.value, styles.link]}>{bloodRequest.location}</Text>
                   </TouchableOpacity>
-                  : <Text style={styles.value}>Location not provided</Text>}
+                  : <Text variant="body" style={styles.value}>Location not provided</Text>}
 
               </View>
               <View style={styles.dividerHorizontal}></View>
               <View style={styles.infoRow}>
                 <View style={styles.labelRow}>
-                  <Ionicons name="calendar-outline" size={14} color="gray" style={styles.icons} />
-                  <Text style={styles.label}>
+                  <Ionicons name="calendar-outline" size={14} color={theme.colors.textSecondary} style={styles.icons} />
+                  <Text variant="bodySmall" style={styles.label}>
                     {t('donationPosts.timeDate')}
                   </Text>
                 </View>
-                <Text style={styles.value}>
+                <Text variant="body" style={styles.value}>
                   {formatDateTime(bloodRequest.donationDateTime)}
                 </Text>
               </View>
@@ -129,11 +129,11 @@ const ResponseDonationRequest = () => {
             <View style={styles.contactNumber}>
               <View style={styles.contactRow}>
                 <View>
-                  <Text style={styles.label}>
+                  <Text variant="bodySmall" style={styles.label}>
                     {t('donationPosts.contactNumber')}
                   </Text>
                   {isRequestAlreadyAccepted
-                    ? <Text style={styles.phoneNumber}>
+                    ? <Text variant="body" style={styles.phoneNumber}>
                       {bloodRequest.contactNumber ?? 'Contact Not Shared'}
                     </Text>
                     : <Text style={styles.hiddenNumber}>
@@ -156,37 +156,37 @@ const ResponseDonationRequest = () => {
                       source={require('../../../../../assets/images/call.png')}
                       style={styles.callIcon as StyleProp<ImageStyle>}
                     />
-                    <Text style={styles.callText}>{t('btn.call')}</Text>
+                    <Text variant="bodySmall" style={styles.callText}>{t('btn.call')}</Text>
                   </TouchableOpacity>
                 )}
               </View>
             </View>
             {bloodRequest.patientName !== ''
               && <View style={styles.infoRow}>
-                <Text style={styles.label}>
+                <Text variant="bodySmall" style={styles.label}>
                   {t('donationPosts.nameOfThePatient')}
                 </Text>
-                <Text style={styles.value}>
+                <Text variant="body" style={styles.value}>
                   {bloodRequest.patientName ?? 'Patient Name not provided'}
                 </Text>
               </View>
             }
             {bloodRequest.shortDescription !== ''
               && <View style={styles.infoRow}>
-                <Text style={styles.label}>
+                <Text variant="bodySmall" style={styles.label}>
                   {t('donationPosts.shortDescription')}
                 </Text>
-                <Text style={styles.value}>
+                <Text variant="body" style={styles.value}>
                   {bloodRequest.shortDescription ?? 'No description provided'}
                 </Text>
               </View>
             }
             {bloodRequest.transportationInfo !== ''
               && <View style={styles.infoRow}>
-                <Text style={styles.label}>
+                <Text variant="bodySmall" style={styles.label}>
                   {t('donationPosts.transportationFacilityForTheDonor')}
                 </Text>
-                <Text style={styles.value}>
+                <Text variant="body" style={styles.value}>
                   {bloodRequest.transportationInfo ?? 'No transportation info'}
                 </Text>
               </View>
@@ -204,7 +204,7 @@ const ResponseDonationRequest = () => {
             && <Button
               text={t('btn.ignore')}
               buttonStyle={styles.ignoreButton}
-              textStyle={{ color: theme.colors.black }}
+              textStyle={{ color: theme.colors.textPrimary }}
               onPress={() => {
                 void handleIgnore()
               }} />}

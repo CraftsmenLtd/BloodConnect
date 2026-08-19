@@ -1,4 +1,5 @@
-import { View, StyleSheet, Text, ScrollView } from 'react-native'
+import { View, StyleSheet, ScrollView } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import DonorCard from '../../../components/donation/DonorCard'
 import useDonorConfirmation from './useDonorConfirmation'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
@@ -7,6 +8,7 @@ import { Button } from '../../../components/button/Button'
 import type { DonorItem } from '../../myPosts/donorResponses/DonorResponses'
 import StateAwareRenderer from '../../../components/StateAwareRenderer'
 import useCompleteDonation from '../useCompleteDonation'
+import { spacing } from '../../../setup/theme/tokens'
 
 const DonorConfirmationScreen = () => {
   const styles = createStyles(useTheme())
@@ -15,7 +17,7 @@ const DonorConfirmationScreen = () => {
 
   const ViewToRender = () =>
     <View style={styles.container}>
-      <Text style={styles.responseText}>Select the donors who have donated blood</Text>
+      <Text variant="h3" style={styles.responseText}>Select the donors who have donated blood</Text>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {donors.map((donor: DonorItem) => (
@@ -29,7 +31,7 @@ const DonorConfirmationScreen = () => {
       </ScrollView>
 
       <View style={styles.footerContainer}>
-        {error !== null && <Text style={styles.errorText}>{error}</Text>}
+        {error !== null && <Text variant="bodySmall" style={styles.errorText}>{error}</Text>}
         <Button
           text="Confirm"
           onPress={() => { void executeFunction(selectedDonor, requestPostId, createdAt) }}
@@ -45,25 +47,22 @@ const DonorConfirmationScreen = () => {
 const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: spacing.lg,
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   scrollContainer: {
-    paddingBottom: 16
+    paddingBottom: spacing.lg
   },
   responseText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16
+    marginBottom: spacing.lg
   },
   footerContainer: {
-    marginTop: 16
+    marginTop: spacing.lg
   },
   errorText: {
     color: theme.colors.primary,
-    fontSize: 14,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
     textAlign: 'center'
   }
 })

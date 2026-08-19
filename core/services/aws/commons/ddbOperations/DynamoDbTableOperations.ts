@@ -253,7 +253,10 @@ export default class DynamoDbTableOperations<
     try {
       const items = this.modelAdapter.fromDto(item)
       const primaryKeyName = this.modelAdapter.getPrimaryIndex()
-      const updatedItem = this.removePrimaryKey(
+      // createdAt is the record's creation time and must survive updates. Several
+      // model adapters fabricate it in fromDto when the (often partial) DTO omits
+      // it, so letting it through here rewrites creation time on every update.
+      const { createdAt: _createdAt, ...updatableFields } = this.removePrimaryKey(
         primaryKeyName.partitionKey as string,
         items,
         primaryKeyName.sortKey as string
@@ -263,7 +266,7 @@ export default class DynamoDbTableOperations<
         removeExpression,
         expressionAttribute,
         expressionAttributeNames
-      } = this.createUpdateExpressions(updatedItem)
+      } = this.createUpdateExpressions(updatableFields)
       const keyObject: Record<string, DbFields[keyof DbFields]> = {
         [primaryKeyName.partitionKey]: items[primaryKeyName.partitionKey]
       }

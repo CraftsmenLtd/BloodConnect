@@ -64,4 +64,8 @@ export default class LocationDynamoDbOperations extends DynamoDbTableOperations<
       await super.delete(`USER#${userId}`, `LOCATION#${location.locationId}`)
     }
   }
+
+  async deleteUserLocation(userId: string, locationId: string): Promise<void> {
+    await super.delete(`USER#${userId}`, `LOCATION#${locationId}`)
+  }
 }

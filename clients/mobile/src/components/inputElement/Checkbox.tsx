@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing } from '../../setup/theme/tokens'
 
 type CheckboxProps = {
   isChecked: boolean;
@@ -12,8 +13,9 @@ type CheckboxProps = {
   children: React.ReactNode;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ isChecked, onCheckboxChange, name, children, checkboxColor = 'red' }) => {
-  const styles = createStyles(useTheme())
+const Checkbox: React.FC<CheckboxProps> = ({ isChecked, onCheckboxChange, name, children, checkboxColor }) => {
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   return (
     <View style={styles.container}>
@@ -21,7 +23,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ isChecked, onCheckboxChange, name, 
         <MaterialIcons
           name={isChecked ? 'check-box' : 'check-box-outline-blank'}
           size={32}
-          color={checkboxColor}
+          color={checkboxColor ?? theme.colors.primary}
         />
       </TouchableOpacity>
       {children}
@@ -33,10 +35,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10
+    paddingVertical: spacing.md
   },
   checkboxContainer: {
-    marginRight: 10
+    marginRight: spacing.md
   },
   text: {
     fontSize: theme.typography.fontSize,

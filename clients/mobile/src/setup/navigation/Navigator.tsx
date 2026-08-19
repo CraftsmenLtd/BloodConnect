@@ -9,13 +9,15 @@ import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
 import type { Theme } from '../theme'
 import { useTheme } from '../theme/hooks/useTheme'
 import { withRegisterPushOnFocus } from '../../utility/WithDeviceRegistration'
+import { spacing, radius } from '../theme/tokens'
 
 const Stack = createStackNavigator()
 
 export default function Navigator() {
   const { isAuthenticated, loading } = useAuth()
   const { userProfile, fetchUserProfile, loading: profileLoading } = useUserProfile()
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -45,6 +47,13 @@ export default function Navigator() {
   return (
     <Stack.Navigator
       initialRouteName={getInitialRoute()}
+      screenOptions={({ navigation }) => ({
+        headerStyle: { backgroundColor: theme.colors.surface },
+        headerTintColor: theme.colors.textPrimary,
+        headerTitleStyle: { color: theme.colors.textPrimary },
+        cardStyle: { backgroundColor: theme.colors.background },
+        detachPreviousScreen: !navigation.isFocused()
+      })}
     >
       {filteredRoutes.map(({ name, component, options }) => (
         <Stack.Screen
@@ -66,10 +75,10 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   comingSoonText: {
     fontSize: 20,
-    padding: 10,
+    padding: spacing.md,
     lineHeight: 30,
     fontWeight: 'bold',
-    color: theme.colors.black,
+    color: theme.colors.textPrimary,
     textAlign: 'center'
   },
   logoTitleContainer: {
@@ -82,12 +91,12 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     width: 100,
     height: 100,
     backgroundColor: theme.colors.primary,
-    borderRadius: 20
+    borderRadius: radius.xl
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.primary,
-    marginTop: 10
+    marginTop: spacing.md
   },
 })

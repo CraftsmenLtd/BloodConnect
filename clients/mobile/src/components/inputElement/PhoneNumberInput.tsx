@@ -1,13 +1,16 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import { Text } from '../text/AppText'
 import PhoneInput from 'react-native-phone-number-input'
 import { WARNINGS } from '../../setup/constant/consts'
 import type { Theme } from '../../setup/theme'
-import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { useTheme, useIsDark } from '../../setup/theme/hooks/useTheme'
 import Loader from '../loaders/loader'
 import Warning from '../warning'
 import { commonStyles } from './commonStyles'
 import usePhoneNumberInput from './hooks/usePhoneNumberInput'
+import useFieldFocus from './hooks/useFieldFocus'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 /**
  * PhoneNumberInput Component
@@ -64,7 +67,9 @@ const PhoneNumberInput = ({
   showWarning?: boolean;
 }): React.ReactElement => {
   const theme = useTheme()
+  const isDark = useIsDark()
   const styles = createStyles(theme)
+  const { isFocused, handleFocus, handleBlur } = useFieldFocus()
   const {
     phoneInputRef,
     isValid,
@@ -104,13 +109,22 @@ const PhoneNumberInput = ({
         onChangeFormattedText={handleChangeFormattedText}
         containerStyle={[
           styles.phoneContainer,
-          !isValid ? styles.errorBorder : null
+          isFocused && styles.inputFocused,
+          !isValid && styles.inputError
         ]}
         textContainerStyle={styles.textInput}
         textInputStyle={styles.text}
         codeTextStyle={styles.codeText}
         flagButtonStyle={styles.flagButton}
         placeholder={placeholder}
+        withDarkTheme={isDark}
+        textInputProps={{
+          placeholderTextColor: theme.colors.textTertiary,
+          selectionColor: theme.colors.focus,
+          cursorColor: theme.colors.focus,
+          onFocus: handleFocus,
+          onBlur: handleBlur
+        }}
       />
       {!isValid && <Text style={styles.error}>Please enter a valid phone number</Text>}
       {showWarning
@@ -126,40 +140,35 @@ const PhoneNumberInput = ({
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   ...commonStyles(theme),
   container: {
-    marginVertical: 8
+    marginVertical: spacing.sm
   },
   phoneContainer: {
     borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: theme.colors.white,
+    borderRadius: radius.sm,
+    backgroundColor: theme.colors.surface,
     height: 50,
     width: '100%',
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   textInput: {
     backgroundColor: 'transparent',
-    borderTopRightRadius: 8,
-    borderBottomRightRadius: 8,
+    borderTopRightRadius: radius.md,
+    borderBottomRightRadius: radius.md,
     paddingVertical: 0,
     paddingHorizontal: 0
   },
   text: {
     height: 48,
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textPrimary
   },
   codeText: {
     fontSize: 16,
     color: theme.colors.textSecondary
   },
   flagButton: {
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8
-  },
-  errorText: {
-    color: theme.colors.bloodRed,
-    fontSize: 12,
-    marginTop: 4
+    borderTopLeftRadius: radius.md,
+    borderBottomLeftRadius: radius.md
   },
   loader: {
     flex: 1,

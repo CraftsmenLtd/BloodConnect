@@ -40,6 +40,16 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
+  # S3 Origin (Media bucket — user images, documents, etc.)
+  origin {
+    domain_name = var.media_bucket.bucket_regional_domain_name
+    origin_id   = var.media_origin_id
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.s3_media_bucket_oai.cloudfront_access_identity_path
+    }
+  }
+
   # API Gateway Origin (for /api routes)
   origin {
     domain_name = "${var.rest_api_id}.execute-api.${data.aws_region.current.name}.amazonaws.com"
@@ -106,6 +116,23 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 
   ordered_cache_behavior {
+    path_pattern           = "/${var.media_path}/*"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    target_origin_id       = var.media_origin_id
+    viewer_protocol_policy = "redirect-to-https"
+
+    forwarded_values {
+      query_string = true
+      cookies {
+        forward = "none"
+      }
+    }
+
+    response_headers_policy_id = var.cloudfront_header_response_policy_id
+  }
+
+  ordered_cache_behavior {
     path_pattern           = "/${var.monitoring_site_path}/*"
     allowed_methods        = ["GET", "OPTIONS", "HEAD"]
     cached_methods         = ["GET", "OPTIONS", "HEAD"]
@@ -143,4 +170,26 @@ resource "aws_cloudfront_origin_access_identity" "s3_static_bucket_oai" {
 
 resource "aws_cloudfront_origin_access_identity" "s3_monitoring_bucket_oai" {
   comment = "OAI for S3 Monitoring Site"
+}
+
+resource "aws_cloudfront_origin_access_identity" "s3_media_bucket_oai" {
+  comment = "OAI for S3 Media bucket"
+}
+
+data "aws_iam_policy_document" "media_bucket_policy" {
+  statement {
+    sid       = "AllowCloudFrontMediaRead"
+    actions   = ["s3:GetObject"]
+    resources = ["${var.media_bucket.arn}/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.s3_media_bucket_oai.iam_arn]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "media_bucket_policy" {
+  bucket = var.media_bucket.id
+  policy = data.aws_iam_policy_document.media_bucket_policy.json
 }

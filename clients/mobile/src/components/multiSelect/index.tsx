@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Modal,
@@ -10,11 +9,13 @@ import {
   TextInput,
   ActivityIndicator
 } from 'react-native'
+import { Text } from '../text/AppText'
 import { Ionicons } from '@expo/vector-icons'
 import type { Theme } from '../../setup/theme'
 import Badge from '../badge'
 import { commonStyles } from '../inputElement/commonStyles'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type Option = {
   label: string;
@@ -163,6 +164,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
             ref={searchInputRef}
             style={styles.searchInput}
             placeholder="Search..."
+            placeholderTextColor={theme.colors.textTertiary}
             value={searchText}
             onChangeText={handleSearch}
             editable={editable}
@@ -180,7 +182,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
             style={styles.option}
             onPress={() => { handleSelect(item) }}
           >
-            <Text style={styles.optionText}>{item.label}</Text>
+            <Text variant="body" style={styles.optionText}>{item.label}</Text>
             {selectedValues.includes(item.value) && (
               <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
             )}
@@ -214,7 +216,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
         activeOpacity={1}
       >
         <View style={styles.input}>
-          <Text style={styles.placeholder}>{placeholder}</Text>
+          <Text variant="body" style={styles.placeholder}>{placeholder}</Text>
         </View>
         <Ionicons
           name={isVisible ? 'chevron-up' : 'chevron-down'}
@@ -224,7 +226,7 @@ const MultiSelect: React.FC<MultiSelectProps> = React.memo(({
       </TouchableOpacity>
 
       {(minRequiredLabel !== null && selectedValues.length === 0)
-        && <Text style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
+        && <Text variant="caption" style={styles.minRequiredLabel}>{minRequiredLabel}</Text>
       }
       {error !== null && <Text style={styles.error}>{error}</Text>}
 
@@ -264,7 +266,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   container: {
     width: '100%',
-    marginVertical: 3
+    marginVertical: spacing.xs
   },
   requiredStar: {
     color: theme.colors.primary
@@ -274,96 +276,89 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: theme.colors.white
+    borderColor: theme.colors.border,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    backgroundColor: theme.colors.surface
   },
   placeholder: {
-    fontSize: 16,
-    color: theme.colors.grey
+    color: theme.colors.textTertiary
   },
   input: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     flex: 1,
-    gap: 5,
-    paddingVertical: 3
+    gap: spacing.xs,
+    paddingVertical: spacing.xs
   },
   selectedItemContainer: {
-    gap: 4,
+    gap: spacing.xs,
     flexDirection: 'row',
     flexWrap: 'wrap'
   },
   selectedItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.greyBG,
-    borderRadius: 20,
+    backgroundColor: theme.colors.surfaceVariant,
+    borderRadius: radius.xl,
     paddingHorizontal: 1,
-    paddingVertical: 3,
-    marginBottom: 5,
+    paddingVertical: spacing.xs,
+    marginBottom: spacing.xs,
     justifyContent: 'space-between',
   },
   selectedItemText: {
-    marginRight: 5
+    marginRight: spacing.xs
   },
   minRequiredLabel: {
-    fontSize: 12,
-    color: theme.colors.darkGrey,
-    marginTop: 4
+    color: theme.colors.textSecondary,
+    marginTop: spacing.xs
   },
   backdrop: {
     flex: 1,
-    backgroundColor: theme.colors.blackFaded,
+    backgroundColor: theme.colors.backdrop,
     justifyContent: 'center',
     alignItems: 'center'
   },
   dropdownContainer: {
     position: 'absolute',
     width,
-    paddingHorizontal: 16
+    paddingHorizontal: spacing.lg
   },
   dropdown: {
     width: '100%',
     maxHeight: height * 0.45,
-    backgroundColor: theme.colors.white,
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: theme.colors.textPrimary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5
+    backgroundColor: theme.colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    ...theme.elevation.md
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.lightGrey,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 10
+    borderColor: theme.colors.borderStrong,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md
   },
   searchIcon: {
-    marginRight: 8
+    marginRight: spacing.sm
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
     color: theme.colors.textPrimary,
-    paddingVertical: 8
+    paddingVertical: spacing.sm
   },
   option: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.extraLightGray
+    borderBottomColor: theme.colors.border
   },
   optionText: {
-    fontSize: 16,
     color: theme.colors.textPrimary
   }
 })

@@ -1,5 +1,6 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { Input } from '../../../components/inputElement/Input'
 import { Button } from '../../../components/button/Button'
 import { SocialButton } from '../../../components/button/SocialButton'
@@ -72,7 +73,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
 
       <Divider text={t('common.orText')} />
 
-      {socialLoginError !== '' && <Text style={styles.error}>{socialLoginError}</Text>}
+      {socialLoginError !== '' && <Text variant="caption" style={styles.error}>{socialLoginError}</Text>}
 
       <SocialButton
         text={t('common.continueWithGoogle')}
@@ -100,7 +101,6 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
 const createStyles = (theme: Theme) => StyleSheet.create({
   error: {
     color: theme.colors.primary,
-    fontSize: theme.typography.errorFontSize,
     textAlign: 'center'
   },
   phoneWrapper: {

@@ -2,7 +2,7 @@ import 'react-native-gesture-handler'
 import '@react-native-firebase/app'
 import { LogBox, StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native'
+import { NavigationContainer, useNavigationContainerRef, DefaultTheme, DarkTheme } from '@react-navigation/native'
 import { NetInfoProvider } from './src/authentication/context/NetInfo'
 import { NetInfoModal } from './src/components/NetInfoModal'
 import { ThemeProvider } from './src/setup/theme/context/ThemeContext'
@@ -24,7 +24,60 @@ import Monitoring from './src/setup/monitoring/MonitoringService'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 import i18n from './src/setup/language/i18n'
 import { KeyboardProvider } from 'react-native-keyboard-controller'
-import React from 'react'
+import { useTheme, useIsDark } from './src/setup/theme/hooks/useTheme'
+import type { NavigationContainerRefWithCurrent } from '@react-navigation/native'
+import * as SplashScreen from 'expo-splash-screen'
+import { useFonts } from 'expo-font'
+import { Roboto_400Regular } from '@expo-google-fonts/roboto/400Regular'
+import { Roboto_500Medium } from '@expo-google-fonts/roboto/500Medium'
+import { Roboto_700Bold } from '@expo-google-fonts/roboto/700Bold'
+import React, { useEffect } from 'react'
+
+const ThemedStatusBar = () => {
+  const theme = useTheme()
+  const isDark = useIsDark()
+
+  // Match the status bar to the header surface and adapt the icon contrast to the theme
+  // (light-content was white-on-white over the white header on iOS light mode).
+  return <StatusBar hidden={false} barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.surface} />
+}
+
+const AppNavigator = ({ navigationRef }: { navigationRef: NavigationContainerRefWithCurrent<RootStackParamList> }) => {
+  const theme = useTheme()
+  const isDark = useIsDark()
+  const base = isDark ? DarkTheme : DefaultTheme
+
+  const navigationTheme = {
+    ...base,
+    colors: {
+      ...base.colors,
+      primary: theme.colors.primary,
+      background: theme.colors.background,
+      card: theme.colors.surface,
+      text: theme.colors.textPrimary,
+      border: theme.colors.border,
+      notification: theme.colors.primary
+    }
+  }
+
+  return (
+    <NavigationContainer ref={navigationRef} theme={navigationTheme}>
+      <NetInfoProvider>
+        <NotificationProvider navigationRef={navigationRef}>
+          <AuthProvider>
+            <UserProfileProvider>
+              <MyActivityProvider>
+                <ThemedStatusBar />
+                <Navigator />
+                <NetInfoModal />
+              </MyActivityProvider>
+            </UserProfileProvider>
+          </AuthProvider>
+        </NotificationProvider>
+      </NetInfoProvider>
+    </NavigationContainer>
+  )
+}
 
 const { APP_ENV } = Constants.expoConfig?.extra ?? {}
 
@@ -35,6 +88,9 @@ if (APP_ENV !== 'development') {
 cognitoUserPoolsTokenProvider.setKeyValueStorage(secureKeyValueStorage)
 Amplify.configure(awsCognitoConfiguration)
 void clearLegacyTokenStorage()
+
+// Keep the native splash up until the app fonts are loaded to avoid a font swap flash.
+void SplashScreen.preventAutoHideAsync()
 
 Notifications.setNotificationHandler({
   handleNotification: async() => ({
@@ -55,29 +111,26 @@ export default function App() {
   useTranslation()
   useBackPressHandler()
   const navigationRef = useNavigationContainerRef<RootStackParamList>()
+  const [fontsLoaded, fontError] = useFonts({ Roboto_400Regular, Roboto_500Medium, Roboto_700Bold })
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      void SplashScreen.hideAsync()
+    }
+  }, [fontsLoaded, fontError])
+
+  // On font-load failure, render anyway and let text fall back to the system font.
+  if (!fontsLoaded && !fontError) {
+    return null
+  }
 
   return (
     <KeyboardProvider>
       <I18nextProvider i18n={i18n} >
         <SafeAreaProvider>
-          <NavigationContainer ref={navigationRef}>
-            <NetInfoProvider>
-              <NotificationProvider navigationRef={navigationRef}>
-                <AuthProvider>
-                  <UserProfileProvider>
-                    <MyActivityProvider>
-                      <ThemeProvider>
-                        {/* TODO: need to use themes' primary color but it's not working. */}
-                        <StatusBar hidden={false} backgroundColor='#FF4D4D' />
-                        <Navigator />
-                        <NetInfoModal />
-                      </ThemeProvider>
-                    </MyActivityProvider>
-                  </UserProfileProvider>
-                </AuthProvider>
-              </NotificationProvider>
-            </NetInfoProvider>
-          </NavigationContainer>
+          <ThemeProvider>
+            <AppNavigator navigationRef={navigationRef} />
+          </ThemeProvider>
         </SafeAreaProvider>
       </I18nextProvider>
     </KeyboardProvider>

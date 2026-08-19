@@ -1,16 +1,24 @@
 import React from 'react'
 import type { StyleProp, ImageStyle } from 'react-native'
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native'
+import { View, Image, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
+import { Text } from '../../components/text/AppText'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
-import { COMMON_URLS } from '../../setup/constant/commonUrls'
+import InitialsAvatar from '../../components/avatar/InitialsAvatar'
+import Badge from '../../components/badge'
+import { useProfileAvatarUri } from '../hooks/useProfileAvatarUri'
+import { spacing, radius } from '../../setup/theme/tokens'
+
+const AVATAR_SIZE = 56
 
 type UserData = {
   name: string;
   location: string;
   age: number;
+  bloodGroup?: string;
   isEditing?: boolean;
+  uploading?: boolean;
   onImageUpload?: () => void;
 }
 
@@ -19,19 +27,32 @@ const ProfileSection: React.FC<UserData> = (
     name,
     location,
     age,
+    bloodGroup,
     isEditing = false,
+    uploading = false,
     onImageUpload
   }) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
+  const avatarUri = useProfileAvatarUri()
 
   return (
     <View style={styles.profileSection}>
       <View style={styles.imageOuterBorder}>
         <View style={styles.imageInnerBorder}>
-          <Image
-            style={styles.profileImage as StyleProp<ImageStyle>}
-            source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-          />
+          {avatarUri !== undefined
+            ? (
+              <Image
+                style={styles.profileImage as StyleProp<ImageStyle>}
+                source={{ uri: avatarUri }}
+              />
+            )
+            : <InitialsAvatar name={name} size={AVATAR_SIZE} />}
+          {uploading && (
+            <View style={styles.uploadingOverlay}>
+              <ActivityIndicator size="small" color={theme.colors.onPrimary} />
+            </View>
+          )}
           {isEditing && (
             <Pressable style={styles.cameraIconContainer} onPress={onImageUpload}>
               <View style={styles.cameraIconWrapper}>
@@ -42,10 +63,19 @@ const ProfileSection: React.FC<UserData> = (
         </View>
       </View>
       <View style={styles.profileInfo}>
-        <Text style={styles.profileName}>{name} {age && `(${age})`}</Text>
+        <View style={styles.profileNameRow}>
+          <Text variant="h3" style={styles.profileName}>{name} {age && `(${age})`}</Text>
+          {bloodGroup !== undefined && bloodGroup !== '' && (
+            <Badge
+              text={bloodGroup}
+              containerStyle={styles.bloodGroupBadge}
+              textStyle={styles.bloodGroupBadgeText}
+            />
+          )}
+        </View>
         <View style={styles.profileLocationSection}>
           <MaterialIcons name="location-on" size={16} style={styles.iconStyle} />
-          <Text style={styles.profileLocation}>{location}</Text>
+          <Text variant="bodySmall" style={styles.profileLocation}>{location}</Text>
         </View>
       </View>
     </View>
@@ -58,16 +88,16 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   profileSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
     borderTopWidth: 1,
     borderBottomWidth: 4,
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   imageOuterBorder: {
     width: 60,
     height: 60,
-    borderRadius: 50,
+    borderRadius: radius.pill,
     borderWidth: 4,
     borderColor: theme.colors.primary,
     alignItems: 'center',
@@ -76,59 +106,74 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   imageInnerBorder: {
     width: 58,
     height: 58,
-    borderRadius: 45,
+    borderRadius: radius.pill,
     borderWidth: 2,
-    borderColor: theme.colors.extraLightGray,
+    borderColor: theme.colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative'
   },
   profileImage: {
-    width: 56,
-    height: 56,
-    borderRadius: 30
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: radius.pill
+  },
+  uploadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.backdrop
   },
   cameraIconContainer: {
     position: 'absolute',
     bottom: -10,
     alignSelf: 'center',
-    backgroundColor: theme.colors.white,
-    borderRadius: 20,
+    backgroundColor: theme.colors.surface,
+    borderRadius: radius.xl,
     width: 46,
     height: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: theme.colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
+    ...theme.elevation.sm,
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray
+    borderColor: theme.colors.border
   },
   cameraIconWrapper: {
-    backgroundColor: theme.colors.greyBG,
+    backgroundColor: theme.colors.surfaceVariant,
     width: 46,
     height: 20,
     bottom: -1,
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderRadius: radius.xl,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     alignItems: 'center',
     justifyContent: 'center'
   },
   cameraIcon: {
-    color: theme.colors.black,
+    color: theme.colors.textPrimary,
     fontSize: 18,
     width: 16,
     height: 16,
     transform: [{ scaleX: -1 }]
   },
   profileInfo: {
-    marginLeft: 15
+    marginLeft: spacing.lg
+  },
+  profileNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: spacing.sm
   },
   profileName: {
-    fontSize: 18,
+    fontWeight: 'bold'
+  },
+  bloodGroupBadge: {
+    backgroundColor: theme.colors.primary
+  },
+  bloodGroupBadgeText: {
+    color: theme.colors.onPrimary,
     fontWeight: 'bold'
   },
   profileLocationSection: {
@@ -136,11 +181,10 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
   },
   profileLocation: {
-    fontSize: 14,
-    color: 'gray'
+    color: theme.colors.textSecondary
   },
   iconStyle: {
-    color: 'gray',
-    marginRight: 4
+    color: theme.colors.textSecondary,
+    marginRight: spacing.xs
   }
 })

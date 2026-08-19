@@ -1,14 +1,18 @@
 import React from 'react'
 import type { ImageStyle, StyleProp } from 'react-native'
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { Text } from '../../components/text/AppText'
 import { Ionicons } from '@expo/vector-icons'
 import useDonorProfile from './useDonorProfile'
 import type { preferredDonationLocations } from '../../userWorkflow/services/userServices'
-import { COMMON_URLS } from '../../setup/constant/commonUrls'
+import InitialsAvatar from '../../components/avatar/InitialsAvatar'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import StateAwareRenderer from '../../components/StateAwareRenderer'
 import { calculateBMI, getBMICategory } from '../../utility/bmi'
+import { spacing, radius } from '../../setup/theme/tokens'
+
+const AVATAR_SIZE = 110
 
 const DonorProfile = () => {
   const theme = useTheme()
@@ -16,25 +20,29 @@ const DonorProfile = () => {
   const { donorProfile, loading, error, handleCall } = useDonorProfile()
   const ViewToRender = () => <View style={styles.container}>
     <View style={styles.profileContainer}>
-      <Image
-        source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-        style={styles.profileImage as StyleProp<ImageStyle>}
-      />
+      {donorProfile?.profilePicture !== undefined && donorProfile.profilePicture !== ''
+        ? (
+          <Image
+            source={{ uri: donorProfile.profilePicture }}
+            style={styles.profileImage as StyleProp<ImageStyle>}
+          />
+        )
+        : <InitialsAvatar name={donorProfile?.donorName ?? ''} size={AVATAR_SIZE} />}
       <View style={styles.bloodGroupBadge}>
-        <Text style={styles.bloodGroupText}>
+        <Text variant="body" style={styles.bloodGroupText}>
           {donorProfile?.bloodGroup ?? ''}(ve)
         </Text>
       </View>
     </View>
 
-    <Text style={styles.name}>{donorProfile?.donorName ?? ''}</Text>
+    <Text variant="h2" style={styles.name}>{donorProfile?.donorName ?? ''}</Text>
     <View>
       {Array.isArray(donorProfile?.preferredDonationLocations)
         && donorProfile.preferredDonationLocations.map(
           (location: preferredDonationLocations, index: number) => (
             <View style={styles.locationRow} key={index}>
               <Ionicons name="location-sharp" size={16} color={theme.colors.primary} />
-              <Text style={styles.locationText}>
+              <Text variant="bodySmall" style={styles.locationText}>
                 {location?.area ?? ''}
               </Text>
             </View>
@@ -42,20 +50,21 @@ const DonorProfile = () => {
     </View>
 
     <View style={styles.detailsRow}>
-      <Text style={styles.detailsText}>
-        {donorProfile.weight && donorProfile.height
-          ? (() => {
-            const bmi = calculateBMI(donorProfile.weight, donorProfile.height)
+      <Text variant="bodySmall" style={styles.detailsText}>
+        {(() => {
+          const weight = donorProfile?.weight ?? 0
+          const height = donorProfile?.height ?? 0
+          if (weight === 0 || height === 0) return 'BMI: Not Available'
+          const bmi = calculateBMI(weight, height)
 
-            return `BMI: ${bmi} (${getBMICategory(bmi)})`
-          })()
-          : 'BMI: Not Available'}
+          return `BMI: ${bmi} (${getBMICategory(bmi)})`
+        })()}
       </Text>
     </View>
 
     <View style={{ width: '100%' }}>
       <TouchableOpacity style={styles.callButton} onPress={handleCall}>
-        <Text style={styles.callButtonText}>Call now</Text>
+        <Text variant="body" style={styles.callButtonText}>Call now</Text>
       </TouchableOpacity>
     </View>
   </View>
@@ -72,24 +81,23 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     locationRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginVertical: 4
+      marginVertical: spacing.xs
     },
     locationText: {
-      marginLeft: 8,
-      fontSize: 14,
+      marginLeft: spacing.sm,
       color: theme.colors.textSecondary
     },
     errorContainer: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 16,
-      backgroundColor: theme.colors.white
+      padding: spacing.lg,
+      backgroundColor: theme.colors.surface
     },
     errorText: {
       fontSize: 16,
@@ -97,12 +105,12 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       textAlign: 'center'
     },
     container: {
-      borderTopColor: theme.colors.black,
+      borderTopColor: theme.colors.textPrimary,
       borderTopWidth: 1,
-      paddingTop: 32,
-      paddingBottom: 16,
-      paddingHorizontal: 16,
-      backgroundColor: theme.colors.white,
+      paddingTop: spacing.xxxl,
+      paddingBottom: spacing.lg,
+      paddingHorizontal: spacing.lg,
+      backgroundColor: theme.colors.surface,
       alignItems: 'center'
     },
     profileContainer: {
@@ -110,9 +118,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       alignItems: 'center'
     },
     profileImage: {
-      width: 110,
-      height: 110,
-      borderRadius: 50,
+      width: AVATAR_SIZE,
+      height: AVATAR_SIZE,
+      borderRadius: radius.pill,
       borderWidth: 2,
       borderColor: theme.colors.primary
     },
@@ -120,46 +128,41 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       position: 'absolute',
       bottom: -8,
       backgroundColor: theme.colors.goldenYellow,
-      borderRadius: 12,
+      borderRadius: radius.lg,
       paddingVertical: 2,
-      paddingHorizontal: 8,
+      paddingHorizontal: spacing.sm,
       borderWidth: 1,
       borderColor: theme.colors.primary
     },
     bloodGroupText: {
-      fontSize: 16,
       fontWeight: 'bold',
       color: theme.colors.textSecondary
     },
     name: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      marginTop: 12,
+      marginTop: spacing.md,
       color: theme.colors.textPrimary
     },
     detailsRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 8
+      marginTop: spacing.sm
     },
     detailsText: {
-      fontSize: 14,
-      color: theme.colors.grey
+      color: theme.colors.textTertiary
     },
     callButton: {
       flexDirection: 'row',
       justifyContent: 'center',
-      gap: 8,
+      gap: spacing.sm,
       backgroundColor: theme.colors.primary,
-      borderRadius: 100,
-      paddingVertical: 12,
-      paddingHorizontal: 40,
-      marginTop: 16
+      borderRadius: radius.pill,
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.xxxxl,
+      marginTop: spacing.lg
     },
     callButtonText: {
       textAlign: 'center',
-      fontSize: 16,
-      color: theme.colors.white,
+      color: theme.colors.onPrimary,
       fontWeight: 'bold'
     }
   })

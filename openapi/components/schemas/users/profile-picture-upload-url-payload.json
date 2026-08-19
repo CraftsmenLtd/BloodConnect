@@ -1,0 +1,21 @@
+{
+  "ProfilePictureUploadUrlRequestModel": {
+    "type": "object",
+    "properties": {
+      "contentType": {
+        "type": "string",
+        "enum": [
+          "image/jpeg",
+          "image/jpg",
+          "image/png"
+        ]
+      }
+    },
+    "required": [
+      "contentType"
+    ],
+    "example": {
+      "contentType": "image/jpeg"
+    }
+  }
+}

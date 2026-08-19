@@ -1,11 +1,22 @@
 import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
+import {
+  useTranslation } from 'react-i18next'
+import { View,
+  Image,
+  TouchableOpacity,
+  StyleSheet
+} from 'react-native'
+import { Text } from '../../components/text/AppText'
+import InitialsAvatar from '../../components/avatar/InitialsAvatar'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { spacing, radius } from '../../setup/theme/tokens'
+import { useProfileAvatarUri } from '../../userWorkflow/hooks/useProfileAvatarUri'
+import { useUserProfile } from '../../userWorkflow/context/UserProfileContext'
+
+const AVATAR_SIZE = 40
 
 type HeaderProps = {
-  profileImageUri: string;
   title: string;
   buttonLabel: string;
   onButtonPress: () => void;
@@ -16,7 +27,6 @@ type HeaderProps = {
 }
 
 const Header: React.FC<HeaderProps> = ({
-  profileImageUri,
   title,
   buttonLabel,
   onButtonPress,
@@ -28,13 +38,18 @@ const Header: React.FC<HeaderProps> = ({
   const theme = useTheme()
   const { t } = useTranslation()
   const styles = createStyles(theme)
+  // The signed-in user's own avatar, resolved the same way as the profile screen.
+  const avatarUri = useProfileAvatarUri()
+  const { userProfile } = useUserProfile()
 
   return (
     <View>
       <View style={styles.header}>
         <View style={styles.headerLeftContent}>
-          <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
-          <Text style={styles.title}>{title}</Text>
+          {avatarUri !== undefined
+            ? <Image source={{ uri: avatarUri }} style={styles.profileImage} />
+            : <InitialsAvatar name={userProfile.name} size={AVATAR_SIZE} />}
+          <Text variant="h3" style={styles.title}>{title}</Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={onButtonPress}>
           <Text style={styles.buttonText}>{buttonLabel}</Text>
@@ -69,62 +84,61 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
-    paddingVertical: 15,
-    paddingHorizontal: 15,
-    backgroundColor: theme.colors.white,
-    borderBottomColor: theme.colors.extraLightGray,
+    marginBottom: spacing.sm,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: theme.colors.surface,
+    borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
-    borderTopColor: theme.colors.extraLightGray,
+    borderTopColor: theme.colors.border,
     borderTopWidth: 1
   },
   filter: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-    paddingVertical: 6,
-    paddingHorizontal: 15,
-    backgroundColor: theme.colors.white,
-    borderBottomColor: theme.colors.extraLightGray,
+    marginBottom: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: theme.colors.surface,
+    borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
-    borderTopColor: theme.colors.extraLightGray,
+    borderTopColor: theme.colors.border,
     borderTopWidth: 1
   },
   headerLeftContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8
+    gap: spacing.sm
   },
   profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: radius.xl
   },
   title: {
-    fontSize: 17,
-    color: theme.colors.lightGrey
+    color: theme.colors.borderStrong
   },
   button: {
     backgroundColor: theme.colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 25
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: radius.xl
   },
   filterButton: {
     backgroundColor: theme.colors.primary,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 25,
-    marginRight: 10
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: radius.xl,
+    marginRight: spacing.md
   },
   filterSelected: {
     backgroundColor: theme.colors.primary
   },
   filterNotSelected: {
-    backgroundColor: theme.colors.lightGrey
+    backgroundColor: theme.colors.borderStrong
   },
   buttonText: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontWeight: 'bold'
   }
 })

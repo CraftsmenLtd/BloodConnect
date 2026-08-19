@@ -1,8 +1,8 @@
 #set($inputRoot = $input.path('$'))
 {
   "userId": "$context.authorizer.claims['custom:userId']",
-  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "cloudFrontRequestId": "$util.escapeJavaScript($input.params('X-Amz-Cf-Id')).replaceAll("\\'","'")",
   "apiGwRequestId": "$context.requestId",
-  "deviceToken": "$inputRoot.deviceToken",
-  "platform": "$inputRoot.platform"
+  "deviceToken": "$util.escapeJavaScript($inputRoot.deviceToken).replaceAll("\\'","'")",
+  "platform": "$util.escapeJavaScript($inputRoot.platform).replaceAll("\\'","'")"
 }

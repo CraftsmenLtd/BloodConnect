@@ -29,7 +29,7 @@ export default class UserModel implements NosqlModel<UserFields>, DbModelDtoAdap
       PK: `${USER_PK_PREFIX}#${typeof id === 'string' ? id : id.toString()}`,
       SK: USER_SK,
       ...remainingUser,
-      createdAt: new Date().toISOString()
+      createdAt: remainingUser.createdAt ?? new Date().toISOString()
     }
   }
 

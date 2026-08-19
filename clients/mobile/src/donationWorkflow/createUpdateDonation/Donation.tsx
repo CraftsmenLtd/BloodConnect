@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react'
 import Constants from 'expo-constants'
 import { useTranslation } from 'react-i18next'
 import type { ScrollView } from 'react-native'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import { Text } from '../../components/text/AppText'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import PhoneNumberInput from '../../components/inputElement/PhoneNumberInput'
 import RadioButton from '../../components/inputElement/Radio'
@@ -20,6 +21,7 @@ import type { Theme } from '../../setup/theme'
 import SearchMultiSelect from '../../components/inputElement/SearchMultiSelect'
 import { LocationService } from '../../LocationService/LocationService'
 import Dropdown from '../../components/inputElement/Dropdown'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
@@ -212,35 +214,35 @@ const CreateBloodRequest = () => {
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 18,
-    backgroundColor: theme.colors.white
+    padding: spacing.xl,
+    backgroundColor: theme.colors.surface
   },
   fieldSpacing: {
-    marginTop: 5
+    marginTop: spacing.xs
   },
   reducedSpacing: {
-    marginTop: 12,
+    marginTop: spacing.md,
     marginBottom: -6
   },
   extraBottomMargin: {
-    marginBottom: 12
+    marginBottom: spacing.md
   },
   buttonContainer: {
-    marginTop: 28,
-    marginBottom: 16
+    marginTop: spacing.xxxl,
+    marginBottom: spacing.lg
   },
   errorMessage: {
     color: theme.colors.primary,
     textAlign: 'center',
-    marginTop: 16,
+    marginTop: spacing.lg,
     fontSize: theme.typography.fontSize
   },
   mapViewContainer: {
-    borderRadius: 6,
+    borderRadius: radius.md,
     borderWidth: 1.5
   }
 })

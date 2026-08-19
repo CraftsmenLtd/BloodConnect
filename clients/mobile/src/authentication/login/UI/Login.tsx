@@ -1,4 +1,5 @@
-import { Text, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { Input } from '../../../components/inputElement/Input'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
@@ -55,7 +56,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
         isVisible={isPasswordVisible}
         setIsVisible={setIsPasswordVisible}
       />
-      {loginError !== '' && <Text style={styles.error}>{loginError}</Text>}
+      {loginError !== '' && <Text variant="caption" style={styles.error}>{loginError}</Text>}
 
       <LinkWithText
         staticText=""
@@ -71,7 +72,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
       <Divider text={t('common.orText')} />
 
-      {socialLoginError !== '' && <Text style={styles.error}>{socialLoginError}</Text>}
+      {socialLoginError !== '' && <Text variant="caption" style={styles.error}>{socialLoginError}</Text>}
 
       <SocialButton
         text={t('common.continueWithGoogle')}
@@ -99,7 +100,6 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 const createStyles = (theme: Theme) => StyleSheet.create({
   error: {
     color: theme.colors.primary,
-    fontSize: theme.typography.errorFontSize,
     textAlign: 'center'
   }
 })

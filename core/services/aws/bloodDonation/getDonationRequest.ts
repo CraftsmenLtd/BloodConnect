@@ -54,8 +54,11 @@ async function getDonationRequestLambda(
       HTTP_CODES.OK
     )
   } catch (error) {
-    httpLogger.error(error)
     const errorMessage = error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE
+    httpLogger.error(
+      { err: error, requestPostId: event.requestPostId, createdAt: event.createdAt },
+      errorMessage
+    )
     const errorCode
       = error instanceof DonationRecordOperationError ? error.errorCode : HTTP_CODES.ERROR
 

@@ -1,10 +1,12 @@
 import React from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+import { Text } from '../../components/text/AppText'
 import { useDonationResponse } from './useDonationResponse'
 import PostCard from '../../components/donation/PostCard'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { Button } from '../../components/button/Button'
+import { spacing } from '../../setup/theme/tokens'
 
 const DonorResponse = () => {
   const styles = createStyles(useTheme())
@@ -14,7 +16,7 @@ const DonorResponse = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.responseText}>{bloodRequest.donorName} responded to your request</Text>
+        <Text variant="h3" style={styles.responseText}>{bloodRequest.donorName} responded to your request</Text>
         <PostCard post={bloodRequest} showButton={false} showDescription showHeader={false} />
       </View>
 
@@ -37,32 +39,30 @@ const DonorResponse = () => {
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: spacing.xl,
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   ignoreButton: {
-    backgroundColor: theme.colors.greyBG,
+    backgroundColor: theme.colors.surfaceVariant,
     flex: 1,
-    marginRight: 10,
-    color: theme.colors.black
+    marginRight: spacing.md,
+    color: theme.colors.textPrimary
   },
   buttonTextStyle: {
-    color: theme.colors.black
+    color: theme.colors.textPrimary
   },
   responseText: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold'
+    textAlign: 'center'
   },
   buttonContainer: {
     flexDirection: 'row',
-    gap: 16,
+    gap: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingTop: 8,
-    backgroundColor: theme.colors.lightGrey
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    backgroundColor: theme.colors.borderStrong
   },
   buttonWrapper: {
     flex: 1

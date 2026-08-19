@@ -1,5 +1,6 @@
 import React from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import PostCard from '../../../components/donation/PostCard'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import useRequestStatus from './useRequestStatus'
@@ -7,6 +8,7 @@ import Button from '../../../components/button/Button'
 import type { Theme } from '../../../setup/theme'
 import StateAwareRenderer from '../../../components/StateAwareRenderer'
 import { commonStyles } from '../../../components/inputElement/commonStyles'
+import { spacing } from '../../../setup/theme/tokens'
 
 const RequestStatusScreen = () => {
   const styles = createStyles(useTheme())
@@ -23,7 +25,7 @@ const RequestStatusScreen = () => {
   const ViewToRender = () =>
     <View style={styles.container}>
       <View>
-        <Text style={styles.responseText}>Was the blood managed for this request?</Text>
+        <Text variant="h3" style={styles.responseText}>Was the blood managed for this request?</Text>
         <PostCard
           post={bloodRequest}
           showButton={false}
@@ -36,7 +38,7 @@ const RequestStatusScreen = () => {
         <Text
           style={[
             styles.error,
-            { textAlign: 'center', paddingBottom: 12 }
+            { textAlign: 'center', paddingBottom: spacing.md }
           ]}>{completeDonationError}</Text>
 
         <View style={styles.buttonContainer}>
@@ -73,32 +75,30 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   container: {
     flex: 1,
     marginTop: 1,
-    paddingTop: 20,
+    paddingTop: spacing.xl,
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.white
+    backgroundColor: theme.colors.surface
   },
   ignoreButton: {
-    backgroundColor: theme.colors.greyBG,
+    backgroundColor: theme.colors.surfaceVariant,
     flex: 1,
-    marginRight: 10,
-    color: theme.colors.black
+    marginRight: spacing.md,
+    color: theme.colors.textPrimary
   },
   buttonTextStyle: {
-    color: theme.colors.black
+    color: theme.colors.textPrimary
   },
   responseText: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold'
+    textAlign: 'center'
   },
   buttonContainer: {
     flexDirection: 'row',
-    gap: 16,
+    gap: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingTop: 8,
-    backgroundColor: theme.colors.extraLightGray
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    backgroundColor: theme.colors.border
   },
   buttonWrapper: {
     flex: 1

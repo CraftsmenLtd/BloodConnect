@@ -1,5 +1,7 @@
 import React from 'react'
-import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native'
+import { Image, StyleSheet, useWindowDimensions } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Text } from '../components/text/AppText'
 import { LanguageSwitcher } from '../components/languageSwitcher'
 import { languageOptions } from '../setup/constant/language'
 import type { WelcomeScreenNavigationProp } from '../setup/navigation/navigationTypes'
@@ -8,6 +10,7 @@ import { Button } from '../components/button/Button'
 import { useTheme } from '../setup/theme/hooks/useTheme'
 import type { Theme } from '../setup/theme'
 import { useTranslation } from 'react-i18next'
+import { spacing } from '../setup/theme/tokens'
 
 export type WelcomeScreenProps = {
   navigation: WelcomeScreenNavigationProp;
@@ -18,7 +21,7 @@ const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
   const styles = createStyles(useTheme())
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <LanguageSwitcher
         languages={languageOptions}
         position="bottom-right"
@@ -27,8 +30,8 @@ const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
 
       <Image source={require('../../assets/images/bloodBag.png')} style={styles.image} />
 
-      <Text style={styles.title}>{t('home.title')}</Text>
-      <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
+      <Text variant="h2" style={styles.title}>{t('home.title')}</Text>
+      <Text variant="bodySmall" style={styles.subtitle}>{t('home.subtitle')}</Text>
 
       <Button
         text={t('common.createAccount')}
@@ -38,7 +41,7 @@ const Welcome = ({ navigation }: WelcomeScreenProps): React.ReactElement => {
         text={t('common.logIn')}
         onPress={() => { navigation.navigate(SCREENS.LOGIN) }}
         buttonStyle={styles.loginButton} textStyle={styles.loginText} />
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -49,32 +52,29 @@ const createStyles = (theme: Theme) => {
     container: {
       flex: 1,
       justifyContent: 'center',
-      paddingHorizontal: 20,
-      backgroundColor: theme.colors.white
+      paddingHorizontal: spacing.xl,
+      backgroundColor: theme.colors.surface
     },
     image: {
       width: width * 0.4,
       height: undefined,
       aspectRatio: 1,
       alignSelf: 'center',
-      marginBottom: 30
+      marginBottom: spacing.xxxl
     },
     title: {
-      fontSize: 20,
-      fontWeight: '600',
       textAlign: 'center',
-      marginBottom: 10
+      marginBottom: spacing.md
     },
     subtitle: {
-      fontSize: 14,
-      color: theme.colors.darkGrey,
+      color: theme.colors.textSecondary,
       textAlign: 'center',
-      marginBottom: 40
+      marginBottom: spacing.xxxxl
     },
     loginButton: {
-      borderColor: theme.colors.lightGrey,
+      borderColor: theme.colors.borderStrong,
       borderWidth: 1,
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     loginText: {
       color: theme.colors.textPrimary

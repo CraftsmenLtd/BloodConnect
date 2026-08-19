@@ -63,6 +63,10 @@ async function createUserLambda(
       ...(isValidIsoDate(event.lastVaccinatedDate) && { lastVaccinatedDate: event.lastVaccinatedDate }),
       ...(event.NIDFront !== undefined && { NIDFront: event.NIDFront }),
       ...(event.NIDBack !== undefined && { NIDBack: event.NIDBack }),
+      // Persisted here so other users can see it — the idToken claim is private to its owner.
+      // Always 'provider': at signup the only source is that claim.
+      ...(event.profilePicture !== undefined && event.profilePicture !== ''
+        && { profilePicture: event.profilePicture, profilePictureSource: 'provider' as const }),
     }
 
     await userService.createUser(userAttributes, locationService, config.minMonthsBetweenDonations)

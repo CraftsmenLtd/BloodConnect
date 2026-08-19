@@ -1,9 +1,14 @@
 import React from 'react'
 import type { ImageStyle, StyleProp } from 'react-native'
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
-import { COMMON_URLS } from '../../../setup/constant/commonUrls'
+import { View, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { Text } from '../../../components/text/AppText'
+import InitialsAvatar from '../../../components/avatar/InitialsAvatar'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
+import { spacing, radius } from '../../../setup/theme/tokens'
+import useDonorResponses from './useDonorResponses'
+
+const AVATAR_SIZE = 40
 
 export type DonorItem = {
   donorId: string;
@@ -17,16 +22,17 @@ type DonorResponsesProps = {
 
 const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProps) => {
   const styles = createStyles(useTheme())
+  const donorDetails = useDonorResponses(acceptedDonors)
 
   return (
     <View style={styles.rootContainer}>
       {acceptedDonors.length === 0
         ? <View style={styles.centeredContainer}>
-          <Text style={styles.noDonorText}>No donors have responded yet.</Text>
+          <Text variant="body" style={styles.noDonorText}>No donors have responded yet.</Text>
         </View>
         : <View style={styles.responseContainer}>
           <View style={styles.container}>
-            <Text style={styles.title}>Donors Who Responded</Text>
+            <Text variant="h3" style={styles.title}>Donors Who Responded</Text>
             <FlatList
               data={acceptedDonors}
               keyExtractor={(item) => item.donorId}
@@ -37,12 +43,24 @@ const DonorResponses = ({ acceptedDonors, handlePressDonor }: DonorResponsesProp
                     index === acceptedDonors.length - 1 && styles.donorItemLast
                   ]}
                   onPress={() => { handlePressDonor(item.donorId) }}>
-                  <Image
-                    source={{ uri: COMMON_URLS.PROFILE_AVATAR }}
-                    style={styles.avatar as StyleProp<ImageStyle>} />
+                  {donorDetails[item.donorId]?.profilePicture !== undefined
+                    ? (
+                      <Image
+                        source={{ uri: donorDetails[item.donorId].profilePicture }}
+                        style={styles.avatar as StyleProp<ImageStyle>} />
+                    )
+                    : (
+                      <View style={styles.avatar as StyleProp<ImageStyle>}>
+                        <InitialsAvatar name={item.donorName} size={AVATAR_SIZE} />
+                      </View>
+                    )}
                   <View style={styles.textContainer}>
-                    <Text style={styles.name}>{item.donorName}</Text>
-                    <Text style={styles.status}>New blood donor</Text>
+                    <Text variant="body" style={styles.name}>{item.donorName}</Text>
+                    {donorDetails[item.donorId]?.area !== undefined && (
+                      <Text variant="caption" style={styles.status}>
+                        {donorDetails[item.donorId].area}
+                      </Text>
+                    )}
                   </View>
                   <Text style={styles.arrow}>&gt;</Text>
                 </TouchableOpacity>
@@ -59,7 +77,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
   StyleSheet.create({
     rootContainer: {
       flex: 1,
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     centeredContainer: {
       flex: 1,
@@ -67,50 +85,46 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> =>
       alignItems: 'center'
     },
     noDonorText: {
-      fontSize: 16,
-      color: theme.colors.grey,
+      color: theme.colors.textTertiary,
       textAlign: 'center'
     },
     responseContainer: {
-      backgroundColor: theme.colors.white
+      backgroundColor: theme.colors.surface
     },
     container: {
-      padding: 16
+      padding: spacing.lg
     },
     title: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 10,
+      marginBottom: spacing.md,
       color: theme.colors.textPrimary
     },
     donorItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: 10,
+      paddingVertical: spacing.md,
       borderBottomWidth: 1,
-      borderBottomColor: theme.colors.lightGrey
+      borderBottomColor: theme.colors.borderStrong
     },
     donorItemLast: {
       borderBottomWidth: 0,
       borderBottomColor: 'transparent'
     },
     avatar: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      marginRight: 12
+      width: AVATAR_SIZE,
+      height: AVATAR_SIZE,
+      borderRadius: radius.xl,
+      marginRight: spacing.md,
+      overflow: 'hidden'
     },
     textContainer: {
       flex: 1
     },
     name: {
-      fontSize: 16,
       fontWeight: '500',
       color: theme.colors.textPrimary
     },
     status: {
-      fontSize: 12,
-      color: theme.colors.darkGrey
+      color: theme.colors.textSecondary
     },
     arrow: {
       fontSize: 20,

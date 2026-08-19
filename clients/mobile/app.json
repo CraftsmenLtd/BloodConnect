@@ -68,14 +68,21 @@
         {
           "android": {
             "minSdkVersion": 29,
-            "compileSdkVersion": 35,
-            "targetSdkVersion": 35
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36
           }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow BloodConnect to access your photos so you can set a profile picture."
         }
       ],
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
-      "@maplibre/maplibre-react-native"
+      "@maplibre/maplibre-react-native",
+      "./plugins/withRestrictedResizability"
     ]
   }
 }

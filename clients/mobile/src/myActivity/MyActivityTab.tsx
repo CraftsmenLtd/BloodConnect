@@ -8,6 +8,7 @@ import Posts from '../components/donation/Posts'
 import { useMyActivityContext } from './context/useMyActivityContext'
 import Toast from '../components/toast'
 import React from 'react'
+import { spacing } from '../setup/theme/tokens'
 
 const MyActivityTab = () => {
   const theme = useTheme()
@@ -96,19 +97,20 @@ const MyActivityTab = () => {
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: theme.colors.background
   },
   tabHeader: {
-    paddingHorizontal: 8,
-    backgroundColor: theme.colors.white,
-    paddingVertical: 16,
-    borderBottomColor: theme.colors.extraLightGray,
+    paddingHorizontal: spacing.sm,
+    backgroundColor: theme.colors.surface,
+    paddingVertical: spacing.lg,
+    borderBottomColor: theme.colors.border,
     borderBottomWidth: 1,
-    borderTopColor: theme.colors.extraLightGray,
+    borderTopColor: theme.colors.border,
     borderTopWidth: 1
   },
   contentContainer: {
-    marginTop: 20
+    marginTop: spacing.xl
   }
 })
 

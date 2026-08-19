@@ -1,6 +1,6 @@
 {
   "userId": "$context.authorizer.claims['custom:userId']",
-  "cloudFrontRequestId": "$input.params('X-Amz-Cf-Id')",
+  "cloudFrontRequestId": "$util.escapeJavaScript($input.params('X-Amz-Cf-Id')).replaceAll("\\'","'")",
   "apiGwRequestId": "$context.requestId",
-  "address": "$input.params('address')"
+  "address": "$util.escapeJavaScript($input.params('address')).replaceAll("\\'","'")"
 }

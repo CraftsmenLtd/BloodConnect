@@ -1,8 +1,11 @@
 import React from 'react'
-import { View, TextInput, Text, StyleSheet } from 'react-native'
+import { View, TextInput, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
+import useFieldFocus from './hooks/useFieldFocus'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type TextAreaProps = {
   name: string;
@@ -15,16 +18,28 @@ type TextAreaProps = {
 }
 
 export const TextArea = ({ name, label, value, placeholder, onChangeText, maxLength, error }: TextAreaProps) => {
-  const styles = createStyles(useTheme())
+  const theme = useTheme()
+  const styles = createStyles(theme)
+  const { isFocused, handleFocus, handleBlur } = useFieldFocus()
+  const hasError = error !== null && error !== undefined && error !== ''
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         placeholder={placeholder}
-        style={styles.textArea}
+        placeholderTextColor={theme.colors.textTertiary}
+        selectionColor={theme.colors.focus}
+        cursorColor={theme.colors.focus}
+        style={[
+          styles.textArea,
+          isFocused && styles.inputFocused,
+          hasError && styles.inputError
+        ]}
         value={value}
         onChangeText={(text) => { onChangeText(name, text) }}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         multiline
         maxLength={maxLength}
       />
@@ -40,11 +55,13 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   ...commonStyles(theme),
   textArea: {
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
-    borderRadius: 5,
-    padding: 10,
+    borderColor: theme.colors.border,
+    borderRadius: radius.sm,
+    padding: spacing.md,
     height: 100,
-    textAlignVertical: 'top'
+    textAlignVertical: 'top',
+    color: theme.colors.textPrimary,
+    backgroundColor: theme.colors.surface
   },
   charCountContainer: {
     flexDirection: 'row',

@@ -44,6 +44,9 @@
     "/users": {
       "$ref": "./../paths/users/users.json"
     },
+    "/users/profile-picture-upload-url": {
+      "$ref": "./../paths/users/profile-picture-upload-url.json"
+    },
     "/donors/{donorId}": {
       "$ref": "./../paths/donors/donors.json"
     },

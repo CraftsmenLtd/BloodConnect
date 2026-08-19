@@ -25,6 +25,7 @@ const useDonorProfile = () => {
     gender: donorProfile.gender ?? '',
     height: donorProfile.height ?? 0,
     weight: donorProfile.weight ?? 0,
+    profilePicture: donorProfile.profilePicture ?? '',
     phoneNumbers: Array.isArray(donorProfile.phoneNumbers) ? donorProfile.phoneNumbers : [],
     preferredDonationLocations: Array.isArray(donorProfile.preferredDonationLocations)
       ? donorProfile.preferredDonationLocations.map((location) => ({

@@ -27,6 +27,7 @@ import {
 } from '../../../utility/formatting'
 import { useUserProfile } from '../../context/UserProfileContext'
 import { getCurrentUser } from 'aws-amplify/auth'
+import { getIdTokenPicture } from '../../../authentication/services/authService'
 import { LocationService } from '../../../LocationService/LocationService'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
@@ -56,6 +57,16 @@ export const useAddPersonalInfo = () => {
   const { fetchUserProfile } = useUserProfile()
   const navigation = useNavigation<AddPersonalInfoNavigationProp>()
   const [isSSO, setIsSSO] = useState(false)
+  const [providerPicture, setProviderPicture] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    let active = true
+    void getIdTokenPicture().then((picture) => {
+      if (active) setProviderPicture(picture)
+    })
+
+    return () => { active = false }
+  }, [])
 
   useEffect(() => {
     const checkAuthProvider = async(): Promise<void> => {
@@ -193,6 +204,9 @@ export const useAddPersonalInfo = () => {
         ...(weight !== null && { weight: formatToTwoDecimalPlaces(weight) }),
         preferredDonationLocations,
         ...(isSSO && phoneNumber !== null ? { phoneNumbers: [phoneNumber] } : {}),
+        // The identity provider's avatar lives only in this user's own idToken, so it has to
+        // be persisted at signup for anyone else (donor lists, donor profiles) to ever see it.
+        ...(providerPicture !== undefined && { profilePicture: providerPicture }),
         availableForDonation: rest.availableForDonation
       }
 

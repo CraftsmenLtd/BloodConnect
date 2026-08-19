@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import type { StyleProp, ViewStyle } from 'react-native'
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native'
+import { TouchableOpacity, View, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { formattedDate } from '../../utility/formatting'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
 import { commonStyles } from './commonStyles'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type DateTimePickerComponentProps = {
   label: string;
@@ -24,6 +26,7 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
   const styles = createStyles(useTheme())
   const [isPickingTime, setIsPickingTime] = useState<boolean>(false)
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false)
+  const hasError = error !== null && error !== undefined && error !== ''
 
   const handleDateChange = (event: unknown, selectedDate: Date | undefined) => {
     if (event.type === 'dismissed') {
@@ -64,14 +67,19 @@ const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
   }
 
   return (
-    <View style={{ marginVertical: 4 }}>
+    <View style={{ marginVertical: spacing.xs }}>
       <Text style={styles.label}>
         {label}
         {isRequired && <Text style={styles.asterisk}> *</Text>}
       </Text>
       <TouchableOpacity
         onPress={() => { setShowDatePicker(true) }}
-        style={[styles.datePicker, inputStyle]}>
+        style={[
+          styles.datePicker,
+          showDatePicker && styles.inputFocused,
+          hasError && styles.inputError,
+          inputStyle
+        ]}>
         <Text>
           {value !== null
             ? formattedDate(value, isOnlyDate)
@@ -108,9 +116,9 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
-    padding: 12,
-    borderRadius: 4
+    borderColor: theme.colors.border,
+    padding: spacing.md,
+    borderRadius: radius.sm
   },
   iconStyle: {
     color: theme.colors.primary

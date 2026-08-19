@@ -3,10 +3,10 @@ import React, { useRef, useEffect } from 'react'
 import type { ScrollView } from 'react-native'
 import {
   View,
-  Text,
   StyleSheet,
   Linking
 } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 import { Input } from '../../../components/inputElement/Input'
 import Dropdown from '../../../components/inputElement/Dropdown'
@@ -26,6 +26,7 @@ import type { Theme } from '../../../setup/theme'
 import { LocationService } from '../../../LocationService/LocationService'
 import { POLICY_URLS } from '../../../setup/constant/urls'
 import MultiSelect from '../../../components/multiSelect'
+import { spacing, radius } from '../../../setup/theme/tokens'
 
 const { API_BASE_URL } = Constants.expoConfig?.extra ?? {}
 
@@ -173,7 +174,7 @@ const AddPersonalInfo = () => {
 
             return (
               <View style={styles.fieldSpacing}>
-                <Text style={styles.bmiText}>BMI: {bmi} ({getBMICategory(bmi)})</Text>
+                <Text variant="bodySmall" style={styles.bmiText}>BMI: {bmi} ({getBMICategory(bmi)})</Text>
               </View>
             )
           }
@@ -256,22 +257,22 @@ const AddPersonalInfo = () => {
 
 const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => StyleSheet.create({
   scrollContent: {
-    padding: 16,
-    paddingBottom: 32,
-    backgroundColor: theme.colors.white
+    padding: spacing.lg,
+    paddingBottom: spacing.xxxl,
+    backgroundColor: theme.colors.surface
   },
   fieldSpacing: {
     marginBottom: 0
   },
   reducedSpacing: {
-    marginTop: 12,
+    marginTop: spacing.md,
     marginBottom: -6
   },
   extraBottomMargin: {
-    marginBottom: 12
+    marginBottom: spacing.md
   },
   extraTopMargin: {
-    marginTop: 10
+    marginTop: spacing.md
   },
   termsText: {
     fontSize: theme.typography.fontSize,
@@ -283,30 +284,29 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
     textDecorationLine: 'underline'
   },
   space: {
-    padding: 16
+    padding: spacing.lg
   },
   bmiText: {
-    fontSize: 14,
     color: theme.colors.textSecondary,
-    paddingVertical: 4
+    paddingVertical: spacing.xs
   },
   errorMessage: {
-    color: 'red',
+    color: theme.colors.primary,
     textAlign: 'center',
-    padding: 8,
-    borderRadius: 6
+    padding: spacing.sm,
+    borderRadius: radius.md
   },
   buttonContainer: {
-    paddingHorizontal: 8
+    paddingHorizontal: spacing.sm
   },
   submitButton: {
-    marginTop: 15,
-    paddingVertical: 16
+    marginTop: spacing.lg,
+    paddingVertical: spacing.lg
   },
   mapViewContainer: {
-    borderRadius: 6,
+    borderRadius: radius.md,
     borderWidth: 1.5,
-    marginBottom: 15
+    marginBottom: spacing.lg
   }
 })
 

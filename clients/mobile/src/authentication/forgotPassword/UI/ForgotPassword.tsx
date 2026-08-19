@@ -1,4 +1,5 @@
-import { Text, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
 import { Button } from '../../../components/button/Button'
@@ -6,6 +7,7 @@ import AuthLayout from '../../AuthLayout'
 import { Input } from '../../../components/inputElement/Input'
 import { useForgotPassword } from '../hooks/useForgotPassword'
 import { useTranslation } from 'react-i18next'
+import { spacing } from '../../../setup/theme/tokens'
 
 export default function ForgotPassword(): JSX.Element {
   const { t } = useTranslation()
@@ -32,9 +34,9 @@ export default function ForgotPassword(): JSX.Element {
         error={errors.email}
       />
       <View style={styles.errorContainer}>
-        {error !== '' && <Text style={styles.error}>{error}</Text>}
+        {error !== '' && <Text variant="caption" style={styles.error}>{error}</Text>}
       </View>
-      <View style={{ marginTop: 15 }}>
+      <View style={{ marginTop: spacing.lg }}>
         <Button
           text={t('common.continue')}
           onPress={handleForgotPassword}
@@ -51,9 +53,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     height: 40
   },
   error: {
-    paddingVertical: 10,
+    paddingVertical: spacing.md,
     color: theme.colors.primary,
-    fontSize: theme.typography.errorFontSize,
     textAlign: 'center'
   }
 })

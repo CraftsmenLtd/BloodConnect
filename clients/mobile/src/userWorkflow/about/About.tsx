@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Image, StyleSheet } from 'react-native'
+import { Text } from '../../components/text/AppText'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 const currentYear = new Date().getFullYear()
 
@@ -16,9 +18,9 @@ const AboutPage: React.FC = () => {
   useEffect(() => {
     let index = 0
     const intervalId = setInterval(() => {
-      setDisplayedText((prevText) => prevText + fullText[index])
       index += 1
-      if (index === fullText.length) {
+      setDisplayedText(fullText.slice(0, index))
+      if (index >= fullText.length) {
         clearInterval(intervalId)
       }
     }, typingSpeed)
@@ -30,17 +32,17 @@ const AboutPage: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.logoTitleContainer}>
         <Image source={require('../../../assets/icon.png')} style={styles.logo} />
-        <Text style={styles.title}>BloodConnect</Text>
+        <Text variant="h1" style={styles.title}>BloodConnect</Text>
       </View>
 
       <View style={styles.fixedDescriptionContainer}>
-        <Text style={styles.description}>{displayedText}</Text>
+        <Text variant="body" style={styles.description}>{displayedText}</Text>
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>© 2023-{currentYear}</Text>
+        <Text variant="bodySmall" style={styles.footerText}>© 2023-{currentYear}</Text>
         <Image source={require('../../../assets/craftsmen-logo.png')} style={styles.companyLogo} />
-        <Text style={styles.footerText}>Craftsmen Ltd.</Text>
+        <Text variant="bodySmall" style={styles.footerText}>Craftsmen Ltd.</Text>
       </View>
     </View>
   )
@@ -51,8 +53,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-    backgroundColor: theme.colors.white
+    padding: spacing.xl,
+    backgroundColor: theme.colors.surface
   },
   logoTitleContainer: {
     position: 'absolute',
@@ -64,13 +66,11 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     width: 100,
     height: 100,
     backgroundColor: theme.colors.primary,
-    borderRadius: 20
+    borderRadius: radius.xl
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
     color: theme.colors.primary,
-    marginTop: 10
+    marginTop: spacing.md
   },
   fixedDescriptionContainer: {
     position: 'absolute',
@@ -80,7 +80,6 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     zIndex: 0
   },
   description: {
-    fontSize: 20,
     textAlign: 'justify',
     color: theme.colors.textSecondary
   },
@@ -92,9 +91,8 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     justifyContent: 'center'
   },
   footerText: {
-    fontSize: 14,
-    color: theme.colors.darkGrey,
-    marginHorizontal: 5
+    color: theme.colors.textSecondary,
+    marginHorizontal: spacing.xs
   },
   companyLogo: {
     width: 20,

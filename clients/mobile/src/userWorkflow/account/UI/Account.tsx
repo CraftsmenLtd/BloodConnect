@@ -1,8 +1,9 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Text, View, TouchableOpacity, Linking
+  View, TouchableOpacity, Linking
 } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { SCREENS } from '../../../setup/constant/screens'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
@@ -28,6 +29,7 @@ export const Account = () => {
       {userProfileData !== null && <ProfileSection
         name={userProfileData?.name ?? ''}
         location={userProfileData?.location ?? ''}
+        bloodGroup={userProfileData?.bloodGroup ?? ''}
       ></ProfileSection>}
 
       <View style={styles.optionsSection}>
@@ -36,19 +38,19 @@ export const Account = () => {
           onPress={() => { navigation.navigate(SCREENS.PROFILE) }}
         >
           <MaterialIcons name="person-outline" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>{t('account.profile')}</Text>
+          <Text variant="body" style={styles.optionText}>{t('account.profile')}</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
 
         {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="bloodtype" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>Donor Information</Text>
+          <Text variant="body" style={styles.optionText}>Donor Information</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity> */}
 
         {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="notifications-none" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>Notifications</Text>
+          <Text variant="body" style={styles.optionText}>Notifications</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity> */}
 
@@ -57,7 +59,7 @@ export const Account = () => {
           onPress={() => { navigation.navigate(SCREENS.ABOUT) }}
         >
           <MaterialIcons name="info-outline" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>{t('account.about')}</Text>
+          <Text variant="body" style={styles.optionText}>{t('account.about')}</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
 
@@ -66,7 +68,7 @@ export const Account = () => {
           onPress={() => { navigation.navigate(SCREENS.SETTINGS) }}
         >
           <MaterialIcons name="settings" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>{t('account.settings')}</Text>
+          <Text variant="body" style={styles.optionText}>{t('account.settings')}</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
       </View>
@@ -79,7 +81,7 @@ export const Account = () => {
           accessibilityHint="Opens in browser"
         >
           <MaterialIcons name="child-care" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>{t('account.childSafety')}</Text>
+          <Text variant="body" style={styles.optionText}>{t('account.childSafety')}</Text>
           <MaterialIcons name="open-in-new" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
 
@@ -90,7 +92,7 @@ export const Account = () => {
           accessibilityHint="Opens in browser"
         >
           <MaterialIcons name="privacy-tip" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>{t('account.privacyPolicy')}</Text>
+          <Text variant="body" style={styles.optionText}>{t('account.privacyPolicy')}</Text>
           <MaterialIcons name="open-in-new" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
 
@@ -101,7 +103,7 @@ export const Account = () => {
           accessibilityHint="Opens in browser"
         >
           <MaterialIcons name="description" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>{t('account.termsOfService')}</Text>
+          <Text variant="body" style={styles.optionText}>{t('account.termsOfService')}</Text>
           <MaterialIcons name="open-in-new" size={24} style={styles.optionIcon} />
         </TouchableOpacity>
       </View>
@@ -110,19 +112,19 @@ export const Account = () => {
         {/* <Text style={styles.moreText}>More</Text> */}
         {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="star-border" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>Rate & Review</Text>
+          <Text variant="body" style={styles.optionText}>Rate & Review</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity> */}
 
         {/* <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="help-outline" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>Help</Text>
+          <Text variant="body" style={styles.optionText}>Help</Text>
           <MaterialIcons name="chevron-right" size={24} style={styles.optionIcon} />
         </TouchableOpacity> */}
 
         <TouchableOpacity style={styles.optionItem} onPress={() => { void handleSignOut() }}>
           <MaterialIcons name="logout" size={24} style={styles.iconStyle} />
-          <Text style={styles.optionText}>{t('account.logout')}</Text>
+          <Text variant="body" style={styles.optionText}>{t('account.logout')}</Text>
         </TouchableOpacity>
       </View>
     </View>

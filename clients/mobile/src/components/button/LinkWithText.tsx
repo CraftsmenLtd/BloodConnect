@@ -1,7 +1,9 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text } from '../text/AppText'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../setup/theme'
+import { spacing } from '../../setup/theme/tokens'
 
 type LinkWithTextProps = {
   staticText?: string;
@@ -32,7 +34,7 @@ const createStyles = (theme: Theme): ReturnType<typeof StyleSheet.create> => Sty
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 20
+    marginVertical: spacing.xl
   },
   linkText: {
     color: theme.colors.primary,

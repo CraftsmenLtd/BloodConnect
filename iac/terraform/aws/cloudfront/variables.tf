@@ -95,3 +95,23 @@ variable "bloodconnect_environment_domain" {
   type        = string
   description = "Bloodconnect domain for this environment"
 }
+
+variable "media_bucket" {
+  description = "General-purpose S3 media bucket (user images, documents, etc.)"
+  type = object({
+    id                          = string
+    arn                         = string
+    bucket_regional_domain_name = string
+  })
+}
+
+variable "media_path" {
+  type        = string
+  description = "CloudFront path pattern (and top-level S3 key prefix) for the media bucket"
+  default     = "media"
+}
+
+variable "media_origin_id" {
+  type    = string
+  default = "S3MediaOrigin"
+}

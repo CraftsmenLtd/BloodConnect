@@ -6,13 +6,14 @@ import {
   TouchableWithoutFeedback,
   Modal,
   View,
-  Text,
   StyleSheet,
   Image
 } from 'react-native'
+import { Text } from '../text/AppText'
 import Button from '../button/Button'
 import type { Theme } from '../../setup/theme'
 import { useTheme } from '../../setup/theme/hooks/useTheme'
+import { spacing, radius } from '../../setup/theme/tokens'
 
 type ButtonType = {
   text: string;
@@ -121,16 +122,16 @@ const GenericModal: React.FC<GenericModalProps> = ({
               {icon !== null && (
                 <Image
                   source={icon}
-                  style={{ width: iconSize, height: iconSize, marginBottom: 10 }}
+                  style={{ width: iconSize, height: iconSize, marginBottom: spacing.md }}
                   resizeMode="contain"
                 />
               )}
 
               {/* Title */}
-              <Text style={styles.title}>{title}</Text>
+              <Text variant="h2" style={styles.title}>{title}</Text>
 
               {/* Message */}
-              <Text style={styles.message}>{message}</Text>
+              <Text variant="body" style={styles.message}>{message}</Text>
 
               {/* Buttons */}
               <View style={styles.buttonContainer}>
@@ -156,27 +157,24 @@ const GenericModal: React.FC<GenericModalProps> = ({
 const createStyles = (theme: Theme) => StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: theme.colors.blackFaded,
+    backgroundColor: theme.colors.backdrop,
     justifyContent: 'center',
     alignItems: 'center'
   },
   modalContainer: {
     width: '80%',
-    backgroundColor: theme.colors.white,
-    borderRadius: 10,
-    padding: 20,
+    backgroundColor: theme.colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.xl,
     alignItems: 'center',
-    elevation: 5
+    ...theme.elevation.lg
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: spacing.md,
     textAlign: 'center'
   },
   message: {
-    fontSize: 16,
-    marginBottom: 20,
+    marginBottom: spacing.xl,
     textAlign: 'center'
   },
   buttonContainer: {
@@ -186,14 +184,14 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingVertical: 10,
-    marginHorizontal: 5,
+    paddingVertical: spacing.md,
+    marginHorizontal: spacing.xs,
     backgroundColor: theme.colors.primary,
-    borderRadius: 100,
+    borderRadius: radius.pill,
     alignItems: 'center'
   },
   buttonText: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontSize: 16
   }
 })

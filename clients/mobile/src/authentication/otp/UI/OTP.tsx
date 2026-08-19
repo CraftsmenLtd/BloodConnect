@@ -1,10 +1,12 @@
-import { View, StyleSheet, Text, TextInput } from 'react-native'
+import { View, StyleSheet, TextInput } from 'react-native'
+import { Text } from '../../../components/text/AppText'
 import { useTheme } from '../../../setup/theme/hooks/useTheme'
 import type { Theme } from '../../../setup/theme'
 import { Button } from '../../../components/button/Button'
 import { useOtp } from '../hooks/useOtp'
 import LinkWithText from '../../../components/button/LinkWithText'
 import { useTranslation } from 'react-i18next'
+import { spacing, radius } from '../../../setup/theme/tokens'
 
 const OTP = () => {
   const { t } = useTranslation()
@@ -13,10 +15,10 @@ const OTP = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{t('otp.enterAuthenticationCode')}</Text>
+      <Text variant="h1" style={styles.title}>{t('otp.enterAuthenticationCode')}</Text>
       <View style={styles.subtitleContainer}>
-        <Text style={styles.subtitle}>{t('otp.enter6DigitCodeSent')}</Text>
-        <Text style={[styles.subtitle, styles.subtitleEmail]}> {t('common.email')} ({email})</Text>
+        <Text variant="body" style={styles.subtitle}>{t('otp.enter6DigitCodeSent')}</Text>
+        <Text variant="body" style={[styles.subtitle, styles.subtitleEmail]}> {t('common.email')} ({email})</Text>
       </View>
       <View style={styles.otpContainer}>
         {otp.map((digit: string, index: number) => (
@@ -35,7 +37,7 @@ const OTP = () => {
           />
         ))}
       </View>
-      {error !== '' && <Text style={styles.error}>{error}</Text>}
+      {error !== '' && <Text variant="caption" style={styles.error}>{error}</Text>}
       <LinkWithText
         staticText={t('otp.didntGetCode')}
         linkText={isDisabled === true ? ` Resend OTP in ${countdown}s` : ` ${t('otp.resendOtp')}`}
@@ -53,21 +55,18 @@ const createStyles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     paddingTop: '15%',
-    paddingHorizontal: 20,
-    backgroundColor: theme.colors.white
+    paddingHorizontal: spacing.xl,
+    backgroundColor: theme.colors.surface
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: spacing.xl,
     color: theme.colors.textPrimary
   },
   subtitleContainer: {
-    marginBottom: 20
+    marginBottom: spacing.xl
   },
   subtitle: {
-    fontSize: theme.typography.fontSize,
     color: theme.colors.textSecondary,
     textAlign: 'center'
   },
@@ -80,9 +79,9 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   otpBox: {
     borderWidth: 1,
-    borderColor: theme.colors.extraLightGray,
-    borderRadius: 5,
-    padding: 10,
+    borderColor: theme.colors.border,
+    borderRadius: radius.sm,
+    padding: spacing.md,
     fontSize: 20,
     textAlign: 'center',
     width: 50,
@@ -90,8 +89,7 @@ const createStyles = (theme: Theme) => StyleSheet.create({
   },
   error: {
     textAlign: 'center',
-    color: theme.colors.primary,
-    fontSize: theme.typography.errorFontSize
+    color: theme.colors.primary
   }
 })
 
