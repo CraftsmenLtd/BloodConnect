@@ -3,7 +3,7 @@
   "KeyConditionExpression": "PK = :pk",
   "ExpressionAttributeValues": {
     ":pk": {
-      "S": "USER#$input.params('donorId')"
+      "S": "USER#$util.escapeJavaScript($input.params('donorId')).replaceAll("\\'","'")"
     }
   }
 }
